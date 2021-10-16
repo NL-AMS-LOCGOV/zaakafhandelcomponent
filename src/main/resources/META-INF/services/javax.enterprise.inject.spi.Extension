@@ -1,0 +1,6 @@
+#
+# SPDX-FileCopyrightText: 2021 Atos
+# SPDX-License-Identifier: EUPL-1.2+
+#
+
+org.flowable.cdi.impl.FlowableIdmExtension

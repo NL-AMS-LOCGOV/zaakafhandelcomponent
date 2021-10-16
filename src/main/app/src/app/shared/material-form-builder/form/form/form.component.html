@@ -1,0 +1,24 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<form [formGroup]="formGroup" (ngSubmit)="submit()">
+    <ng-container *ngFor="let row of data">
+        <div fxLayout="row" fxLayout.lt-md="column"
+             fxLayoutGap="10px" fxFlexFill>
+            <div [fxFlex]="100/row.length" *ngFor="let tile of row">
+                <mfb-form-field [field]="tile"></mfb-form-field>
+            </div>
+        </div>
+    </ng-container>
+
+    <div fxLayout="row" fxLayoutAlign="start">
+        <button mat-flat-button color="primary" [disabled]="formGroup.invalid" type="submit">
+            {{config.saveButtonText}}
+        </button>
+        <button mat-flat-button type="button" (click)="cancel()">
+            {{config.cancelButtonText}}
+        </button>
+    </div>
+</form>

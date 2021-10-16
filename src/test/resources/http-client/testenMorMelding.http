@@ -1,0 +1,31 @@
+###
+# Create Zaak
+POST http://open-zaak.open-zaak/zaken/api/v1/zaken
+Content-Type: application/json
+Authorization: {{jwt}}
+Accept-Crs: EPSG:4326
+Content-Crs: EPSG:4326
+
+{
+  "bronorganisatie": "622439224",
+  "startdatum": "2021-01-31",
+  "verantwoordelijkeOrganisatie": "130433226",
+  "zaaktype": "http://open-zaak.open-zaak/catalogi/api/v1/zaaktypen/418ef5a1-efbc-4564-9c2f-e9389c95d644"
+}
+> {%
+client.global.set("zaakURI", response.headers.valueOf("Location"));
+ %}
+
+###
+# Notificeer nieuwe zaak
+POST {{zaakafhandelcomponentHost}}/zac/rest/notificaties
+Content-Type: application/json
+
+{
+  "kanaal" : "zaken",
+  "hoofdObject" : "{{zaakURI}}",
+  "resource" : "zaak",
+  "resourceUrl" : "{{zaakURI}}",
+  "actie" : "create",
+  "aanmaakdatum" : "2021-05-05T10:31:36.456698Z"
+}

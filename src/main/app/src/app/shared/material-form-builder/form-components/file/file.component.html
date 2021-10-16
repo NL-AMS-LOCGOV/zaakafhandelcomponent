@@ -1,0 +1,24 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field appearance="fill" class="full-width" (click)="fileInput.click()">
+    <mat-label>{{data.label}}</mat-label>
+    <input [id]="data.id" matInput [formControl]="data.formControl" [readonly]="true" [required]="data.required"/>
+    <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
+        <mat-icon>upload</mat-icon>
+    </button>
+    <button *ngIf="status == 'BEZIG'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+        <mat-icon>cancel</mat-icon>
+    </button>
+    <button *ngIf="status == 'GEREED'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+        <mat-icon>delete</mat-icon>
+    </button>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label}}</mat-hint>
+    <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
+        {{data.getErrorMessage()}}
+    </mat-hint>
+    <input hidden="hidden" type="file" [accept]="data.config.fileTypes" #fileInput id="uploadFile" (change)="uploadFile($event.target.files[0])"
+           name="uploadFile"/>
+</mat-form-field>

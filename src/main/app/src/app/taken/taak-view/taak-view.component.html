@@ -1,0 +1,64 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar">
+    <mat-sidenav #taakMenuSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)"
+                 (mouseenter)="collapseSideNav(false)" (mouseleave)="collapseSideNav(true)">
+        <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav #verkorteZaakSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)" position="end">
+        <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakLoadedEmitter)="onZaakLoaded($event)"></zac-zaak-verkort>
+    </mat-sidenav>
+    <mat-sidenav-content fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="20px">
+        <mat-card fxFlex="100">
+            <mat-card-header>
+                <mat-card-title>{{'taak' | translate}}</mat-card-title>
+                <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'bewerken' | translate }}">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                        <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
+                        <zac-static-text [label]="'status' | translate" [value]="taak.status | translate"></zac-static-text>
+                    </div>
+
+                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                        <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
+                        <zac-static-text [label]="'behandelaar' | translate" [value]="taak.behandelaar | empty: 'naam'"></zac-static-text>
+                    </div>
+
+                    <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
+                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd | datum | empty"></zac-static-text>
+                        <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate" [value]="taak.streefdatum | datum | empty"></zac-static-text>
+                    </div>
+
+                    <div fxFlex="100">
+                        <zac-static-text [label]="'toelichting' | translate" [value]="taak.toelichting | empty"></zac-static-text>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+<mat-toolbar class="bottom-toolbar" *ngIf="utilService.isTablet$|async">
+
+    <div fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button (click)="taakMenuSideNav.toggle(); verkorteZaakSideNav.close()">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+
+    <div fxLayout="row" fxFlex fxLayoutAlign="end center">
+        <button mat-icon-button (click)="verkorteZaakSideNav.toggle(); taakMenuSideNav.close()">
+            <mat-icon>folder_open</mat-icon>
+        </button>
+    </div>
+
+</mat-toolbar>

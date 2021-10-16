@@ -1,0 +1,24 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="fout-pagina">
+    <div class="emoji">🤕</div>
+    <h1>e-Suite</h1>
+    <h2>Common Ground</h2>
+    <h3>{{foutmelding}}</h3>
+    <h4> {{bericht}}</h4>
+</div>
+<mat-expansion-panel
+        *ngIf="stack"
+        (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Technische informatie
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <b>{{exception}}</b>
+    <pre>{{stack}}</pre>
+</mat-expansion-panel>

@@ -1,0 +1,13 @@
+# IntelliJ specific files
+.idea
+**/*.iml
+# The git repository
+.git
+#
+**/target
+**/generated
+**/node
+**/node_modules
+**/dist
+wildfly-*
+.editorconfig

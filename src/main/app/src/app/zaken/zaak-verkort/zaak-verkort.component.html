@@ -1,0 +1,73 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div *ngIf="zaak" [@sideNavToggle]="{value:!collapsed ? 'open' : 'close', params: {width: '72px'}}">
+    <mat-toolbar class="toolbar-footer" fxLayout="row">
+        <ng-container *ngIf="collapsed">
+            <button mat-icon-button color="default" (click)="toggleMenu()" title="{{ 'menu.openen' | translate }}">
+                <mat-icon>menu_open</mat-icon>
+            </button>
+        </ng-container>
+        <ng-container *ngIf="!collapsed">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <button mat-raised-button [routerLink]="['/zaken', zaak.uuid]">
+                    {{zaak.identificatie}}
+                </button>
+            </div>
+
+            <div fxLayout="row" fxFlex fxLayoutAlign="end center" *ngIf="!(utilService.isTablet$|async)">
+                <button mat-icon-button (click)="toggleMenu()" title="{{ 'verkorte.zaak.sluiten' | translate }}">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </div>
+        </ng-container>
+    </mat-toolbar>
+    <div class="content" fxLayout="column wrap" *ngIf="collapsed">
+        <button mat-icon-button [routerLink]="['/zaken', zaak.uuid]" [title]="zaak.identificatie + ' openen'">
+            <mat-icon>visibility</mat-icon>
+        </button>
+    </div>
+    <div class="content" fxLayout="row wrap" *ngIf="!collapsed">
+        <zac-static-text fxFlex="100" [label]="'zaaktype' | translate" [value]="zaak.zaaktype.omschrijving"></zac-static-text>
+        <zac-static-text fxFlex="100" [label]="'status' | translate" [value]="zaak.status | empty:'naam'"></zac-static-text>
+
+        <zac-static-text fxFlex="50" [label]="'startdatum' | translate" [value]="zaak.startdatum|datum"></zac-static-text>
+        <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate" [value]="zaak.einddatumGepland|datum|empty"></zac-static-text>
+
+        <zac-static-text fxFlex="100" [label]="'toelichting' | translate" [value]="zaak.toelichting | empty"></zac-static-text>
+    </div>
+</div>
+<div class="table-wrapper" *ngIf="!collapsed">
+    <h2>{{'documenten'|translate}}</h2>
+    <table mat-table [dataSource]="(enkelvoudigInformatieObjecten | slice: lowValue : highValue)">
+        <ng-container matColumnDef="titel">
+            <th mat-header-cell *matHeaderCellDef>{{ 'titel' | translate }}</th>
+            <td mat-cell *matCellDef="let informatieObject">{{ informatieObject.titel | empty }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ 'status' | translate }}</th>
+            <td mat-cell *matCellDef="let informatieObject">{{ 'informatieobjectstatus.' + informatieObject.status |translate| empty }}</td>
+        </ng-container>
+        <ng-container matColumnDef="url" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let informatieObject">
+                <button mat-flat-button [routerLink]="['/informatie-objecten', informatieObject.uuid]">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="objectenColumnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: objectenColumnsToDisplay;"></tr>
+    </table>
+
+    <mat-paginator (page)="onPageChanged($event)"
+                   [length]="enkelvoudigInformatieObjecten.length"
+                   [pageIndex]="0"
+                   [pageSize]="5"
+                   hidePageSize
+                   sticky>
+    </mat-paginator>
+    <p *ngIf="enkelvoudigInformatieObjecten.length == 0">{{'geen.gegevens.gevonden' | translate}}</p>
+</div>

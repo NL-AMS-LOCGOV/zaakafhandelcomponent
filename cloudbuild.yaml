@@ -1,0 +1,18 @@
+steps:
+  - id: docker build
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t=europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}', '.' ]
+  - id: docker push
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}' ]
+  - id: Deploy to GKE
+    name: 'gcr.io/cloud-builders/kubectl'
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=europe-west4-a
+      - CLOUDSDK_CONTAINER_CLUSTER=haven
+    args: [ 'rollout', 'restart', 'deployment', '${_DEPLOYMENT}' ]
+substitutions:
+  _REPOSITORY: common-ground
+  _DEPLOYMENT: zaakafhandelcomponent
+tags:
+  - '${_DEPLOYMENT}'

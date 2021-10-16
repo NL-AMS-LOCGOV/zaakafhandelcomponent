@@ -1,0 +1,121 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+.notitiesBtn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  z-index: 10;
+}
+
+.notitieContainer {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 380px;
+  box-shadow: 6px 6px 25px -8px #888888;
+  z-index: 1;
+}
+
+@media (max-width: 599px) {
+  .notitieContainer {
+    width: 97%;
+    right: 2px;
+    bottom: 2px;
+  }
+}
+
+.notitieHeader {
+  padding: 2px;
+  min-height: 30px;
+  border-bottom: 1px solid #bababa;
+  background: #3f51b5;
+  font-size: 14px;
+  color: white;
+}
+
+.notitieHeaderStickyIcon {
+  float: left;
+  margin-top: 3px;
+  margin-left: 5px;
+}
+
+.notitieHeaderTekst {
+  float: left;
+  margin-left: 5px;
+  margin-top: 7px;
+}
+
+.notitieBody {
+  min-height: 300px;
+  max-height: 420px;
+  overflow-y: auto;
+  background: #f5f5f5;
+}
+
+.notitieFooter {
+  padding: 5px;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+
+  button {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+  }
+}
+
+.textareaNotitie {
+  width: 85%;
+}
+
+.minBtn {
+  float: right;
+  margin-right: 10px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.notitie {
+  background: white;
+  border-bottom: 1px solid darkgrey;
+
+  .notitieContentHeader {
+    margin-bottom: 8px;
+    padding: 16px 16px 0 16px;
+  }
+
+  .notitieContentBody {
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding: 0 16px;
+
+    p {
+      white-space: pre-wrap;
+    }
+  }
+
+  .notitieContentFooter {
+    display: flex;
+    justify-content: flex-end;
+
+    .material-icons {
+      font-size: 18px;
+    }
+  }
+
+  .notitieTitle {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .notitieSubtitle {
+    font-size: 12px;
+    color: rgba(0, 0, 0, .54);
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -15px;
+  }
+}

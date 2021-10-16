@@ -1,0 +1,75 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <button mat-mini-fab aria-label="Mijn dashboard"
+                color="primary" routerLink="" title="{{ 'toolbar.dashboard' | translate }}">
+            <mat-icon mat-list-icon>home</mat-icon>
+        </button>
+        <button *ngIf="utilService.isHandset$ |async" mat-icon-button aria-label="Terug" [disabled]="navigation.backDisabled$ | async"
+                title="{{ 'toolbar.terug' | translate }}" zacBackButton>
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <button mat-mini-fab aria-label="Zaak toevoegen" routerLink="/zaken/create" title="{{ 'toolbar.zaak.toevoegen' | translate }}">
+            <mat-icon>create_new_folder</mat-icon>
+        </button>
+
+        <button mat-flat-button [matMenuTriggerFor]="zakenMenu" aria-label="Menu voor zaken"
+                color="primary">
+            {{'zaken' |translate }}
+            <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #zakenMenu="matMenu">
+            <button mat-menu-item [routerLink]="['/zaken/werkvoorraad']" routerLinkActive="active">
+                <mat-icon mat-list-icon>source</mat-icon>
+                <span>Werkvoorraad zaken</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/zaken/mijn']" routerLinkActive="active">
+                <mat-icon mat-list-icon>folder_shared</mat-icon>
+                <span>Mijn zaken</span>
+            </button>
+        </mat-menu>
+
+        <button mat-flat-button [matMenuTriggerFor]="takenMenu" aria-label="Menu voor zaken"
+                color="primary">
+            {{'taken' |translate }}
+            <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #takenMenu="matMenu">
+            <button mat-menu-item [routerLink]="['/taken/werkvoorraad']" routerLinkActive="active">
+                <mat-icon mat-list-icon>description</mat-icon>
+                <span>Werkvoorraad taken</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/taken/mijn']" routerLinkActive="active">
+                <mat-icon mat-list-icon>contact_page</mat-icon>
+                <span>Mijn taken</span>
+            </button>
+        </mat-menu>
+
+        <div class="title" *ngIf="!(utilService.isTablet$ |async)">{{headerTitle | translate}}</div>
+        <span class="spacer"></span>
+
+        <button mat-flat-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
+                color="primary" title="{{ 'toolbar.profiel' | translate }}">
+            <ng-container *ngIf="!(utilService.isTablet$ |async)">
+                {{ ingelogdeMedewerker?.naam }}
+            </ng-container>
+            <mat-icon>account_circle</mat-icon>
+        </button>
+
+        <mat-menu #accountMenu="matMenu">
+            <h4 *ngIf="utilService.isTablet$ |async">{{ingelogdeMedewerker}}</h4>
+            <mat-divider></mat-divider>
+            <button mat-menu-item aria-label="Uitloggen">
+                <mat-icon>logout</mat-icon>
+                <span>{{'uitloggen' | translate}}</span>
+            </button>
+        </mat-menu>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="mat-subheading-2 title" *ngIf="utilService.isTablet$ |async">{{headerTitle | translate}}</div>

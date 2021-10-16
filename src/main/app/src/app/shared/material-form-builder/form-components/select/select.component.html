@@ -1,0 +1,15 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{data.label}}</mat-label>
+    <mat-select [id]="data.id" [formControl]="data.formControl" [required]="data.required" [compareWith]="data.compareWithFn">
+        <mat-option *ngFor="let option of data.options" [value]="option">
+            {{data.optionLabel ? option[data.optionLabel] : option}}
+        </mat-option>
+    </mat-select>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label}}</mat-hint>
+    <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
+</mat-form-field>

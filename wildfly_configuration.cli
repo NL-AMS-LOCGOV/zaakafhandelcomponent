@@ -1,0 +1,48 @@
+embed-server --server-config=standalone.xml
+
+# Mark the commands below to be run as a batch
+batch
+
+# Remove default h2 driver
+/subsystem=datasources/jdbc-driver=h2:remove
+
+# Remove default datasource
+data-source remove \
+    --name=ExampleDS
+/subsystem=ee/service=default-bindings:remove
+/subsystem=ee/service=default-bindings:add(context-service="java:jboss/ee/concurrency/context/default",managed-executor-service="java:jboss/ee/concurrency/executor/default",managed-scheduled-executor-service="java:jboss/ee/concurrency/scheduler/default",managed-thread-factory="java:jboss/ee/concurrency/factory/default")
+
+# Add PostgreSQL module
+module add \
+    --name=org.postgresql \
+    --resources=postgresql-driver.jar \
+    --dependencies=javax.api,javax.transaction.api
+
+# Add PostgreSQL driver
+/subsystem=datasources/jdbc-driver=postgresql-driver:add(driver-name="postgresql-driver",driver-module-name="org.postgresql",driver-class-name=org.postgresql.Driver)
+
+# Add zaakafhandelcomponent datasource
+data-source add \
+    --name=ZaakafhandelcomponentDS \
+    --jndi-name=java:jboss/datasources/ZaakafhandelcomponentDS \
+    --connection-url=jdbc:postgresql://${env.DB_HOST:localhost}/${env.DB_NAME} \
+    --driver-name=postgresql-driver --user-name=${env.DB_USER} --password=${env.DB_PASSWORD} \
+    --use-java-context=true \
+    --statistics-enabled=${wildfly.datasources.statistics-enabled:${wildfly.statistics-enabled:false}}
+
+# Add flowable datasource
+data-source add \
+    --name=FlowableDS \
+    --jndi-name=java:jboss/datasources/FlowableDS \
+    --connection-url=jdbc:postgresql://${env.DB_HOST:localhost}/${env.DB_NAME} \
+    --jta=false \
+    --driver-name=postgresql-driver --user-name=${env.DB_USER} --password=${env.DB_PASSWORD} \
+    --use-java-context=true \
+    --statistics-enabled=${wildfly.datasources.statistics-enabled:${wildfly.statistics-enabled:false}}
+
+# Add system property to enable the usage of JsonB
+/system-property=resteasy.preferJacksonOverJsonB:add(value=false)
+
+# Execute the batch
+run-batch
+

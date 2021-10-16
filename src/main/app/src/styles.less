@@ -1,0 +1,247 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  overscroll-behavior-y: contain;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+
+    caption {
+      text-align: left;
+    }
+
+    tr.collapsed-row {
+      height: 0;
+    }
+
+    tr.row {
+
+      &:not(.expanded-row):hover {
+        background: whitesmoke;
+      }
+
+      &:not(.expanded-row):active {
+        background: #efefef;
+      }
+
+      & td {
+        border-bottom-width: 0;
+      }
+    }
+
+    tr {
+      & .mat-table-sticky.mat-table-sticky-border-elem-right {
+        button {
+          float: right;
+        }
+      }
+
+      th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+        padding: 0 10px;
+      }
+    }
+
+    .row-detail {
+      overflow: hidden;
+      display: flex;
+    }
+  }
+
+
+  p {
+    font-size: small;
+    font-style: italic;
+    text-align: center;
+  }
+
+  & > mat-paginator[sticky] {
+    bottom: 0;
+    position: sticky;
+    z-index: 10;
+  }
+}
+
+.loading {
+  cursor: not-allowed;
+
+  & > * {
+    pointer-events: none;
+  }
+
+  table {
+    opacity: 0.7;
+    background-color: fade(white, 10%);
+  }
+}
+
+.content {
+  padding: 10px;
+}
+
+button.mat-button-base + button.mat-button-base {
+  margin: 0 5px;
+}
+
+.mat-icon-button.edit-button {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.mat-drawer.mat-drawer-end {
+  max-width: 20%;
+}
+
+.inner-sidenav-container {
+  height: calc(100% - 64px);
+
+  .mat-sidenav-content {
+    padding: 10px
+  }
+}
+
+.mat-divider-wrapper {
+  padding-bottom: 10px;
+}
+
+//tablet landscape
+@media (max-width: 1279px) {
+  .mat-drawer.mat-drawer-end {
+    max-width: 30%;
+  }
+}
+
+//tablet portrait
+@media (max-width: 839px) {
+  .mat-drawer.mat-drawer-end {
+    max-width: 60%;
+  }
+
+  .bottom-toolbar {
+    height: 50px;
+  }
+
+  .inner-sidenav-container.tablet-bottom-toolbar {
+    height: calc(100% - 152px);
+  }
+}
+
+//telefoon
+@media (max-width: 599px) {
+  .inner-sidenav-container.tablet-bottom-toolbar {
+    height: calc(100% - 144px);
+  }
+
+  .mat-drawer.mat-drawer-end {
+    max-width: 75%;
+  }
+
+}
+
+.mat-tab-group {
+  padding-bottom: 10px;
+}
+
+mat-card {
+  .mat-card-header .mat-card-title {
+    font-size: 14px;
+  }
+}
+
+[mat-subheader] {
+  & mat-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    box-sizing: content-box;
+    border-radius: 50%;
+    padding: 4px;
+  }
+}
+
+.mat-form-field-appearance-legacy {
+  .mat-form-field-underline {
+    display: none;
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.6;
+}
+
+/*****PWA specfiek*****/
+
+.disable-content-selection {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+a {
+  -webkit-touch-callout: none;
+}
+
+.container {
+  /*margin voor mobiele devices*/
+  height: 100%;
+  margin: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (display-mode: standalone) {
+    //specifiek voor iOS/iPadOS op geinstalleerde PWA
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  //animaties uitschakelen
+}
+
+@media (prefers-color-scheme: dark) {
+  //darkmode
+}
+
+.text-label {
+  font-size: small;
+  font-weight: 500;
+}
+
+.text-content {
+  font-size: 14px;
+  margin-top: 5px;
+}

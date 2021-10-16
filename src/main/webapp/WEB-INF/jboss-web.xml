@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           version="7.1"
+           xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee
+                               http://www.jboss.org/schema/jbossweb/jboss-web_7_1.xsd">
+    <context-root>zac</context-root>
+</jboss-web>

@@ -1,0 +1,25 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="mat-form-field full-width mat-primary mat-form-field-type-mat-input
+                mat-form-field-appearance-fill mat-form-field-can-float mat-form-field-has-label
+                mat-form-field-should-float mat-form-field-autofilled">
+    <div class="mat-form-field-wrapper">
+        <div class="mat-form-field-flex">
+            <div class="mat-form-field-infix">
+                <div class="mat-input-element mat-form-field-autofill-control"
+                     [id]="data.id" aria-required="false">
+                    {{data.formControl.value}}
+                </div>
+                <span class="mat-form-field-label-wrapper">
+                    <label class="mat-form-field-label" [for]="data.id">
+                        <div>{{data.label}}</div>
+                    </label>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="mat-form-field-underline"><span class="mat-form-field-ripple"></span></div>
+</div>

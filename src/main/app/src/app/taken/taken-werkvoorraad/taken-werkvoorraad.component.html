@@ -1,0 +1,106 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-wrapper" [class.loading]="utilService.loading$ | async">
+    <table mat-table matSort multiTemplateDataRows cdkDropList
+           cdkDropListLockAxis="x"
+           cdkDropListOrientation="horizontal"
+           (cdkDropListDropped)="dataSource.drop($event)">
+
+        <ng-container [matColumnDef]="column.model" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="column.sort"
+                [disabled]="!column.sort">
+
+                {{column.label|translate}}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{row[column.model] | empty}}
+            </td>
+        </ng-container>
+
+        <ng-container *ngIf="dataSource.hasFilter()">
+            <ng-container [matColumnDef]="column.model + '_filter'" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-form-field *ngIf="column.filter" appearance="standard" class="full-width">
+                        <mat-label>- Kies een {{column.model}} -</mat-label>
+                        <mat-select [id]="column.filter.viewValue" [(value)]="column.filter.value" (valueChange)="dataSource.filter(column.filter)">
+                            <mat-option>- Kies een {{column.model}} -</mat-option>
+                            <mat-option *ngFor="let value of column.filter.values" [value]="value">
+                                {{column.filter.viewValue ? value[column.filter.viewValue] : value}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </th>
+            </ng-container>
+        </ng-container>
+
+        <ng-container matColumnDef="url_filter" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="url" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef>
+                <button mat-flat-button [matMenuTriggerFor]="menu" (menuClosed)="dataSource.updateColumns()" title="{{ 'filters' | translate }}">
+                    <mat-icon>view_column</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
+                        <mat-list-option (click)="$event.stopPropagation()" [selected]="column.visible"
+                                         checkboxPosition="before"
+                                         [value]="column"
+                                         *ngFor="let column of dataSource.columns | noStickyColumn">
+                            {{column.label | translate}}
+                        </mat-list-option>
+                    </mat-selection-list>
+                </mat-menu>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-flat-button [routerLink]="['/taken', row.id]" (click)="$event.stopPropagation()" title="{{ 'taken.bekijk' | translate }}">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennenAanIngelogdeGebruiker(row, $event)">
+                    <mat-icon>person_add_alt</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let row" [attr.colspan]="(dataSource.columns | visibleColumn: true).length">
+                <div class="row-detail"
+                     [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                    <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
+                        <ng-container *ngFor="let column of dataSource.columns | visibleColumn:false">
+                            <zac-static-text fxFlex="33" [label]="column.label | translate" [value]="row[column.model] | translate | empty"></zac-static-text>
+                        </ng-container>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString; sticky:true"></tr>
+        <ng-container *ngIf="dataSource.hasFilter()">
+            <tr mat-header-row
+                *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString:'_filter'; sticky:true"></tr>
+        </ng-container>
+        <tr mat-row *matRowDef="let row; columns: dataSource.columns | visibleColumn:true | columnToString;"
+            class="row"
+            [class.expanded-row]="expandedRow === row"
+            (click)="expandedRow = expandedRow === row ? null : row"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"
+            class="collapsed-row"></tr>
+    </table>
+
+    <ng-container *ngIf="dataSource.totalItems === 0">
+        <p>{{'geen.gegevens.gevonden' | translate}}</p>
+    </ng-container>
+
+    <mat-paginator #paginator
+                   [length]="dataSource.totalItems"
+                   [pageIndex]="0"
+                   [pageSize]="25"
+                   [pageSizeOptions]="[10, 25, 50, 100]"
+                   sticky>
+    </mat-paginator>
+</div>
