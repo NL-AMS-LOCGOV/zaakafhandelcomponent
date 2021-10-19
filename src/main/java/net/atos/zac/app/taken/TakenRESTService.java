@@ -99,7 +99,8 @@ public class TakenRESTService {
     public RESTTaak toekennenTaak(final RESTTaak restTaak) {
         final Task task = cmmnService.assignTask(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null,
                                                  restTaak.groep != null ? restTaak.groep.id : null);
-        versturenTaakWijzigingen(task, restTaak.zaakUUID);
+        taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
+
         return taakConverter.convertTask(task);
     }
 
@@ -109,13 +110,9 @@ public class TakenRESTService {
         final Task task = cmmnService.assignTask(restTaakToekennenGegevens.taakId,
                                                  ingelogdeMedewerker.getGebruikersnaam(),
                                                  null);
-        versturenTaakWijzigingen(task, restTaakToekennenGegevens.zaakUuid);
-        return taakConverter.convertTask(task);
-    }
+        taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
 
-    private void versturenTaakWijzigingen(final Task taak, final UUID zaakUuid) {
-        eventingService.versturen(TAAK.wijziging(taak));
-        eventingService.versturen(ZAAK_TAKEN.wijziging(zaakUuid));
+        return taakConverter.convertTask(task);
     }
 
     @PATCH
@@ -136,5 +133,10 @@ public class TakenRESTService {
         eventingService.versturen(TAAK.wijziging(taskInfo));
         eventingService.versturen(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
         return taakConverter.convertTask(taskInfo);
+    }
+
+    private void taakBehandelaarGewijzigd(final Task taak, final UUID zaakUuid) {
+        eventingService.versturen(TAAK.wijziging(taak));
+        eventingService.versturen(ZAAK_TAKEN.wijziging(zaakUuid));
     }
 }
