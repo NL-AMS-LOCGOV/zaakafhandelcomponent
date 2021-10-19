@@ -26,6 +26,7 @@ import {StaticTextComponent} from './static-text/static-text.component';
 import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
 import {NotitiesComponent} from './notities/notities.component';
+import {StatusLabelComponent} from './status-label/status-label.component';
 
 @NgModule({
     declarations: [
@@ -39,7 +40,8 @@ import {NotitiesComponent} from './notities/notities.component';
         BackButtonDirective,
         DynamicPipe,
         StaticTextComponent,
-        NotitiesComponent
+        NotitiesComponent,
+        StatusLabelComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -49,7 +51,6 @@ import {NotitiesComponent} from './notities/notities.component';
         StoreModule.forFeature('shared', {
             'sideNav': sideNavReducer
         }),
-        //MatBadgeModule,
         TranslateModule
     ],
     exports: [
@@ -70,7 +71,8 @@ import {NotitiesComponent} from './notities/notities.component';
         StaticTextComponent,
         MaterialModule,
         MaterialFormBuilderModule,
-        NotitiesComponent
+        NotitiesComponent,
+        StatusLabelComponent
     ],
     providers: [
         Title

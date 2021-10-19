@@ -52,7 +52,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     notitieType = NotitieType.ZAAK;
 
-    filterValues: any = {};
+    takenFilter: any = {};
 
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
@@ -88,8 +88,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
-            const filterValues = JSON.parse(filter);
-            return (!this.toonAfgerondeTaken ? data.status !== filterValues.status : true);
+            return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
     }
 
@@ -196,10 +195,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     filterTakenOpStatus() {
         if (!this.toonAfgerondeTaken) {
-            this.filterValues['status'] = 'AFGEROND';
+            this.takenFilter['status'] = 'AFGEROND';
         }
 
-        this.takenDataSource.filter = JSON.stringify(this.filterValues);
+        this.takenDataSource.filter = this.takenFilter;
     }
 
     bepaalChipKleur(taak: Taak): ThemePalette {
