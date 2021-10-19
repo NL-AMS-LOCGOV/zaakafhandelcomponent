@@ -45,6 +45,8 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.app.util.datatable.TableRequest;
 import net.atos.zac.app.util.datatable.TableResponse;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
@@ -94,6 +96,9 @@ public class ZakenRESTService {
     @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
+
+    @Inject
+    private RESTMedewerkerConverter medewerkerConverter;
 
     @Inject
     private EventingServiceBean eventingService;
@@ -183,7 +188,7 @@ public class ZakenRESTService {
 
     @PUT
     @Path("toekennen")
-    public Medewerker toekennen(final RESTZaakToekennenGegevens restZaak) {
+    public RESTMedewerker toekennen(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
         final Medewerker toegekendeMedewerker;
@@ -203,14 +208,15 @@ public class ZakenRESTService {
 
         zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
 
-        verstuurZaakWijzigingen(zaak);
+        zaakBehandelaarGewijzigd(zaak);
 
-        return toegekendeMedewerker;
+        return medewerkerConverter.convertGebruikersnaam(
+                toegekendeMedewerker != null ? toegekendeMedewerker.getGebruikersnaam() : null);
     }
 
     @PUT
     @Path("toekennen/mij")
-    public Medewerker toekennenAanIngelogdeGebruiker(final RESTZaakToekennenGegevens restZaak) {
+    public RESTMedewerker toekennenAanIngelogdeGebruiker(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
         final User user = idmService.getUser(ingelogdeMedewerker.getGebruikersnaam());
@@ -219,9 +225,9 @@ public class ZakenRESTService {
 
         zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
 
-        verstuurZaakWijzigingen(zaak);
+        zaakBehandelaarGewijzigd(zaak);
 
-        return ingelogdeMedewerker;
+        return medewerkerConverter.convertGebruikersnaam(ingelogdeMedewerker.getGebruikersnaam());
     }
 
     // http://localhost:4200/zac/rest/zaken/caches/clear
@@ -268,7 +274,7 @@ public class ZakenRESTService {
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 
-    private void verstuurZaakWijzigingen(final Zaak zaak) {
+    private void zaakBehandelaarGewijzigd(final Zaak zaak) {
         eventingService.versturen(ZAAK.wijziging(zaak));
         eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaak));
     }
