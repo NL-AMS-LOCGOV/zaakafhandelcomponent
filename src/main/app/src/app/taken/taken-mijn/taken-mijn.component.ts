@@ -51,7 +51,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.dataSource.columns = [
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
             new TableColumn('status', 'status', true),
-            new TableColumn('zaaknummer', 'zaakIdentificatie', true),
+            new TableColumn('hoort.bij.zaaknummer', 'zaakIdentificatie', true),
             new TableColumn('zaaktype', 'zaaktypeOmschrijving', true),
             creatieDatum,
             streefDatum,

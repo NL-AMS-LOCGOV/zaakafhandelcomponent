@@ -52,7 +52,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
         this.dataSource.columns = [
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
-            new TableColumn('zaaknummer', 'zaakIdentificatie', true),
+            new TableColumn('hoort.bij.zaaknummer', 'zaakIdentificatie', true),
             new TableColumn('zaaktype', 'zaaktypeOmschrijving', true),
             creatieDatum,
             streefDatum,

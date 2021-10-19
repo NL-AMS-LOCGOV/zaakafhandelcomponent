@@ -19,6 +19,7 @@
   "zaak": "Case",
   "zaaktype": "Casetype",
   "zaaknummer": "Case number",
+  "hoort.bij.zaaknummer": "Belongs to case number",
   "zaken": "Cases",
   "naam": "Name",
   "streefdatum": "Due date",
