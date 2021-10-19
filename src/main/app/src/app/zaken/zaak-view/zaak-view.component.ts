@@ -182,7 +182,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     };
 
     zaakToekennenAanIngelogdeGebruiker = (): void => {
-        this.zaak.behandelaar = this.ingelogdeMedewerker;
         this.zakenService.toekennenAanIngelogdeGebruiker(this.zaak).subscribe(() => this.updateZaak());
     };
 
