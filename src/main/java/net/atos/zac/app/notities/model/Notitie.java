@@ -18,7 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -38,9 +37,6 @@ public class Notitie {
     @Id
     @GeneratedValue(generator = "notitie_sq", strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    @Version
-    private Long version;
 
     @Basic
     @Column(name = "zaak_uuid", updatable = false)
@@ -64,14 +60,6 @@ public class Notitie {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(final Long version) {
-        this.version = version;
     }
 
     public UUID getZaakUUID() {

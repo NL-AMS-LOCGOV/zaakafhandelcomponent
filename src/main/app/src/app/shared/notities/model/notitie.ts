@@ -5,7 +5,6 @@
 
 export class Notitie {
     id: number;
-    version: number;
     zaakUUID: string;
     tekst: string;
     tijdstipLaatsteWijziging: string;

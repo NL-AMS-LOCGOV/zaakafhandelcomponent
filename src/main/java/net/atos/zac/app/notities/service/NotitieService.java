@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -43,12 +42,7 @@ public class NotitieService {
 
     public Notitie updateNotitie(final Notitie notitie) {
         valideerObject(notitie);
-        try {
-            return entityManager.merge(notitie);
-        } catch (final OptimisticLockException e) {
-            // ToDo: ESUITEDEV-25691
-            return notitie;
-        }
+        return entityManager.merge(notitie);
     }
 
     public void deleteNotitie(final Long id) {

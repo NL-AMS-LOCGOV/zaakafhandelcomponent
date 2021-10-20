@@ -12,8 +12,6 @@ public class RESTNotitie {
 
     public Long id;
 
-    public Long version;
-
     public UUID zaakUUID;
 
     public String tekst;

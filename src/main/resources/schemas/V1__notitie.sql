@@ -8,7 +8,6 @@ create sequence ${schema}.notitie_sq start with 1 increment by 1 no maxvalue no 
 create table ${schema}.notitie
 (
     id                         bigint  not null,
-    version                    bigint  not null default 0,
     zaak_uuid                  uuid,
     tekst                      text    not null,
     tijdstip_laatste_wijziging date    not null,

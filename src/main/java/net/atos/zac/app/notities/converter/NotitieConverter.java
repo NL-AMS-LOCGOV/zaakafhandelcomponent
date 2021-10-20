@@ -30,7 +30,6 @@ public class NotitieConverter {
         final RESTNotitie restNotitie = new RESTNotitie();
 
         restNotitie.id = notitie.getId();
-        restNotitie.version = notitie.getVersion();
         restNotitie.zaakUUID = notitie.getZaakUUID();
         restNotitie.tekst = notitie.getTekst();
         restNotitie.tijdstipLaatsteWijziging = notitie.getTijdstipLaatsteWijziging();
@@ -50,7 +49,6 @@ public class NotitieConverter {
         final Notitie notitie = new Notitie();
 
         notitie.setId(restNotitie.id);
-        notitie.setVersion(restNotitie.version);
         notitie.setZaakUUID(restNotitie.zaakUUID);
         notitie.setTekst(restNotitie.tekst);
         notitie.setTijdstipLaatsteWijziging(ZonedDateTime.now());
