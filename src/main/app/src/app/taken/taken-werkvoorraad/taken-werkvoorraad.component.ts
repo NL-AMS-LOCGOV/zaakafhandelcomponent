@@ -57,7 +57,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             creatieDatum,
             streefDatum,
             new TableColumn('groep', 'groep.naam', true),
-            new TableColumn('behandelaar', 'behandelaar', true, TaakSortering.BEHANDELAAR),
+            new TableColumn('behandelaar', 'behandelaar.naam', true, TaakSortering.BEHANDELAAR),
             new TableColumn('url', 'url', true, null, true)
         ];
     }
@@ -70,6 +70,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     toekennenAanIngelogdeGebruiker(taak: Taak, event) {
         event.stopPropagation();
-        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(() => { });
+        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(medewerker => {
+            taak['behandelaar.naam'] = medewerker.naam;
+        });
     }
 }
