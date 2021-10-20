@@ -72,6 +72,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
             this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
+        } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam) {
+            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeGebruiker, 'person_add_alt'));
         }
     }
 
