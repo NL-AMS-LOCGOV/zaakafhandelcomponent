@@ -20,7 +20,6 @@ import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {Zaak} from '../model/zaak';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -114,11 +113,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.setFilter('zaaktype', this.geselecteerdeZaaktype?.identificatie);
     }
 
-    toekennenAanIngelogdeGebruiker(zaak: Zaak, event) {
+    toekennenAanIngelogdeMedewerker(zaakOverzicht: ZaakOverzicht, event) {
         event.stopPropagation();
 
-        this.zakenService.toekennenAanIngelogdeGebruiker(zaak).subscribe(medewerker => {
-            zaak['behandelaar.naam'] = medewerker.naam;
+        this.zakenService.toekennenAanIngelogdeMedewerkerVanuitLijst(zaakOverzicht).subscribe(zaak => {
+            zaakOverzicht['behandelaar.naam'] = zaak.behandelaar.naam;
         });
     }
 }

@@ -14,7 +14,6 @@ import {Zaaktype} from './model/zaaktype';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {ZaakOverzicht} from './model/zaak-overzicht';
 import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
-import {Medewerker} from '../identity/model/medewerker';
 
 @Injectable({
     providedIn: 'root'
@@ -66,21 +65,30 @@ export class ZakenService {
         );
     }
 
-    toekennen(zaak: Zaak): Observable<Medewerker> {
+    toekennen(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         zaakBody.uuid = zaak.uuid;
         zaakBody.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
 
-        return this.http.put<Medewerker>(`${this.basepath}/toekennen`, zaakBody).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/toekennen`, zaakBody).pipe(
             catchError(this.handleError)
         );
     }
 
-    toekennenAanIngelogdeGebruiker(zaak: Zaak): Observable<Medewerker> {
+    toekennenAanIngelogdeMedewerker(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         zaakBody.uuid = zaak.uuid;
 
-        return this.http.put<Medewerker>(`${this.basepath}/toekennen/mij`, zaakBody).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, zaakBody).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht): Observable<ZaakOverzicht> {
+        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        zaakBody.uuid = zaak.uuid;
+
+        return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, zaakBody).pipe(
             catchError(this.handleError)
         );
     }

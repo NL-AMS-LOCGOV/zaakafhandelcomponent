@@ -127,7 +127,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private setupMenu(): void {
         this.menu = [];
-        this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.zaakToekennenAanIngelogdeGebruiker, 'person_add_alt'));
+        this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.zaakToekennenAanIngelogdeMedewerker, 'person_add_alt'));
         if (this.zitIngelogdeMedewerkerInGroepVanZaak() && !this.zaak.behandelaar) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
         } else if (this.zitIngelogdeMedewerkerInGroepVanZaak() && this.isIngelogdeMedewerkerBehandelaar()) {
@@ -178,8 +178,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     isIngelogdeMedewerkerTaakBehandelaar(taak: Taak): boolean {
-        console.log(taak);
-        return this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar?.gebruikersnaam;
     }
 
     vrijgeven = (): void => {
@@ -187,8 +186,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.toekennen(this.zaak).subscribe(() => this.ngOnInit());
     };
 
-    zaakToekennenAanIngelogdeGebruiker = (): void => {
-        this.zakenService.toekennenAanIngelogdeGebruiker(this.zaak).subscribe(() => this.updateZaak());
+    zaakToekennenAanIngelogdeMedewerker = (): void => {
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(() => this.updateZaak());
     };
 
     taakToekennenAanIngelogdeGebruiker(taak: Taak) {

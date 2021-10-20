@@ -45,8 +45,6 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
-import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.app.util.datatable.TableRequest;
 import net.atos.zac.app.util.datatable.TableResponse;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
@@ -96,9 +94,6 @@ public class ZakenRESTService {
     @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
-
-    @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
 
     @Inject
     private EventingServiceBean eventingService;
@@ -188,35 +183,43 @@ public class ZakenRESTService {
 
     @PUT
     @Path("toekennen")
-    public RESTMedewerker toekennen(final RESTZaakToekennenGegevens restZaak) {
+    public RESTZaak toekennen(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
-        final Medewerker toegekendeMedewerker;
 
         // Toekennen of overdragen
         if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
             final User user = idmService.getUser(restZaak.behandelaarGebruikersnaam);
             rollen.add(bepaalRolMedewerker(user, zaak));
-            toegekendeMedewerker = new Medewerker(user, idmService.getUserGroups(user.getId()));
         } else {
             // Vrijgeven
             final Optional<Rol<?>> rolMedewerker =
                     rollen.stream().filter(rol -> rol.getBetrokkeneType() == BetrokkeneType.MEDEWERKER).findFirst();
             rolMedewerker.ifPresent(medewerker -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(medewerker)));
-            toegekendeMedewerker = null;
         }
 
         zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
 
         zaakBehandelaarGewijzigd(zaak);
 
-        return medewerkerConverter.convertGebruikersnaam(
-                toegekendeMedewerker != null ? toegekendeMedewerker.getGebruikersnaam() : null);
+        return zaakConverter.convert(zaak);
     }
 
     @PUT
     @Path("toekennen/mij")
-    public RESTMedewerker toekennenAanIngelogdeGebruiker(final RESTZaakToekennenGegevens restZaak) {
+    public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens restZaak) {
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
+        return zaakConverter.convert(zaak);
+    }
+
+    @PUT
+    @Path("toekennen/mij/lijst")
+    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens restZaak) {
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
+        return zaakOverzichtConverter.convert(zaak);
+    }
+
+    private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
         final User user = idmService.getUser(ingelogdeMedewerker.getGebruikersnaam());
@@ -227,7 +230,7 @@ public class ZakenRESTService {
 
         zaakBehandelaarGewijzigd(zaak);
 
-        return medewerkerConverter.convertGebruikersnaam(ingelogdeMedewerker.getGebruikersnaam());
+        return zaak;
     }
 
     // http://localhost:4200/zac/rest/zaken/caches/clear
