@@ -77,7 +77,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     vrijgeven = (): void => {
         this.taak.behandelaar = null;
-        this.takenService.toekennen(this.taak).subscribe(taak => this.init(taak));
+        this.takenService.toekennen(this.taak).subscribe(() => {
+            this.taak.status = TaakStatus.NietToegekend;
+            this.init(this.taak)
+        });
     };
 
     afronden = (): void => {
@@ -85,6 +88,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     };
 
     toekennenAanIngelogdeGebruiker = (): void => {
-        this.takenService.toekennenAanIngelogdeGebruiker(this.taak).subscribe(taak => this.init(taak));
+        this.takenService.toekennenAanIngelogdeGebruiker(this.taak).subscribe(medewerker => {
+            this.taak.behandelaar = medewerker;
+            this.taak.status = TaakStatus.Toegekend;
+            this.init(this.taak);
+        });
     };
 }

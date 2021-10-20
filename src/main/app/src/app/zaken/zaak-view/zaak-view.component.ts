@@ -33,6 +33,7 @@ import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
+import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -176,6 +177,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         return this.ingelogdeMedewerker.gebruikersnaam == this.zaak.behandelaar?.gebruikersnaam;
     }
 
+    isIngelogdeMedewerkerTaakBehandelaar(taak: Taak): boolean {
+        console.log(taak);
+        return this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar.gebruikersnaam;
+    }
+
     vrijgeven = (): void => {
         this.zaak.behandelaar = null;
         this.zakenService.toekennen(this.zaak).subscribe(() => this.ngOnInit());
@@ -186,9 +192,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     };
 
     taakToekennenAanIngelogdeGebruiker(taak: Taak) {
-        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(response => {
-            taak.behandelaar = response.behandelaar;
-            taak.status = response.status;
+        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(medewerker => {
+            taak.behandelaar = medewerker;
+            taak.status = TaakStatus.Toegekend;
         });
     }
 

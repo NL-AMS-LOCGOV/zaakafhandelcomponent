@@ -25,6 +25,8 @@ import javax.ws.rs.core.MediaType;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
@@ -56,6 +58,9 @@ public class TakenRESTService {
     @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
+
+    @Inject
+    private RESTMedewerkerConverter medewerkerConverter;
 
     @GET
     @Path("werkvoorraad")
@@ -96,23 +101,23 @@ public class TakenRESTService {
 
     @PATCH
     @Path("toekennen")
-    public RESTTaak toekennenTaak(final RESTTaak restTaak) {
+    public RESTMedewerker toekennenTaak(final RESTTaak restTaak) {
         final Task task = cmmnService.assignTask(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null,
                                                  restTaak.groep != null ? restTaak.groep.id : null);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
 
-        return taakConverter.convertTask(task);
+        return medewerkerConverter.convertGebruikersnaam(task.getAssignee());
     }
 
     @PATCH
     @Path("toekennen/mij")
-    public RESTTaak toekennenAanIngelogdeGebruiker(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+    public RESTMedewerker toekennenAanIngelogdeGebruiker(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         final Task task = cmmnService.assignTask(restTaakToekennenGegevens.taakId,
                                                  ingelogdeMedewerker.getGebruikersnaam(),
                                                  null);
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
 
-        return taakConverter.convertTask(task);
+        return medewerkerConverter.convertGebruikersnaam(task.getAssignee());
     }
 
     @PATCH
