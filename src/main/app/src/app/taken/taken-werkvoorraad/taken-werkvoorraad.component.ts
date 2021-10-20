@@ -18,7 +18,6 @@ import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {IdentityService} from '../../identity/identity.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -35,7 +34,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService, private identityService: IdentityService) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService) {
     }
 
     ngOnInit() {
@@ -68,10 +67,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.table.dataSource = this.dataSource;
     }
 
-    toekennenAanIngelogdeGebruiker(taak: Taak, event) {
+    toekennenAanIngelogdeMedewerker(taak: Taak, event) {
         event.stopPropagation();
-        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(medewerker => {
-            taak['behandelaar.naam'] = medewerker.naam;
+        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
+            taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
         });
     }
 }

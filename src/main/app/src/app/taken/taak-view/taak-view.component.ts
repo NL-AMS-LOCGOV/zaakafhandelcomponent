@@ -66,34 +66,27 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     private buildMenu(ingelogdeMedewerker: Medewerker): void {
         this.menu.push(new HeaderMenuItem('Taak'));
         if (this.taak.status == TaakStatus.NietToegekend && ingelogdeMedewerker.groepen?.map(groep => groep.id).includes(this.taak.groep.id)) {
-            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeGebruiker, 'person_add_alt'));
+            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeMedewerker, 'person_add_alt'));
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
         } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam) {
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
             this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
         } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam) {
-            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeGebruiker, 'person_add_alt'));
+            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeMedewerker, 'person_add_alt'));
         }
     }
 
     vrijgeven = (): void => {
         this.taak.behandelaar = null;
-        this.takenService.toekennen(this.taak).subscribe(() => {
-            this.taak.status = TaakStatus.NietToegekend;
-            this.init(this.taak)
-        });
+        this.takenService.toekennen(this.taak).subscribe(taak => this.init(taak));
     };
 
     afronden = (): void => {
         this.takenService.afronden(this.taak).subscribe(taak => this.init(taak));
     };
 
-    toekennenAanIngelogdeGebruiker = (): void => {
-        this.takenService.toekennenAanIngelogdeGebruiker(this.taak).subscribe(medewerker => {
-            this.taak.behandelaar = medewerker;
-            this.taak.status = TaakStatus.Toegekend;
-            this.init(this.taak);
-        });
+    toekennenAanIngelogdeMedewerker = (): void => {
+        this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => this.init(taak));
     };
 }

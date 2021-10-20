@@ -12,7 +12,6 @@ import {Taak} from './model/taak';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
 import {TableResponse} from '../shared/dynamic-table/datasource/table-response';
 import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
-import {Medewerker} from '../identity/model/medewerker';
 
 @Injectable({
     providedIn: 'root'
@@ -52,18 +51,18 @@ export class TakenService {
         );
     }
 
-    toekennen(taak: Taak): Observable<Medewerker> {
-        return this.http.patch<Medewerker>(`${this.basepath}/toekennen`, taak).pipe(
+    toekennen(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}/toekennen`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    toekennenAanIngelogdeGebruiker(taak: Taak): Observable<Medewerker> {
+    toekennenAanIngelogdeMedewerker(taak: Taak): Observable<Taak> {
         let taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUUID;
 
-        return this.http.patch<Medewerker>(`${this.basepath}/toekennen/mij`, taakToekennenGegevens).pipe(
+        return this.http.patch<Taak>(`${this.basepath}/toekennen/mij`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

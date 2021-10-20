@@ -197,7 +197,7 @@
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}"
-                                            (click)="taakToekennenAanIngelogdeGebruiker(taak)" *ngIf="taak.status !== 'AFGEROND'">
+                                            (click)="taakToekennenAanIngelogdeMedewerker(taak)" *ngIf="taak.status !== 'AFGEROND'">
                                         <mat-icon>person_add_alt</mat-icon>
                                     </button>
                                 </td>

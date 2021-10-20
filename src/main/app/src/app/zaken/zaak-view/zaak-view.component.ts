@@ -33,7 +33,6 @@ import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
-import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -190,10 +189,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(() => this.updateZaak());
     };
 
-    taakToekennenAanIngelogdeGebruiker(taak: Taak) {
-        this.takenService.toekennenAanIngelogdeGebruiker(taak).subscribe(medewerker => {
-            taak.behandelaar = medewerker;
-            taak.status = TaakStatus.Toegekend;
+    taakToekennenAanIngelogdeMedewerker(taak: Taak) {
+        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
+            taak.behandelaar = taakResponse.behandelaar;
+            taak.status = taakResponse.status;
         });
     }
 
