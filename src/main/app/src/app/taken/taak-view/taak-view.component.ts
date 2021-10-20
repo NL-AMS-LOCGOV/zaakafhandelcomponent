@@ -21,6 +21,7 @@ import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
 import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -34,7 +35,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     menu: MenuItem[] = [];
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
-                private identityService: IdentityService) {
+                private identityService: IdentityService, private snackbar: MatSnackBar) {
         super(store, utilService);
     }
 
@@ -79,14 +80,29 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     vrijgeven = (): void => {
         this.taak.behandelaar = null;
-        this.takenService.toekennen(this.taak).subscribe(taak => this.init(taak));
+        this.takenService.toekennen(this.taak).subscribe(taak => {
+            this.laatSnackbarZien(`Taak vrijgegeven`);
+            this.init(taak);
+        });
     };
 
     afronden = (): void => {
-        this.takenService.afronden(this.taak).subscribe(taak => this.init(taak));
+        this.takenService.afronden(this.taak).subscribe(taak => {
+            this.laatSnackbarZien(`Taak afgerond`);
+            this.init(taak);
+        });
     };
 
     toekennenAanIngelogdeMedewerker = (): void => {
-        this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => this.init(taak));
+        this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => {
+            this.laatSnackbarZien(`Taak toegekend aan ${taak.behandelaar.naam}`);
+            this.init(taak);
+        });
     };
+
+    laatSnackbarZien(message: string) {
+        this.snackbar.open(message, "Sluit", {
+            duration: 3000,
+        });
+    }
 }

@@ -18,6 +18,7 @@ import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -34,7 +35,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService, private snackbar: MatSnackBar) {
     }
 
     ngOnInit() {
@@ -71,6 +72,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         event.stopPropagation();
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
             taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
+            this.snackbar.open(`Taak toegekend aan ${taakResponse.behandelaar.naam}`, "Sluit", {
+                duration: 3000,
+            });
         });
     }
 }

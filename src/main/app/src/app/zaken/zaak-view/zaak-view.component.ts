@@ -33,6 +33,7 @@ import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -66,7 +67,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private titleService: Title,
                 private identityService: IdentityService,
                 public utilService: UtilService,
-                public websocketService: WebsocketService) {
+                public websocketService: WebsocketService,
+                private snackbar: MatSnackBar) {
         super(store, utilService);
     }
 
@@ -182,15 +184,22 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     vrijgeven = (): void => {
         this.zaak.behandelaar = null;
-        this.zakenService.toekennen(this.zaak).subscribe(() => this.ngOnInit());
+        this.zakenService.toekennen(this.zaak).subscribe(() => {
+            this.laatSnackbarZien(`Zaak vrijgegeven`);
+            this.ngOnInit();
+        });
     };
 
     zaakToekennenAanIngelogdeMedewerker = (): void => {
-        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(() => this.updateZaak());
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(zaak => {
+            this.laatSnackbarZien(`Zaak toegekend aan ${zaak.behandelaar.naam}`);
+            this.updateZaak();
+        });
     };
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
+            this.laatSnackbarZien(`Taak toegekend aan ${taakResponse.behandelaar.naam}`);
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
         });
@@ -216,5 +225,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     bepaalChipSelected(taak: Taak): boolean {
         return taak.status === 'AFGEROND' || taak.status === 'TOEGEKEND';
+    }
+
+    laatSnackbarZien(message: string) {
+        this.snackbar.open(message, "Sluit", {
+            duration: 3000,
+        });
     }
 }
