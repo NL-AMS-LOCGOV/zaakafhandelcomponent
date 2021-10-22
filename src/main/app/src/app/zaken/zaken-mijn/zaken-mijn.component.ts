@@ -45,7 +45,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
             startdatum.pipe = DatumPipe;
 
-            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
+            const einddatumGepland: TableColumn = new TableColumn('streefdatum', 'einddatumGepland');
             einddatumGepland.pipe = DatumPipe;
 
             const uiterlijkedatumafdoening: TableColumn = new TableColumn('fataledatum', 'uiterlijkeDatumAfdoening');
