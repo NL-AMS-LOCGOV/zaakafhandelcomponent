@@ -7,7 +7,6 @@ package net.atos.zac.app.zaken.converter;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -15,12 +14,8 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.BetrokkeneType;
-import net.atos.client.zgw.zrc.model.Rol;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.identity.model.RESTGroep;
@@ -64,18 +59,8 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uiterlijkedatumafdoening = zaak.getUiterlijkeEinddatumAfdoening();
 //      restZaakOverzichtView.aanvrager
 
-        final Optional<Rol<?>> rol = zrcClientService.getRollenForZaak(zaak.getUrl())
-                .stream()
-                .filter(r -> r.getBetrokkeneType() == BetrokkeneType.MEDEWERKER)
-                .filter(r -> r.getOmschrijvingGeneriek().equals(AardVanRol.BEHANDELAAR.toValue()))
-                .findFirst();
-
-        if (rol.isPresent()) {
-            final RolMedewerker rolMedewerker = (RolMedewerker) rol.get();
-            restZaakOverzicht.behandelaar =
-                    restMedewerkerConverter
-                            .convertUserId(rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie());
-        }
+        // TODO ESUITEDEV-25802 Behandelaar voor de werkvoorraad ophalen
+        // restZaakOverzicht.behandelaar = ~
 
         restZaakOverzicht.groep = getGroep(zaak.getZaaktype(), zaak.getUrl());
 
