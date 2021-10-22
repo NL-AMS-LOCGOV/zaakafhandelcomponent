@@ -27,6 +27,7 @@ import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
 import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
+import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import {StatusLabelComponent} from './status-label/status-label.component';
         DynamicPipe,
         StaticTextComponent,
         NotitiesComponent,
-        StatusLabelComponent
+        StatusLabelComponent,
+        BehandelaarVeldComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -72,7 +74,8 @@ import {StatusLabelComponent} from './status-label/status-label.component';
         MaterialModule,
         MaterialFormBuilderModule,
         NotitiesComponent,
-        StatusLabelComponent
+        StatusLabelComponent,
+        BehandelaarVeldComponent
     ],
     providers: [
         Title

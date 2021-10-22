@@ -28,7 +28,7 @@
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
-                        <zac-static-text [label]="'behandelaar' | translate" [value]="taak.behandelaar | empty: 'naam'"></zac-static-text>
+                        <zac-behandelaar-veld [taak]="taak" [laatKnopZien]="!isIngelogdeMedewerkerBehandelaar()"></zac-behandelaar-veld>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">

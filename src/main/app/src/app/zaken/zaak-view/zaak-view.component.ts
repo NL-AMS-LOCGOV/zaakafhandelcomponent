@@ -175,7 +175,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         return this.ingelogdeMedewerker.groepen.some(g => g.id === this.zaak.groep?.id);
     }
 
-    private isIngelogdeMedewerkerBehandelaar(): boolean {
+    isIngelogdeMedewerkerBehandelaar(): boolean {
         return this.ingelogdeMedewerker.gebruikersnaam == this.zaak.behandelaar?.gebruikersnaam;
     }
 

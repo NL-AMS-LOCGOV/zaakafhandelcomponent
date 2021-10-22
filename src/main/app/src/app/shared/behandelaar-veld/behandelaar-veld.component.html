@@ -1,0 +1,12 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="behandelaar">
+    <label class="behandelaar-label">{{ 'behandelaar' | translate }}</label>
+    <button mat-icon-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennen()" *ngIf="laatKnopZien">
+        <mat-icon>person_add_alt</mat-icon>
+    </button>
+    <div class="behandelaar-content">{{ behandelaar?.naam | empty }}</div>
+</div>

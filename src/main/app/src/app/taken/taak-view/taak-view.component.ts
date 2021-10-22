@@ -34,6 +34,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     taak: Taak;
     menu: MenuItem[] = [];
 
+    ingelogdeMedewerker: Medewerker;
+
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
                 private identityService: IdentityService, private snackbar: MatSnackBar) {
         super(store, utilService);
@@ -42,6 +44,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.route.data.subscribe(data => {
             this.init(data['taak']);
+        });
+        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
 
@@ -99,6 +104,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.init(taak);
         });
     };
+
+    isIngelogdeMedewerkerBehandelaar(): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam;
+    }
 
     laatSnackbarZien(message: string) {
         this.snackbar.open(message, "Sluit", {
