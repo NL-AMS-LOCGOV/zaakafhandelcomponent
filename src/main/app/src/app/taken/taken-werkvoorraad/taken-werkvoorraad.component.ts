@@ -19,6 +19,8 @@ import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Medewerker} from '../../identity/model/medewerker';
+import {IdentityService} from '../../identity/identity.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -35,7 +37,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService, private snackbar: MatSnackBar) {
+    ingelogdeMedewerker: Medewerker;
+
+    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService, private snackbar: MatSnackBar, private identityService: IdentityService) {
     }
 
     ngOnInit() {
@@ -60,6 +64,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             new TableColumn('behandelaar', 'behandelaar.naam', true, TaakSortering.BEHANDELAAR),
             new TableColumn('url', 'url', true, null, true)
         ];
+        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
     }
 
     ngAfterViewInit(): void {

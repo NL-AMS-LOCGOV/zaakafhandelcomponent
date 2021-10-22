@@ -21,6 +21,7 @@ import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -43,6 +44,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     geselecteerdeZaaktype: Zaaktype;
     selectie: string = '';
     selecties = ['Groep', 'Zaaktype'];
+
+    ingelogdeMedewerker: Medewerker;
 
     constructor(private zakenService: ZakenService, private titleService: Title, public utilService: UtilService, private identityService: IdentityService, private snackbar: MatSnackBar) {
     }
@@ -78,6 +81,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 new TableColumn('toelichting', 'toelichting'),
                 new TableColumn('url', 'url', true, null, true)
             ];
+        });
+        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
 
         this.groepenOphalen();

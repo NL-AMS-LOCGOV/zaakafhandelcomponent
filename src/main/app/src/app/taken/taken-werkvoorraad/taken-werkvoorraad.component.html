@@ -60,7 +60,7 @@
                 <button mat-flat-button [routerLink]="['/taken', row.id]" (click)="$event.stopPropagation()" title="{{ 'taken.bekijk' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
-                <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)">
+                <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)" *ngIf="row.behandelaar?.gebruikersnaam != ingelogdeMedewerker.gebruikersnaam">
                     <mat-icon>person_add_alt</mat-icon>
                 </button>
             </td>
