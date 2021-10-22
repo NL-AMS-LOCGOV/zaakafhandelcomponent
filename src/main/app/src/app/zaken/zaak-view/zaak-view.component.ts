@@ -34,6 +34,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -178,8 +179,12 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         return this.ingelogdeMedewerker.gebruikersnaam == this.zaak.behandelaar?.gebruikersnaam;
     }
 
-    isIngelogdeMedewerkerTaakBehandelaar(taak: Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar?.gebruikersnaam;
+    // Knop mag niet getoond worden als de ingelogde gebruiker ook de behandelaar is
+    // of als de taak als is afgerond
+    isBehandelaarOfTaakIsAfgerond(taak: Taak): boolean {
+        let isBehandelaar = this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar?.gebruikersnaam;
+        let isTaakAfgerond = taak.status == TaakStatus.Afgerond;
+        return isBehandelaar || isTaakAfgerond;
     }
 
     vrijgeven = (): void => {
