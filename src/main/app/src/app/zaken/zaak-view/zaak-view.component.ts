@@ -93,6 +93,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
+
+        this.toonAfgerondeTaken = JSON.parse(localStorage.getItem('toonAfgerondeTaken'));
+
     }
 
     ngAfterViewInit() {
@@ -216,6 +219,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
 
         this.takenDataSource.filter = this.takenFilter;
+        localStorage.setItem('toonAfgerondeTaken', JSON.stringify(this.toonAfgerondeTaken));
     }
 
     bepaalChipKleur(taak: Taak): ThemePalette {
