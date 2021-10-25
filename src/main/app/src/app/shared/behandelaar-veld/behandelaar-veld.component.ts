@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Medewerker} from '../../identity/model/medewerker';
 import {ZakenService} from '../../zaken/zaken.service';
 import {TakenService} from '../../taken/taken.service';
@@ -19,36 +19,22 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
     templateUrl: './behandelaar-veld.component.html',
     styleUrls: ['./behandelaar-veld.component.less']
 })
-export class BehandelaarVeldComponent implements OnInit, OnChanges {
+export class BehandelaarVeldComponent implements OnInit {
 
-    @Input() zaak: Zaak;
-    @Input() taak: Taak;
+    @Input() zaakUuid: string;
+    @Input() taakId: string;
+    @Input() behandelaar: Medewerker;
     @Input() laatKnopZien: boolean;
     @Output() behandelaarGewijzigd: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-    behandelaar: Medewerker;
 
     constructor(private zakenService: ZakenService, private takenService: TakenService, private snackbar: MatSnackBar, private websocketService: WebsocketService) { }
 
     ngOnInit(): void {
-        this.init();
-        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, () => this.init());
-    }
-
-    ngOnChanges(): void {
-        this.init();
-    }
-
-    init() {
-        if (this.zaak) {
-            this.behandelaar = this.zaak.behandelaar;
-        } else {
-            this.behandelaar = this.taak.behandelaar;
-        }
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid, () => {});
     }
 
     toekennen() {
-        if (!this.zaak) {
+        if (!this.zaakUuid) {
             this.toekennenAanIngelogdeGebruikerViaTaak();
         } else {
             this.toekennenAanIngelogdeGebruikerViaZaak();
@@ -57,24 +43,24 @@ export class BehandelaarVeldComponent implements OnInit, OnChanges {
 
     toekennenAanIngelogdeGebruikerViaZaak() {
         let zaak: Zaak = new Zaak();
-        zaak.uuid = this.zaak.uuid;
+        zaak.uuid = this.zaakUuid;
 
         this.zakenService.toekennenAanIngelogdeMedewerker(zaak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Zaak toegekend aan ${response.behandelaar.naam}`);
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
+            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid);
         });
     }
 
     toekennenAanIngelogdeGebruikerViaTaak() {
         let taak: Taak = new Taak();
-        taak.id = this.taak.id;
-        taak.zaakUUID = this.taak.zaakUUID;
+        taak.id = this.taakId;
+        taak.zaakUUID = this.zaakUuid;
 
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Taak toegekend aan ${response.behandelaar.naam}`);
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
+            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taakId);
         });
     }
 
