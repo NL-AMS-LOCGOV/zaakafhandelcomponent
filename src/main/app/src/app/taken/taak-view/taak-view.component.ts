@@ -103,13 +103,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     };
 
-    toekennenAanIngelogdeMedewerker = (): void => {
-        this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => {
-            this.laatSnackbarZien(`Taak toegekend aan ${taak.behandelaar.naam}`);
-            this.init(taak);
-        });
-    };
-
     isIngelogdeMedewerkerBehandelaar(): boolean {
         return this.ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam;
     }

@@ -31,7 +31,6 @@ export class BehandelaarVeldComponent implements OnInit {
 
     ngOnInit(): void {
         this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid, () => {});
-        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.TAAK, this.taakId, () => {});
     }
 
     toekennen() {
@@ -61,7 +60,6 @@ export class BehandelaarVeldComponent implements OnInit {
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Taak toegekend aan ${response.behandelaar.naam}`);
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taakId);
         });
     }
 
