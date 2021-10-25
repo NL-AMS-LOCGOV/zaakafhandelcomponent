@@ -43,7 +43,7 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-behandelaar-veld [zaak]="zaak" [laatKnopZien]="!isIngelogdeMedewerkerBehandelaar()"></zac-behandelaar-veld>
+                                    <zac-behandelaar-veld [zaak]="zaak" [laatKnopZien]="!isIngelogdeMedewerkerBehandelaar()" (behandelaarGewijzigd)="updateZaak()"></zac-behandelaar-veld>
                                     <zac-static-text [label]="'groep' | translate"
                                                      [value]="zaak.groep| empty:'naam'"></zac-static-text>
                                 </div>

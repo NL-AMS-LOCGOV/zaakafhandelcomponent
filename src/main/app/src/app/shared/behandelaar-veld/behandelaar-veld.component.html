@@ -8,5 +8,5 @@
     <button mat-icon-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennen()" *ngIf="laatKnopZien">
         <mat-icon>person_add_alt</mat-icon>
     </button>
-    <div class="behandelaar-content">{{ behandelaar?.naam | empty }}</div>
+    <div class="behandelaar-content" [ngClass]="behandelaar?.naam.length > 1 ? 'behandelaar-ingevuld' : 'behandelaar-leeg'">{{ behandelaar?.naam | empty }}</div>
 </div>

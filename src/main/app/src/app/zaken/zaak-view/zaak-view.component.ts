@@ -132,7 +132,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private setupMenu(): void {
         this.menu = [];
-        this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.zaakToekennenAanIngelogdeMedewerker, 'person_add_alt'));
         if (this.zitIngelogdeMedewerkerInGroepVanZaak() && !this.zaak.behandelaar) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
         } else if (this.zitIngelogdeMedewerkerInGroepVanZaak() && this.isIngelogdeMedewerkerBehandelaar()) {
@@ -153,7 +152,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    private updateZaak(): void {
+    updateZaak(): void {
         this.zakenService.getZaak(this.zaak.uuid).subscribe(zaak => {
             this.zaak = zaak;
             this.setupMenu();
@@ -195,13 +194,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.toekennen(this.zaak).subscribe(() => {
             this.laatSnackbarZien(`Zaak vrijgegeven`);
             this.ngOnInit();
-        });
-    };
-
-    zaakToekennenAanIngelogdeMedewerker = (): void => {
-        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(zaak => {
-            this.laatSnackbarZien(`Zaak toegekend aan ${zaak.behandelaar.naam}`);
-            this.updateZaak();
         });
     };
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Medewerker} from '../../identity/model/medewerker';
 import {ZakenService} from '../../zaken/zaken.service';
 import {TakenService} from '../../taken/taken.service';
@@ -19,17 +19,27 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
     templateUrl: './behandelaar-veld.component.html',
     styleUrls: ['./behandelaar-veld.component.less']
 })
-export class BehandelaarVeldComponent implements OnInit {
+export class BehandelaarVeldComponent implements OnInit, OnChanges {
 
     @Input() zaak: Zaak;
     @Input() taak: Taak;
     @Input() laatKnopZien: boolean;
+    @Output() behandelaarGewijzigd: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     behandelaar: Medewerker;
 
     constructor(private zakenService: ZakenService, private takenService: TakenService, private snackbar: MatSnackBar, private websocketService: WebsocketService) { }
 
     ngOnInit(): void {
+        this.init();
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, () => this.init());
+    }
+
+    ngOnChanges(): void {
+        this.init();
+    }
+
+    init() {
         if (this.zaak) {
             this.behandelaar = this.zaak.behandelaar;
         } else {
@@ -50,6 +60,7 @@ export class BehandelaarVeldComponent implements OnInit {
         zaak.uuid = this.zaak.uuid;
 
         this.zakenService.toekennenAanIngelogdeMedewerker(zaak).subscribe(response => {
+            this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Zaak toegekend aan ${response.behandelaar.naam}`);
             this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
         });
@@ -61,9 +72,15 @@ export class BehandelaarVeldComponent implements OnInit {
         taak.zaakUUID = this.taak.zaakUUID;
 
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(response => {
+            this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Taak toegekend aan ${response.behandelaar.naam}`);
             this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
         });
+    }
+
+    private geefBehandelaarWijzigingDoor(behandelaar: Medewerker) {
+        this.behandelaar = behandelaar;
+        this.behandelaarGewijzigd.emit(true);
     }
 
     private laatSnackbarZien(message: string) {
