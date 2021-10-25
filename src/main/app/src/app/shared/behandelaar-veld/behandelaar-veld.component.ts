@@ -3,23 +3,20 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Medewerker} from '../../identity/model/medewerker';
 import {ZakenService} from '../../zaken/zaken.service';
 import {TakenService} from '../../taken/taken.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Zaak} from '../../zaken/model/zaak';
 import {Taak} from '../../taken/model/taak';
-import {Operatie} from '../../core/websocket/model/operatie';
-import {ObjectType} from '../../core/websocket/model/object-type';
-import {WebsocketService} from '../../core/websocket/websocket.service';
 
 @Component({
     selector: 'zac-behandelaar-veld',
     templateUrl: './behandelaar-veld.component.html',
     styleUrls: ['./behandelaar-veld.component.less']
 })
-export class BehandelaarVeldComponent implements OnInit {
+export class BehandelaarVeldComponent {
 
     @Input() zaakUuid: string;
     @Input() taakId: string;
@@ -27,11 +24,7 @@ export class BehandelaarVeldComponent implements OnInit {
     @Input() laatKnopZien: boolean;
     @Output() behandelaarGewijzigd: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    constructor(private zakenService: ZakenService, private takenService: TakenService, private snackbar: MatSnackBar, private websocketService: WebsocketService) { }
-
-    ngOnInit(): void {
-        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid, () => {});
-    }
+    constructor(private zakenService: ZakenService, private takenService: TakenService, private snackbar: MatSnackBar) { }
 
     toekennen() {
         if (!this.taakId) {
@@ -48,7 +41,6 @@ export class BehandelaarVeldComponent implements OnInit {
         this.zakenService.toekennenAanIngelogdeMedewerker(zaak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.laatSnackbarZien(`Zaak toegekend aan ${response.behandelaar.naam}`);
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid);
         });
     }
 
