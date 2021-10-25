@@ -31,6 +31,7 @@ export class BehandelaarVeldComponent implements OnInit {
 
     ngOnInit(): void {
         this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid, () => {});
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.TAAK, this.taakId, () => {});
     }
 
     toekennen() {
