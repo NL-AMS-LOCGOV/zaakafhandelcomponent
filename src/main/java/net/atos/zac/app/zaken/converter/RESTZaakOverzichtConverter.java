@@ -59,10 +59,9 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uiterlijkedatumafdoening = zaak.getUiterlijkeEinddatumAfdoening();
 //      restZaakOverzichtView.aanvrager
 
-        // TODO ESUITEDEV-25802 Behandelaar voor de werkvoorraad ophalen
+        // TODO ESUITEDEV-25802 Behandelaar en groep per zaak voor de werkvoorraad ophalen
         // restZaakOverzicht.behandelaar = ~
-
-        restZaakOverzicht.groep = getGroep(zaak.getZaaktype(), zaak.getUrl());
+        // restZaakOverzicht.groep = getGroep(zaak.getZaaktype(), zaak.getUrl());
 
         return restZaakOverzicht;
     }
@@ -73,6 +72,7 @@ public class RESTZaakOverzichtConverter {
                                                           .collect(Collectors.toList()), pagination);
     }
 
+    // TODO opruimen als ESUITEDEV-25802 een betere oplossing biedt
     private RESTGroep getGroep(final URI zaaktypeURI, final URI zaakURI) {
         final String groupId = handleService.ophalenZaakBehandelaarGroepId(zaakURI, zaaktypeURI);
         return groupId != null ? groepConverter.convertGroupId(groupId) : null;
