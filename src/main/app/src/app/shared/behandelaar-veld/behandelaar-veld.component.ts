@@ -34,10 +34,10 @@ export class BehandelaarVeldComponent implements OnInit {
     }
 
     toekennen() {
-        if (!this.zaakUuid) {
-            this.toekennenAanIngelogdeGebruikerViaTaak();
-        } else {
+        if (!this.taakId) {
             this.toekennenAanIngelogdeGebruikerViaZaak();
+        } else {
+            this.toekennenAanIngelogdeGebruikerViaTaak();
         }
     }
 

@@ -61,7 +61,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    private init(taak: Taak): void {
+    init(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
         this.titleService.setTitle(`${taak.naam} | Taakgegevens`);
@@ -72,15 +72,20 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     private buildMenu(ingelogdeMedewerker: Medewerker): void {
         this.menu.push(new HeaderMenuItem('Taak'));
         if (this.taak.status == TaakStatus.NietToegekend && ingelogdeMedewerker.groepen?.map(groep => groep.id).includes(this.taak.groep.id)) {
-            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeMedewerker, 'person_add_alt'));
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
         } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam) {
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
             this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
-        } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam) {
-            this.menu.push(new ButtonMenuItem('Ken toe aan mijzelf', this.toekennenAanIngelogdeMedewerker, 'person_add_alt'));
         }
+    }
+
+    ophalenTaak() {
+        this.route.data.subscribe(data => {
+            this.takenService.getTaak(data['taak'].id).subscribe(taak => {
+                this.init(taak);
+            })
+        });
     }
 
     vrijgeven = (): void => {
