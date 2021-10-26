@@ -32,6 +32,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -64,7 +65,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private titleService: Title,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                private snackbar: MatSnackBar) {
+                private snackbar: MatSnackBar,
+                private sessionStorageService: SessionStorageService) {
         super(store, utilService);
     }
 
@@ -86,7 +88,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = JSON.parse(localStorage.getItem('toonAfgerondeTaken'));
+        this.toonAfgerondeTaken = this.sessionStorageService.getAfgerondeTakenTonen();
 
     }
 
@@ -189,7 +191,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        localStorage.setItem('toonAfgerondeTaken', JSON.stringify(this.toonAfgerondeTaken));
+        this.sessionStorageService.setAfgerondeTakenTonen(this.toonAfgerondeTaken);
     }
 
     bepaalChipKleur(taak: Taak): ThemePalette {

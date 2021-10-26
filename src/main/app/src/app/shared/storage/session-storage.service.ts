@@ -32,5 +32,13 @@ export class SessionStorageService {
     clearSessionStorage(): void {
         sessionStorage.clear();
     }
+
+    getAfgerondeTakenTonen(): boolean {
+        return JSON.parse(sessionStorage.getItem('toonAfgerondeTaken'));
+    }
+
+    setAfgerondeTakenTonen(waarde: boolean) {
+        sessionStorage.setItem('toonAfgerondeTaken', JSON.stringify(waarde));
+    }
 }
 
