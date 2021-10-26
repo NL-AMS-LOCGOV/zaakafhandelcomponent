@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
+@import "src/variables";
 
 .notitiesBtn {
   position: absolute;
@@ -15,7 +16,7 @@
   bottom: 15px;
   right: 15px;
   width: 380px;
-  box-shadow: 6px 6px 25px -8px #888888;
+  box-shadow: 6px 6px 25px -8px @box-shadow-color;
   z-index: 1;
 }
 
@@ -30,10 +31,10 @@
 .notitieHeader {
   padding: 2px;
   min-height: 30px;
-  border-bottom: 1px solid #bababa;
-  background: #3f51b5;
+  border-bottom: 1px solid @border-color;
+  background: @primary-background-color;
   font-size: 14px;
-  color: white;
+  color: @primary-text-color;
 }
 
 .notitieHeaderStickyIcon {
@@ -52,13 +53,13 @@
   min-height: 300px;
   max-height: 420px;
   overflow-y: auto;
-  background: #f5f5f5;
+  background: @body-background-color;
 }
 
 .notitieFooter {
   padding: 5px;
   background: white;
-  border-top: 1px solid rgba(0, 0, 0, .12);
+  border-top: 1px solid @border-color;
 
   button {
     position: absolute;
@@ -80,7 +81,7 @@
 
 .notitie {
   background: white;
-  border-bottom: 1px solid darkgrey;
+  border-bottom: 1px solid @border-color;
 
   .notitieContentHeader {
     margin-bottom: 8px;
@@ -113,7 +114,7 @@
 
   .notitieSubtitle {
     font-size: 12px;
-    color: rgba(0, 0, 0, .54);
+    color: @title-color;
     display: flex;
     justify-content: flex-end;
     margin-top: -15px;
