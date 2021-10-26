@@ -6,7 +6,9 @@
 package net.atos.zac.app.zaken.converter;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -19,9 +21,12 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.identity.model.RESTGroep;
+import net.atos.zac.app.rechten.ZaakRechten;
 import net.atos.zac.app.util.datatable.Pagination;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.handle.HandleService;
 import net.atos.zac.util.PaginationUtil;
 
@@ -42,6 +47,10 @@ public class RESTZaakOverzichtConverter {
     @Inject
     private RESTGroepConverter groepConverter;
 
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker ingelogdeMedewerker;
+
     @EJB
     private HandleService handleService;
 
@@ -61,8 +70,12 @@ public class RESTZaakOverzichtConverter {
 
         // TODO ESUITEDEV-25802 Behandelaar en groep per zaak voor de werkvoorraad ophalen
         // restZaakOverzicht.behandelaar = ~
-        // restZaakOverzicht.groep = getGroep(zaak.getZaaktype(), zaak.getUrl());
+        // restZaakOverzicht.groep = getGroep();
 
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        final String groupId = handleService.ophalenZaakBehandelaarGroepId(zaak.getUrl(), zaak.getZaaktype());
+        final String behandelaarId = handleService.ophalenZaakBehandelaarMedewerkerId(zaak.getUrl(), zaak.getZaaktype());
+        restZaakOverzicht.rechten = getRechten(behandelaarId, groupId);
         return restZaakOverzicht;
     }
 
@@ -76,5 +89,14 @@ public class RESTZaakOverzichtConverter {
     private RESTGroep getGroep(final URI zaaktypeURI, final URI zaakURI) {
         final String groupId = handleService.ophalenZaakBehandelaarGroepId(zaakURI, zaaktypeURI);
         return groupId != null ? groepConverter.convertGroupId(groupId) : null;
+    }
+
+    private Map<String, Boolean> getRechten(final String behandelaarId, final String groepId) {
+        final Map<String, Boolean> rechten = new HashMap<>();
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+
+        return rechten;
     }
 }

@@ -101,6 +101,8 @@ public class TakenRESTService {
     @PATCH
     @Path("toekennen")
     public RESTTaak toekennenTaak(final RESTTaak restTaak) {
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final Task task = cmmnService.assignTask(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null,
                                                  restTaak.groep != null ? restTaak.groep.id : null);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
@@ -111,6 +113,8 @@ public class TakenRESTService {
     @PATCH
     @Path("toekennen/mij")
     public RESTTaak toekennenAanIngelogdeGebruiker(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final Task task = cmmnService.assignTask(restTaakToekennenGegevens.taakId,
                                                  ingelogdeMedewerker.getGebruikersnaam(),
                                                  null);
@@ -122,6 +126,8 @@ public class TakenRESTService {
     @PATCH
     @Path("bewerken")
     public RESTTaak bewerkenTaak(final RESTTaak restTaak) {
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         Task task = cmmnService.getLopendeTaak(restTaak.id);
         taakConverter.convertTaak(restTaak, task);
         task = cmmnService.saveTask(task);
@@ -133,6 +139,8 @@ public class TakenRESTService {
     @PATCH
     @Path("afronden")
     public RESTTaak afrondenTaak(final RESTTaak restTaak) {
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final TaskInfo taskInfo = cmmnService.completeTask(restTaak.id);
         eventingService.versturen(TAAK.wijziging(taskInfo));
         eventingService.versturen(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));

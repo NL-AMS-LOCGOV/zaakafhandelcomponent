@@ -65,6 +65,8 @@ public class RESTTaakConverter {
             restTaak.zaaktypeOmschrijving = cmmnService.getZaaktypeOmschrijvingViaTaskId(task.getId());
         }
 
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         restTaak.rechten = getRechten(task);
         return restTaak;
     }
@@ -114,6 +116,7 @@ public class RESTTaakConverter {
         final String groepId = extractGroupId(taskInfo.getIdentityLinks());
         final TaakStatus status = convertToStatus(taskInfo);
 
+        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         rechten.put("toekennenToegestaan", TaakRechten.isToekennenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId));
         rechten.put("vrijgevenToegestaan", TaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
         rechten.put("kenToeAanMijToegestaan", TaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));

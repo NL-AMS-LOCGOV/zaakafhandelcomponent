@@ -48,7 +48,7 @@ public class RESTZaakConverter {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker medewerker;
+    private Medewerker ingelogdeMedewerker;
 
     @EJB
     private HandleService handleService;
@@ -99,6 +99,7 @@ public class RESTZaakConverter {
         final String behandelaarId = handleService.ophalenZaakBehandelaarMedewerkerId(zaak.getUrl(), zaak.getZaaktype());
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
         restZaak.rechten = getRechten(behandelaarId, groepId);
         return restZaak;
     }
@@ -135,10 +136,11 @@ public class RESTZaakConverter {
     private Map<String, Boolean> getRechten(final String behandelaarId, final String groepId) {
         final Map<String, Boolean> rechten = new HashMap<>();
 
-        rechten.put("toekennenToegestaan", ZaakRechten.isToekennenToegestaan(medewerker, behandelaarId, groepId));
-        rechten.put("vrijgevenToegestaan", ZaakRechten.isVrijgevenToegestaan(medewerker, behandelaarId, groepId));
-        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(medewerker, behandelaarId, groepId));
-        rechten.put("behandelenToegestaan", ZaakRechten.isBehandelenToegestaan(medewerker, behandelaarId, groepId));
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        rechten.put("toekennenToegestaan", ZaakRechten.isToekennenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put("vrijgevenToegestaan", ZaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put("behandelenToegestaan", ZaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
 
         return rechten;
     }
