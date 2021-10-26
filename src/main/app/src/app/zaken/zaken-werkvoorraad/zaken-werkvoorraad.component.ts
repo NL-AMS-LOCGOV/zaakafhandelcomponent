@@ -55,15 +55,17 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.zakenService.getZaaktypes().subscribe(zaaktypes => {
             this.zaakTypes = zaaktypes;
             const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
-            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving', 'identificatie');
+            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving',
+                'identificatie');
 
             const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
             startdatum.pipe = DatumPipe;
 
-            const einddatumGepland: TableColumn = new TableColumn('streefdatum', 'einddatumGepland');
+            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
             einddatumGepland.pipe = DatumPipe;
 
-            const uiterlijkedatumafdoening: TableColumn = new TableColumn('fataledatum', 'uiterlijkeDatumAfdoening');
+            const uiterlijkedatumafdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
+                'uiterlijkeDatumAfdoening');
             uiterlijkedatumafdoening.pipe = DatumPipe;
 
             this.dataSource.columns = [
