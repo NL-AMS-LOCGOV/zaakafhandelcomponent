@@ -3,19 +3,20 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import {IFormComponent} from '../../model/iform-component';
 import {GoogleMapsFormField} from './google-maps-form-field';
 import {GoogleMap, MapInfoWindow} from '@angular/google-maps';
 import {GoogleMapsService} from '../../service/google-maps.service';
 import LatLng = google.maps.LatLng;
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'mfb-google-maps',
     templateUrl: './google-maps.component.html',
     styleUrls: ['./google-maps.component.less']
 })
-export class GoogleMapsComponent implements OnInit, AfterViewInit, IFormComponent {
+export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IFormComponent {
 
     data: GoogleMapsFormField;
     _map: GoogleMap;
@@ -33,17 +34,19 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, IFormComponen
 
     apiLoaded: boolean;
 
+    private subscription$: Subscription;
+
     constructor(private googleMapsService: GoogleMapsService) {
 
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.googleMapsService.load();
     }
 
     ngAfterViewInit(): void {
 
-        this.googleMapsService.loaded.subscribe(loaded => {
+        this.subscription$ = this.googleMapsService.loaded.subscribe(loaded => {
             if (loaded) {
                 this.apiLoaded = true;
                 //Timeout omdat de kaart anders undefined is...
@@ -81,6 +84,12 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, IFormComponen
                 }, 500);
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        if(this.subscription$){
+            this.subscription$.unsubscribe();
+        }
     }
 
     onPlaceMarker(event: google.maps.MouseEvent) {

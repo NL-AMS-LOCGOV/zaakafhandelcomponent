@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EnkelvoudigInformatieObject} from '../model/enkelvoudig-informatie-object';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ZakenService} from '../../zaken/zaken.service';
@@ -18,6 +18,7 @@ import {AbstractView} from '../../shared/abstract-view/abstract-view';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
+import {Subscription} from 'rxjs';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -40,14 +41,14 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     ngOnInit(): void {
-        this.route.data.subscribe(data => {
+        this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
             this.titleService.setTitle(`${this.infoObject.identificatie} | Document`);
             this.utilService.setHeaderTitle(`${this.infoObject.identificatie} | Document`);
 
             this.setupMenu();
             this.loadZaken();
-        });
+        }));
     }
 
     private setupMenu(): void {

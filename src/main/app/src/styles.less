@@ -4,6 +4,7 @@
  */
 
 /* You can add global styles to this file, and also import other style files */
+@import "variables";
 
 html, body {
   height: 100%;
@@ -34,13 +35,12 @@ body {
     }
 
     tr.row {
-
       &:not(.expanded-row):hover {
-        background: whitesmoke;
+        background: @table-hover-background-color;
       }
 
       &:not(.expanded-row):active {
-        background: #efefef;
+        background: @table-active-background-color;
       }
 
       & td {
@@ -57,6 +57,11 @@ body {
 
       th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
         padding: 0 10px;
+      }
+
+      td > button.mat-button-base {
+        min-width: 40px;
+        padding: 0;
       }
     }
 

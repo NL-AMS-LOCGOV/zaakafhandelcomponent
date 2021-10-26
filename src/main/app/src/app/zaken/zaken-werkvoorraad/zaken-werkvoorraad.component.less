@@ -23,12 +23,14 @@ mat-radio-button {
   margin-left: 15px;
 }
 
-:host ::ng-deep .mat-radio-outer-circle {
-  height: 18px;
-  width: 18px;
-}
+.mat-radio-container {
+  .mat-radio-outer-circle, .mat-radio-inner-circle {
+    height: 18px;
+    width: 18px;
+  }
 
-:host ::ng-deep .mat-radio-inner-circle {
-  height: 18px;
-  width: 18px;
+  .mat-radio-button .mat-radio-ripple {
+    width: 38px;
+    height: 38px;
+  }
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {delay, retryWhen, switchMap, takeUntil} from 'rxjs/operators';
@@ -19,7 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 @Injectable({
     providedIn: 'root'
 })
-export class WebsocketService {
+export class WebsocketService implements OnDestroy {
 
     public static test: boolean = false; // Als true dan wordt de mock gebruikt
 
@@ -46,7 +46,7 @@ export class WebsocketService {
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.destroyed$.next();
         this.destroyed$.complete();
         this.close();

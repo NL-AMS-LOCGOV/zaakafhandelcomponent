@@ -2,29 +2,28 @@
  * SPDX-FileCopyrightText: 2021 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
+@import "src/variables";
 
 .status-label {
-  display: inline-flex;
-  padding: 7px 12px;
-  align-items: center;
-  cursor: default;
-  min-height: 32px;
-  height: 1px;
+  text-align: center;
+  padding: 2px 5px;
   border-radius: 3px;
-  font-size: 14px;
-  box-sizing: border-box;
+  font-variant: all-small-caps;
+  font-weight: bold;
+  letter-spacing: 1px;
+  width: 100%;
 }
 
 .status-label-default {
-  background-color: #e0e0e0;
+  background-color: @default-background-color;
 }
 
 .status-label-primary {
-  background: #3f51b5;
-  color: white;
+  background: @primary-background-color;
+  color: @primary-text-color;
 }
 
 .status-label-success {
-  background-color: #3F691F;
-  color: white;
+  background-color: @success-background-color;
+  color: @success-text-color;
 }
