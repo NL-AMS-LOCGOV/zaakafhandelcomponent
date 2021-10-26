@@ -20,4 +20,5 @@ export class Taak {
     zaakIdentificatie: string;
     zaaktypeOmschrijving: string;
     status: TaakStatus;
+    rechten: {};
 }

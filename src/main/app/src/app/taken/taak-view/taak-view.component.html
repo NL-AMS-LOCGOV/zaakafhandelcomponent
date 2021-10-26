@@ -28,7 +28,9 @@
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
-                        <zac-behandelaar-veld [taakId]="taak.id" [zaakUuid]="taak.zaakUUID" [behandelaar]="taak.behandelaar" [laatKnopZien]="!isIngelogdeMedewerkerBehandelaar()" (behandelaarGewijzigd)="ophalenTaak()"></zac-behandelaar-veld>
+                        <zac-behandelaar-veld [taakId]="taak.id" [zaakUuid]="taak.zaakUUID" [behandelaar]="taak.behandelaar"
+                                              [laatKnopZien]="taak.rechten['kenToeAanMijToegestaan']"
+                                              (behandelaarGewijzigd)="ophalenTaak()"></zac-behandelaar-veld>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">

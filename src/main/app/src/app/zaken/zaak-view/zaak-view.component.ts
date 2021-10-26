@@ -20,8 +20,6 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
-import {IdentityService} from '../../identity/identity.service';
-import {Medewerker} from '../../identity/model/medewerker';
 import {MatSidenavContainer} from '@angular/material/sidenav';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
@@ -34,7 +32,6 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -50,7 +47,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieObject[] = [];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
-    ingelogdeMedewerker: Medewerker;
 
     notitieType = NotitieType.ZAAK;
 
@@ -66,7 +62,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private planItemsService: PlanItemsService,
                 private route: ActivatedRoute,
                 private titleService: Title,
-                private identityService: IdentityService,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
                 private snackbar: MatSnackBar) {
@@ -74,9 +69,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ngOnInit(): void {
-        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-            this.ingelogdeMedewerker = ingelogdeMedewerker;
-        });
         this.route.data.subscribe(data => {
             this.zaak = data['zaak'];
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, event => this.updateZaak());
@@ -173,14 +165,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
         });
-    }
-
-    // Knop mag niet getoond worden als de ingelogde gebruiker ook de behandelaar is
-    // of als de taak als is afgerond
-    isBehandelaarOfTaakIsAfgerond(taak: Taak): boolean {
-        const isBehandelaar = this.ingelogdeMedewerker.gebruikersnaam === taak.behandelaar?.gebruikersnaam;
-        const isTaakAfgerond = taak.status === TaakStatus.Afgerond;
-        return isBehandelaar || isTaakAfgerond;
     }
 
     vrijgeven = (): void => {

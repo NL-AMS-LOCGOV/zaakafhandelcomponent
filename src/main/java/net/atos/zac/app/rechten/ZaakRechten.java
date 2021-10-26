@@ -14,18 +14,18 @@ public class ZaakRechten {
     //TODO ESUITEDEV-25820 alle rechten checks vervangen door een solrZaak ipv behandelaarId en groepId strings
 
     public static boolean isToekennenToegestaan(final Medewerker ingelogdeMedewerker, final String behandelaarId, final String groepId) {
-        return ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) || ingelogdeMedewerker.getGroupIds().contains(groepId);
+        return ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) || ingelogdeMedewerker.isInGroup(groepId);
     }
 
     public static boolean isVrijgevenToegestaan(final Medewerker ingelogdeMedewerker, final String behandelaarId, final String groepId) {
-        return behandelaarId != null && ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.getGroupIds().contains(groepId);
+        return behandelaarId != null && ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.isInGroup(groepId);
     }
 
     public static boolean isKenToeAanMijToegestaan(final Medewerker ingelogdeMedewerker, final String behandelaarId, final String groepId) {
-        return !ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.getGroupIds().contains(groepId);
+        return !ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.isInGroup(groepId);
     }
 
     public static boolean isBehandelenToegestaan(final Medewerker ingelogdeMedewerker, final String behandelaarId, final String groepId) {
-        return ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.getGroupIds().contains(groepId);
+        return ingelogdeMedewerker.getGebruikersnaam().equals(behandelaarId) && ingelogdeMedewerker.isInGroup(groepId);
     }
 }

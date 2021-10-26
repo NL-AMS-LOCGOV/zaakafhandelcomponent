@@ -11,9 +11,6 @@ import {TakenService} from '../taken.service';
 import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
-import {IdentityService} from '../../identity/identity.service';
-import {Medewerker} from '../../identity/model/medewerker';
-import {TaakStatus} from '../model/taak-status.enum';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
 import {AbstractView} from '../../shared/abstract-view/abstract-view';
 import {Store} from '@ngrx/store';
@@ -34,19 +31,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     taak: Taak;
     menu: MenuItem[] = [];
 
-    ingelogdeMedewerker: Medewerker;
-
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
-                private identityService: IdentityService, private snackbar: MatSnackBar) {
+                private snackbar: MatSnackBar) {
         super(store, utilService);
     }
 
     ngOnInit(): void {
         this.route.data.subscribe(data => {
             this.init(data['taak']);
-        });
-        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-            this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
 
@@ -66,16 +58,21 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.taak = taak;
         this.titleService.setTitle(`${taak.naam} | Taakgegevens`);
         this.utilService.setHeaderTitle(`${taak.naam} | Taakgegevens`);
-        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => this.buildMenu(ingelogdeMedewerker));
+        this.setupMenu();
     }
 
-    private buildMenu(ingelogdeMedewerker: Medewerker): void {
+    private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('Taak'));
-        if (this.taak.status == TaakStatus.NietToegekend && ingelogdeMedewerker.groepen?.map(groep => groep.id).includes(this.taak.groep.id)) {
+
+        if (this.taak.rechten['toekennenToegestaan']) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
-        } else if (this.taak.status == TaakStatus.Toegekend && ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam) {
+        }
+
+        if (this.taak.rechten['vrijgevenToegestaan']) {
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
-            this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
+        }
+
+        if (this.taak.rechten['behandelenToegestaan']) {
             this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
         }
     }
@@ -84,7 +81,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.route.data.subscribe(data => {
             this.takenService.getTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);
-            })
+            });
         });
     }
 
@@ -103,13 +100,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     };
 
-    isIngelogdeMedewerkerBehandelaar(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam == this.taak.behandelaar?.gebruikersnaam;
-    }
-
     laatSnackbarZien(message: string) {
-        this.snackbar.open(message, "Sluit", {
-            duration: 3000,
+        this.snackbar.open(message, 'Sluit', {
+            duration: 3000
         });
     }
 }
