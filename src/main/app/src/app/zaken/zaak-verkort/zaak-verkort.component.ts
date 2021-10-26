@@ -15,6 +15,7 @@ import {EnkelvoudigInformatieObject} from '../../informatie-objecten/model/enkel
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {PageEvent} from '@angular/material/paginator';
 import {UtilService} from '../../core/service/util.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -32,14 +33,15 @@ export class ZaakVerkortComponent implements OnInit {
     objectenColumnsToDisplay: string[] = ['titel', 'status', 'url'];
     lowValue: number = 0;
     highValue: number = 5;
+    private subscriptions$: Subscription[];
 
     constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.store.select(isZaakVerkortCollapsed).subscribe(isCollapsed => {
+        this.subscriptions$.push(this.store.select(isZaakVerkortCollapsed).subscribe(isCollapsed => {
             this.collapsed = isCollapsed;
-        });
+        }));
 
         this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
@@ -47,11 +49,11 @@ export class ZaakVerkortComponent implements OnInit {
             this.loadInformatieObjecten();
         });
 
-        this.utilService.isTablet$.subscribe(isTablet => {
+        this.subscriptions$.push(this.utilService.isTablet$.subscribe(isTablet => {
             if (isTablet && this.collapsed) {
                 this.toggleMenu();
             }
-        });
+        }));
     }
 
     toggleMenu(): void {
@@ -68,5 +70,9 @@ export class ZaakVerkortComponent implements OnInit {
         this.lowValue = event.pageIndex * event.pageSize;
         this.highValue = this.lowValue + event.pageSize;
         return event;
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
     }
 }

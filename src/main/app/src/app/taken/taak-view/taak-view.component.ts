@@ -37,14 +37,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ngOnInit(): void {
-        this.route.data.subscribe(data => {
+        this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['taak']);
-        });
+        }));
     }
 
     ngAfterViewInit(): void {
         super.ngAfterViewInit();
-        this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins()));
+        this.subscriptions$.push(this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
     }
 
     onZaakLoaded($event): void {
@@ -78,11 +78,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ophalenTaak() {
-        this.route.data.subscribe(data => {
+        this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.getTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);
             });
-        });
+        }));
     }
 
     vrijgeven = (): void => {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {MenuItem} from './menu-item/menu-item';
 import {catchError, finalize} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
@@ -17,6 +17,7 @@ import {State} from '../../state/app.state';
 import {isFixedMenu} from '../state/side-nav.reducer';
 import {toggleFixedSideNav} from '../state/side-nav.actions';
 import {UtilService} from '../../core/service/util.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'zac-side-nav',
@@ -26,23 +27,28 @@ import {UtilService} from '../../core/service/util.service';
         rotate180, sideNavToggle
     ]
 })
-export class SideNavComponent implements OnInit, OnChanges {
+export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
 
     @Input() menu: MenuItem[];
     @Input() collapsed: boolean;
 
     private fixedMenu: boolean;
     public buttonState: string = 'default';
+    private subscription$: Subscription;
 
     constructor(private store: Store<State>, private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, public utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.store.select(isFixedMenu).subscribe(fixedMenu => {
+        this.subscription$ = this.store.select(isFixedMenu).subscribe(fixedMenu => {
             this.fixedMenu = fixedMenu;
             this.buttonState = fixedMenu ? 'default' : 'rotated';
             this.collapsed = !fixedMenu;
         });
+    }
+
+    ngOnDestroy(): void {
+        this.subscription$.unsubscribe();
     }
 
     ngOnChanges(changes: SimpleChanges): void {

@@ -71,7 +71,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ngOnInit(): void {
-        this.route.data.subscribe(data => {
+        this.subscriptions$.push(this.route.data.subscribe(data => {
             this.zaak = data['zaak'];
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, event => this.updateZaak());
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid, event => this.loadTaken());
@@ -82,7 +82,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.setupMenu();
             this.loadTaken();
             this.loadInformatieObjecten();
-        });
+        }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);

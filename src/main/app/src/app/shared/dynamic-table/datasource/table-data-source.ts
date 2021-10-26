@@ -4,7 +4,7 @@
  */
 
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
-import {BehaviorSubject, merge, Observable} from 'rxjs';
+import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {tap} from 'rxjs/operators';
@@ -27,9 +27,11 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     columns: Array<TableColumn>;
     selectedColumns: Array<TableColumn>;
 
+    private subscription$: Subscription;
+
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
         //reset pageindex on sort change
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.subscription$ = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
         //watch sortchange and page change
         merge(this.sort.sortChange, this.paginator.page).pipe(
             tap(() => this.load())
@@ -67,6 +69,9 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
      * any open connections or free any held resources that were set up during connect.
      */
     disconnect(collectionViewer: CollectionViewer): void {
+        if (this.subscription$) {
+            this.subscription$.unsubscribe();
+        }
         this.tableSubject.complete();
     }
 
