@@ -88,7 +88,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = this.sessionStorageService.getAfgerondeTakenTonen();
+        this.toonAfgerondeTaken = this.sessionStorageService.getSessionStorage('toonAfgerondeTaken');
 
     }
 
@@ -191,7 +191,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        this.sessionStorageService.setAfgerondeTakenTonen(this.toonAfgerondeTaken);
+        this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     bepaalChipKleur(taak: Taak): ThemePalette {
