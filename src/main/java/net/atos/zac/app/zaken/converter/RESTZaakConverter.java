@@ -6,6 +6,8 @@
 package net.atos.zac.app.zaken.converter;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -17,11 +19,12 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.rechten.ZaakRechten;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.handle.HandleService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PeriodUtil;
@@ -42,6 +45,10 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTMedewerkerConverter medewerkerConverter;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker medewerker;
 
     @EJB
     private HandleService handleService;
@@ -85,8 +92,14 @@ public class RESTZaakConverter {
         }
         //restZaakView.communicatiekanaal
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
-        restZaak.groep = getGroep(zaak.getZaaktype(), zaak.getUrl());
-        restZaak.behandelaar = getBehandelaar(zaak.getZaaktype(), zaak.getUrl());
+
+        final String groepId = handleService.ophalenZaakBehandelaarGroepId(zaak.getUrl(), zaak.getZaaktype());
+        restZaak.groep = groepConverter.convertGroupId(groepId);
+
+        final String behandelaarId = handleService.ophalenZaakBehandelaarMedewerkerId(zaak.getUrl(), zaak.getZaaktype());
+        restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
+
+        restZaak.rechten = getRechten(behandelaarId, groepId);
         return restZaak;
     }
 
@@ -114,19 +127,20 @@ public class RESTZaakConverter {
         return RESTZaaktypeConverter.convert(zaaktype);
     }
 
-    private RESTGroep getGroep(final URI zaaktypeURI, final URI zaakURI) {
-        final String groupId = handleService.ophalenZaakBehandelaarGroepId(zaakURI, zaaktypeURI);
-        return groupId != null ? groepConverter.convertGroupId(groupId) : null;
-    }
-
-    private RESTMedewerker getBehandelaar(final URI zaaktypeURI, final URI zaakURI) {
-        final String userId = handleService.ophalenZaakBehandelaarMedewerkerId(zaakURI, zaaktypeURI);
-        return userId != null ? medewerkerConverter.convertUserId(userId) : null;
-    }
-
     private URI getCommunicatieKanaal(final String id) {
         //TODO het daadwerkelijke kanaal moet worden opgezocht
         return id != null ? URI.create(id) : null;
+    }
+
+    private Map<String, Boolean> getRechten(final String behandelaarId, final String groepId) {
+        final Map<String, Boolean> rechten = new HashMap<>();
+
+        rechten.put("toekennenToegestaan", ZaakRechten.isToekennenToegestaan(medewerker, behandelaarId, groepId));
+        rechten.put("vrijgevenToegestaan", ZaakRechten.isVrijgevenToegestaan(medewerker, behandelaarId, groepId));
+        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(medewerker, behandelaarId, groepId));
+        rechten.put("behandelenToegestaan", ZaakRechten.isBehandelenToegestaan(medewerker, behandelaarId, groepId));
+
+        return rechten;
     }
 }
 

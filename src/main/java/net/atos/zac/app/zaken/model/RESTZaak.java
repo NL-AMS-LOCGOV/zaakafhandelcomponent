@@ -11,8 +11,9 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.shared.rest.AbstractRESTObject;
 
-public class RESTZaak {
+public class RESTZaak extends AbstractRESTObject {
     public UUID uuid;
 
     public String identificatie;

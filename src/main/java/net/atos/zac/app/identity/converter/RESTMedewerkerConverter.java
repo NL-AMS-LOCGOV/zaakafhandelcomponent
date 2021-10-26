@@ -43,8 +43,11 @@ public class RESTMedewerkerConverter {
     }
 
     public RESTMedewerker convertUserId(final String medewerkerId) {
-        final User user = idmService.getUser(medewerkerId);
-        return convertUser(user);
+        if (medewerkerId != null) {
+            final User user = idmService.getUser(medewerkerId);
+            return convertUser(user);
+        }
+        return null;
     }
 
     public static String convertToNaam(final User user) {

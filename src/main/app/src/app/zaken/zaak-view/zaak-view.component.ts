@@ -131,14 +131,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private setupMenu(): void {
-        this.menu = [];
-        if (this.zitIngelogdeMedewerkerInGroepVanZaak() && !this.zaak.behandelaar) {
-            this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
-        } else if (this.zitIngelogdeMedewerkerInGroepVanZaak() && this.isIngelogdeMedewerkerBehandelaar()) {
-            this.menu = [
-                new HeaderMenuItem('Zaak'),
-                new LinkMenuTitem('Document toevoegen', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file')
-            ];
+        this.menu = [new HeaderMenuItem('Zaak')];
+
+        if (this.zaak.rechten['behandelenToegestaan']) {
+            this.menu.push(new LinkMenuTitem('Document toevoegen', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+
             this.planItemsService.getPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
                 if (planItems.length > 0) {
                     this.menu.push(new HeaderMenuItem('Plan items'));
@@ -146,9 +143,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
             });
         }
-        if (this.isIngelogdeMedewerkerBehandelaar()) {
-            this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
+
+        if (this.zaak.rechten['toekennenToegestaan']) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
+        }
+
+        if (this.zaak.rechten['vrijgevenToegestaan']) {
+            this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
         }
     }
 
@@ -167,25 +168,18 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private loadTaken(): void {
         this.takenService.getTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
-            taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) || a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
+            taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
+                a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
         });
     }
 
-    private zitIngelogdeMedewerkerInGroepVanZaak(): boolean {
-        return this.ingelogdeMedewerker.groepen.some(g => g.id === this.zaak.groep?.id);
-    }
-
-    isIngelogdeMedewerkerBehandelaar(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam == this.zaak.behandelaar?.gebruikersnaam;
-    }
-
     // Knop mag niet getoond worden als de ingelogde gebruiker ook de behandelaar is
     // of als de taak als is afgerond
     isBehandelaarOfTaakIsAfgerond(taak: Taak): boolean {
-        let isBehandelaar = this.ingelogdeMedewerker.gebruikersnaam == taak.behandelaar?.gebruikersnaam;
-        let isTaakAfgerond = taak.status == TaakStatus.Afgerond;
+        const isBehandelaar = this.ingelogdeMedewerker.gebruikersnaam === taak.behandelaar?.gebruikersnaam;
+        const isTaakAfgerond = taak.status === TaakStatus.Afgerond;
         return isBehandelaar || isTaakAfgerond;
     }
 
@@ -195,7 +189,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.laatSnackbarZien(`Zaak vrijgegeven`);
             this.ngOnInit();
         });
-    };
+    }
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
@@ -229,8 +223,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     laatSnackbarZien(message: string) {
-        this.snackbar.open(message, "Sluit", {
-            duration: 3000,
+        this.snackbar.open(message, 'Sluit', {
+            duration: 3000
         });
     }
 }

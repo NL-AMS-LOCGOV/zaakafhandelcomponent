@@ -184,6 +184,8 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens restZaak) {
+
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
 
@@ -208,6 +210,7 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens restZaak) {
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
         return zaakConverter.convert(zaak);
     }
@@ -215,6 +218,7 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen/mij/lijst")
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens restZaak) {
+        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
         return zaakOverzichtConverter.convert(zaak);
     }

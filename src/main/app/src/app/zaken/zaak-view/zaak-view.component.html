@@ -43,7 +43,9 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-behandelaar-veld [zaakUuid]="zaak.uuid" [behandelaar]="zaak.behandelaar" [laatKnopZien]="!isIngelogdeMedewerkerBehandelaar()" (behandelaarGewijzigd)="updateZaak()"></zac-behandelaar-veld>
+                                    <zac-behandelaar-veld [zaakUuid]="zaak.uuid" [behandelaar]="zaak.behandelaar"
+                                                          [laatKnopZien]="zaak.rechten['kenToeAanMijToegestaan']"
+                                                          (behandelaarGewijzigd)="updateZaak()"></zac-behandelaar-veld>
                                     <zac-static-text [label]="'groep' | translate"
                                                      [value]="zaak.groep| empty:'naam'"></zac-static-text>
                                 </div>

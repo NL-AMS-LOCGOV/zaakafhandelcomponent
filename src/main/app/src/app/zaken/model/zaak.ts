@@ -41,4 +41,5 @@ export class Zaak {
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
+    rechten: {};
 }
