@@ -260,7 +260,7 @@ public class ZakenRESTService {
                 case "zaaktype":
                     zaakListParameters.setZaaktype(ztcClientService.getZaaktype(entry.getValue()).getUrl());
                     break;
-                case "groepId":
+                case "groep":
                     zaakListParameters
                             .setRolBetrokkeneIdentificatieOrganisatorischeEenheidIdentificatie(entry.getValue());
                     break;

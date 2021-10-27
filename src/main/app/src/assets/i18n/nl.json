@@ -116,5 +116,8 @@
   "menu.openen": "Menu openen",
   "menu.sluiten": "Menu sluiten",
   "verkorte.zaak.sluiten": "Verkorte zaak sluiten",
-  "toekennen.aan.mij": "Ken toe aan mijzelf"
+  "toekennen.aan.mij": "Ken toe aan mijzelf",
+  "werkvoorraad.van": "Werkvoorraad van",
+  "zaaktype.-kies-": "- Kies een zaaktype -",
+  "groep.-kies-": "- Kies een groep -"
 }
