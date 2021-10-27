@@ -17,9 +17,7 @@ export class StatusLabelComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit(): void {
-        this.bepaalStatusLabelKleur(this.taakStatus);
-    }
+    ngOnInit(): void { }
 
     bepaalStatusLabelKleur(taakStatus: TaakStatus): string {
         if (taakStatus === TaakStatus.Toegekend) {
