@@ -17,7 +17,7 @@ export abstract class AbstractView implements AfterViewInit, OnDestroy {
 
     abstract sideNavContainer: MatSidenavContainer;
     private isFixedMenu: boolean;
-    protected subscriptions$: Subscription[];
+    protected subscriptions$: Subscription[] = [];
     collapsed: boolean = true;
 
     constructor(protected store: Store<State>, protected utilService: UtilService) {
