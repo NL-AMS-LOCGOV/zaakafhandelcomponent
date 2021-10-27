@@ -14,7 +14,6 @@ import {ZakenService} from '../zaken.service';
 import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {TableColumn} from '../../shared/dynamic-table/column/table-column';
-import {TableColumnFilter} from '../../shared/dynamic-table/filter/table-column-filter';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
@@ -39,11 +38,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
-    geselecteerdeGroep: Groep;
-    geselecteerdeZaaktype: Zaaktype;
-    selectie: string = '';
-    selecties = ['Groep', 'Zaaktype'];
-
 
     constructor(private zakenService: ZakenService, private titleService: Title, public utilService: UtilService, private identityService: IdentityService, private snackbar: MatSnackBar) {
     }
@@ -52,37 +46,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.titleService.setTitle('Werkvoorraad zaken');
         this.utilService.setHeaderTitle('Werkvoorraad zaken');
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
-        this.zakenService.getZaaktypes().subscribe(zaaktypes => {
-            this.zaakTypes = zaaktypes;
-            const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
-            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving',
-                'identificatie');
+        this.setColumns();
 
-            const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
-            startdatum.pipe = DatumPipe;
-
-            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
-            einddatumGepland.pipe = DatumPipe;
-
-            const uiterlijkedatumafdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
-                'uiterlijkeDatumAfdoening');
-            uiterlijkedatumafdoening.pipe = DatumPipe;
-
-            this.dataSource.columns = [
-                new TableColumn('zaaknummer', 'identificatie', true),
-                new TableColumn('status', 'status', true),
-                zaaktypeColumn,
-                new TableColumn('groep', 'groep.naam', false),
-                startdatum,
-                einddatumGepland,
-                new TableColumn('aanvrager', 'aanvrager', true),
-                new TableColumn('behandelaar', 'behandelaar.naam', true),
-                uiterlijkedatumafdoening,
-                new TableColumn('toelichting', 'toelichting'),
-                new TableColumn('url', 'url', true, null, true)
-            ];
-        });
-
+        this.zaaktypesOphalen();
         this.groepenOphalen();
     }
 
@@ -91,34 +57,52 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.table.dataSource = this.dataSource;
     }
 
-    groepenOphalen() {
+    private zaaktypesOphalen() {
+        this.zakenService.getZaaktypes().subscribe(zaakTypes => {
+            this.zaakTypes = zaakTypes;
+        });
+    }
+
+    private groepenOphalen() {
         this.identityService.getGroepen().subscribe(response => {
             this.groepen = response;
         });
     }
 
-    zakenVanGroepOphalen() {
-        // Kolom Zaaktype moet zichtbaar worden
-        this.dataSource.columns.find(kolom => kolom.label === 'groep').visible = false;
-        this.dataSource.columns.find(kolom => kolom.label === 'zaaktype').visible = true;
+    private setColumns() {
+        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
+        startdatum.pipe = DatumPipe;
 
-        // Filter van zaaktype weggooien, omdat we alleen willen zoeken op groepId
-        this.dataSource.removeFilter('zaaktype');
-        this.dataSource.setFilter('groepId', this.geselecteerdeGroep?.id);
+        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
+        einddatumGepland.pipe = DatumPipe;
+
+        const uiterlijkedatumafdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
+            'uiterlijkeDatumAfdoening');
+        uiterlijkedatumafdoening.pipe = DatumPipe;
+
+        this.dataSource.columns = [
+            new TableColumn('zaaknummer', 'identificatie', true),
+            new TableColumn('status', 'status', true),
+            this.dataSource.zoekParameters.selectie === 'groep' ?
+                new TableColumn('zaaktype', 'zaaktype', true) :
+                new TableColumn('groep', 'groep.naam', true),
+            startdatum,
+            einddatumGepland,
+            new TableColumn('aanvrager', 'aanvrager', true),
+            new TableColumn('behandelaar', 'behandelaar.naam', true),
+            uiterlijkedatumafdoening,
+            new TableColumn('toelichting', 'toelichting'),
+            new TableColumn('url', 'url', true, null, true)
+        ];
     }
 
-    zakenVanZaaktypeOphalen() {
-        // Kolom Groep moet zichtbaar worden
-        this.dataSource.columns.find(kolom => kolom.label === 'groep').visible = true;
-        this.dataSource.columns.find(kolom => kolom.label === 'zaaktype').visible = false;
-
-        // Filter van groepId weggooien, omdat we alleen willen zoeken op zaaktype
-        this.dataSource.removeFilter('groepId');
-        this.dataSource.setFilter('zaaktype', this.geselecteerdeZaaktype?.identificatie);
+    zoekZaken() {
+        this.dataSource.zoekZaken();
+        this.setColumns();
     }
 
-    toekennenAanIngelogdeMedewerker(zaakOverzicht: ZaakOverzicht, event) {
-        event.stopPropagation();
+    toekennenAanIngelogdeMedewerker(zaakOverzicht: ZaakOverzicht, $event) {
+        $event.stopPropagation();
 
         this.zakenService.toekennenAanIngelogdeMedewerkerVanuitLijst(zaakOverzicht).subscribe(zaak => {
             // TODO de vraagtekens zijn overbodig als de Behandelaar weer gevuld wordt in de RESTOverzichtConverter

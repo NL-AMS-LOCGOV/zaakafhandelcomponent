@@ -15,6 +15,18 @@ import {UtilService} from '../../core/service/util.service';
  */
 export class ZakenWerkvoorraadDatasource extends TableDataSource<ZaakOverzicht> {
 
+    zoekParameters: {
+        selectie: 'groep' | 'zaaktype',
+        groep: string,
+        zaaktype: string
+    } = {
+        selectie: 'groep',
+        groep: null,
+        zaaktype: null
+    };
+
+    selecties: string[] = ['groep', 'zaaktype'];
+
     constructor(private zakenService: ZakenService, private utilService: UtilService) {
         super();
     }
@@ -29,6 +41,11 @@ export class ZakenWerkvoorraadDatasource extends TableDataSource<ZaakOverzicht> 
                 this.setData(zaakResponse);
             }
         );
+    }
+
+    zoekZaken(): void {
+        this.removeFilter(this.zoekParameters.selectie === 'groep' ? 'zaaktype' : 'groep');
+        this.setFilter(this.zoekParameters.selectie, this.zoekParameters[this.zoekParameters.selectie]);
     }
 
 }

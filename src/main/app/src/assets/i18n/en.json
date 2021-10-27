@@ -116,5 +116,8 @@
   "menu.openen": "Open menu",
   "menu.sluiten": "Close menu",
   "verkorte.zaak.sluiten": "Close shortened case",
-  "toekennen.aan.mij": "Assign to me"
+  "toekennen.aan.mij": "Assign to me",
+  "werkvoorraad.van": "Work stock of",
+  "zaaktype.-kies-": "- Choose casetype -",
+  "groep.-kies-": "- Choose group -"
 }
