@@ -19,7 +19,7 @@ public class SecurityUtil implements Serializable {
     /**
      * Constant which indicates in which {@link HttpSession} attribute the current authenticated {@link Medewerker} can be found.
      */
-    private static final String INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE = "medewerker";
+    public static final String INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE = "medewerker";
 
     @Inject
     @ActiveSession
