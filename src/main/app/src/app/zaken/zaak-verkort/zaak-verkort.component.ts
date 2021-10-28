@@ -33,7 +33,7 @@ export class ZaakVerkortComponent implements OnInit {
     objectenColumnsToDisplay: string[] = ['titel', 'status', 'url'];
     lowValue: number = 0;
     highValue: number = 5;
-    private subscriptions$: Subscription[];
+    private subscriptions$: Subscription[] = [];
 
     constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService) {
     }
