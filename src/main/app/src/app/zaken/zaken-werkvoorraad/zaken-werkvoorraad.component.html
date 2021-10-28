@@ -84,7 +84,7 @@
                     <mat-icon>visibility</mat-icon>
                 </button>
                 <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)"
-                        *ngIf="row.rechten['kenToeAanMijToegestaan']">
+                        *ngIf="row.rechten[zaakRechten.TOEKENNEN_AAN_MIJ]">
                     <mat-icon>person_add_alt</mat-icon>
                 </button>
             </td>

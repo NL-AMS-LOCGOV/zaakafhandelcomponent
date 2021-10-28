@@ -44,7 +44,7 @@
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
                                     <zac-behandelaar-veld [zaakUuid]="zaak.uuid" [behandelaar]="zaak.behandelaar"
-                                                          [laatKnopZien]="zaak.rechten['kenToeAanMijToegestaan']"
+                                                          [laatKnopZien]="zaak.rechten[zaakRechten.TOEKENNEN_AAN_MIJ]"
                                                           (behandelaarGewijzigd)="updateZaak()"></zac-behandelaar-veld>
                                     <zac-static-text [label]="'groep' | translate"
                                                      [value]="zaak.groep| empty:'naam'"></zac-static-text>
@@ -198,7 +198,7 @@
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}"
-                                            (click)="taakToekennenAanIngelogdeMedewerker(taak)" *ngIf="taak.rechten['kenToeAanMijToegestaan']">
+                                            (click)="taakToekennenAanIngelogdeMedewerker(taak)" *ngIf="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]">
                                         <mat-icon>person_add_alt</mat-icon>
                                     </button>
                                 </td>

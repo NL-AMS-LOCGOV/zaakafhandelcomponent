@@ -19,6 +19,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.rechten.RechtOperatie;
 import net.atos.zac.app.rechten.ZaakRechten;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
@@ -133,14 +134,13 @@ public class RESTZaakConverter {
         return id != null ? URI.create(id) : null;
     }
 
-    private Map<String, Boolean> getRechten(final String behandelaarId, final String groepId) {
-        final Map<String, Boolean> rechten = new HashMap<>();
+    private Map<RechtOperatie, Boolean> getRechten(final String behandelaarId, final String groepId) {
+        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
-        rechten.put("toekennenToegestaan", ZaakRechten.isToekennenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put("vrijgevenToegestaan", ZaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put("behandelenToegestaan", ZaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put(RechtOperatie.TOEKENNEN, ZaakRechten.isToekennenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put(RechtOperatie.VRIJGEVEN, ZaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put(RechtOperatie.BEHANDELEN, ZaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
 
         return rechten;
     }

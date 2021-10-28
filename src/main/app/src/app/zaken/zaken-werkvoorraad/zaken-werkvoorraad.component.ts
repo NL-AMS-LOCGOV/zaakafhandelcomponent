@@ -20,6 +20,7 @@ import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {ZaakRechten} from '../model/zaak-rechten';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -38,6 +39,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
+
+    get zaakRechten(): typeof ZaakRechten {
+        return ZaakRechten;
+    }
 
     constructor(private zakenService: ZakenService, private titleService: Title, public utilService: UtilService, private identityService: IdentityService, private snackbar: MatSnackBar) {
     }

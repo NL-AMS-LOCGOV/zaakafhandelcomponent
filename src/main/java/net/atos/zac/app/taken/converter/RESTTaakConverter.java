@@ -26,6 +26,7 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.rechten.RechtOperatie;
 import net.atos.zac.app.rechten.TaakRechten;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.TaakStatus;
@@ -110,17 +111,16 @@ public class RESTTaakConverter {
         }
     }
 
-    private Map<String, Boolean> getRechten(final TaskInfo taskInfo) {
-        final Map<String, Boolean> rechten = new HashMap<>();
+    private Map<RechtOperatie, Boolean> getRechten(final TaskInfo taskInfo) {
+        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
 
         final String groepId = extractGroupId(taskInfo.getIdentityLinks());
         final TaakStatus status = convertToStatus(taskInfo);
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        rechten.put("toekennenToegestaan", TaakRechten.isToekennenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId));
-        rechten.put("vrijgevenToegestaan", TaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
-        rechten.put("kenToeAanMijToegestaan", TaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
-        rechten.put("behandelenToegestaan", TaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
+        rechten.put(RechtOperatie.TOEKENNEN, TaakRechten.isToekennenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId));
+        rechten.put(RechtOperatie.VRIJGEVEN, TaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
+        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, TaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
+        rechten.put(RechtOperatie.BEHANDELEN, TaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
 
         return rechten;
     }

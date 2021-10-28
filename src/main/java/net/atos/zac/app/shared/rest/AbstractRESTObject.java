@@ -7,6 +7,8 @@ package net.atos.zac.app.shared.rest;
 
 import java.util.Map;
 
+import net.atos.zac.app.rechten.RechtOperatie;
+
 public abstract class AbstractRESTObject {
-    public Map<String, Boolean> rechten;
+    public Map<RechtOperatie, Boolean> rechten;
 }

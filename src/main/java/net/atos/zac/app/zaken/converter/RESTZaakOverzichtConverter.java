@@ -21,6 +21,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.identity.model.RESTGroep;
+import net.atos.zac.app.rechten.RechtOperatie;
 import net.atos.zac.app.rechten.ZaakRechten;
 import net.atos.zac.app.util.datatable.Pagination;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -91,11 +92,10 @@ public class RESTZaakOverzichtConverter {
         return groupId != null ? groepConverter.convertGroupId(groupId) : null;
     }
 
-    private Map<String, Boolean> getRechten(final String behandelaarId, final String groepId) {
-        final Map<String, Boolean> rechten = new HashMap<>();
+    private Map<RechtOperatie, Boolean> getRechten(final String behandelaarId, final String groepId) {
+        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
-        rechten.put("kenToeAanMijToegestaan", ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
+        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
 
         return rechten;
     }

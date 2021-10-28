@@ -19,6 +19,7 @@ import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TaakRechten} from '../model/taak-rechten';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -34,6 +35,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
+
+    get taakRechten(): typeof TaakRechten {
+        return TaakRechten;
+    }
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService, private snackbar: MatSnackBar) {
     }

@@ -33,6 +33,8 @@ import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import {ZaakRechten} from '../model/zaak-rechten';
+import {TaakRechten} from '../../taken/model/taak-rechten';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -50,6 +52,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
+
+    get zaakRechten(): typeof ZaakRechten {
+        return ZaakRechten;
+    };
+
+    get taakRechten(): typeof TaakRechten {
+        return TaakRechten;
+    };
 
     takenFilter: any = {};
 
@@ -127,7 +137,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('Zaak')];
 
-        if (this.zaak.rechten['behandelenToegestaan']) {
+        if (this.zaak.rechten[this.zaakRechten.BEHANDELEN]) {
             this.menu.push(new LinkMenuTitem('Document toevoegen', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
             this.planItemsService.getPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
@@ -138,11 +148,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             });
         }
 
-        if (this.zaak.rechten['toekennenToegestaan']) {
+        if (this.zaak.rechten[this.zaakRechten.TOEKENNEN]) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
         }
 
-        if (this.zaak.rechten['vrijgevenToegestaan']) {
+        if (this.zaak.rechten[this.zaakRechten.VRIJGEVEN]) {
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
         }
     }
@@ -175,7 +185,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.laatSnackbarZien(`Zaak vrijgegeven`);
             this.ngOnInit();
         });
-    }
+    };
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
