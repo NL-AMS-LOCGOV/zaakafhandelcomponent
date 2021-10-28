@@ -31,6 +31,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     taak: Taak;
     menu: MenuItem[] = [];
 
+    get taakRechten(): typeof TaakRechten {
+        return TaakRechten;
+    }
+
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
                 private snackbar: MatSnackBar) {
         super(store, utilService);
@@ -64,15 +68,15 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('Taak'));
 
-        if (this.taak.rechten['toekennenToegestaan']) {
+        if (this.taak.rechten[this.taakRechten.TOEKENNEN]) {
             this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
         }
 
-        if (this.taak.rechten['vrijgevenToegestaan']) {
+        if (this.taak.rechten[this.taakRechten.VRIJGEVEN]) {
             this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
         }
 
-        if (this.taak.rechten['behandelenToegestaan']) {
+        if (this.taak.rechten[this.taakRechten.BEHANDELEN]) {
             this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
         }
     }

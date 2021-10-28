@@ -29,7 +29,7 @@
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
                         <zac-behandelaar-veld [taakId]="taak.id" [zaakUuid]="taak.zaakUUID" [behandelaar]="taak.behandelaar"
-                                              [laatKnopZien]="taak.rechten['kenToeAanMijToegestaan']"
+                                              [laatKnopZien]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
                                               (behandelaarGewijzigd)="ophalenTaak()"></zac-behandelaar-veld>
                     </div>
 
