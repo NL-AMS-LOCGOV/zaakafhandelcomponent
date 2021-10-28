@@ -19,6 +19,7 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TaakRechten} from '../model/taak-rechten';
 
 @Component({
     templateUrl: './taak-view.component.html',
