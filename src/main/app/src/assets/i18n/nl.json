@@ -90,6 +90,7 @@
   "objecttype.ZAAK": "Deze zaak",
   "objecttype.TAAK": "Deze taak",
   "objecttype.DOCUMENT": "Dit document",
+  "objecttype.ZAAK_TAKEN": "Een taak bij deze zaak",
   "snackbar.2": " is zojuist door iemand ",
   "operatie.WIJZIGING": "gewijzigd",
   "operatie.TOEVOEGING": "toegevoegd",

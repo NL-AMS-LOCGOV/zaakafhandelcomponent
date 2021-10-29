@@ -90,6 +90,7 @@
   "objecttype.ZAAK": "This case",
   "objecttype.TAAK": "This task",
   "objecttype.DOCUMENT": "This document",
+  "objecttype.ZAAK_TAKEN": "A task for this case",
   "snackbar.2": " has just been ",
   "operatie.WIJZIGING": "modified",
   "operatie.TOEVOEGING": "added",

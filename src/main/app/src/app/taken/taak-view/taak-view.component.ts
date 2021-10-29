@@ -19,6 +19,9 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {Operatie} from '../../core/websocket/model/operatie';
+import {ObjectType} from '../../core/websocket/model/object-type';
 import {TaakRechten} from '../model/taak-rechten';
 
 @Component({
@@ -37,7 +40,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
-                private snackbar: MatSnackBar) {
+                private snackbar: MatSnackBar, private websocketService: WebsocketService) {
         super(store, utilService);
     }
 
@@ -49,7 +52,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     ngAfterViewInit(): void {
         super.ngAfterViewInit();
-        this.subscriptions$.push(this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
+        this.subscriptions$.push(
+            this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
     }
 
     onZaakLoaded($event): void {

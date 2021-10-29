@@ -83,9 +83,12 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.zaak = data['zaak'];
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, event => this.updateZaak());
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid, event => this.loadTaken());
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid, event => this.loadInformatieObjecten());
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid,
+                () => this.updateZaak());
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+                () => this.loadTaken());
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid,
+                () => this.loadInformatieObjecten());
 
             this.titleService.setTitle(`${this.zaak.identificatie} | Zaakgegevens`);
             this.utilService.setHeaderTitle(`${this.zaak.identificatie} | Zaakgegevens`);
