@@ -37,7 +37,7 @@ public enum SubscriptionType {
      * Abonnementen op alle events opzeggen
      */
     VERWIJDER_ALLES {
-        // Een instantie is wel genoeg voor dit immutable object. ;-)
+        // 1 instantie is wel genoeg voor dit immutable object.
         private final SubscriptionMessage MESSAGE = new SubscriptionMessage(this, null);
 
         @Override

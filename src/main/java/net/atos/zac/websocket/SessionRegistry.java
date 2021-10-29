@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.websocket.Session;
 
 import com.google.common.collect.HashMultimap;

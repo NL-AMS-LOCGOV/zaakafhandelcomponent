@@ -8,6 +8,7 @@ import javax.websocket.server.ServerEndpointConfig;
 /* Deze interceptor is alleen nodig om aan de httpSession te komen bij het openen van een websocket.
  */
 public class WebsocketHandshakeInterceptor extends ServerEndpointConfig.Configurator {
+
     public static final String HTTP_SESSION = "httpSession";
 
     @Override

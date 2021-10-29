@@ -27,7 +27,6 @@ import javax.websocket.server.ServerEndpoint;
 import net.atos.zac.authentication.Medewerker;
 
 @ServerEndpoint(value = "/websocket", configurator = WebsocketHandshakeInterceptor.class, decoders = {WebSocketSubscriptionMessageDecoder.class})
-
 public class WebSocketServerEndPoint {
 
     private static final Logger LOG = Logger.getLogger(WebSocketServerEndPoint.class.getName());
