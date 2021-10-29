@@ -81,9 +81,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
         einddatumGepland.pipe = DatumPipe;
 
-        const uiterlijkedatumafdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
+        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
             'uiterlijkeDatumAfdoening');
-        uiterlijkedatumafdoening.pipe = DatumPipe;
+        uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
 
         this.dataSource.columns = [
             new TableColumn('zaaknummer', 'identificatie', true),
@@ -95,7 +95,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             einddatumGepland,
             new TableColumn('aanvrager', 'aanvrager', true),
             new TableColumn('behandelaar', 'behandelaar.naam', true),
-            uiterlijkedatumafdoening,
+            uiterlijkeEinddatumAfdoening,
             new TableColumn('toelichting', 'toelichting'),
             new TableColumn('url', 'url', true, null, true)
         ];

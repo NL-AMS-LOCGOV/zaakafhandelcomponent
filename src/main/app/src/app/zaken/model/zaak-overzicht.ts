@@ -14,5 +14,5 @@ export class ZaakOverzicht {
     zaaktype: string;
     aanvrager: string;
     behandelaar: Medewerker;
-    uiterlijkedatumafdoening: string;
+    uiterlijkeDatumAfdoening: string;
 }
