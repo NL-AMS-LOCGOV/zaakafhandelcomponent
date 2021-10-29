@@ -48,9 +48,9 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
             einddatumGepland.pipe = DatumPipe;
 
-            const uiterlijkedatumafdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
+            const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
                 'uiterlijkeDatumAfdoening');
-            uiterlijkedatumafdoening.pipe = DatumPipe;
+            uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
 
             this.dataSource.columns = [
                 new TableColumn('zaaknummer', 'identificatie', true),
@@ -60,7 +60,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
                 startdatum,
                 einddatumGepland,
                 new TableColumn('aanvrager', 'aanvrager', true),
-                uiterlijkedatumafdoening,
+                uiterlijkeEinddatumAfdoening,
                 new TableColumn('toelichting', 'toelichting'),
                 new TableColumn('url', 'url', true, null, true)
             ];
