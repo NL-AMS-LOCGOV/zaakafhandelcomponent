@@ -127,13 +127,7 @@ public class ZGWApiService {
         endZaak(zaak, eindstatusToelichting);
     }
 
-    public void endZaakWithResultaat(final Zaak zaak, final String eindstatusToelichting, final String resultaat, final String resultaatToelichting,
-            final ZonedDateTime datumEindstatusGezet) {
-        setZaakResultaat(zaak, resultaat, resultaatToelichting);
-        endZaak(zaak, eindstatusToelichting, datumEindstatusGezet);
-    }
-
-    public ZaakInformatieObject addInformatieObjectToZaak(final URI zaakURI, final EnkelvoudigInformatieobjectData informatieObjectData, final String titel,
+    public ZaakInformatieObject addInformatieobjectToZaak(final URI zaakURI, final EnkelvoudigInformatieobjectData informatieObjectData, final String titel,
             final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
         final EnkelvoudigInformatieobjectData informatieobject = drcClient.enkelvoudigInformatieobjectCreate(informatieObjectData);
         drcClient.gebruiksrechtenCreate(new Gebruiksrechten(informatieobject.getUrl(), DateTimeUtil.convertToDateTime(informatieobject.getCreatiedatum()),
@@ -146,11 +140,4 @@ public class ZGWApiService {
         zaakInformatieObject.setBeschrijving(beschrijving);
         return zrcClient.zaakinformatieobjectCreate(zaakInformatieObject);
     }
-
-    public void removeZaakInformatieObjectCascaded(final ZaakInformatieObject zaakInformatieObject) {
-        // ToDo: ESUITEDEV-22935 Delete geeft een server 500 response
-        // zrcClient.zaakinformatieobjectDelete(zaakInformatieObject.getUuid());
-        // drcClient.enkelvoudiginformatieobjectDelete(URIUtil.parseUUIDFromResourceURI(zaakInformatieObject.getInformatieobject()));
-    }
-
 }

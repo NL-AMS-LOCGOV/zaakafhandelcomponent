@@ -9,13 +9,8 @@ package net.atos.client.zgw.shared.cache;
    Vandaar deze util implementatie.
  */
 public class CacheEnum {
-    public static final String ZTC_INFORMATIEOBJECTTYPE = "ztc-documenttype-cache";
-
-    public static final String ZTC_EIGENSCHAP = "ztc-eigenschap-cache";
 
     public static final String ZTC_RESULTAATTYPE = "ztc-resultaattype-cache";
-
-    public static final String ZTC_ROLTYPE = "ztc-roltype-cache";
 
     public static final String ZTC_STATUSTYPE = "ztc-statustype-cache";
 

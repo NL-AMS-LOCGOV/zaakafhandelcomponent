@@ -16,7 +16,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.ws.rs.core.GenericType;
 
-import net.atos.client.zgw.shared.util.InvocationBuilderFactory;
+import net.atos.client.zgw.shared.util.ZGWApisInvocationBuilderFactory;
 
 /**
  *
@@ -78,7 +78,6 @@ public class Results<T> {
     }
 
     private Results<T> get(final URI uri) {
-        return uri != null ? InvocationBuilderFactory.create(uri).get(new GenericType<Results<T>>() {
-        }) : null;
+        return uri != null ? ZGWApisInvocationBuilderFactory.create(uri).get(new GenericType<Results<T>>() {}) : null;
     }
 }

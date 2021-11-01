@@ -8,7 +8,7 @@ package net.atos.client.zgw.drc.model;
 /**
  *
  */
-public class UnlockEnkelvoudigInformatieObject {
+public class UnlockEnkelvoudigInformatieobject {
 
     /**
      * Hash string, wordt gebruikt als ID voor de lock
@@ -20,7 +20,7 @@ public class UnlockEnkelvoudigInformatieObject {
      *
      * @param lock
      */
-    public UnlockEnkelvoudigInformatieObject(final String lock) {
+    public UnlockEnkelvoudigInformatieobject(final String lock) {
         this.lock = lock;
     }
 

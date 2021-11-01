@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.shared.util;
+package net.atos.client.util;
 
 import java.util.logging.Logger;
 

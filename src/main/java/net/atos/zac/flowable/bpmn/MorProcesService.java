@@ -18,8 +18,8 @@ import org.flowable.cdi.BusinessProcess;
 import org.flowable.cdi.annotation.BusinessKey;
 
 import net.atos.client.or.object.ObjectsClient;
-import net.atos.client.or.object.ObjectsClientFactory;
 import net.atos.client.or.object.model.ORObject;
+import net.atos.client.or.object.util.ObjectsInvocationBuilderFactory;
 import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
@@ -65,7 +65,7 @@ public class MorProcesService {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         zaakobjectListParameters.setZaak(zaak.getUrl());
         final Zaakobject zaakobject = zrcClient.zaakobjectList(zaakobjectListParameters).getSingleResult().get();
-        final ORObject object = ObjectsClientFactory.getInvocationBuilder(zaakobject.getObject()).get(ORObject.class);
+        final ORObject object = ObjectsInvocationBuilderFactory.create(zaakobject.getObject()).get(ORObject.class);
         final String categorie = (String) object.getRecord().getDataAsHashMap().get(CATEGORIE_ATTRIBUUT_NAAM);
         final Boolean result = StringUtils.equalsIgnoreCase(categorie, CATEGORIE_TE_ANALYSEREN_WAARDE);
         LOG.info(String.format("Categorie '%s' dus analyseren melding: %s", categorie, result));

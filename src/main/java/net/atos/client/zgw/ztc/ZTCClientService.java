@@ -6,10 +6,7 @@
 package net.atos.client.zgw.ztc;
 
 import static java.lang.String.format;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_EIGENSCHAP;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_INFORMATIEOBJECTTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_RESULTAATTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ROLTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_STATUSTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_RESULTAATTYPE;
@@ -29,12 +26,10 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.zgw.shared.util.InvocationBuilderFactory;
+import net.atos.client.zgw.shared.util.ZGWApisInvocationBuilderFactory;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
-import net.atos.client.zgw.ztc.model.Eigenschap;
-import net.atos.client.zgw.ztc.model.EigenschapListParameters;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.ResultaattypeListParameters;
@@ -54,20 +49,19 @@ public class ZTCClientService {
     private ZTCClient ztcClient;
 
     private void cleared(final String cache) {
-        LOG.info(String.format("De %s is leeggemaakt.", cache));
+        LOG.info(String.format("Emptied cache: %s", cache));
     }
 
     public void clearCaches() {
         clearZaaktypeCache(true);
         clearStatustypeCache(false);
         clearResultaattypeCache(false);
-        clearRoltypeCache(false);
-        clearInformatieobjecttypeCache();
-        clearEigenschapCache();
     }
 
     public Catalogus getCatalogus(final CatalogusListParameters parameters) {
-        return ztcClient.catalogusList(parameters).getSingleResult().orElseThrow(() -> new RuntimeException("Catalogus niet gevonden."));
+        return ztcClient.catalogusList(parameters)
+                .getSingleResult()
+                .orElseThrow(() -> new RuntimeException("Catalogus not found."));
     }
 
     // ZAAKTYPE
@@ -84,7 +78,7 @@ public class ZTCClientService {
 
     @CacheResult(cacheName = ZTC_ZAAKTYPE)
     public Zaaktype getZaaktype(final URI zaaktypeURI) {
-        return InvocationBuilderFactory.create(zaaktypeURI).get(Zaaktype.class);
+        return ZGWApisInvocationBuilderFactory.create(zaaktypeURI).get(Zaaktype.class);
     }
 
     @CacheResult(cacheName = ZTC_ZAAKTYPE)
@@ -107,11 +101,6 @@ public class ZTCClientService {
         return ztcClient.zaaktypeList(new ZaaktypeListParameters(catalogusURI)).getResults();
     }
 
-    // Geen caching wegens onbeperkte zoekparameters
-    public List<Zaaktype> findZaaktypes(final ZaaktypeListParameters parameters) {
-        return ztcClient.zaaktypeList(parameters).getResults();
-    }
-
     // STATUSTYPE
 
     @CacheRemoveAll(cacheName = ZTC_STATUSTYPE)
@@ -124,17 +113,7 @@ public class ZTCClientService {
 
     @CacheResult(cacheName = ZTC_STATUSTYPE)
     public Statustype getStatustype(final URI statustypeURI) {
-        return InvocationBuilderFactory.create(statustypeURI).get(Statustype.class);
-    }
-
-    @CacheResult(cacheName = ZTC_STATUSTYPE)
-    public Statustype getStatustype(final UUID statustypeUuid) {
-        return ztcClient.statustypeRead(statustypeUuid);
-    }
-
-    // Geen caching wegens onbeperkte zoekparameters
-    public List<Statustype> findStatustypes(final StatustypeListParameters parameters) {
-        return ztcClient.statustypeList(parameters).getResults();
+        return ZGWApisInvocationBuilderFactory.create(statustypeURI).get(Statustype.class);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_STATUSTYPE)
@@ -149,7 +128,7 @@ public class ZTCClientService {
                 .filter(statustype -> omschrijving.equals(statustype.getOmschrijving()))
                 .findAny()
                 .orElseThrow(() -> new RuntimeException(
-                        String.format("Zaaktype %s: Statustype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
+                        String.format("Zaaktype '%s': Statustype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
     }
 
     @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE)
@@ -157,7 +136,7 @@ public class ZTCClientService {
         return ztcClient.statustypeList(new StatustypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
                 .filter(Statustype::getEindstatus)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(String.format("Zaaktype %s: No eindstatus found.", zaaktypeURI)));
+                .orElseThrow(() -> new RuntimeException(String.format("Zaaktype '%s': No eind Status found for Zaaktype.", zaaktypeURI)));
     }
 
     // RESULTAATTYPE
@@ -172,12 +151,7 @@ public class ZTCClientService {
 
     @CacheResult(cacheName = ZTC_RESULTAATTYPE)
     public Resultaattype getResultaattype(final URI resultaattypeURI) {
-        return InvocationBuilderFactory.create(resultaattypeURI).get(Resultaattype.class);
-    }
-
-    // Geen caching wegens onbeperkte zoekparameters
-    public List<Resultaattype> findResultaattypes(final ResultaattypeListParameters parameters) {
-        return ztcClient.resultaattypeList(parameters).getResults();
+        return ZGWApisInvocationBuilderFactory.create(resultaattypeURI).get(Resultaattype.class);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE)
@@ -192,28 +166,10 @@ public class ZTCClientService {
                 .findAny()
                 .orElseThrow(
                         () -> new RuntimeException(
-                                String.format("Zaaktype %s: Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
+                                String.format("Zaaktype '%s': Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
     }
 
     // ROLTYPE
-
-    @CacheRemoveAll(cacheName = ZTC_ROLTYPE)
-    public void clearRoltypeCache(final boolean cascade) {
-        cleared(ZTC_ROLTYPE);
-        if (cascade) {
-            clearZaaktypeRoltypeCache();
-        }
-    }
-
-    @CacheResult(cacheName = ZTC_ROLTYPE)
-    public Roltype getRoltype(final URI roltypeURI) {
-        return InvocationBuilderFactory.create(roltypeURI).get(Roltype.class);
-    }
-
-    // Geen caching wegens onbeperkte zoekparameters
-    public List<Roltype> findRoltypes(final RoltypeListParameters parameters) {
-        return ztcClient.roltypeList(parameters).getResults();
-    }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
     public void clearZaaktypeRoltypeCache() {
@@ -223,42 +179,11 @@ public class ZTCClientService {
     @CacheResult(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
     public Roltype getRoltype(final URI zaaktypeURI, final AardVanRol aardVanRol) {
         return ztcClient.roltypeList(new RoltypeListParameters(zaaktypeURI, aardVanRol)).getSingleResult()
-                .orElseThrow(() -> new RuntimeException(format("Zaaktype %s: Roltype with aard '%s' not found.", zaaktypeURI, aardVanRol.toString())));
-    }
-
-    // INFORMATIEOBJECTTYPE
-
-    @CacheRemoveAll(cacheName = ZTC_INFORMATIEOBJECTTYPE)
-    public void clearInformatieobjecttypeCache() {
-        cleared(ZTC_INFORMATIEOBJECTTYPE);
-    }
-
-    @CacheResult(cacheName = ZTC_INFORMATIEOBJECTTYPE)
-    public Informatieobjecttype getInformatieobjecttype(final String omschrijving) {
-        return ztcClient.informatieobjecttypeList().getSinglePageResults().stream()
-                .filter(informatieobjecttype -> StringUtils.equals(informatieobjecttype.getOmschrijving(), omschrijving))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(format("Informatieobjecttype with omschrijving '%s' not found.", omschrijving)));
-    }
-
-    @CacheResult(cacheName = ZTC_INFORMATIEOBJECTTYPE)
-    public List<Informatieobjecttype> findInformatieobjecttypes() {
-        return ztcClient.informatieobjecttypeList().getResults();
-    }
-
-    // EIGENSCHAP
-
-    @CacheRemoveAll(cacheName = ZTC_EIGENSCHAP)
-    public void clearEigenschapCache() {
-        cleared(ZTC_EIGENSCHAP);
-    }
-
-    // Geen caching wegens onbeperkte zoekparameters
-    public List<Eigenschap> findEigenschappen(final EigenschapListParameters parameters) {
-        return ztcClient.eigenschapList(parameters).getResults();
+                .orElseThrow(
+                        () -> new RuntimeException(format("Zaaktype '%s': Roltype with aard '%s' not found.", zaaktypeURI.toString(), aardVanRol.toString())));
     }
 
     public Informatieobjecttype getInformatieobjecttype(final URI uri) {
-        return InvocationBuilderFactory.create(uri).get(Informatieobjecttype.class);
+        return ZGWApisInvocationBuilderFactory.create(uri).get(Informatieobjecttype.class);
     }
 }

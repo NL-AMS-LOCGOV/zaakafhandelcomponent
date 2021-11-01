@@ -27,15 +27,15 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectListParameters;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockData;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
-import net.atos.client.zgw.drc.model.LockEnkelvoudigInformatieObject;
-import net.atos.client.zgw.drc.model.ObjectInformatieobjectListParameters;
+import net.atos.client.zgw.drc.model.LockEnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.ObjectInformatieobject;
-import net.atos.client.zgw.drc.model.UnlockEnkelvoudigInformatieObject;
+import net.atos.client.zgw.drc.model.ObjectInformatieobjectListParameters;
+import net.atos.client.zgw.drc.model.UnlockEnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
@@ -61,7 +61,7 @@ public interface DRCClient {
 
     @GET
     @Path("enkelvoudiginformatieobjecten")
-    Results<EnkelvoudigInformatieobject> enkelvoudigInformatieobjectList(@BeanParam final EnkelvoudigInformatieObjectListParameters parameters);
+    Results<EnkelvoudigInformatieobject> enkelvoudigInformatieobjectList(@BeanParam final EnkelvoudigInformatieobjectListParameters parameters);
 
     @GET
     @Path("enkelvoudiginformatieobjecten/{uuid}")
@@ -84,12 +84,12 @@ public interface DRCClient {
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/lock")
-    LockEnkelvoudigInformatieObject enkelvoudigInformatieobjectLock(@PathParam("uuid") final UUID uuid,
-            final LockEnkelvoudigInformatieObject lockEnkelvoudigInformatieObject);
+    LockEnkelvoudigInformatieobject enkelvoudigInformatieobjectLock(@PathParam("uuid") final UUID uuid,
+            final LockEnkelvoudigInformatieobject lockEnkelvoudigInformatieObject);
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/unlock")
-    Response enkelvoudigInformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final UnlockEnkelvoudigInformatieObject unlockEnkelvoudigInformatieObject);
+    Response enkelvoudigInformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final UnlockEnkelvoudigInformatieobject unlockEnkelvoudigInformatieObject);
 
     @POST
     @Path("gebruiksrechten")

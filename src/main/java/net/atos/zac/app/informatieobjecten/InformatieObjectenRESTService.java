@@ -103,7 +103,7 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClient.zaakRead(zaakUuid);
         final RESTFileUpload file = (RESTFileUpload) httpSession.getAttribute("FILE_" + zaakUuid);
         final EnkelvoudigInformatieobjectData data = restInformatieObjectConverter.convert(restInformatieObject, file);
-        final ZaakInformatieObject zaakInformatieObject = zgwApiService.addInformatieObjectToZaak(
+        final ZaakInformatieObject zaakInformatieObject = zgwApiService.addInformatieobjectToZaak(
                 zaak.getUrl(), data, restInformatieObject.titel, restInformatieObject.beschrijving, "-");
         eventingService.versturen(DOCUMENT.toevoeging(zaakInformatieObject.getInformatieobject()));
         eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak));

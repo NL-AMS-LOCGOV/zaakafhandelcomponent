@@ -12,7 +12,7 @@ import net.atos.client.zgw.shared.model.AbstractListParameters;
 /**
  *
  */
-public class EnkelvoudigInformatieObjectListParameters extends AbstractListParameters {
+public class EnkelvoudigInformatieobjectListParameters extends AbstractListParameters {
 
     /**
      * Een binnen een gegeven context ondubbelzinnige referentie naar het INFORMATIEOBJECT.
@@ -28,11 +28,11 @@ public class EnkelvoudigInformatieObjectListParameters extends AbstractListParam
     private String bronorganisatie;
 
 
-    public EnkelvoudigInformatieObjectListParameters(final String identificatie) {
+    public EnkelvoudigInformatieobjectListParameters(final String identificatie) {
         this.identificatie = identificatie;
     }
 
-    public EnkelvoudigInformatieObjectListParameters() {
+    public EnkelvoudigInformatieobjectListParameters() {
     }
 
     public String getIdentificatie() {

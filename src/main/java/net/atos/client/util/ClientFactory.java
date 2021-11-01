@@ -3,45 +3,31 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.shared.util;
+package net.atos.client.util;
 
-import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
-import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
-
-import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-
-import net.atos.client.zgw.zrc.ZRCClient;
 
 /**
  *
  */
-public final class InvocationBuilderFactory {
+public final class ClientFactory {
 
     private static Client client;
 
-    private InvocationBuilderFactory() {
+    private ClientFactory() {
     }
 
-    public static Invocation.Builder create(final URI uri) {
+    public static Client create() {
         if (client == null) {
             client = createClient();
         }
-
-        return client.target(uri)
-                .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken())
-                .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
-                .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
+        return client;
     }
 
     private static Client createClient() {

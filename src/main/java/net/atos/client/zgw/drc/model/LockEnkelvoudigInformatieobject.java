@@ -11,7 +11,7 @@ import javax.json.bind.annotation.JsonbProperty;
 /**
  *
  */
-public class LockEnkelvoudigInformatieObject {
+public class LockEnkelvoudigInformatieobject {
 
     /**
      * Hash string, wordt gebruikt als ID voor de lock
@@ -22,14 +22,14 @@ public class LockEnkelvoudigInformatieObject {
     /**
      * Constructor for POST request
      */
-    public LockEnkelvoudigInformatieObject() {
+    public LockEnkelvoudigInformatieobject() {
     }
 
     /**
      * Constructor for POST response
      */
     @JsonbCreator
-    public LockEnkelvoudigInformatieObject(@JsonbProperty("lock") final String lock) {
+    public LockEnkelvoudigInformatieobject(@JsonbProperty("lock") final String lock) {
         this.lock = lock;
     }
 

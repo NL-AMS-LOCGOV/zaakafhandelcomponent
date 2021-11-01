@@ -5,31 +5,23 @@
 
 package net.atos.client.zgw.zrc;
 
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.zgw.shared.util.InvocationBuilderFactory;
-import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.util.ZGWApisInvocationBuilderFactory;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
-import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakeigenschap;
-import net.atos.client.zgw.zrc.model.ZaakinformatieobjectListParameters;
 
 /**
  *
@@ -40,32 +32,6 @@ public class ZRCClientService {
     @Inject
     @RestClient
     private ZRCClient zrcClient;
-
-    public Zaak getZaakWithKenmerk(final String bron, final String kenmerk) {
-        // See ESUITEDEV-22944
-        Results<Zaak> results = zrcClient.zaakList(new ZaakListParameters());
-        while (results != null) {
-            final Optional<Zaak> zaak = results.getResults().stream()
-                    .filter(z -> isNotEmpty(z.getKenmerken()) && z.getKenmerken().stream()
-                            .anyMatch(zaakKenmerk -> StringUtils
-                                    .equals(zaakKenmerk.getBron(), bron) && StringUtils
-                                    .equals(zaakKenmerk.getKenmerk(), kenmerk)))
-                    .findAny();
-
-            if (zaak.isPresent()) {
-                return zaak.get();
-            } else {
-                results = results.getNext();
-            }
-        }
-        throw new IllegalStateException(String.format("Zaak from bron '%s' with kenmerk '%s' not found.", bron, kenmerk));
-    }
-
-    public List<ZaakInformatieObject> getZaakInformatieObjectenForZaak(final URI zaakURI) {
-        final ZaakinformatieobjectListParameters zaakinformatieobjectListParameters = new ZaakinformatieobjectListParameters();
-        zaakinformatieobjectListParameters.setZaak(zaakURI);
-        return zrcClient.zaakinformatieobjectList(zaakinformatieobjectListParameters);
-    }
 
     public void setZaakStatus(final URI zaakURI, final URI statustypeURI, final String toelichting, final ZonedDateTime datumGezet) {
         final Status status = new Status(zaakURI, statustypeURI, datumGezet);
@@ -90,10 +56,6 @@ public class ZRCClientService {
         return zrcClient.rolList(rolListParameters).getResults();
     }
 
-    public void addRollenToZaak(final Collection<Rol<?>> rollen) {
-        rollen.forEach(rol -> zrcClient.rolCreate(rol));
-    }
-
     public void updateRollenForZaak(final URI zaakURI, final Collection<Rol<?>> rollen) {
         final Collection<Rol<?>> current = getRollenForZaak(zaakURI);
         deleteDeletedRollen(current, rollen);
@@ -103,15 +65,19 @@ public class ZRCClientService {
     }
 
     public Zaak getZaak(final URI zaakURI) {
-        return InvocationBuilderFactory.create(zaakURI).get(Zaak.class);
+        return ZGWApisInvocationBuilderFactory.create(zaakURI).get(Zaak.class);
     }
 
     public Resultaat getResultaat(final URI resultaatURI) {
-        return InvocationBuilderFactory.create(resultaatURI).get(Resultaat.class);
+        return ZGWApisInvocationBuilderFactory.create(resultaatURI).get(Resultaat.class);
     }
 
     public Zaakeigenschap getZaakeigenschap(final URI zaakeigenschapURI) {
-        return InvocationBuilderFactory.create(zaakeigenschapURI).get(Zaakeigenschap.class);
+        return ZGWApisInvocationBuilderFactory.create(zaakeigenschapURI).get(Zaakeigenschap.class);
+    }
+
+    public Status getStatus(final URI statusURI) {
+        return ZGWApisInvocationBuilderFactory.create(statusURI).get(Status.class);
     }
 
     private void deleteDeletedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {
@@ -142,9 +108,5 @@ public class ZRCClientService {
                 .filter(nieuw -> currentRollen.stream()
                         .noneMatch(nieuw::equalBetrokkeneRol))
                 .forEach(nieuw -> zrcClient.rolCreate(nieuw));
-    }
-
-    public Status getStatus(final URI statusURI) {
-        return InvocationBuilderFactory.create(statusURI).get(Status.class);
     }
 }
