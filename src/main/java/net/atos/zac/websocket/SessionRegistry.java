@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Singleton;
+import javax.ejb.Singleton;
 import javax.websocket.Session;
 
 import com.google.common.collect.HashMultimap;
@@ -20,7 +20,7 @@ import com.google.common.collect.SetMultimap;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 /**
- * Deze class wordt gebruikt voor het bijhouden van een lijst met actieve sessies.
+ * Deze EJB wordt gebruikt voor het bijhouden van een lijst met actieve sessies.
  * eventSessions bevat alle (vanuit de browser) geregistreerde client sessies
  */
 @Singleton

@@ -13,7 +13,7 @@ import static net.atos.zac.websocket.WebsocketHandshakeInterceptor.HTTP_SESSION;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
@@ -31,7 +31,7 @@ public class WebSocketServerEndPoint {
 
     private static final Logger LOG = Logger.getLogger(WebSocketServerEndPoint.class.getName());
 
-    @Inject
+    @EJB
     private SessionRegistry registry;
 
     @OnOpen
