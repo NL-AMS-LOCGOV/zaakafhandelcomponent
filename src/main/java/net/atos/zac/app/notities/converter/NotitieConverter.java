@@ -7,6 +7,7 @@ package net.atos.zac.app.notities.converter;
 
 import java.time.ZonedDateTime;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 
 import org.flowable.idm.api.User;
@@ -15,11 +16,11 @@ import net.atos.zac.app.notities.model.Notitie;
 import net.atos.zac.app.notities.model.rest.RESTNotitie;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.idm.IdmService;
+import net.atos.zac.service.IdmService;
 
 public class NotitieConverter {
 
-    @Inject
+    @EJB
     private IdmService identityService;
 
     @Inject

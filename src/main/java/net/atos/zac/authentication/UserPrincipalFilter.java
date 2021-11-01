@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -24,15 +24,15 @@ import javax.servlet.http.HttpSession;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 
-import net.atos.zac.flowable.idm.IdmService;
-import net.atos.zac.handle.HandleService;
+import net.atos.zac.service.HandleService;
+import net.atos.zac.service.IdmService;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(HandleService.class.getName());
 
-    @Inject
+    @EJB
     private IdmService idmService;
 
     @Override

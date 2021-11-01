@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: EUPL-1.2+
 #
 
-org.flowable.cdi.impl.FlowableIdmExtension
+net.atos.zac.flowable.idm.cdi.FlowableIdmExtension

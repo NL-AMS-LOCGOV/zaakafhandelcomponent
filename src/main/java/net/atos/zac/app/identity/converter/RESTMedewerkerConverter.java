@@ -8,16 +8,16 @@ package net.atos.zac.app.identity.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
 
 import org.flowable.idm.api.User;
 
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.flowable.idm.IdmService;
+import net.atos.zac.service.IdmService;
 
 public class RESTMedewerkerConverter {
 
-    @Inject
+    @EJB
     private IdmService idmService;
 
     public RESTMedewerker convertGebruikersnaam(final String gebruikersnaam) {

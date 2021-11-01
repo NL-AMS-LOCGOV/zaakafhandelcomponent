@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
@@ -87,7 +88,7 @@ public class InformatieObjectenRESTService {
     @ActiveSession
     private HttpSession httpSession;
 
-    @Inject
+    @EJB
     private EventingServiceBean eventingService;
 
     @GET

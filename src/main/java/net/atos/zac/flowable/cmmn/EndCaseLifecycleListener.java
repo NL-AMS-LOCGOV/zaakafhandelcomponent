@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.flowable.cmmn.api.listener.CaseInstanceLifecycleListener;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 
-import net.atos.zac.handle.HandleService;
+import net.atos.zac.service.HandleService;
 
 /**
  *

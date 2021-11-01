@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 
 import org.flowable.identitylink.api.IdentityLinkInfo;
@@ -26,20 +27,20 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
-import net.atos.zac.app.rechten.RechtOperatie;
-import net.atos.zac.app.rechten.TaakRechten;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.cmmn.CmmnService;
+import net.atos.zac.rechten.RechtOperatie;
+import net.atos.zac.rechten.TaakRechten;
+import net.atos.zac.service.CmmnService;
 
 /**
  *
  */
 public class RESTTaakConverter {
 
-    @Inject
+    @EJB
     private CmmnService cmmnService;
 
     @Inject

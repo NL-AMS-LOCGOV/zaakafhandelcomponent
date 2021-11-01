@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -45,8 +46,6 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.app.util.datatable.TableRequest;
-import net.atos.zac.app.util.datatable.TableResponse;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -56,9 +55,11 @@ import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.datatable.TableRequest;
+import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.events.EventingServiceBean;
-import net.atos.zac.flowable.idm.IdmService;
-import net.atos.zac.util.ConfigurationService;
+import net.atos.zac.service.ConfigurationService;
+import net.atos.zac.service.IdmService;
 import net.atos.zac.util.PaginationUtil;
 
 /**
@@ -88,7 +89,7 @@ public class ZakenRESTService {
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
 
-    @Inject
+    @EJB
     private IdmService idmService;
 
     @Inject
@@ -98,10 +99,10 @@ public class ZakenRESTService {
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
 
-    @Inject
+    @EJB
     private EventingServiceBean eventingService;
 
-    @Inject
+    @EJB
     private ConfigurationService configurationService;
 
     @GET

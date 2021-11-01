@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.resteasy.util.Base64;
 
-import net.atos.client.zgw.drc.DRCClient;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
@@ -22,7 +21,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieObject;
-import net.atos.zac.util.ConfigurationService;
+import net.atos.zac.service.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieObjectConverter {

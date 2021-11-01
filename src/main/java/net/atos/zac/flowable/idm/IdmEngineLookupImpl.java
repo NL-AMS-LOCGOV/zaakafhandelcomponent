@@ -10,9 +10,10 @@ import static net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl.DATA_SOURCE_JND
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DATABASE_TYPE_POSTGRES;
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_FALSE;
 
-import org.flowable.cdi.spi.IdmEngineLookup;
 import org.flowable.idm.engine.IdmEngine;
 import org.flowable.idm.engine.IdmEngineConfiguration;
+
+import net.atos.zac.flowable.idm.cdi.IdmEngineLookup;
 
 public class IdmEngineLookupImpl implements IdmEngineLookup {
 

@@ -11,7 +11,7 @@ import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.common.engine.api.delegate.Expression;
 
-import net.atos.zac.handle.HandleService;
+import net.atos.zac.service.HandleService;
 
 /**
  *

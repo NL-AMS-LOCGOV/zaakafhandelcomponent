@@ -7,6 +7,7 @@ package net.atos.zac.app.identity;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -26,7 +27,7 @@ import net.atos.zac.app.identity.model.RESTIngelogdeMedewerker;
 import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.idm.IdmService;
+import net.atos.zac.service.IdmService;
 
 @Path("identity")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -46,7 +47,7 @@ public class IdentityRESTService {
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
 
-    @Inject
+    @EJB
     private IdmService idmService;
 
     @GET

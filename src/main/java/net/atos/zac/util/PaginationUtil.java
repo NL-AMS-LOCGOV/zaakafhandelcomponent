@@ -7,7 +7,7 @@ package net.atos.zac.util;
 
 import java.util.List;
 
-import net.atos.zac.app.util.datatable.Pagination;
+import net.atos.zac.datatable.Pagination;
 
 public final class PaginationUtil {
 

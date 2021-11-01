@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,14 +24,14 @@ import javax.ws.rs.core.MediaType;
 import net.atos.zac.app.notities.converter.NotitieConverter;
 import net.atos.zac.app.notities.model.Notitie;
 import net.atos.zac.app.notities.model.rest.RESTNotitie;
-import net.atos.zac.app.notities.service.NotitieService;
+import net.atos.zac.service.NotitieService;
 
 @Path("notities")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class NotitiesRESTService {
 
-    @Inject
+    @EJB
     private NotitieService notitieService;
 
     @Inject

@@ -21,14 +21,14 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.rechten.RechtOperatie;
-import net.atos.zac.app.rechten.ZaakRechten;
-import net.atos.zac.app.util.datatable.Pagination;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.handle.HandleService;
+import net.atos.zac.datatable.Pagination;
+import net.atos.zac.rechten.RechtOperatie;
+import net.atos.zac.rechten.ZaakRechten;
+import net.atos.zac.service.HandleService;
 import net.atos.zac.util.PaginationUtil;
 
 public class RESTZaakOverzichtConverter {

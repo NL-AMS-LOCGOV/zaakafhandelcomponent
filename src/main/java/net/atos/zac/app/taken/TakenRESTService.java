@@ -11,6 +11,7 @@ import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK_TAKEN;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -30,12 +31,12 @@ import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.TaakSortering;
-import net.atos.zac.app.util.datatable.TableRequest;
-import net.atos.zac.app.util.datatable.TableResponse;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.datatable.TableRequest;
+import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.events.EventingServiceBean;
-import net.atos.zac.flowable.cmmn.CmmnService;
+import net.atos.zac.service.CmmnService;
 
 /**
  *
@@ -45,13 +46,13 @@ import net.atos.zac.flowable.cmmn.CmmnService;
 @Produces(MediaType.APPLICATION_JSON)
 public class TakenRESTService {
 
-    @Inject
+    @EJB
     private CmmnService cmmnService;
 
     @Inject
     private RESTTaakConverter taakConverter;
 
-    @Inject
+    @EJB
     private EventingServiceBean eventingService;
 
     @Inject

@@ -19,15 +19,15 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
-import net.atos.zac.app.rechten.RechtOperatie;
-import net.atos.zac.app.rechten.ZaakRechten;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.handle.HandleService;
-import net.atos.zac.util.ConfigurationService;
+import net.atos.zac.rechten.RechtOperatie;
+import net.atos.zac.rechten.ZaakRechten;
+import net.atos.zac.service.ConfigurationService;
+import net.atos.zac.service.HandleService;
 import net.atos.zac.util.PeriodUtil;
 
 public class RESTZaakConverter {

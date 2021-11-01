@@ -13,6 +13,7 @@ import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 @Stateless
 public class EventingServiceBean {
+
     @Inject
     private Event<SchermUpdateEvent> schermUpdateEvent;
 
