@@ -14,6 +14,9 @@ import {IdentityService} from '../../identity/identity.service';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {TakenService} from '../taken.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {Operatie} from '../../core/websocket/model/operatie';
+import {ObjectType} from '../../core/websocket/model/object-type';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
@@ -26,11 +29,17 @@ export class TaakToekennenComponent implements OnInit {
     taak: Taak;
 
     constructor(private route: ActivatedRoute, private identityService: IdentityService, private takenService: TakenService,
-                private mfbService: MaterialFormBuilderService, private navigation: NavigationService) {
+                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
         this.taak = this.route.snapshot.data['taak'];
+        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
+            () => this.updateTaak());
+        this.initForm();
+    }
+
+    private initForm() {
         this.formConfig = new FormConfig('Toekennen', 'Annuleren');
         const titel = this.mfbService.createHeadingFormItem('toekennenTaak', 'Toekennen Taak', '1');
         const naam = this.mfbService.createReadonlyFormItem('naam', 'Naam', this.taak.naam);
@@ -41,6 +50,13 @@ export class TaakToekennenComponent implements OnInit {
                     new FormFieldConfig([Validators.required]));
                 this.formItems = [[titel], [naam], [medewerker]];
             });
+        });
+    }
+
+    private updateTaak() {
+        this.takenService.getTaak(this.taak.id).subscribe(taak => {
+            this.taak.behandelaar = taak.behandelaar;
+            this.initForm();
         });
     }
 
