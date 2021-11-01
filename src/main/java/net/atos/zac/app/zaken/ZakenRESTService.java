@@ -57,8 +57,8 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
-import net.atos.zac.events.EventingServiceBean;
 import net.atos.zac.service.ConfigurationService;
+import net.atos.zac.service.EventingService;
 import net.atos.zac.service.IdmService;
 import net.atos.zac.util.PaginationUtil;
 
@@ -100,7 +100,7 @@ public class ZakenRESTService {
     private Medewerker ingelogdeMedewerker;
 
     @EJB
-    private EventingServiceBean eventingService;
+    private EventingService eventingService;
 
     @EJB
     private ConfigurationService configurationService;

@@ -48,7 +48,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieObject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.events.EventingServiceBean;
+import net.atos.zac.service.EventingService;
 import net.atos.zac.util.UriUtil;
 
 @Path("informatieobjecten")
@@ -89,7 +89,7 @@ public class InformatieObjectenRESTService {
     private HttpSession httpSession;
 
     @EJB
-    private EventingServiceBean eventingService;
+    private EventingService eventingService;
 
     @GET
     @Path("informatieobject/{uuid}")

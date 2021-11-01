@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.exception;
+package net.atos.zac.util;
 
 import java.io.IOException;
 import java.util.HashMap;

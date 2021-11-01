@@ -35,8 +35,8 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
-import net.atos.zac.events.EventingServiceBean;
 import net.atos.zac.service.CmmnService;
+import net.atos.zac.service.EventingService;
 
 /**
  *
@@ -53,7 +53,7 @@ public class TakenRESTService {
     private RESTTaakConverter taakConverter;
 
     @EJB
-    private EventingServiceBean eventingService;
+    private EventingService eventingService;
 
     @Inject
     @IngelogdeMedewerker

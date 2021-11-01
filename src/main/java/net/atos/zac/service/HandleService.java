@@ -40,7 +40,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.events.EventingServiceBean;
 import net.atos.zac.notificaties.Notificatie;
 
 /**
@@ -80,7 +79,7 @@ public class HandleService {
     private ZRCClient zrcClient;
 
     @EJB
-    private EventingServiceBean eventingService;
+    private EventingService eventingService;
 
     public static HandleService getHandleService() {
         try {

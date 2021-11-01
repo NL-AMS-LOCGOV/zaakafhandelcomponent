@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.events;
+package net.atos.zac.service;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 @Stateless
-public class EventingServiceBean {
+public class EventingService {
 
     @Inject
     private Event<SchermUpdateEvent> schermUpdateEvent;
