@@ -7,7 +7,7 @@ package net.atos.zac.service;
 
 import java.net.URI;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -16,7 +16,7 @@ import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 /**
  *
  */
-@Stateless
+@Singleton
 public class ConfigurationService {
 
     //TODO ESUITEDEV-25102 vervangen van onderstaande placeholders
