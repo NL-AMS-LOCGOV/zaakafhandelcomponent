@@ -11,16 +11,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections4.CollectionUtils;
 
-import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RelevanteZaak;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 
 public class RESTGerelateerdeZaakConverter {
 
-    public static List<RESTGerelateerdeZaak> getGerelateerdeZaken(final Zaak zaak) {
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    public List<RESTGerelateerdeZaak> getGerelateerdeZaken(final Zaak zaak) {
         final List<RESTGerelateerdeZaak> list = new ArrayList<>();
         final RESTGerelateerdeZaak hoofdzaak = convertHoofdzaak(zaak.getHoofdzaak());
         final List<RESTGerelateerdeZaak> deelzaken = convertDeelzaken(zaak.getDeelzaken());
@@ -38,8 +43,8 @@ public class RESTGerelateerdeZaakConverter {
         return list;
     }
 
-    private static RESTGerelateerdeZaak convert(final URI zaakURI, final RESTGerelateerdeZaak.RelatieType relatieType) {
-        final Zaak zaak = ZRCClient.getZaak(zaakURI);
+    private RESTGerelateerdeZaak convert(final URI zaakURI, final RESTGerelateerdeZaak.RelatieType relatieType) {
+        final Zaak zaak = zrcClientService.getZaak(zaakURI);
         final RESTGerelateerdeZaak restZaak = new RESTGerelateerdeZaak();
         restZaak.relatieType = relatieType;
         restZaak.omschrijving = zaak.getOmschrijving();
@@ -51,7 +56,7 @@ public class RESTGerelateerdeZaakConverter {
         return restZaak;
     }
 
-    private static List<RESTGerelateerdeZaak> convertRelevanteAndereZaken(final List<RelevanteZaak> relevanteZaken) {
+    private List<RESTGerelateerdeZaak> convertRelevanteAndereZaken(final List<RelevanteZaak> relevanteZaken) {
         if (CollectionUtils.isEmpty(relevanteZaken)) {
             return null;
         }
@@ -74,18 +79,17 @@ public class RESTGerelateerdeZaakConverter {
         return list;
     }
 
-    private static RESTGerelateerdeZaak convertHoofdzaak(final URI uri) {
+    private RESTGerelateerdeZaak convertHoofdzaak(final URI uri) {
         if (uri == null) {
             return null;
         }
         return convert(uri, RESTGerelateerdeZaak.RelatieType.HOOFDZAAK);
     }
 
-    private static List<RESTGerelateerdeZaak> convertDeelzaken(final Collection<URI> uris) {
+    private List<RESTGerelateerdeZaak> convertDeelzaken(final Collection<URI> uris) {
         if (CollectionUtils.isEmpty(uris)) {
             return null;
         }
         return uris.stream().map((URI zaak) -> convert(zaak, RESTGerelateerdeZaak.RelatieType.DEELZAAK)).collect(Collectors.toList());
     }
-
 }

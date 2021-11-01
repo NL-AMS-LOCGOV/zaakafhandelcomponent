@@ -45,7 +45,16 @@ public class RESTZaakConverter {
     private RESTGroepConverter groepConverter;
 
     @Inject
+    private RESTGerelateerdeZaakConverter gerelateerdeZaakConverter;
+
+    @Inject
     private RESTMedewerkerConverter medewerkerConverter;
+
+    @Inject
+    private RESTZaakEigenschappenConverter zaakEigenschappenConverter;
+
+    @Inject
+    private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -82,8 +91,8 @@ public class RESTZaakConverter {
             restZaak.duurVerlenging = PeriodUtil.format(zaak.getVerlenging().getDuur());
             restZaak.indicatieVerlenging = restZaak.duurVerlenging != null;
         }
-        restZaak.eigenschappen = RESTZaakEigenschappenConverter.convert(zaak.getEigenschappen());
-        restZaak.gerelateerdeZaken = RESTGerelateerdeZaakConverter.getGerelateerdeZaken(zaak);
+        restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
+        restZaak.gerelateerdeZaken = gerelateerdeZaakConverter.getGerelateerdeZaken(zaak);
         if (zaak.getZaakgeometrie() != null) {
             restZaak.zaakgeometrie = zaak.getZaakgeometrie().getType();
         }
@@ -126,7 +135,7 @@ public class RESTZaakConverter {
 
     private RESTZaaktype getZaaktype(final URI zaaktypeURI) {
         final Zaaktype zaaktype = ztcClientService.getZaaktype(zaaktypeURI);
-        return RESTZaaktypeConverter.convert(zaaktype);
+        return zaaktypeConverter.convert(zaaktype);
     }
 
     private URI getCommunicatieKanaal(final String id) {

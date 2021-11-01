@@ -13,8 +13,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.resteasy.util.Base64;
 
 import net.atos.client.zgw.drc.DRCClient;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectData;
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
@@ -29,6 +30,9 @@ public class RESTInformatieObjectConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
+    @Inject
+    private DRCClientService drcClientService;
+
     public RESTInformatieObject convert(final ZaakInformatieObject zaakInformatieObject) {
         final RESTInformatieObject restObject = convert(zaakInformatieObject.getInformatieobject());
         if (zaakInformatieObject.getAardRelatieWeergave() != null) {
@@ -38,11 +42,11 @@ public class RESTInformatieObjectConverter {
     }
 
     public RESTInformatieObject convert(final URI informatieObjectURI) {
-        final EnkelvoudigInformatieObject enkelvoudigInformatieObject = DRCClient.getEnkelvoudigInformatieObject(informatieObjectURI);
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.getEnkelvoudigInformatieobject(informatieObjectURI);
         return convert(enkelvoudigInformatieObject);
     }
 
-    public RESTInformatieObject convert(final EnkelvoudigInformatieObject enkelvoudigInformatieObject) {
+    public RESTInformatieObject convert(final EnkelvoudigInformatieobject enkelvoudigInformatieObject) {
         final RESTInformatieObject restObject = new RESTInformatieObject();
         restObject.url = enkelvoudigInformatieObject.getUrl().toString();
         restObject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
@@ -77,8 +81,8 @@ public class RESTInformatieObjectConverter {
         return restObject;
     }
 
-    public EnkelvoudigInformatieObjectData convert(final RESTInformatieObject restInformatieObject, final RESTFileUpload bestand) {
-        final EnkelvoudigInformatieObjectData data = new EnkelvoudigInformatieObjectData(
+    public EnkelvoudigInformatieobjectData convert(final RESTInformatieObject restInformatieObject, final RESTFileUpload bestand) {
+        final EnkelvoudigInformatieobjectData data = new EnkelvoudigInformatieobjectData(
                 ConfigurationService.BRON_ORGANISATIE,
                 restInformatieObject.creatiedatum,
                 restInformatieObject.titel,

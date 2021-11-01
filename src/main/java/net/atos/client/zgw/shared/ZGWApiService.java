@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.zgw.drc.DRCClient;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.util.DateTimeUtil;
 import net.atos.client.zgw.zrc.ZRCClient;
@@ -133,9 +133,9 @@ public class ZGWApiService {
         endZaak(zaak, eindstatusToelichting, datumEindstatusGezet);
     }
 
-    public ZaakInformatieObject addInformatieObjectToZaak(final URI zaakURI, final EnkelvoudigInformatieObjectData informatieObjectData, final String titel,
+    public ZaakInformatieObject addInformatieObjectToZaak(final URI zaakURI, final EnkelvoudigInformatieobjectData informatieObjectData, final String titel,
             final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
-        final EnkelvoudigInformatieObjectData informatieobject = drcClient.enkelvoudiginformatieobjectCreate(informatieObjectData);
+        final EnkelvoudigInformatieobjectData informatieobject = drcClient.enkelvoudigInformatieobjectCreate(informatieObjectData);
         drcClient.gebruiksrechtenCreate(new Gebruiksrechten(informatieobject.getUrl(), DateTimeUtil.convertToDateTime(informatieobject.getCreatiedatum()),
                                                             omschrijvingVoorwaardenGebruiksrechten));
 

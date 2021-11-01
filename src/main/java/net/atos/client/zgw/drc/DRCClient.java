@@ -9,7 +9,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
-import java.net.URI;
 import java.util.UUID;
 
 import javax.ws.rs.BeanParam;
@@ -28,16 +27,15 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectData;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectListParameters;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectWithLockData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockData;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.drc.model.LockEnkelvoudigInformatieObject;
-import net.atos.client.zgw.drc.model.ObjectInformatieObjectListParameters;
-import net.atos.client.zgw.drc.model.Objectinformatieobject;
+import net.atos.client.zgw.drc.model.ObjectInformatieobjectListParameters;
+import net.atos.client.zgw.drc.model.ObjectInformatieobject;
 import net.atos.client.zgw.drc.model.UnlockEnkelvoudigInformatieObject;
-import net.atos.client.zgw.shared.InvocationBuilderFactory;
 import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
@@ -59,39 +57,39 @@ public interface DRCClient {
 
     @POST
     @Path("enkelvoudiginformatieobjecten")
-    EnkelvoudigInformatieObjectData enkelvoudiginformatieobjectCreate(final EnkelvoudigInformatieObjectData enkelvoudigInformatieObjectData);
+    EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectCreate(final EnkelvoudigInformatieobjectData enkelvoudigInformatieObjectData);
 
     @GET
     @Path("enkelvoudiginformatieobjecten")
-    Results<EnkelvoudigInformatieObject> enkelvoudiginformatieobjectList(@BeanParam final EnkelvoudigInformatieObjectListParameters parameters);
+    Results<EnkelvoudigInformatieobject> enkelvoudigInformatieobjectList(@BeanParam final EnkelvoudigInformatieObjectListParameters parameters);
 
     @GET
     @Path("enkelvoudiginformatieobjecten/{uuid}")
-    EnkelvoudigInformatieObject enkelvoudiginformatieobjectRead(@PathParam("uuid") final UUID uuid);
+    EnkelvoudigInformatieobject enkelvoudigInformatieobjectRead(@PathParam("uuid") final UUID uuid);
 
     @GET
     @Produces(APPLICATION_OCTET_STREAM)
     @Path("enkelvoudiginformatieobjecten/{uuid}/download")
-    Response enkelvoudiginformatieobjectDownload(@PathParam("uuid") final UUID uuid, @QueryParam("versie") final Integer versie);
+    Response enkelvoudigInformatieobjectDownload(@PathParam("uuid") final UUID uuid, @QueryParam("versie") final Integer versie);
 
 
     @PATCH
     @Path("enkelvoudiginformatieobjecten/{uuid}")
-    EnkelvoudigInformatieObjectWithLockData enkelvoudiginformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
-            final EnkelvoudigInformatieObjectWithLockData enkelvoudigInformatieObjectWithLockData);
+    EnkelvoudigInformatieobjectWithLockData enkelvoudigInformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
+            final EnkelvoudigInformatieobjectWithLockData enkelvoudigInformatieObjectWithLockData);
 
     @DELETE
     @Path("enkelvoudiginformatieobjecten/{uuid}")
-    Response enkelvoudiginformatieobjectDelete(@PathParam("uuid") final UUID uuid);
+    Response enkelvoudigInformatieobjectDelete(@PathParam("uuid") final UUID uuid);
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/lock")
-    LockEnkelvoudigInformatieObject enkelvoudiginformatieobjectLock(@PathParam("uuid") final UUID uuid,
+    LockEnkelvoudigInformatieObject enkelvoudigInformatieobjectLock(@PathParam("uuid") final UUID uuid,
             final LockEnkelvoudigInformatieObject lockEnkelvoudigInformatieObject);
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/unlock")
-    Response enkelvoudiginformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final UnlockEnkelvoudigInformatieObject unlockEnkelvoudigInformatieObject);
+    Response enkelvoudigInformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final UnlockEnkelvoudigInformatieObject unlockEnkelvoudigInformatieObject);
 
     @POST
     @Path("gebruiksrechten")
@@ -99,9 +97,5 @@ public interface DRCClient {
 
     @GET
     @Path("objectinformatieobjecten")
-    Results<Objectinformatieobject> objectinformatieobjectList(@BeanParam final ObjectInformatieObjectListParameters parameters);
-
-    static EnkelvoudigInformatieObject getEnkelvoudigInformatieObject(final URI uri) {
-        return InvocationBuilderFactory.create(uri).get(EnkelvoudigInformatieObject.class);
-    }
+    Results<ObjectInformatieobject> objectInformatieobjectList(@BeanParam final ObjectInformatieobjectListParameters parameters);
 }

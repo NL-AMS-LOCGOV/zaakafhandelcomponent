@@ -10,15 +10,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.atos.client.zgw.zrc.ZRCClient;
+import javax.inject.Inject;
+
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaakeigenschap;
 import net.atos.zac.app.zaken.model.RESTZaakEigenschap;
 
 public class RESTZaakEigenschappenConverter {
 
-    public static RESTZaakEigenschap convert(final URI uri) {
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    public RESTZaakEigenschap convert(final URI uri) {
         if (uri != null) {
-            final Zaakeigenschap zaakeigenschap = ZRCClient.getZaakeigenschap(uri);
+            final Zaakeigenschap zaakeigenschap = zrcClientService.getZaakeigenschap(uri);
             if (zaakeigenschap != null) {
                 final RESTZaakEigenschap restZaakEigenschap = new RESTZaakEigenschap();
                 restZaakEigenschap.naam = zaakeigenschap.getNaam();
@@ -29,11 +34,10 @@ public class RESTZaakEigenschappenConverter {
         return null;
     }
 
-    public static List<RESTZaakEigenschap> convert(final Collection<URI> eigenschappen) {
+    public List<RESTZaakEigenschap> convert(final Collection<URI> eigenschappen) {
         if (eigenschappen == null) {
             return null;
         }
-        return eigenschappen.stream().map(RESTZaakEigenschappenConverter::convert).collect(Collectors.toList());
+        return eigenschappen.stream().map(this::convert).collect(Collectors.toList());
     }
-
 }

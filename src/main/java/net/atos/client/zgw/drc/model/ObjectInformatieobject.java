@@ -13,7 +13,7 @@ import javax.json.bind.annotation.JsonbProperty;
 /**
  *
  */
-public class Objectinformatieobject {
+public class ObjectInformatieobject {
 
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.
@@ -38,13 +38,13 @@ public class Objectinformatieobject {
     /**
      * Constructor for PATCH request
      */
-    public Objectinformatieobject() {
+    public ObjectInformatieobject() {
     }
 
     /**
      * Constructor with required attributes for POST and PUT request
      */
-    public Objectinformatieobject(final URI informatieobject, final URI object, final ObjectType objectType) {
+    public ObjectInformatieobject(final URI informatieobject, final URI object, final ObjectType objectType) {
         this.informatieobject = informatieobject;
         this.object = object;
         this.objectType = objectType;
@@ -54,7 +54,7 @@ public class Objectinformatieobject {
      * Constructor with readOnly attributes for GET response
      */
     @JsonbCreator
-    public Objectinformatieobject(@JsonbProperty("url") final URI url) {
+    public ObjectInformatieobject(@JsonbProperty("url") final URI url) {
         this.url = url;
     }
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.zrc;
+package net.atos.client.zgw.zrc.util;
 
 import static net.atos.client.zgw.shared.util.JsonbUtil.JSONB;
 import static net.atos.client.zgw.zrc.model.Rol.BETROKKENE_TYPE_NAM;

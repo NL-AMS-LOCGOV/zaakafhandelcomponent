@@ -8,7 +8,6 @@ package net.atos.client.zgw.zrc;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.client.zgw.shared.InvocationBuilderFactory;
 import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
@@ -144,16 +142,4 @@ public interface ZRCClient {
     @POST
     @Path("zaakobjecten")
     Zaakobject zaakobjectCreate(final Zaakobject zaakobject);
-
-    static Zaak getZaak(final URI uri) {
-        return InvocationBuilderFactory.create(uri).get(Zaak.class);
-    }
-
-    static Resultaat getResultaat(final URI uri) {
-        return InvocationBuilderFactory.create(uri).get(Resultaat.class);
-    }
-
-    static Zaakeigenschap getZaakeigenschap(final URI uri) {
-        return InvocationBuilderFactory.create(uri).get(Zaakeigenschap.class);
-    }
 }

@@ -18,7 +18,7 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 /**
  *
  */
-public abstract class AbstractEnkelvoudigInformatieObject {
+public abstract class AbstractEnkelvoudigInformatieobject {
 
     public static final int IDENTIFICATIE_MAX_LENGTH = 40;
 
@@ -41,7 +41,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
 
     /**
      * Een binnen een gegeven context ondubbelzinnige referentie naar het INFORMATIEOBJECT.
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#IDENTIFICATIE_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#IDENTIFICATIE_MAX_LENGTH}
      */
     private String identificatie;
 
@@ -58,7 +58,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
 
     /**
      * De naam waaronder het INFORMATIEOBJECT formeel bekend is.
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#TITEL_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#TITEL_MAX_LENGTH}
      */
     private String titel;
 
@@ -69,7 +69,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
 
     /**
      * De persoon of organisatie die in de eerste plaats verantwoordelijk is voor het creeren van de inhoud van het INFORMATIEOBJECT
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#AUTEUR_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#AUTEUR_MAX_LENGTH}
      */
     private String auteur;
 
@@ -83,7 +83,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
     /**
      * Het "Media Type" (voorheen "MIME type") voor de wijze waaropde inhoud van het INFORMATIEOBJECT is vastgelegd in een computerbestand.
      * Voorbeeld: `application/msword`. Zie: https://www.iana.org/assignments/media-types/media-types.xhtml
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#FORMAAT_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#FORMAAT_MAX_LENGTH}
      */
     private String formaat;
 
@@ -109,7 +109,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
 
     /**
      * De naam van het fysieke bestand waarin de inhoud van het informatieobject is vastgelegd, inclusief extensie.
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#BESTANDSNAAM_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#BESTANDSNAAM_MAX_LENGTH}
      */
     private String bestandsnaam;
 
@@ -125,7 +125,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
 
     /**
      * Een generieke beschrijving van de inhoud van het INFORMATIEOBJECT.
-     * maxLength: {@link AbstractEnkelvoudigInformatieObject#BESCHRIJVING_MAX_LENGTH}
+     * maxLength: {@link AbstractEnkelvoudigInformatieobject#BESCHRIJVING_MAX_LENGTH}
      */
     private String beschrijving;
 
@@ -178,13 +178,13 @@ public abstract class AbstractEnkelvoudigInformatieObject {
     /**
      * Constructor for PATCH request
      */
-    public AbstractEnkelvoudigInformatieObject() {
+    public AbstractEnkelvoudigInformatieobject() {
     }
 
     /**
      * Constructor with required attributes for POST request
      */
-    public AbstractEnkelvoudigInformatieObject(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
+    public AbstractEnkelvoudigInformatieobject(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
             final String taal,
             final URI informatieobjecttype) {
         this.bronorganisatie = bronorganisatie;
@@ -198,7 +198,7 @@ public abstract class AbstractEnkelvoudigInformatieObject {
     /**
      * Constructor with readOnly attributes for GET response
      */
-    public AbstractEnkelvoudigInformatieObject(final URI url, final Integer versie, final ZonedDateTime beginRegistratie, final Long bestandsomvang,
+    public AbstractEnkelvoudigInformatieobject(final URI url, final Integer versie, final ZonedDateTime beginRegistratie, final Long bestandsomvang,
             final Boolean locked) {
         this.url = url;
         this.versie = versie;

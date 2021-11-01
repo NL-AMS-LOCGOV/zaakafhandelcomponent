@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.shared;
+package net.atos.client.zgw.shared.util;
 
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
@@ -20,7 +20,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.atos.client.zgw.shared.util.LoggingFilter;
 import net.atos.client.zgw.zrc.ZRCClient;
 
 /**

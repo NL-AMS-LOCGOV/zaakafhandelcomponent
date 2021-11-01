@@ -8,6 +8,7 @@ package net.atos.zac.app.informatieobjecten.converter;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -21,12 +22,15 @@ public class RESTZaakInformatieObjectConverter {
     private ZTCClientService ztcClientService;
 
     @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
     private RESTZaakStatusConverter restZaakStatusConverter;
 
     public RESTZaakInformatieObject convert(final ZaakInformatieObject zaakInformatieObject) {
         final RESTZaakInformatieObject restZaakInformatieObject = new RESTZaakInformatieObject();
 
-        final Zaak zaak = ZRCClient.getZaak(zaakInformatieObject.getZaak());
+        final Zaak zaak = zrcClientService.getZaak(zaakInformatieObject.getZaak());
 
         restZaakInformatieObject.status = restZaakStatusConverter.convert(zaak.getStatus());
         restZaakInformatieObject.zaakUuid = zaak.getUuid().toString();

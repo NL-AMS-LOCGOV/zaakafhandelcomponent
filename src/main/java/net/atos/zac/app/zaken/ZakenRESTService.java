@@ -86,6 +86,9 @@ public class ZakenRESTService {
     private RESTZaakConverter zaakConverter;
 
     @Inject
+    private RESTZaaktypeConverter zaaktypeConverter;
+
+    @Inject
     private IdmService idmService;
 
     @Inject
@@ -177,7 +180,7 @@ public class ZakenRESTService {
     @Path("zaaktypes")
     public List<RESTZaaktype> getZaaktypes() {
         return ztcClientService.findZaaktypes(configurationService.getCatalogus()).stream()
-                .map(RESTZaaktypeConverter::convert)
+                .map(zaaktypeConverter::convert)
                 .collect(Collectors.toList());
     }
 

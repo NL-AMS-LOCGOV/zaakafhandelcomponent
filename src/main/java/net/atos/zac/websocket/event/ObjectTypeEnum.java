@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import org.flowable.task.api.TaskInfo;
 
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 
@@ -28,7 +28,7 @@ public enum ObjectTypeEnum {
      */
     DOCUMENT {
         @Override
-        protected SchermUpdateEvent event(final OperatieEnum operatie, final EnkelvoudigInformatieObject document) {
+        protected SchermUpdateEvent event(final OperatieEnum operatie, final EnkelvoudigInformatieobject document) {
             return instance(operatie, this, document);
         }
     },
@@ -112,7 +112,7 @@ public enum ObjectTypeEnum {
         return instance(operatie, type, zaak.getUuid());
     }
 
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final EnkelvoudigInformatieObject document) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final EnkelvoudigInformatieobject document) {
         return instance(operatie, type, document.getUrl());
     }
 
@@ -133,7 +133,7 @@ public enum ObjectTypeEnum {
         throw new IllegalArgumentException(); // Niet toegestaan behalve bij objecttypes waar deze method een override heeft
     }
 
-    protected SchermUpdateEvent event(final OperatieEnum operatie, final EnkelvoudigInformatieObject document) {
+    protected SchermUpdateEvent event(final OperatieEnum operatie, final EnkelvoudigInformatieobject document) {
         throw new IllegalArgumentException(); // Niet toegestaan behalve bij objecttypes waar deze method een override heeft
     }
 
@@ -181,7 +181,7 @@ public enum ObjectTypeEnum {
      * @param document het toegevoegde document.
      * @return een instance van het event
      */
-    public final SchermUpdateEvent toevoeging(final EnkelvoudigInformatieObject document) {
+    public final SchermUpdateEvent toevoeging(final EnkelvoudigInformatieobject document) {
         return event(TOEVOEGING, document);
     }
 
@@ -233,7 +233,7 @@ public enum ObjectTypeEnum {
      * @param document het gewijzigde document.
      * @return een instance van het event
      */
-    public final SchermUpdateEvent wijziging(final EnkelvoudigInformatieObject document) {
+    public final SchermUpdateEvent wijziging(final EnkelvoudigInformatieobject document) {
         return event(WIJZIGING, document);
     }
 
@@ -285,7 +285,7 @@ public enum ObjectTypeEnum {
      * @param document het verwijderde document.
      * @return een instance van het event
      */
-    public final SchermUpdateEvent verwijdering(final EnkelvoudigInformatieObject document) {
+    public final SchermUpdateEvent verwijdering(final EnkelvoudigInformatieobject document) {
         return event(VERWIJDERING, document);
     }
 

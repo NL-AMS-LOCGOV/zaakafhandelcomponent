@@ -20,11 +20,13 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Medewerker;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
@@ -67,10 +69,14 @@ public class HandleService {
     private ZGWApiService zgwApiService;
 
     @Inject
-    private ZRCClient zrcClient;
+    private ZRCClientService zrcClientService;
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    @RestClient
+    private ZRCClient zrcClient;
 
     @Inject
     private EventingServiceBean eventingService;
@@ -84,7 +90,7 @@ public class HandleService {
     }
 
     public void startZaakAfhandeling(final Notificatie notificatie) {
-        final Zaak zaak = ZRCClient.getZaak(notificatie.getHoofdObject());
+        final Zaak zaak = zrcClientService.getZaak(notificatie.getHoofdObject());
         final Zaaktype zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype());
         if (zaaktype.getReferentieproces() != null && StringUtils.isNotEmpty(zaaktype.getReferentieproces().getNaam())) {
             final String caseDefinitionKey = zaaktype.getReferentieproces().getNaam();

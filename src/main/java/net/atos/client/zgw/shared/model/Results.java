@@ -16,7 +16,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.ws.rs.core.GenericType;
 
-import net.atos.client.zgw.shared.InvocationBuilderFactory;
+import net.atos.client.zgw.shared.util.InvocationBuilderFactory;
 
 /**
  *

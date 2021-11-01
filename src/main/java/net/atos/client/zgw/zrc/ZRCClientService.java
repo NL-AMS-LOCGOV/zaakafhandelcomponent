@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.zgw.shared.InvocationBuilderFactory;
+import net.atos.client.zgw.shared.util.InvocationBuilderFactory;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -28,6 +28,7 @@ import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
+import net.atos.client.zgw.zrc.model.Zaakeigenschap;
 import net.atos.client.zgw.zrc.model.ZaakinformatieobjectListParameters;
 
 /**
@@ -99,6 +100,18 @@ public class ZRCClientService {
         deleteUpdatedRollen(current, rollen);
         createUpdatedRollen(current, rollen);
         createCreatedRollen(current, rollen);
+    }
+
+    public Zaak getZaak(final URI zaakURI) {
+        return InvocationBuilderFactory.create(zaakURI).get(Zaak.class);
+    }
+
+    public Resultaat getResultaat(final URI resultaatURI) {
+        return InvocationBuilderFactory.create(resultaatURI).get(Resultaat.class);
+    }
+
+    public Zaakeigenschap getZaakeigenschap(final URI zaakeigenschapURI) {
+        return InvocationBuilderFactory.create(zaakeigenschapURI).get(Zaakeigenschap.class);
     }
 
     private void deleteDeletedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {

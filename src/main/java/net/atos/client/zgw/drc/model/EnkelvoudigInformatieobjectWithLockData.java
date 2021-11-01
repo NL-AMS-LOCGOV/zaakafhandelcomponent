@@ -16,9 +16,9 @@ import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
 
 /**
- * Representation of EnkelvoudigInformatieObject for PUT request and respone and for PATCH request only
+ * Representation of EnkelvoudigInformatieobject for PUT request and respone and for PATCH request only
  */
-public class EnkelvoudigInformatieObjectWithLockData extends AbstractEnkelvoudigInformatieObject {
+public class EnkelvoudigInformatieobjectWithLockData extends AbstractEnkelvoudigInformatieobject {
 
     /**
      * Tijdens het updaten van een document (PATCH, PUT) moet het `lock` veld opgegeven worden.
@@ -33,7 +33,7 @@ public class EnkelvoudigInformatieObjectWithLockData extends AbstractEnkelvoudig
     /**
      * Constructor for PATCH request
      */
-    public EnkelvoudigInformatieObjectWithLockData(final String lock) {
+    public EnkelvoudigInformatieobjectWithLockData(final String lock) {
         super();
         this.lock = lock;
     }
@@ -41,7 +41,7 @@ public class EnkelvoudigInformatieObjectWithLockData extends AbstractEnkelvoudig
     /**
      * Constructor with required attributes for PUT request
      */
-    public EnkelvoudigInformatieObjectWithLockData(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
+    public EnkelvoudigInformatieobjectWithLockData(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
             final String taal, final URI informatieobjecttype, final String inhoud, final String lock) {
         super(bronorganisatie, creatiedatum, titel, auteur, taal, informatieobjecttype);
         this.inhoud = inhoud;
@@ -52,7 +52,7 @@ public class EnkelvoudigInformatieObjectWithLockData extends AbstractEnkelvoudig
      * Constructor with readOnly attributes for PUT and PATCH response
      */
     @JsonbCreator
-    public EnkelvoudigInformatieObjectWithLockData(@JsonbProperty("url") final URI url,
+    public EnkelvoudigInformatieobjectWithLockData(@JsonbProperty("url") final URI url,
             @JsonbProperty("versie") final Integer versie,
             @JsonbProperty("beginRegistratie") @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS) final ZonedDateTime beginRegistratie,
             @JsonbProperty("bestandsomvang") final Long bestandsomvang,

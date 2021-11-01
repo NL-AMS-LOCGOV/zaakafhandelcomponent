@@ -28,8 +28,8 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClient;
 import net.atos.client.zgw.drc.DRCClientService;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieObjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -93,7 +93,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}")
     public RESTInformatieObject getObject(@PathParam("uuid") final UUID uuid) {
-        final EnkelvoudigInformatieObject enkelvoudigInformatieObject = drcClient.enkelvoudiginformatieobjectRead(uuid);
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClient.enkelvoudigInformatieobjectRead(uuid);
         return restInformatieObjectConverter.convert(enkelvoudigInformatieObject);
     }
 
@@ -102,7 +102,7 @@ public class InformatieObjectenRESTService {
     public UUID postObject(@PathParam("zaakUuid") final UUID zaakUuid, final RESTInformatieObject restInformatieObject) {
         final Zaak zaak = zrcClient.zaakRead(zaakUuid);
         final RESTFileUpload file = (RESTFileUpload) httpSession.getAttribute("FILE_" + zaakUuid);
-        final EnkelvoudigInformatieObjectData data = restInformatieObjectConverter.convert(restInformatieObject, file);
+        final EnkelvoudigInformatieobjectData data = restInformatieObjectConverter.convert(restInformatieObject, file);
         final ZaakInformatieObject zaakInformatieObject = zgwApiService.addInformatieObjectToZaak(
                 zaak.getUrl(), data, restInformatieObject.titel, restInformatieObject.beschrijving, "-");
         eventingService.versturen(DOCUMENT.toevoeging(zaakInformatieObject.getInformatieobject()));
@@ -149,7 +149,7 @@ public class InformatieObjectenRESTService {
 
     private List<ZaakInformatieObject> getZaakInformatieObjects(final UUID uuid) {
         final ZaakinformatieobjectListParameters parameters = new ZaakinformatieobjectListParameters();
-        parameters.setInformatieobject(drcClient.enkelvoudiginformatieobjectRead(uuid).getUrl());
+        parameters.setInformatieobject(drcClient.enkelvoudigInformatieobjectRead(uuid).getUrl());
         return zrcClient.zaakinformatieobjectList(parameters);
     }
 
@@ -157,8 +157,8 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(@PathParam("uuid") final UUID uuid) {
-        final EnkelvoudigInformatieObject enkelvoudigInformatieObject = drcClient.enkelvoudiginformatieobjectRead(uuid);
-        try (final Response response = drcClient.enkelvoudiginformatieobjectDownload(uuid, enkelvoudigInformatieObject.getVersie())) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClient.enkelvoudigInformatieobjectRead(uuid);
+        try (final Response response = drcClient.enkelvoudigInformatieobjectDownload(uuid, enkelvoudigInformatieObject.getVersie())) {
             response.bufferEntity(); // Altijd voordat je fromResponse gebruikt.
             return Response.ok(response.getEntity())
                     .header("Content-Disposition", "attachment; filename=\"" + enkelvoudigInformatieObject.getBestandsnaam() + "\"")
@@ -170,7 +170,7 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/lock")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.lockInformatieObject(uuid, lockEigenaar());
+        drcClientService.lockEnkelvoudigInformatieobject(uuid, lockEigenaar());
         eventingService.versturen(DOCUMENT.wijziging(uuid));
         getZaakInformatieObjects(uuid)
                 .forEach(zaak -> eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));
@@ -181,7 +181,7 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/unlock")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.unlockInformatieObject(uuid, lockEigenaar());
+        drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
         eventingService.versturen(DOCUMENT.wijziging(uuid));
         getZaakInformatieObjects(uuid)
                 .forEach(zaak -> eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));

@@ -15,9 +15,9 @@ import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
 
 /**
- * Representation of EnkelvoudigInformatieObject for GET response only
+ * Representation of EnkelvoudigInformatieobject for GET response only
  */
-public class EnkelvoudigInformatieObject extends AbstractEnkelvoudigInformatieObject {
+public class EnkelvoudigInformatieobject extends AbstractEnkelvoudigInformatieobject {
 
     /**
      * Download URL van de binaire inhoud.
@@ -28,7 +28,7 @@ public class EnkelvoudigInformatieObject extends AbstractEnkelvoudigInformatieOb
      * Constructor with readOnly attributes for GET response
      */
     @JsonbCreator
-    public EnkelvoudigInformatieObject(@JsonbProperty("url") final URI url,
+    public EnkelvoudigInformatieobject(@JsonbProperty("url") final URI url,
             @JsonbProperty("versie") final Integer versie,
             @JsonbProperty("beginRegistratie") @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS) final ZonedDateTime beginRegistratie,
             @JsonbProperty("bestandsomvang") final Long bestandsomvang,

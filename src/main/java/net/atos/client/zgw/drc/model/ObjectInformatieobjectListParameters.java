@@ -9,7 +9,7 @@ import java.net.URI;
 
 import javax.ws.rs.QueryParam;
 
-public class ObjectInformatieObjectListParameters {
+public class ObjectInformatieobjectListParameters {
 
     /**
      * URL-referentie naar het gerelateerde OBJECT (in deze of een andere API).
@@ -24,7 +24,7 @@ public class ObjectInformatieObjectListParameters {
     private URI informatieobject;
 
 
-    public ObjectInformatieObjectListParameters() {
+    public ObjectInformatieobjectListParameters() {
     }
 
     public URI getObject() {

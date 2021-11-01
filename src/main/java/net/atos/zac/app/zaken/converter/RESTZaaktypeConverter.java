@@ -11,7 +11,7 @@ import net.atos.zac.util.UriUtil;
 
 public class RESTZaaktypeConverter {
 
-    public static RESTZaaktype convert(final Zaaktype zaaktype) {
+    public RESTZaaktype convert(final Zaaktype zaaktype) {
         final RESTZaaktype restZaaktype = new RESTZaaktype();
         restZaaktype.uuid = UriUtil.uuidFromURI(zaaktype.getUrl()).toString();
         restZaaktype.identificatie = zaaktype.getIdentificatie();
