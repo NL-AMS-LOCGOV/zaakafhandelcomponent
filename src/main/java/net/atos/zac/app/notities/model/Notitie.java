@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.notities.model;
 
-import static net.atos.zac.config.FlywayIntegrator.SCHEMA;
+import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;

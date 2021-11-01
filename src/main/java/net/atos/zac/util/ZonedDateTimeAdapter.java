@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.adapter;
+package net.atos.zac.util;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

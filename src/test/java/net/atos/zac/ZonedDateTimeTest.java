@@ -15,7 +15,7 @@ import javax.json.bind.Jsonb;
 import org.junit.jupiter.api.Test;
 import org.wildfly.common.Assert;
 
-import net.atos.zac.config.JsonbContextResolver;
+import net.atos.zac.util.JsonbContextResolver;
 
 /**
  * Datums worden niet aangepast naar locale zone.

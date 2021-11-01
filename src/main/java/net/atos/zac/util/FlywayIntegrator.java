@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.config;
+package net.atos.zac.util;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 

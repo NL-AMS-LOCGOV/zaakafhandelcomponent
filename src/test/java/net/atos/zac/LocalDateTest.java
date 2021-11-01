@@ -15,7 +15,7 @@ import javax.json.bind.Jsonb;
 
 import org.junit.jupiter.api.Test;
 
-import net.atos.zac.config.JsonbContextResolver;
+import net.atos.zac.util.JsonbContextResolver;
 
 /**
  * Datums worden NIET aangepast naar Locale tijdzone (Europe/Amsterdam), dus 23-06-2020 blijft 23-06-2020, ongeacht de tijdzone
