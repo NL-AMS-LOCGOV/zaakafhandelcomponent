@@ -195,6 +195,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.laatSnackbarZien(`Taak toegekend aan ${taakResponse.behandelaar.naam}`);
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
+            taak.rechten = taakResponse.rechten;
         });
     }
 

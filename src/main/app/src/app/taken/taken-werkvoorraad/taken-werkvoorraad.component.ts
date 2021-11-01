@@ -77,6 +77,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         event.stopPropagation();
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
             taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
+            taak.rechten = taakResponse.rechten;
             this.snackbar.open(`Taak toegekend aan ${taakResponse.behandelaar.naam}`, 'Sluit', {
                 duration: 3000
             });
