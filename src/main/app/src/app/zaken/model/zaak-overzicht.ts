@@ -4,6 +4,7 @@
  */
 
 import {Medewerker} from '../../identity/model/medewerker';
+import {ZaakRechten} from './zaak-rechten';
 
 export class ZaakOverzicht {
     identificatie: string;
@@ -15,4 +16,5 @@ export class ZaakOverzicht {
     aanvrager: string;
     behandelaar: Medewerker;
     uiterlijkeDatumAfdoening: string;
+    rechten: ZaakRechten;
 }
