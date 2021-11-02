@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Taak} from '../model/taak';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ActivatedRoute} from '@angular/router';
@@ -28,7 +28,7 @@ import {TaakRechten} from '../model/taak-rechten';
     templateUrl: './taak-view.component.html',
     styleUrls: ['./taak-view.component.less']
 })
-export class TaakViewComponent extends AbstractView implements OnInit, AfterViewInit {
+export class TaakViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
 
@@ -55,6 +55,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
         this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
     }
 
     onZaakLoaded($event): void {

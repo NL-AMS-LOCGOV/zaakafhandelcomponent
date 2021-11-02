@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Taak} from '../../taken/model/taak';
 import {Title} from '@angular/platform-browser';
@@ -40,7 +40,7 @@ import {TaakRechten} from '../../taken/model/taak-rechten';
     templateUrl: './zaak-view.component.html',
     styleUrls: ['./zaak-view.component.less']
 })
-export class ZaakViewComponent extends AbstractView implements OnInit, AfterViewInit {
+export class ZaakViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
 
     zaak: Zaak;
     menu: MenuItem[];
@@ -118,7 +118,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             }
         };
         this.takenDataSource.sort = this.sort;
+    }
 
+    ngOnDestroy(): void {
+        super.ngOnDestroy();
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid);
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
@@ -22,7 +22,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
     templateUrl: './taak-toekennen.component.html',
     styleUrls: ['./taak-toekennen.component.less']
 })
-export class TaakToekennenComponent implements OnInit {
+export class TaakToekennenComponent implements OnInit, OnDestroy {
 
     formItems: Array<FormItem[]>;
     formConfig: FormConfig;
@@ -37,6 +37,10 @@ export class TaakToekennenComponent implements OnInit {
         this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());
         this.initForm();
+    }
+
+    ngOnDestroy(): void {
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
     }
 
     private initForm() {

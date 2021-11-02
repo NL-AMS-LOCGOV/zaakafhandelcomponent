@@ -69,8 +69,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private groepenOphalen() {
-        this.identityService.getGroepen().subscribe(response => {
-            this.groepen = response;
+        this.identityService.getGroepen().subscribe(groepen => {
+            this.groepen = groepen;
         });
     }
 

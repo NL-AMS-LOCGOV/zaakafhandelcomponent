@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {Taak} from '../model/taak';
@@ -22,7 +22,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
     templateUrl: './taak-bewerken.component.html',
     styleUrls: ['./taak-bewerken.component.less']
 })
-export class TaakBewerkenComponent implements OnInit {
+export class TaakBewerkenComponent implements OnInit, OnDestroy {
 
     formItems: Array<FormItem[]>;
     formConfig: FormConfig;
@@ -45,10 +45,13 @@ export class TaakBewerkenComponent implements OnInit {
             () => this.updateTaak());
     }
 
+    ngOnDestroy() {
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
+    }
+
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.taak.toelichting = formGroup.controls['toelichting'] ? formGroup.controls['toelichting'].value : null;
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
             this.takenService.bewerken(this.taak).subscribe(() => {
                 this.navigation.back();
             });
