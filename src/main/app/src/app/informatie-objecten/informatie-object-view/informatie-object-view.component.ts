@@ -9,7 +9,6 @@ import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {ActivatedRoute} from '@angular/router';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {ZaakInformatieObjectKoppeling} from '../model/zaak-informatie-object-koppeling';
 import {DownloadMenuItem} from '../../shared/side-nav/menu-item/download-menu-item';
@@ -37,7 +36,6 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
                 private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
-                private titleService: Title,
                 public utilService: UtilService,
                 private websocketService: WebsocketService) {
         super(store, utilService);
@@ -46,8 +44,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
-            this.titleService.setTitle(`${this.infoObject.identificatie} | Document`);
-            this.utilService.setHeaderTitle(`${this.infoObject.identificatie} | Document`);
+            this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.DOCUMENT, this.infoObject.uuid,
                 () => this.loadInformatieObject());
@@ -63,9 +60,8 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
 
     private setupMenu(): void {
         this.menu = [
-            new HeaderMenuItem('Document'),
-            new DownloadMenuItem('Downloaden',
-                `/zac/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
+            new HeaderMenuItem('informatieobject'),
+            new DownloadMenuItem('actie.downloaden', `/zac/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
                 this.infoObject.bestandsnaam,
                 'save_alt')
         ];

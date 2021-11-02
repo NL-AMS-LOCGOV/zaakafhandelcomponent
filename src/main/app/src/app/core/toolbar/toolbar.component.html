@@ -6,15 +6,15 @@
 <mat-toolbar color="primary">
     <mat-toolbar-row>
         <button mat-mini-fab aria-label="Mijn dashboard"
-                color="primary" routerLink="" title="{{ 'toolbar.dashboard' | translate }}">
+                color="primary" routerLink="" title="{{ 'dashboard' | translate }}">
             <mat-icon mat-list-icon>home</mat-icon>
         </button>
         <button *ngIf="utilService.isHandset$ |async" mat-icon-button aria-label="Terug" [disabled]="navigation.backDisabled$ | async"
-                title="{{ 'toolbar.terug' | translate }}" zacBackButton>
+                title="{{ 'actie.terug' | translate }}" zacBackButton>
             <mat-icon>arrow_back</mat-icon>
         </button>
 
-        <button mat-mini-fab aria-label="Zaak toevoegen" routerLink="/zaken/create" title="{{ 'toolbar.zaak.toevoegen' | translate }}">
+        <button mat-mini-fab aria-label="Zaak toevoegen" routerLink="/zaken/create" title="{{ 'actie.zaak.aanmaken' | translate }}">
             <mat-icon>create_new_folder</mat-icon>
         </button>
 
@@ -66,7 +66,7 @@
             <mat-divider></mat-divider>
             <button mat-menu-item aria-label="Uitloggen">
                 <mat-icon>logout</mat-icon>
-                <span>{{'uitloggen' | translate}}</span>
+                <span>{{'actie.uitloggen' | translate}}</span>
             </button>
         </mat-menu>
     </mat-toolbar-row>

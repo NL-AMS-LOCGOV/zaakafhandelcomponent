@@ -11,7 +11,6 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ZakenService} from '../zaken.service';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {Zaaktype} from '../model/zaaktype';
@@ -19,7 +18,6 @@ import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {ZaakRechten} from '../model/zaak-rechten';
 
 @Component({
@@ -44,12 +42,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return ZaakRechten;
     }
 
-    constructor(private zakenService: ZakenService, private titleService: Title, public utilService: UtilService, private identityService: IdentityService, private snackbar: MatSnackBar) {
+    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService) {
     }
 
     ngOnInit() {
-        this.titleService.setTitle('Werkvoorraad zaken');
-        this.utilService.setHeaderTitle('Werkvoorraad zaken');
+        this.utilService.setTitle('title.zaken.werkvoorraad');
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
         this.setColumns();
 
@@ -86,7 +83,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
 
         this.dataSource.columns = [
-            new TableColumn('zaaknummer', 'identificatie', true),
+            new TableColumn('zaak.identificatie', 'identificatie', true),
             new TableColumn('status', 'status', true),
             this.dataSource.zoekParameters.selectie === 'groep' ?
                 new TableColumn('zaaktype', 'zaaktype', true) :
@@ -113,9 +110,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             zaakOverzicht.rechten = zaak.rechten;
             // TODO de vraagtekens zijn overbodig als de Behandelaar weer gevuld wordt in de RESTOverzichtConverter
             zaakOverzicht['behandelaar.naam'] = zaak.behandelaar?.naam;
-            this.snackbar.open(`Zaak toegekend aan ${zaak.behandelaar?.naam}`, 'Sluit', {
-                duration: 3000
-            });
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
         });
     }
 }

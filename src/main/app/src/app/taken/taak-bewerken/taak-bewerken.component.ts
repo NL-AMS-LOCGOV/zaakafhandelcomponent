@@ -12,7 +12,6 @@ import {TakenService} from '../taken.service';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {FormGroup} from '@angular/forms';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
@@ -30,16 +29,14 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, private mfbService: MaterialFormBuilderService,
                 private navigation: NavigationService,
-                private titleService: Title,
                 private utilService: UtilService,
                 private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
         this.taak = this.route.snapshot.data['taak'];
-        this.titleService.setTitle(`Taak '${this.taak.naam}' wijzigen`);
-        this.utilService.setHeaderTitle(`Taak '${this.taak.naam}' wijzigen`);
-        this.formConfig = new FormConfig('Bewerken', 'Annuleren');
+        this.utilService.setTitle('title.taak.wijzigen', {taak: this.taak.naam});
+        this.formConfig = this.utilService.getFormConfig('actie.bewerken');
         this.initToelichtingVeld();
         this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());
@@ -61,7 +58,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     }
 
     private initToelichtingVeld() {
-        const toelichting = this.mfbService.createTextareaFormItem('toelichting', 'Toelichting', this.taak.toelichting);
+        const toelichting = this.mfbService.createTextareaFormItem('toelichting', 'toelichting', this.taak.toelichting);
         this.formItems = [[toelichting]];
     }
 

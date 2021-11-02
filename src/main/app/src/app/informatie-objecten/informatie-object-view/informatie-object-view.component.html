@@ -36,7 +36,7 @@
                             <zac-static-text [label]="'documentType' | translate" [value]="infoObject.documentType"></zac-static-text>
                             <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
                             <zac-static-text [label]="'ontvangstdatum' | translate" [value]="infoObject.ontvangstdatum | datum | empty"></zac-static-text>
-                            <zac-static-text [label]="'beginRegistratie' | translate"
+                            <zac-static-text [label]="'registratiedatum' | translate"
                                              [value]="infoObject.registratiedatumTijd | datum | empty"></zac-static-text>
                             <zac-static-text [label]="'locked' | translate" [value]="infoObject.locked ? 'Ja' : 'Nee'"></zac-static-text>
                             <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie|empty"></zac-static-text>
@@ -45,8 +45,8 @@
                             <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                 <mat-divider></mat-divider>
                             </div>
-                            <zac-static-text [label]="'status' | translate"
-                                             [value]="'informatieobjectstatus.'+infoObject.status | translate | empty"></zac-static-text>
+                            <zac-static-text [label]="'informatieobject.status' | translate"
+                                             [value]="'informatieobject.status.'+infoObject.status | translate | empty"></zac-static-text>
                             <zac-static-text [label]="'bronorganisatie' | translate" [value]="infoObject.bronorganisatie|empty"></zac-static-text>
                             <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum | empty"></zac-static-text>
                             <zac-static-text [label]="'formaat' | translate" [value]="infoObject.formaat | empty"></zac-static-text>

@@ -7,9 +7,9 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Medewerker} from '../../identity/model/medewerker';
 import {ZakenService} from '../../zaken/zaken.service';
 import {TakenService} from '../../taken/taken.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {Zaak} from '../../zaken/model/zaak';
 import {Taak} from '../../taken/model/taak';
+import {UtilService} from '../../core/service/util.service';
 
 @Component({
     selector: 'zac-behandelaar-veld',
@@ -24,7 +24,7 @@ export class BehandelaarVeldComponent {
     @Input() laatKnopZien: boolean;
     @Output() behandelaarGewijzigd: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    constructor(private zakenService: ZakenService, private takenService: TakenService, private snackbar: MatSnackBar) { }
+    constructor(private zakenService: ZakenService, private takenService: TakenService, private utilService: UtilService) { }
 
     toekennen() {
         if (!this.taakId) {
@@ -40,7 +40,7 @@ export class BehandelaarVeldComponent {
 
         this.zakenService.toekennenAanIngelogdeMedewerker(zaak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
-            this.laatSnackbarZien(`Zaak toegekend aan ${response.behandelaar.naam}`);
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: response.behandelaar.naam});
         });
     }
 
@@ -51,7 +51,7 @@ export class BehandelaarVeldComponent {
 
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
-            this.laatSnackbarZien(`Taak toegekend aan ${response.behandelaar.naam}`);
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: response.behandelaar.naam});
         });
     }
 
@@ -59,11 +59,4 @@ export class BehandelaarVeldComponent {
         this.behandelaar = behandelaar;
         this.behandelaarGewijzigd.emit(true);
     }
-
-    private laatSnackbarZien(message: string) {
-        this.snackbar.open(message, "Sluit", {
-            duration: 3000,
-        });
-    }
-
 }

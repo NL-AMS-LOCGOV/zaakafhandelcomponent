@@ -8,7 +8,6 @@ import {Taak} from '../model/taak';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
@@ -18,7 +17,6 @@ import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
 import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
@@ -39,8 +37,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         return TaakRechten;
     }
 
-    constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService,
-                private snackbar: MatSnackBar, private websocketService: WebsocketService) {
+    constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+                private websocketService: WebsocketService) {
         super(store, utilService);
     }
 
@@ -71,24 +69,23 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     init(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
-        this.titleService.setTitle(`${taak.naam} | Taakgegevens`);
-        this.utilService.setHeaderTitle(`${taak.naam} | Taakgegevens`);
+        this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();
     }
 
     private setupMenu(): void {
-        this.menu.push(new HeaderMenuItem('Taak'));
+        this.menu.push(new HeaderMenuItem('taak'));
 
         if (this.taak.rechten[this.taakRechten.TOEKENNEN]) {
-            this.menu.push(new LinkMenuTitem('Toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
+            this.menu.push(new LinkMenuTitem('actie.toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
         }
 
         if (this.taak.rechten[this.taakRechten.VRIJGEVEN]) {
-            this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
+            this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
         }
 
         if (this.taak.rechten[this.taakRechten.BEHANDELEN]) {
-            this.menu.push(new ButtonMenuItem('Afronden', this.afronden, 'assignment_turned_in'));
+            this.menu.push(new ButtonMenuItem('actie.afronden', this.afronden, 'assignment_turned_in'));
         }
     }
 
@@ -103,21 +100,15 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     vrijgeven = (): void => {
         this.taak.behandelaar = null;
         this.takenService.toekennen(this.taak).subscribe(taak => {
-            this.laatSnackbarZien(`Taak vrijgegeven`);
+            this.utilService.openSnackbar('msg.taak.vrijgegeven');
             this.init(taak);
         });
     };
 
     afronden = (): void => {
         this.takenService.afronden(this.taak).subscribe(taak => {
-            this.laatSnackbarZien(`Taak afgerond`);
+            this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
     };
-
-    laatSnackbarZien(message: string) {
-        this.snackbar.open(message, 'Sluit', {
-            duration: 3000
-        });
-    }
 }

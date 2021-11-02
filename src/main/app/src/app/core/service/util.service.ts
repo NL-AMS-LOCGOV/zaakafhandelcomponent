@@ -4,10 +4,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, iif, Observable, of} from 'rxjs';
+import {BehaviorSubject, forkJoin, iif, Observable, of} from 'rxjs';
 import {delay, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
+import {Title} from '@angular/platform-browser';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 
 @Injectable({
     providedIn: 'root'
@@ -39,15 +42,30 @@ export class UtilService {
                                                     shareReplay()
                                                 );
 
-    constructor(private breakpointObserver: BreakpointObserver, private translate: TranslateService) {
+    constructor(private breakpointObserver: BreakpointObserver, private translate: TranslateService, private titleService: Title, private snackbar: MatSnackBar) {
     }
 
-    setHeaderTitle(headerTitle: string): void {
-        this.headerTitle.next(headerTitle);
+    getGemeenteNaam(): string {
+        // TODO Configuratie uitlezen
+        return 'zaakafhandelcomponent';
+    }
+
+    setTitle(title: string, params?: Object): void {
+        forkJoin({
+            prefix: this.translate.get('title.prefix', {gemeente: this.getGemeenteNaam()}),
+            title: this.translate.get(title, params)
+        }).subscribe(result => {
+            this.titleService.setTitle(result.prefix + result.title);
+            this.headerTitle.next(result.title);
+        });
     }
 
     setLoading(loading: boolean): void {
         this.loading.next(loading);
+    }
+
+    getFormConfig(actie) {
+        return new FormConfig(this.translate.get(actie), this.translate.get('actie.annuleren'));
     }
 
     getEnumAsSelectList(prefix: string, enumValue: any): { label: string, value: string }[] {
@@ -59,5 +77,14 @@ export class UtilService {
         });
 
         return list;
+    }
+
+    openSnackbar(message: string, params?: Object) {
+        forkJoin({
+            message: this.translate.get(message, params),
+            action: this.translate.get('actie.sluiten')
+        }).subscribe(result => {
+            this.snackbar.open(result.message, result.action, {duration: 3000});
+        });
     }
 }

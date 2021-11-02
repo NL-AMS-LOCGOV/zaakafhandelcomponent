@@ -11,7 +11,6 @@ import {Taak} from '../model/taak';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TakenMijnDatasource} from './taken-mijn-datasource';
@@ -34,15 +33,14 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     dataSource: TakenMijnDatasource;
     expandedRow: Taak | null;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private titleService: Title, public utilService: UtilService) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
     }
 
     ngOnInit() {
-        this.titleService.setTitle('Mijn taken');
-        this.utilService.setHeaderTitle('Mijn taken');
+        this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        const creatieDatum: TableColumn = new TableColumn('creatiedatum', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM);
+        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM);
         creatieDatum.pipe = DatumPipe;
 
         const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
@@ -51,8 +49,8 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.dataSource.columns = [
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
             new TableColumn('status', 'status', true),
-            new TableColumn('hoort.bij.zaaknummer', 'zaakIdentificatie', true),
-            new TableColumn('zaaktype', 'zaaktypeOmschrijving', true),
+            new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true),
+            new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true),
             creatieDatum,
             streefDatum,
             new TableColumn('groep', 'groep.naam', true),

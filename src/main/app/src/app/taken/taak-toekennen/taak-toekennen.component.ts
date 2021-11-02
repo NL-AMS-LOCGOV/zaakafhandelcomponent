@@ -17,6 +17,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
+import {UtilService} from '../../core/service/util.service';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
@@ -29,7 +30,8 @@ export class TaakToekennenComponent implements OnInit, OnDestroy {
     taak: Taak;
 
     constructor(private route: ActivatedRoute, private identityService: IdentityService, private takenService: TakenService,
-                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private websocketService: WebsocketService) {
+                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private websocketService: WebsocketService,
+                private utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -44,9 +46,9 @@ export class TaakToekennenComponent implements OnInit, OnDestroy {
     }
 
     private initForm() {
-        this.formConfig = new FormConfig('Toekennen', 'Annuleren');
-        const titel = this.mfbService.createHeadingFormItem('toekennenTaak', 'Toekennen Taak', '1');
-        const naam = this.mfbService.createReadonlyFormItem('naam', 'Naam', this.taak.naam);
+        this.formConfig = this.utilService.getFormConfig('actie.toekennen');
+        const titel = this.mfbService.createHeadingFormItem('toekennenTaak', 'actie.taak.toekennen', '1');
+        const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.taak.naam);
         this.identityService.getMedewerkersInGroep(this.taak.groep.id).subscribe(medewerkers => {
             this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
                 const medewerker = this.mfbService.createSelectFormItem('medewerker', 'medewerker',

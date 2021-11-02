@@ -11,7 +11,6 @@ import {MaterialFormBuilderService} from '../../shared/material-form-builder/mat
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormGroup} from '@angular/forms';
 import {Zaak} from '../model/zaak';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
@@ -33,7 +32,6 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
                 private mfbService: MaterialFormBuilderService,
                 private router: Router,
                 private route: ActivatedRoute,
-                private titleService: Title,
                 private utilService: UtilService,
                 private websocketService: WebsocketService) {
     }
@@ -50,10 +48,9 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
     }
 
     private initForm() {
-        this.titleService.setTitle(`${this.zaak.identificatie} wijzigen`);
-        this.utilService.setHeaderTitle(`${this.zaak.identificatie} wijzigen`);
+        this.utilService.setTitle('title.zaak.wijzigen', {zaak: this.zaak.identificatie});
 
-        this.formConfig = new FormConfig('Wijziging opslaan', 'Annuleren');
+        this.formConfig = this.utilService.getFormConfig('actie.opslaan');
 
         const omschrijving =
             this.mfbService.createInputFormItem('omschrijving', 'omschrijving', this.zaak.omschrijving);

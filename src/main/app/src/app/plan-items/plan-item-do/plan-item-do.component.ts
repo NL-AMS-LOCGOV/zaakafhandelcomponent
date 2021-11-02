@@ -15,6 +15,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {PlanItemType} from '../model/plan-item-type.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
+import {UtilService} from '../../core/service/util.service';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -27,14 +28,15 @@ export class PlanItemDoComponent implements OnInit {
     private planItem: PlanItem;
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private identityService: IdentityService,
-                private mfbService: MaterialFormBuilderService, private router: Router, private navigation: NavigationService) {
+                private mfbService: MaterialFormBuilderService, private router: Router, private navigation: NavigationService,
+                private utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfig('Starten', 'Annuleren');
-        const titel = this.mfbService.createHeadingFormItem('doPlanItem', 'Uitvoeren plan item', '1');
+        this.formConfig = this.utilService.getFormConfig('actie.starten');
+        const titel = this.mfbService.createHeadingFormItem('doPlanItem', 'actie.taak.aanmaken', '1');
         this.planItem = this.route.snapshot.data['planItem'];
-        const naam = this.mfbService.createReadonlyFormItem('naam', 'Naam', this.planItem.naam);
+        const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.planItem.naam);
         if (this.planItem.type == PlanItemType.HumanTask) {
             this.identityService.getGroepen().subscribe(groepen => {
                 const groep = this.mfbService.createSelectFormItem('groep', 'groep', this.planItem.groep, 'naam', groepen,

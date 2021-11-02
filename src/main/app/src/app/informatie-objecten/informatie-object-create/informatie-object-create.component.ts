@@ -7,7 +7,6 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {Zaak} from '../../zaken/model/zaak';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
@@ -40,34 +39,32 @@ export class InformatieObjectCreateComponent implements OnInit {
                 private informatieObjectenService: InformatieObjectenService,
                 private mfbService: MaterialFormBuilderService,
                 private route: ActivatedRoute,
-                private titleService: Title,
                 private router: Router,
                 private navigation: NavigationService,
                 public utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfig('Versturen', 'Annuleren');
+        this.formConfig = this.utilService.getFormConfig('actie.versturen');
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         let talen = this.utilService.getEnumAsSelectList('taal', Taal);
-        let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobjectstatus', InformatieobjectStatus);
+        let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
         this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
-            this.titleService.setTitle(`Document toevoegen aan ${zaak.identificatie}`);
-            this.utilService.setHeaderTitle(`Document toevoegen aan ${zaak.identificatie}`);
+            this.utilService.setTitle('title.document.toevoegen', {zaak: zaak.identificatie});
             const types = this.getTypes(zaak);
-            const titel = this.mfbService.createInputFormItem('titel', 'Titel', null, this.required());
-            const beschrijving = this.mfbService.createInputFormItem('beschrijving', 'Beschrijving', null);
-            const inhoud = this.mfbService.createFileFormItem('bestandsnaam', 'Bestand', this.fileUploadConfig());
-            const beginRegistratie = this.mfbService.createDateFormItem('creatiedatum', 'Creatiedatum', moment(), this.required());
-            const taal = this.mfbService.createSelectFormItem('taal', 'Taal', talen[0], 'label', talen, this.required());
-            const status = this.mfbService.createSelectFormItem('status', 'Status', informatieobjectStatussen[0], 'label',
+            const titel = this.mfbService.createInputFormItem('titel', 'titel', null, this.required());
+            const beschrijving = this.mfbService.createInputFormItem('beschrijving', 'beschrijving', null);
+            const inhoud = this.mfbService.createFileFormItem('bestandsnaam', 'bestandsnaam', this.fileUploadConfig());
+            const beginRegistratie = this.mfbService.createDateFormItem('creatiedatum', 'creatiedatum', moment(), this.required());
+            const taal = this.mfbService.createSelectFormItem('taal', 'taal', talen[0], 'label', talen, this.required());
+            const status = this.mfbService.createSelectFormItem('status', 'status', informatieobjectStatussen[0], 'label',
                 informatieobjectStatussen);
-            const documentType = this.mfbService.createSelectFormItem('informatieobjectType', 'Type', null, null, types, this.required());
-            const auteur = this.mfbService.createInputFormItem('auteur', 'Auteur', null, this.required());
-            const vertrouwelijk = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding', 'Vertrouwelijkheidaanduiding',
+            const documentType = this.mfbService.createSelectFormItem('informatieobjectType', 'type', null, null, types, this.required());
+            const auteur = this.mfbService.createInputFormItem('auteur', 'auteur', null, this.required());
+            const vertrouwelijk = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding', 'vertrouwelijkheidaanduiding',
                 vertrouwelijkheidsAanduidingen[0],
                 'label', vertrouwelijkheidsAanduidingen, this.required());
 

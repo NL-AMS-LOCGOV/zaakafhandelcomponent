@@ -6,7 +6,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Taak} from '../../taken/model/taak';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../../core/service/util.service';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
@@ -31,7 +30,6 @@ import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {ThemePalette} from '@angular/material/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
@@ -72,10 +70,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
                 private route: ActivatedRoute,
-                private titleService: Title,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                private snackbar: MatSnackBar,
                 private sessionStorageService: SessionStorageService) {
         super(store, utilService);
     }
@@ -90,8 +86,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid,
                 () => this.loadInformatieObjecten());
 
-            this.titleService.setTitle(`${this.zaak.identificatie} | Zaakgegevens`);
-            this.utilService.setHeaderTitle(`${this.zaak.identificatie} | Zaakgegevens`);
+            this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
             this.setupMenu();
             this.loadTaken();
             this.loadInformatieObjecten();
@@ -144,25 +139,25 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private setupMenu(): void {
-        this.menu = [new HeaderMenuItem('Zaak')];
+        this.menu = [new HeaderMenuItem('zaak')];
 
         if (this.zaak.rechten[this.zaakRechten.BEHANDELEN]) {
-            this.menu.push(new LinkMenuTitem('Document toevoegen', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+            this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
             this.planItemsService.getPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
                 if (planItems.length > 0) {
-                    this.menu.push(new HeaderMenuItem('Plan items'));
+                    this.menu.push(new HeaderMenuItem('planItems'));
                 }
                 this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
             });
         }
 
         if (this.zaak.rechten[this.zaakRechten.TOEKENNEN]) {
-            this.menu.push(new LinkMenuTitem('Toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
+            this.menu.push(new LinkMenuTitem('actie.toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
         }
 
         if (this.zaak.rechten[this.zaakRechten.VRIJGEVEN]) {
-            this.menu.push(new ButtonMenuItem('Vrijgeven', this.vrijgeven, 'assignment_return'));
+            this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
         }
     }
 
@@ -191,14 +186,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     vrijgeven = (): void => {
         this.zaak.behandelaar = null;
         this.zakenService.toekennen(this.zaak).subscribe(() => {
-            this.laatSnackbarZien(`Zaak vrijgegeven`);
+            this.utilService.openSnackbar('zaak.vrijgegeven');
             this.ngOnInit();
         });
     };
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
         this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
-            this.laatSnackbarZien(`Taak toegekend aan ${taakResponse.behandelaar.naam}`);
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
             taak.rechten = taakResponse.rechten;
@@ -226,11 +221,5 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     bepaalChipSelected(taak: Taak): boolean {
         return taak.status === 'AFGEROND' || taak.status === 'TOEGEKEND';
-    }
-
-    laatSnackbarZien(message: string) {
-        this.snackbar.open(message, 'Sluit', {
-            duration: 3000
-        });
     }
 }

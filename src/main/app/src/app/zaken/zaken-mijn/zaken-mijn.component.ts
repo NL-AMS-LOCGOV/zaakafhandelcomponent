@@ -14,7 +14,6 @@ import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TableColumnFilter} from '../../shared/dynamic-table/filter/table-column-filter';
 import {Zaaktype} from '../model/zaaktype';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
-import {Title} from '@angular/platform-browser';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 
@@ -31,12 +30,11 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     dataSource: ZakenMijnDatasource;
     expandedRow: ZaakOverzicht | null;
 
-    constructor(private zakenService: ZakenService, private titleService: Title, public utilService: UtilService) {
+    constructor(private zakenService: ZakenService, public utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.titleService.setTitle('Mijn zaken');
-        this.utilService.setHeaderTitle('Mijn zaken');
+        this.utilService.setTitle('title.zaken.mijn');
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
         this.zakenService.getZaaktypes().subscribe(zaaktypes => {
             const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
@@ -53,7 +51,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
 
             this.dataSource.columns = [
-                new TableColumn('zaaknummer', 'identificatie', true),
+                new TableColumn('zaak.identificatie', 'identificatie', true),
                 new TableColumn('status', 'status', true),
                 zaaktypeColumn,
                 new TableColumn('groep', 'groep.naam', false),

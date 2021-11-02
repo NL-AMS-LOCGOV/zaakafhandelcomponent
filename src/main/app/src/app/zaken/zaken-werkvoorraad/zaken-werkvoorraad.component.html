@@ -80,10 +80,10 @@
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
-                        title="{{ 'zaken.bekijk' | translate }}">
+                        title="{{ 'actie.zaak.bekijk' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
-                <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)"
+                <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)"
                         *ngIf="row.rechten[zaakRechten.TOEKENNEN_AAN_MIJ]">
                     <mat-icon>person_add_alt</mat-icon>
                 </button>
@@ -115,7 +115,7 @@
     </table>
 
     <ng-container *ngIf="dataSource.totalItems === 0">
-        <p>{{'geen.gegevens.gevonden' | translate}}</p>
+        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
     </ng-container>
 
     <mat-paginator #paginator

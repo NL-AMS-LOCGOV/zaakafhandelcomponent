@@ -6,7 +6,6 @@
 import {Component, OnInit} from '@angular/core';
 import {map} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {Title} from '@angular/platform-browser';
 import {UtilService} from '../core/service/util.service';
 
 @Component({
@@ -36,11 +35,10 @@ export class DashboardComponent implements OnInit {
         })
     );
 
-    constructor(private breakpointObserver: BreakpointObserver, private titleService: Title, private utilService: UtilService) {
+    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.titleService.setTitle('zaakafhandelcomponent - Dashboard');
-        this.utilService.setHeaderTitle('Dashboard');
+        this.utilService.setTitle('title.dashboard');
     }
 }

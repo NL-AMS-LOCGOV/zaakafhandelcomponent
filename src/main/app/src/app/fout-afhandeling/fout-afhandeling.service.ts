@@ -8,6 +8,7 @@ import {Observable, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,7 @@ export class FoutAfhandelingService {
     stack: string;
     exception: string;
 
-    constructor(private router: Router, private snackbar: MatSnackBar) {
+    constructor(private router: Router, private snackbar: MatSnackBar, private translate: TranslateService) {
     }
 
     public redirect(err: HttpErrorResponse): Observable<never> {
@@ -51,7 +52,9 @@ export class FoutAfhandelingService {
     public log(melding): (error: HttpErrorResponse) => Observable<any> {
         return (error: any): Observable<never> => {
             console.error(error); // log to console instead
-            this.snackbar.open(melding, 'Sluiten');
+            this.translate.get('actie.sluiten').subscribe(action => {
+                this.snackbar.open(melding, action);
+            });
             return throwError(error);
         };
     }

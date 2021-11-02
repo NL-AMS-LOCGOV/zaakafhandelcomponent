@@ -32,31 +32,31 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfig('Versturen', 'Annuleren');
+        this.formConfig = this.utilService.getFormConfig('actie.versturen');
         this.zakenService.getZaaktypes().subscribe(value => {
             const zaaktypes: Zaaktype[] = value;
             const communicatiekanalen: object[] = [{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}];
             const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                 Vertrouwelijkheidaanduiding);
 
-            const titel = this.mfbService.createHeadingFormItem('aanmakenZaak', 'Aanmaken zaak', '1');
-            const tussenTitel = this.mfbService.createHeadingFormItem('overigegegevens', 'Overige gegevens', '2');
+            const titel = this.mfbService.createHeadingFormItem('aanmakenZaak', 'actie.zaak.aanmaken', '1');
+            const tussenTitel = this.mfbService.createHeadingFormItem('overigegegevens', 'gegevens.overig', '2');
 
-            const zaaktype = this.mfbService.createSelectFormItem('zaaktype', 'Zaaktype', null, 'omschrijving', zaaktypes,
+            const zaaktype = this.mfbService.createSelectFormItem('zaaktype', 'zaaktype', null, 'omschrijving', zaaktypes,
                 new FormFieldConfig([Validators.required]));
 
-            const startdatum = this.mfbService.createDateFormItem('startdatum', 'Startdatum', moment(),
+            const startdatum = this.mfbService.createDateFormItem('startdatum', 'startdatum', moment(),
                 new FormFieldConfig([Validators.required]));
-            const registratiedatum = this.mfbService.createDateFormItem('registratiedatum', 'Registratiedatum', moment());
+            const registratiedatum = this.mfbService.createDateFormItem('registratiedatum', 'registratiedatum', moment());
 
-            const communicatiekanaal = this.mfbService.createSelectFormItem('communicatiekanaal', 'Communicatiekanaal', null,
+            const communicatiekanaal = this.mfbService.createSelectFormItem('communicatiekanaal', 'communicatiekanaal', null,
                 'doel', communicatiekanalen);
             const vertrouwelijkheidaanduiding = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding',
                 'Vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
             const omschrijving =
-                this.mfbService.createInputFormItem('omschrijving', 'Omschrijving', null);
+                this.mfbService.createInputFormItem('omschrijving', 'omschrijving', null);
             const toelichting =
-                this.mfbService.createTextareaFormItem('toelichting', 'Toelichting', null);
+                this.mfbService.createTextareaFormItem('toelichting', 'toelichting', null);
             this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
                 [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
         });

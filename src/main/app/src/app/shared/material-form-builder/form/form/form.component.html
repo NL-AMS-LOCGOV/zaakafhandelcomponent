@@ -15,10 +15,10 @@
 
     <div fxLayout="row" fxLayoutAlign="start">
         <button mat-flat-button color="primary" [disabled]="formGroup.invalid" type="submit">
-            {{config.saveButtonText}}
+            {{config.saveButtonText | async}}
         </button>
         <button mat-flat-button type="button" (click)="cancel()">
-            {{config.cancelButtonText}}
+            {{config.cancelButtonText | async}}
         </button>
     </div>
 </form>

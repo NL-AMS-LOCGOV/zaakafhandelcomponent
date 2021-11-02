@@ -15,7 +15,7 @@
         <mat-card fxFlex="100">
             <mat-card-header>
                 <mat-card-title>{{'taak' | translate}}</mat-card-title>
-                <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'bewerken' | translate }}">
+                <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'actie.bewerken' | translate }}">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-card-header>
@@ -23,7 +23,7 @@
                 <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
-                        <zac-static-text [label]="'status' | translate" [value]="taak.status | translate"></zac-static-text>
+                        <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">

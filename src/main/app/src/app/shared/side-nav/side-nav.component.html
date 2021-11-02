@@ -7,27 +7,27 @@
     <ng-container *ngFor="let menuItem of menu" [ngSwitch]="menuItem.type">
         <h3 mat-subheader *ngSwitchCase="'HEADER'">
             <mat-icon *ngIf="collapsed">{{menuItem.icon ? menuItem.icon : 'more_horiz'}}</mat-icon>
-            <span *ngIf="!collapsed"> {{menuItem.title}}</span>
+            <span *ngIf="!collapsed"> {{menuItem.title | translate}}</span>
         </h3>
         <mat-divider *ngSwitchCase="'HEADER'"></mat-divider>
 
         <a mat-list-item *ngSwitchCase="'LINK'" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
             <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title}}</div>
+            <div mat-line>{{menuItem.title | translate}}</div>
         </a>
         <a mat-list-item *ngSwitchCase="'BUTTON'" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
             <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title}}</div>
+            <div mat-line>{{menuItem.title | translate}}</div>
         </a>
         <a mat-list-item *ngSwitchCase="'DOWNLOAD'" (click)="download(asDownloadMenuItem(menuItem))" [disabled]="menuItem.disabled">
             <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
-            <div mat-line>{{menuItem.title}}</div>
+            <div mat-line>{{menuItem.title | translate}}</div>
         </a>
     </ng-container>
 </mat-nav-list>
 <mat-toolbar class="toolbar-footer" *ngIf="!(utilService.isTablet$|async)">
     <button (click)="toggleMenu()" mat-mini-fab color="default" aria-label="menu inklappen"
-            [title]="(buttonState == 'rotated' ? 'menu.openen'  : 'menu.sluiten') | translate">
+            [title]="(buttonState == 'rotated' ? 'actie.menu.openen'  : 'actie.menu.sluiten') | translate">
         <mat-icon [@rotated180]="buttonState">menu_open</mat-icon>
     </button>
 </mat-toolbar>

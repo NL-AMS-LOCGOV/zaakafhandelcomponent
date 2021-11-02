@@ -14,20 +14,20 @@
                 <mat-card-header>
                     <mat-card-title>
                         {{'zaak' | translate}}
-                        <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'bewerken' | translate }}">
+                        <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'actie.bewerken' | translate }}">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
-                        <mat-tab label="{{'algemenegegevens' | translate}}">
+                        <mat-tab label="{{'gegevens.algemeen' | translate}}">
                             <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                    <zac-static-text [label]="'identificatie' | translate"
+                                    <zac-static-text [label]="'zaak.identificatie' | translate"
                                                      [value]="zaak.identificatie"></zac-static-text>
                                     <zac-static-text [label]="'zaaktype' | translate"
-                                                     [value]="zaak.zaaktype.omschrijving"></zac-static-text>
+                                                     [value]="zaak.zaaktype"></zac-static-text>
                                     <zac-static-text [label]="'kanaal' | translate"
                                                      [value]="'-'"></zac-static-text>
                                     <zac-static-text [label]="'status' | translate"
@@ -111,11 +111,11 @@
 
                         <mat-tab label="{{'betrokkenen' | translate}}">
                             <div class="table-wrapper">
-                                <p>{{'geen.gegevens.gevonden' | translate}}</p>
+                                <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'overigegegevens'|translate}}">
+                        <mat-tab label="{{'gegevens.overig'|translate}}">
                             <div class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.eigenschappen">
                                     <caption><h4>{{'eigenschappen' | translate}}</h4></caption>
@@ -129,7 +129,7 @@
                                     <tr mat-header-row *matHeaderRowDef="['naam', 'waarde']"></tr>
                                     <tr mat-row *matRowDef="let row; columns: ['naam', 'waarde'];"></tr>
                                 </table>
-                                <p *ngIf="zaak.eigenschappen.length == 0">{{'geen.gegevens.gevonden' | translate}}</p>
+                                <p *ngIf="zaak.eigenschappen.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
 
                             <div class="table-wrapper">
@@ -145,7 +145,7 @@
                                     <tr mat-header-row *matHeaderRowDef="['naam', 'waarde']"></tr>
                                     <tr mat-row *matRowDef="let row; columns: ['naam', 'waarde'];"></tr>
                                 </table>
-                                <p *ngIf="zaak.kenmerken.length == 0">{{'geen.gegevens.gevonden' | translate}}</p>
+                                <p *ngIf="zaak.kenmerken.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
                     </mat-tab-group>
@@ -156,7 +156,7 @@
                 <mat-card-header fxLayout="row">
                     <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>
                     <mat-slide-toggle fxLayout="row" color="primary" [(ngModel)]="toonAfgerondeTaken"
-                                      (change)="filterTakenOpStatus()">{{ 'zaak.taken.slider' | translate }}</mat-slide-toggle>
+                                      (change)="filterTakenOpStatus()">{{ 'toonAfgerondeTaken' | translate }}</mat-slide-toggle>
                 </mat-card-header>
                 <mat-card-content>
                     <div class="table-wrapper">
@@ -168,7 +168,7 @@
                             <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'status' | translate}} </th>
                                 <td mat-cell *matCellDef="let taak">
-                                    <zac-status-label [taakStatus]="taak.status"></zac-status-label>
+                                    <zac-status-label [taakStatus]="'taak.status.'+taak.status | translate"></zac-status-label>
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="creatiedatumTijd">
@@ -194,10 +194,10 @@
                             <ng-container matColumnDef="id" stickyEnd id="taakButtons">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let taak">
-                                    <button mat-flat-button [routerLink]="['/taken', taak.id]" title="{{ 'taken.bekijk' | translate }}">
+                                    <button mat-flat-button [routerLink]="['/taken', taak.id]" title="{{ 'actie.taak.bekijk' | translate }}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
-                                    <button mat-flat-button title="{{ 'toekennen.aan.mij' | translate }}"
+                                    <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
                                             (click)="taakToekennenAanIngelogdeMedewerker(taak)" *ngIf="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]">
                                         <mat-icon>person_add_alt</mat-icon>
                                     </button>
@@ -206,7 +206,7 @@
                             <tr mat-header-row *matHeaderRowDef="takenColumnsToDisplay"></tr>
                             <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"></tr>
                         </table>
-                        <p *ngIf="takenDataSource.data.length == 0">{{'geen.gegevens.gevonden' | translate}}</p>
+                        <p *ngIf="takenDataSource.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                     </div>
                 </mat-card-content>
             </mat-card>
@@ -215,7 +215,7 @@
         <div fxLayout>
             <mat-card fxFlex="calc(100%-20px)">
                 <mat-card-header>
-                    <mat-card-title>{{'documenten'| translate}}</mat-card-title>
+                    <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <div class="table-wrapper">
@@ -225,7 +225,7 @@
                                 <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
                                 <td mat-cell *matCellDef="let row">
                                     <ng-container *ngIf="column == 'titel'">{{row[column] | empty}}</ng-container>
-                                    <ng-container *ngIf="column == 'status'">{{'informatieobjectstatus.' + row[column]|translate | empty}}</ng-container>
+                                    <ng-container *ngIf="column == 'status'">{{'informatieobject.status.' + row[column]|translate | empty}}</ng-container>
                                     <ng-container
                                             *ngIf="column == 'vertrouwelijkheidaanduiding'">{{'vertrouwelijkheidaanduiding.' + row[column]|translate | empty}}</ng-container>
                                     <ng-container *ngIf="column == 'creatiedatum'">{{row[column] |datum| empty}}</ng-container>
@@ -237,7 +237,7 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let row">
                                     <button mat-flat-button [routerLink]="['/informatie-objecten', row.uuid]"
-                                            title="{{ 'documenten.bekijk' | translate}}">
+                                            title="{{ 'actie.document.bekijk' | translate}}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                 </td>
@@ -247,7 +247,7 @@
                             <tr mat-row
                                 *matRowDef="let row; columns: ['titel','status','vertrouwelijkheidaanduiding','creatiedatum', 'auteur', 'url'];"></tr>
                         </table>
-                        <p *ngIf="enkelvoudigInformatieObjecten.length == 0">{{'geen.gegevens.gevonden' | translate}}</p>
+                        <p *ngIf="enkelvoudigInformatieObjecten.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                     </div>
                 </mat-card-content>
             </mat-card>

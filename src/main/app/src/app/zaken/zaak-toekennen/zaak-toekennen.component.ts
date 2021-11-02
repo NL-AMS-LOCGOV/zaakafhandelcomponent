@@ -14,7 +14,6 @@ import {IdentityService} from '../../identity/identity.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {Title} from '@angular/platform-browser';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
@@ -31,14 +30,13 @@ export class ZaakToekennenComponent implements OnInit, OnDestroy {
     zaak: Zaak;
 
     constructor(private route: ActivatedRoute, private mfbService: MaterialFormBuilderService, private identityService: IdentityService,
-                private navigation: NavigationService, private zakenService: ZakenService, private titleService: Title, private utilService: UtilService, private websocketService: WebsocketService) {
+                private navigation: NavigationService, private zakenService: ZakenService, private utilService: UtilService, private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
         this.zaak = this.route.snapshot.data['zaak'];
 
-        this.titleService.setTitle(`${this.zaak.identificatie} | Zaak toekennen`);
-        this.utilService.setHeaderTitle(`${this.zaak.identificatie} | Zaak toekennen`);
+        this.utilService.setTitle('title.zaak.toekennen', {zaak: this.zaak.identificatie});
 
         this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid,
             () => this.updateZaak());
@@ -60,13 +58,13 @@ export class ZaakToekennenComponent implements OnInit, OnDestroy {
     private initForm() {
         this.identityService.getMedewerkersInGroep(this.zaak.groep.id).subscribe(medewerkers => {
             this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-                const medewerker = this.mfbService.createSelectFormItem('medewerker', 'Medewerker',
+                const medewerker = this.mfbService.createSelectFormItem('medewerker', 'medewerker',
                     this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam', medewerkers,
                     new FormFieldConfig([Validators.required]));
                 this.formItems = [[medewerker]];
             });
         });
-        this.formConfig = new FormConfig('Toekennen', 'Annuleren');
+        this.formConfig = this.utilService.getFormConfig('actie.toekennen');
     }
 
     onFormSubmit(formGroup: FormGroup): void {
