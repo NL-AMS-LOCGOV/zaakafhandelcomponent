@@ -84,14 +84,6 @@ public class CmmnService {
         return (UUID) cmmnRuntimeService.getVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
     }
 
-    public String getZaakIdentificatie(final String caseInstanceID) {
-        return (String) cmmnRuntimeService.getVariable(caseInstanceID, VAR_CASE_ZAAK_IDENTIFICATIE);
-    }
-
-    public String getZaaktypeOmschrijving(final String caseInstanceID) {
-        return (String) cmmnRuntimeService.getVariable(caseInstanceID, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
-    }
-
     public UUID getZaakUuidViaTaskId(final String taskId) {
         return (UUID) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAK_UUID);
     }
@@ -279,7 +271,7 @@ public class CmmnService {
                 .list();
     }
 
-    public String getCaseInstanceId(final UUID zaakUUID) {
+    private String getCaseInstanceId(final UUID zaakUUID) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .singleResult();

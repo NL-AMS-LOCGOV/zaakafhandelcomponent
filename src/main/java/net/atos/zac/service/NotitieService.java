@@ -32,7 +32,7 @@ public class NotitieService {
         return notitie;
     }
 
-    public List<Notitie> listNotities(final UUID zaakUUID) {
+    public List<Notitie> getNotitiesForZaak(final UUID zaakUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Notitie> query = builder.createQuery(Notitie.class);
         final Root<Notitie> root = query.from(Notitie.class);
@@ -45,8 +45,8 @@ public class NotitieService {
         return entityManager.merge(notitie);
     }
 
-    public void deleteNotitie(final Long id) {
-        final Notitie notitie = entityManager.find(Notitie.class, id);
+    public void deleteNotitie(final Long notitieId) {
+        final Notitie notitie = entityManager.find(Notitie.class, notitieId);
         entityManager.remove(notitie);
     }
 }
