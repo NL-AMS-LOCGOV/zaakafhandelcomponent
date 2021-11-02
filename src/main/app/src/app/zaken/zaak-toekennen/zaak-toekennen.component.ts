@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {Zaak} from '../model/zaak';
 import {FormGroup, Validators} from '@angular/forms';
@@ -15,22 +15,19 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
-import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
-import {ObjectType} from '../../core/websocket/model/object-type';
 
 @Component({
     templateUrl: './zaak-toekennen.component.html',
     styleUrls: ['./zaak-toekennen.component.less']
 })
-export class ZaakToekennenComponent implements OnInit, OnDestroy {
+export class ZaakToekennenComponent implements OnInit {
 
     formItems: Array<FormItem[]>;
     formConfig: FormConfig;
     zaak: Zaak;
 
     constructor(private route: ActivatedRoute, private mfbService: MaterialFormBuilderService, private identityService: IdentityService,
-                private navigation: NavigationService, private zakenService: ZakenService, private utilService: UtilService, private websocketService: WebsocketService) {
+                private navigation: NavigationService, private zakenService: ZakenService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -38,21 +35,7 @@ export class ZaakToekennenComponent implements OnInit, OnDestroy {
 
         this.utilService.setTitle('title.zaak.toekennen', {zaak: this.zaak.identificatie});
 
-        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid,
-            () => this.updateZaak());
-
         this.initForm();
-    }
-
-    ngOnDestroy(): void {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
-    }
-
-    private updateZaak() {
-        this.zakenService.getZaak(this.zaak.uuid).subscribe(zaak => {
-            this.zaak.behandelaar = zaak.behandelaar;
-            this.initForm();
-        });
     }
 
     private initForm() {

@@ -118,7 +118,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
         this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid);
     }
 

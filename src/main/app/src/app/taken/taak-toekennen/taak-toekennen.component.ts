@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
@@ -14,35 +14,25 @@ import {IdentityService} from '../../identity/identity.service';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {TakenService} from '../taken.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
-import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
-import {ObjectType} from '../../core/websocket/model/object-type';
 import {UtilService} from '../../core/service/util.service';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
     styleUrls: ['./taak-toekennen.component.less']
 })
-export class TaakToekennenComponent implements OnInit, OnDestroy {
+export class TaakToekennenComponent implements OnInit {
 
     formItems: Array<FormItem[]>;
     formConfig: FormConfig;
     taak: Taak;
 
     constructor(private route: ActivatedRoute, private identityService: IdentityService, private takenService: TakenService,
-                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private websocketService: WebsocketService,
-                private utilService: UtilService) {
+                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
         this.taak = this.route.snapshot.data['taak'];
-        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
-            () => this.updateTaak());
         this.initForm();
-    }
-
-    ngOnDestroy(): void {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
     }
 
     private initForm() {
@@ -56,13 +46,6 @@ export class TaakToekennenComponent implements OnInit, OnDestroy {
                     new FormFieldConfig([Validators.required]));
                 this.formItems = [[titel], [naam], [medewerker]];
             });
-        });
-    }
-
-    private updateTaak() {
-        this.takenService.getTaak(this.taak.id).subscribe(taak => {
-            this.taak.behandelaar = taak.behandelaar;
-            this.initForm();
         });
     }
 
