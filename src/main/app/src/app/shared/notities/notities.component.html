@@ -32,7 +32,7 @@
                     </p>
                     <div *ngIf="geselecteerdeNotitieId === notitie.id">
                         <mat-form-field class="textareaNotitie" appearance="fill">
-                            <mat-label>{{ 'msg.notitie.bewerken' | translate }}</mat-label>
+                            <mat-label>{{ 'actie.notitie.wijzigen' | translate }}</mat-label>
                             <textarea matInput cdkTextareaAutosize [maxLength]="maxLengteTextArea" #notitieTekst>{{ notitie.tekst }}</textarea>
                         </mat-form-field>
                         <button fxLayoutAlign="center center" mat-icon-button aria-label="Opslaan" color="primary"
@@ -43,7 +43,7 @@
                 </div>
                 <div class="notitieContentFooter">
                     <ng-container *ngIf="(notitie.bewerkenToegestaan && !geselecteerdeNotitieId) || geselecteerdeNotitieId !== notitie.id">
-                        <button mat-icon-button (click)="pasNotitieAan(notitie.id)" title="{{ 'acie.bewerken' | translate }}">
+                        <button mat-icon-button (click)="pasNotitieAan(notitie.id)" title="{{ 'actie.bewerken' | translate }}">
                             <mat-icon>edit</mat-icon>
                         </button>
                         <button mat-icon-button (click)="verwijderNotitie(notitie.id)" title="{{ 'actie.verwijderen' | translate }}">
@@ -56,7 +56,7 @@
     </div>
     <div class="notitieFooter">
         <mat-form-field class="textareaNotitie">
-            <mat-label>{{ 'msg.notitie.toevoegen' | translate }}</mat-label>
+            <mat-label>{{ 'actie.notitie.aanmaken' | translate }}</mat-label>
             <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="2" maxlength="1000" #notitieTekst></textarea>
         </mat-form-field>
         <button mat-mini-fab aria-label="Opslaan" color="primary" (click)="maakNotitieAan(notitieTekst.value)"
