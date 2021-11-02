@@ -80,7 +80,7 @@
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
-                        title="{{ 'actie.zaak.bekijk' | translate }}">
+                        title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
                 <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)"

@@ -4,9 +4,9 @@
   -->
 
 <mat-form-field appearance="fill" class="full-width">
-    <mat-label>{{data.label}}</mat-label>
+    <mat-label>{{data.label | translate}}</mat-label>
     <input [id]="data.id" #mapAutoComplete matInput [formControl]="data.formControl" [required]="data.required"/>
-    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label}}</mat-hint>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
 </mat-form-field>
 

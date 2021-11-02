@@ -50,7 +50,7 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
     private initForm() {
         this.utilService.setTitle('title.zaak.wijzigen', {zaak: this.zaak.identificatie});
 
-        this.formConfig = this.utilService.getFormConfig('actie.opslaan');
+        this.formConfig = new FormConfig('actie.opslaan', 'actie.annuleren');
 
         const omschrijving =
             this.mfbService.createInputFormItem('omschrijving', 'omschrijving', this.zaak.omschrijving);

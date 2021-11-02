@@ -32,7 +32,8 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = this.utilService.getFormConfig('actie.versturen');
+        this.utilService.setTitle('title.zaak.aanmaken');
+        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
         this.zakenService.getZaaktypes().subscribe(value => {
             const zaaktypes: Zaaktype[] = value;
             const communicatiekanalen: object[] = [{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}];
@@ -52,7 +53,7 @@ export class ZaakCreateComponent implements OnInit {
             const communicatiekanaal = this.mfbService.createSelectFormItem('communicatiekanaal', 'communicatiekanaal', null,
                 'doel', communicatiekanalen);
             const vertrouwelijkheidaanduiding = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding',
-                'Vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
+                'vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
             const omschrijving =
                 this.mfbService.createInputFormItem('omschrijving', 'omschrijving', null);
             const toelichting =

@@ -10,7 +10,6 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 
 @Injectable({
     providedIn: 'root'
@@ -62,10 +61,6 @@ export class UtilService {
 
     setLoading(loading: boolean): void {
         this.loading.next(loading);
-    }
-
-    getFormConfig(actie) {
-        return new FormConfig(this.translate.get(actie), this.translate.get('actie.annuleren'));
     }
 
     getEnumAsSelectList(prefix: string, enumValue: any): { label: string, value: string }[] {

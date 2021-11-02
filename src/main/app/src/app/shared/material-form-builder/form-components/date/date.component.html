@@ -4,10 +4,10 @@
   -->
 
 <mat-form-field appearance="fill" class="full-width">
-    <mat-label>{{data.label}}</mat-label>
+    <mat-label>{{data.label | translate}}</mat-label>
     <input matInput [matDatepicker]="picker" [formControl]="data.formControl" [required]="data.required"/>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
-    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label}}</mat-hint>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
 </mat-form-field>

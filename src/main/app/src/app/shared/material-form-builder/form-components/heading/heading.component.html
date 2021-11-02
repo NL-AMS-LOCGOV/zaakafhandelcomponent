@@ -4,10 +4,10 @@
   -->
 
 <ng-container [ngSwitch]="data.level">
-    <h1 [id]="data.id" *ngSwitchCase="'1'">{{data.label}}</h1>
-    <h2 [id]="data.id" *ngSwitchCase="'2'">{{data.label}}</h2>
-    <h3 [id]="data.id" *ngSwitchCase="'3'">{{data.label}}</h3>
-    <h4 [id]="data.id" *ngSwitchCase="'4'">{{data.label}}</h4>
-    <h5 [id]="data.id" *ngSwitchCase="'5'">{{data.label}}</h5>
-    <h6 [id]="data.id" *ngSwitchCase="'6'">{{data.label}}</h6>
+    <h1 [id]="data.id" *ngSwitchCase="'1'">{{data.label | translate}}</h1>
+    <h2 [id]="data.id" *ngSwitchCase="'2'">{{data.label | translate}}</h2>
+    <h3 [id]="data.id" *ngSwitchCase="'3'">{{data.label | translate}}</h3>
+    <h4 [id]="data.id" *ngSwitchCase="'4'">{{data.label | translate}}</h4>
+    <h5 [id]="data.id" *ngSwitchCase="'5'">{{data.label | translate}}</h5>
+    <h6 [id]="data.id" *ngSwitchCase="'6'">{{data.label | translate}}</h6>
 </ng-container>

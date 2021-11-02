@@ -36,7 +36,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.taak = this.route.snapshot.data['taak'];
         this.utilService.setTitle('title.taak.wijzigen', {taak: this.taak.naam});
-        this.formConfig = this.utilService.getFormConfig('actie.bewerken');
+        this.formConfig = new FormConfig('actie.bewerken', 'actie.annuleren');
         this.initToelichtingVeld();
         this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());

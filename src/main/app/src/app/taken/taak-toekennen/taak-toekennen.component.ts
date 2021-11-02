@@ -36,7 +36,8 @@ export class TaakToekennenComponent implements OnInit {
     }
 
     private initForm() {
-        this.formConfig = this.utilService.getFormConfig('actie.toekennen');
+        this.utilService.setTitle('title.taak.toekennen', {taak: this.taak.naam});
+        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
         const titel = this.mfbService.createHeadingFormItem('toekennenTaak', 'actie.taak.toekennen', '1');
         const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.taak.naam);
         this.identityService.getMedewerkersInGroep(this.taak.groep.id).subscribe(medewerkers => {

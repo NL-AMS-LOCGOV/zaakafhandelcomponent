@@ -28,12 +28,12 @@ export class PlanItemDoComponent implements OnInit {
     private planItem: PlanItem;
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private identityService: IdentityService,
-                private mfbService: MaterialFormBuilderService, private router: Router, private navigation: NavigationService,
-                private utilService: UtilService) {
+                private mfbService: MaterialFormBuilderService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.formConfig = this.utilService.getFormConfig('actie.starten');
+        this.utilService.setTitle('title.taak.aanmaken', {taak: this.planItem.naam});
+        this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
         const titel = this.mfbService.createHeadingFormItem('doPlanItem', 'actie.taak.aanmaken', '1');
         this.planItem = this.route.snapshot.data['planItem'];
         const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.planItem.naam);

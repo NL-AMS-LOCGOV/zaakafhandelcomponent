@@ -45,7 +45,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = this.utilService.getFormConfig('actie.versturen');
+        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
@@ -53,7 +53,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
         this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
-            this.utilService.setTitle('title.document.toevoegen', {zaak: zaak.identificatie});
+            this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
             const types = this.getTypes(zaak);
             const titel = this.mfbService.createInputFormItem('titel', 'titel', null, this.required());
             const beschrijving = this.mfbService.createInputFormItem('beschrijving', 'beschrijving', null);
@@ -62,7 +62,7 @@ export class InformatieObjectCreateComponent implements OnInit {
             const taal = this.mfbService.createSelectFormItem('taal', 'taal', talen[0], 'label', talen, this.required());
             const status = this.mfbService.createSelectFormItem('status', 'status', informatieobjectStatussen[0], 'label',
                 informatieobjectStatussen);
-            const documentType = this.mfbService.createSelectFormItem('informatieobjectType', 'type', null, null, types, this.required());
+            const documentType = this.mfbService.createSelectFormItem('informatieobjectType', 'informatieobjectType', null, null, types, this.required());
             const auteur = this.mfbService.createInputFormItem('auteur', 'auteur', null, this.required());
             const vertrouwelijk = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding', 'vertrouwelijkheidaanduiding',
                 vertrouwelijkheidsAanduidingen[0],

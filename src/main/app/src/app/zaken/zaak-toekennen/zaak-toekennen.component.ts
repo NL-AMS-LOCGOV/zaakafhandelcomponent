@@ -47,7 +47,7 @@ export class ZaakToekennenComponent implements OnInit {
                 this.formItems = [[medewerker]];
             });
         });
-        this.formConfig = this.utilService.getFormConfig('actie.toekennen');
+        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
     }
 
     onFormSubmit(formGroup: FormGroup): void {

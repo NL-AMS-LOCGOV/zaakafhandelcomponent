@@ -4,7 +4,7 @@
   -->
 
 <mat-form-field appearance="fill" class="full-width" (click)="fileInput.click()">
-    <mat-label>{{data.label}}</mat-label>
+    <mat-label>{{data.label | translate}}</mat-label>
     <input [id]="data.id" matInput [formControl]="data.formControl" [readonly]="true" [required]="data.required"/>
     <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
         <mat-icon>upload</mat-icon>
@@ -15,7 +15,7 @@
     <button *ngIf="status == 'GEREED'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
         <mat-icon>delete</mat-icon>
     </button>
-    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label}}</mat-hint>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
         {{data.getErrorMessage()}}
     </mat-hint>

@@ -30,6 +30,7 @@ import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {BUILDER_CONFIG, MaterialFormBuilderConfig} from './material-form-builder-config';
 import {FileComponent} from './form-components/file/file.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -59,7 +60,8 @@ import {FileComponent} from './form-components/file/file.component';
         MatButtonModule,
         MatSelectModule,
         MatMomentDateModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        TranslateModule
     ],
     exports: [
         FormComponent,
