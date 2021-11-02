@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {sideNavToggle} from '../../shared/animations/animations';
@@ -16,6 +16,9 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {PageEvent} from '@angular/material/paginator';
 import {UtilService} from '../../core/service/util.service';
 import {Subscription} from 'rxjs';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {Operatie} from '../../core/websocket/model/operatie';
+import {ObjectType} from '../../core/websocket/model/object-type';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -23,7 +26,7 @@ import {Subscription} from 'rxjs';
     styleUrls: ['./zaak-verkort.component.less'],
     animations: [sideNavToggle]
 })
-export class ZaakVerkortComponent implements OnInit {
+export class ZaakVerkortComponent implements OnInit, OnDestroy {
     @Input() zaakUuid: string;
     @Output() zaakLoadedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -35,7 +38,7 @@ export class ZaakVerkortComponent implements OnInit {
     highValue: number = 5;
     private subscriptions$: Subscription[] = [];
 
-    constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService) {
+    constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService, private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
@@ -43,17 +46,17 @@ export class ZaakVerkortComponent implements OnInit {
             this.collapsed = isCollapsed;
         }));
 
-        this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.zaakLoadedEmitter.emit(true);
-            this.loadInformatieObjecten();
-        });
+        this.loadZaak();
 
         this.subscriptions$.push(this.utilService.isTablet$.subscribe(isTablet => {
             if (isTablet && this.collapsed) {
                 this.toggleMenu();
             }
         }));
+
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
+        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaakUuid,
+            () => this.loadInformatieObjecten());
     }
 
     toggleMenu(): void {
@@ -66,6 +69,14 @@ export class ZaakVerkortComponent implements OnInit {
         });
     }
 
+    private loadZaak() {
+        this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
+            this.zaak = zaak;
+            this.zaakLoadedEmitter.emit(true);
+            this.loadInformatieObjecten();
+        });
+    }
+
     onPageChanged(event: PageEvent): PageEvent {
         this.lowValue = event.pageIndex * event.pageSize;
         this.highValue = this.lowValue + event.pageSize;
@@ -73,6 +84,8 @@ export class ZaakVerkortComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaakUuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaakUuid);
         this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
     }
 }

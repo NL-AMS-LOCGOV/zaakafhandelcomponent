@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ZakenService} from '../zaken.service';
@@ -22,7 +22,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
     templateUrl: './zaak-edit.component.html',
     styleUrls: ['./zaak-edit.component.less']
 })
-export class ZaakEditComponent implements OnInit {
+export class ZaakEditComponent implements OnInit, OnDestroy {
 
     editZaakFields: Array<FormItem[]>;
     private zaak: Zaak;
@@ -40,8 +40,13 @@ export class ZaakEditComponent implements OnInit {
 
     ngOnInit(): void {
         this.zaak = this.route.snapshot.data['zaak'];
-        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid, event => this.updateZaak());
+        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid,
+            () => this.updateZaak());
         this.initForm();
+    }
+
+    ngOnDestroy(): void {
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
     }
 
     private initForm() {
@@ -69,7 +74,6 @@ export class ZaakEditComponent implements OnInit {
             const patchData: Zaak = new Zaak();
             patchData.omschrijving = formGroup.controls['omschrijving'].value;
             patchData.toelichting = formGroup.controls['toelichting'].value;
-            this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
             this.zakenService.updateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
                 this.router.navigate(['/zaken/', updatedZaak.uuid]);
             });

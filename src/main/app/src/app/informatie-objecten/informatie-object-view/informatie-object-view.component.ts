@@ -18,13 +18,15 @@ import {AbstractView} from '../../shared/abstract-view/abstract-view';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
-import {Subscription} from 'rxjs';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {Operatie} from '../../core/websocket/model/operatie';
+import {ObjectType} from '../../core/websocket/model/object-type';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
-export class InformatieObjectViewComponent extends AbstractView implements OnInit {
+export class InformatieObjectViewComponent extends AbstractView implements OnInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieObject;
     menu: MenuItem[];
@@ -36,7 +38,8 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
                 private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
                 private titleService: Title,
-                public utilService: UtilService) {
+                public utilService: UtilService,
+                private websocketService: WebsocketService) {
         super(store, utilService);
     }
 
@@ -46,15 +49,24 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.titleService.setTitle(`${this.infoObject.identificatie} | Document`);
             this.utilService.setHeaderTitle(`${this.infoObject.identificatie} | Document`);
 
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.DOCUMENT, this.infoObject.uuid,
+                () => this.loadInformatieObject());
+
             this.setupMenu();
             this.loadZaken();
         }));
     }
 
+    ngOnDestroy() {
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.DOCUMENT, this.infoObject.uuid);
+    }
+
     private setupMenu(): void {
         this.menu = [
             new HeaderMenuItem('Document'),
-            new DownloadMenuItem('Downloaden', `/zac/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`, this.infoObject.bestandsnaam,
+            new DownloadMenuItem('Downloaden',
+                `/zac/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
+                this.infoObject.bestandsnaam,
                 'save_alt')
         ];
     }
@@ -63,6 +75,13 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
         this.informatieObjectenService.getZaakKoppelingen(this.infoObject.uuid).subscribe(zaken => {
             this.zaken = zaken;
         });
+    }
+
+    private loadInformatieObject() {
+        this.informatieObjectenService.getEnkelvoudigInformatieObject(this.infoObject.uuid)
+            .subscribe(informatieObject => {
+                this.infoObject = informatieObject;
+            });
     }
 
 }
