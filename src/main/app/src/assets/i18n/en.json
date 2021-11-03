@@ -153,9 +153,9 @@
   "msg.gewijzigd.operatie.TOEVOEGING": "added",
   "msg.gewijzigd.operatie.VERWIJDERING": "removed",
   "msg.gewijzigd.4": " by somebody.",
-  "msg.taak.afgerond": "Task finished",
-  "msg.taak.toegekend": "Task assigned to {{behandelaar}}",
-  "msg.taak.vrijgegeven": "Task released",
-  "msg.zaak.toegekend": "Case assigned to {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "Case released"
+  "msg.taak.afgerond": "The task has been finished",
+  "msg.taak.toegekend": "The task has been assigned to {{behandelaar}}",
+  "msg.taak.vrijgegeven": "The task has been released",
+  "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
+  "msg.zaak.vrijgegeven": "The case has been released"
 }

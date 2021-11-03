@@ -153,9 +153,9 @@
   "msg.gewijzigd.operatie.TOEVOEGING": "toegevoegd",
   "msg.gewijzigd.operatie.VERWIJDERING": "verwijderd",
   "msg.gewijzigd.4": ".",
-  "msg.taak.afgerond": "Taak afgerond",
-  "msg.taak.toegekend": "Taak toegekend aan {{behandelaar}}",
-  "msg.taak.vrijgegeven": "Taak vrijgegeven",
-  "msg.zaak.toegekend": "Zaak toegekend aan {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "Zaak vrijgegeven"
+  "msg.taak.afgerond": "De taak is afgerond",
+  "msg.taak.toegekend": "De taak is toegekend aan {{behandelaar}}",
+  "msg.taak.vrijgegeven": "De taak is vrijgegeven",
+  "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
+  "msg.zaak.vrijgegeven": "De zaak is vrijgegeven"
 }
