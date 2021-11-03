@@ -32,10 +32,10 @@ export class PlanItemDoComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.planItem = this.route.snapshot.data['planItem'];
         this.utilService.setTitle('title.taak.aanmaken', {taak: this.planItem.naam});
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
         const titel = this.mfbService.createHeadingFormItem('doPlanItem', 'actie.taak.aanmaken', '1');
-        this.planItem = this.route.snapshot.data['planItem'];
         const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.planItem.naam);
         if (this.planItem.type == PlanItemType.HumanTask) {
             this.identityService.getGroepen().subscribe(groepen => {
