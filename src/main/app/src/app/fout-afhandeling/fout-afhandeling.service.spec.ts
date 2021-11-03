@@ -9,12 +9,13 @@ describe('FoutAfhandelingService', () => {
     let service: FoutAfhandelingService;
     let mockRouter;
     let mockSnackbar;
+    let mockTranslate;
 
     beforeEach(() => {
         mockRouter = jasmine.createSpyObj(['navigate']);
         mockSnackbar = jasmine.createSpyObj(['open']);
 
-        service = new FoutAfhandelingService(mockRouter, mockSnackbar);
+        service = new FoutAfhandelingService(mockRouter, mockSnackbar, mockTranslate);
     });
 
     it('should be created', () => {

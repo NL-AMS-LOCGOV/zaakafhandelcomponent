@@ -19,6 +19,7 @@ describe('IdentityService', () => {
     let mockSessionStorageService;
     let mockRouter;
     let mockSnackbar;
+    let mockTranslate;
 
     const groepenJaap: Groep[] = [{id: 'groepa', naam: 'GroepA'}, {id: 'groepb', naam: 'GroepB'}];
     const jaap: Medewerker = {gebruikersnaam: 'jaap@mail.com', naam: 'Jaap Doe', groepen: groepenJaap};
@@ -26,7 +27,7 @@ describe('IdentityService', () => {
     beforeEach(() => {
         mockRouter = jasmine.createSpyObj(['navigate']);
         mockSnackbar = jasmine.createSpyObj(['open']);
-        mockFoutAfhandelingService = new FoutAfhandelingService(mockRouter, mockSnackbar);
+        mockFoutAfhandelingService = new FoutAfhandelingService(mockRouter, mockSnackbar, mockTranslate);
 
         TestBed.configureTestingModule({
             providers: [

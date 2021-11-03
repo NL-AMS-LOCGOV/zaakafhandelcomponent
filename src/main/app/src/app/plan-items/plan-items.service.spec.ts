@@ -12,12 +12,13 @@ describe('PlanItemServiceService', () => {
     let mockFoutAfhandelingService;
     let mockRouter;
     let mockSnackbar;
+    let mockTranslate;
 
     beforeEach(() => {
         mockHttpClient = jasmine.createSpyObj(['get', 'put']);
         mockRouter = jasmine.createSpyObj(['navigate']);
         mockSnackbar = jasmine.createSpyObj(['open']);
-        mockFoutAfhandelingService = new FoutAfhandelingService(mockRouter, mockSnackbar);
+        mockFoutAfhandelingService = new FoutAfhandelingService(mockRouter, mockSnackbar, mockTranslate);
 
         service = new PlanItemsService(mockHttpClient, mockFoutAfhandelingService);
     });

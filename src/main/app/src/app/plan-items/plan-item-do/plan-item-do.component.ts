@@ -33,7 +33,7 @@ export class PlanItemDoComponent implements OnInit {
 
     ngOnInit(): void {
         this.planItem = this.route.snapshot.data['planItem'];
-        this.utilService.setTitle('title.taak.aanmaken', {taak: this.planItem.naam});
+        this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
         const titel = this.mfbService.createHeadingFormItem('doPlanItem', 'actie.taak.aanmaken', '1');
         const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.planItem.naam);
