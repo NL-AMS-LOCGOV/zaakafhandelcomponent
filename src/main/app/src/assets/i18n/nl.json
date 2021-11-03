@@ -156,5 +156,6 @@
   "msg.taak.afgerond": "Taak afgerond",
   "msg.taak.toegekend": "Taak toegekend aan {{behandelaar}}",
   "msg.taak.vrijgegeven": "Taak vrijgegeven",
-  "msg.zaak.toegekend": "Zaak toegekend aan {{behandelaar}}"
+  "msg.zaak.toegekend": "Zaak toegekend aan {{behandelaar}}",
+  "msg.zaak.vrijgegeven": "Zaak vrijgegeven"
 }

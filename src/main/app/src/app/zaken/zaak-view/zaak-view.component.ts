@@ -186,7 +186,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     vrijgeven = (): void => {
         this.zaak.behandelaar = null;
         this.zakenService.toekennen(this.zaak).subscribe(() => {
-            this.utilService.openSnackbar('zaak.vrijgegeven');
+            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
             this.ngOnInit();
         });
     };

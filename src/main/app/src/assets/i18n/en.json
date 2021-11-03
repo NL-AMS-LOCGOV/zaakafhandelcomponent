@@ -156,5 +156,6 @@
   "msg.taak.afgerond": "Task finished",
   "msg.taak.toegekend": "Task assigned to {{behandelaar}}",
   "msg.taak.vrijgegeven": "Task released",
-  "msg.zaak.toegekend": "Case assigned to {{behandelaar}}"
+  "msg.zaak.toegekend": "Case assigned to {{behandelaar}}",
+  "msg.zaak.vrijgegeven": "Case released"
 }
