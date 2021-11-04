@@ -21,7 +21,7 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import net.atos.zac.event.OperatieEnum;
-import net.atos.zac.websocket.event.ObjectTypeEnum;
+import net.atos.zac.websocket.event.SchermObjectTypeEnum;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 /**
@@ -53,7 +53,7 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
 
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
             final OperatieEnum operatie = OperatieEnum.valueOf(jsonEvent.getString(EVENT_OPERATIE));
-            final ObjectTypeEnum objectType = ObjectTypeEnum.valueOf(jsonEvent.getString(EVENT_OBJECT_TYPE));
+            final SchermObjectTypeEnum objectType = SchermObjectTypeEnum.valueOf(jsonEvent.getString(EVENT_OBJECT_TYPE));
             final JsonValue jsonObjectId = jsonEvent.get(EVENT_OBJECT_ID);
             return subscriptionType.message(new SchermUpdateEvent(operatie, objectType, jsonObjectId != null ? jsonObjectId.toString() : null));
         }

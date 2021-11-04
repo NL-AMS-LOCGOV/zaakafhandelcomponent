@@ -6,8 +6,8 @@
 package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK;
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK_BETROKKENEN;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_BETROKKENEN;
 
 import java.util.logging.Logger;
 

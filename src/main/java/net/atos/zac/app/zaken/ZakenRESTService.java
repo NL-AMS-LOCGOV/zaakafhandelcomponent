@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.zaken;
 
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK;
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK_BETROKKENEN;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_BETROKKENEN;
 
 import java.util.Collections;
 import java.util.List;

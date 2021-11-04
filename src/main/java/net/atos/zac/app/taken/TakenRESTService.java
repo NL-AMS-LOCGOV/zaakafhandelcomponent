@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.taken;
 
-import static net.atos.zac.websocket.event.ObjectTypeEnum.TAAK;
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK_TAKEN;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.TAAK;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_TAKEN;
 
 import java.util.List;
 import java.util.UUID;

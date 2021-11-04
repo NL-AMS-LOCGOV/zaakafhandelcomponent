@@ -5,8 +5,6 @@
 
 package net.atos.zac.websocket.event;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import net.atos.zac.event.AbstractUpdateEvent;
@@ -19,12 +17,12 @@ import net.atos.zac.event.OperatieEnum;
  * 3. De ObjectEventProducerImpl gooit objecten o.a. dit object (SchermUpdateEvent) naar de queue: /jms/queue/SchermUpdate
  * 4. WebSocketsObjectMessageDrivenBean haalt het object weer van de queue en gooit deze via webSockets naar de browser.
  */
-public class SchermUpdateEvent extends AbstractUpdateEvent<ObjectTypeEnum, String> {
+public class SchermUpdateEvent extends AbstractUpdateEvent<SchermObjectTypeEnum, String> {
 
     private static final long serialVersionUID = -740125186878024703L;
 
     @NotNull
-    private ObjectTypeEnum objectType;
+    private SchermObjectTypeEnum objectType;
 
     /**
      * Constructor for the sake of JAXB
@@ -40,13 +38,13 @@ public class SchermUpdateEvent extends AbstractUpdateEvent<ObjectTypeEnum, Strin
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public SchermUpdateEvent(final OperatieEnum operatie, final ObjectTypeEnum objectType, final String objectId) {
+    public SchermUpdateEvent(final OperatieEnum operatie, final SchermObjectTypeEnum objectType, final String objectId) {
         super(operatie, objectId);
         this.objectType = objectType;
     }
 
     @Override
-    public ObjectTypeEnum getObjectType() {
+    public SchermObjectTypeEnum getObjectType() {
         return objectType;
     }
 }

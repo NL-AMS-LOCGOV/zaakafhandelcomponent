@@ -5,7 +5,7 @@
 
 package net.atos.zac.service;
 
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
 
 import java.net.URI;
 import java.util.Optional;

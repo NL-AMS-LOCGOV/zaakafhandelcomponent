@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import net.atos.zac.event.OperatieEnum;
 import net.atos.zac.websocket.SessionRegistry;
-import net.atos.zac.websocket.event.ObjectTypeEnum;
+import net.atos.zac.websocket.event.SchermObjectTypeEnum;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 public class SessionRegistryTest {
@@ -328,17 +328,17 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final SchermUpdateEvent EVENT1 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, ObjectTypeEnum.ZAAK, "1");
+    private static final SchermUpdateEvent EVENT1 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "1");
 
-    private static final SchermUpdateEvent EVENT1a = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, ObjectTypeEnum.ZAAK, "\"1\"");
+    private static final SchermUpdateEvent EVENT1a = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "\"1\"");
 
-    private static final SchermUpdateEvent EVENT1b = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, ObjectTypeEnum.ZAAK, "\"\"1\"\"");
+    private static final SchermUpdateEvent EVENT1b = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "\"\"1\"\"");
 
-    private static final SchermUpdateEvent EVENT2 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, ObjectTypeEnum.ZAAK, "2");
+    private static final SchermUpdateEvent EVENT2 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "2");
 
-    private static final SchermUpdateEvent EVENT3 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, ObjectTypeEnum.TAAK, "1");
+    private static final SchermUpdateEvent EVENT3 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.TAAK, "1");
 
-    private static final SchermUpdateEvent EVENT4 = new SchermUpdateEvent(OperatieEnum.WIJZIGING, ObjectTypeEnum.ZAAK, "1");
+    private static final SchermUpdateEvent EVENT4 = new SchermUpdateEvent(OperatieEnum.WIJZIGING, SchermObjectTypeEnum.ZAAK, "1");
 
     @Test
     public void testFixGelijk() {

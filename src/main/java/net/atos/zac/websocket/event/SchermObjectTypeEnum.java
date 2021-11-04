@@ -22,7 +22,7 @@ import net.atos.zac.event.OperatieEnum;
 /**
  * Enumeratie die de soorten object wijzigingen bevat zoals die gebruikt worden door het {@link SchermUpdateEvent}.
  */
-public enum ObjectTypeEnum {
+public enum SchermObjectTypeEnum {
 
     /**
      * indicatie dat een operatie op een document is opgetreden
@@ -95,29 +95,29 @@ public enum ObjectTypeEnum {
     };
 
     // Dit is de uiteindelijke echte factory method
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final String id) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final String id) {
         return new SchermUpdateEvent(operatie, type, id);
     }
 
     // Bij deze methods bepaal je zelf wat er als id gebruikt wordt, let er op dat dit consistent is met de andere methods
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final UUID uuid) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final UUID uuid) {
         return instance(operatie, type, uuid.toString());
     }
 
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final URI url) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final URI url) {
         return instance(operatie, type, URIUtil.parseUUIDFromResourceURI(url));
     }
 
     // Deze methods bepalen wat er als id gebruikt wordt, zodat dit overal hetzelfde is
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final Zaak zaak) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final Zaak zaak) {
         return instance(operatie, type, zaak.getUuid());
     }
 
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final EnkelvoudigInformatieobject document) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final EnkelvoudigInformatieobject document) {
         return instance(operatie, type, document.getUrl());
     }
 
-    private static SchermUpdateEvent instance(final OperatieEnum operatie, final ObjectTypeEnum type, final TaskInfo taak) {
+    private static SchermUpdateEvent instance(final OperatieEnum operatie, final SchermObjectTypeEnum type, final TaskInfo taak) {
         return instance(operatie, type, taak.getId());
     }
 

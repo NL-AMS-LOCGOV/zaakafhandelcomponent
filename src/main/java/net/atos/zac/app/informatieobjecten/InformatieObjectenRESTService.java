@@ -6,8 +6,8 @@
 package net.atos.zac.app.informatieobjecten;
 
 
-import static net.atos.zac.websocket.event.ObjectTypeEnum.DOCUMENT;
-import static net.atos.zac.websocket.event.ObjectTypeEnum.ZAAK_DOCUMENTEN;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.DOCUMENT;
+import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_DOCUMENTEN;
 
 import java.util.ArrayList;
 import java.util.List;
