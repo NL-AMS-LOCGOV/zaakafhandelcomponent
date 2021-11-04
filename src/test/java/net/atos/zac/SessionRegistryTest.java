@@ -25,9 +25,9 @@ import javax.websocket.WebSocketContainer;
 
 import org.junit.jupiter.api.Test;
 
+import net.atos.zac.event.OperatieEnum;
 import net.atos.zac.websocket.SessionRegistry;
 import net.atos.zac.websocket.event.ObjectTypeEnum;
-import net.atos.zac.websocket.event.OperatieEnum;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 public class SessionRegistryTest {

@@ -20,8 +20,8 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
+import net.atos.zac.event.OperatieEnum;
 import net.atos.zac.websocket.event.ObjectTypeEnum;
-import net.atos.zac.websocket.event.OperatieEnum;
 import net.atos.zac.websocket.event.SchermUpdateEvent;
 
 /**

@@ -5,9 +5,9 @@
 
 package net.atos.zac.websocket.event;
 
-import static net.atos.zac.websocket.event.OperatieEnum.TOEVOEGING;
-import static net.atos.zac.websocket.event.OperatieEnum.VERWIJDERING;
-import static net.atos.zac.websocket.event.OperatieEnum.WIJZIGING;
+import static net.atos.zac.event.OperatieEnum.TOEVOEGING;
+import static net.atos.zac.event.OperatieEnum.VERWIJDERING;
+import static net.atos.zac.event.OperatieEnum.WIJZIGING;
 
 import java.net.URI;
 import java.util.UUID;
@@ -17,6 +17,7 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.zac.event.OperatieEnum;
 
 /**
  * Enumeratie die de soorten object wijzigingen bevat zoals die gebruikt worden door het {@link SchermUpdateEvent}.

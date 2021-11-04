@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.websocket.event;
+package net.atos.zac.event;
 
 /**
- * Enumeratie die de operaties bevat zoals die gebruikt worden door het {@link SchermUpdateEvent}.
+ * Enumeratie die de operaties bevat zoals die gebruikt worden door het {@link AbstractUpdateEvent}.
  */
 public enum OperatieEnum {
 
