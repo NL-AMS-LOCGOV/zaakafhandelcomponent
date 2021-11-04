@@ -168,7 +168,7 @@
                             <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'status' | translate}} </th>
                                 <td mat-cell *matCellDef="let taak">
-                                    <zac-status-label [taakStatus]="'taak.status.'+taak.status | translate"></zac-status-label>
+                                    <zac-status-label [taakStatus]="taak.status"></zac-status-label>
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="creatiedatumTijd">
