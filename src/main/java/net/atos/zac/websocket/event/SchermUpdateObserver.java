@@ -17,13 +17,14 @@ import javax.websocket.Session;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.atos.zac.event.AbstractUpdateObserver;
 import net.atos.zac.websocket.SessionRegistry;
 
 /**
  * Deze bean luistert naar SchermUpdateEvents, zet ze om naar een Websockets event en stuurt deze dan door naar de browsers die zich erop geabonneerd hebben.
  */
 @Stateless
-public class SchermUpdateObserver {
+public class SchermUpdateObserver extends AbstractUpdateObserver<SchermUpdateEvent> {
 
     private static final Logger LOG = Logger.getLogger(SchermUpdateObserver.class.getName());
 

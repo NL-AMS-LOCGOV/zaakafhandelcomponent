@@ -36,6 +36,8 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.cache.event.CacheUpdateEvent;
+import net.atos.zac.flowable.cmmn.event.CmmnUpdateEvent;
 import net.atos.zac.service.CmmnService;
 import net.atos.zac.service.EventingService;
 
@@ -78,25 +80,28 @@ public class NotificatieReceiver {
         LOG.info(() -> String
                 .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
                         notificatie.getKanaal(), notificatie.getResource(), notificatie.getActie(), notificatie.getAanmaakdatum().toString()));
-        // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
-        if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
-            startZaakAfhandeling(notificatie);
-        }
+        handleCmmn(notificatie);
+        handleCaches(notificatie);
+        handleWebsockets(notificatie);
         return noContent().build();
     }
 
-    private void startZaakAfhandeling(final Notificatie notificatie) {
-        final Zaak zaak = zrcClientService.getZaak(notificatie.getHoofdObject());
-        final Zaaktype zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype());
-        if (zaaktype.getReferentieproces() != null && StringUtils.isNotEmpty(zaaktype.getReferentieproces().getNaam())) {
-            final String caseDefinitionKey = zaaktype.getReferentieproces().getNaam();
-            LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
-            final Group group = cmmnService.getZaakBehandelaarGroup(caseDefinitionKey);
-            zetZaakBehandelaarOrganisatorischeEenheid(zaak.getUrl(), zaaktype.getUrl(), group);
-            cmmnService.startCase(caseDefinitionKey, zaak, zaaktype);
-            eventingService.versturen(ZAAK.wijziging(zaak));
-        } else {
-            LOG.warning(String.format("Zaaktype '%s': Geen referentie proces gevonden", zaaktype.getIdentificatie()));
+    private void handleCmmn(final Notificatie notificatie) {
+        // TODO ESUITEDEV-25860
+        eventingService.versturen((CmmnUpdateEvent) null);
+        // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
+        if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
+            final Zaak zaak = zrcClientService.getZaak(notificatie.getHoofdObject());
+            final Zaaktype zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype());
+            if (zaaktype.getReferentieproces() != null && StringUtils.isNotEmpty(zaaktype.getReferentieproces().getNaam())) {
+                final String caseDefinitionKey = zaaktype.getReferentieproces().getNaam();
+                LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
+                final Group group = cmmnService.getZaakBehandelaarGroup(caseDefinitionKey);
+                zetZaakBehandelaarOrganisatorischeEenheid(zaak.getUrl(), zaaktype.getUrl(), group);
+                cmmnService.startCase(caseDefinitionKey, zaak, zaaktype);
+            } else {
+                LOG.warning(String.format("Zaaktype '%s': Geen referentie proces gevonden", zaaktype.getIdentificatie()));
+            }
         }
     }
 
@@ -110,7 +115,19 @@ public class NotificatieReceiver {
         final RolOrganisatorischeEenheid rol = new RolOrganisatorischeEenheid(zaakURI, roltype.getUrl(), ORGANISATORISCHE_EENHEID_ROL_TOELICHTING,
                                                                               organisatorischeEenheid);
         zrcClient.rolCreate(rol);
-        eventingService.versturen(ZAAK.wijziging(zaakUUID));
-        eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaakUUID));
+    }
+
+    private void handleCaches(final Notificatie notificatie) {
+        // TODO ESUITEDEV-25860
+        eventingService.versturen((CacheUpdateEvent) null);
+    }
+
+    private void handleWebsockets(final Notificatie notificatie) {
+        // TODO ESUITEDEV-25860
+        if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
+            final Zaak zaak = zrcClientService.getZaak(notificatie.getHoofdObject());
+            eventingService.versturen(ZAAK.wijziging(zaak));
+            eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaak));
+        }
     }
 }

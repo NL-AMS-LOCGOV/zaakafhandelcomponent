@@ -5,12 +5,13 @@
 
 package net.atos.zac.websocket.event;
 
-import java.io.Serializable;
 import java.time.Instant;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import net.atos.zac.event.AbstractUpdateEvent;
 
 /**
  * Dit event wordt gebruikt voor het doorgeven van een service-laag aanpassing naar een update van de web-pagina.
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * 3. De ObjectEventProducerImpl gooit objecten o.a. dit object (SchermUpdateEvent) naar de queue: /jms/queue/SchermUpdate
  * 4. WebSocketsObjectMessageDrivenBean haalt het object weer van de queue en gooit deze via webSockets naar de browser.
  */
-public class SchermUpdateEvent implements Serializable {
+public class SchermUpdateEvent extends AbstractUpdateEvent {
 
     private static final long serialVersionUID = -740125186878024703L;
 
