@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,7 +25,6 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.or.object.model.ORObject;
-import net.atos.client.or.object.util.ObjectsClientHeadersFactory;
 import net.atos.client.or.shared.exception.FoutExceptionMapper;
 import net.atos.client.or.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
@@ -40,7 +40,7 @@ import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
         @RegisterProvider(RuntimeExceptionMapper.class)})
 @Produces({APPLICATION_JSON, APPLICATION_PROBLEM_JSON})
 @Path("api/v1")
-public interface ObjectsClient {
+interface ObjectsClient {
 
     String ACCEPT_CRS = "Accept-Crs";
 
@@ -59,6 +59,12 @@ public interface ObjectsClient {
 
     @GET
     @Path("objects/{object-uuid}")
-    ORObject objectRead(@PathParam("object-uuid") final UUID objectUUID
-    );
+    ORObject objectRead(@PathParam("object-uuid") final UUID objectUUID);
+
+    @PUT
+    @Path("objects/{object-uuid}")
+    @ClientHeaderParams({
+            @ClientHeaderParam(name = ACCEPT_CRS, value = ACCEPT_CRS_VALUE),
+            @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
+    ORObject objectUpdate(@PathParam("object-uuid") final UUID objectUUID, final ORObject object);
 }

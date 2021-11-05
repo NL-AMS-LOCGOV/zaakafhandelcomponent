@@ -23,7 +23,6 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.or.objecttype.model.Objecttype;
 import net.atos.client.or.objecttype.model.ObjecttypeVersion;
-import net.atos.client.or.objecttype.util.ObjecttypesClientHeadersFactory;
 import net.atos.client.or.shared.exception.FoutExceptionMapper;
 import net.atos.client.or.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
@@ -39,7 +38,7 @@ import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
         @RegisterProvider(RuntimeExceptionMapper.class)})
 @Produces({APPLICATION_JSON, APPLICATION_PROBLEM_JSON})
 @Path("api/v1")
-public interface ObjecttypesClient {
+interface ObjecttypesClient {
 
     @GET
     @Path("objecttypes")

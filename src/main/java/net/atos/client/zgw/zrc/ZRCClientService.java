@@ -9,12 +9,14 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.util.ZGWApisInvocationBuilderFactory;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -22,6 +24,8 @@ import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakeigenschap;
+import net.atos.client.zgw.zrc.model.Zaakobject;
+import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 
 /**
  *
@@ -64,6 +68,10 @@ public class ZRCClientService {
         createCreatedRollen(current, rollen);
     }
 
+    public Zaak getZaak(final UUID zaakUUID) {
+        return zrcClient.zaakRead(zaakUUID);
+    }
+
     public Zaak getZaak(final URI zaakURI) {
         return ZGWApisInvocationBuilderFactory.create(zaakURI).get(Zaak.class);
     }
@@ -78,6 +86,10 @@ public class ZRCClientService {
 
     public Status getStatus(final URI statusURI) {
         return ZGWApisInvocationBuilderFactory.create(statusURI).get(Status.class);
+    }
+
+    public void zaakobjectCreate(final Zaakobject zaakobject) {
+        zrcClient.zaakobjectCreate(zaakobject);
     }
 
     private void deleteDeletedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {
@@ -108,5 +120,9 @@ public class ZRCClientService {
                 .filter(nieuw -> currentRollen.stream()
                         .noneMatch(nieuw::equalBetrokkeneRol))
                 .forEach(nieuw -> zrcClient.rolCreate(nieuw));
+    }
+
+    public Results<Zaakobject> zaakobjectList(final ZaakobjectListParameters zaakobjectListParameters) {
+        return zrcClient.zaakobjectList(zaakobjectListParameters);
     }
 }

@@ -48,10 +48,12 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
+import net.atos.zac.app.zaken.converter.RESTZaakdataConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakdata;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
@@ -60,7 +62,9 @@ import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.service.ConfigurationService;
 import net.atos.zac.service.EventingService;
 import net.atos.zac.service.IdmService;
+import net.atos.zac.service.ZaakdataService;
 import net.atos.zac.util.PaginationUtil;
+import net.atos.zac.zaakdata.Zaakdata;
 
 /**
  *
@@ -89,6 +93,9 @@ public class ZakenRESTService {
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
 
+    @Inject
+    private RESTZaakdataConverter zaakdataConverter;
+
     @EJB
     private IdmService idmService;
 
@@ -104,6 +111,9 @@ public class ZakenRESTService {
 
     @EJB
     private ConfigurationService configurationService;
+
+    @EJB
+    private ZaakdataService zaakdataService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -188,8 +198,7 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens restZaak) {
-
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
 
@@ -205,16 +214,14 @@ public class ZakenRESTService {
         }
 
         zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
-
         zaakBehandelaarGewijzigd(zaak);
-
         return zaakConverter.convert(zaak);
     }
 
     @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens restZaak) {
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
         return zaakConverter.convert(zaak);
     }
@@ -222,9 +229,32 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen/mij/lijst")
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens restZaak) {
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
+        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
         return zaakOverzichtConverter.convert(zaak);
+    }
+
+    @GET
+    @Path("zaakdata/{zaak-uuid}")
+    public RESTZaakdata getZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID) {
+        final Zaakdata zaakdata = zaakdataService.retrieveZaakdata(zaakUUID);
+        return zaakdataConverter.convert(zaakdata);
+    }
+
+    @PUT
+    @Path("zaakdata/{zaak-uuid}")
+    public RESTZaakdata updateZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID, final RESTZaakdata restZaakdata) {
+        final Zaakdata zaakdata = zaakdataConverter.convert(restZaakdata);
+        final Zaakdata updatedZaakdata = zaakdataService.storeZaakdata(zaakUUID, zaakdata);
+        return zaakdataConverter.convert(updatedZaakdata);
+    }
+
+    @GET
+    @Path("caches/clear")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String clearCaches() {
+        ztcClientService.clearCaches();
+        return "all caches cleared";
     }
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
@@ -239,15 +269,6 @@ public class ZakenRESTService {
         zaakBehandelaarGewijzigd(zaak);
 
         return zaak;
-    }
-
-    // http://localhost:4200/zac/rest/zaken/caches/clear
-    @GET
-    @Path("caches/clear")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String clearCaches() {
-        ztcClientService.clearCaches();
-        return "all caches cleared";
     }
 
     private ZaakListParameters getZaakListParameters(final TableRequest tableState) {

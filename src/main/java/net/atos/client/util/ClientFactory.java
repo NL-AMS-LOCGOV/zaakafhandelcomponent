@@ -36,7 +36,8 @@ public final class ClientFactory {
         try {
             final ClientBuilder clientBuilder = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault());
             if (StringUtils.isNotEmpty(proxyHost) && StringUtils.isNumeric(proxyPort)) {
-                clientBuilder.property("org.jboss.resteasy.jaxrs.client.proxy.host", proxyHost)
+                clientBuilder
+                        .property("org.jboss.resteasy.jaxrs.client.proxy.host", proxyHost)
                         .property("org.jboss.resteasy.jaxrs.client.proxy.port", proxyPort);
             }
             return clientBuilder.build().register(LoggingFilter.class);
