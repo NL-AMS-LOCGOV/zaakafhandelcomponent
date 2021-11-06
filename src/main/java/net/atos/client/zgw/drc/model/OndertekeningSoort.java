@@ -12,8 +12,8 @@ import net.atos.client.zgw.shared.model.AbstractEnum;
 /**
  *
  */
-@JsonbTypeAdapter(SoortOndertekening.Adapter.class)
-public enum SoortOndertekening implements AbstractEnum<SoortOndertekening> {
+@JsonbTypeAdapter(OndertekeningSoort.Adapter.class)
+public enum OndertekeningSoort implements AbstractEnum<OndertekeningSoort> {
 
     ANALOOG("analoog"),
 
@@ -23,7 +23,7 @@ public enum SoortOndertekening implements AbstractEnum<SoortOndertekening> {
 
     private final String value;
 
-    SoortOndertekening(final String value) {
+    OndertekeningSoort(final String value) {
         this.value = value;
     }
 
@@ -32,14 +32,14 @@ public enum SoortOndertekening implements AbstractEnum<SoortOndertekening> {
         return value;
     }
 
-    public static SoortOndertekening fromValue(final String value) {
+    public static OndertekeningSoort fromValue(final String value) {
         return AbstractEnum.fromValue(values(), value);
     }
 
-    static class Adapter extends AbstractEnum.Adapter<SoortOndertekening> {
+    static class Adapter extends AbstractEnum.Adapter<OndertekeningSoort> {
 
         @Override
-        protected SoortOndertekening[] getEnums() {
+        protected OndertekeningSoort[] getEnums() {
             return values();
         }
     }

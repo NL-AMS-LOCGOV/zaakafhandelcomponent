@@ -26,10 +26,10 @@ public class RESTZaakResultaatConverter {
 
     public RESTZaakResultaat convert(final URI resultaatURI) {
         if (resultaatURI != null) {
-            final Resultaat resultaat = zrcClientService.getResultaat(resultaatURI);
+            final Resultaat resultaat = zrcClientService.readResultaat(resultaatURI);
             if (resultaat != null) {
                 final RESTZaakResultaat restZaakResultaat = new RESTZaakResultaat();
-                final Resultaattype resultaattype = ztcClientService.getResultaattype(resultaat.getResultaattype());
+                final Resultaattype resultaattype = ztcClientService.readResultaattype(resultaat.getResultaattype());
                 restZaakResultaat.toelichting = resultaat.getToelichting();
                 restZaakResultaat.archiefNominatie = resultaattype.getArchiefnominatie().name();
                 restZaakResultaat.toelichtingResultaattype = resultaattype.getToelichting();

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Zaakeigenschap;
+import net.atos.client.zgw.zrc.model.ZaakEigenschap;
 import net.atos.zac.app.zaken.model.RESTZaakEigenschap;
 
 public class RESTZaakEigenschappenConverter {
@@ -23,7 +23,7 @@ public class RESTZaakEigenschappenConverter {
 
     public RESTZaakEigenschap convert(final URI uri) {
         if (uri != null) {
-            final Zaakeigenschap zaakeigenschap = zrcClientService.getZaakeigenschap(uri);
+            final ZaakEigenschap zaakeigenschap = zrcClientService.readZaakeigenschap(uri);
             if (zaakeigenschap != null) {
                 final RESTZaakEigenschap restZaakEigenschap = new RESTZaakEigenschap();
                 restZaakEigenschap.naam = zaakeigenschap.getNaam();

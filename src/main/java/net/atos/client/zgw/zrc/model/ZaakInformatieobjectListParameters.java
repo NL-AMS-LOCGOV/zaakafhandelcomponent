@@ -14,7 +14,7 @@ import net.atos.client.zgw.shared.model.AbstractListParameters;
 /**
  *
  */
-public class ZaakinformatieobjectListParameters extends AbstractListParameters {
+public class ZaakInformatieobjectListParameters extends AbstractListParameters {
 
     /**
      * URL-referentie naar de ZAAK.

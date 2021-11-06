@@ -18,7 +18,7 @@ import javax.json.bind.annotation.JsonbProperty;
 /**
  * Representation of EnkelvoudigInformatieobject for POST request and response only
  */
-public class EnkelvoudigInformatieobjectData extends AbstractEnkelvoudigInformatieobject {
+public class EnkelvoudigInformatieobjectWithInhoud extends AbstractEnkelvoudigInformatieobject {
 
     /**
      * Binaire inhoud, in base64 ge-encodeerd.
@@ -28,7 +28,7 @@ public class EnkelvoudigInformatieobjectData extends AbstractEnkelvoudigInformat
     /**
      * Constructor with required attributes for POST request
      */
-    public EnkelvoudigInformatieobjectData(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
+    public EnkelvoudigInformatieobjectWithInhoud(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
             final String taal, final URI informatieobjecttype, final String inhoud) {
         super(bronorganisatie, creatiedatum, titel, auteur, taal, informatieobjecttype);
         this.inhoud = inhoud;
@@ -38,7 +38,7 @@ public class EnkelvoudigInformatieobjectData extends AbstractEnkelvoudigInformat
      * Constructor with readOnly attributes for POST response
      */
     @JsonbCreator
-    public EnkelvoudigInformatieobjectData(@JsonbProperty("url") final URI url,
+    public EnkelvoudigInformatieobjectWithInhoud(@JsonbProperty("url") final URI url,
             @JsonbProperty("versie") final Integer versie,
             @JsonbProperty("beginRegistratie") @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS) final ZonedDateTime beginRegistratie,
             @JsonbProperty("bestandsomvang") final Long bestandsomvang,

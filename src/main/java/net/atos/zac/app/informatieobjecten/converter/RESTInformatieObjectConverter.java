@@ -14,10 +14,10 @@ import org.jboss.resteasy.util.Base64;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
-import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieObject;
@@ -32,7 +32,7 @@ public class RESTInformatieObjectConverter {
     @Inject
     private DRCClientService drcClientService;
 
-    public RESTInformatieObject convert(final ZaakInformatieObject zaakInformatieObject) {
+    public RESTInformatieObject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTInformatieObject restObject = convert(zaakInformatieObject.getInformatieobject());
         if (zaakInformatieObject.getAardRelatieWeergave() != null) {
             restObject.zaakRelatie = zaakInformatieObject.getAardRelatieWeergave().name();
@@ -41,7 +41,7 @@ public class RESTInformatieObjectConverter {
     }
 
     public RESTInformatieObject convert(final URI informatieObjectURI) {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.getEnkelvoudigInformatieobject(informatieObjectURI);
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(informatieObjectURI);
         return convert(enkelvoudigInformatieObject);
     }
 
@@ -75,13 +75,13 @@ public class RESTInformatieObjectConverter {
         restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
         restObject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
-        restObject.documentType = ztcClientService.getInformatieobjecttype(enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
+        restObject.documentType = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
 
         return restObject;
     }
 
-    public EnkelvoudigInformatieobjectData convert(final RESTInformatieObject restInformatieObject, final RESTFileUpload bestand) {
-        final EnkelvoudigInformatieobjectData data = new EnkelvoudigInformatieobjectData(
+    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTInformatieObject restInformatieObject, final RESTFileUpload bestand) {
+        final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfigurationService.BRON_ORGANISATIE,
                 restInformatieObject.creatiedatum,
                 restInformatieObject.titel,

@@ -19,7 +19,7 @@ public class Ondertekening {
     /**
      * Aanduiding van de wijze van ondertekening van het INFORMATIEOBJECT
      */
-    private final SoortOndertekening soort;
+    private final OndertekeningSoort soort;
 
     /**
      * De datum waarop de ondertekening van het INFORMATIEOBJECT heeft plaatsgevonden.
@@ -30,13 +30,13 @@ public class Ondertekening {
      * Constructor with required attributes for POST and PUT request and for GET Response
      */
     @JsonbCreator
-    public Ondertekening(@JsonbProperty("soort") final SoortOndertekening soort,
+    public Ondertekening(@JsonbProperty("soort") final OndertekeningSoort soort,
             @JsonbProperty("datum") final LocalDate datum) {
         this.soort = soort;
         this.datum = datum;
     }
 
-    public SoortOndertekening getSoort() {
+    public OndertekeningSoort getSoort() {
         return soort;
     }
 

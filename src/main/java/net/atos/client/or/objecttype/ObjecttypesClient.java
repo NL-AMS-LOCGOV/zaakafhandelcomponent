@@ -38,7 +38,7 @@ import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
         @RegisterProvider(RuntimeExceptionMapper.class)})
 @Produces({APPLICATION_JSON, APPLICATION_PROBLEM_JSON})
 @Path("api/v1")
-interface ObjecttypesClient {
+public interface ObjecttypesClient {
 
     @GET
     @Path("objecttypes")

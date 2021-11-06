@@ -76,7 +76,7 @@ public class NotificatieReceiver {
         // TODO ESUITEDEV-25860 conversie
         // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
         if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
-            final Zaak zaak = zrcClientService.getZaak(notificatie.getHoofdObject());
+            final Zaak zaak = zrcClientService.readZaak(notificatie.getHoofdObject());
             eventingService.versturen(ZAAK.wijziging(zaak));
             eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaak));
         }

@@ -27,14 +27,34 @@ public class ObjectsClientService {
     @RestClient
     private ObjectsClient objectsClient;
 
-    public ORObject getObject(final URI objectURI) {
-        return createInvocationBuilder(objectURI).get(ORObject.class);
-    }
-
+    /**
+     * Create {@link ORObject}.
+     *
+     * @param object {@link ORObject}.
+     * @return Created {@link ORObject}.
+     */
     public ORObject createObject(final ORObject object) {
         return objectsClient.objectCreate(object);
     }
 
+    /**
+     * Read {@link ORObject} via its URI.
+     * Throws a RuntimeException if the {@link ORObject} can not be read.
+     *
+     * @param objectURI URI of {@link ORObject}.
+     * @return {@link ORObject}. Never 'null'!
+     */
+    public ORObject readObject(final URI objectURI) {
+        return createInvocationBuilder(objectURI).get(ORObject.class);
+    }
+
+    /**
+     * Update {@link ORObject}.
+     * The given instance completely replaces the existing instance.
+     *
+     * @param object {@link ORObject}.
+     * @return Updated {@link ORObject}.
+     */
     public ORObject updateObject(final ORObject object) {
         return objectsClient.objectUpdate(object.getUuid(), object);
     }

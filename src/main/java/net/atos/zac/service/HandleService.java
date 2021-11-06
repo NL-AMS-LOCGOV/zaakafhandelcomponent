@@ -18,15 +18,14 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import net.atos.client.zgw.shared.ZGWApiService;
-import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -57,8 +56,7 @@ public class HandleService {
     private ZTCClientService ztcClientService;
 
     @Inject
-    @RestClient
-    private ZRCClient zrcClient;
+    private ZRCClientService zrcClientService;
 
     @EJB
     private EventingService eventingService;
@@ -71,21 +69,26 @@ public class HandleService {
         }
     }
 
-    public void updateZaak(final String caseInstanceId, final String status, final String resultaat) {
+    public void updateZaak(final String caseInstanceId, final String statustypeOmschrijving, final String resultaattypeOmschrijving) {
         final UUID zaakUUID = cmmnService.getZaakUUID(caseInstanceId);
-        if (status != null) {
-            LOG.info(String.format("Zaak %s: Verander status in '%s'", zaakUUID, status));
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        if (statustypeOmschrijving != null) {
+            LOG.info(String.format("Zaak %s: Verander status in '%s'", zaakUUID, statustypeOmschrijving));
+            zgwApiService.createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
         }
-        if (resultaat != null) {
-            LOG.info(String.format("Zaak %s: Verander resultaat in '%s'", zaakUUID, resultaat));
+        if (resultaattypeOmschrijving != null) {
+            LOG.info(String.format("Zaak %s: Verander resultaat in '%s'", zaakUUID, resultaattypeOmschrijving));
+            zgwApiService.createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
         }
-        zgwApiService.updateZaak(zaakUUID, status, STATUS_TOELICHTING, resultaat, RESULTAAT_TOELICHTING);
-        eventingService.versturen(ZAAK.wijziging(zaakUUID));
+        if (statustypeOmschrijving != null || resultaattypeOmschrijving != null) {
+            eventingService.versturen(ZAAK.wijziging(zaakUUID));
+        }
     }
 
     public void endZaak(final UUID zaakUUID) {
         LOG.info(String.format("Zaak %s: Beeindig Case", zaakUUID));
-        zgwApiService.endZaak(zaakUUID, EINDSTATUS_TOELICHTING);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        zgwApiService.endZaak(zaak, EINDSTATUS_TOELICHTING);
         eventingService.versturen(ZAAK.wijziging(zaakUUID));
     }
 
@@ -102,11 +105,11 @@ public class HandleService {
     }
 
     private Optional<Rol<?>> ophalenZaakBehandelaarId(final URI zaakURI, final URI zaaktypeURI, final BetrokkeneType betrokkeneType) {
-        final Roltype roltype = ztcClientService.getRoltype(zaaktypeURI, AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(zaaktypeURI, AardVanRol.BEHANDELAAR);
         final RolListParameters rolListParameters = new RolListParameters();
         rolListParameters.setZaak(zaakURI);
         rolListParameters.setBetrokkeneType(betrokkeneType);
         rolListParameters.setRoltype(roltype.getUrl());
-        return zrcClient.rolList(rolListParameters).getSingleResult();
+        return zrcClientService.listRollen(rolListParameters).getSingleResult();
     }
 }

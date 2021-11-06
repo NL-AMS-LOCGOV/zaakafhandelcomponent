@@ -18,7 +18,7 @@ import javax.json.bind.annotation.JsonbProperty;
 /**
  *
  */
-public class ZaakInformatieObject {
+public class ZaakInformatieobject {
 
     public static final int TITEL_MAX_LENGTH = 200;
 
@@ -50,7 +50,7 @@ public class ZaakInformatieObject {
 
     /**
      * De naam waaronder het INFORMATIEOBJECT binnen het OBJECT bekend is.
-     * maxLength: {@link ZaakInformatieObject#TITEL_MAX_LENGTH}
+     * maxLength: {@link ZaakInformatieobject#TITEL_MAX_LENGTH}
      */
     private String titel;
 
@@ -69,13 +69,13 @@ public class ZaakInformatieObject {
     /**
      * Constructor for PATCH request
      */
-    public ZaakInformatieObject() {
+    public ZaakInformatieobject() {
     }
 
     /**
      * Constructor with required attributes for POST and PUT requests
      */
-    public ZaakInformatieObject(final URI informatieobject, final URI zaak) {
+    public ZaakInformatieobject(final URI informatieobject, final URI zaak) {
         this.informatieobject = informatieobject;
         this.zaak = zaak;
     }
@@ -84,7 +84,7 @@ public class ZaakInformatieObject {
      * Constructor with readOnly attributes for GET response
      */
     @JsonbCreator
-    public ZaakInformatieObject(@JsonbProperty("url") final URI url,
+    public ZaakInformatieobject(@JsonbProperty("url") final URI url,
             @JsonbProperty("uuid") final UUID uuid,
             @JsonbProperty("aardRelatieWeergave") final AardRelatieWeergave aardRelatieWeergave,
             @JsonbProperty("registratiedatum") final ZonedDateTime registratiedatum) {

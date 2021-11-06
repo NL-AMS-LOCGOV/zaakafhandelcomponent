@@ -5,11 +5,12 @@
 
 package net.atos.client.zgw.shared;
 
+import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
+
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,13 +18,13 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.zgw.drc.DRCClient;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
-import net.atos.client.zgw.shared.util.DateTimeUtil;
 import net.atos.client.zgw.zrc.ZRCClient;
-import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Resultaat;
+import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -36,6 +37,9 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 public class ZGWApiService {
 
     @Inject
+    private ZTCClientService ztcClientService;
+
+    @Inject
     @RestClient
     private ZRCClient zrcClient;
 
@@ -43,39 +47,90 @@ public class ZGWApiService {
     @RestClient
     private DRCClient drcClient;
 
-    @Inject
-    private ZTCClientService ztcClientService;
-
-    @Inject
-    private ZRCClientService zrcClientService;
-
-    public void setZaakstatus(final UUID zaakUUID, final String status, final String statusToelichting) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
-        setZaakstatus(zaak, status, statusToelichting);
-    }
-
-    public void setZaakstatus(final Zaak zaak, final String status, final String statusToelichting) {
-        final Statustype statustype = ztcClientService.getStatustype(zaak.getZaaktype(), status);
-        zrcClientService.setZaakStatus(zaak.getUrl(), statustype.getUrl(), statusToelichting);
-    }
-
-    public void setZaakResultaat(final UUID zaakUUID, final String resultaat, final String resultaatToelichting) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
-        setZaakResultaat(zaak, resultaat, resultaatToelichting);
-    }
-
-    public void setZaakResultaat(final Zaak zaak, final String resultaat, final String resultaatToelichting) {
-        final Resultaattype resultaattype = ztcClientService.getResultaattype(zaak.getZaaktype(), resultaat);
-        zrcClientService.setZaakResultaat(zaak.getUrl(), resultaattype.getUrl(), resultaatToelichting);
-    }
-
+    /**
+     * Create {@link Zaak} and calculate Doorlooptijden.
+     *
+     * @param zaak {@link Zaak}
+     * @return Created {@link Zaak}
+     */
     public Zaak createZaak(final Zaak zaak) {
-        final Zaak zaakMetDoorlooptijden = berekenDoorlooptijden(zaak);
-        return zrcClient.zaakCreate(zaakMetDoorlooptijden);
+        calculateDoorlooptijden(zaak);
+        return zrcClient.zaakCreate(zaak);
     }
 
-    private Zaak berekenDoorlooptijden(final Zaak zaak) {
-        final Zaaktype zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype());
+    /**
+     * Create {@link Status} for a given {@link Zaak} based on {@link Statustype}.omschrijving and with {@link Status}.toelichting.
+     *
+     * @param zaak                   {@link Zaak}
+     * @param statustypeOmschrijving Omschrijving of the {@link Statustype} of the required {@link Status}.
+     * @param statusToelichting      Toelichting for thew {@link Status}.
+     * @return Created {@link Status}.
+     */
+    public Status createStatusForZaak(final Zaak zaak, final String statustypeOmschrijving, final String statusToelichting) {
+        final Statustype statustype = ztcClientService.readStatustype(zaak.getZaaktype(), statustypeOmschrijving);
+        return createStatusForZaak(zaak.getUrl(), statustype.getUrl(), statusToelichting);
+    }
+
+    /**
+     * Create {@link Resultaat} for a given {@link Zaak} based on {@link Resultaattype}.omschrijving and with {@link Resultaat}.toelichting.
+     *
+     * @param zaak                      {@link Zaak}
+     * @param resultaattypeOmschrijving Omschrijving of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param resultaatToelichting      Toelichting for thew {@link Resultaat}.
+     * @return Created {@link Resultaat}.
+     */
+    public Resultaat createResultaatForZaak(final Zaak zaak, final String resultaattypeOmschrijving, final String resultaatToelichting) {
+        final Resultaattype resultaattype = ztcClientService.readResultaattype(zaak.getZaaktype(), resultaattypeOmschrijving);
+        final Resultaat resultaat = new Resultaat(zaak.getUrl(), resultaattype.getUrl());
+        resultaat.setToelichting(resultaatToelichting);
+        return zrcClient.resultaatCreate(resultaat);
+    }
+
+    /**
+     * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
+     *
+     * @param zaak                  {@link Zaak}
+     * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
+     * @return Created Eind {@link Status}.
+     */
+    public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
+        final Statustype eindStatustype = ztcClientService.readStatustypeEind(zaak.getZaaktype());
+        return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+    }
+
+    /**
+     * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
+     *
+     * @param zaak                                {@link Zaak}.
+     * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
+     * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
+     * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.
+     * @param omschrijvingVoorwaardenGebruiksrechten Used to create the {@link Gebruiksrechten} for the to be created {@link EnkelvoudigInformatieobjectWithInhoud}
+     * @return Created {@link ZaakInformatieobject}.
+     */
+    public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
+            final String titel, final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
+        final EnkelvoudigInformatieobjectWithInhoud newInformatieobject = drcClient.enkelvoudigInformatieobjectCreate(informatieobject);
+        drcClient.gebruiksrechtenCreate(new Gebruiksrechten(newInformatieobject.getUrl(), convertToDateTime(newInformatieobject.getCreatiedatum()),
+                                                            omschrijvingVoorwaardenGebruiksrechten));
+
+        final ZaakInformatieobject zaakInformatieObject = new ZaakInformatieobject();
+        zaakInformatieObject.setZaak(zaak.getUrl());
+        zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
+        zaakInformatieObject.setTitel(titel);
+        zaakInformatieObject.setBeschrijving(beschrijving);
+        return zrcClient.zaakinformatieobjectCreate(zaakInformatieObject);
+    }
+
+    private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
+        // Wanneer de huidige datum en tijd gebruikt wordt geeft open zaak een validatie fout dat de datum in de toekomst ligt.
+        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now().minusDays(1));
+        status.setStatustoelichting(toelichting);
+        return zrcClient.statusCreate(status);
+    }
+
+    private void calculateDoorlooptijden(final Zaak zaak) {
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         final Period streefDatum = zaaktype.getServicenorm();
         final Period fataleDatum = zaaktype.getDoorlooptijd();
 
@@ -87,57 +142,5 @@ public class ZGWApiService {
             final LocalDate uiterlijkeEindDatumAfdoening = zaak.getStartdatum().plus(fataleDatum);
             zaak.setUiterlijkeEinddatumAfdoening(uiterlijkeEindDatumAfdoening);
         }
-
-        return zaak;
-    }
-
-    public void updateZaak(final UUID zaakUUID, final String status, final String statusToelichting, final String resultaat,
-            final String resultaatToelichting) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
-        if (status != null) {
-            setZaakstatus(zaak, status, statusToelichting);
-        }
-        if (resultaat != null) {
-            setZaakResultaat(zaak, resultaat, resultaatToelichting);
-        }
-    }
-
-    public void endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
-        endZaak(zaak, eindstatusToelichting);
-    }
-
-    public void endZaak(final Zaak zaak, final String eindstatusToelichting, final ZonedDateTime datumEindstatusGezet) {
-        final Statustype eindStatustype = ztcClientService.getEindstatustype(zaak.getZaaktype());
-        zrcClientService.setZaakStatus(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting, datumEindstatusGezet);
-    }
-
-    public void endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = ztcClientService.getEindstatustype(zaak.getZaaktype());
-        zrcClientService.setZaakStatus(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
-    }
-
-    public void endZaakWithResultaat(final UUID zaakUUID, final String eindstatusToelichting, final String resultaat, final String resultaatToelichting) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
-        endZaakWithResultaat(zaak, eindstatusToelichting, resultaat, resultaatToelichting);
-    }
-
-    public void endZaakWithResultaat(final Zaak zaak, final String eindstatusToelichting, final String resultaat, final String resultaatToelichting) {
-        setZaakResultaat(zaak, resultaat, resultaatToelichting);
-        endZaak(zaak, eindstatusToelichting);
-    }
-
-    public ZaakInformatieObject addInformatieobjectToZaak(final URI zaakURI, final EnkelvoudigInformatieobjectData informatieObjectData, final String titel,
-            final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
-        final EnkelvoudigInformatieobjectData informatieobject = drcClient.enkelvoudigInformatieobjectCreate(informatieObjectData);
-        drcClient.gebruiksrechtenCreate(new Gebruiksrechten(informatieobject.getUrl(), DateTimeUtil.convertToDateTime(informatieobject.getCreatiedatum()),
-                                                            omschrijvingVoorwaardenGebruiksrechten));
-
-        final ZaakInformatieObject zaakInformatieObject = new ZaakInformatieObject();
-        zaakInformatieObject.setZaak(zaakURI);
-        zaakInformatieObject.setInformatieobject(informatieobject.getUrl());
-        zaakInformatieObject.setTitel(titel);
-        zaakInformatieObject.setBeschrijving(beschrijving);
-        return zrcClient.zaakinformatieobjectCreate(zaakInformatieObject);
     }
 }

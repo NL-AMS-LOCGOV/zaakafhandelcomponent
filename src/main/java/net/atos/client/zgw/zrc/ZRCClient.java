@@ -38,10 +38,10 @@ import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
+import net.atos.client.zgw.zrc.model.ZaakEigenschap;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
-import net.atos.client.zgw.zrc.model.Zaakeigenschap;
-import net.atos.client.zgw.zrc.model.ZaakinformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 
@@ -109,11 +109,11 @@ public interface ZRCClient {
 
     @GET
     @Path("zaakinformatieobjecten")
-    List<ZaakInformatieObject> zaakinformatieobjectList(@BeanParam final ZaakinformatieobjectListParameters parameters);
+    List<ZaakInformatieobject> zaakinformatieobjectList(@BeanParam final ZaakInformatieobjectListParameters parameters);
 
     @POST
     @Path("zaakinformatieobjecten")
-    ZaakInformatieObject zaakinformatieobjectCreate(final ZaakInformatieObject zaakInformatieObject);
+    ZaakInformatieobject zaakinformatieobjectCreate(final ZaakInformatieobject zaakInformatieObject);
 
     @DELETE
     @Path("zaakinformatieobjecten/{uuid}")
@@ -129,11 +129,11 @@ public interface ZRCClient {
 
     @GET
     @Path("zaken/{zaak_uuid}/zaakeigenschappen")
-    List<Zaakeigenschap> zaakeigenschapList(@PathParam("zaak_uuid") final UUID zaakUUID);
+    List<ZaakEigenschap> zaakeigenschapList(@PathParam("zaak_uuid") final UUID zaakUUID);
 
     @POST
     @Path("zaken/{zaak_uuid}/zaakeigenschappen")
-    Zaakeigenschap zaakeigenschapCreate(@PathParam("zaak_uuid") final UUID zaakUUID, final Zaakeigenschap zaakeigenschap);
+    ZaakEigenschap zaakeigenschapCreate(@PathParam("zaak_uuid") final UUID zaakUUID, final ZaakEigenschap zaakeigenschap);
 
     @GET
     @Path("zaakobjecten")

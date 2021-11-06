@@ -41,6 +41,6 @@ public class ConfigurationService {
     private URI retrievCatalogus() {
         final CatalogusListParameters catalogusListParameters = new CatalogusListParameters();
         catalogusListParameters.setDomein(CATALOGUS_DOMEIN);
-        return ztcClientService.getCatalogus(catalogusListParameters).getUrl();
+        return ztcClientService.readCatalogus(catalogusListParameters).getUrl();
     }
 }

@@ -40,13 +40,13 @@ public class ObjectRegistratieClientService {
      */
     public ORObject createObject(final String objecttypeNaam, final Object data) {
         // Search Objecttype
-        final Objecttype objecttype = objecttypesClientService.getObjecttypes().stream()
+        final Objecttype objecttype = objecttypesClientService.listObjecttypes().stream()
                 .filter(_objecttype -> equalsIgnoreCase(_objecttype.getName(), objecttypeNaam))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(format("Objecttype with name '%s' not found", objecttypeNaam)));
 
         // Get latest ObjecttypeVersion
-        final ObjecttypeVersion objecttypeVersion = objecttypesClientService.getObjecttypeVersions(objecttype.getUuid()).stream()
+        final ObjecttypeVersion objecttypeVersion = objecttypesClientService.listObjecttypeVersions(objecttype.getUuid()).stream()
                 .filter(_objecttypeVersion -> _objecttypeVersion.getStatus() == PUBLISHED)
                 .max(Comparator.comparing(ObjecttypeVersion::getVersion))
                 .orElseThrow(() -> new RuntimeException(format("No ObjecttypeVersion found for Objecttype with UUID: '%s'", objecttype.getUuid().toString())));

@@ -5,6 +5,8 @@
 
 package net.atos.client.zgw.shared.model;
 
+import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
+import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 import java.net.URI;
@@ -14,9 +16,13 @@ import java.util.Optional;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.shared.util.ZGWApisInvocationBuilderFactory;
+import net.atos.client.util.ClientFactory;
+import net.atos.client.zgw.zrc.ZRCClient;
 
 /**
  *
@@ -78,6 +84,14 @@ public class Results<T> {
     }
 
     private Results<T> get(final URI uri) {
-        return uri != null ? ZGWApisInvocationBuilderFactory.create(uri).get(new GenericType<Results<T>>() {}) : null;
+        return uri != null ? createInvocationBuilder(uri).get(new GenericType<Results<T>>() {}) : null;
+    }
+
+    private static Invocation.Builder createInvocationBuilder(final URI uri) {
+        return ClientFactory.create().target(uri)
+                .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
+                .header(HttpHeaders.AUTHORIZATION, generateJWTToken())
+                .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
+                .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
     }
 }

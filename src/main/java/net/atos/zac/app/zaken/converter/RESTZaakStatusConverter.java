@@ -25,11 +25,11 @@ public class RESTZaakStatusConverter {
 
     public RESTZaakStatus convert(final URI statusURI) {
         if (statusURI != null) {
-            final Status status = zrcClientService.getStatus(statusURI);
+            final Status status = zrcClientService.readStatus(statusURI);
             final RESTZaakStatus restZaakStatus = new RESTZaakStatus();
             restZaakStatus.toekenningsdatumTijd = status.getDatumStatusGezet();
             restZaakStatus.toelichting = status.getStatustoelichting();
-            final Statustype statustype = ztcClientService.getStatustype(status.getStatustype());
+            final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
             restZaakStatus.eindStatus = statustype.getEindstatus();
             restZaakStatus.statusToelichting = statustype.getToelichting();
             restZaakStatus.informeren = statustype.getInformeren();

@@ -61,7 +61,7 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uuid = zaak.getUuid().toString();
         restZaakOverzicht.startdatum = zaak.getStartdatum();
         restZaakOverzicht.toelichting = zaak.getToelichting();
-        restZaakOverzicht.zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype()).getOmschrijving();
+        restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         final RESTZaakStatus status = restZaakStatusConverter.convert(zaak.getStatus());
         if (status != null) {
             restZaakOverzicht.status = status.naam;

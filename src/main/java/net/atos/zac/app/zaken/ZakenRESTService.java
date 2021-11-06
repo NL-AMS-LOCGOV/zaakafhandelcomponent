@@ -30,13 +30,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
-import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -73,10 +71,6 @@ import net.atos.zac.zaakdata.Zaakdata;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ZakenRESTService {
-
-    @Inject
-    @RestClient
-    private ZRCClient zrcClient;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -118,7 +112,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/{uuid}")
     public RESTZaak getZaak(@PathParam("uuid") final UUID uuid) {
-        final Zaak zaak = zrcClient.zaakRead(uuid);
+        final Zaak zaak = zrcClientService.readZaak(uuid);
         return zaakConverter.convert(zaak);
     }
 
@@ -133,11 +127,11 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("zaak/{uuid}")
-    public RESTZaak updateZaak(@PathParam("uuid") final UUID uuid, final RESTZaak restZaak) {
+    public RESTZaak updateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
         final Zaak zaak = new Zaak();
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
-        final Zaak updatedZaak = zrcClient.zaakPartialUpdate(uuid, zaak);
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
         eventingService.versturen(ZAAK.wijziging(updatedZaak));
         return zaakConverter.convert(updatedZaak);
     }
@@ -148,7 +142,7 @@ public class ZakenRESTService {
         final TableRequest tableState = TableRequest.getTableState(request);
 
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        final Results<Zaak> zaakResults = zrcClient.zaakList(zaakListParameters);
+        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
 
         final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
                 .convertZaakResults(zaakResults, tableState.getPagination());
@@ -164,7 +158,7 @@ public class ZakenRESTService {
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
         zaakListParameters
                 .setRolBetrokkeneIdentificatieMedewerkerIdentificatie(ingelogdeMedewerker.getGebruikersnaam());
-        final Results<Zaak> zaakResults = zrcClient.zaakList(zaakListParameters);
+        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
 
         final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
                 .convertZaakResults(zaakResults, tableState.getPagination());
@@ -178,7 +172,7 @@ public class ZakenRESTService {
         final TableRequest tableState = TableRequest.getTableState(request);
 
         if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClient.zaakList(getZaakListParameters(tableState));
+            final Results<Zaak> zaakResults = zrcClientService.listZaken(getZaakListParameters(tableState));
             final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
                     .convertZaakResults(zaakResults, tableState.getPagination());
             return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
@@ -190,7 +184,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> getZaaktypes() {
-        return ztcClientService.findZaaktypes(configurationService.getCatalogus()).stream()
+        return ztcClientService.listZaaktypen(configurationService.getCatalogus()).stream()
                 .map(zaaktypeConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -199,8 +193,8 @@ public class ZakenRESTService {
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens restZaak) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
-        final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
-        final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
+        final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
+        final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
 
         // Toekennen of overdragen
         if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
@@ -213,7 +207,7 @@ public class ZakenRESTService {
             rolMedewerker.ifPresent(medewerker -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(medewerker)));
         }
 
-        zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
+        zrcClientService.updateRollen(zaak.getUrl(), rollen);
         zaakBehandelaarGewijzigd(zaak);
         return zaakConverter.convert(zaak);
     }
@@ -258,13 +252,13 @@ public class ZakenRESTService {
     }
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
-        final Zaak zaak = zrcClient.zaakRead(restZaak.uuid);
-        final List<Rol<?>> rollen = zrcClientService.getRollenForZaak(zaak.getUrl());
+        final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
+        final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
         final User user = idmService.getUser(ingelogdeMedewerker.getGebruikersnaam());
 
         rollen.add(bepaalRolMedewerker(user, zaak));
 
-        zrcClientService.updateRollenForZaak(zaak.getUrl(), rollen);
+        zrcClientService.updateRollen(zaak.getUrl(), rollen);
 
         zaakBehandelaarGewijzigd(zaak);
 
@@ -283,7 +277,7 @@ public class ZakenRESTService {
         for (final Map.Entry<String, String> entry : tableState.getSearch().getPredicateObject().entrySet()) {
             switch (entry.getKey()) {
                 case "zaaktype":
-                    zaakListParameters.setZaaktype(ztcClientService.getZaaktype(entry.getValue()).getUrl());
+                    zaakListParameters.setZaaktype(ztcClientService.readZaaktype(entry.getValue()).getUrl());
                     break;
                 case "groep":
                     zaakListParameters
@@ -302,7 +296,7 @@ public class ZakenRESTService {
         medewerker.setIdentificatie(user.getId());
         medewerker.setVoorletters(user.getFirstName());
         medewerker.setAchternaam(user.getLastName());
-        final Roltype roltype = ztcClientService.getRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 

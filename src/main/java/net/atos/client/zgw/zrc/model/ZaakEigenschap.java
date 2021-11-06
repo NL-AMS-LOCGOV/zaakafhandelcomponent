@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  *
  */
-public class Zaakeigenschap {
+public class ZaakEigenschap {
 
     /**
      * readOnly
@@ -47,10 +47,10 @@ public class Zaakeigenschap {
      */
     private String waarde;
 
-    public Zaakeigenschap() {
+    public ZaakEigenschap() {
     }
 
-    public Zaakeigenschap(final URI zaak, final URI eigenschap, final String waarde) {
+    public ZaakEigenschap(final URI zaak, final URI eigenschap, final String waarde) {
         this.zaak = zaak;
         this.eigenschap = eigenschap;
         this.waarde = waarde;

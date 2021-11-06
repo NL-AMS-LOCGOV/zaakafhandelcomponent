@@ -5,31 +5,30 @@
 
 package net.atos.client.zgw.drc.model;
 
+import java.util.UUID;
+
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 /**
  *
  */
-public class LockEnkelvoudigInformatieobject {
+public class Lock {
 
     /**
      * Hash string, wordt gebruikt als ID voor de lock
      */
-    private String lock;
+    private final String lock;
 
-
-    /**
-     * Constructor for POST request
-     */
-    public LockEnkelvoudigInformatieobject() {
+    public Lock() {
+        lock = UUID.randomUUID().toString();
     }
 
     /**
      * Constructor for POST response
      */
     @JsonbCreator
-    public LockEnkelvoudigInformatieobject(@JsonbProperty("lock") final String lock) {
+    public Lock(@JsonbProperty("lock") final String lock) {
         this.lock = lock;
     }
 

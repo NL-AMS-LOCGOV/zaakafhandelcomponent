@@ -9,8 +9,8 @@ import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import net.atos.client.zgw.shared.model.AbstractEnum;
 
-@JsonbTypeAdapter(ObjectType.Adapter.class)
-public enum ObjectType implements AbstractEnum<ObjectType> {
+@JsonbTypeAdapter(Objecttype.Adapter.class)
+public enum Objecttype implements AbstractEnum<Objecttype> {
 
     BESLUIT("besluit"),
 
@@ -18,7 +18,7 @@ public enum ObjectType implements AbstractEnum<ObjectType> {
 
     private final String value;
 
-    ObjectType(final String value) {
+    Objecttype(final String value) {
         this.value = value;
     }
 
@@ -27,14 +27,14 @@ public enum ObjectType implements AbstractEnum<ObjectType> {
         return value;
     }
 
-    public static ObjectType fromValue(final String value) {
+    public static Objecttype fromValue(final String value) {
         return AbstractEnum.fromValue(values(), value);
     }
 
-    static class Adapter extends AbstractEnum.Adapter<ObjectType> {
+    static class Adapter extends AbstractEnum.Adapter<Objecttype> {
 
         @Override
-        protected ObjectType[] getEnums() {
+        protected Objecttype[] getEnums() {
             return values();
         }
     }

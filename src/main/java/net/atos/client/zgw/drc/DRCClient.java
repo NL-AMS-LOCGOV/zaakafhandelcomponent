@@ -28,14 +28,13 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectData;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockData;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
-import net.atos.client.zgw.drc.model.LockEnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.drc.model.ObjectInformatieobject;
 import net.atos.client.zgw.drc.model.ObjectInformatieobjectListParameters;
-import net.atos.client.zgw.drc.model.UnlockEnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
@@ -57,7 +56,7 @@ public interface DRCClient {
 
     @POST
     @Path("enkelvoudiginformatieobjecten")
-    EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectCreate(final EnkelvoudigInformatieobjectData enkelvoudigInformatieObjectData);
+    EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectCreate(final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieObjectWithInhoud);
 
     @GET
     @Path("enkelvoudiginformatieobjecten")
@@ -75,8 +74,8 @@ public interface DRCClient {
 
     @PATCH
     @Path("enkelvoudiginformatieobjecten/{uuid}")
-    EnkelvoudigInformatieobjectWithLockData enkelvoudigInformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
-            final EnkelvoudigInformatieobjectWithLockData enkelvoudigInformatieObjectWithLockData);
+    EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
+            final EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieObjectWithLockAndInhoud);
 
     @DELETE
     @Path("enkelvoudiginformatieobjecten/{uuid}")
@@ -84,12 +83,12 @@ public interface DRCClient {
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/lock")
-    LockEnkelvoudigInformatieobject enkelvoudigInformatieobjectLock(@PathParam("uuid") final UUID uuid,
-            final LockEnkelvoudigInformatieobject lockEnkelvoudigInformatieObject);
+    Lock enkelvoudigInformatieobjectLock(@PathParam("uuid") final UUID uuid,
+            final Lock enkelvoudigInformatieObjectLock);
 
     @POST
     @Path("enkelvoudiginformatieobjecten/{uuid}/unlock")
-    Response enkelvoudigInformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final UnlockEnkelvoudigInformatieobject unlockEnkelvoudigInformatieObject);
+    Response enkelvoudigInformatieobjectUnlock(@PathParam("uuid") final UUID uuid, final Lock lock);
 
     @POST
     @Path("gebruiksrechten")

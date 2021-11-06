@@ -33,7 +33,7 @@ public class ObjectInformatieobject {
     /**
      * Het type van het gerelateerde OBJECT.
      */
-    private ObjectType objectType;
+    private Objecttype objectType;
 
     /**
      * Constructor for PATCH request
@@ -44,7 +44,7 @@ public class ObjectInformatieobject {
     /**
      * Constructor with required attributes for POST and PUT request
      */
-    public ObjectInformatieobject(final URI informatieobject, final URI object, final ObjectType objectType) {
+    public ObjectInformatieobject(final URI informatieobject, final URI object, final Objecttype objectType) {
         this.informatieobject = informatieobject;
         this.object = object;
         this.objectType = objectType;
@@ -78,11 +78,11 @@ public class ObjectInformatieobject {
         this.object = object;
     }
 
-    public ObjectType getObjectType() {
+    public Objecttype getObjectType() {
         return objectType;
     }
 
-    public void setObjectType(ObjectType objectType) {
+    public void setObjectType(Objecttype objectType) {
         this.objectType = objectType;
     }
 }

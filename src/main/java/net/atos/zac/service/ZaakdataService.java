@@ -8,6 +8,7 @@ package net.atos.zac.service;
 import java.net.URI;
 import java.util.UUID;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import net.atos.client.or.object.ObjectsClientService;
@@ -20,6 +21,7 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.zac.zaakdata.Zaakdata;
 
+@Stateless
 public class ZaakdataService {
 
     private static final String ZAAKDATA_OBJECT_TYPE_OVERIGE = "zaakdata";
@@ -38,23 +40,23 @@ public class ZaakdataService {
     private ObjectRegistratieClientService objectRegistratieClientService;
 
     public Zaakdata retrieveZaakdata(final UUID zaakUUID) {
-        final Zaak zaak = zrcClientService.getZaak(zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         final Zaakobject zaakobject = findZaakobject(zaak.getUrl());
-        final ORObject object = objectsClientService.getObject(zaakobject.getObject());
+        final ORObject object = objectsClientService.readObject(zaakobject.getObject());
         final Zaakdata zaakdata = new Zaakdata();
         object.getRecord().getDataAsHashMap().forEach((key, value) -> zaakdata.addElement(key, value.toString()));
         return zaakdata;
     }
 
     public Zaakdata storeZaakdata(final UUID zaakUUID, final Zaakdata zaakdata) {
-        final Zaak zaak = zrcClientService.getZaak(zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         Zaakobject zaakobject = findZaakobject(zaak.getUrl());
         if (zaakobject == null) {
             final ORObject object = objectRegistratieClientService.createObject(ZAAKDATA_OBJECTTYPE_NAAM, zaakdata.getElementen());
             zaakobject = convertToZaakobject(zaak.getUrl(), object.getUrl());
-            zrcClientService.zaakobjectCreate(zaakobject);
+            zrcClientService.createZaakobject(zaakobject);
         } else {
-            final ORObject object = objectsClientService.getObject(zaakobject.getObject());
+            final ORObject object = objectsClientService.readObject(zaakobject.getObject());
             object.getRecord().setData(zaakdata.getElementen());
             objectsClientService.updateObject(object);
         }
@@ -65,7 +67,7 @@ public class ZaakdataService {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         zaakobjectListParameters.setZaak(zaakURI);
         zaakobjectListParameters.setObjectType(Objecttype.OVERIGE);
-        return zrcClientService.zaakobjectList(zaakobjectListParameters).getSinglePageResults().stream()
+        return zrcClientService.listZaakobjecten(zaakobjectListParameters).getSinglePageResults().stream()
                 .filter(zaakobject -> ZAAKDATA_OBJECT_TYPE_OVERIGE.equals(zaakobject.getObjectTypeOverige()))
                 .findAny()
                 .orElse(null);

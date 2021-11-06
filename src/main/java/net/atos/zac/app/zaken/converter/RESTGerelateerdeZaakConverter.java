@@ -44,7 +44,7 @@ public class RESTGerelateerdeZaakConverter {
     }
 
     private RESTGerelateerdeZaak convert(final URI zaakURI, final RESTGerelateerdeZaak.RelatieType relatieType) {
-        final Zaak zaak = zrcClientService.getZaak(zaakURI);
+        final Zaak zaak = zrcClientService.readZaak(zaakURI);
         final RESTGerelateerdeZaak restZaak = new RESTGerelateerdeZaak();
         restZaak.relatieType = relatieType;
         restZaak.omschrijving = zaak.getOmschrijving();

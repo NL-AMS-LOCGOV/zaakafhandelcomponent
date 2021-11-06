@@ -7,10 +7,9 @@ package net.atos.zac.app.informatieobjecten.converter;
 
 import javax.inject.Inject;
 
-import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakInformatieObject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieObject;
@@ -27,17 +26,17 @@ public class RESTZaakInformatieObjectConverter {
     @Inject
     private RESTZaakStatusConverter restZaakStatusConverter;
 
-    public RESTZaakInformatieObject convert(final ZaakInformatieObject zaakInformatieObject) {
+    public RESTZaakInformatieObject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTZaakInformatieObject restZaakInformatieObject = new RESTZaakInformatieObject();
 
-        final Zaak zaak = zrcClientService.getZaak(zaakInformatieObject.getZaak());
+        final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
 
         restZaakInformatieObject.status = restZaakStatusConverter.convert(zaak.getStatus());
         restZaakInformatieObject.zaakUuid = zaak.getUuid().toString();
         restZaakInformatieObject.zaakIdentificatie = zaak.getIdentificatie();
         restZaakInformatieObject.zaakStartDatum = zaak.getStartdatum();
         restZaakInformatieObject.zaakEinddatumGepland = zaak.getEinddatumGepland();
-        final Zaaktype zaaktype = ztcClientService.getZaaktype(zaak.getZaaktype());
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         restZaakInformatieObject.zaaktype = zaaktype.getOmschrijving();
         return restZaakInformatieObject;
     }
