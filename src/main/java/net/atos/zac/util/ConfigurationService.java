@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.service;
+package net.atos.zac.util;
 
 import java.net.URI;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
@@ -29,18 +29,14 @@ public class ConfigurationService {
     @Inject
     private ZTCClientService ztcClientService;
 
-    private URI catalogus;
+    private URI catalogusURI;
 
-    public URI getCatalogus() {
-        if (catalogus == null) {
-            catalogus = retrievCatalogus();
+    public URI readDefaultCatalogusURI() {
+        if (catalogusURI == null) {
+            final CatalogusListParameters catalogusListParameters = new CatalogusListParameters();
+            catalogusListParameters.setDomein(CATALOGUS_DOMEIN);
+            catalogusURI = ztcClientService.readCatalogus(catalogusListParameters).getUrl();
         }
-        return catalogus;
-    }
-
-    private URI retrievCatalogus() {
-        final CatalogusListParameters catalogusListParameters = new CatalogusListParameters();
-        catalogusListParameters.setDomein(CATALOGUS_DOMEIN);
-        return ztcClientService.readCatalogus(catalogusListParameters).getUrl();
+        return catalogusURI;
     }
 }

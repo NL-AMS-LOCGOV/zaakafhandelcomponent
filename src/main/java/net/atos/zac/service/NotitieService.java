@@ -32,7 +32,7 @@ public class NotitieService {
         return notitie;
     }
 
-    public List<Notitie> getNotitiesForZaak(final UUID zaakUUID) {
+    public List<Notitie> listNotitiesForZaak(final UUID zaakUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Notitie> query = builder.createQuery(Notitie.class);
         final Root<Notitie> root = query.from(Notitie.class);

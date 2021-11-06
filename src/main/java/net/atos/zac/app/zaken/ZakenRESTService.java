@@ -57,12 +57,12 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
-import net.atos.zac.service.ConfigurationService;
-import net.atos.zac.service.EventingService;
-import net.atos.zac.service.IdmService;
-import net.atos.zac.service.ZaakdataService;
+import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.IdmService;
+import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PaginationUtil;
 import net.atos.zac.zaakdata.Zaakdata;
+import net.atos.zac.zaakdata.ZaakdataService;
 
 /**
  *
@@ -100,13 +100,13 @@ public class ZakenRESTService {
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
 
-    @EJB
+    @Inject
     private EventingService eventingService;
 
-    @EJB
+    @Inject
     private ConfigurationService configurationService;
 
-    @EJB
+    @Inject
     private ZaakdataService zaakdataService;
 
     @GET
@@ -121,7 +121,7 @@ public class ZakenRESTService {
     public RESTZaak postZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        eventingService.versturen(ZAAK.toevoeging(nieuweZaak));
+        eventingService.send(ZAAK.toevoeging(nieuweZaak));
         return zaakConverter.convert(nieuweZaak);
     }
 
@@ -132,7 +132,7 @@ public class ZakenRESTService {
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
-        eventingService.versturen(ZAAK.wijziging(updatedZaak));
+        eventingService.send(ZAAK.wijziging(updatedZaak));
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -184,7 +184,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> getZaaktypes() {
-        return ztcClientService.listZaaktypen(configurationService.getCatalogus()).stream()
+        return ztcClientService.listZaaktypen(configurationService.readDefaultCatalogusURI()).stream()
                 .map(zaaktypeConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -198,7 +198,7 @@ public class ZakenRESTService {
 
         // Toekennen of overdragen
         if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
-            final User user = idmService.getUser(restZaak.behandelaarGebruikersnaam);
+            final User user = idmService.findUser(restZaak.behandelaarGebruikersnaam);
             rollen.add(bepaalRolMedewerker(user, zaak));
         } else {
             // Vrijgeven
@@ -231,7 +231,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaakdata/{zaak-uuid}")
     public RESTZaakdata getZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID) {
-        final Zaakdata zaakdata = zaakdataService.retrieveZaakdata(zaakUUID);
+        final Zaakdata zaakdata = zaakdataService.readZaakdata(zaakUUID);
         return zaakdataConverter.convert(zaakdata);
     }
 
@@ -239,7 +239,7 @@ public class ZakenRESTService {
     @Path("zaakdata/{zaak-uuid}")
     public RESTZaakdata updateZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID, final RESTZaakdata restZaakdata) {
         final Zaakdata zaakdata = zaakdataConverter.convert(restZaakdata);
-        final Zaakdata updatedZaakdata = zaakdataService.storeZaakdata(zaakUUID, zaakdata);
+        final Zaakdata updatedZaakdata = zaakdataService.updateZaakdata(zaakUUID, zaakdata);
         return zaakdataConverter.convert(updatedZaakdata);
     }
 
@@ -254,7 +254,7 @@ public class ZakenRESTService {
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
-        final User user = idmService.getUser(ingelogdeMedewerker.getGebruikersnaam());
+        final User user = idmService.findUser(ingelogdeMedewerker.getGebruikersnaam());
 
         rollen.add(bepaalRolMedewerker(user, zaak));
 
@@ -301,7 +301,7 @@ public class ZakenRESTService {
     }
 
     private void zaakBehandelaarGewijzigd(final Zaak zaak) {
-        eventingService.versturen(ZAAK.wijziging(zaak));
-        eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaak));
+        eventingService.send(ZAAK.wijziging(zaak));
+        eventingService.send(ZAAK_BETROKKENEN.wijziging(zaak));
     }
 }

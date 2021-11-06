@@ -41,7 +41,7 @@ public class NotitiesRESTService {
     @Path("{type}/{uuid}")
     public List<RESTNotitie> getNotities(@PathParam("type") final String type, @PathParam("uuid") final String uuid) {
         final UUID notitieUUID = UUID.fromString(uuid);
-        return notitieService.getNotitiesForZaak(notitieUUID).stream()
+        return notitieService.listNotitiesForZaak(notitieUUID).stream()
                 .map(notitieConverter::convertToRESTNotitie)
                 .collect(Collectors.toList());
     }

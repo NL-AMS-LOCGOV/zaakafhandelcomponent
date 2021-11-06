@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.service;
+package net.atos.zac.flowable;
 
 import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_LOCAL_CANDIDATE_GROUP_ID;
 import static org.apache.commons.lang3.StringUtils.substringBetween;
@@ -36,8 +36,6 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
 
 /**
  *
@@ -76,45 +74,41 @@ public class CmmnService {
     @EJB
     private IdmService idmService;
 
-    @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
-
-    public UUID getZaakUUID(final String caseInstanceId) {
+    public UUID findZaakUuidForCase(final String caseInstanceId) {
         return (UUID) cmmnRuntimeService.getVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
     }
 
-    public UUID getZaakUuidViaTaskId(final String taskId) {
+    public UUID findZaakUuidForTask(final String taskId) {
         return (UUID) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAK_UUID);
     }
 
-    public String getZaakIdentificatieViaTaskId(final String taskId) {
+    public String findZaakIdentificatieForTask(final String taskId) {
         return (String) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
     }
 
-    public String getZaaktypeOmschrijvingViaTaskId(final String taskId) {
+    public String findZaaktypeOmschrijvingForTask(final String taskId) {
         return (String) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
     }
 
-    public List<TaskInfo> getTakenVoorZaak(final UUID zaakUUID) {
-        final String caseInstanceId = getCaseInstanceId(zaakUUID);
+    public List<TaskInfo> listTaskInfosForZaak(final UUID zaakUUID) {
+        final String caseInstanceId = findCaseInstanceIdForZaak(zaakUUID);
         if (caseInstanceId != null) {
-            final List<TaskInfo> taken = new ArrayList<>(getLopendeTakenBijZaak(caseInstanceId));
-            taken.addAll(getBeeindigdeTakenVoorZaak(caseInstanceId));
+            final List<TaskInfo> taken = new ArrayList<>(listTasksForCase(caseInstanceId));
+            taken.addAll(listHistoricTasksForCase(caseInstanceId));
             return taken;
         } else {
             return Collections.emptyList();
         }
     }
 
-    private List<Task> getLopendeTakenBijZaak(final String caseInstanceId) {
+    private List<Task> listTasksForCase(final String caseInstanceId) {
         return cmmnTaskService.createTaskQuery()
                 .caseInstanceId(caseInstanceId)
                 .includeIdentityLinks()
                 .list();
     }
 
-    private List<HistoricTaskInstance> getBeeindigdeTakenVoorZaak(final String caseInstanceId) {
+    private List<HistoricTaskInstance> listHistoricTasksForCase(final String caseInstanceId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .caseInstanceId(caseInstanceId)
                 .finished()
@@ -122,36 +116,34 @@ public class CmmnService {
                 .list();
     }
 
-    public List<Task> getMijnTaken(final TaakSortering sortering, final String direction, final int firstResult, final int maxResults) {
-        return getTaskSorting(getTaskQuery(), sortering, direction)
-                .taskAssignee(ingelogdeMedewerker.getGebruikersnaam())
+    public List<Task> listTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
+            final int firstResult, final int maxResults) {
+        return addTaskSortingToTaskQuery(createTaskQuery(), sortering, direction)
+                .taskAssignee(gebruikersnaam)
                 .listPage(firstResult, maxResults);
     }
 
-    public int getMijnTakenAantal() {
-        return (int) getTaskQuery().taskAssignee(ingelogdeMedewerker.getGebruikersnaam()).count();
+    public int countTasksOwnedByMedewerker(final String gebruikersnaam) {
+        return (int) createTaskQuery().taskAssignee(gebruikersnaam).count();
     }
 
-    public List<Task> getWerkvoorraadTaken(final TaakSortering sortering, final String direction, final int firstResult, final int maxResults) {
-        return getTaskSorting(getTaskQuery(), sortering, direction)
-                .taskCandidateGroupIn(ingelogdeMedewerker.getGroupIds())
+    public List<Task> listTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
+            final int firstResult,
+            final int maxResults) {
+        return addTaskSortingToTaskQuery(createTaskQuery(), sortering, direction)
+                .taskCandidateGroupIn(groupIds)
                 .listPage(firstResult, maxResults);
     }
 
-    public int getWerkvoorraadTakenAantal() {
-        return (int) getTaskQuery()
-                .taskCandidateGroupIn(ingelogdeMedewerker.getGroupIds())
+    public int countTasksForGroups(final List<String> groupIds) {
+        return (int) createTaskQuery()
+                .taskCandidateGroupIn(groupIds)
                 .count();
     }
 
-    private TaskQuery getTaskQuery() {
-        //hier kan nog filtering komen/mapping van tablerequest#getSearch
-        return cmmnTaskService.createTaskQuery().includeIdentityLinks();
-    }
-
-    public List<PlanItemInstance> getPlanItemsVoorZaak(final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = getAvailablePlanItems(zaakUUID);
-        planItems.addAll(getAvailableUserEventListeners(zaakUUID));
+    public List<PlanItemInstance> listPlanItemsForZaak(final UUID zaakUUID) {
+        final List<PlanItemInstance> planItems = listAvailablePlanItemsForZaak(zaakUUID);
+        planItems.addAll(listAvailableUserEventListenersForZaak(zaakUUID));
         return planItems;
     }
 
@@ -171,14 +163,14 @@ public class CmmnService {
         }
     }
 
-    public void startHumanTaskPlanItemInstance(final String planItemInstanceId, final String groupId) {
+    public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId) {
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
                 .transientVariable(VAR_LOCAL_CANDIDATE_GROUP_ID, groupId)
                 .start();
     }
 
-    public void startPlanItemInstance(final String planItemInstanceId) {
-        final PlanItemInstance planItem = getPlanItem(planItemInstanceId);
+    public void startPlanItem(final String planItemInstanceId) {
+        final PlanItemInstance planItem = findPlanItem(planItemInstanceId);
         if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
             cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
         } else {
@@ -186,7 +178,7 @@ public class CmmnService {
         }
     }
 
-    public PlanItemInstance getPlanItem(final String planItemInstanceId) {
+    public PlanItemInstance findPlanItem(final String planItemInstanceId) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .planItemInstanceId(planItemInstanceId)
                 .singleResult();
@@ -206,7 +198,7 @@ public class CmmnService {
      */
     public Task assignTask(final String taskId, final String userId, final String groupId) {
         if (userId != null) {
-            final Task task = getLopendeTaak(taskId);
+            final Task task = findTask(taskId);
             if (!userId.equals(task.getAssignee())) {
                 cmmnTaskService.unclaim(taskId);
                 cmmnTaskService.claim(taskId, userId);
@@ -214,32 +206,32 @@ public class CmmnService {
         } else {
             cmmnTaskService.unclaim(taskId);
         }
-        return getLopendeTaak(taskId);
+        return findTask(taskId);
     }
 
-    public Task saveTask(final Task task) {
+    public Task updateTask(final Task task) {
         cmmnTaskService.saveTask(task);
-        return getLopendeTaak(task.getId());
+        return findTask(task.getId());
     }
 
     public TaskInfo completeTask(final String taskId) {
         cmmnTaskService.complete(taskId);
-        return getAfgerondeTaak(taskId);
+        return findHistoricTask(taskId);
     }
 
-    public TaskInfo getTaak(final String taskId) {
-        final Task task = getLopendeTaak(taskId);
-        return task != null ? task : getAfgerondeTaak(taskId);
+    public TaskInfo findTaskInfo(final String taskId) {
+        final Task task = findTask(taskId);
+        return task != null ? task : findHistoricTask(taskId);
     }
 
-    public Task getLopendeTaak(final String taskId) {
+    public Task findTask(final String taskId) {
         return cmmnTaskService.createTaskQuery()
                 .taskId(taskId)
                 .includeIdentityLinks()
                 .singleResult();
     }
 
-    private HistoricTaskInstance getAfgerondeTaak(final String taskId) {
+    private HistoricTaskInstance findHistoricTask(final String taskId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .taskId(taskId)
                 .finished()
@@ -247,23 +239,28 @@ public class CmmnService {
                 .singleResult();
     }
 
-    public Group getZaakBehandelaarGroup(final String caseDefinitionKey) {
+    public Group findGroupForCaseDefinition(final String caseDefinitionKey) {
         final CaseDefinition caseDefinition = cmmnRepositoryService.createCaseDefinitionQuery()
                 .caseDefinitionKey(caseDefinitionKey)
                 .latestVersion()
                 .singleResult();
         final String groupId = substringBetween(caseDefinition.getDescription(), ID_GROEP_ZAAK_OPEN, ID_GROEP_ZAAK_CLOSE);
-        return idmService.getGroup(groupId);
+        return idmService.findGroup(groupId);
     }
 
-    private List<PlanItemInstance> getAvailablePlanItems(final UUID zaakUUID) {
+    public Group findGroupForPlanItem(final String planItemInstanceId) {
+        final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_LOCAL_CANDIDATE_GROUP_ID);
+        return groupId != null ? idmService.findGroup(groupId) : null;
+    }
+
+    private List<PlanItemInstance> listAvailablePlanItemsForZaak(final UUID zaakUUID) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .caseVariableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .planItemInstanceStateEnabled()
                 .list();
     }
 
-    private List<PlanItemInstance> getAvailableUserEventListeners(final UUID zaakUUID) {
+    private List<PlanItemInstance> listAvailableUserEventListenersForZaak(final UUID zaakUUID) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .caseVariableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .planItemInstanceStateAvailable()
@@ -271,19 +268,19 @@ public class CmmnService {
                 .list();
     }
 
-    private String getCaseInstanceId(final UUID zaakUUID) {
+    private String findCaseInstanceIdForZaak(final UUID zaakUUID) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .singleResult();
         return caseInstance != null ? caseInstance.getId() : null;
     }
 
-    public Group getPlanItemGroup(final String planItemInstanceId) {
-        final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_LOCAL_CANDIDATE_GROUP_ID);
-        return groupId != null ? idmService.getGroup(groupId) : null;
+    private TaskQuery createTaskQuery() {
+        //hier kan nog filtering komen/mapping van tablerequest#getSearch
+        return cmmnTaskService.createTaskQuery().includeIdentityLinks();
     }
 
-    private static TaskQuery getTaskSorting(final TaskQuery taskQuery, final TaakSortering sortering, final String direction) {
+    private static TaskQuery addTaskSortingToTaskQuery(final TaskQuery taskQuery, final TaakSortering sortering, final String direction) {
         if (sortering != null) {
             final TaskQuery sortedTaskQuery;
             switch (sortering) {

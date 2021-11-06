@@ -13,7 +13,7 @@ import javax.ejb.EJB;
 import org.flowable.idm.api.User;
 
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.service.IdmService;
+import net.atos.zac.flowable.IdmService;
 
 public class RESTMedewerkerConverter {
 
@@ -22,7 +22,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertGebruikersnaam(final String gebruikersnaam) {
         if (gebruikersnaam != null) {
-            final User user = idmService.getUser(gebruikersnaam);
+            final User user = idmService.findUser(gebruikersnaam);
             return convertUser(user);
         } else {
             return null;
@@ -44,7 +44,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertUserId(final String medewerkerId) {
         if (medewerkerId != null) {
-            final User user = idmService.getUser(medewerkerId);
+            final User user = idmService.findUser(medewerkerId);
             return convertUser(user);
         }
         return null;

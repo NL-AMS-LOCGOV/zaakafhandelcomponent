@@ -23,7 +23,7 @@ import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
-import net.atos.zac.service.CmmnService;
+import net.atos.zac.flowable.CmmnService;
 
 /**
  *
@@ -42,15 +42,15 @@ public class PlanItemsRESTService {
     @GET
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> getPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = cmmnService.getPlanItemsVoorZaak(zaakUUID);
+        final List<PlanItemInstance> planItems = cmmnService.listPlanItemsForZaak(zaakUUID);
         return planItemConverter.convertPlanItems(planItems);
     }
 
     @GET
     @Path("{id}")
     public RESTPlanItem getPlanItem(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = cmmnService.getPlanItem(planItemId);
-        final Group group = cmmnService.getPlanItemGroup(planItemId);
+        final PlanItemInstance planItem = cmmnService.findPlanItem(planItemId);
+        final Group group = cmmnService.findGroupForPlanItem(planItemId);
         return planItemConverter.convertPlanItemMetGroep(planItem, group);
     }
 
@@ -58,9 +58,9 @@ public class PlanItemsRESTService {
     @Path("do/{id}")
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
         if (restPlanItem.groep != null) {
-            cmmnService.startHumanTaskPlanItemInstance(restPlanItem.id, restPlanItem.groep.id);
+            cmmnService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id);
         } else {
-            cmmnService.startPlanItemInstance(restPlanItem.id);
+            cmmnService.startPlanItem(restPlanItem.id);
         }
         return restPlanItem;
     }

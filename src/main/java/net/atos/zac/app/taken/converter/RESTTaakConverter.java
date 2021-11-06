@@ -31,9 +31,9 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.flowable.CmmnService;
 import net.atos.zac.rechten.RechtOperatie;
 import net.atos.zac.rechten.TaakRechten;
-import net.atos.zac.service.CmmnService;
 
 /**
  *
@@ -62,9 +62,9 @@ public class RESTTaakConverter {
     public RESTTaak convertTask(final TaskInfo task) {
         final RESTTaak restTaak = convertTaskInfo(task);
         if (task instanceof Task) {
-            restTaak.zaakUUID = cmmnService.getZaakUuidViaTaskId(task.getId());
-            restTaak.zaakIdentificatie = cmmnService.getZaakIdentificatieViaTaskId(task.getId());
-            restTaak.zaaktypeOmschrijving = cmmnService.getZaaktypeOmschrijvingViaTaskId(task.getId());
+            restTaak.zaakUUID = cmmnService.findZaakUuidForTask(task.getId());
+            restTaak.zaakIdentificatie = cmmnService.findZaakIdentificatieForTask(task.getId());
+            restTaak.zaaktypeOmschrijving = cmmnService.findZaaktypeOmschrijvingForTask(task.getId());
         }
 
 

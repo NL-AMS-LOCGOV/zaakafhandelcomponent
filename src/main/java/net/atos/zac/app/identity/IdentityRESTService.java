@@ -27,7 +27,7 @@ import net.atos.zac.app.identity.model.RESTIngelogdeMedewerker;
 import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.service.IdmService;
+import net.atos.zac.flowable.IdmService;
 
 @Path("identity")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -53,14 +53,14 @@ public class IdentityRESTService {
     @GET
     @Path("groepen")
     public List<RESTGroep> getGroepen() {
-        final List<Group> groups = idmService.getGroups();
+        final List<Group> groups = idmService.listGroups();
         return groepConverter.convertGroups(groups);
     }
 
     @GET
     @Path("groepen/{groepId}/medewerkers")
     public List<RESTMedewerker> getMedewerkersInGroep(@PathParam("groepId") final String groepId) {
-        final List<User> users = idmService.getUsersInGroup(groepId);
+        final List<User> users = idmService.listUsersInGroup(groepId);
         return medewerkerConverter.convertUsers(users);
     }
 

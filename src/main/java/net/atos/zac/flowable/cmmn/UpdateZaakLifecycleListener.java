@@ -11,7 +11,7 @@ import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.common.engine.api.delegate.Expression;
 
-import net.atos.zac.service.HandleService;
+import net.atos.zac.flowable.CaseHandlingService;
 
 /**
  *
@@ -73,7 +73,7 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
         final String resultaat = resultaatExpression != null ? resultaatExpression.getValue(planItemInstance).toString() : extractResultaatFromName(
                 planItemInstance.getName());
         if (status != null || resultaat != null) {
-            HandleService.getHandleService().updateZaak(planItemInstance.getCaseInstanceId(), status, resultaat);
+            CaseHandlingService.getHandleService().updateZaak(planItemInstance.getCaseInstanceId(), status, resultaat);
         }
     }
 

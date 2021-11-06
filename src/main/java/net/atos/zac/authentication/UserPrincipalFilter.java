@@ -24,13 +24,12 @@ import javax.servlet.http.HttpSession;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 
-import net.atos.zac.service.HandleService;
-import net.atos.zac.service.IdmService;
+import net.atos.zac.flowable.IdmService;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
 
-    private static final Logger LOG = Logger.getLogger(HandleService.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserPrincipalFilter.class.getName());
 
     @EJB
     private IdmService idmService;
@@ -72,11 +71,11 @@ public class UserPrincipalFilter implements Filter {
     }
 
     private Medewerker createIngelogdeMedewerker(final String gebruikersnaam) {
-        final User user = idmService.getUser(gebruikersnaam);
+        final User user = idmService.findUser(gebruikersnaam);
         if (user == null) {
             throw new RuntimeException(String.format("Gebruiker met gebruikersnaam '%s' is niet bekend.", gebruikersnaam));
         }
-        final List<Group> groups = idmService.getUserGroups(gebruikersnaam);
+        final List<Group> groups = idmService.listGroupsForUser(gebruikersnaam);
         return new Medewerker(user, groups);
     }
 

@@ -21,7 +21,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieObject;
-import net.atos.zac.service.ConfigurationService;
+import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieObjectConverter {

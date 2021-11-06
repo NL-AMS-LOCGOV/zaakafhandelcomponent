@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.service;
+package net.atos.zac.zaakdata;
 
 import java.net.URI;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import net.atos.client.or.object.ObjectsClientService;
@@ -19,9 +19,8 @@ import net.atos.client.zgw.zrc.model.Objecttype;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
-import net.atos.zac.zaakdata.Zaakdata;
 
-@Stateless
+@ApplicationScoped
 public class ZaakdataService {
 
     private static final String ZAAKDATA_OBJECT_TYPE_OVERIGE = "zaakdata";
@@ -39,7 +38,7 @@ public class ZaakdataService {
     @Inject
     private ObjectRegistratieClientService objectRegistratieClientService;
 
-    public Zaakdata retrieveZaakdata(final UUID zaakUUID) {
+    public Zaakdata readZaakdata(final UUID zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         final Zaakobject zaakobject = findZaakobject(zaak.getUrl());
         final ORObject object = objectsClientService.readObject(zaakobject.getObject());
@@ -48,7 +47,7 @@ public class ZaakdataService {
         return zaakdata;
     }
 
-    public Zaakdata storeZaakdata(final UUID zaakUUID, final Zaakdata zaakdata) {
+    public Zaakdata updateZaakdata(final UUID zaakUUID, final Zaakdata zaakdata) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         Zaakobject zaakobject = findZaakobject(zaak.getUrl());
         if (zaakobject == null) {

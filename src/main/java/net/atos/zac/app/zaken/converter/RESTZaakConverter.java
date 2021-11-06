@@ -10,12 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 
+import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
@@ -26,14 +29,16 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.rechten.RechtOperatie;
 import net.atos.zac.rechten.ZaakRechten;
-import net.atos.zac.service.ConfigurationService;
-import net.atos.zac.service.HandleService;
+import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PeriodUtil;
 
 public class RESTZaakConverter {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZGWApiService zgwApiService;
 
     @Inject
     private RESTZaakStatusConverter zaakStatusConverter;
@@ -59,9 +64,6 @@ public class RESTZaakConverter {
     @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
-
-    @EJB
-    private HandleService handleService;
 
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
@@ -103,10 +105,12 @@ public class RESTZaakConverter {
         //restZaakView.communicatiekanaal
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final String groepId = handleService.ophalenZaakBehandelaarGroepId(zaak.getUrl(), zaak.getZaaktype());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findRolOrganisatorischeEenheidForZaak(zaak, AardVanRol.BEHANDELAAR);
+        final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.groep = groepConverter.convertGroupId(groepId);
 
-        final String behandelaarId = handleService.ophalenZaakBehandelaarMedewerkerId(zaak.getUrl(), zaak.getZaaktype());
+        final RolMedewerker behandelaar = zgwApiService.findRolMedewerkerForZaak(zaak, AardVanRol.BEHANDELAAR);
+        final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
         //TODO ESUITEDEV-25820 rechtencheck met solrZaak

@@ -11,7 +11,6 @@ import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_BETROKKENEN
 
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -22,9 +21,9 @@ import javax.ws.rs.core.Response;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.cache.event.CacheUpdateEvent;
+import net.atos.zac.event.CacheUpdateEvent;
+import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnUpdateEvent;
-import net.atos.zac.service.EventingService;
 
 /**
  *
@@ -42,7 +41,7 @@ public class NotificatieReceiver {
 
     private static final String ACTIE_CREATE = "create";
 
-    @EJB
+    @Inject
     private EventingService eventingService;
 
     @Inject
@@ -63,13 +62,13 @@ public class NotificatieReceiver {
         // TODO ESUITEDEV-25860 conversie
         // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
         if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
-            eventingService.versturen(new CmmnUpdateEvent(notificatie.getHoofdObject()));
+            eventingService.send(new CmmnUpdateEvent(notificatie.getHoofdObject()));
         }
     }
 
     private void handleCaches(final Notificatie notificatie) {
         // TODO ESUITEDEV-25860 conversie
-        eventingService.versturen((CacheUpdateEvent) null);
+        eventingService.send((CacheUpdateEvent) null);
     }
 
     private void handleWebsockets(final Notificatie notificatie) {
@@ -77,8 +76,8 @@ public class NotificatieReceiver {
         // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
         if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
             final Zaak zaak = zrcClientService.readZaak(notificatie.getHoofdObject());
-            eventingService.versturen(ZAAK.wijziging(zaak));
-            eventingService.versturen(ZAAK_BETROKKENEN.wijziging(zaak));
+            eventingService.send(ZAAK.wijziging(zaak));
+            eventingService.send(ZAAK_BETROKKENEN.wijziging(zaak));
         }
     }
 }

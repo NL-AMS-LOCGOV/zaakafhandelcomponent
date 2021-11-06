@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
@@ -49,7 +48,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieObject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.service.EventingService;
+import net.atos.zac.event.EventingService;
 import net.atos.zac.util.UriUtil;
 
 @Path("informatieobjecten")
@@ -86,7 +85,7 @@ public class InformatieObjectenRESTService {
     @ActiveSession
     private HttpSession httpSession;
 
-    @EJB
+    @Inject
     private EventingService eventingService;
 
     @GET
@@ -104,8 +103,8 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobjectWithInhoud data = restInformatieObjectConverter.convert(restInformatieObject, file);
         final ZaakInformatieobject zaakInformatieObject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restInformatieObject.titel,
                                                                                                           restInformatieObject.beschrijving, "-");
-        eventingService.versturen(DOCUMENT.toevoeging(zaakInformatieObject.getInformatieobject()));
-        eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak));
+        eventingService.send(DOCUMENT.toevoeging(zaakInformatieObject.getInformatieobject()));
+        eventingService.send(ZAAK_DOCUMENTEN.wijziging(zaak));
         return UriUtil.uuidFromURI(zaakInformatieObject.getInformatieobject());
     }
 
@@ -171,9 +170,9 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.lockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        eventingService.versturen(DOCUMENT.wijziging(uuid));
+        eventingService.send(DOCUMENT.wijziging(uuid));
         getZaakInformatieObjects(uuid)
-                .forEach(zaak -> eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));
+                .forEach(zaak -> eventingService.send(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));
         return Response.noContent().build();
     }
 
@@ -182,9 +181,9 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        eventingService.versturen(DOCUMENT.wijziging(uuid));
+        eventingService.send(DOCUMENT.wijziging(uuid));
         getZaakInformatieObjects(uuid)
-                .forEach(zaak -> eventingService.versturen(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));
+                .forEach(zaak -> eventingService.send(ZAAK_DOCUMENTEN.wijziging(zaak.getZaak())));
         return Response.noContent().build();
     }
 

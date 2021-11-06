@@ -13,7 +13,7 @@ import javax.ejb.EJB;
 import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.service.IdmService;
+import net.atos.zac.flowable.IdmService;
 
 public class RESTGroepConverter {
 
@@ -38,6 +38,6 @@ public class RESTGroepConverter {
     }
 
     public RESTGroep convertGroupId(final String groepId) {
-        return groepId != null ? convertGroup(idmService.getGroup(groepId)) : null;
+        return groepId != null ? convertGroup(idmService.findGroup(groepId)) : null;
     }
 }

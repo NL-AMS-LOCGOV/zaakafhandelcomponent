@@ -35,8 +35,8 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
-import net.atos.zac.service.CmmnService;
-import net.atos.zac.service.EventingService;
+import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.CmmnService;
 
 /**
  *
@@ -52,7 +52,7 @@ public class TakenRESTService {
     @Inject
     private RESTTaakConverter taakConverter;
 
-    @EJB
+    @Inject
     private EventingService eventingService;
 
     @Inject
@@ -67,35 +67,38 @@ public class TakenRESTService {
     public TableResponse<RESTTaak> getWerkvoorraadTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
         final List<Task> tasks = cmmnService
-                .getWerkvoorraadTaken(TaakSortering.fromValue(tableState.getSort().getPredicate()), tableState.getSort().getDirection(),
-                                      tableState.getPagination().getFirstResult(), tableState.getPagination().getPageSize());
+                .listTasksForGroups(ingelogdeMedewerker.getGroupIds(), TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                    tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
+                                    tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTasks(tasks);
-        return new TableResponse<>(taken, cmmnService.getWerkvoorraadTakenAantal());
+        return new TableResponse<>(taken, cmmnService.countTasksForGroups(ingelogdeMedewerker.getGroupIds()));
     }
 
     @GET
     @Path("mijn")
     public TableResponse<RESTTaak> getMijnTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<Task> tasks = cmmnService
-                .getMijnTaken(TaakSortering.fromValue(tableState.getSort().getPredicate()), tableState.getSort().getDirection(),
-                              tableState.getPagination().getFirstResult(), tableState.getPagination().getPageSize());
+        final List<Task> tasks = cmmnService.listTasksOwnedByMedewerker(ingelogdeMedewerker.getGebruikersnaam(),
+                                                                        TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                                                        tableState.getSort().getDirection(),
+                                                                        tableState.getPagination().getFirstResult(),
+                                                                        tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTasks(tasks);
-        return new TableResponse<>(taken, cmmnService.getMijnTakenAantal());
+        return new TableResponse<>(taken, cmmnService.countTasksOwnedByMedewerker(ingelogdeMedewerker.getGebruikersnaam()));
     }
 
 
     @GET
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> getTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
-        final List<TaskInfo> tasks = cmmnService.getTakenVoorZaak(zaakUUID);
+        final List<TaskInfo> tasks = cmmnService.listTaskInfosForZaak(zaakUUID);
         return taakConverter.convertTasks(tasks);
     }
 
     @GET
     @Path("{taskId}")
     public RESTTaak getTaak(@PathParam("taskId") final String taskId) {
-        final TaskInfo task = cmmnService.getTaak(taskId);
+        final TaskInfo task = cmmnService.findTaskInfo(taskId);
         return taakConverter.convertTask(task);
     }
 
@@ -129,11 +132,11 @@ public class TakenRESTService {
     public RESTTaak bewerkenTaak(final RESTTaak restTaak) {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        Task task = cmmnService.getLopendeTaak(restTaak.id);
+        Task task = cmmnService.findTask(restTaak.id);
         taakConverter.convertTaak(restTaak, task);
-        task = cmmnService.saveTask(task);
-        eventingService.versturen(TAAK.wijziging(task));
-        eventingService.versturen(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
+        task = cmmnService.updateTask(task);
+        eventingService.send(TAAK.wijziging(task));
+        eventingService.send(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
         return taakConverter.convertTask(task);
     }
 
@@ -143,13 +146,13 @@ public class TakenRESTService {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final TaskInfo taskInfo = cmmnService.completeTask(restTaak.id);
-        eventingService.versturen(TAAK.wijziging(taskInfo));
-        eventingService.versturen(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
+        eventingService.send(TAAK.wijziging(taskInfo));
+        eventingService.send(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
         return taakConverter.convertTask(taskInfo);
     }
 
     private void taakBehandelaarGewijzigd(final Task taak, final UUID zaakUuid) {
-        eventingService.versturen(TAAK.wijziging(taak));
-        eventingService.versturen(ZAAK_TAKEN.wijziging(zaakUuid));
+        eventingService.send(TAAK.wijziging(taak));
+        eventingService.send(ZAAK_TAKEN.wijziging(zaakUuid));
     }
 }

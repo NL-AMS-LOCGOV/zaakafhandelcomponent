@@ -21,12 +21,19 @@ import net.atos.client.zgw.drc.DRCClient;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
+import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.zrc.model.RolListParameters;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Resultaattype;
+import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 
@@ -120,6 +127,39 @@ public class ZGWApiService {
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
         return zrcClient.zaakinformatieobjectCreate(zaakInformatieObject);
+    }
+
+    /**
+     * Find {@link RolOrganisatorischeEenheid} for {@link Zaak} with specific {@link AardVanRol}.
+     *
+     * @param zaak       {@link Zaak}
+     * @param aardVanRol Required {@link AardVanRol}
+     * @return {@link RolOrganisatorischeEenheid} or 'null'.
+     */
+    public RolOrganisatorischeEenheid findRolOrganisatorischeEenheidForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
+        final Rol<?> rol = findRolForZaak(zaak, BetrokkeneType.ORGANISATORISCHE_EENHEID, aardVanRol);
+        return rol != null ? (RolOrganisatorischeEenheid) rol : null;
+    }
+
+    /**
+     * Find {@link RolMedewerker} for {@link Zaak} with specific {@link AardVanRol}.
+     *
+     * @param zaak       {@link Zaak}
+     * @param aardVanRol Required {@link AardVanRol}
+     * @return {@link RolMedewerker} or 'null'.
+     */
+    public RolMedewerker findRolMedewerkerForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
+        final Rol<?> rol = findRolForZaak(zaak, BetrokkeneType.MEDEWERKER, aardVanRol);
+        return rol != null ? (RolMedewerker) rol : null;
+    }
+
+    private Rol<?> findRolForZaak(final Zaak zaak, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
+        final RolListParameters rolListParameters = new RolListParameters();
+        rolListParameters.setZaak(zaak.getUrl());
+        rolListParameters.setBetrokkeneType(betrokkeneType);
+        rolListParameters.setRoltype(roltype.getUrl());
+        return zrcClient.rolList(rolListParameters).getSingleResult().orElse(null);
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {

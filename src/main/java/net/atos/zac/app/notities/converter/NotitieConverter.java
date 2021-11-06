@@ -16,7 +16,7 @@ import net.atos.zac.app.notities.model.Notitie;
 import net.atos.zac.app.notities.model.rest.RESTNotitie;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.service.IdmService;
+import net.atos.zac.flowable.IdmService;
 
 public class NotitieConverter {
 
@@ -36,7 +36,7 @@ public class NotitieConverter {
         restNotitie.tijdstipLaatsteWijziging = notitie.getTijdstipLaatsteWijziging();
         restNotitie.gebruikersnaamMedewerker = notitie.getGebruikersnaamMedewerker();
 
-        final User medewerker = identityService.getUser(notitie.getGebruikersnaamMedewerker());
+        final User medewerker = identityService.findUser(notitie.getGebruikersnaamMedewerker());
         restNotitie.voornaamAchternaamMedewerker = String.format("%s %s", medewerker.getFirstName(),
                                                                  medewerker.getLastName());
 
