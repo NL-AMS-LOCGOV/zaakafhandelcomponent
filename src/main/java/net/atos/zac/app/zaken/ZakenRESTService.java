@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.zaken;
 
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_BETROKKENEN;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK_BETROKKENEN;
 
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +120,7 @@ public class ZakenRESTService {
     public RESTZaak postZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        eventingService.send(ZAAK.toevoeging(nieuweZaak));
+        eventingService.send(ZAAK.creation(nieuweZaak));
         return zaakConverter.convert(nieuweZaak);
     }
 
@@ -131,7 +131,7 @@ public class ZakenRESTService {
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
-        eventingService.send(ZAAK.wijziging(updatedZaak));
+        eventingService.send(ZAAK.update(updatedZaak));
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -300,7 +300,7 @@ public class ZakenRESTService {
     }
 
     private void zaakBehandelaarGewijzigd(final Zaak zaak) {
-        eventingService.send(ZAAK.wijziging(zaak));
-        eventingService.send(ZAAK_BETROKKENEN.wijziging(zaak));
+        eventingService.send(ZAAK.update(zaak));
+        eventingService.send(ZAAK_BETROKKENEN.update(zaak));
     }
 }

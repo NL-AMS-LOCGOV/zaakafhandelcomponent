@@ -10,13 +10,13 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import net.atos.zac.flowable.cmmn.event.CmmnUpdateEvent;
-import net.atos.zac.websocket.event.SchermUpdateEvent;
+import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 @ApplicationScoped
 public class EventingService {
 
     @Inject
-    private Event<SchermUpdateEvent> schermUpdateEvent;
+    private Event<ScreenUpdateEvent> screenUpdateEvent;
 
     @Inject
     private Event<CacheUpdateEvent> cacheUpdateEvent;
@@ -32,8 +32,8 @@ public class EventingService {
      *
      * @param event
      */
-    public void send(final SchermUpdateEvent event) {
-        schermUpdateEvent.fireAsync(event);
+    public void send(final ScreenUpdateEvent event) {
+        screenUpdateEvent.fireAsync(event);
     }
 
     /**

@@ -12,14 +12,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import net.atos.zac.websocket.event.SchermUpdateEvent;
+import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
 
     private long timestamp;
 
     @NotNull
-    private OperatieEnum operatie;
+    private ActionEnum operatie;
 
     @NotBlank
     @Valid
@@ -32,7 +32,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
         super();
     }
 
-    public AbstractUpdateEvent(final OperatieEnum operatie, final ID objectId) {
+    public AbstractUpdateEvent(final ActionEnum operatie, final ID objectId) {
         this.timestamp = Instant.now().getEpochSecond();
         this.operatie = operatie;
         this.objectId = objectId;
@@ -42,7 +42,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
         return timestamp;
     }
 
-    public OperatieEnum getOperatie() {
+    public ActionEnum getOperatie() {
         return operatie;
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
             return false;
         }
         // cast en vergelijk
-        final SchermUpdateEvent other = (SchermUpdateEvent) obj;
+        final ScreenUpdateEvent other = (ScreenUpdateEvent) obj;
         if (getOperatie() != other.getOperatie()) {
             return false;
         }

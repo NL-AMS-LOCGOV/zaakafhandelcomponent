@@ -24,20 +24,20 @@ import net.atos.zac.websocket.SessionRegistry;
  * Deze bean luistert naar SchermUpdateEvents, zet ze om naar een Websockets event en stuurt deze dan door naar de browsers die zich erop geabonneerd hebben.
  */
 @ManagedBean
-public class SchermUpdateObserver extends AbstractUpdateObserver<SchermUpdateEvent> {
+public class ScreenUpdateObserver extends AbstractUpdateObserver<ScreenUpdateEvent> {
 
-    private static final Logger LOG = Logger.getLogger(SchermUpdateObserver.class.getName());
+    private static final Logger LOG = Logger.getLogger(ScreenUpdateObserver.class.getName());
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     @EJB
     private SessionRegistry sessionRegistry;
 
-    public void onFire(final @ObservesAsync SchermUpdateEvent event) {
-        verstuurNaarWebsocketSubscribers(event);
+    public void onFire(final @ObservesAsync ScreenUpdateEvent event) {
+        sendToWebsocketSubscribers(event);
     }
 
-    private void verstuurNaarWebsocketSubscribers(final SchermUpdateEvent event) {
+    private void sendToWebsocketSubscribers(final ScreenUpdateEvent event) {
         try {
             final Set<Session> subscribers = sessionRegistry.getSessions(event);
             if (!subscribers.isEmpty()) {
@@ -45,7 +45,7 @@ public class SchermUpdateObserver extends AbstractUpdateObserver<SchermUpdateEve
                 subscribers.forEach(session -> session.getAsyncRemote().sendText(json));
             }
         } catch (final JsonProcessingException e) {
-            LOG.log(Level.SEVERE, "Het omzetten van het SchermUpdateEvent naar JSON is mislukt.", e);
+            LOG.log(Level.SEVERE, "Het omzetten van het ScreenUpdateEvent naar JSON is mislukt.", e);
         }
     }
 }

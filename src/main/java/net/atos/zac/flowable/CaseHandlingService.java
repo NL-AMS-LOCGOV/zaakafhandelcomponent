@@ -6,7 +6,7 @@
 package net.atos.zac.flowable;
 
 import static java.lang.String.format;
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -62,7 +62,7 @@ public class CaseHandlingService {
             zgwApiService.createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
         }
         if (statustypeOmschrijving != null || resultaattypeOmschrijving != null) {
-            eventingService.send(ZAAK.wijziging(zaakUUID));
+            eventingService.send(ZAAK.update(zaakUUID));
         }
     }
 
@@ -70,6 +70,6 @@ public class CaseHandlingService {
         LOG.info(format("Zaak %s: Beeindig Case", zaakUUID));
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         zgwApiService.endZaak(zaak, EINDSTATUS_TOELICHTING);
-        eventingService.send(ZAAK.wijziging(zaakUUID));
+        eventingService.send(ZAAK.update(zaakUUID));
     }
 }

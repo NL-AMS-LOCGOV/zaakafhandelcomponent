@@ -6,8 +6,8 @@
 package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_BETROKKENEN;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK_BETROKKENEN;
 
 import java.util.logging.Logger;
 
@@ -76,8 +76,8 @@ public class NotificatieReceiver {
         // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
         if (KANAAL_ZAKEN.equals(notificatie.getKanaal()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getActie())) {
             final Zaak zaak = zrcClientService.readZaak(notificatie.getHoofdObject());
-            eventingService.send(ZAAK.wijziging(zaak));
-            eventingService.send(ZAAK_BETROKKENEN.wijziging(zaak));
+            eventingService.send(ZAAK.update(zaak));
+            eventingService.send(ZAAK_BETROKKENEN.update(zaak));
         }
     }
 }

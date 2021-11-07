@@ -8,7 +8,7 @@ package net.atos.zac.websocket;
 
 import javax.websocket.Session;
 
-import net.atos.zac.websocket.event.SchermUpdateEvent;
+import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 /**
  * Geeft aan of een client zich abonneert op een event,
@@ -20,7 +20,7 @@ public enum SubscriptionType {
      */
     TOEVOEGEN {
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final SchermUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
             registry.add(event, session);
         }
     },
@@ -29,7 +29,7 @@ public enum SubscriptionType {
      */
     VERWIJDEREN {
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final SchermUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
             registry.remove(event, session);
         }
     },
@@ -41,12 +41,12 @@ public enum SubscriptionType {
         private final SubscriptionMessage MESSAGE = new SubscriptionMessage(this, null);
 
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final SchermUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
             registry.removeAll(session);
         }
 
         @Override
-        public SubscriptionMessage message(final SchermUpdateEvent event) {
+        public SubscriptionMessage message(final ScreenUpdateEvent event) {
             if (event != null) {
                 throw new IllegalArgumentException("Onverwacht event argument");
             }
@@ -59,7 +59,7 @@ public enum SubscriptionType {
         }
     };
 
-    protected abstract void register(final SessionRegistry registry, final Session session, final SchermUpdateEvent event);
+    protected abstract void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event);
 
     /**
      * Factory method voor SubscriptionMessages (types TOEVOEGEN en VERWIJDEREN).
@@ -67,7 +67,7 @@ public enum SubscriptionType {
      * @param event het event waarop geabonneerd wordt.
      * @return het bericht
      */
-    public SubscriptionMessage message(final SchermUpdateEvent event) {
+    public SubscriptionMessage message(final ScreenUpdateEvent event) {
         if (event != null) {
             return new SubscriptionMessage(this, event);
         }
@@ -93,9 +93,9 @@ public enum SubscriptionType {
 
         private final SubscriptionType subscriptionType;
 
-        private final SchermUpdateEvent event;
+        private final ScreenUpdateEvent event;
 
-        private SubscriptionMessage(final SubscriptionType subscriptionType, final SchermUpdateEvent event) {
+        private SubscriptionMessage(final SubscriptionType subscriptionType, final ScreenUpdateEvent event) {
             this.subscriptionType = subscriptionType;
             this.event = event;
         }
@@ -104,7 +104,7 @@ public enum SubscriptionType {
             return subscriptionType;
         }
 
-        public final SchermUpdateEvent getEvent() {
+        public final ScreenUpdateEvent getEvent() {
             return event;
         }
 

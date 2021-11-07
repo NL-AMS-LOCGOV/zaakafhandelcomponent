@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.taken;
 
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.TAAK;
-import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_TAKEN;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.TAAK;
+import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK_TAKEN;
 
 import java.util.List;
 import java.util.UUID;
@@ -134,8 +134,8 @@ public class TakenRESTService {
         Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertTaak(restTaak, task);
         task = flowableService.updateTask(task);
-        eventingService.send(TAAK.wijziging(task));
-        eventingService.send(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
+        eventingService.send(TAAK.update(task));
+        eventingService.send(ZAAK_TAKEN.update(restTaak.zaakUUID));
         return taakConverter.convertTask(task);
     }
 
@@ -145,13 +145,13 @@ public class TakenRESTService {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final TaskInfo taskInfo = flowableService.completeTask(restTaak.id);
-        eventingService.send(TAAK.wijziging(taskInfo));
-        eventingService.send(ZAAK_TAKEN.wijziging(restTaak.zaakUUID));
+        eventingService.send(TAAK.update(taskInfo));
+        eventingService.send(ZAAK_TAKEN.update(restTaak.zaakUUID));
         return taakConverter.convertTask(taskInfo);
     }
 
     private void taakBehandelaarGewijzigd(final Task taak, final UUID zaakUuid) {
-        eventingService.send(TAAK.wijziging(taak));
-        eventingService.send(ZAAK_TAKEN.wijziging(zaakUuid));
+        eventingService.send(TAAK.update(taak));
+        eventingService.send(ZAAK_TAKEN.update(zaakUuid));
     }
 }

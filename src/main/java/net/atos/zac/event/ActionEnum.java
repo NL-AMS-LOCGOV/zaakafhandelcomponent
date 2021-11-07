@@ -8,20 +8,20 @@ package net.atos.zac.event;
 /**
  * Enumeratie die de operaties bevat zoals die gebruikt worden door het {@link AbstractUpdateEvent}.
  */
-public enum OperatieEnum {
+public enum ActionEnum {
 
     /**
      * indicatie dat het genoemde object is gewijzigd
      */
-    WIJZIGING,
+    UPDATE,
 
     /**
      * indicatie dat het genoemde object is toegevoegd
      */
-    TOEVOEGING,
+    CREATE,
 
     /**
      * indicatie dat het genoemde object is verwijderd
      */
-    VERWIJDERING
+    DELETE
 }

@@ -25,10 +25,10 @@ import javax.websocket.WebSocketContainer;
 
 import org.junit.jupiter.api.Test;
 
-import net.atos.zac.event.OperatieEnum;
+import net.atos.zac.event.ActionEnum;
 import net.atos.zac.websocket.SessionRegistry;
-import net.atos.zac.websocket.event.SchermObjectTypeEnum;
-import net.atos.zac.websocket.event.SchermUpdateEvent;
+import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
+import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 public class SessionRegistryTest {
 
@@ -328,17 +328,17 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final SchermUpdateEvent EVENT1 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "1");
 
-    private static final SchermUpdateEvent EVENT1a = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "\"1\"");
+    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"1\"");
 
-    private static final SchermUpdateEvent EVENT1b = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "\"\"1\"\"");
+    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
 
-    private static final SchermUpdateEvent EVENT2 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.ZAAK, "2");
+    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "2");
 
-    private static final SchermUpdateEvent EVENT3 = new SchermUpdateEvent(OperatieEnum.TOEVOEGING, SchermObjectTypeEnum.TAAK, "1");
+    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.TAAK, "1");
 
-    private static final SchermUpdateEvent EVENT4 = new SchermUpdateEvent(OperatieEnum.WIJZIGING, SchermObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(ActionEnum.UPDATE, ScreenObjectTypeEnum.ZAAK, "1");
 
     @Test
     public void testFixGelijk() {

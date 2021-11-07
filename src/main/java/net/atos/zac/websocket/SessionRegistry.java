@@ -17,7 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
-import net.atos.zac.websocket.event.SchermUpdateEvent;
+import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 /**
  * Deze EJB wordt gebruikt voor het bijhouden van een lijst met actieve sessies.
@@ -28,14 +28,14 @@ public class SessionRegistry {
 
     private static final Pattern QUOTED = Pattern.compile("^\"(.*)\"$");
 
-    private final SetMultimap<SchermUpdateEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    private final SetMultimap<ScreenUpdateEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     /**
      * Geef een set met alle actieve sessies voor een bepaald event terug.
      *
      * @return Set met actieve sessies
      */
-    public Set<Session> getSessions(final SchermUpdateEvent event) {
+    public Set<Session> getSessions(final ScreenUpdateEvent event) {
         return Collections.unmodifiableSet(eventSessions.get(fix(event)));
     }
 
@@ -45,7 +45,7 @@ public class SessionRegistry {
      * @param event   het event
      * @param session de toe te voegen sessie
      */
-    public void add(final SchermUpdateEvent event, final Session session) {
+    public void add(final ScreenUpdateEvent event, final Session session) {
         if (session != null) {
             eventSessions.put(fix(event), session);
         }
@@ -57,7 +57,7 @@ public class SessionRegistry {
      * @param event   het event
      * @param session de te verwijderen sessie
      */
-    public void remove(final SchermUpdateEvent event, final Session session) {
+    public void remove(final ScreenUpdateEvent event, final Session session) {
         if (session != null) {
             eventSessions.get(fix(event)).remove(session);
         }
@@ -81,8 +81,8 @@ public class SessionRegistry {
      * @param event het event waarin mogelijk het objectId gequote is
      * @return een event waarin het objectId is ontdaan van de eventuele quotes
      */
-    public SchermUpdateEvent fix(final SchermUpdateEvent event) {
+    public ScreenUpdateEvent fix(final ScreenUpdateEvent event) {
         final Matcher matcher = QUOTED.matcher(event.getObjectId());
-        return matcher.matches() ? fix(new SchermUpdateEvent(event.getOperatie(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
+        return matcher.matches() ? fix(new ScreenUpdateEvent(event.getOperatie(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
     }
 }

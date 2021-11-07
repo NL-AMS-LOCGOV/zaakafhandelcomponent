@@ -5,7 +5,7 @@
 
 package net.atos.zac.flowable.cmmn.event;
 
-import static net.atos.zac.event.OperatieEnum.TOEVOEGING;
+import static net.atos.zac.event.ActionEnum.CREATE;
 
 import java.net.URI;
 
@@ -23,7 +23,7 @@ public class CmmnUpdateEvent extends AbstractUpdateEvent<Object, URI> {
     }
 
     public CmmnUpdateEvent(final URI objectId) {
-        super(TOEVOEGING, objectId);
+        super(CREATE, objectId);
     }
 
     @Override
