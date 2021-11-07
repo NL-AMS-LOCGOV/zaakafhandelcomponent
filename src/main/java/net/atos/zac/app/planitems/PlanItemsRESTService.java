@@ -48,7 +48,7 @@ public class PlanItemsRESTService {
     @GET
     @Path("{id}")
     public RESTPlanItem getPlanItem(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = flowableService.findPlanItem(planItemId);
+        final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
         final Group group = flowableService.findGroupForPlanItem(planItemId);
         return planItemConverter.convertPlanItemMetGroep(planItem, group);
     }

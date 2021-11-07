@@ -61,9 +61,9 @@ public class RESTTaakConverter {
     public RESTTaak convertTask(final TaskInfo task) {
         final RESTTaak restTaak = convertTaskInfo(task);
         if (task instanceof Task) {
-            restTaak.zaakUUID = flowableService.findZaakUuidForTask(task.getId());
-            restTaak.zaakIdentificatie = flowableService.findZaakIdentificatieForTask(task.getId());
-            restTaak.zaaktypeOmschrijving = flowableService.findZaaktypeOmschrijvingForTask(task.getId());
+            restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
+            restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
+            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingForTask(task.getId());
         }
 
 

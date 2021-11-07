@@ -197,7 +197,7 @@ public class ZakenRESTService {
 
         // Toekennen of overdragen
         if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
-            final User user = flowableService.findUser(restZaak.behandelaarGebruikersnaam);
+            final User user = flowableService.readUser(restZaak.behandelaarGebruikersnaam);
             rollen.add(bepaalRolMedewerker(user, zaak));
         } else {
             // Vrijgeven
@@ -253,7 +253,7 @@ public class ZakenRESTService {
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
-        final User user = flowableService.findUser(ingelogdeMedewerker.getGebruikersnaam());
+        final User user = flowableService.readUser(ingelogdeMedewerker.getGebruikersnaam());
 
         rollen.add(bepaalRolMedewerker(user, zaak));
 

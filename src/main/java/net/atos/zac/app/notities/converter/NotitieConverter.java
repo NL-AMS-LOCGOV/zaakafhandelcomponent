@@ -35,7 +35,7 @@ public class NotitieConverter {
         restNotitie.tijdstipLaatsteWijziging = notitie.getTijdstipLaatsteWijziging();
         restNotitie.gebruikersnaamMedewerker = notitie.getGebruikersnaamMedewerker();
 
-        final User medewerker = flowableService.findUser(notitie.getGebruikersnaamMedewerker());
+        final User medewerker = flowableService.readUser(notitie.getGebruikersnaamMedewerker());
         restNotitie.voornaamAchternaamMedewerker = String.format("%s %s", medewerker.getFirstName(),
                                                                  medewerker.getLastName());
 

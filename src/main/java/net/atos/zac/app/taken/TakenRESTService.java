@@ -97,7 +97,7 @@ public class TakenRESTService {
     @GET
     @Path("{taskId}")
     public RESTTaak getTaak(@PathParam("taskId") final String taskId) {
-        final TaskInfo task = flowableService.findTaskInfo(taskId);
+        final TaskInfo task = flowableService.readTaskInfo(taskId);
         return taakConverter.convertTask(task);
     }
 
@@ -131,7 +131,7 @@ public class TakenRESTService {
     public RESTTaak bewerkenTaak(final RESTTaak restTaak) {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        Task task = flowableService.findTask(restTaak.id);
+        Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertTaak(restTaak, task);
         task = flowableService.updateTask(task);
         eventingService.send(TAAK.wijziging(task));

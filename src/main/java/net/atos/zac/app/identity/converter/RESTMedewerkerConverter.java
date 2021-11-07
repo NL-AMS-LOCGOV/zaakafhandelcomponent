@@ -22,7 +22,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertGebruikersnaam(final String gebruikersnaam) {
         if (gebruikersnaam != null) {
-            final User user = flowableService.findUser(gebruikersnaam);
+            final User user = flowableService.readUser(gebruikersnaam);
             return convertUser(user);
         } else {
             return null;
@@ -44,7 +44,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertUserId(final String medewerkerId) {
         if (medewerkerId != null) {
-            final User user = flowableService.findUser(medewerkerId);
+            final User user = flowableService.readUser(medewerkerId);
             return convertUser(user);
         }
         return null;

@@ -51,7 +51,7 @@ public class CaseHandlingService {
     }
 
     public void updateZaak(final String caseInstanceId, final String statustypeOmschrijving, final String resultaattypeOmschrijving) {
-        final UUID zaakUUID = flowableService.findZaakUuidForCase(caseInstanceId);
+        final UUID zaakUUID = flowableService.readZaakUuidForCase(caseInstanceId);
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         if (statustypeOmschrijving != null) {
             LOG.info(format("Zaak %s: Verander status in '%s'", zaakUUID, statustypeOmschrijving));

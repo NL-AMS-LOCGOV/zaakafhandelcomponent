@@ -71,7 +71,7 @@ public class UserPrincipalFilter implements Filter {
     }
 
     private Medewerker createIngelogdeMedewerker(final String gebruikersnaam) {
-        final User user = flowableService.findUser(gebruikersnaam);
+        final User user = flowableService.readUser(gebruikersnaam);
         if (user == null) {
             throw new RuntimeException(String.format("Gebruiker met gebruikersnaam '%s' is niet bekend.", gebruikersnaam));
         }

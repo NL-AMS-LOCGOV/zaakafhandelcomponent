@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -77,20 +78,20 @@ public class FlowableService {
     @Inject
     private IdmIdentityService idmIdentityService;
 
-    public UUID findZaakUuidForCase(final String caseInstanceId) {
-        return (UUID) cmmnRuntimeService.getVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
+    public UUID readZaakUuidForCase(final String caseInstanceId) {
+        return (UUID) readVariableForCase(caseInstanceId, VAR_CASE_ZAAK_UUID);
     }
 
-    public UUID findZaakUuidForTask(final String taskId) {
-        return (UUID) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAK_UUID);
+    public UUID readZaakUuidForTask(final String taskId) {
+        return (UUID) readVariableForTask(taskId, VAR_CASE_ZAAK_UUID);
     }
 
-    public String findZaakIdentificatieForTask(final String taskId) {
-        return (String) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
+    public String readZaakIdentificatieForTask(final String taskId) {
+        return (String) readVariableForTask(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
     }
 
-    public String findZaaktypeOmschrijvingForTask(final String taskId) {
-        return (String) cmmnTaskService.getVariable(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+    public String readZaaktypeOmschrijvingForTask(final String taskId) {
+        return (String) readVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
     }
 
     public List<TaskInfo> listTaskInfosForZaak(final UUID zaakUUID) {
@@ -173,7 +174,7 @@ public class FlowableService {
     }
 
     public void startPlanItem(final String planItemInstanceId) {
-        final PlanItemInstance planItem = findPlanItem(planItemInstanceId);
+        final PlanItemInstance planItem = readPlanItem(planItemInstanceId);
         if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
             cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
         } else {
@@ -181,10 +182,15 @@ public class FlowableService {
         }
     }
 
-    public PlanItemInstance findPlanItem(final String planItemInstanceId) {
-        return cmmnRuntimeService.createPlanItemInstanceQuery()
+    public PlanItemInstance readPlanItem(final String planItemInstanceId) {
+        final PlanItemInstance planItemInstance = cmmnRuntimeService.createPlanItemInstanceQuery()
                 .planItemInstanceId(planItemInstanceId)
                 .singleResult();
+        if (planItemInstance != null) {
+            return planItemInstance;
+        } else {
+            throw new RuntimeException(String.format("No plan item found with plan item instance id '%s'", planItemInstanceId));
+        }
     }
 
     /**
@@ -201,7 +207,7 @@ public class FlowableService {
      */
     public Task assignTask(final String taskId, final String userId, final String groupId) {
         if (userId != null) {
-            final Task task = findTask(taskId);
+            final Task task = readTask(taskId);
             if (!userId.equals(task.getAssignee())) {
                 cmmnTaskService.unclaim(taskId);
                 cmmnTaskService.claim(taskId, userId);
@@ -209,12 +215,12 @@ public class FlowableService {
         } else {
             cmmnTaskService.unclaim(taskId);
         }
-        return findTask(taskId);
+        return readTask(taskId);
     }
 
     public Task updateTask(final Task task) {
         cmmnTaskService.saveTask(task);
-        return findTask(task.getId());
+        return readTask(task.getId());
     }
 
     public TaskInfo completeTask(final String taskId) {
@@ -222,24 +228,28 @@ public class FlowableService {
         return findHistoricTask(taskId);
     }
 
-    public TaskInfo findTaskInfo(final String taskId) {
-        final Task task = findTask(taskId);
-        return task != null ? task : findHistoricTask(taskId);
+    public TaskInfo readTaskInfo(final String taskId) {
+        TaskInfo taskInfo = findTask(taskId);
+        if (taskInfo == null) {
+            taskInfo = findHistoricTask(taskId);
+        }
+        if (taskInfo != null) {
+            return taskInfo;
+        } else {
+            throw new RuntimeException(String.format("No TaskInfo found with task id '%s'", taskId));
+        }
     }
 
-    public Task findTask(final String taskId) {
-        return cmmnTaskService.createTaskQuery()
+    public Task readTask(final String taskId) {
+        final Task task = cmmnTaskService.createTaskQuery()
                 .taskId(taskId)
                 .includeIdentityLinks()
                 .singleResult();
-    }
-
-    private HistoricTaskInstance findHistoricTask(final String taskId) {
-        return cmmnHistoryService.createHistoricTaskInstanceQuery()
-                .taskId(taskId)
-                .finished()
-                .includeIdentityLinks()
-                .singleResult();
+        if (task != null) {
+            return task;
+        } else {
+            throw new RuntimeException(String.format("No Task found with task id '%s'", taskId));
+        }
     }
 
     public Group findGroupForCaseDefinition(final String caseDefinitionKey) {
@@ -248,12 +258,12 @@ public class FlowableService {
                 .latestVersion()
                 .singleResult();
         final String groupId = substringBetween(caseDefinition.getDescription(), ID_GROEP_ZAAK_OPEN, ID_GROEP_ZAAK_CLOSE);
-        return findGroup(groupId);
+        return StringUtils.isNotEmpty(groupId) ? readGroup(groupId) : null;
     }
 
     public Group findGroupForPlanItem(final String planItemInstanceId) {
         final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_LOCAL_CANDIDATE_GROUP_ID);
-        return groupId != null ? findGroup(groupId) : null;
+        return groupId != null ? readGroup(groupId) : null;
     }
 
     public List<Group> listGroups() {
@@ -263,16 +273,26 @@ public class FlowableService {
                 .list();
     }
 
-    public Group findGroup(final String groupId) {
-        return idmIdentityService.createGroupQuery()
+    public Group readGroup(final String groupId) {
+        final Group group = idmIdentityService.createGroupQuery()
                 .groupId(groupId)
                 .singleResult();
+        if (group != null) {
+            return group;
+        } else {
+            throw new RuntimeException(String.format("No Group found with group id '%s'", groupId));
+        }
     }
 
-    public User findUser(final String userId) {
-        return idmIdentityService.createUserQuery()
+    public User readUser(final String userId) {
+        final User user = idmIdentityService.createUserQuery()
                 .userId(userId)
                 .singleResult();
+        if (user != null) {
+            return user;
+        } else {
+            throw new RuntimeException(String.format("No User found with user id '%s'", userId));
+        }
     }
 
     public List<Group> listGroupsForUser(final String userId) {
@@ -285,6 +305,39 @@ public class FlowableService {
         return idmIdentityService.createUserQuery()
                 .memberOfGroup(groepId)
                 .list();
+    }
+
+    private Object readVariableForCase(final String caseInstanceId, final String variableName) {
+        final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("Variable '%s' not found for case instance id '%s'", variableName, caseInstanceId));
+        }
+    }
+
+    private Object readVariableForTask(final String taskId, final String variableName) {
+        final Object variableValue = cmmnTaskService.getVariable(taskId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("Variable '%s' not found for task id '%s'", variableName, taskId));
+        }
+    }
+
+    private TaskInfo findTask(final String taskId) {
+        return cmmnTaskService.createTaskQuery()
+                .taskId(taskId)
+                .includeIdentityLinks()
+                .singleResult();
+    }
+
+    private HistoricTaskInstance findHistoricTask(final String taskId) {
+        return cmmnHistoryService.createHistoricTaskInstanceQuery()
+                .taskId(taskId)
+                .finished()
+                .includeIdentityLinks()
+                .singleResult();
     }
 
     private List<PlanItemInstance> listAvailablePlanItemsForZaak(final UUID zaakUUID) {
@@ -310,7 +363,6 @@ public class FlowableService {
     }
 
     private TaskQuery createTaskQuery() {
-        //hier kan nog filtering komen/mapping van tablerequest#getSearch
         return cmmnTaskService.createTaskQuery().includeIdentityLinks();
     }
 
@@ -331,7 +383,7 @@ public class FlowableService {
                     sortedTaskQuery = taskQuery.orderByTaskAssignee();
                     break;
                 default:
-                    throw new IllegalArgumentException(String.format("Onbekende predicate met de naam: %s", sortering));
+                    throw new IllegalArgumentException(String.format("Unknown predicate with name: %s", sortering));
             }
 
             return "asc".equals(direction) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();

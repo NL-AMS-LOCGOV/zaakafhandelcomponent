@@ -38,6 +38,6 @@ public class RESTGroepConverter {
     }
 
     public RESTGroep convertGroupId(final String groepId) {
-        return groepId != null ? convertGroup(flowableService.findGroup(groepId)) : null;
+        return groepId != null ? convertGroup(flowableService.readGroup(groepId)) : null;
     }
 }
