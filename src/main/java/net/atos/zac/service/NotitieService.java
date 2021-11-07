@@ -11,16 +11,18 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import net.atos.zac.app.notities.model.Notitie;
 
-@Stateless
+@ApplicationScoped
+@Transactional
 public class NotitieService {
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")

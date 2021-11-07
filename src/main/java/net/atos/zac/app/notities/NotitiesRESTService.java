@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,7 +30,7 @@ import net.atos.zac.service.NotitieService;
 @Produces(MediaType.APPLICATION_JSON)
 public class NotitiesRESTService {
 
-    @EJB
+    @Inject
     private NotitieService notitieService;
 
     @Inject
