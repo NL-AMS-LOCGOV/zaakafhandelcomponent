@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
+import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
@@ -32,7 +32,7 @@ import net.atos.zac.flowable.CmmnService;
 /**
  * Deze bean luistert naar CmmnUpdateEvents, en werkt daar vervolgens flowable mee bij.
  */
-@Stateless
+@ManagedBean
 public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> {
 
     private static final Logger LOG = Logger.getLogger(CmmnUpdateObserver.class.getName());

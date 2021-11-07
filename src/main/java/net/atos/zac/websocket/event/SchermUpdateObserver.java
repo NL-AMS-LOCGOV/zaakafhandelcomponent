@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.enterprise.event.ObservesAsync;
 import javax.websocket.Session;
 
@@ -23,7 +23,7 @@ import net.atos.zac.websocket.SessionRegistry;
 /**
  * Deze bean luistert naar SchermUpdateEvents, zet ze om naar een Websockets event en stuurt deze dan door naar de browsers die zich erop geabonneerd hebben.
  */
-@Stateless
+@ManagedBean
 public class SchermUpdateObserver extends AbstractUpdateObserver<SchermUpdateEvent> {
 
     private static final Logger LOG = Logger.getLogger(SchermUpdateObserver.class.getName());

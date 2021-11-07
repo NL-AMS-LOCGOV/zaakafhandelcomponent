@@ -7,13 +7,13 @@ package net.atos.zac.event;
 
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
+import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
 
 /**
  * Deze bean luistert naar CacheUpdateEvents, en werkt daar vervolgens de caches mee bij.
  */
-@Stateless
+@ManagedBean
 public class CacheUpdateObserver extends AbstractUpdateObserver<CacheUpdateEvent> {
 
     private static final Logger LOG = Logger.getLogger(CacheUpdateObserver.class.getName());
