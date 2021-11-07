@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,7 +31,7 @@ public class UserPrincipalFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(UserPrincipalFilter.class.getName());
 
-    @EJB
+    @Inject
     private IdmService idmService;
 
     @Override

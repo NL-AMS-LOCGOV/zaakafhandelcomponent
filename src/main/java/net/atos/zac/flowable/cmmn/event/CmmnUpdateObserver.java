@@ -11,7 +11,6 @@ import java.net.URI;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
@@ -46,7 +45,7 @@ public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> 
     @Inject
     private ZRCClientService zrcClientService;
 
-    @EJB
+    @Inject
     private CmmnService cmmnService;
 
     @Override

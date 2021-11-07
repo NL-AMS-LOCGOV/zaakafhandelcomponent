@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
@@ -40,7 +40,8 @@ import net.atos.zac.app.taken.model.TaakSortering;
 /**
  *
  */
-@Stateless
+@ApplicationScoped
+@Transactional
 public class CmmnService {
 
     public static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
@@ -71,7 +72,7 @@ public class CmmnService {
     @Inject
     private CmmnRepositoryService cmmnRepositoryService;
 
-    @EJB
+    @Inject
     private IdmService idmService;
 
     public UUID findZaakUuidForCase(final String caseInstanceId) {

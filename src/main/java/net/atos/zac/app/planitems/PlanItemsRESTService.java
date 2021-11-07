@@ -8,7 +8,6 @@ package net.atos.zac.app.planitems;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,7 +32,7 @@ import net.atos.zac.flowable.CmmnService;
 @Produces(MediaType.APPLICATION_JSON)
 public class PlanItemsRESTService {
 
-    @EJB
+    @Inject
     private CmmnService cmmnService;
 
     @Inject

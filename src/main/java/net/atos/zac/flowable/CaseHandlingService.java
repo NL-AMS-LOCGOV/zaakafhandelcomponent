@@ -11,7 +11,6 @@ import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
@@ -35,7 +34,7 @@ public class CaseHandlingService {
 
     private static final String RESULTAAT_TOELICHTING = "Resultaat gewijizgd vanuit Case";
 
-    @EJB
+    @Inject
     private CmmnService cmmnService;
 
     @Inject

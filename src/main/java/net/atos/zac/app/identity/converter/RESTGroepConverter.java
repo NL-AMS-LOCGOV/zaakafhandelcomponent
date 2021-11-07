@@ -8,7 +8,7 @@ package net.atos.zac.app.identity.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 
 import org.flowable.idm.api.Group;
 
@@ -17,7 +17,7 @@ import net.atos.zac.flowable.IdmService;
 
 public class RESTGroepConverter {
 
-    @EJB
+    @Inject
     private IdmService idmService;
 
     public List<RESTGroep> convertGroups(final List<Group> groups) {

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 
 import org.flowable.identitylink.api.IdentityLinkInfo;
@@ -40,7 +39,7 @@ import net.atos.zac.rechten.TaakRechten;
  */
 public class RESTTaakConverter {
 
-    @EJB
+    @Inject
     private CmmnService cmmnService;
 
     @Inject

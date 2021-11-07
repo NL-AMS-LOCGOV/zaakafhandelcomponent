@@ -7,14 +7,16 @@ package net.atos.zac.flowable;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.IdmIdentityService;
 import org.flowable.idm.api.User;
 
-@Stateless
+@ApplicationScoped
+@Transactional
 public class IdmService {
 
     @Inject

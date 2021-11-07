@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -90,7 +89,7 @@ public class ZakenRESTService {
     @Inject
     private RESTZaakdataConverter zaakdataConverter;
 
-    @EJB
+    @Inject
     private IdmService idmService;
 
     @Inject

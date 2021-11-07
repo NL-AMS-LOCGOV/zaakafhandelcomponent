@@ -11,7 +11,6 @@ import static net.atos.zac.websocket.event.SchermObjectTypeEnum.ZAAK_TAKEN;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -46,7 +45,7 @@ import net.atos.zac.flowable.CmmnService;
 @Produces(MediaType.APPLICATION_JSON)
 public class TakenRESTService {
 
-    @EJB
+    @Inject
     private CmmnService cmmnService;
 
     @Inject
