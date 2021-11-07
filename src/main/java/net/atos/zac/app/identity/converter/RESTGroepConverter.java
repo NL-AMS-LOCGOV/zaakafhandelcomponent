@@ -13,12 +13,12 @@ import javax.inject.Inject;
 import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.flowable.IdmService;
+import net.atos.zac.flowable.FlowableService;
 
 public class RESTGroepConverter {
 
     @Inject
-    private IdmService idmService;
+    private FlowableService flowableService;
 
     public List<RESTGroep> convertGroups(final List<Group> groups) {
         return groups.stream()
@@ -38,6 +38,6 @@ public class RESTGroepConverter {
     }
 
     public RESTGroep convertGroupId(final String groepId) {
-        return groepId != null ? convertGroup(idmService.findGroup(groepId)) : null;
+        return groepId != null ? convertGroup(flowableService.findGroup(groepId)) : null;
     }
 }

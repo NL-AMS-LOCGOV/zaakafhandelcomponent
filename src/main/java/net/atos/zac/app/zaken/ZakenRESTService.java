@@ -57,7 +57,7 @@ import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.IdmService;
+import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PaginationUtil;
 import net.atos.zac.zaakdata.Zaakdata;
@@ -90,7 +90,7 @@ public class ZakenRESTService {
     private RESTZaakdataConverter zaakdataConverter;
 
     @Inject
-    private IdmService idmService;
+    private FlowableService flowableService;
 
     @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
@@ -197,7 +197,7 @@ public class ZakenRESTService {
 
         // Toekennen of overdragen
         if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
-            final User user = idmService.findUser(restZaak.behandelaarGebruikersnaam);
+            final User user = flowableService.findUser(restZaak.behandelaarGebruikersnaam);
             rollen.add(bepaalRolMedewerker(user, zaak));
         } else {
             // Vrijgeven
@@ -253,7 +253,7 @@ public class ZakenRESTService {
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
         final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
-        final User user = idmService.findUser(ingelogdeMedewerker.getGebruikersnaam());
+        final User user = flowableService.findUser(ingelogdeMedewerker.getGebruikersnaam());
 
         rollen.add(bepaalRolMedewerker(user, zaak));
 

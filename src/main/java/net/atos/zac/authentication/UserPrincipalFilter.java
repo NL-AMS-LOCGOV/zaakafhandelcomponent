@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 
-import net.atos.zac.flowable.IdmService;
+import net.atos.zac.flowable.FlowableService;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
@@ -32,7 +32,7 @@ public class UserPrincipalFilter implements Filter {
     private static final Logger LOG = Logger.getLogger(UserPrincipalFilter.class.getName());
 
     @Inject
-    private IdmService idmService;
+    private FlowableService flowableService;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -71,11 +71,11 @@ public class UserPrincipalFilter implements Filter {
     }
 
     private Medewerker createIngelogdeMedewerker(final String gebruikersnaam) {
-        final User user = idmService.findUser(gebruikersnaam);
+        final User user = flowableService.findUser(gebruikersnaam);
         if (user == null) {
             throw new RuntimeException(String.format("Gebruiker met gebruikersnaam '%s' is niet bekend.", gebruikersnaam));
         }
-        final List<Group> groups = idmService.listGroupsForUser(gebruikersnaam);
+        final List<Group> groups = flowableService.listGroupsForUser(gebruikersnaam);
         return new Medewerker(user, groups);
     }
 

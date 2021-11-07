@@ -13,16 +13,16 @@ import javax.inject.Inject;
 import org.flowable.idm.api.User;
 
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.flowable.IdmService;
+import net.atos.zac.flowable.FlowableService;
 
 public class RESTMedewerkerConverter {
 
     @Inject
-    private IdmService idmService;
+    private FlowableService flowableService;
 
     public RESTMedewerker convertGebruikersnaam(final String gebruikersnaam) {
         if (gebruikersnaam != null) {
-            final User user = idmService.findUser(gebruikersnaam);
+            final User user = flowableService.findUser(gebruikersnaam);
             return convertUser(user);
         } else {
             return null;
@@ -44,7 +44,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertUserId(final String medewerkerId) {
         if (medewerkerId != null) {
-            final User user = idmService.findUser(medewerkerId);
+            final User user = flowableService.findUser(medewerkerId);
             return convertUser(user);
         }
         return null;

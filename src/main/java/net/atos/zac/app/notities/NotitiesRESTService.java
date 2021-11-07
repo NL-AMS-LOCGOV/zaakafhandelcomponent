@@ -23,7 +23,7 @@ import javax.ws.rs.core.MediaType;
 import net.atos.zac.app.notities.converter.NotitieConverter;
 import net.atos.zac.app.notities.model.Notitie;
 import net.atos.zac.app.notities.model.rest.RESTNotitie;
-import net.atos.zac.service.NotitieService;
+import net.atos.zac.notities.NotitieService;
 
 @Path("notities")
 @Consumes(MediaType.APPLICATION_JSON)

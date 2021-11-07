@@ -27,7 +27,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.event.AbstractUpdateObserver;
-import net.atos.zac.flowable.CmmnService;
+import net.atos.zac.flowable.FlowableService;
 
 /**
  * Deze bean luistert naar CmmnUpdateEvents, en werkt daar vervolgens flowable mee bij.
@@ -46,7 +46,7 @@ public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> 
     private ZRCClientService zrcClientService;
 
     @Inject
-    private CmmnService cmmnService;
+    private FlowableService flowableService;
 
     @Override
     public void onFire(final @ObservesAsync CmmnUpdateEvent event) {
@@ -59,9 +59,9 @@ public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> 
         if (zaaktype.getReferentieproces() != null && StringUtils.isNotEmpty(zaaktype.getReferentieproces().getNaam())) {
             final String caseDefinitionKey = zaaktype.getReferentieproces().getNaam();
             LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
-            final Group group = cmmnService.findGroupForCaseDefinition(caseDefinitionKey);
+            final Group group = flowableService.findGroupForCaseDefinition(caseDefinitionKey);
             zetZaakBehandelaarOrganisatorischeEenheid(zaak.getUrl(), zaaktype.getUrl(), group);
-            cmmnService.startCase(caseDefinitionKey, zaak, zaaktype);
+            flowableService.startCase(caseDefinitionKey, zaak, zaaktype);
         } else {
             LOG.warning(String.format("Zaaktype '%s': Geen referentie proces gevonden", zaaktype.getIdentificatie()));
         }

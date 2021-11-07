@@ -30,7 +30,7 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.CmmnService;
+import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.rechten.RechtOperatie;
 import net.atos.zac.rechten.TaakRechten;
 
@@ -40,7 +40,7 @@ import net.atos.zac.rechten.TaakRechten;
 public class RESTTaakConverter {
 
     @Inject
-    private CmmnService cmmnService;
+    private FlowableService flowableService;
 
     @Inject
     private RESTGroepConverter groepConverter;
@@ -61,9 +61,9 @@ public class RESTTaakConverter {
     public RESTTaak convertTask(final TaskInfo task) {
         final RESTTaak restTaak = convertTaskInfo(task);
         if (task instanceof Task) {
-            restTaak.zaakUUID = cmmnService.findZaakUuidForTask(task.getId());
-            restTaak.zaakIdentificatie = cmmnService.findZaakIdentificatieForTask(task.getId());
-            restTaak.zaaktypeOmschrijving = cmmnService.findZaaktypeOmschrijvingForTask(task.getId());
+            restTaak.zaakUUID = flowableService.findZaakUuidForTask(task.getId());
+            restTaak.zaakIdentificatie = flowableService.findZaakIdentificatieForTask(task.getId());
+            restTaak.zaaktypeOmschrijving = flowableService.findZaaktypeOmschrijvingForTask(task.getId());
         }
 
 

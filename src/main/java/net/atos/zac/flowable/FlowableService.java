@@ -28,6 +28,8 @@ import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.idm.api.Group;
+import org.flowable.idm.api.IdmIdentityService;
+import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.TaskQuery;
@@ -42,7 +44,7 @@ import net.atos.zac.app.taken.model.TaakSortering;
  */
 @ApplicationScoped
 @Transactional
-public class CmmnService {
+public class FlowableService {
 
     public static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
 
@@ -54,7 +56,7 @@ public class CmmnService {
 
     public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
-    private static final Logger LOG = Logger.getLogger(CmmnService.class.getName());
+    private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
     private static final String ID_GROEP_ZAAK_OPEN = "*";
 
@@ -73,7 +75,7 @@ public class CmmnService {
     private CmmnRepositoryService cmmnRepositoryService;
 
     @Inject
-    private IdmService idmService;
+    private IdmIdentityService idmIdentityService;
 
     public UUID findZaakUuidForCase(final String caseInstanceId) {
         return (UUID) cmmnRuntimeService.getVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
@@ -246,12 +248,43 @@ public class CmmnService {
                 .latestVersion()
                 .singleResult();
         final String groupId = substringBetween(caseDefinition.getDescription(), ID_GROEP_ZAAK_OPEN, ID_GROEP_ZAAK_CLOSE);
-        return idmService.findGroup(groupId);
+        return findGroup(groupId);
     }
 
     public Group findGroupForPlanItem(final String planItemInstanceId) {
         final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_LOCAL_CANDIDATE_GROUP_ID);
-        return groupId != null ? idmService.findGroup(groupId) : null;
+        return groupId != null ? findGroup(groupId) : null;
+    }
+
+    public List<Group> listGroups() {
+        return idmIdentityService.createGroupQuery()
+                .orderByGroupName()
+                .asc()
+                .list();
+    }
+
+    public Group findGroup(final String groupId) {
+        return idmIdentityService.createGroupQuery()
+                .groupId(groupId)
+                .singleResult();
+    }
+
+    public User findUser(final String userId) {
+        return idmIdentityService.createUserQuery()
+                .userId(userId)
+                .singleResult();
+    }
+
+    public List<Group> listGroupsForUser(final String userId) {
+        return idmIdentityService.createGroupQuery()
+                .groupMember(userId)
+                .list();
+    }
+
+    public List<User> listUsersInGroup(final String groepId) {
+        return idmIdentityService.createUserQuery()
+                .memberOfGroup(groepId)
+                .list();
     }
 
     private List<PlanItemInstance> listAvailablePlanItemsForZaak(final UUID zaakUUID) {

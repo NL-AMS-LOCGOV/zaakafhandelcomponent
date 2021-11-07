@@ -35,7 +35,7 @@ public class CaseHandlingService {
     private static final String RESULTAAT_TOELICHTING = "Resultaat gewijizgd vanuit Case";
 
     @Inject
-    private CmmnService cmmnService;
+    private FlowableService flowableService;
 
     @Inject
     private EventingService eventingService;
@@ -51,7 +51,7 @@ public class CaseHandlingService {
     }
 
     public void updateZaak(final String caseInstanceId, final String statustypeOmschrijving, final String resultaattypeOmschrijving) {
-        final UUID zaakUUID = cmmnService.findZaakUuidForCase(caseInstanceId);
+        final UUID zaakUUID = flowableService.findZaakUuidForCase(caseInstanceId);
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         if (statustypeOmschrijving != null) {
             LOG.info(format("Zaak %s: Verander status in '%s'", zaakUUID, statustypeOmschrijving));

@@ -22,7 +22,7 @@ import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
-import net.atos.zac.flowable.CmmnService;
+import net.atos.zac.flowable.FlowableService;
 
 /**
  *
@@ -33,7 +33,7 @@ import net.atos.zac.flowable.CmmnService;
 public class PlanItemsRESTService {
 
     @Inject
-    private CmmnService cmmnService;
+    private FlowableService flowableService;
 
     @Inject
     private RESTPlanItemConverter planItemConverter;
@@ -41,15 +41,15 @@ public class PlanItemsRESTService {
     @GET
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> getPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = cmmnService.listPlanItemsForZaak(zaakUUID);
+        final List<PlanItemInstance> planItems = flowableService.listPlanItemsForZaak(zaakUUID);
         return planItemConverter.convertPlanItems(planItems);
     }
 
     @GET
     @Path("{id}")
     public RESTPlanItem getPlanItem(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = cmmnService.findPlanItem(planItemId);
-        final Group group = cmmnService.findGroupForPlanItem(planItemId);
+        final PlanItemInstance planItem = flowableService.findPlanItem(planItemId);
+        final Group group = flowableService.findGroupForPlanItem(planItemId);
         return planItemConverter.convertPlanItemMetGroep(planItem, group);
     }
 
@@ -57,9 +57,9 @@ public class PlanItemsRESTService {
     @Path("do/{id}")
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
         if (restPlanItem.groep != null) {
-            cmmnService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id);
+            flowableService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id);
         } else {
-            cmmnService.startPlanItem(restPlanItem.id);
+            flowableService.startPlanItem(restPlanItem.id);
         }
         return restPlanItem;
     }

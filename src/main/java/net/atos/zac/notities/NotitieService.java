@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.service;
+package net.atos.zac.notities;
 
 import static net.atos.zac.app.notities.model.Notitie.ZAAK_UUID;
 import static net.atos.zac.util.ValidationUtil.valideerObject;

@@ -15,12 +15,12 @@ import net.atos.zac.app.notities.model.Notitie;
 import net.atos.zac.app.notities.model.rest.RESTNotitie;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.IdmService;
+import net.atos.zac.flowable.FlowableService;
 
 public class NotitieConverter {
 
     @Inject
-    private IdmService identityService;
+    private FlowableService flowableService;
 
     @Inject
     @IngelogdeMedewerker
@@ -35,7 +35,7 @@ public class NotitieConverter {
         restNotitie.tijdstipLaatsteWijziging = notitie.getTijdstipLaatsteWijziging();
         restNotitie.gebruikersnaamMedewerker = notitie.getGebruikersnaamMedewerker();
 
-        final User medewerker = identityService.findUser(notitie.getGebruikersnaamMedewerker());
+        final User medewerker = flowableService.findUser(notitie.getGebruikersnaamMedewerker());
         restNotitie.voornaamAchternaamMedewerker = String.format("%s %s", medewerker.getFirstName(),
                                                                  medewerker.getLastName());
 
