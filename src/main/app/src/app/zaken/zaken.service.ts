@@ -20,7 +20,7 @@ import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
 })
 export class ZakenService {
 
-    private basepath: string = '/zac/rest/zaken';
+    private basepath = '/zac/rest/zaken';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
