@@ -5,6 +5,7 @@
 
 package net.atos.zac.event;
 
+// TODO Verplaatsen naar waar dit gebruikt worden .../event
 public class CacheUpdateEvent extends AbstractUpdateEvent<Object, Long> {
 
     private static final long serialVersionUID = -329301003012599689L;

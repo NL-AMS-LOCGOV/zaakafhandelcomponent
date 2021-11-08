@@ -13,6 +13,7 @@ import javax.enterprise.event.ObservesAsync;
 /**
  * Deze bean luistert naar CacheUpdateEvents, en werkt daar vervolgens de caches mee bij.
  */
+// TODO Verplaatsen naar waar dit gebruikt gaat worden .../event
 @ManagedBean
 public class CacheUpdateObserver extends AbstractUpdateObserver<CacheUpdateEvent> {
 
