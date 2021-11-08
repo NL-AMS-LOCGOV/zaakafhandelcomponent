@@ -43,14 +43,13 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.zac.app.zaakdata.converter.RESTZaakdataConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
-import net.atos.zac.app.zaken.converter.RESTZaakdataConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
-import net.atos.zac.app.zaken.model.RESTZaakdata;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
@@ -60,8 +59,6 @@ import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PaginationUtil;
-import net.atos.zac.zaakdata.Zaakdata;
-import net.atos.zac.zaakdata.ZaakdataService;
 
 /**
  *
@@ -104,9 +101,6 @@ public class ZakenRESTService {
 
     @Inject
     private ConfigurationService configurationService;
-
-    @Inject
-    private ZaakdataService zaakdataService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -225,21 +219,6 @@ public class ZakenRESTService {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
         return zaakOverzichtConverter.convert(zaak);
-    }
-
-    @GET
-    @Path("zaakdata/{zaak-uuid}")
-    public RESTZaakdata getZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID) {
-        final Zaakdata zaakdata = zaakdataService.readZaakdata(zaakUUID);
-        return zaakdataConverter.convert(zaakdata);
-    }
-
-    @PUT
-    @Path("zaakdata/{zaak-uuid}")
-    public RESTZaakdata updateZaakdata(@PathParam("zaak-uuid") final UUID zaakUUID, final RESTZaakdata restZaakdata) {
-        final Zaakdata zaakdata = zaakdataConverter.convert(restZaakdata);
-        final Zaakdata updatedZaakdata = zaakdataService.updateZaakdata(zaakUUID, zaakdata);
-        return zaakdataConverter.convert(updatedZaakdata);
     }
 
     @GET

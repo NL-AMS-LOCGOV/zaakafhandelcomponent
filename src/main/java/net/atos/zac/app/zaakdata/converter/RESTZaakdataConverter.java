@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.zaken.converter;
+package net.atos.zac.app.zaakdata.converter;
 
-import net.atos.zac.app.zaken.model.RESTZaakdata;
+import net.atos.zac.app.zaakdata.model.RESTZaakdata;
 import net.atos.zac.zaakdata.Zaakdata;
 
 public class RESTZaakdataConverter {
