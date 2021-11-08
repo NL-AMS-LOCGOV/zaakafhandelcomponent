@@ -31,7 +31,7 @@
     </div>
     <div class="content" fxLayout="row wrap" *ngIf="!collapsed">
         <zac-static-text fxFlex="100" [label]="'zaaktype' | translate"
-                         [value]="zaak.zaaktype"></zac-static-text>
+                         [value]="zaak.zaaktype.omschrijving"></zac-static-text>
         <zac-static-text fxFlex="100" [label]="'status' | translate"
                          [value]="zaak.status | empty:'naam'"></zac-static-text>
 
