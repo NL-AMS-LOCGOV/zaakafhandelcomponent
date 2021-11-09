@@ -30,12 +30,12 @@ public class CmmnUpdateEvent extends AbstractUpdateEvent<CmmnObjectTypeEnum, URI
     /**
      * Constructor die alle verplichte velden bevat.
      *
-     * @param operatie   de operatie die uitgevoerd is op het betreffende object
+     * @param operation   de operatie die uitgevoerd is op het betreffende object
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public CmmnUpdateEvent(final OpcodeEnum operatie, final CmmnObjectTypeEnum objectType, final URI objectId) {
-        super(operatie, objectId);
+    public CmmnUpdateEvent(final OpcodeEnum operation, final CmmnObjectTypeEnum objectType, final URI objectId) {
+        super(operation, objectId);
         this.objectType = objectType;
     }
 
