@@ -6,6 +6,7 @@
 package net.atos.zac.notificaties;
 
 import static net.atos.client.zgw.shared.util.DateTimeUtil.DATE_TIME_FORMAT_WITH_MILLISECONDS;
+import static net.atos.zac.notificaties.ActionEnum.UPDATE;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -55,7 +56,10 @@ public class Notificatie {
     }
 
     public Resource getMainResource() {
-        return new Resource(getMainResourceType(), getMainResourceUrl());
+        return new Resource(
+                getMainResourceType(),
+                getMainResourceUrl(),
+                getMainResourceType() == getResourceType() ? getAction() : UPDATE);
     }
 
     public ResourceEnum getMainResourceType() {
@@ -67,7 +71,10 @@ public class Notificatie {
     }
 
     public Resource getResource() {
-        return new Resource(getResourceType(), getResourceUrl(), getAction());
+        return new Resource(
+                getResourceType(),
+                getResourceUrl(),
+                getAction());
     }
 
     public ResourceEnum getResourceType() {
@@ -116,16 +123,6 @@ public class Notificatie {
             this.action = action;
             this.type = type;
             this.url = url;
-        }
-
-        /**
-         * Use this for the involved main resource
-         *
-         * @param type the type of resource
-         * @param url  the identification of the resource
-         */
-        private Resource(final ResourceEnum type, final URI url) {
-            this(type, url, null);
         }
 
         public ResourceEnum getType() {
