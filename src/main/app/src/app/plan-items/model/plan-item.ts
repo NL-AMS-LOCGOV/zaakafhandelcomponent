@@ -11,5 +11,5 @@ export class PlanItem {
     naam: string;
     type: PlanItemType;
     groep: Groep;
-    taakdata: Map<string, string>;
+    taakdata: {};
 }
