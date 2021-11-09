@@ -4,10 +4,8 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ZakenService} from '../zaken.service';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormGroup} from '@angular/forms';
 import {Zaak} from '../model/zaak';
@@ -16,6 +14,8 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './zaak-edit.component.html',
@@ -23,13 +23,12 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 })
 export class ZaakEditComponent implements OnInit, OnDestroy {
 
-    editZaakFields: Array<FormItem[]>;
+    editZaakFields: Array<AbstractFormField[]>;
     private zaak: Zaak;
     formConfig: FormConfig;
 
     constructor(private zakenService: ZakenService,
                 private navigation: NavigationService,
-                private mfbService: MaterialFormBuilderService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private utilService: UtilService,
@@ -53,9 +52,9 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
         this.formConfig = new FormConfig('actie.opslaan', 'actie.annuleren');
 
         const omschrijving =
-            this.mfbService.createInputFormItem('omschrijving', 'omschrijving', this.zaak.omschrijving);
+            new TextareaFormField('omschrijving', 'omschrijving', this.zaak.omschrijving);
         const toelichting =
-            this.mfbService.createTextareaFormItem('toelichting', 'toelichting', this.zaak.toelichting);
+            new TextareaFormField('toelichting', 'toelichting', this.zaak.toelichting);
         this.editZaakFields = [[omschrijving], [toelichting]];
     }
 

@@ -9,8 +9,6 @@ import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaak} from '../../zaken/model/zaak';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
@@ -22,6 +20,11 @@ import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {FileFormField} from '../../shared/material-form-builder/form-components/file/file-form-field';
+import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -31,13 +34,12 @@ export class InformatieObjectCreateComponent implements OnInit {
 
     zaakUuid: string;
     zaak: Zaak;
-    fields: Array<FormItem[]>;
+    fields: Array<AbstractFormField[]>;
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
-                private mfbService: MaterialFormBuilderService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private navigation: NavigationService,
@@ -55,20 +57,21 @@ export class InformatieObjectCreateComponent implements OnInit {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
             const types = this.getTypes(zaak);
-            const titel = this.mfbService.createInputFormItem('titel', 'titel', null, this.required());
-            const beschrijving = this.mfbService.createInputFormItem('beschrijving', 'beschrijving', null);
-            const inhoud = this.mfbService.createFileFormItem('bestandsnaam', 'bestandsnaam', this.fileUploadConfig());
-            const beginRegistratie = this.mfbService.createDateFormItem('creatiedatum', 'creatiedatum', moment(), this.required());
-            const taal = this.mfbService.createSelectFormItem('taal', 'taal', talen[0], 'label', talen, this.required());
-            const status = this.mfbService.createSelectFormItem('status', 'status', informatieobjectStatussen[0], 'label',
+            const titel = new InputFormField('titel', 'titel', null, this.required());
+            const beschrijving = new InputFormField('beschrijving', 'beschrijving', null);
+            const inhoud = new FileFormField('bestandsnaam', 'bestandsnaam', this.fileUploadConfig());
+            const beginRegistratie = new DateFormField('creatiedatum', 'creatiedatum', moment(), this.required());
+            const taal = new SelectFormField('taal', 'taal', talen[0], 'label', talen, this.required());
+            const status = new SelectFormField('status', 'status', informatieobjectStatussen[0], 'label',
                 informatieobjectStatussen);
-            const documentType = this.mfbService.createSelectFormItem('informatieobjectType', 'informatieobjectType', null, null, types, this.required());
-            const auteur = this.mfbService.createInputFormItem('auteur', 'auteur', null, this.required());
-            const vertrouwelijk = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding', 'vertrouwelijkheidaanduiding',
+            const documentType = new SelectFormField('informatieobjectType', 'informatieobjectType', null, null, types, this.required());
+            const auteur = new InputFormField('auteur', 'auteur', null, this.required());
+            const vertrouwelijk = new SelectFormField('vertrouwelijkheidaanduiding', 'vertrouwelijkheidaanduiding',
                 vertrouwelijkheidsAanduidingen[0],
                 'label', vertrouwelijkheidsAanduidingen, this.required());
 
-            this.fields = [[titel], [beschrijving], [inhoud], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal]];
+            this.fields =
+                [[titel], [beschrijving], [inhoud], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal]];
         });
     }
 

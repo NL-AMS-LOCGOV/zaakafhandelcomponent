@@ -9,14 +9,18 @@ import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {Router} from '@angular/router';
 import {Zaaktype} from '../model/zaaktype';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import * as moment from 'moment/moment';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
+import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -24,11 +28,10 @@ import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertr
 })
 export class ZaakCreateComponent implements OnInit {
 
-    createZaakFields: Array<FormItem[]>;
+    createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
 
-    constructor(private zakenService: ZakenService, private mfbService: MaterialFormBuilderService, private router: Router, private navigation: NavigationService
-        , private utilService: UtilService) {
+    constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -40,24 +43,22 @@ export class ZaakCreateComponent implements OnInit {
             const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                 Vertrouwelijkheidaanduiding);
 
-            const titel = this.mfbService.createHeadingFormItem('aanmakenZaak', 'actie.zaak.aanmaken', '1');
-            const tussenTitel = this.mfbService.createHeadingFormItem('overigegegevens', 'gegevens.overig', '2');
+            const titel = new HeadingFormField('aanmakenZaak', 'actie.zaak.aanmaken', '1');
+            const tussenTitel = new HeadingFormField('overigegegevens', 'gegevens.overig', '2');
 
-            const zaaktype = this.mfbService.createSelectFormItem('zaaktype', 'zaaktype', null, 'omschrijving', zaaktypes,
+            const zaaktype = new SelectFormField('zaaktype', 'zaaktype', null, 'omschrijving', zaaktypes,
                 new FormFieldConfig([Validators.required]));
 
-            const startdatum = this.mfbService.createDateFormItem('startdatum', 'startdatum', moment(),
+            const startdatum = new DateFormField('startdatum', 'startdatum', moment(),
                 new FormFieldConfig([Validators.required]));
-            const registratiedatum = this.mfbService.createDateFormItem('registratiedatum', 'registratiedatum', moment());
+            const registratiedatum = new DateFormField('registratiedatum', 'registratiedatum', moment());
 
-            const communicatiekanaal = this.mfbService.createSelectFormItem('communicatiekanaal', 'communicatiekanaal', null,
+            const communicatiekanaal = new SelectFormField('communicatiekanaal', 'communicatiekanaal', null,
                 'doel', communicatiekanalen);
-            const vertrouwelijkheidaanduiding = this.mfbService.createSelectFormItem('vertrouwelijkheidaanduiding',
+            const vertrouwelijkheidaanduiding = new SelectFormField('vertrouwelijkheidaanduiding',
                 'vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
-            const omschrijving =
-                this.mfbService.createInputFormItem('omschrijving', 'omschrijving', null);
-            const toelichting =
-                this.mfbService.createTextareaFormItem('toelichting', 'toelichting', null);
+            const omschrijving = new InputFormField('omschrijving', 'omschrijving', null);
+            const toelichting = new TextareaFormField('toelichting', 'toelichting', null);
             this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
                 [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
         });
