@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.event;
+package net.atos.zac.event.cache;
 
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
+
+import net.atos.zac.event.AbstractUpdateObserver;
 
 /**
  * Deze bean luistert naar CacheUpdateEvents, en werkt daar vervolgens de caches mee bij.

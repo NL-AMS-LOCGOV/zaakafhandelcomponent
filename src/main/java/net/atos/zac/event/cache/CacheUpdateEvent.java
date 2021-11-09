@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.event;
+package net.atos.zac.event.cache;
+
+import net.atos.zac.event.AbstractUpdateEvent;
 
 // TODO Verplaatsen naar waar dit gebruikt worden .../event
 public class CacheUpdateEvent extends AbstractUpdateEvent<Object, Long> {
