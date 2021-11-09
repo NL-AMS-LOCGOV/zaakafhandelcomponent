@@ -12,6 +12,7 @@ import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LI
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -56,6 +57,8 @@ public class FlowableService {
     public static final String VAR_CASE_ZAAKTYPE_URI = "zaaktypeURI";
 
     public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+
+    private static final String VAR_TASK_TAAKDATA = "taakdata";
 
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
@@ -167,9 +170,10 @@ public class FlowableService {
         }
     }
 
-    public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId) {
+    public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId, final Map<String, String> taakdata) {
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
                 .transientVariable(VAR_LOCAL_CANDIDATE_GROUP_ID, groupId)
+                .localVariable(VAR_TASK_TAAKDATA, taakdata)
                 .start();
     }
 
@@ -305,6 +309,15 @@ public class FlowableService {
         return idmIdentityService.createUserQuery()
                 .memberOfGroup(groepId)
                 .list();
+    }
+
+    public Map<String, String> readTaakdata(final String taskId) {
+        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariable(taskId, VAR_TASK_TAAKDATA);
+        if (taakdata != null) {
+            return taakdata;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     private Object readVariableForCase(final String caseInstanceId, final String variableName) {

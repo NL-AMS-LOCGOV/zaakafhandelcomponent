@@ -9,6 +9,7 @@ import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.TAAK;
 import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK_TAKEN;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -98,7 +99,8 @@ public class TakenRESTService {
     @Path("{taskId}")
     public RESTTaak getTaak(@PathParam("taskId") final String taskId) {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
-        return taakConverter.convertTask(task);
+        final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
+        return taakConverter.convertTask(task, taakdata);
     }
 
     @PATCH

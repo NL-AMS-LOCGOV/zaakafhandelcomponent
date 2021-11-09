@@ -30,7 +30,7 @@ public class ZaakobjectListParameters {
      * Beschrijft het type OBJECT gerelateerd aan de ZAAK. Als er geen passend type is, dan moet het type worden opgegeven onder `objectTypeOverige`
      */
     @QueryParam("objectType")
-    private Objecttype objectType;
+    private String objectType;
 
     /**
      * Een pagina binnen de gepagineerde set resultaten
@@ -55,11 +55,11 @@ public class ZaakobjectListParameters {
     }
 
     public Objecttype getObjectType() {
-        return objectType;
+        return Objecttype.fromValue(objectType);
     }
 
     public void setObjectType(final Objecttype objectType) {
-        this.objectType = objectType;
+        this.objectType = objectType.toValue();
     }
 
     public Integer getPage() {

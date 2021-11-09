@@ -21,4 +21,5 @@ export class Taak {
     zaaktypeOmschrijving: string;
     status: TaakStatus;
     rechten: {};
+    taakdata: Map<string, string>;
 }
