@@ -18,11 +18,21 @@ public enum ResourceEnum {
 
     APPLICATIE("applicatie"),
     BESLUIT("besluit"),
+    BESLUITINFORMATIEOBJECT("besluitinformatieobject"),
     BESLUITTYPE("besluittype"),
+    GEBRUIKSRECHTEN("gebruiksrechten"),
     INFORMATIEOBJECT("enkelvoudiginformatieobject"),
     INFORMATIEOBJECTTYPE("informatieobjecttype"),
-    ZAAKTYPE("zaaktype"),
-    ZAAK("zaak");
+    KLANTCONTACT("klantcontact"),
+    RESULTAAT("resultaat"),
+    ROL("rol"),
+    STATUS("status"),
+    ZAAK("zaak"),
+    ZAAKBESLUIT("zaakbesluit"),
+    ZAAKOBJECT("zaakobject"),
+    ZAAKEIGENSCHAP("zaakeigenschap"),
+    ZAAKINFORMATIEOBJECT("zaakinformatieobject"),
+    ZAAKTYPE("zaaktype");
 
     private static final Logger LOG = Logger.getLogger(ResourceEnum.class.getName());
 

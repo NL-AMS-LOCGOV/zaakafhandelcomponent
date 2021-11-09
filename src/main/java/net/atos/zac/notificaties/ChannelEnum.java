@@ -28,8 +28,8 @@ public enum ChannelEnum {
     BESLUITTYPEN("besluittypen", BESLUITTYPE),
     INFORMATIEOBJECTEN("documenten", INFORMATIEOBJECT),
     INFORMATIEOBJECTTYPEN("informatieobjecttypen", INFORMATIEOBJECTTYPE),
-    ZAAKTYPEN("zaaktypen", ZAAKTYPE),
-    ZAKEN("zaken", ZAAK);
+    ZAKEN("zaken", ZAAK),
+    ZAAKTYPEN("zaaktypen", ZAAKTYPE);
 
     private static final Logger LOG = Logger.getLogger(ChannelEnum.class.getName());
 
