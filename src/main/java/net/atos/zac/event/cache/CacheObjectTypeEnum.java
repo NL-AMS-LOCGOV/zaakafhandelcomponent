@@ -26,8 +26,8 @@ public enum CacheObjectTypeEnum {
     BESLUITTYPE,
     INFORMATIEOBJECT,
     INFORMATIEOBJECTTYPE,
-    ROL,
     ZAAK,
+    ZAAKBETROKKENE,
     ZAAKTYPE;
 
     private static final Logger LOG = Logger.getLogger(CacheObjectTypeEnum.class.getName());
@@ -152,7 +152,7 @@ public enum CacheObjectTypeEnum {
                         events.add(CacheObjectTypeEnum.ZAAK.event(mainResource));
                         break;
                     case ROL:
-                        events.add(CacheObjectTypeEnum.ROL.event(resource));
+                        events.add(CacheObjectTypeEnum.ZAAKBETROKKENE.event(resource));
                         events.add(CacheObjectTypeEnum.ZAAK.event(mainResource));
                         break;
                     case RESULTAAT:
