@@ -34,17 +34,8 @@ public class NotificatieReceiver {
 
     private static final Logger LOG = Logger.getLogger(NotificatieReceiver.class.getName());
 
-    private static final String KANAAL_ZAKEN = "zaken";
-
-    private static final String RESOURCE_ZAAK = "zaak";
-
-    private static final String ACTIE_CREATE = "create";
-
     @Inject
     private EventingService eventingService;
-
-    @Inject
-    private ZRCClientService zrcClientService;
 
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
@@ -70,13 +61,8 @@ public class NotificatieReceiver {
     }
 
     private void handleWebsockets(final Notificatie notificatie) {
-        // TODO ESUITEDEV-25860 conversie
-        // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
-        if (KANAAL_ZAKEN.equals(notificatie.getChannel()) && RESOURCE_ZAAK.equals(notificatie.getResourceType()) && ACTIE_CREATE.equals(
-                notificatie.getAction())) {
-            final Zaak zaak = zrcClientService.readZaak(notificatie.getResourceUrl());
-            eventingService.send(ScreenObjectTypeEnum.ZAAK.updated(zaak));
-            eventingService.send(ScreenObjectTypeEnum.ZAAK_BETROKKENEN.updated(zaak));
+        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
+            ScreenObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 }

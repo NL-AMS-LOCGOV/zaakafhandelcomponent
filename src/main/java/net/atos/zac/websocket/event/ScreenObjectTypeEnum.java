@@ -10,7 +10,10 @@ import static net.atos.zac.event.OpcodeEnum.DELETED;
 import static net.atos.zac.event.OpcodeEnum.UPDATED;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.flowable.task.api.TaskInfo;
 
@@ -18,6 +21,8 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.OpcodeEnum;
+import net.atos.zac.notificaties.ChannelEnum;
+import net.atos.zac.notificaties.Notificatie;
 
 /**
  * Enumeratie die de soorten object wijzigingen bevat zoals die gebruikt worden door het {@link ScreenUpdateEvent}.
@@ -73,6 +78,8 @@ public enum ScreenObjectTypeEnum {
         }
     };
 
+    private static final Logger LOG = Logger.getLogger(ScreenObjectTypeEnum.class.getName());
+
     // Dit is de uiteindelijke echte factory method
     private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final String id) {
         return new ScreenUpdateEvent(action, type, id);
@@ -107,7 +114,11 @@ public enum ScreenObjectTypeEnum {
     }
 
     private ScreenUpdateEvent event(final OpcodeEnum action, final URI url) {
-        return instance(action, this, URIUtil.parseUUIDFromResourceURI(url)); // Toegestaan bij alle objecttypes
+        return instance(action, this, url); // Toegestaan bij alle objecttypes
+    }
+
+    private ScreenUpdateEvent event(final OpcodeEnum action, final Notificatie.Resource resource) {
+        return instance(action, this, resource.getUrl()); // Toegestaan bij alle objecttypes
     }
 
     protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
@@ -278,5 +289,85 @@ public enum ScreenObjectTypeEnum {
      */
     public final ScreenUpdateEvent deleted(final TaskInfo taak) {
         return event(DELETED, taak);
+    }
+
+    private ScreenUpdateEvent event(final Notificatie.Resource resource) {
+        switch (resource.getAction()) {
+            case CREATE:
+                return event(CREATED, resource);
+            case UPDATE:
+                return event(UPDATED, resource);
+            case DELETE:
+                return event(DELETED, resource);
+        }
+        return null;
+    }
+
+    /**
+     * This is the mapping.
+     *
+     * @param channel      the channel the notification came in on
+     * @param mainResource the involved main resource (may be equal to the resource)
+     * @param resource     the actually modified resource
+     * @return the set of events that the parameters map to
+     */
+    public static Set<ScreenUpdateEvent> getEvents(final ChannelEnum channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+        final Set<ScreenUpdateEvent> events = new HashSet<>();
+        switch (channel) {
+            case INFORMATIEOBJECTEN:
+                switch (resource.getType()) {
+                    case INFORMATIEOBJECT:
+                        events.add(ScreenObjectTypeEnum.ENKELVOUDIG_INFORMATIEOBJECT.event(resource));
+                        break;
+                    case GEBRUIKSRECHTEN:
+                        events.add(ScreenObjectTypeEnum.ENKELVOUDIG_INFORMATIEOBJECT.event(mainResource));
+                        break;
+                    default:
+                        unexpectedResource(channel, resource);
+                        break;
+                }
+                break;
+            case ZAKEN:
+                switch (resource.getType()) {
+                    case ZAAK:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(resource));
+                        break;
+                    case STATUS:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case ZAAKOBJECT:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case ZAAKINFORMATIEOBJECT:
+                        events.add(ScreenObjectTypeEnum.ZAAK_INFORMATIEOBJECT.event(mainResource));
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case ZAAKEIGENSCHAP:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case KLANTCONTACT:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case ROL:
+                        events.add(ScreenObjectTypeEnum.ZAAK_BETROKKENEN.event(mainResource));
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case RESULTAAT:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    case ZAAKBESLUIT:
+                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        break;
+                    default:
+                        unexpectedResource(channel, resource);
+                        break;
+                }
+                break;
+        }
+        return events;
+    }
+
+    private static void unexpectedResource(final ChannelEnum channel, final Notificatie.Resource resource) {
+        LOG.warning(String.format("resource %s not implemented on channel %s", resource.getType(), channel));
     }
 }
