@@ -20,7 +20,7 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
-import net.atos.zac.event.ActionEnum;
+import net.atos.zac.event.OpcodeEnum;
 import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
@@ -52,7 +52,7 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
             }
 
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
-            final ActionEnum operatie = ActionEnum.valueOf(jsonEvent.getString(EVENT_OPERATIE));
+            final OpcodeEnum operatie = OpcodeEnum.valueOf(jsonEvent.getString(EVENT_OPERATIE));
             final ScreenObjectTypeEnum objectType = ScreenObjectTypeEnum.valueOf(jsonEvent.getString(EVENT_OBJECT_TYPE));
             final JsonValue jsonObjectId = jsonEvent.get(EVENT_OBJECT_ID);
             return subscriptionType.message(new ScreenUpdateEvent(operatie, objectType, jsonObjectId != null ? jsonObjectId.toString() : null));

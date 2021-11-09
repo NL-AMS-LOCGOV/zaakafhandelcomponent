@@ -4,17 +4,17 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {Zaak} from '../model/zaak';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute} from '@angular/router';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {IdentityService} from '../../identity/identity.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './zaak-toekennen.component.html',
@@ -22,11 +22,11 @@ import {FormFieldConfig} from '../../shared/material-form-builder/model/form-fie
 })
 export class ZaakToekennenComponent implements OnInit {
 
-    formItems: Array<FormItem[]>;
+    formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     zaak: Zaak;
 
-    constructor(private route: ActivatedRoute, private mfbService: MaterialFormBuilderService, private identityService: IdentityService,
+    constructor(private route: ActivatedRoute, private identityService: IdentityService,
                 private navigation: NavigationService, private zakenService: ZakenService, private utilService: UtilService) {
     }
 
@@ -41,7 +41,7 @@ export class ZaakToekennenComponent implements OnInit {
     private initForm() {
         this.identityService.getMedewerkersInGroep(this.zaak.groep.id).subscribe(medewerkers => {
             this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-                const medewerker = this.mfbService.createSelectFormItem('medewerker', 'medewerker',
+                const medewerker = new SelectFormField('medewerker', 'medewerker',
                     this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam', medewerkers,
                     new FormFieldConfig([Validators.required]));
                 this.formItems = [[medewerker]];

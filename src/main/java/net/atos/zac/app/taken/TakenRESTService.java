@@ -136,8 +136,8 @@ public class TakenRESTService {
         Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertTaak(restTaak, task);
         task = flowableService.updateTask(task);
-        eventingService.send(TAAK.update(task));
-        eventingService.send(ZAAK_TAKEN.update(restTaak.zaakUUID));
+        eventingService.send(TAAK.updated(task));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTask(task);
     }
 
@@ -147,13 +147,13 @@ public class TakenRESTService {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         final TaskInfo taskInfo = flowableService.completeTask(restTaak.id);
-        eventingService.send(TAAK.update(taskInfo));
-        eventingService.send(ZAAK_TAKEN.update(restTaak.zaakUUID));
+        eventingService.send(TAAK.updated(taskInfo));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTask(taskInfo);
     }
 
     private void taakBehandelaarGewijzigd(final Task taak, final UUID zaakUuid) {
-        eventingService.send(TAAK.update(taak));
-        eventingService.send(ZAAK_TAKEN.update(zaakUuid));
+        eventingService.send(TAAK.updated(taak));
+        eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
     }
 }

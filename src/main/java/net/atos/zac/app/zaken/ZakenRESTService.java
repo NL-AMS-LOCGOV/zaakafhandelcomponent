@@ -114,7 +114,7 @@ public class ZakenRESTService {
     public RESTZaak postZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        eventingService.send(ZAAK.creation(nieuweZaak));
+        eventingService.send(ZAAK.created(nieuweZaak));
         return zaakConverter.convert(nieuweZaak);
     }
 
@@ -125,7 +125,7 @@ public class ZakenRESTService {
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
-        eventingService.send(ZAAK.update(updatedZaak));
+        eventingService.send(ZAAK.updated(updatedZaak));
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -279,7 +279,7 @@ public class ZakenRESTService {
     }
 
     private void zaakBehandelaarGewijzigd(final Zaak zaak) {
-        eventingService.send(ZAAK.update(zaak));
-        eventingService.send(ZAAK_BETROKKENEN.update(zaak));
+        eventingService.send(ZAAK.updated(zaak));
+        eventingService.send(ZAAK_BETROKKENEN.updated(zaak));
     }
 }

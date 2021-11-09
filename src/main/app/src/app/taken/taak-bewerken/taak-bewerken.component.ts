@@ -4,18 +4,18 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {Taak} from '../model/taak';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../core/service/util.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Operatie} from '../../core/websocket/model/operatie';
 import {ObjectType} from '../../core/websocket/model/object-type';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './taak-bewerken.component.html',
@@ -23,11 +23,11 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 })
 export class TaakBewerkenComponent implements OnInit, OnDestroy {
 
-    formItems: Array<FormItem[]>;
+    formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     taak: Taak;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, private mfbService: MaterialFormBuilderService,
+    constructor(private route: ActivatedRoute, private takenService: TakenService,
                 private navigation: NavigationService,
                 private utilService: UtilService,
                 private websocketService: WebsocketService) {
@@ -58,7 +58,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     }
 
     private initToelichtingVeld() {
-        const toelichting = this.mfbService.createTextareaFormItem('toelichting', 'toelichting', this.taak.toelichting);
+        const toelichting = new TextareaFormField('toelichting', 'toelichting', this.taak.toelichting);
         this.formItems = [[toelichting]];
     }
 

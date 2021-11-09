@@ -8,6 +8,8 @@ import {FormItem} from '../../model/form-item';
 import {FormGroup} from '@angular/forms';
 import {FieldType} from '../../model/field-type.enum';
 import {FormConfig} from '../../model/form-config';
+import {AbstractFormField} from '../../model/abstract-form-field';
+import {MaterialFormBuilderService} from '../../material-form-builder.service';
 
 @Component({
     selector: 'mfb-form',
@@ -16,15 +18,19 @@ import {FormConfig} from '../../model/form-config';
 })
 export class FormComponent implements OnInit {
 
-    @Input() data: Array<FormItem[]>;
+    @Input() formFields: Array<AbstractFormField[]>;
     @Input() config: FormConfig;
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+    data: Array<FormItem[]>;
     formGroup: FormGroup = new FormGroup({});
 
-    constructor() {
+    constructor(private mfbService: MaterialFormBuilderService) {
     }
 
     ngOnInit(): void {
+
+        this.data = this.mfbService.createForm(this.formFields);
+
         for (const value of this.data.values()) {
             value.forEach((formItem) => {
                 if (formItem.data.fieldType !== FieldType.HEADING) {

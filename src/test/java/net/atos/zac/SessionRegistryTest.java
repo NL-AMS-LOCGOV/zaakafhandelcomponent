@@ -5,9 +5,9 @@
 
 package net.atos.zac;
 
-import static org.jgroups.util.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +25,7 @@ import javax.websocket.WebSocketContainer;
 
 import org.junit.jupiter.api.Test;
 
-import net.atos.zac.event.ActionEnum;
+import net.atos.zac.event.OpcodeEnum;
 import net.atos.zac.websocket.SessionRegistry;
 import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
@@ -328,17 +328,17 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"1\"");
+    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"1\"");
 
-    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
+    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
 
-    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "2");
+    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "2");
 
-    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(ActionEnum.CREATE, ScreenObjectTypeEnum.TAAK, "1");
+    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.TAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(ActionEnum.UPDATE, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(OpcodeEnum.UPDATED, ScreenObjectTypeEnum.ZAAK, "1");
 
     @Test
     public void testFixGelijk() {

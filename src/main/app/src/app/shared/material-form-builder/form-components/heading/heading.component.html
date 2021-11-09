@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<ng-container [ngSwitch]="data.level">
+<ng-container [ngSwitch]="data.value">
     <h1 [id]="data.id" *ngSwitchCase="'1'">{{data.label | translate}}</h1>
     <h2 [id]="data.id" *ngSwitchCase="'2'">{{data.label | translate}}</h2>
     <h3 [id]="data.id" *ngSwitchCase="'3'">{{data.label | translate}}</h3>

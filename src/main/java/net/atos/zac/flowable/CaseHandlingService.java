@@ -62,7 +62,7 @@ public class CaseHandlingService {
             zgwApiService.createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
         }
         if (statustypeOmschrijving != null || resultaattypeOmschrijving != null) {
-            eventingService.send(ZAAK.update(zaakUUID));
+            eventingService.send(ZAAK.updated(zaakUUID));
         }
     }
 
@@ -70,6 +70,6 @@ public class CaseHandlingService {
         LOG.info(format("Zaak %s: Beeindig Case", zaakUUID));
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         zgwApiService.endZaak(zaak, EINDSTATUS_TOELICHTING);
-        eventingService.send(ZAAK.update(zaakUUID));
+        eventingService.send(ZAAK.updated(zaakUUID));
     }
 }

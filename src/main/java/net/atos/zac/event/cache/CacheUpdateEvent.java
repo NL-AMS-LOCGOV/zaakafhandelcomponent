@@ -3,44 +3,44 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.flowable.cmmn.event;
+package net.atos.zac.event.cache;
 
+import static net.atos.zac.event.OpcodeEnum.UPDATED;
 
-import java.net.URI;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
 import net.atos.zac.event.AbstractUpdateEvent;
-import net.atos.zac.event.OpcodeEnum;
 
-public class CmmnUpdateEvent extends AbstractUpdateEvent<CmmnObjectTypeEnum, URI> {
+// TODO Verplaatsen naar waar dit gebruikt worden .../event
+public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, UUID> {
 
-    private static final long serialVersionUID = 4764736142892883842L;
+    private static final long serialVersionUID = -329301003012599689L;
 
     @NotNull
-    private CmmnObjectTypeEnum objectType;
+    private CacheObjectTypeEnum objectType;
 
     /**
      * Constructor for the sake of JAXB
      */
-    public CmmnUpdateEvent() {
+    public CacheUpdateEvent() {
         super();
     }
 
     /**
      * Constructor die alle verplichte velden bevat.
      *
-     * @param operation   de operatie die uitgevoerd is op het betreffende object
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public CmmnUpdateEvent(final OpcodeEnum operation, final CmmnObjectTypeEnum objectType, final URI objectId) {
-        super(operation, objectId);
+    public CacheUpdateEvent(final CacheObjectTypeEnum objectType, final UUID objectId) {
+        super(UPDATED, objectId);
         this.objectType = objectType;
     }
 
     @Override
-    public CmmnObjectTypeEnum getObjectType() {
+    public CacheObjectTypeEnum getObjectType() {
         return objectType;
     }
 }

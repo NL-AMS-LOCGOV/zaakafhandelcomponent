@@ -4,10 +4,8 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {ActivatedRoute} from '@angular/router';
 import {Taak} from '../model/taak';
 import {IdentityService} from '../../identity/identity.service';
@@ -15,6 +13,10 @@ import {FormFieldConfig} from '../../shared/material-form-builder/model/form-fie
 import {TakenService} from '../taken.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
+import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
+import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
@@ -22,12 +24,12 @@ import {UtilService} from '../../core/service/util.service';
 })
 export class TaakToekennenComponent implements OnInit {
 
-    formItems: Array<FormItem[]>;
+    formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     taak: Taak;
 
     constructor(private route: ActivatedRoute, private identityService: IdentityService, private takenService: TakenService,
-                private mfbService: MaterialFormBuilderService, private navigation: NavigationService, private utilService: UtilService) {
+                private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -38,11 +40,11 @@ export class TaakToekennenComponent implements OnInit {
     private initForm() {
         this.utilService.setTitle('title.taak.toekennen', {taak: this.taak.naam});
         this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
-        const titel = this.mfbService.createHeadingFormItem('toekennenTaak', 'actie.taak.toekennen', '1');
-        const naam = this.mfbService.createReadonlyFormItem('naam', 'naam', this.taak.naam);
+        const titel = new HeadingFormField('toekennenTaak', 'actie.taak.toekennen', '1');
+        const naam = new ReadonlyFormField('naam', 'naam', this.taak.naam);
         this.identityService.getMedewerkersInGroep(this.taak.groep.id).subscribe(medewerkers => {
             this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-                const medewerker = this.mfbService.createSelectFormItem('medewerker', 'medewerker',
+                const medewerker = new SelectFormField('medewerker', 'medewerker',
                     this.taak.behandelaar ? this.taak.behandelaar : ingelogdeMedewerker, 'naam', medewerkers,
                     new FormFieldConfig([Validators.required]));
                 this.formItems = [[titel], [naam], [medewerker]];

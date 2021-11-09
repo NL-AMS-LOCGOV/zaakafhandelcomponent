@@ -4,5 +4,5 @@
   -->
 
 <div>
-    <mfb-form *ngIf="createZaakFields" (formSubmit)="onFormSubmit($event)" [data]="createZaakFields" [config]="formConfig"></mfb-form>
+    <mfb-form *ngIf="createZaakFields" (formSubmit)="onFormSubmit($event)" [formFields]="createZaakFields" [config]="formConfig"></mfb-form>
 </div>

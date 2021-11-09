@@ -83,6 +83,6 @@ public class SessionRegistry {
      */
     public ScreenUpdateEvent fix(final ScreenUpdateEvent event) {
         final Matcher matcher = QUOTED.matcher(event.getObjectId());
-        return matcher.matches() ? fix(new ScreenUpdateEvent(event.getOperatie(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
+        return matcher.matches() ? fix(new ScreenUpdateEvent(event.getOperation(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
     }
 }
