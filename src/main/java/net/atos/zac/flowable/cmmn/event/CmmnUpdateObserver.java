@@ -50,7 +50,6 @@ public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> 
 
     @Override
     public void onFire(final @ObservesAsync CmmnUpdateEvent event) {
-        LOG.info("TODO CmmnUpdateEvent verwerken " + event);
         startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
     }
 
