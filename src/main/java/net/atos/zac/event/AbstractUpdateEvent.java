@@ -19,7 +19,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
     private long timestamp;
 
     @NotNull
-    private ActionEnum operatie;
+    private OpcodeEnum operation;
 
     @NotBlank
     @Valid
@@ -32,9 +32,9 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
         super();
     }
 
-    public AbstractUpdateEvent(final ActionEnum operatie, final ID objectId) {
+    public AbstractUpdateEvent(final OpcodeEnum operation, final ID objectId) {
         this.timestamp = Instant.now().getEpochSecond();
-        this.operatie = operatie;
+        this.operation = operation;
         this.objectId = objectId;
     }
 
@@ -42,8 +42,8 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
         return timestamp;
     }
 
-    public ActionEnum getOperatie() {
-        return operatie;
+    public OpcodeEnum getOperation() {
+        return operation;
     }
 
     public abstract TYPE getObjectType();
@@ -64,7 +64,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
         }
         // cast en vergelijk
         final ScreenUpdateEvent other = (ScreenUpdateEvent) obj;
-        if (getOperatie() != other.getOperatie()) {
+        if (getOperation() != other.getOperation()) {
             return false;
         }
         if (getObjectType() != other.getObjectType()) {
@@ -75,7 +75,7 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = getOperatie().hashCode();
+        int result = getOperation().hashCode();
         result = 31 * result + getObjectType().hashCode();
         result = 31 * result + getObjectId().hashCode();
         return result;
@@ -83,6 +83,6 @@ public abstract class AbstractUpdateEvent<TYPE, ID> implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s %s", getClass().getSimpleName(), getOperatie(), getObjectType(), getOperatie());
+        return String.format("%s %s %s %s", getClass().getSimpleName(), getOperation(), getObjectType(), getOperation());
     }
 }

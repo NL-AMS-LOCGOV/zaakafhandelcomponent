@@ -9,6 +9,8 @@ import static net.atos.client.zgw.shared.util.DateTimeUtil.DATE_TIME_FORMAT_WITH
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.bind.annotation.JsonbCreator;
@@ -20,45 +22,50 @@ import javax.json.bind.annotation.JsonbProperty;
  */
 public class Notificatie {
 
-    private final String kanaal;
+    private final ChannelEnum channel;
 
-    private final URI hoofdObject;
+    private final URI mainResourceUrl;
 
-    private final String resource;
+    private final ResourceEnum resource;
 
     private final URI resourceUrl;
 
-    private final String actie;
+    private final ActionEnum action;
 
     @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS)
-    private final ZonedDateTime aanmaakdatum;
+    private final ZonedDateTime creationDateTime;
 
-    private Map<String, String> kenmerken;
+    private final Map<String, String> properties = new HashMap<>();
 
     @JsonbCreator
-    public Notificatie(@JsonbProperty("kanaal") final String kanaal,
-            @JsonbProperty("hoofdObject") final URI hoofdObject,
+    public Notificatie(
+            @JsonbProperty("kanaal") final String channel,
+            @JsonbProperty("hoofdObject") final URI mainResourceUrl,
             @JsonbProperty("resource") final String resource,
             @JsonbProperty("resourceUrl") final URI resourceUrl,
-            @JsonbProperty("actie") final String actie,
-            @JsonbProperty("aanmaakdatum") final ZonedDateTime aanmaakdatum) {
-        this.kanaal = kanaal;
-        this.hoofdObject = hoofdObject;
-        this.resource = resource;
+            @JsonbProperty("actie") final String action,
+            @JsonbProperty("aanmaakdatum") final ZonedDateTime creationDateTime) {
+        this.channel = ChannelEnum.value(channel);
+        this.mainResourceUrl = mainResourceUrl;
+        this.resource = ResourceEnum.value(resource);
         this.resourceUrl = resourceUrl;
-        this.actie = actie;
-        this.aanmaakdatum = aanmaakdatum;
+        this.action = ActionEnum.value(action);
+        this.creationDateTime = creationDateTime;
     }
 
-    public String getKanaal() {
-        return kanaal;
+    public ChannelEnum getChannel() {
+        return channel;
     }
 
-    public URI getHoofdObject() {
-        return hoofdObject;
+    public ResourceEnum getMainResource() {
+        return channel.getMain();
     }
 
-    public String getResource() {
+    public URI getMainResourceUrl() {
+        return mainResourceUrl;
+    }
+
+    public ResourceEnum getResource() {
         return resource;
     }
 
@@ -66,19 +73,23 @@ public class Notificatie {
         return resourceUrl;
     }
 
-    public String getActie() {
-        return actie;
+    public ActionEnum getAction() {
+        return action;
     }
 
-    public ZonedDateTime getAanmaakdatum() {
-        return aanmaakdatum;
+    public ZonedDateTime getCreationDateTime() {
+        return creationDateTime;
     }
 
-    public Map<String, String> getKenmerken() {
-        return kenmerken;
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
-    public void setKenmerken(final Map<String, String> kenmerken) {
-        this.kenmerken = kenmerken;
+    public void setProperty(final String key, final String value) {
+        if (value == null) {
+            properties.remove(key);
+        } else {
+            properties.put(key, value);
+        }
     }
 }
