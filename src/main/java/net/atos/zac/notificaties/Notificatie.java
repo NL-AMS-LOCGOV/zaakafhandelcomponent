@@ -17,16 +17,13 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
 
-/**
- *
- */
 public class Notificatie {
 
     private final ChannelEnum channel;
 
     private final URI mainResourceUrl;
 
-    private final ResourceEnum resource;
+    private final ResourceEnum resourceType;
 
     private final URI resourceUrl;
 
@@ -41,13 +38,13 @@ public class Notificatie {
     public Notificatie(
             @JsonbProperty("kanaal") final String channel,
             @JsonbProperty("hoofdObject") final URI mainResourceUrl,
-            @JsonbProperty("resource") final String resource,
+            @JsonbProperty("resource") final String resourceType,
             @JsonbProperty("resourceUrl") final URI resourceUrl,
             @JsonbProperty("actie") final String action,
             @JsonbProperty("aanmaakdatum") final ZonedDateTime creationDateTime) {
         this.channel = ChannelEnum.value(channel);
         this.mainResourceUrl = mainResourceUrl;
-        this.resource = ResourceEnum.value(resource);
+        this.resourceType = ResourceEnum.value(resourceType);
         this.resourceUrl = resourceUrl;
         this.action = ActionEnum.value(action);
         this.creationDateTime = creationDateTime;
@@ -57,16 +54,24 @@ public class Notificatie {
         return channel;
     }
 
-    public ResourceEnum getMainResource() {
-        return channel.getMain();
+    public Resource getMainResource() {
+        return new Resource(getMainResourceType(), getMainResourceUrl());
+    }
+
+    public ResourceEnum getMainResourceType() {
+        return channel.getResourceType();
     }
 
     public URI getMainResourceUrl() {
         return mainResourceUrl;
     }
 
-    public ResourceEnum getResource() {
-        return resource;
+    public Resource getResource() {
+        return new Resource(getResourceType(), getResourceUrl(), getAction());
+    }
+
+    public ResourceEnum getResourceType() {
+        return resourceType;
     }
 
     public URI getResourceUrl() {
@@ -90,6 +95,49 @@ public class Notificatie {
             properties.remove(key);
         } else {
             properties.put(key, value);
+        }
+    }
+
+    public static class Resource {
+        private final ResourceEnum type;
+
+        private final URI url;
+
+        private final ActionEnum action;
+
+        /**
+         * Use this for the actually modified resource
+         *
+         * @param type   the type of resource
+         * @param url    the identification of the resource
+         * @param action the type of modification
+         */
+        private Resource(final ResourceEnum type, final URI url, final ActionEnum action) {
+            this.action = action;
+            this.type = type;
+            this.url = url;
+        }
+
+        /**
+         * Use this for the involved main resource
+         *
+         * @param type the type of resource
+         * @param url  the identification of the resource
+         */
+        private Resource(final ResourceEnum type, final URI url) {
+            this(type, url, null);
+        }
+
+        public ResourceEnum getType() {
+            return type;
+        }
+
+        public URI getUrl() {
+            return url;
+        }
+
+        public ActionEnum getAction() {
+            return action;
         }
     }
 }

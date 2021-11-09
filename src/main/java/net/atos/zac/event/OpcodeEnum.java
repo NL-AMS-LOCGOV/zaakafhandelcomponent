@@ -11,17 +11,17 @@ package net.atos.zac.event;
 public enum OpcodeEnum {
 
     /**
-     * indicatie dat het genoemde object is gewijzigd
-     */
-    UPDATE,
-
-    /**
      * indicatie dat het genoemde object is toegevoegd
      */
-    CREATE,
+    CREATED,
+
+    /**
+     * indicatie dat het genoemde object is gewijzigd
+     */
+    UPDATED,
 
     /**
      * indicatie dat het genoemde object is verwijderd
      */
-    DELETE
+    DELETED
 }

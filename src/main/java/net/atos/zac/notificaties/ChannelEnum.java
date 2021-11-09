@@ -35,7 +35,7 @@ public enum ChannelEnum {
 
     private final String code;
 
-    private final ResourceEnum main;
+    private final ResourceEnum resourceType;
 
     private static final Map<String, ChannelEnum> VALUES = new HashMap<>();
 
@@ -45,13 +45,13 @@ public enum ChannelEnum {
         }
     }
 
-    ChannelEnum(final String code, final ResourceEnum main) {
+    ChannelEnum(final String code, final ResourceEnum resourceType) {
         this.code = code;
-        this.main = main;
+        this.resourceType = resourceType;
     }
 
-    public ResourceEnum getMain() {
-        return main;
+    public ResourceEnum getResourceType() {
+        return resourceType;
     }
 
     public static ChannelEnum value(final String code) {

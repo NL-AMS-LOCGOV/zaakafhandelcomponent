@@ -6,9 +6,6 @@
 package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
-import static net.atos.zac.notificaties.ActionEnum.CREATE;
-import static net.atos.zac.notificaties.ChannelEnum.ZAKEN;
-import static net.atos.zac.notificaties.ResourceEnum.ZAAK;
 
 import java.util.logging.Logger;
 
@@ -22,7 +19,7 @@ import javax.ws.rs.core.Response;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.event.cache.CacheUpdateEvent;
+import net.atos.zac.event.cache.CacheObjectTypeEnum;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnObjectTypeEnum;
 import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
@@ -53,7 +50,7 @@ public class NotificatieReceiver {
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
                 .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
-                        notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
+                        notificatie.getChannel(), notificatie.getResourceType(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCmmn(notificatie);
         handleCaches(notificatie);
         handleWebsockets(notificatie);
@@ -61,23 +58,25 @@ public class NotificatieReceiver {
     }
 
     private void handleCmmn(final Notificatie notificatie) {
-        if (ZAKEN == notificatie.getChannel() && ZAAK == notificatie.getResource() && CREATE == notificatie.getAction()) {
-            eventingService.send(CmmnObjectTypeEnum.ZAAK.creation(notificatie.getResourceUrl()));
+        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
+            CmmnObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 
     private void handleCaches(final Notificatie notificatie) {
-        // TODO ESUITEDEV-25860 conversie
-        eventingService.send((CacheUpdateEvent) null);
+        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
+            CacheObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+        }
     }
 
     private void handleWebsockets(final Notificatie notificatie) {
         // TODO ESUITEDEV-25860 conversie
         // Bij aanmaken van abonnement in open-notificaties stuurt deze een test notificatie naar kanaal "test". Vandaar de test op kanaal.
-        if (KANAAL_ZAKEN.equals(notificatie.getChannel()) && RESOURCE_ZAAK.equals(notificatie.getResource()) && ACTIE_CREATE.equals(notificatie.getAction())) {
+        if (KANAAL_ZAKEN.equals(notificatie.getChannel()) && RESOURCE_ZAAK.equals(notificatie.getResourceType()) && ACTIE_CREATE.equals(
+                notificatie.getAction())) {
             final Zaak zaak = zrcClientService.readZaak(notificatie.getResourceUrl());
-            eventingService.send(ScreenObjectTypeEnum.ZAAK.update(zaak));
-            eventingService.send(ScreenObjectTypeEnum.ZAAK_BETROKKENEN.update(zaak));
+            eventingService.send(ScreenObjectTypeEnum.ZAAK.updated(zaak));
+            eventingService.send(ScreenObjectTypeEnum.ZAAK_BETROKKENEN.updated(zaak));
         }
     }
 }
