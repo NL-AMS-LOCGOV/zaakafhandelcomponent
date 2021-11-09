@@ -43,7 +43,6 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.app.zaakdata.converter.RESTZaakdataConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -82,9 +81,6 @@ public class ZakenRESTService {
 
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
-
-    @Inject
-    private RESTZaakdataConverter zaakdataConverter;
 
     @Inject
     private FlowableService flowableService;
