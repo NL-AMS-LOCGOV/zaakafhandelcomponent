@@ -103,8 +103,8 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobjectWithInhoud data = restInformatieObjectConverter.convert(restInformatieObject, file);
         final ZaakInformatieobject zaakInformatieObject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restInformatieObject.titel,
                                                                                                           restInformatieObject.beschrijving, "-");
-        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.creation(zaakInformatieObject.getInformatieobject()));
-        eventingService.send(ZAAK_INFORMATIEOBJECT.update(zaak));
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.created(zaakInformatieObject.getInformatieobject()));
+        eventingService.send(ZAAK_INFORMATIEOBJECT.updated(zaak));
         return UriUtil.uuidFromURI(zaakInformatieObject.getInformatieobject());
     }
 
@@ -170,9 +170,9 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.lockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.update(uuid));
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         getZaakInformatieObjects(uuid)
-                .forEach(zaak -> eventingService.send(ZAAK_INFORMATIEOBJECT.update(zaak.getZaak())));
+                .forEach(zaak -> eventingService.send(ZAAK_INFORMATIEOBJECT.updated(zaak.getZaak())));
         return Response.noContent().build();
     }
 
@@ -181,9 +181,9 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.update(uuid));
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         getZaakInformatieObjects(uuid)
-                .forEach(zaak -> eventingService.send(ZAAK_INFORMATIEOBJECT.update(zaak.getZaak())));
+                .forEach(zaak -> eventingService.send(ZAAK_INFORMATIEOBJECT.updated(zaak.getZaak())));
         return Response.noContent().build();
     }
 

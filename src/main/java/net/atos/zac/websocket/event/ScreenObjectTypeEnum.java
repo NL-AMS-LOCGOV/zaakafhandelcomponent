@@ -5,9 +5,9 @@
 
 package net.atos.zac.websocket.event;
 
-import static net.atos.zac.event.OpcodeEnum.CREATE;
-import static net.atos.zac.event.OpcodeEnum.DELETE;
-import static net.atos.zac.event.OpcodeEnum.UPDATE;
+import static net.atos.zac.event.OpcodeEnum.CREATED;
+import static net.atos.zac.event.OpcodeEnum.DELETED;
+import static net.atos.zac.event.OpcodeEnum.UPDATED;
 
 import java.net.URI;
 import java.util.UUID;
@@ -131,8 +131,8 @@ public enum ScreenObjectTypeEnum {
      * @param uuid de indentificatie van het toegevoegde object.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent creation(final UUID uuid) {
-        return event(CREATE, uuid);
+    public final ScreenUpdateEvent created(final UUID uuid) {
+        return event(CREATED, uuid);
     }
 
     /**
@@ -142,8 +142,8 @@ public enum ScreenObjectTypeEnum {
      * @param url de indentificatie van het toegevoegde object.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent creation(final URI url) {
-        return event(CREATE, url);
+    public final ScreenUpdateEvent created(final URI url) {
+        return event(CREATED, url);
     }
 
     /**
@@ -152,8 +152,8 @@ public enum ScreenObjectTypeEnum {
      * @param zaak de toegevoegde zaak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent creation(final Zaak zaak) {
-        return event(CREATE, zaak);
+    public final ScreenUpdateEvent created(final Zaak zaak) {
+        return event(CREATED, zaak);
     }
 
     /**
@@ -162,8 +162,8 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject het toegevoegde enkelvoudigInformatieobject.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent creation(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return event(CREATE, enkelvoudigInformatieobject);
+    public final ScreenUpdateEvent created(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        return event(CREATED, enkelvoudigInformatieobject);
     }
 
     /**
@@ -172,8 +172,8 @@ public enum ScreenObjectTypeEnum {
      * @param taak de toegevoegde taak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent creation(final TaskInfo taak) {
-        return event(CREATE, taak);
+    public final ScreenUpdateEvent created(final TaskInfo taak) {
+        return event(CREATED, taak);
     }
 
     /**
@@ -183,8 +183,8 @@ public enum ScreenObjectTypeEnum {
      * @param uuid de indentificatie van het gewijzigde object.
      * @return eem instance van het event
      */
-    public final ScreenUpdateEvent update(final UUID uuid) {
-        return event(UPDATE, uuid);
+    public final ScreenUpdateEvent updated(final UUID uuid) {
+        return event(UPDATED, uuid);
     }
 
     /**
@@ -194,8 +194,8 @@ public enum ScreenObjectTypeEnum {
      * @param url de indentificatie van het gewijzigde object.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent update(final URI url) {
-        return event(UPDATE, url);
+    public final ScreenUpdateEvent updated(final URI url) {
+        return event(UPDATED, url);
     }
 
     /**
@@ -204,8 +204,8 @@ public enum ScreenObjectTypeEnum {
      * @param zaak de gewijzigde zaak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent update(final Zaak zaak) {
-        return event(UPDATE, zaak);
+    public final ScreenUpdateEvent updated(final Zaak zaak) {
+        return event(UPDATED, zaak);
     }
 
     /**
@@ -214,8 +214,8 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject het gewijzigde enkelvoudigInformatieobject.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent update(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return event(UPDATE, enkelvoudigInformatieobject);
+    public final ScreenUpdateEvent updated(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        return event(UPDATED, enkelvoudigInformatieobject);
     }
 
     /**
@@ -224,8 +224,8 @@ public enum ScreenObjectTypeEnum {
      * @param taak de gewijzigde taak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent update(final TaskInfo taak) {
-        return event(UPDATE, taak);
+    public final ScreenUpdateEvent updated(final TaskInfo taak) {
+        return event(UPDATED, taak);
     }
 
     /**
@@ -235,8 +235,8 @@ public enum ScreenObjectTypeEnum {
      * @param uuid de indentificatie van het verwijderde object.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent deletion(final UUID uuid) {
-        return event(DELETE, uuid);
+    public final ScreenUpdateEvent deleted(final UUID uuid) {
+        return event(DELETED, uuid);
     }
 
     /**
@@ -246,8 +246,8 @@ public enum ScreenObjectTypeEnum {
      * @param url de indentificatie van het verwijderd object.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent deletion(final URI url) {
-        return event(DELETE, url);
+    public final ScreenUpdateEvent deleted(final URI url) {
+        return event(DELETED, url);
     }
 
     /**
@@ -256,8 +256,8 @@ public enum ScreenObjectTypeEnum {
      * @param zaak de verwijderde zaak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent deletion(final Zaak zaak) {
-        return event(DELETE, zaak);
+    public final ScreenUpdateEvent deleted(final Zaak zaak) {
+        return event(DELETED, zaak);
     }
 
     /**
@@ -266,8 +266,8 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject het verwijderde enkelvoudigInformatieobject.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent deletion(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return event(DELETE, enkelvoudigInformatieobject);
+    public final ScreenUpdateEvent deleted(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        return event(DELETED, enkelvoudigInformatieobject);
     }
 
     /**
@@ -276,7 +276,7 @@ public enum ScreenObjectTypeEnum {
      * @param taak de verwijderde taak.
      * @return een instance van het event
      */
-    public final ScreenUpdateEvent deletion(final TaskInfo taak) {
-        return event(DELETE, taak);
+    public final ScreenUpdateEvent deleted(final TaskInfo taak) {
+        return event(DELETED, taak);
     }
 }

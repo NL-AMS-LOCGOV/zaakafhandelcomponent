@@ -328,17 +328,17 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(OpcodeEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(OpcodeEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"1\"");
+    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"1\"");
 
-    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(OpcodeEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
+    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
 
-    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(OpcodeEnum.CREATE, ScreenObjectTypeEnum.ZAAK, "2");
+    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "2");
 
-    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(OpcodeEnum.CREATE, ScreenObjectTypeEnum.TAAK, "1");
+    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.TAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(OpcodeEnum.UPDATE, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(OpcodeEnum.UPDATED, ScreenObjectTypeEnum.ZAAK, "1");
 
     @Test
     public void testFixGelijk() {
