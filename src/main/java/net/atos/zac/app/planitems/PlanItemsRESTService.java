@@ -57,7 +57,7 @@ public class PlanItemsRESTService {
     @Path("do/{id}")
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
         if (restPlanItem.groep != null) {
-            flowableService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id);
+            flowableService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id, restPlanItem.taakdata);
         } else {
             flowableService.startPlanItem(restPlanItem.id);
         }

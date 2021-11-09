@@ -72,6 +72,12 @@ public class RESTTaakConverter {
         return restTaak;
     }
 
+    public RESTTaak convertTask(final TaskInfo task, final Map<String, String> taakdata) {
+        final RESTTaak restTaak = convertTask(task);
+        restTaak.taakdata = taakdata;
+        return restTaak;
+    }
+
     public void convertTaak(final RESTTaak restTaak, final Task task) {
         task.setDescription(restTaak.toelichting);
         task.setDueDate(convertToDate(restTaak.streefdatum));

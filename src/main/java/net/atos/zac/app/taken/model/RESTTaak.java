@@ -7,6 +7,7 @@ package net.atos.zac.app.taken.model;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroep;
@@ -42,4 +43,6 @@ public class RESTTaak extends AbstractRESTObject {
     public String zaaktypeOmschrijving;
 
     public TaakStatus status;
+
+    public Map<String, String> taakdata;
 }

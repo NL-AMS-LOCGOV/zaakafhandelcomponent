@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.planitems.model;
 
+import java.util.Map;
+
 import net.atos.zac.app.identity.model.RESTGroep;
 
 /**
@@ -19,4 +21,6 @@ public class RESTPlanItem {
     public PlanItemType type;
 
     public RESTGroep groep;
+
+    public Map<String, String> taakdata;
 }
