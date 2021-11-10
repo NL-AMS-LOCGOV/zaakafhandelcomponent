@@ -61,6 +61,7 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uiterlijkedatumafdoening = zaak.getUiterlijkeEinddatumAfdoening();
 //      restZaakOverzichtView.aanvrager
 
+        // TODO ESUITEDEV-25829
         // TODO ESUITEDEV-25802 Behandelaar en groep per zaak voor de werkvoorraad ophalen
         // restZaakOverzicht.behandelaar = ~
         // restZaakOverzicht.groep = getGroep();

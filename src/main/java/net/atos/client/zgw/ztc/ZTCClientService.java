@@ -9,9 +9,11 @@ import static java.lang.String.format;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_RESULTAATTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_STATUSTYPE;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_RESULTAATTYPE;
+import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED;
 import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_ROLTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_STATUSTYPE;
+import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_STATUSTYPE_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_URL;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
@@ -45,6 +48,12 @@ import net.atos.client.zgw.ztc.model.StatustypeListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 
+/**
+ * Let op!
+ *
+ * Methods met caching nooit van binnen de service aanroepen (anders werkt de caching niet).
+ * En bij managed caches geen sleutels anders dan URI en UID introduceren.
+ */
 @ApplicationScoped
 public class ZTCClientService {
     private static final Logger LOG = Logger.getLogger(ZTCClientService.class.getName());
@@ -73,7 +82,7 @@ public class ZTCClientService {
      * @param zaaktypeURI URI of {@link Zaaktype}.
      * @return {@link Zaaktype}. Never 'null'!
      */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE)
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_MANAGED)
     public Zaaktype readZaaktype(final URI zaaktypeURI) {
         return createInvocationBuilder(zaaktypeURI).get(Zaaktype.class);
     }
@@ -85,26 +94,9 @@ public class ZTCClientService {
      * @param zaaktypeUuid UUID of {@link Zaaktype}.
      * @return {@link Zaaktype}. Never 'null'!
      */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE)
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_MANAGED)
     public Zaaktype readZaaktype(final UUID zaaktypeUuid) {
         return ztcClient.zaaktypeRead(zaaktypeUuid);
-    }
-
-    /**
-     * Read {@link Zaaktype} via Identificatie.
-     * Throws a RuntimeException if the {@link Zaaktype} can not be read.
-     *
-     * @param identificatie Identificatie of {@link Zaaktype}.
-     * @return {@link Zaaktype}. Never 'null'!
-     */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE)
-    public Zaaktype readZaaktype(final String identificatie) {
-        final ZaaktypeListParameters zaaktypeListParameters = new ZaaktypeListParameters();
-        zaaktypeListParameters.setIdentificatie(identificatie);
-        return ztcClient.zaaktypeList(zaaktypeListParameters).getResults().stream()
-                .filter(zaaktype -> zaaktype.getEindeGeldigheid() == null)
-                .findAny()
-                .orElseThrow(() -> new RuntimeException(format("Zaaktype with identificatie '%s' not found.", identificatie)));
     }
 
     /**
@@ -116,6 +108,24 @@ public class ZTCClientService {
     @CacheResult(cacheName = ZTC_ZAAKTYPE)
     public List<Zaaktype> listZaaktypen(final URI catalogusURI) {
         return ztcClient.zaaktypeList(new ZaaktypeListParameters(catalogusURI)).getResults();
+    }
+
+    /**
+     * Read zaaktype {@link URI} via Identificatie.
+     * Throws a RuntimeException if the {@link Zaaktype} can not be found.
+     *
+     * @param identificatie Identificatie of {@link Zaaktype}.
+     * @return {@link URI}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_URL)
+    public URI readZaaktypeUrl(final String identificatie) {
+        final ZaaktypeListParameters zaaktypeListParameters = new ZaaktypeListParameters();
+        zaaktypeListParameters.setIdentificatie(identificatie);
+        return ztcClient.zaaktypeList(zaaktypeListParameters).getResults().stream()
+                .filter(zaaktype -> zaaktype.getEindeGeldigheid() == null)
+                .map(Zaaktype::getUrl)
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(format("Zaaktype with identificatie '%s' not found.", identificatie)));
     }
 
     /**
@@ -131,6 +141,17 @@ public class ZTCClientService {
     }
 
     /**
+     * Read the {@link Statustype} of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link Statustype}.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
+    public List<Statustype> readStatustypen(final URI zaaktypeURI) {
+        return ztcClient.statustypeList(new StatustypeListParameters(zaaktypeURI)).getSinglePageResults();
+    }
+
+    /**
      * Read {@link Statustype} of {@link Zaaktype} and Omschrijving of {@link Statustype}.
      * Throws a RuntimeException if the {@link Statustype} can not be read.
      *
@@ -138,10 +159,8 @@ public class ZTCClientService {
      * @param omschrijving Omschrijving of {@link Statustype}/
      * @return {@link Statustype}. Never 'null'!
      */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE)
-    public Statustype readStatustype(final URI zaaktypeURI, final String omschrijving) {
-        return readZaaktype(zaaktypeURI).getStatustypen().stream()
-                .map(this::readStatustype)
+    public Statustype getStatustype(final List<Statustype> statustypes, final String omschrijving, final URI zaaktypeURI) {
+        return statustypes.stream()
                 .filter(statustype -> omschrijving.equals(statustype.getOmschrijving()))
                 .findAny()
                 .orElseThrow(() -> new RuntimeException(
@@ -155,11 +174,10 @@ public class ZTCClientService {
      * @param zaaktypeURI URI of {@link Zaaktype}.
      * @return {@link Statustype}. Never 'null'!
      */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE)
-    public Statustype readStatustypeEind(final URI zaaktypeURI) {
-        return ztcClient.statustypeList(new StatustypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
+    public Statustype getStatustypeEind(final List<Statustype> statustypes, final URI zaaktypeURI) {
+        return statustypes.stream()
                 .filter(Statustype::getEindstatus)
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new RuntimeException(String.format("Zaaktype '%s': No eind Status found for Zaaktype.", zaaktypeURI)));
     }
 
@@ -176,6 +194,17 @@ public class ZTCClientService {
     }
 
     /**
+     * Read the {@link Resultaattype} of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link Resultaattype}.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
+    public List<Resultaattype> readResultaattypen(final URI zaaktypeURI) {
+        return ztcClient.resultaattypeList(new ResultaattypeListParameters(zaaktypeURI)).getSinglePageResults();
+    }
+
+    /**
      * Read {@link Resultaattype} of {@link Zaaktype} and Omschrijving of {@link Resultaattype}.
      * Throws a RuntimeException if the {@link Resultaattype} can not be read.
      *
@@ -183,9 +212,8 @@ public class ZTCClientService {
      * @param omschrijving Omschrijving of {@link Resultaattype}/
      * @return {@link Resultaattype}. Never 'null'!
      */
-    @CacheResult(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE)
-    public Resultaattype readResultaattype(final URI zaaktypeURI, final String omschrijving) {
-        return ztcClient.resultaattypeList(new ResultaattypeListParameters(zaaktypeURI)).getSinglePageResults().stream()
+    public Resultaattype getResultaattype(List<Resultaattype> resultaattypes, final String omschrijving, final URI zaaktypeURI) {
+        return resultaattypes.stream()
                 .filter(resultaattype -> StringUtils.equals(resultaattype.getOmschrijving(), omschrijving))
                 .findAny()
                 .orElseThrow(
@@ -219,82 +247,70 @@ public class ZTCClientService {
         return createInvocationBuilder(informatieobjecttypeURI).get(Informatieobjecttype.class);
     }
 
-    /**
-     * Clear all caches.
-     */
-    public void clearCaches() {
-        clearZaaktypeCache(true);
-        clearStatustypeCache(false);
-        clearResultaattypeCache(false);
-    }
-
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_ZAAKTYPE}
-     *
-     * @param cascade Wheter all related caches should also be cleared.
-     */
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE)
-    public void clearZaaktypeCache(final boolean cascade) {
-        cleared(ZTC_ZAAKTYPE);
-        if (cascade) {
-            clearZaaktypeResultaattypeCache();
-            clearZaaktypeRoltypeCache();
-            clearZaaktypeStatustypeCache();
-        }
+    public void clearZaaktypeCache() {cleared(ZTC_ZAAKTYPE);}
+
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_MANAGED)
+    public void clearZaaktypeManagedCache() {
+        cleared(ZTC_ZAAKTYPE_MANAGED);
     }
 
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_STATUSTYPE}
-     *
-     * @param cascade Wheter all related caches should also be cleared.
-     */
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_MANAGED)
+    public void updateZaaktypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_MANAGED, key.toString());
+    }
+
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_MANAGED)
+    public void updateZaaktypeCache(final UUID key) {
+        removed(ZTC_ZAAKTYPE_MANAGED, key.toString());
+    }
+
     @CacheRemoveAll(cacheName = ZTC_STATUSTYPE)
-    public void clearStatustypeCache(final boolean cascade) {
+    public void clearStatustypeCache() {
         cleared(ZTC_STATUSTYPE);
-        if (cascade) {
-            clearZaaktypeStatustypeCache();
-        }
     }
 
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_ZAAKTYPE_STATUSTYPE}
-     */
-    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_STATUSTYPE)
-    public void clearZaaktypeStatustypeCache() {
-        cleared(ZTC_ZAAKTYPE_STATUSTYPE);
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
+    public void clearZaaktypeStatustypeManagedCache() {
+        cleared(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED);
     }
 
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_RESULTAATTYPE}
-     *
-     * @param cascade Wheter all related caches should also be cleared.
-     */
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
+    public void updateZaaktypeStatustypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED, key.toString());
+    }
+
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_URL)
+    public void clearZaaktypeUrlCache() {
+        cleared(ZTC_ZAAKTYPE_URL);
+    }
+
     @CacheRemoveAll(cacheName = ZTC_RESULTAATTYPE)
-    public void clearResultaattypeCache(final boolean cascade) {
+    public void clearResultaattypeCache() {
         cleared(ZTC_RESULTAATTYPE);
-        if (cascade) {
-            clearZaaktypeResultaattypeCache();
-        }
     }
 
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_ZAAKTYPE_RESULTAATTYPE}
-     */
-    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE)
-    public void clearZaaktypeResultaattypeCache() {
-        cleared(ZTC_ZAAKTYPE_RESULTAATTYPE);
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
+    public void clearZaaktypeResultaattypeManagedCache() {
+        cleared(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
     }
 
-    /**
-     * Clear caches for type {@link net.atos.client.zgw.shared.cache.CacheEnum#ZTC_ZAAKTYPE_ROLTYPE}
-     */
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
+    public void updateZaaktypeResultaattypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED, key.toString());
+    }
+
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
     public void clearZaaktypeRoltypeCache() {
         cleared(ZTC_ZAAKTYPE_ROLTYPE);
     }
 
     private void cleared(final String cache) {
-        LOG.info(String.format("Emptied cache: %s", cache));
+        LOG.info(String.format("Cleared %s cache", cache));
+    }
+
+    private void removed(final String cache, final String key) {
+        LOG.info(String.format("Removed from %s cache: %s", cache, key));
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

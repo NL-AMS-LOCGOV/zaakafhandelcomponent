@@ -120,7 +120,7 @@ public class RESTZaakConverter {
 
     public Zaak convert(final RESTZaak restZaak) {
 
-        final Zaak zaak = new Zaak(ztcClientService.readZaaktype(restZaak.zaaktype.identificatie).getUrl(), restZaak.startdatum,
+        final Zaak zaak = new Zaak(ztcClientService.readZaaktypeUrl(restZaak.zaaktype.identificatie), restZaak.startdatum,
                                    ConfigurationService.BRON_ORGANISATIE, ConfigurationService.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);

@@ -3,23 +3,26 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.event.cache;
+package net.atos.client.zgw.shared.cache.event;
 
 import static net.atos.zac.event.OpcodeEnum.UPDATED;
 
+import java.net.URI;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.zac.event.AbstractUpdateEvent;
 
-// TODO Verplaatsen naar waar dit gebruikt worden .../event
-public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, UUID> {
+public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, URI> {
 
     private static final long serialVersionUID = -329301003012599689L;
 
     @NotNull
     private CacheObjectTypeEnum objectType;
+
+    private volatile UUID uuid = null;
 
     /**
      * Constructor for the sake of JAXB
@@ -34,7 +37,7 @@ public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, U
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public CacheUpdateEvent(final CacheObjectTypeEnum objectType, final UUID objectId) {
+    public CacheUpdateEvent(final CacheObjectTypeEnum objectType, final URI objectId) {
         super(UPDATED, objectId);
         this.objectType = objectType;
     }
@@ -42,5 +45,16 @@ public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, U
     @Override
     public CacheObjectTypeEnum getObjectType() {
         return objectType;
+    }
+
+    public URI getUrl() {
+        return getObjectId();
+    }
+
+    public UUID getUUID() {
+        if (uuid == null) {
+            uuid = URIUtil.parseUUIDFromResourceURI(getObjectId());
+        }
+        return uuid;
     }
 }

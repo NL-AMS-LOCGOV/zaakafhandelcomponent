@@ -11,6 +11,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -74,7 +75,8 @@ public class ZGWApiService {
      * @return Created {@link Status}.
      */
     public Status createStatusForZaak(final Zaak zaak, final String statustypeOmschrijving, final String statusToelichting) {
-        final Statustype statustype = ztcClientService.readStatustype(zaak.getZaaktype(), statustypeOmschrijving);
+        final Statustype statustype = ztcClientService.getStatustype(
+                ztcClientService.readStatustypen(zaak.getZaaktype()), statustypeOmschrijving, zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), statustype.getUrl(), statusToelichting);
     }
 
@@ -87,7 +89,8 @@ public class ZGWApiService {
      * @return Created {@link Resultaat}.
      */
     public Resultaat createResultaatForZaak(final Zaak zaak, final String resultaattypeOmschrijving, final String resultaatToelichting) {
-        final Resultaattype resultaattype = ztcClientService.readResultaattype(zaak.getZaaktype(), resultaattypeOmschrijving);
+        final Resultaattype resultaattype = ztcClientService.getResultaattype(
+                ztcClientService.readResultaattypen(zaak.getZaaktype()), resultaattypeOmschrijving, zaak.getZaaktype());
         final Resultaat resultaat = new Resultaat(zaak.getUrl(), resultaattype.getUrl());
         resultaat.setToelichting(resultaatToelichting);
         return zrcClient.resultaatCreate(resultaat);
@@ -101,14 +104,15 @@ public class ZGWApiService {
      * @return Created Eind {@link Status}.
      */
     public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = ztcClientService.readStatustypeEind(zaak.getZaaktype());
+        final Statustype eindStatustype = ztcClientService.getStatustypeEind(
+                ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
     }
 
     /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
-     * @param zaak                                {@link Zaak}.
+     * @param zaak                                   {@link Zaak}.
      * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
      * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
      * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.

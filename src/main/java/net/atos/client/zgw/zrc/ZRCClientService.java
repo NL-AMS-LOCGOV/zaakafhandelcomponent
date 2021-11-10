@@ -36,7 +36,10 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 
 /**
+ * Let op!
  *
+ * Methods met caching nooit van binnen de service aanroepen (anders werkt de caching niet).
+ * En bij managed caches geen sleutels anders dan URI en UID introduceren.
  */
 @ApplicationScoped
 public class ZRCClientService {
@@ -71,6 +74,7 @@ public class ZRCClientService {
      * @param zaakURI URI of {@link Zaak}
      * @return List of {@link Rol}
      */
+    // TODO ESUITEDEV-25829?
     public List<Rol<?>> listRollen(final URI zaakURI) {
         final RolListParameters rolListParameters = new RolListParameters();
         rolListParameters.setZaak(zaakURI);
@@ -143,6 +147,7 @@ public class ZRCClientService {
      * @param statusURI URI of {@link Status}.
      * @return {@link Status}. Never 'null'!
      */
+    // TODO ESUITEDEV-25829
     public Status readStatus(final URI statusURI) {
         return createInvocationBuilder(statusURI).get(Status.class);
     }

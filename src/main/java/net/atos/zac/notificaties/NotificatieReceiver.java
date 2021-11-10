@@ -17,9 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.event.cache.CacheObjectTypeEnum;
+import net.atos.client.zgw.shared.cache.event.CacheObjectTypeEnum;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnObjectTypeEnum;
 import net.atos.zac.websocket.event.ScreenObjectTypeEnum;

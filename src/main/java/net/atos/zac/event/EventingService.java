@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import net.atos.zac.event.cache.CacheUpdateEvent;
+import net.atos.client.zgw.shared.cache.event.CacheUpdateEvent;
 import net.atos.zac.flowable.cmmn.event.CmmnUpdateEvent;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
 

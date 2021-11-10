@@ -211,7 +211,15 @@ public class ZakenRESTService {
     @Path("caches/clear")
     @Produces(MediaType.TEXT_PLAIN)
     public String clearCaches() {
-        ztcClientService.clearCaches();
+        ztcClientService.clearStatustypeCache();
+        ztcClientService.clearZaaktypeStatustypeManagedCache();
+        ztcClientService.clearResultaattypeCache();
+        ztcClientService.clearZaaktypeResultaattypeManagedCache();
+        ztcClientService.clearZaaktypeRoltypeCache();
+        ztcClientService.clearZaaktypeUrlCache();
+        ztcClientService.clearZaaktypeCache();
+        ztcClientService.clearZaaktypeManagedCache();
+// TODO ESUITEDEV-25829 zrc caches
         return "all caches cleared";
     }
 
@@ -239,7 +247,7 @@ public class ZakenRESTService {
         for (final Map.Entry<String, String> entry : tableState.getSearch().getPredicateObject().entrySet()) {
             switch (entry.getKey()) {
                 case "zaaktype":
-                    zaakListParameters.setZaaktype(ztcClientService.readZaaktype(entry.getValue()).getUrl());
+                    zaakListParameters.setZaaktype(ztcClientService.readZaaktypeUrl(entry.getValue()));
                     break;
                 case "groep":
                     zaakListParameters
