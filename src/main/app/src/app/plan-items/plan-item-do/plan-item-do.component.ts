@@ -7,17 +7,13 @@ import {Component, OnInit} from '@angular/core';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
-import {IdentityService} from '../../identity/identity.service';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {PlanItemType} from '../model/plan-item-type.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
-import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -29,7 +25,7 @@ export class PlanItemDoComponent implements OnInit {
     formConfig: FormConfig;
     private planItem: PlanItem;
 
-    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private identityService: IdentityService,
+    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService,
                 private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
@@ -37,16 +33,11 @@ export class PlanItemDoComponent implements OnInit {
         this.planItem = this.route.snapshot.data['planItem'];
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
-        const titel = new HeadingFormField('doPlanItem', 'actie.taak.aanmaken', '1');
-        const naam = new ReadonlyFormField('naam', 'naam', this.planItem.naam);
+
         if (this.planItem.type == PlanItemType.HumanTask) {
-            this.identityService.getGroepen().subscribe(groepen => {
-                const groep = new SelectFormField('groep', 'groep', this.planItem.groep, 'naam', groepen,
-                    new FormFieldConfig([Validators.required]));
-                this.formItems = [[titel], [naam], [groep]];
-            });
+            this.formItems = new AanvullendeInformatie(this.planItem).taakStartFormulier;
         } else {
-            this.formItems = [[titel], [naam]];
+            this.formItems = [[]];
         }
     }
 
