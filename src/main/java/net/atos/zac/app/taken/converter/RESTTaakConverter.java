@@ -63,17 +63,17 @@ public class RESTTaakConverter {
         if (task instanceof Task) {
             restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
             restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
-            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingForTask(task.getId());
+            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeIdentificatieForTask(task.getId());
         }
-
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         restTaak.rechten = getRechten(task);
         return restTaak;
     }
 
-    public RESTTaak convertTask(final TaskInfo task, final Map<String, String> taakdata) {
+    public RESTTaak convertTask(final TaskInfo task, final String taakBehandelFormulier, final Map<String, String> taakdata) {
         final RESTTaak restTaak = convertTask(task);
+        restTaak.taakBehandelFormulier = taakBehandelFormulier;
         restTaak.taakdata = taakdata;
         return restTaak;
     }

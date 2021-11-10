@@ -27,7 +27,7 @@ public class Statustype {
 
     /**
      * Een korte, voor de initiator van de zaak relevante, omschrijving van de aard van de STATUS van zaken van een ZAAKTYPE
-     * maxLength: {@link Statustype#OMSCHRIJVING_MAX_LENGTH}
+     * - maxLength: {@link Statustype#OMSCHRIJVING_MAX_LENGTH}
      */
     private String omschrijving;
 
@@ -38,7 +38,7 @@ public class Statustype {
 
     /**
      * De tekst die wordt gebruikt om de Initiator te informeren over het bereiken van een STATUS van dit STATUSTYPE bij het desbetreffende ZAAKTYPE.
-     * maxLength: {@link Statustype#OMSCHRIJVING_MAX_LENGTH}
+     * - maxLength: {@link Statustype#OMSCHRIJVING_MAX_LENGTH}
      */
     private String statustekst;
 

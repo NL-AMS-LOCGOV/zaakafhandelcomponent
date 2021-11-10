@@ -44,5 +44,7 @@ public class RESTTaak extends AbstractRESTObject {
 
     public TaakStatus status;
 
+    public String taakBehandelFormulier;
+
     public Map<String, String> taakdata;
 }

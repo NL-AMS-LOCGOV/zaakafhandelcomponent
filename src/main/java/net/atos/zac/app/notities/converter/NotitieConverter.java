@@ -11,11 +11,11 @@ import javax.inject.Inject;
 
 import org.flowable.idm.api.User;
 
-import net.atos.zac.app.notities.model.Notitie;
-import net.atos.zac.app.notities.model.rest.RESTNotitie;
+import net.atos.zac.app.notities.model.RESTNotitie;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.notities.model.Notitie;
 
 public class NotitieConverter {
 

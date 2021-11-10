@@ -22,5 +22,7 @@ public class RESTPlanItem {
 
     public RESTGroep groep;
 
+    public String taakStartFormulier;
+
     public Map<String, String> taakdata;
 }
