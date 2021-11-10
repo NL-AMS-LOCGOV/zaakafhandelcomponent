@@ -6,7 +6,7 @@
 package net.atos.zac.event;
 
 /**
- * Generieke code voor beans die luisteren naar AbstractUpdateEvents.
+ * Generic code for beans that listen to AbstractUpdateEvents.
  */
 public abstract class AbstractUpdateObserver<UPDATE_EVENT extends AbstractUpdateEvent> {
     public abstract void onFire(final UPDATE_EVENT event);

@@ -9,7 +9,7 @@ import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {delay, retryWhen, switchMap, takeUntil} from 'rxjs/operators';
 import {SubscriptionMessage} from './model/subscription-message';
 import {SubscriptionType} from './model/subscription-type';
-import {Operatie} from './model/operatie';
+import {Opcode} from './model/opcode';
 import {ObjectType} from './model/object-type';
 import {ScreenUpdateEvent} from './model/screen-update-event';
 import {EventCallback} from './model/event-callback';
@@ -104,7 +104,7 @@ export class WebsocketService implements OnDestroy {
     }
 
     private onMessage = (message: any) => {
-        var event: ScreenUpdateEvent = new ScreenUpdateEvent(message.operatie, message.objectType, message.objectId, message.timestamp);
+        var event: ScreenUpdateEvent = new ScreenUpdateEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
         var callbacks: EventCallback[] = this.getCallbacks(event);
         for (var i = 0; i < callbacks.length; i++) {
             try {
@@ -121,18 +121,18 @@ export class WebsocketService implements OnDestroy {
         console.debug(error);
     };
 
-    public addListener(operatie: Operatie, objectType: ObjectType, objectId: string, callback: EventCallback): void {
-        var event: ScreenUpdateEvent = new ScreenUpdateEvent(operatie, objectType, objectId);
+    public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): void {
+        var event: ScreenUpdateEvent = new ScreenUpdateEvent(opcode, objectType, objectId);
         this.addCallback(event, callback);
-        this.send(new SubscriptionMessage(SubscriptionType.TOEVOEGEN, event));
+        this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
     }
 
-    public addListenerMetSnackbar(operatie: Operatie, objectType: ObjectType, objectId: string, callback: EventCallback): void {
-        this.addListener(operatie, objectType, objectId, (event) => {
+    public addListenerMetSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): void {
+        this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
                 snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + objectType),
                 snackbar2: this.translate.get('msg.gewijzigd.2'),
-                snackbar3: this.translate.get('msg.gewijzigd.operatie.' + operatie),
+                snackbar3: this.translate.get('msg.gewijzigd.operatie.' + opcode),
                 snackbar4: this.translate.get('msg.gewijzigd.4'),
                 actie: this.translate.get('actie.scherm.verversen')
             }).subscribe(result => {
@@ -142,10 +142,10 @@ export class WebsocketService implements OnDestroy {
         });
     }
 
-    public removeListeners(operatie: Operatie, objectType: ObjectType, objectId: string): void {
-        var event: ScreenUpdateEvent = new ScreenUpdateEvent(operatie, objectType, objectId);
+    public removeListeners(opcode: Opcode, objectType: ObjectType, objectId: string): void {
+        var event: ScreenUpdateEvent = new ScreenUpdateEvent(opcode, objectType, objectId);
         this.removeCallbacks(event);
-        this.send(new SubscriptionMessage(SubscriptionType.VERWIJDEREN, event));
+        this.send(new SubscriptionMessage(SubscriptionType.DELETE, event));
     }
 
     private getCallbacks(event: ScreenUpdateEvent): EventCallback[] {

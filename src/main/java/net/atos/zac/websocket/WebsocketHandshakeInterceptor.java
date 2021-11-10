@@ -5,7 +5,7 @@ import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 
-/* Deze interceptor is alleen nodig om aan de httpSession te komen bij het openen van een websocket.
+/* This interceptor is only needed to access the httpSession when opening a websocket.
  */
 public class WebsocketHandshakeInterceptor extends ServerEndpointConfig.Configurator {
 

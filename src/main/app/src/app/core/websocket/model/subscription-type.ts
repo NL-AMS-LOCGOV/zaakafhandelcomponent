@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+/**
+ * Maps to SubscriptionType.java
+ */
 export enum SubscriptionType {
-    TOEVOEGEN = 'TOEVOEGEN',
-    VERWIJDEREN = 'VERWIJDEREN'
+    CREATE = 'CREATE',
+    DELETE = 'DELETE'
 }

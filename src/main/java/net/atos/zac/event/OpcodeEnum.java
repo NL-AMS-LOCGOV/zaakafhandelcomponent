@@ -6,22 +6,23 @@
 package net.atos.zac.event;
 
 /**
- * Enumeratie die de operaties bevat zoals die gebruikt worden door het {@link AbstractUpdateEvent}.
+ * Enumeration containing the operations as used by the {@link AbstractUpdateEvent}.
+ * Maps to opcode.ts
  */
 public enum OpcodeEnum {
 
     /**
-     * indicatie dat het genoemde object is toegevoegd
+     * indication that the mentioned object has been added
      */
     CREATED,
 
     /**
-     * indicatie dat het genoemde object is gewijzigd
+     * indication that the mentioned object has been updated
      */
     UPDATED,
 
     /**
-     * indicatie dat het genoemde object is verwijderd
+     * indication that the mentioned object has been deleted
      */
     DELETED
 }

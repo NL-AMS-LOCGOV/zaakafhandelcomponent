@@ -11,44 +11,44 @@ import javax.websocket.Session;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 /**
- * Geeft aan of een client zich abonneert op een event,
- * of dat een client een event (of alle events) juist niet meer wil ontvangen
+ * Indicates whether a client subscribes to an event, or whether a client no longer wishes to receive an event (or all events)
+ * Maps to subscription-type.ts
  */
 public enum SubscriptionType {
     /**
-     * Abonneren op een event
+     * Subscribe to an event
      */
-    TOEVOEGEN {
+    CREATE {
         @Override
         protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
-            registry.add(event, session);
+            registry.create(event, session);
         }
     },
     /**
-     * Abonnement op een event opzeggen
+     * Cancel subscription to an event
      */
-    VERWIJDEREN {
+    DELETE {
         @Override
         protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
-            registry.remove(event, session);
+            registry.delete(event, session);
         }
     },
     /**
-     * Abonnementen op alle events opzeggen
+     * Cancel subscriptions to all events
      */
-    VERWIJDER_ALLES {
-        // 1 instantie is wel genoeg voor dit immutable object.
+    DELETE_ALL {
+        // 1 instance is enough for this immutable object.
         private final SubscriptionMessage MESSAGE = new SubscriptionMessage(this, null);
 
         @Override
         protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
-            registry.removeAll(session);
+            registry.deleteAll(session);
         }
 
         @Override
         public SubscriptionMessage message(final ScreenUpdateEvent event) {
             if (event != null) {
-                throw new IllegalArgumentException("Onverwacht event argument");
+                throw new IllegalArgumentException("Unexpected event argument");
             }
             return message();
         }
@@ -62,10 +62,10 @@ public enum SubscriptionType {
     protected abstract void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event);
 
     /**
-     * Factory method voor SubscriptionMessages (types TOEVOEGEN en VERWIJDEREN).
+     * Factory method for SubscriptionMessages ({@link SubscriptionType#CREATE} and {@link SubscriptionType#DELETE} types).
      *
-     * @param event het event waarop geabonneerd wordt.
-     * @return het bericht
+     * @param event the event subscribed to.
+     * @return message
      */
     public SubscriptionMessage message(final ScreenUpdateEvent event) {
         if (event != null) {
@@ -75,19 +75,18 @@ public enum SubscriptionType {
     }
 
     /**
-     * Factory method voor SubscriptionMessages (type VERWIJDER_ALLES).
+     * Factory method for SubscriptionMessages (type {@link SubscriptionType#DELETE_ALL).
      *
-     * @return het bericht
+     * @return message
      */
     public SubscriptionMessage message() {
-        throw new IllegalArgumentException("Ontbrekend event argument");
+        throw new IllegalArgumentException("Missing event argument");
     }
 
     /**
-     * Bericht wat afhankelijk van het subscriptionType aangeeft aan op welk event de client zich wil abonneren,
-     * of welk event de client juist niet meer wil ontvangen.
+     * Message which, depending on the subscriptionType, indicates to which event the client wishes to subscribe, or which event the client no longer wishes to receive.
      * <p>
-     * Geen public constructor, gebruik de factory methods!
+     * No public constructor, use the factory methods!
      */
     public static final class SubscriptionMessage {
 
@@ -109,10 +108,10 @@ public enum SubscriptionType {
         }
 
         /**
-         * Verwerk dit bericht bij een van de sessions in een session registry.
+         * Process this message at one of the sessions in a session registry.
          *
-         * @param registry de session registry waarin het bericht verwerkt moet worden
-         * @param session  de session waarbij het bericht verwerkt moet worden
+         * @param registry the session registry in which the message must be processed
+         * @param session  the session in which the message is to be processed
          */
         public final void register(final SessionRegistry registry, final Session session) {
             subscriptionType.register(registry, session, event);

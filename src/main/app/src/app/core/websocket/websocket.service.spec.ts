@@ -4,7 +4,7 @@
  */
 
 import {WebsocketService} from './websocket.service';
-import {Operatie} from './model/operatie';
+import {Opcode} from './model/opcode';
 import {ObjectType} from './model/object-type';
 
 describe('WebsocketService', () => {
@@ -21,10 +21,10 @@ describe('WebsocketService', () => {
     });
 
     const EVENTS = 8192;
-    const OPERATIES = [
-        Operatie.TOEVOEGING,
-        Operatie.WIJZIGING,
-        Operatie.VERWIJDERING];
+    const OPCODES = [
+        Opcode.UPDATED,
+        Opcode.CREATED,
+        Opcode.DELETED];
     const OBJECT_TYPES = [
         ObjectType.ENKELVOUDIG_INFORMATIEOBJECT,
         ObjectType.TAAK,
@@ -36,22 +36,22 @@ describe('WebsocketService', () => {
 
     it('should dispatch events to the correct listeners', (done) => {
         for (var i = 0; i < EVENTS; i++) {
-            var operatie: Operatie = OPERATIES[Math.floor(Math.random() * OPERATIES.length)];
+            var opcode: Opcode = OPCODES[Math.floor(Math.random() * OPCODES.length)];
             var objectType: ObjectType = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
             var delay: string = Math.floor(Math.random() * MAX_DELAY).toString();
-            service.addListener(operatie, objectType, delay, callback(operatie, objectType, delay, done));
+            service.addListener(opcode, objectType, delay, callback(opcode, objectType, delay, done));
         }
     });
 
     var received: number = 0;
 
-    function callback(operatie: Operatie, objectType: ObjectType, objectId: string, done) {
+    function callback(opcode: Opcode, objectType: ObjectType, objectId: string, done) {
         return event => {
             expect(typeof event.timestamp).toEqual('number');
-            expect(event.operatie).toEqual(operatie);
+            expect(event.opcode).toEqual(opcode);
             expect(event.objectType).toEqual(objectType);
             expect(event.objectId).toEqual(objectId);
-            expect(event.key).toEqual(operatie + ';' + objectType + ';' + objectId);
+            expect(event.key).toEqual(opcode + ';' + objectType + ';' + objectId);
             if (++received == EVENTS) {
                 done();
                 cleanup();
@@ -61,9 +61,9 @@ describe('WebsocketService', () => {
 
     function cleanup() {
         for (var i = 0; i < MAX_DELAY; i++) {
-            for (const operatie in Operatie) {
+            for (const opcodeKey in Opcode) {
                 for (const objectType in ObjectType) {
-                    service.removeListeners(Operatie[operatie], ObjectType[objectType], i.toString());
+                    service.removeListeners(Opcode[opcodeKey], ObjectType[objectType], i.toString());
                 }
             }
         }

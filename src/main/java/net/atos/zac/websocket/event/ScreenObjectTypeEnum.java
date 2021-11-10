@@ -25,266 +25,255 @@ import net.atos.zac.notificaties.ChannelEnum;
 import net.atos.zac.notificaties.Notificatie;
 
 /**
- * Enumeratie die de soorten object wijzigingen bevat zoals die gebruikt worden door het {@link ScreenUpdateEvent}.
+ * Enumeration of the types of objects that can be changed by a {@link ScreenUpdateEvent}.
+ * Maps to object-type.ts
  */
 public enum ScreenObjectTypeEnum {
 
-    /** documenten */
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-            return instance(action, this, enkelvoudigInformatieobject);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+            return instance(opcode, this, enkelvoudigInformatieobject);
         }
     },
 
-    /** taken */
     TAAK {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final TaskInfo taak) {
-            return instance(action, this, taak);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final TaskInfo taak) {
+            return instance(opcode, this, taak);
         }
     },
 
-    /** zaken */
     ZAAK {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+            return instance(opcode, this, zaak);
         }
     },
 
-    /** zaak-documenten */
     ZAAK_INFORMATIEOBJECTEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+            return instance(opcode, this, zaak);
         }
     },
 
-    /** zaak-betrokken */
     ZAAK_ROLLEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+            return instance(opcode, this, zaak);
         }
     },
 
-    /** zaak-taken */
     ZAAK_TAKEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
+        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+            return instance(opcode, this, zaak);
         }
     };
 
     private static final Logger LOG = Logger.getLogger(ScreenObjectTypeEnum.class.getName());
 
-    // Dit is de uiteindelijke echte factory method
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final String id) {
-        return new ScreenUpdateEvent(action, type, id);
+    // This is the factory method.
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final String id) {
+        return new ScreenUpdateEvent(opcode, type, id);
     }
 
-    // Bij deze methods bepaal je zelf wat er als id gebruikt wordt, let er op dat dit consistent is met de andere methods
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final UUID uuid) {
-        return instance(action, type, uuid.toString());
+    // In these methods you determine what is used as an id, make sure that this is consistent with the other methods
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final UUID uuid) {
+        return instance(opcode, type, uuid.toString());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final URI url) {
-        return instance(action, type, URIUtil.parseUUIDFromResourceURI(url));
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final URI url) {
+        return instance(opcode, type, URIUtil.parseUUIDFromResourceURI(url));
     }
 
-    // Deze methods bepalen wat er als id gebruikt wordt, zodat dit overal hetzelfde is
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final Zaak zaak) {
-        return instance(action, type, zaak.getUuid());
+    // These methods determine what is used as an id, so that it is the same everywhere
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final Zaak zaak) {
+        return instance(opcode, type, zaak.getUuid());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type,
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type,
             final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return instance(action, type, enkelvoudigInformatieobject.getUrl());
+        return instance(opcode, type, enkelvoudigInformatieobject.getUrl());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum action, final ScreenObjectTypeEnum type, final TaskInfo taak) {
-        return instance(action, type, taak.getId());
+    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final TaskInfo taak) {
+        return instance(opcode, type, taak.getId());
     }
 
-    // Deze methods bepalen op welke object types de verschillende argumenten zijn toegestaan
-    private ScreenUpdateEvent event(final OpcodeEnum action, final UUID uuid) {
-        return instance(action, this, uuid); // Toegestaan bij alle objecttypes
+    // These methods determine on which object types the different arguments are allowed
+    private ScreenUpdateEvent event(final OpcodeEnum opcode, final UUID uuid) {
+        return instance(opcode, this, uuid); // Allowed with all object types
     }
 
-    private ScreenUpdateEvent event(final OpcodeEnum action, final URI url) {
-        return instance(action, this, url); // Toegestaan bij alle objecttypes
+    private ScreenUpdateEvent event(final OpcodeEnum opcode, final URI url) {
+        return instance(opcode, this, url); // Allowed with all object types
     }
 
-    private ScreenUpdateEvent event(final OpcodeEnum action, final Notificatie.Resource resource) {
-        return instance(action, this, resource.getUrl()); // Toegestaan bij alle objecttypes
+    private ScreenUpdateEvent event(final OpcodeEnum opcode, final Notificatie.Resource resource) {
+        return instance(opcode, this, resource.getUrl()); // Allowed with all object types
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-        throw new IllegalArgumentException(); // Niet toegestaan behalve bij objecttypes waar deze method een override heeft
+    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum action, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        throw new IllegalArgumentException(); // Niet toegestaan behalve bij objecttypes waar deze method een override heeft
+    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum action, final TaskInfo taak) {
-        throw new IllegalArgumentException(); // Niet toegestaan behalve bij objecttypes waar deze method een override heeft
+    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final TaskInfo taak) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    // Dit zijn factory methods om handig en eenduidig SchermUpdateEvents te maken voor een objecttype
+    // These are factory methods to create handy and unambiguous ScreenUpdateEvents for an object type
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste UUID mee te geven.
-     * Gebruik bij voorkeur de ander creation methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other creation methods.
      *
-     * @param uuid de indentificatie van het toegevoegde object.
-     * @return een instance van het event
+     * @param uuid indentificatie of the created object
+     * @return instance of the event
      */
     public final ScreenUpdateEvent created(final UUID uuid) {
         return event(CREATED, uuid);
     }
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste URI mee te geven.
-     * Gebruik bij voorkeur de ander creation methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other creation methods.
      *
-     * @param url de indentificatie van het toegevoegde object.
-     * @return een instance van het event
+     * @param url indentificatie of the created object
+     * @return instance of the event
      */
     public final ScreenUpdateEvent created(final URI url) {
         return event(CREATED, url);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een zaak).
+     * Factory method for ScreenUpdateEvent (with case identification).
      *
-     * @param zaak de toegevoegde zaak.
-     * @return een instance van het event
+     * @param zaak created zaak.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent created(final Zaak zaak) {
         return event(CREATED, zaak);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een enkelvoudigInformatieobject).
+     * Factory method for ScreenUpdateEvent (identifying a single Information object).
      *
-     * @param enkelvoudigInformatieobject het toegevoegde enkelvoudigInformatieobject.
-     * @return een instance van het event
+     * @param enkelvoudigInformatieobject created enkelvoudigInformatieobject.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent created(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(CREATED, enkelvoudigInformatieobject);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een taak).
+     * Factory method for ScreenUpdateEvent (with identification of a task).
      *
-     * @param taak de toegevoegde taak.
-     * @return een instance van het event
+     * @param taak created task.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent created(final TaskInfo taak) {
         return event(CREATED, taak);
     }
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste UUID mee te geven.
-     * Gebruik bij voorkeur de ander wijziging methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other modification methods.
      *
-     * @param uuid de indentificatie van het gewijzigde object.
-     * @return eem instance van het event
+     * @param uuid identification of the modified object.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent updated(final UUID uuid) {
         return event(UPDATED, uuid);
     }
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste URI mee te geven.
-     * Gebruik bij voorkeur de ander creation methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct URI. Preferably use the other creation methods.
      *
-     * @param url de indentificatie van het gewijzigde object.
-     * @return een instance van het event
+     * @param url identification of the modified object.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent updated(final URI url) {
         return event(UPDATED, url);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een zaak).
+     * Factory method for ScreenUpdateEvent (with case identification).
      *
-     * @param zaak de gewijzigde zaak.
-     * @return een instance van het event
+     * @param zaak modified zaak.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent updated(final Zaak zaak) {
         return event(UPDATED, zaak);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een enkelvoudigInformatieobject).
+     * Factory method for ScreenUpdateEvent (identifying a single Information object).
      *
-     * @param enkelvoudigInformatieobject het gewijzigde enkelvoudigInformatieobject.
-     * @return een instance van het event
+     * @param enkelvoudigInformatieobject modified enkelvoudigInformatieobject.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent updated(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(UPDATED, enkelvoudigInformatieobject);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een taak).
+     * Factory method for ScreenUpdateEvent (with identification of a task).
      *
-     * @param taak de gewijzigde taak.
-     * @return een instance van het event
+     * @param taak modifierd task
+     * @return instance of the event
      */
     public final ScreenUpdateEvent updated(final TaskInfo taak) {
         return event(UPDATED, taak);
     }
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste UUID mee te geven.
-     * Gebruik bij voorkeur de ander deletion methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other deletion methods.
      *
-     * @param uuid de indentificatie van het verwijderde object.
-     * @return een instance van het event
+     * @param uuid identificatioon of the deleted object.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent deleted(final UUID uuid) {
         return event(DELETED, uuid);
     }
 
     /**
-     * Let op! Als je deze method gebruikt ben je er zelf verantwoordelijk voor om de juiste URI mee te geven.
-     * Gebruik bij voorkeur de ander creation methods.
+     * Pay attention! If you use this method, you are responsible for providing the correct URI. Preferably use the other creation methods.
      *
-     * @param url de indentificatie van het verwijderd object.
-     * @return een instance van het event
+     * @param url identificatioon of the deleted object.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent deleted(final URI url) {
         return event(DELETED, url);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een zaak).
+     * Factory method for ScreenUpdateEvent (with case identification).
      *
-     * @param zaak de verwijderde zaak.
-     * @return een instance van het event
+     * @param zaak deleted zaak.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent deleted(final Zaak zaak) {
         return event(DELETED, zaak);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een enkelvoudigInformatieobject).
+     * Factory method for ScreenUpdateEvent (with case identification).
      *
-     * @param enkelvoudigInformatieobject het verwijderde enkelvoudigInformatieobject.
-     * @return een instance van het event
+     * @param enkelvoudigInformatieobject deleted enkelvoudigInformatieobject.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent deleted(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(DELETED, enkelvoudigInformatieobject);
     }
 
     /**
-     * Factory method voor ScreenUpdateEvent (met identificatie van een taak).
+     * Factory method for ScreenUpdateEvent (with identification of a task).
      *
-     * @param taak de verwijderde taak.
-     * @return een instance van het event
+     * @param taak deleted task.
+     * @return instance of the event
      */
     public final ScreenUpdateEvent deleted(final TaskInfo taak) {
         return event(DELETED, taak);

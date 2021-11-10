@@ -372,107 +372,107 @@ public class SessionRegistryTest {
     @Test
     public void testAdd() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION1);
 
-        assertEquals(1, registry.getSessions(EVENT1).size());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION1));
+        assertEquals(1, registry.listSessions(EVENT1).size());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
     }
 
     @Test
     public void testAddDubbel() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.add(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION1);
 
-        assertEquals(1, registry.getSessions(EVENT1).size());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION1));
+        assertEquals(1, registry.listSessions(EVENT1).size());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
     }
 
     @Test
     public void testAddFixed() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.add(EVENT1a, SESSION1);
-        registry.add(EVENT1b, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.create(EVENT1a, SESSION1);
+        registry.create(EVENT1b, SESSION1);
 
-        assertEquals(1, registry.getSessions(EVENT1).size());
-        assertEquals(1, registry.getSessions(EVENT1a).size());
-        assertEquals(1, registry.getSessions(EVENT1b).size());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION1));
-        assertTrue(registry.getSessions(EVENT1a).contains(SESSION1));
-        assertTrue(registry.getSessions(EVENT1b).contains(SESSION1));
+        assertEquals(1, registry.listSessions(EVENT1).size());
+        assertEquals(1, registry.listSessions(EVENT1a).size());
+        assertEquals(1, registry.listSessions(EVENT1b).size());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT1a).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT1b).contains(SESSION1));
     }
 
     @Test
     public void testAddAndere() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.add(EVENT1, SESSION2);
-        registry.add(EVENT2, SESSION1);
-        registry.add(EVENT3, SESSION1);
-        registry.add(EVENT4, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION2);
+        registry.create(EVENT2, SESSION1);
+        registry.create(EVENT3, SESSION1);
+        registry.create(EVENT4, SESSION1);
 
-        assertEquals(2, registry.getSessions(EVENT1).size());
-        assertEquals(1, registry.getSessions(EVENT2).size());
-        assertEquals(1, registry.getSessions(EVENT3).size());
-        assertEquals(1, registry.getSessions(EVENT4).size());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION1));
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION2));
-        assertTrue(registry.getSessions(EVENT2).contains(SESSION1));
-        assertTrue(registry.getSessions(EVENT3).contains(SESSION1));
-        assertTrue(registry.getSessions(EVENT4).contains(SESSION1));
+        assertEquals(2, registry.listSessions(EVENT1).size());
+        assertEquals(1, registry.listSessions(EVENT2).size());
+        assertEquals(1, registry.listSessions(EVENT3).size());
+        assertEquals(1, registry.listSessions(EVENT4).size());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION2));
+        assertTrue(registry.listSessions(EVENT2).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT3).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT4).contains(SESSION1));
     }
 
     @Test
     public void testRemove() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.remove(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.delete(EVENT1, SESSION1);
 
-        assertTrue(registry.getSessions(EVENT1).isEmpty());
+        assertTrue(registry.listSessions(EVENT1).isEmpty());
     }
 
     @Test
     public void testRemoveFixed() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.remove(EVENT1a, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.delete(EVENT1a, SESSION1);
 
-        registry.getSessions(EVENT1).forEach(session -> System.out.println(session.getId()));
-        assertTrue(registry.getSessions(EVENT1).isEmpty());
-        assertTrue(registry.getSessions(EVENT1a).isEmpty());
+        registry.listSessions(EVENT1).forEach(session -> System.out.println(session.getId()));
+        assertTrue(registry.listSessions(EVENT1).isEmpty());
+        assertTrue(registry.listSessions(EVENT1a).isEmpty());
     }
 
     @Test
     public void testRemoveAndere() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.remove(EVENT1, SESSION2);
-        registry.remove(EVENT2, SESSION1);
-        registry.remove(EVENT3, SESSION1);
-        registry.remove(EVENT4, SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.delete(EVENT1, SESSION2);
+        registry.delete(EVENT2, SESSION1);
+        registry.delete(EVENT3, SESSION1);
+        registry.delete(EVENT4, SESSION1);
 
-        assertTrue(registry.getSessions(EVENT2).isEmpty());
-        assertTrue(registry.getSessions(EVENT3).isEmpty());
-        assertTrue(registry.getSessions(EVENT4).isEmpty());
-        assertEquals(1, registry.getSessions(EVENT1).size());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION1));
+        assertTrue(registry.listSessions(EVENT2).isEmpty());
+        assertTrue(registry.listSessions(EVENT3).isEmpty());
+        assertTrue(registry.listSessions(EVENT4).isEmpty());
+        assertEquals(1, registry.listSessions(EVENT1).size());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
     }
 
     @Test
     public void testRemoveAll() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.add(EVENT1, SESSION1);
-        registry.add(EVENT1, SESSION2);
-        registry.add(EVENT2, SESSION1);
-        registry.add(EVENT3, SESSION1);
-        registry.add(EVENT4, SESSION1);
-        registry.removeAll(SESSION1);
+        registry.create(EVENT1, SESSION1);
+        registry.create(EVENT1, SESSION2);
+        registry.create(EVENT2, SESSION1);
+        registry.create(EVENT3, SESSION1);
+        registry.create(EVENT4, SESSION1);
+        registry.deleteAll(SESSION1);
 
-        assertEquals(1, registry.getSessions(EVENT1).size());
-        assertTrue(registry.getSessions(EVENT2).isEmpty());
-        assertTrue(registry.getSessions(EVENT3).isEmpty());
-        assertTrue(registry.getSessions(EVENT4).isEmpty());
-        assertTrue(registry.getSessions(EVENT1).contains(SESSION2));
+        assertEquals(1, registry.listSessions(EVENT1).size());
+        assertTrue(registry.listSessions(EVENT2).isEmpty());
+        assertTrue(registry.listSessions(EVENT3).isEmpty());
+        assertTrue(registry.listSessions(EVENT4).isEmpty());
+        assertTrue(registry.listSessions(EVENT1).contains(SESSION2));
     }
 }

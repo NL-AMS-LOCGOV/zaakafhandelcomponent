@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+/**
+ * Maps to ScreenObjectTypeEnum.java
+ */
 export enum ObjectType {
     ENKELVOUDIG_INFORMATIEOBJECT = 'ENKELVOUDIG_INFORMATIEOBJECT',
     TAAK = 'TAAK',

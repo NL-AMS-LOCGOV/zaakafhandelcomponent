@@ -18,7 +18,7 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
+import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TaakRechten} from '../model/taak-rechten';
 
@@ -52,12 +52,12 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngAfterViewInit();
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
-        this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
+        this.websocketService.addListener(Opcode.CREATED, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
     }
 
     ngOnDestroy() {
         super.ngOnDestroy();
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
+        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.TAAK, this.taak.id);
     }
 
     onZaakLoaded($event): void {

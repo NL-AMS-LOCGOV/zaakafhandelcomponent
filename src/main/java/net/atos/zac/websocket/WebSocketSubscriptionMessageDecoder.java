@@ -5,7 +5,7 @@
 
 package net.atos.zac.websocket;
 
-import static net.atos.zac.websocket.SubscriptionType.VERWIJDER_ALLES;
+import static net.atos.zac.websocket.SubscriptionType.DELETE_ALL;
 
 import java.io.StringReader;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 /**
- * Converteert websocket berichten naar SubscriptionType.SubscriptionMessage objecten
+ * Converts websocket messages to SubscriptionType.SubscriptionMessage objects
  */
 public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<SubscriptionType.SubscriptionMessage> {
 
@@ -35,7 +35,7 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
 
     private static final String EVENT = "event";
 
-    private static final String EVENT_OPERATIE = "operatie";
+    private static final String EVENT_OPCODE = "opcode";
 
     private static final String EVENT_OBJECT_TYPE = "objectType";
 
@@ -47,12 +47,12 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
             final JsonObject jsonObject = jsonReader.readObject();
 
             final SubscriptionType subscriptionType = SubscriptionType.valueOf(jsonObject.getString(SUBSCRIPTION_TYPE));
-            if (subscriptionType == VERWIJDER_ALLES) {
+            if (subscriptionType == DELETE_ALL) {
                 return subscriptionType.message();
             }
 
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
-            final OpcodeEnum operatie = OpcodeEnum.valueOf(jsonEvent.getString(EVENT_OPERATIE));
+            final OpcodeEnum operatie = OpcodeEnum.valueOf(jsonEvent.getString(EVENT_OPCODE));
             final ScreenObjectTypeEnum objectType = ScreenObjectTypeEnum.valueOf(jsonEvent.getString(EVENT_OBJECT_TYPE));
             final JsonValue jsonObjectId = jsonEvent.get(EVENT_OBJECT_ID);
             return subscriptionType.message(new ScreenUpdateEvent(operatie, objectType, jsonObjectId != null ? jsonObjectId.toString() : null));
@@ -75,7 +75,7 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
             jsonReader.readObject();
             return true;
         } catch (final JsonException e) {
-            LOG.log(Level.WARNING, String.format("SubscriptionMessage kan niet gedecodeerd worden: %s", jsonMessage), e);
+            LOG.log(Level.WARNING, String.format("SubscriptionMessage cannot be decrypted: %s", jsonMessage), e);
             return false;
         }
     }

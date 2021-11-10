@@ -21,7 +21,7 @@ import net.atos.zac.event.AbstractUpdateObserver;
 import net.atos.zac.websocket.SessionRegistry;
 
 /**
- * Deze bean luistert naar SchermUpdateEvents, zet ze om naar een Websockets event en stuurt deze dan door naar de browsers die zich erop geabonneerd hebben.
+ * This bean listens for {@link ScreenUpdateEvent}, converts them to a Websockets event and then forwards it to the browsers that have subscribed to it.
  */
 @ManagedBean
 public class ScreenUpdateObserver extends AbstractUpdateObserver<ScreenUpdateEvent> {
@@ -39,13 +39,13 @@ public class ScreenUpdateObserver extends AbstractUpdateObserver<ScreenUpdateEve
 
     private void sendToWebsocketSubscribers(final ScreenUpdateEvent event) {
         try {
-            final Set<Session> subscribers = sessionRegistry.getSessions(event);
+            final Set<Session> subscribers = sessionRegistry.listSessions(event);
             if (!subscribers.isEmpty()) {
                 final String json = JSON_MAPPER.writeValueAsString(event);
                 subscribers.forEach(session -> session.getAsyncRemote().sendText(json));
             }
         } catch (final JsonProcessingException e) {
-            LOG.log(Level.SEVERE, "Het omzetten van het ScreenUpdateEvent naar JSON is mislukt.", e);
+            LOG.log(Level.SEVERE, "Failed to convert the ScreenUpdateEvent to JSON.", e);
         }
     }
 }

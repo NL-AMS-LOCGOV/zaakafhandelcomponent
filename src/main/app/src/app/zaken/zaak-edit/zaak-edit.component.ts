@@ -12,7 +12,7 @@ import {Zaak} from '../model/zaak';
 import {UtilService} from '../../core/service/util.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
+import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
@@ -37,13 +37,13 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.zaak = this.route.snapshot.data['zaak'];
-        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid,
+        this.websocketService.addListenerMetSnackbar(Opcode.CREATED, ObjectType.ZAAK, this.zaak.uuid,
             () => this.updateZaak());
         this.initForm();
     }
 
     ngOnDestroy(): void {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK, this.zaak.uuid);
     }
 
     private initForm() {

@@ -4,20 +4,20 @@
  */
 
 import {ObjectType} from './object-type';
-import {Operatie} from './operatie';
+import {Opcode} from './opcode';
 
 export class ScreenUpdateEvent {
     timestamp: number;
-    operatie: Operatie;
+    opcode: Opcode;
     objectType: ObjectType;
     objectId: string;
     key: string;
 
-    constructor(operatie: Operatie, objectType: ObjectType, objectId: string, timestamp?: number) {
+    constructor(opcode: Opcode, objectType: ObjectType, objectId: string, timestamp?: number) {
         this.timestamp = timestamp;
-        this.operatie = operatie;
+        this.opcode = opcode;
         this.objectType = objectType;
         this.objectId = objectId;
-        this.key = this.operatie + ';' + this.objectType + ';' + this.objectId;
+        this.key = this.opcode + ';' + this.objectType + ';' + this.objectId;
     }
 }

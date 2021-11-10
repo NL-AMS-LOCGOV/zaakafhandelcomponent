@@ -20,8 +20,8 @@ import com.google.common.collect.SetMultimap;
 import net.atos.zac.websocket.event.ScreenUpdateEvent;
 
 /**
- * Deze EJB wordt gebruikt voor het bijhouden van een lijst met actieve sessies.
- * eventSessions bevat alle (vanuit de browser) geregistreerde client sessies
+ * This EJB is used to maintain a list of active sessions.
+ * EventSessions contains all (from the browser) registered client sessions
  */
 @Singleton
 public class SessionRegistry {
@@ -31,55 +31,55 @@ public class SessionRegistry {
     private final SetMultimap<ScreenUpdateEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     /**
-     * Geef een set met alle actieve sessies voor een bepaald event terug.
+     * Return a set of all active sessions for a particular event.
      *
-     * @return Set met actieve sessies
+     * @return Set with active sessions
      */
-    public Set<Session> getSessions(final ScreenUpdateEvent event) {
+    public Set<Session> listSessions(final ScreenUpdateEvent event) {
         return Collections.unmodifiableSet(eventSessions.get(fix(event)));
     }
 
     /**
-     * Voeg een sessie toe voor een bepaald event
+     * Add a session for a specific event
      *
-     * @param event   het event
-     * @param session de toe te voegen sessie
+     * @param event   event
+     * @param session session
      */
-    public void add(final ScreenUpdateEvent event, final Session session) {
+    public void create(final ScreenUpdateEvent event, final Session session) {
         if (session != null) {
             eventSessions.put(fix(event), session);
         }
     }
 
     /**
-     * Verwijder een sessie voor een bepaald event
+     * Delete a session for a specific event
      *
-     * @param event   het event
-     * @param session de te verwijderen sessie
+     * @param event   event
+     * @param session session
      */
-    public void remove(final ScreenUpdateEvent event, final Session session) {
+    public void delete(final ScreenUpdateEvent event, final Session session) {
         if (session != null) {
             eventSessions.get(fix(event)).remove(session);
         }
     }
 
     /**
-     * Verwijder een sessie voor alle events
+     * Delete a session for all events
      *
-     * @param session de te verwijderen sessie
+     * @param session session
      */
-    public void removeAll(final Session session) {
+    public void deleteAll(final Session session) {
         if (session != null) {
             eventSessions.values().removeAll(Collections.singleton(session));
         }
     }
 
     /**
-     * Deze method wordt op alle event argumenten toegepast om ervoor te zorgen dat het eventueel gequote zijn van het opbjectId (door Angular?) geen
-     * problemen geeft. Events die behalve de wel/niet gequote objectIds verder gelijk zijn moeten in alle gevallen als hetzelfde event worden beschouwd.
+     * This method is applied to all event arguments to make sure that the opbjectId being quoted (by Angular?) doesn't cause any problems.
+     * Events that are otherwise equal except for the quoted/unquoted objectIds should in all cases be regarded as the same event.
      *
-     * @param event het event waarin mogelijk het objectId gequote is
-     * @return een event waarin het objectId is ontdaan van de eventuele quotes
+     * @param event the event in which the objectId may have been quoted
+     * @return an event in which the objectId is stripped of any quotes
      */
     public ScreenUpdateEvent fix(final ScreenUpdateEvent event) {
         final Matcher matcher = QUOTED.matcher(event.getObjectId());

@@ -12,7 +12,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../core/service/util.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
+import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
@@ -38,12 +38,12 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
         this.utilService.setTitle('title.taak.wijzigen', {taak: this.taak.naam});
         this.formConfig = new FormConfig('actie.bewerken', 'actie.annuleren');
         this.initToelichtingVeld();
-        this.websocketService.addListenerMetSnackbar(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id,
+        this.websocketService.addListenerMetSnackbar(Opcode.CREATED, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());
     }
 
     ngOnDestroy() {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.TAAK, this.taak.id);
+        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.TAAK, this.taak.id);
     }
 
     onFormSubmit(formGroup: FormGroup): void {

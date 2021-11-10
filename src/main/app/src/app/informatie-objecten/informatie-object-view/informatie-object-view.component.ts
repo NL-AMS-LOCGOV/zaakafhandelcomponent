@@ -18,7 +18,7 @@ import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
 import {WebsocketService} from '../../core/websocket/websocket.service';
-import {Operatie} from '../../core/websocket/model/operatie';
+import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 
 @Component({
@@ -46,7 +46,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.infoObject = data['informatieObject'];
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+            this.websocketService.addListener(Opcode.CREATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 () => this.loadInformatieObject());
 
             this.setupMenu();
@@ -55,7 +55,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     ngOnDestroy() {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
+        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
     }
 
     private setupMenu(): void {

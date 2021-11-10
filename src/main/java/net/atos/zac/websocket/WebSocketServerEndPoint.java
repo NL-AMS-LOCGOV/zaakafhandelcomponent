@@ -7,7 +7,7 @@ package net.atos.zac.websocket;
 
 import static javax.websocket.CloseReason.CloseCodes.VIOLATED_POLICY;
 import static net.atos.zac.authentication.SecurityUtil.INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE;
-import static net.atos.zac.websocket.SubscriptionType.VERWIJDER_ALLES;
+import static net.atos.zac.websocket.SubscriptionType.DELETE_ALL;
 import static net.atos.zac.websocket.WebsocketHandshakeInterceptor.HTTP_SESSION;
 
 import java.io.IOException;
@@ -36,21 +36,21 @@ public class WebSocketServerEndPoint {
 
     @OnOpen
     public void open(final Session session, final EndpointConfig conf) {
-        // Controleer dat er een ingelogde medewerker is (en dat authenticatie dus heeft plaatsgevonden).
+        // Check that there is a logged in employee (and that authentication has taken place).
         final HttpSession httpSession = (HttpSession) conf.getUserProperties().get(HTTP_SESSION);
-        final Medewerker ingelogdeMedewerker = (Medewerker) httpSession.getAttribute(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE);
-        if (ingelogdeMedewerker == null) {
-            denyAccess(session, "geen ingelogde medewerker");
+        final Medewerker loggedOnUser = (Medewerker) httpSession.getAttribute(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE);
+        if (loggedOnUser == null) {
+            denyAccess(session, "no logged in user");
         } else {
-            session.getUserProperties().put(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE, ingelogdeMedewerker.getGebruikersnaam());
-            LOG.fine(() -> String.format("WebSocket geopend voor %s", user(session)));
+            session.getUserProperties().put(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE, loggedOnUser.getGebruikersnaam());
+            LOG.fine(() -> String.format("WebSocket open for %s", user(session)));
         }
     }
 
     @OnMessage
     public void processMessage(final SubscriptionType.SubscriptionMessage message, final Session session) {
         if (message != null) {
-            LOG.fine(() -> String.format("WebSocket subscription %s voor %s (%s)", message.getSubscriptionType(), user(session), message.getEvent()));
+            LOG.fine(() -> String.format("WebSocket subscription %s for %s (%s)", message.getSubscriptionType(), user(session), message.getEvent()));
             message.register(registry, session);
         }
     }
@@ -58,20 +58,20 @@ public class WebSocketServerEndPoint {
     @OnError
     public void log(final Session session, final Throwable e) {
         final String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
-        LOG.info(() -> String.format("WebSocket error voor %s (%s)", user(session), message));
+        LOG.info(() -> String.format("WebSocket error for %s (%s)", user(session), message));
     }
 
     @OnClose
     public void close(final Session session, final CloseReason reason) {
-        LOG.fine(() -> String.format("WebSocket gesloten voor %s (%s)", user(session), CloseReason.CloseCodes.getCloseCode(reason.getCloseCode().getCode())));
-        // Voorkom resource lekken door altijd nog even een fictief VERWIJDER_ALLES bericht te verwerken bij het sluiten.
-        processMessage(VERWIJDER_ALLES.message(), session);
+        LOG.fine(() -> String.format("WebSocket closed for %s (%s)", user(session), CloseReason.CloseCodes.getCloseCode(reason.getCloseCode().getCode())));
+        // Prevent resource leaks by always processing a fictitious DELETE_ALL message when closing.
+        processMessage(DELETE_ALL.message(), session);
     }
 
     private void denyAccess(final Session session, final String reason) {
-        LOG.severe(() -> String.format("WebSocket openen geweigerd voor %s (%s)", user(session), reason));
+        LOG.severe(() -> String.format("Open WebSocket denied for %s (%s)", user(session), reason));
         try {
-            // Deze close reason moet volgens de RFC gebruikt worden als de andere redenen niet van toepassing zijn.
+            // According to the RFC, this close reason should be used if the other reasons are not applicable.
             session.close(new CloseReason(VIOLATED_POLICY, reason));
         } catch (IOException e) {
             log(session, e);
