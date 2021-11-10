@@ -10,5 +10,6 @@ import java.util.Map;
 import net.atos.zac.rechten.RechtOperatie;
 
 public abstract class AbstractRESTObject {
+
     public Map<RechtOperatie, Boolean> rechten;
 }

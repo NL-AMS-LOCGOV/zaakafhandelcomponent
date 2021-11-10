@@ -5,7 +5,7 @@
 
 package net.atos.zac.notities;
 
-import static net.atos.zac.app.notities.model.Notitie.ZAAK_UUID;
+import static net.atos.zac.notities.model.Notitie.ZAAK_UUID;
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import net.atos.zac.app.notities.model.Notitie;
+import net.atos.zac.notities.model.Notitie;
 
 @ApplicationScoped
 @Transactional

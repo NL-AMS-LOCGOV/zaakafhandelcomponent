@@ -37,6 +37,8 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.zaaksturing.ZaakSturingService;
+import net.atos.zac.zaaksturing.model.TaakFormulieren;
 
 /**
  *
@@ -54,6 +56,9 @@ public class TakenRESTService {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private ZaakSturingService zaakSturingService;
 
     @Inject
     @IngelogdeMedewerker
@@ -99,8 +104,10 @@ public class TakenRESTService {
     @Path("{taskId}")
     public RESTTaak getTaak(@PathParam("taskId") final String taskId) {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
+        final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForTask(taskId);
+        final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, task.getTaskDefinitionId());
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
-        return taakConverter.convertTask(task, taakdata);
+        return taakConverter.convertTask(task, taakFormulieren.getBehandelFormulier(), taakdata);
     }
 
     @PATCH

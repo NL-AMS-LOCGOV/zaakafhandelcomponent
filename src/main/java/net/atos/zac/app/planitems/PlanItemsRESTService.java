@@ -23,6 +23,8 @@ import org.flowable.idm.api.Group;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.zaaksturing.ZaakSturingService;
+import net.atos.zac.zaaksturing.model.TaakFormulieren;
 
 /**
  *
@@ -34,6 +36,9 @@ public class PlanItemsRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private ZaakSturingService zaakSturingService;
 
     @Inject
     private RESTPlanItemConverter planItemConverter;
@@ -49,8 +54,10 @@ public class PlanItemsRESTService {
     @Path("{id}")
     public RESTPlanItem getPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
+        final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForCase(planItem.getCaseInstanceId());
+        final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, planItem.getPlanItemDefinitionId());
         final Group group = flowableService.findGroupForPlanItem(planItemId);
-        return planItemConverter.convertPlanItemMetGroep(planItem, group);
+        return planItemConverter.convertPlanItem(planItem, group, taakFormulieren.getStartFormulier());
     }
 
     @PUT

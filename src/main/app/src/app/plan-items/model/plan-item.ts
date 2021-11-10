@@ -11,5 +11,6 @@ export class PlanItem {
     naam: string;
     type: PlanItemType;
     groep: Groep;
+    taakStartFormulier: string;
     taakdata: {};
 }

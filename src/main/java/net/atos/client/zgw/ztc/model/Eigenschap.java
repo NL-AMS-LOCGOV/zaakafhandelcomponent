@@ -17,19 +17,21 @@ public class Eigenschap {
 
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.
-     * readOnly
+     * - readOnly
      */
     private URI url;
 
     /**
      * De naam van de EIGENSCHAP.
-     * required, maxlength 20
+     * - required
+     * - maxlength 20
      */
     private String naam;
 
     /**
      * De beschrijving van de betekenis van deze EIGENSCHAP
-     * required, maxlength 255
+     * - required
+     * - maxlength 255
      */
     private String definitie;
 
@@ -37,13 +39,13 @@ public class Eigenschap {
 
     /**
      * Een toelichting op deze EIGENSCHAP en het belang hiervan voor zaken van dit ZAAKTYPE.
-     * maxLength 1000
+     * - maxLength 1000
      */
     private String toelichting;
 
     /**
      * URL-referentie naar het ZAAKTYPE van de ZAAKen waarvoor deze EIGENSCHAP van belang is.
-     * required
+     * - required
      */
     private URI zaaktype;
 

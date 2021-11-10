@@ -21,29 +21,6 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
  */
 public class Zaaktype {
 
-    /**
-     * required:
-     * - omschrijving
-     * - vertrouwelijkheidaanduiding
-     * - doel
-     * - aanleiding
-     * - indicatieInternOfExtern
-     * - handelingInitiator
-     * - onderwerp
-     * - handelingBehandelaar
-     * - doorlooptijd
-     * - opschortingEnAanhoudingMogelijk
-     * - verlengingMogelijk
-     * - publicatieIndicatie
-     * - productenOfDiensten
-     * - referentieproces
-     * - catalogus
-     * - besluittypen
-     * - gerelateerdeZaaktypen
-     * - beginGeldigheid
-     * - versiedatum
-     */
-
     public static final int IDENTIFICATIE_MAX_LENGTH = 50;
 
     public static final int OMSCHRIJVING_MAX_LENGTH = 80;
@@ -75,6 +52,7 @@ public class Zaaktype {
     /**
      * Omschrijving van de aard van ZAAKen van het ZAAKTYPE.
      * maxLength: {@link Zaaktype#OMSCHRIJVING_MAX_LENGTH}
+     * - required
      */
     private String omschrijving;
 
@@ -87,16 +65,19 @@ public class Zaaktype {
     /**
      * Aanduiding van de mate waarin zaakdossiers van ZAAKen van dit ZAAKTYPE voor de openbaarheid bestemd zijn.
      * Indien de zaak bij het aanmaken geen vertrouwelijkheidaanduiding krijgt, dan wordt deze waarde gezet.
+     * - required
      */
     private Vertrouwelijkheidaanduiding vertrouwelijkheidaanduiding;
 
     /**
      * Een omschrijving van hetgeen beoogd is te bereiken met een zaak van dit zaaktype.
+     * - required
      */
     private String doel;
 
     /**
      * Een omschrijving van de gebeurtenis die leidt tot het starten van een ZAAK van dit ZAAKTYPE
+     * - required
      */
     private String aanleiding;
 
@@ -108,6 +89,7 @@ public class Zaaktype {
     /**
      * Een aanduiding waarmee onderscheid wordt gemaakt tussen ZAAKTYPEn die Intern respectievelijk Extern ge\xEFnitieerd worden.
      * Indien van beide sprake kan zijn, dan prevaleert de externe initiatie
+     * - required
      */
     private IndicatieInternExtern indicatieInternOfExtern;
 
@@ -115,7 +97,8 @@ public class Zaaktype {
      * Werkwoord dat hoort bij de handeling die de initiator verricht bij dit zaaktype.
      * Meestal 'aanvragen', 'indienen' of 'melden'.
      * Zie ook het IOB model op https://www.gemmaonline.nl/index.php/Imztc_2.1/doc/attribuutsoort/zaaktype.handeling_initiator
-     * maxLength: {@link Zaaktype#HANDELING_INITIATOR_MAX_LENGTH}
+     * - required
+     * - maxLength: {@link Zaaktype#HANDELING_INITIATOR_MAX_LENGTH}
      */
     private String handelingInitiator;
 
@@ -124,7 +107,8 @@ public class Zaaktype {
      * In veel gevallen nauw gerelateerd aan de product- of dienstnaam uit de Producten- en Dienstencatalogus (PDC).
      * Bijvoorbeeld: ''Evenementenvergunning'', ''Geboorte'', ''Klacht''.
      * Zie ook het IOB model op https://www.gemmaonline.nl/index.php/Imztc_2.1/doc/attribuutsoort/zaaktype.onderwer
-     * maxLength: {@link Zaaktype#ONDERWERP_MAX_LENGTH}
+     * - required
+     * - maxLength: {@link Zaaktype#ONDERWERP_MAX_LENGTH}
      */
     private String onderwerp;
 
@@ -132,12 +116,14 @@ public class Zaaktype {
      * Werkwoord dat hoort bij de handeling die de behandelaar verricht bij het afdoen van ZAAKen van dit ZAAKTYPE.
      * Meestal 'behandelen', 'uitvoeren', 'vaststellen' of 'onderhouden'.
      * Zie ook het IOB model op https://www.gemmaonline.nl/index.php/Imztc_2.1/doc/attribuutsoort/zaaktype.handeling_behandelaar
-     * maxLength: {@link Zaaktype#HANDELING_BEHANDELAAR_MAX_LENGTH}
+     * - required
+     * - maxLength: {@link Zaaktype#HANDELING_BEHANDELAAR_MAX_LENGTH}
      */
     private String handelingBehandelaar;
 
     /**
      * De periode waarbinnen volgens wet- en regelgeving een ZAAK van het ZAAKTYPE afgerond dient te zijn, in kalenderdagen.
+     * - required
      */
     private Period doorlooptijd;
 
@@ -148,11 +134,13 @@ public class Zaaktype {
 
     /**
      * Aanduiding die aangeeft of ZAAKen van dit mogelijk ZAAKTYPE kunnen worden opgeschort en/of aangehouden.
+     * - required
      */
     private Boolean opschortingEnAanhoudingMogelijk;
 
     /**
      * Aanduiding die aangeeft of de Doorlooptijd behandeling van ZAAKen van dit ZAAKTYPE kan worden verlengd.
+     * - required
      */
     private Boolean verlengingMogelijk;
 
@@ -170,6 +158,7 @@ public class Zaaktype {
 
     /**
      * Aanduiding of (het starten van) een ZAAK dit ZAAKTYPE gepubliceerd moet worden.
+     * - required
      */
     private Boolean publicatieIndicatie;
 
@@ -197,11 +186,13 @@ public class Zaaktype {
 
     /**
      * Het Referentieproces dat ten grondslag ligt aan dit ZAAKTYPE.
+     * - required
      */
     private Referentieproces referentieproces;
 
     /**
      * URL-referentie naar de CATALOGUS waartoe dit ZAAKTYPE behoort.
+     * - required
      */
     private URI catalogus;
 
@@ -232,6 +223,7 @@ public class Zaaktype {
 
     /**
      * URL-referenties naar de BESLUITTYPEN die mogelijk zijn binnen dit ZAAKTYPE.
+     * - required
      */
     private Set<URI> besluittypen;
 
@@ -242,11 +234,13 @@ public class Zaaktype {
 
     /**
      * De ZAAKTYPEn van zaken die relevant zijn voor zaken van dit ZAAKTYPE.
+     * - required
      */
     private List<ZaakTypenRelatie> gerelateerdeZaaktypen;
 
     /**
      * De datum waarop het is ontstaan.
+     * - required
      */
     private LocalDate beginGeldigheid;
 
@@ -257,6 +251,7 @@ public class Zaaktype {
 
     /**
      * De datum waarop de (gewijzigde) kenmerken van het ZAAKTYPE geldig zijn geworden
+     * - required
      */
     private LocalDate versiedatum;
 

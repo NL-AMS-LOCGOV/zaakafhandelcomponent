@@ -42,9 +42,10 @@ public class RESTPlanItemConverter {
         return restPlanItem;
     }
 
-    public RESTPlanItem convertPlanItemMetGroep(final PlanItemInstance planItem, final Group group) {
+    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final Group group, final String startFormulier) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem);
         restPlanItem.groep = groepConverter.convertGroup(group);
+        restPlanItem.taakStartFormulier = startFormulier;
         return restPlanItem;
     }
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.notities.model.rest;
+package net.atos.zac.app.notities.model;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
