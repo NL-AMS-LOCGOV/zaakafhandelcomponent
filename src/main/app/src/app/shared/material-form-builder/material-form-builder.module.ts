@@ -31,6 +31,7 @@ import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {BUILDER_CONFIG, MaterialFormBuilderConfig} from './material-form-builder-config';
 import {FileComponent} from './form-components/file/file.component';
 import {TranslateModule} from '@ngx-translate/core';
+import {SelectGroepComponent} from './form-components/select/select-groep/select-groep.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import {TranslateModule} from '@ngx-translate/core';
         InputComponent,
         FileComponent,
         SelectComponent,
+        SelectGroepComponent,
         TextareaComponent,
         GoogleMapsComponent,
         FormFieldDirective,
@@ -70,6 +72,7 @@ import {TranslateModule} from '@ngx-translate/core';
         InputComponent,
         FileComponent,
         SelectComponent,
+        SelectGroepComponent,
         TextareaComponent,
         GoogleMapsComponent
     ],

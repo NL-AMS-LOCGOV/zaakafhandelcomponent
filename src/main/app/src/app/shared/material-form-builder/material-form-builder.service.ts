@@ -16,6 +16,7 @@ import {SelectComponent} from './form-components/select/select.component';
 import {GoogleMapsComponent} from './form-components/google-maps/google-maps.component';
 import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
+import {SelectGroepComponent} from './form-components/select/select-groep/select-groep.component';
 
 @Injectable({
     providedIn: 'root'
@@ -45,6 +46,7 @@ export class MaterialFormBuilderService {
 
     private static getType(type: FieldType): Type<IFormComponent> {
         switch (type) {
+
             case FieldType.READONLY:
                 return ReadonlyComponent;
             case FieldType.DATE:
@@ -59,6 +61,9 @@ export class MaterialFormBuilderService {
                 return HeadingComponent;
             case FieldType.SELECT:
                 return SelectComponent;
+            case FieldType.SELECT_GROEP:
+                return SelectGroepComponent;
+                break;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
             default:
