@@ -7,47 +7,56 @@ import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {SelectGroepFormField} from '../../shared/material-form-builder/form-components/select/select-groep/select-groep-form-field';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
-import {Validators} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
+import {FormulierModus} from './formulier-modus';
 
 export abstract class AbstractFormulier {
 
-    private _planItem: PlanItem;
+    private modus: FormulierModus;
 
+    private planItem: PlanItem;
     private _dataElementen: Map<string, string>;
-    private _taakStartFormulier: Array<AbstractFormField[]>;
-    private _taakBehandelFormulier: Array<AbstractFormField[]>;
 
-    constructor(planItem: PlanItem, dataElementen: Map<string, string>) {
-        this._planItem = planItem;
+    abstract formFields: Array<string>;
+    abstract formulier: Array<AbstractFormField[]>;
+
+    constructor(modus: FormulierModus, planItem: PlanItem, dataElementen: Map<string, string>) {
+        this.modus = modus;
+        this.planItem = planItem;
         this._dataElementen = dataElementen;
+
+        if (modus == FormulierModus.START) {
+            this.initStartForm();
+        } else {
+            this.initBehandelForm();
+        }
     }
 
-    get taakStartFormulier(): Array<AbstractFormField[]> {
-        return this._taakStartFormulier;
-    }
+    abstract initStartForm();
 
-    set taakStartFormulier(value: Array<AbstractFormField[]>) {
-        this._taakStartFormulier = value;
-    }
-
-    get taakBehandelFormulier(): Array<AbstractFormField[]> {
-        return this._taakBehandelFormulier;
-    }
-
-    set taakBehandelFormulier(value: Array<AbstractFormField[]>) {
-        this._taakBehandelFormulier = value;
-    }
+    abstract initBehandelForm();
 
     get dataElementen(): Map<string, string> {
         return this._dataElementen;
     }
 
-    get planItem(): PlanItem {
-        return this._planItem;
+    getPlanItem(formGroup: FormGroup): PlanItem {
+        this.planItem.groep = formGroup.controls['groep'].value;
+        this.planItem.taakdata = this.getDataElementen(formGroup);
+        return this.planItem;
     }
 
-    getGroepAssignment(): Array<AbstractFormField[]> {
+    private getDataElementen(formGroup: FormGroup): Map<string, string> {
+        let dataElementen: Map<string, string> = new Map<string, string>();
+        this.formFields.forEach(key => {
+            dataElementen.set(key, formGroup.controls[key]?.value);
+        });
+
+        return dataElementen;
+    }
+
+    protected getGroepAssignment(): Array<AbstractFormField[]> {
         return [
             [new HeadingFormField('taakToekenning', 'actie.toekennen', '2')],
             [new SelectGroepFormField(this.planItem.groep, new FormFieldConfig([Validators.required]))]

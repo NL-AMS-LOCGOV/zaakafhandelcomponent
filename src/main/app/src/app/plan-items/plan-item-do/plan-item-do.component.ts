@@ -14,6 +14,8 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
+import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
+import {FormulierModus} from '../../formulieren/model/formulier-modus';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -24,6 +26,7 @@ export class PlanItemDoComponent implements OnInit {
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     private planItem: PlanItem;
+    private formulier: AbstractFormulier;
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService,
                 private router: Router, private navigation: NavigationService, private utilService: UtilService) {
@@ -33,9 +36,10 @@ export class PlanItemDoComponent implements OnInit {
         this.planItem = this.route.snapshot.data['planItem'];
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
+        this.formulier = new AanvullendeInformatie(FormulierModus.START, this.planItem);
 
         if (this.planItem.type == PlanItemType.HumanTask) {
-            this.formItems = new AanvullendeInformatie(this.planItem).taakStartFormulier;
+            this.formItems = this.formulier.formulier;
         } else {
             this.formItems = [[]];
         }
@@ -43,10 +47,7 @@ export class PlanItemDoComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            const planItem = new PlanItem();
-            planItem.id = this.planItem.id;
-            planItem.groep = formGroup.controls['groep']?.value;
-            this.planItemsService.doPlanItem(planItem).subscribe(planItem => {
+            this.planItemsService.doPlanItem(this.formulier.getPlanItem(formGroup)).subscribe(() => {
                 this.navigation.back();
             });
         } else {

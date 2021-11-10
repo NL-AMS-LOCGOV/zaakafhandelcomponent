@@ -63,7 +63,6 @@ export class MaterialFormBuilderService {
                 return SelectComponent;
             case FieldType.SELECT_GROEP:
                 return SelectGroepComponent;
-                break;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
             default:
