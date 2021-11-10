@@ -38,9 +38,6 @@ public class CaseHandlingService {
     private FlowableService flowableService;
 
     @Inject
-    private EventingService eventingService;
-
-    @Inject
     private ZGWApiService zgwApiService;
 
     @Inject
@@ -61,15 +58,11 @@ public class CaseHandlingService {
             LOG.info(format("Zaak %s: Verander resultaat in '%s'", zaakUUID, resultaattypeOmschrijving));
             zgwApiService.createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
         }
-        if (statustypeOmschrijving != null || resultaattypeOmschrijving != null) {
-            eventingService.send(ZAAK.updated(zaakUUID));
-        }
     }
 
     public void endZaak(final UUID zaakUUID) {
         LOG.info(format("Zaak %s: Beeindig Case", zaakUUID));
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         zgwApiService.endZaak(zaak, EINDSTATUS_TOELICHTING);
-        eventingService.send(ZAAK.updated(zaakUUID));
     }
 }
