@@ -26,13 +26,12 @@ describe('WebsocketService', () => {
         Operatie.WIJZIGING,
         Operatie.VERWIJDERING];
     const OBJECT_TYPES = [
-        ObjectType.DOCUMENT,
+        ObjectType.ENKELVOUDIG_INFORMATIEOBJECT,
         ObjectType.TAAK,
         ObjectType.ZAAK,
-        ObjectType.ZAAK_BETROKKENEN,
-        ObjectType.ZAAK_DOCUMENTEN,
-        ObjectType.ZAAK_TAKEN,
-        ObjectType.ZAAK_ZAKEN];
+        ObjectType.ZAAK_ROLLEN,
+        ObjectType.ZAAK_INFORMATIEOBJECTEN,
+        ObjectType.ZAAK_TAKEN];
     const MAX_DELAY = 256; // ms
 
     it('should dispatch events to the correct listeners', (done) => {

@@ -29,6 +29,7 @@ import net.atos.zac.notificaties.Notificatie;
  */
 public enum ScreenObjectTypeEnum {
 
+    /** documenten */
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
         protected ScreenUpdateEvent event(final OpcodeEnum action, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
@@ -36,6 +37,7 @@ public enum ScreenObjectTypeEnum {
         }
     },
 
+    /** taken */
     TAAK {
         @Override
         protected ScreenUpdateEvent event(final OpcodeEnum action, final TaskInfo taak) {
@@ -43,6 +45,7 @@ public enum ScreenObjectTypeEnum {
         }
     },
 
+    /** zaken */
     ZAAK {
         @Override
         protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
@@ -50,28 +53,24 @@ public enum ScreenObjectTypeEnum {
         }
     },
 
-    ZAAK_INFORMATIEOBJECT {
+    /** zaak-documenten */
+    ZAAK_INFORMATIEOBJECTEN {
         @Override
         protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
             return instance(action, this, zaak);
         }
     },
 
+    /** zaak-betrokken */
+    ZAAK_ROLLEN {
+        @Override
+        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
+            return instance(action, this, zaak);
+        }
+    },
+
+    /** zaak-taken */
     ZAAK_TAKEN {
-        @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
-        }
-    },
-
-    ZAAK_BETROKKENEN {
-        @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
-            return instance(action, this, zaak);
-        }
-    },
-
-    ZAAK_ZAKEN {
         @Override
         protected ScreenUpdateEvent event(final OpcodeEnum action, final Zaak zaak) {
             return instance(action, this, zaak);
@@ -339,8 +338,7 @@ public enum ScreenObjectTypeEnum {
                         events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
                         break;
                     case ZAAKINFORMATIEOBJECT:
-                        events.add(ScreenObjectTypeEnum.ZAAK_INFORMATIEOBJECT.event(mainResource));
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenObjectTypeEnum.ZAAK_INFORMATIEOBJECTEN.event(mainResource));
                         break;
                     case ZAAKEIGENSCHAP:
                         events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
@@ -349,8 +347,7 @@ public enum ScreenObjectTypeEnum {
                         events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
                         break;
                     case ROL:
-                        events.add(ScreenObjectTypeEnum.ZAAK_BETROKKENEN.event(mainResource));
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenObjectTypeEnum.ZAAK_ROLLEN.event(mainResource));
                         break;
                     case RESULTAAT:
                         events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));

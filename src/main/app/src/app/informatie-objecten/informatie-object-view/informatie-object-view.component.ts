@@ -46,7 +46,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.infoObject = data['informatieObject'];
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.DOCUMENT, this.infoObject.uuid,
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 () => this.loadInformatieObject());
 
             this.setupMenu();
@@ -55,7 +55,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     ngOnDestroy() {
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.DOCUMENT, this.infoObject.uuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
     }
 
     private setupMenu(): void {

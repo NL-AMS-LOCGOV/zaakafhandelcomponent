@@ -30,9 +30,9 @@ public class CaseHandlingService {
 
     private static final String EINDSTATUS_TOELICHTING = "Zaak beeindigd vanuit Case";
 
-    private static final String STATUS_TOELICHTING = "Status gewijizgd vanuit Case";
+    private static final String STATUS_TOELICHTING = "Status gewijzigd vanuit Case";
 
-    private static final String RESULTAAT_TOELICHTING = "Resultaat gewijizgd vanuit Case";
+    private static final String RESULTAAT_TOELICHTING = "Resultaat gewijzigd vanuit Case";
 
     @Inject
     private FlowableService flowableService;

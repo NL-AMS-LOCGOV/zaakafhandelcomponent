@@ -83,7 +83,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 () => this.updateZaak());
             this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 () => this.loadTaken());
-            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid,
+            this.websocketService.addListener(Operatie.WIJZIGING, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 () => this.loadInformatieObjecten());
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
@@ -119,7 +119,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngOnDestroy();
         this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK, this.zaak.uuid);
         this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
-        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_DOCUMENTEN, this.zaak.uuid);
+        this.websocketService.removeListeners(Operatie.WIJZIGING, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid);
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {

@@ -5,9 +5,6 @@
 
 package net.atos.zac.app.zaken;
 
-import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK;
-import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK_BETROKKENEN;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +51,6 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
-import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PaginationUtil;
@@ -93,9 +89,6 @@ public class ZakenRESTService {
     private Medewerker ingelogdeMedewerker;
 
     @Inject
-    private EventingService eventingService;
-
-    @Inject
     private ConfigurationService configurationService;
 
     @GET
@@ -110,7 +103,6 @@ public class ZakenRESTService {
     public RESTZaak postZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        eventingService.send(ZAAK.created(nieuweZaak));
         return zaakConverter.convert(nieuweZaak);
     }
 
@@ -121,7 +113,6 @@ public class ZakenRESTService {
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
-        eventingService.send(ZAAK.updated(updatedZaak));
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -197,7 +188,6 @@ public class ZakenRESTService {
         }
 
         zrcClientService.updateRollen(zaak.getUrl(), rollen);
-        zaakBehandelaarGewijzigd(zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -233,8 +223,6 @@ public class ZakenRESTService {
         rollen.add(bepaalRolMedewerker(user, zaak));
 
         zrcClientService.updateRollen(zaak.getUrl(), rollen);
-
-        zaakBehandelaarGewijzigd(zaak);
 
         return zaak;
     }
@@ -272,10 +260,5 @@ public class ZakenRESTService {
         medewerker.setAchternaam(user.getLastName());
         final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
-    }
-
-    private void zaakBehandelaarGewijzigd(final Zaak zaak) {
-        eventingService.send(ZAAK.updated(zaak));
-        eventingService.send(ZAAK_BETROKKENEN.updated(zaak));
     }
 }
