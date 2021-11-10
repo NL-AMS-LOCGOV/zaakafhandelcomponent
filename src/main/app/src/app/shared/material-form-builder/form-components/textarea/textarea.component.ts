@@ -8,7 +8,6 @@ import {IFormComponent} from '../../model/iform-component';
 import {TextareaFormField} from './textarea-form-field';
 
 @Component({
-    selector: 'mfb-textarea',
     templateUrl: './textarea.component.html',
     styleUrls: ['./textarea.component.less']
 })

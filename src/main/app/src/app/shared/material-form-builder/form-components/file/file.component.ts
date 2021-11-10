@@ -12,7 +12,6 @@ import {UploadStatus} from './upload-status.enum';
 import {FoutAfhandelingService} from '../../../../fout-afhandeling/fout-afhandeling.service';
 
 @Component({
-    selector: 'mfb-file',
     templateUrl: './file.component.html',
     styleUrls: ['./file.component.less']
 })

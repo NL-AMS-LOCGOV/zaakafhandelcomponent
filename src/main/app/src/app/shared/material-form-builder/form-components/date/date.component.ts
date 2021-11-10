@@ -8,7 +8,6 @@ import {IFormComponent} from '../../model/iform-component';
 import {DateFormField} from './date-form-field';
 
 @Component({
-    selector: 'mfb-date',
     templateUrl: './date.component.html',
     styleUrls: ['./date.component.less']
 })

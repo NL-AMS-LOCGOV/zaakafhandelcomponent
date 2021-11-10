@@ -8,7 +8,6 @@ import {InputFormField} from './input-form-field';
 import {IFormComponent} from '../../model/iform-component';
 
 @Component({
-    selector: 'mfb-input',
     templateUrl: './input.component.html',
     styleUrls: ['./input.component.less']
 })

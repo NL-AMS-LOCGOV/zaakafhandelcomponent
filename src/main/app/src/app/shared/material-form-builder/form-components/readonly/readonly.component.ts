@@ -8,7 +8,6 @@ import {IFormComponent} from '../../model/iform-component';
 import {ReadonlyFormField} from './readonly-form-field';
 
 @Component({
-    selector: 'mfb-readonly',
     templateUrl: './readonly.component.html',
     styleUrls: ['./readonly.component.less']
 })

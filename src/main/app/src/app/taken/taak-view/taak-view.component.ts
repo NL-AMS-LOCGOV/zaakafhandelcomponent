@@ -21,6 +21,12 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TaakRechten} from '../model/taak-rechten';
+import {FormGroup} from '@angular/forms';
+import {FormConfig} from '../../shared/material-form-builder/model/form-config';
+import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
+import {FormulierModus} from '../../formulieren/model/formulier-modus';
+import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
+import {FormulierBuilder} from '../../formulieren/formulier-builder';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -32,6 +38,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     taak: Taak;
     menu: MenuItem[] = [];
+
+    formulier: AbstractFormulier;
+    formConfig: FormConfig;
 
     get taakRechten(): typeof TaakRechten {
         return TaakRechten;
@@ -69,6 +78,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     init(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
+        this.formConfig = new FormConfig('actie.afronden');
+
+        this.formulier = new FormulierBuilder(new AanvullendeInformatie(FormulierModus.BEHANDEL)).taak(taak).build();
+
         this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();
     }
@@ -86,6 +99,13 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         if (this.taak.rechten[this.taakRechten.BEHANDELEN]) {
             this.menu.push(new ButtonMenuItem('actie.afronden', this.afronden, 'assignment_turned_in'));
+        }
+    }
+
+    onFormSubmit(formGroup: FormGroup): void {
+        if (formGroup) {
+            let taak1: Taak = this.formulier.getTaak(formGroup);
+            console.log(taak1);
         }
     }
 

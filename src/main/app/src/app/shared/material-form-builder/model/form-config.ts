@@ -8,7 +8,7 @@ export class FormConfig {
     private readonly _saveButtonText: string;
     private readonly _cancelButtonText: string;
 
-    constructor(saveButtonText: string, cancelButtonText: string) {
+    constructor(saveButtonText: string, cancelButtonText?: string) {
         this._saveButtonText = saveButtonText;
         this._cancelButtonText = cancelButtonText;
     }

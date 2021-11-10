@@ -11,7 +11,7 @@
     <mat-sidenav #verkorteZaakSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)" position="end">
         <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakLoadedEmitter)="onZaakLoaded($event)"></zac-zaak-verkort>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="20px">
+    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <mat-card fxFlex="100">
             <mat-card-header>
                 <mat-card-title>{{'taak' | translate}}</mat-card-title>
@@ -45,6 +45,12 @@
                         <zac-static-text [label]="'toelichting' | translate" [value]="taak.toelichting | empty"></zac-static-text>
                     </div>
                 </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="100" *ngIf="formulier">
+            <mat-card-content>
+                <mfb-form *ngIf="formulier" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form" [config]="formConfig"></mfb-form>
             </mat-card-content>
         </mat-card>
     </mat-sidenav-content>

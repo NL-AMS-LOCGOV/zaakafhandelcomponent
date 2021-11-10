@@ -17,7 +17,7 @@
         <button mat-flat-button color="primary" [disabled]="formGroup.invalid" type="submit">
             {{config.saveButtonText | translate}}
         </button>
-        <button mat-flat-button type="button" (click)="cancel()">
+        <button *ngIf="config.cancelButtonText" mat-flat-button type="button" (click)="cancel()">
             {{config.cancelButtonText | translate}}
         </button>
     </div>

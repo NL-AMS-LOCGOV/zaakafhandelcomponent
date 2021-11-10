@@ -8,7 +8,6 @@ import {IFormComponent} from '../../model/iform-component';
 import {SelectFormField} from './select-form-field';
 
 @Component({
-    selector: 'mfb-select',
     templateUrl: './select.component.html',
     styleUrls: ['./select.component.less']
 })

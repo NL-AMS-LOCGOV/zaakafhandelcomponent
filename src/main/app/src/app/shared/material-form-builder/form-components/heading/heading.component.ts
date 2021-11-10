@@ -8,7 +8,6 @@ import {IFormComponent} from '../../model/iform-component';
 import {HeadingFormField} from './heading-form-field';
 
 @Component({
-    selector: 'mfb-heading',
     templateUrl: './heading.component.html',
     styleUrls: ['./heading.component.less']
 })

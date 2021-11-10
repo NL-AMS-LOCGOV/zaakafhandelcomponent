@@ -13,9 +13,10 @@ import {PlanItemType} from '../model/plan-item-type.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {FormulierModus} from '../../formulieren/model/formulier-modus';
+import {FormulierBuilder} from '../../formulieren/formulier-builder';
+import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -36,10 +37,11 @@ export class PlanItemDoComponent implements OnInit {
         this.planItem = this.route.snapshot.data['planItem'];
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
-        this.formulier = new AanvullendeInformatie(FormulierModus.START, this.planItem);
+
+        this.formulier = new FormulierBuilder(new AanvullendeInformatie(FormulierModus.START)).planItem(this.planItem).build();
 
         if (this.planItem.type == PlanItemType.HumanTask) {
-            this.formItems = this.formulier.formulier;
+            this.formItems = this.formulier.form;
         } else {
             this.formItems = [[]];
         }

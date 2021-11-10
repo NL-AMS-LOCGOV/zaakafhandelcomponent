@@ -9,7 +9,6 @@ import {IdentityService} from '../../../../../identity/identity.service';
 import {SelectGroepFormField} from './select-groep-form-field';
 
 @Component({
-    selector: 'zac-select-groep',
     templateUrl: '../select.component.html',
     styleUrls: ['../select.component.less']
 })

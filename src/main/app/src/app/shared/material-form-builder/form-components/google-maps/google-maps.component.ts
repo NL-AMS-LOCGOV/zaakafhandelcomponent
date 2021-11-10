@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {IFormComponent} from '../../model/iform-component';
 import {GoogleMapsFormField} from './google-maps-form-field';
 import {GoogleMap, MapInfoWindow} from '@angular/google-maps';
 import {GoogleMapsService} from '../../service/google-maps.service';
-import LatLng = google.maps.LatLng;
 import {Subscription} from 'rxjs';
+import LatLng = google.maps.LatLng;
 
 @Component({
-    selector: 'mfb-google-maps',
     templateUrl: './google-maps.component.html',
     styleUrls: ['./google-maps.component.less']
 })
