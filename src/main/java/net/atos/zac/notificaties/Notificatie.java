@@ -59,7 +59,9 @@ public class Notificatie {
         return new Resource(
                 getMainResourceType(),
                 getMainResourceUrl(),
-                getMainResourceType() == getResourceType() ? getAction() : UPDATE);
+                getMainResourceType() == getResourceType() && getMainResourceUrl().equals(getResourceUrl())
+                        ? getAction()
+                        : UPDATE);
     }
 
     public ResourceEnum getMainResourceType() {
