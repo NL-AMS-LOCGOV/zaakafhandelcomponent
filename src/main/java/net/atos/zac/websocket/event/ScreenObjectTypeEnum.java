@@ -321,9 +321,6 @@ public enum ScreenObjectTypeEnum {
                     case GEBRUIKSRECHTEN:
                         events.add(ScreenObjectTypeEnum.ENKELVOUDIG_INFORMATIEOBJECT.event(mainResource));
                         break;
-                    default:
-                        unexpectedResource(channel, resource);
-                        break;
                 }
                 break;
             case ZAKEN:
@@ -355,16 +352,9 @@ public enum ScreenObjectTypeEnum {
                     case ZAAKBESLUIT:
                         events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
                         break;
-                    default:
-                        unexpectedResource(channel, resource);
-                        break;
                 }
                 break;
         }
         return events;
-    }
-
-    private static void unexpectedResource(final ChannelEnum channel, final Notificatie.Resource resource) {
-        LOG.warning(String.format("resource %s not implemented on channel %s", resource.getType(), channel));
     }
 }
