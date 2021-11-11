@@ -5,8 +5,8 @@
 
 package net.atos.client.zgw.zrc;
 
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZRC_ZAAK_ROL_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZRC_STATUS_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheId.ZRC_ZAAK_ROL_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheId.ZRC_STATUS_MANAGED;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 

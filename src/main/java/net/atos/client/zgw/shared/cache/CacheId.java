@@ -5,10 +5,10 @@
 
 package net.atos.client.zgw.shared.cache;
 
-/* Dit is in feite geen enum maar in de CacheResult annotatie kunnen alleen een string constanten gebruikt worden.
+/* Dit is in feite een enum maar in de CacheResult annotatie kunnen alleen een string constanten gebruikt worden.
    Vandaar deze util stijl implementatie.
  */
-public class CacheEnum {
+public class CacheId {
 
     // Deze cache is managed (alleen URI als sleutel gebruiken!)
     public static final String ZRC_STATUS_MANAGED = "zrc-status-managed-cache";
@@ -35,6 +35,6 @@ public class CacheEnum {
 
     public static final String ZTC_ZAAKTYPE_URL = "ztc-zaaktype-url-cache";
 
-    private CacheEnum() {
+    private CacheId() {
     }
 }

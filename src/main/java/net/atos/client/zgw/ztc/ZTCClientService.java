@@ -6,14 +6,14 @@
 package net.atos.client.zgw.ztc;
 
 import static java.lang.String.format;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_RESULTAATTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_STATUSTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_ROLTYPE;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_STATUSTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheEnum.ZTC_ZAAKTYPE_URL;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_RESULTAATTYPE;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_STATUSTYPE;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_ROLTYPE;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_STATUSTYPE_MANAGED;
+import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_URL;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
