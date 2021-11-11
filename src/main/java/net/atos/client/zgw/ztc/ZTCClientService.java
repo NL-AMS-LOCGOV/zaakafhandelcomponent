@@ -51,7 +51,7 @@ import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 /**
  * Let op!
  *
- * Methods met caching nooit van binnen de service aanroepen (anders werkt de caching niet).
+ * Methods met caching NOOIT van binnen de service aanroepen (anders werkt de caching niet).
  * En bij managed caches geen sleutels anders dan URI en UID introduceren.
  */
 @ApplicationScoped
