@@ -26,16 +26,16 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.event.AbstractUpdateObserver;
+import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableService;
 
 /**
  * Deze bean luistert naar CmmnUpdateEvents, en werkt daar vervolgens flowable mee bij.
  */
 @ManagedBean
-public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> {
+public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
 
-    private static final Logger LOG = Logger.getLogger(CmmnUpdateObserver.class.getName());
+    private static final Logger LOG = Logger.getLogger(CmmnEventObserver.class.getName());
 
     private static final String ORGANISATORISCHE_EENHEID_ROL_TOELICHTING = "Groep verantwoordelijk voor afhandelen zaak";
 
@@ -49,7 +49,7 @@ public class CmmnUpdateObserver extends AbstractUpdateObserver<CmmnUpdateEvent> 
     private FlowableService flowableService;
 
     @Override
-    public void onFire(final @ObservesAsync CmmnUpdateEvent event) {
+    public void onFire(final @ObservesAsync CmmnEvent event) {
         startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
     }
 

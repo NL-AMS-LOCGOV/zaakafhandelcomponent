@@ -5,9 +5,9 @@
 
 package net.atos.zac.websocket.event;
 
-import static net.atos.zac.event.OpcodeEnum.CREATED;
-import static net.atos.zac.event.OpcodeEnum.DELETED;
-import static net.atos.zac.event.OpcodeEnum.UPDATED;
+import static net.atos.zac.event.Opcode.CREATED;
+import static net.atos.zac.event.Opcode.DELETED;
+import static net.atos.zac.event.Opcode.UPDATED;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -20,110 +20,110 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.event.OpcodeEnum;
-import net.atos.zac.notificaties.ChannelEnum;
+import net.atos.zac.event.Opcode;
+import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 
 /**
- * Enumeration of the types of objects that can be changed by a {@link ScreenUpdateEvent}.
+ * Enumeration of the events (objecttypes) that can be changed by a {@link ScreenEvent}.
  * Maps to object-type.ts
  */
-public enum ScreenObjectTypeEnum {
+public enum ScreenEventType {
 
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        protected ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
             return instance(opcode, this, enkelvoudigInformatieobject);
         }
     },
 
     TAAK {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final TaskInfo taak) {
+        protected ScreenEvent event(final Opcode opcode, final TaskInfo taak) {
             return instance(opcode, this, taak);
         }
     },
 
     ZAAK {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_INFORMATIEOBJECTEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_ROLLEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_TAKEN {
         @Override
-        protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     };
 
-    private static final Logger LOG = Logger.getLogger(ScreenObjectTypeEnum.class.getName());
+    private static final Logger LOG = Logger.getLogger(ScreenEventType.class.getName());
 
     // This is the factory method.
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final String id) {
-        return new ScreenUpdateEvent(opcode, type, id);
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final String id) {
+        return new ScreenEvent(opcode, type, id);
     }
 
     // In these methods you determine what is used as an id, make sure that this is consistent with the other methods
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final UUID uuid) {
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final UUID uuid) {
         return instance(opcode, type, uuid.toString());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final URI url) {
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final URI url) {
         return instance(opcode, type, URIUtil.parseUUIDFromResourceURI(url));
     }
 
     // These methods determine what is used as an id, so that it is the same everywhere
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final Zaak zaak) {
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Zaak zaak) {
         return instance(opcode, type, zaak.getUuid());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type,
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
             final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return instance(opcode, type, enkelvoudigInformatieobject.getUrl());
     }
 
-    private static ScreenUpdateEvent instance(final OpcodeEnum opcode, final ScreenObjectTypeEnum type, final TaskInfo taak) {
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taak) {
         return instance(opcode, type, taak.getId());
     }
 
     // These methods determine on which object types the different arguments are allowed
-    private ScreenUpdateEvent event(final OpcodeEnum opcode, final UUID uuid) {
+    private ScreenEvent event(final Opcode opcode, final UUID uuid) {
         return instance(opcode, this, uuid); // Allowed with all object types
     }
 
-    private ScreenUpdateEvent event(final OpcodeEnum opcode, final URI url) {
+    private ScreenEvent event(final Opcode opcode, final URI url) {
         return instance(opcode, this, url); // Allowed with all object types
     }
 
-    private ScreenUpdateEvent event(final OpcodeEnum opcode, final Notificatie.Resource resource) {
+    private ScreenEvent event(final Opcode opcode, final Notificatie.Resource resource) {
         return instance(opcode, this, resource.getUrl()); // Allowed with all object types
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final Zaak zaak) {
+    protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+    protected ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenUpdateEvent event(final OpcodeEnum opcode, final TaskInfo taak) {
+    protected ScreenEvent event(final Opcode opcode, final TaskInfo taak) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
@@ -135,7 +135,7 @@ public enum ScreenObjectTypeEnum {
      * @param uuid indentificatie of the created object
      * @return instance of the event
      */
-    public final ScreenUpdateEvent created(final UUID uuid) {
+    public final ScreenEvent created(final UUID uuid) {
         return event(CREATED, uuid);
     }
 
@@ -145,7 +145,7 @@ public enum ScreenObjectTypeEnum {
      * @param url indentificatie of the created object
      * @return instance of the event
      */
-    public final ScreenUpdateEvent created(final URI url) {
+    public final ScreenEvent created(final URI url) {
         return event(CREATED, url);
     }
 
@@ -155,7 +155,7 @@ public enum ScreenObjectTypeEnum {
      * @param zaak created zaak.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent created(final Zaak zaak) {
+    public final ScreenEvent created(final Zaak zaak) {
         return event(CREATED, zaak);
     }
 
@@ -165,7 +165,7 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject created enkelvoudigInformatieobject.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent created(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+    public final ScreenEvent created(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(CREATED, enkelvoudigInformatieobject);
     }
 
@@ -175,7 +175,7 @@ public enum ScreenObjectTypeEnum {
      * @param taak created task.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent created(final TaskInfo taak) {
+    public final ScreenEvent created(final TaskInfo taak) {
         return event(CREATED, taak);
     }
 
@@ -185,7 +185,7 @@ public enum ScreenObjectTypeEnum {
      * @param uuid identification of the modified object.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent updated(final UUID uuid) {
+    public final ScreenEvent updated(final UUID uuid) {
         return event(UPDATED, uuid);
     }
 
@@ -195,7 +195,7 @@ public enum ScreenObjectTypeEnum {
      * @param url identification of the modified object.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent updated(final URI url) {
+    public final ScreenEvent updated(final URI url) {
         return event(UPDATED, url);
     }
 
@@ -205,7 +205,7 @@ public enum ScreenObjectTypeEnum {
      * @param zaak modified zaak.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent updated(final Zaak zaak) {
+    public final ScreenEvent updated(final Zaak zaak) {
         return event(UPDATED, zaak);
     }
 
@@ -215,7 +215,7 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject modified enkelvoudigInformatieobject.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent updated(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+    public final ScreenEvent updated(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(UPDATED, enkelvoudigInformatieobject);
     }
 
@@ -225,7 +225,7 @@ public enum ScreenObjectTypeEnum {
      * @param taak modifierd task
      * @return instance of the event
      */
-    public final ScreenUpdateEvent updated(final TaskInfo taak) {
+    public final ScreenEvent updated(final TaskInfo taak) {
         return event(UPDATED, taak);
     }
 
@@ -235,7 +235,7 @@ public enum ScreenObjectTypeEnum {
      * @param uuid identificatioon of the deleted object.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent deleted(final UUID uuid) {
+    public final ScreenEvent deleted(final UUID uuid) {
         return event(DELETED, uuid);
     }
 
@@ -245,7 +245,7 @@ public enum ScreenObjectTypeEnum {
      * @param url identificatioon of the deleted object.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent deleted(final URI url) {
+    public final ScreenEvent deleted(final URI url) {
         return event(DELETED, url);
     }
 
@@ -255,7 +255,7 @@ public enum ScreenObjectTypeEnum {
      * @param zaak deleted zaak.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent deleted(final Zaak zaak) {
+    public final ScreenEvent deleted(final Zaak zaak) {
         return event(DELETED, zaak);
     }
 
@@ -265,7 +265,7 @@ public enum ScreenObjectTypeEnum {
      * @param enkelvoudigInformatieobject deleted enkelvoudigInformatieobject.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent deleted(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+    public final ScreenEvent deleted(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return event(DELETED, enkelvoudigInformatieobject);
     }
 
@@ -275,11 +275,11 @@ public enum ScreenObjectTypeEnum {
      * @param taak deleted task.
      * @return instance of the event
      */
-    public final ScreenUpdateEvent deleted(final TaskInfo taak) {
+    public final ScreenEvent deleted(final TaskInfo taak) {
         return event(DELETED, taak);
     }
 
-    private ScreenUpdateEvent event(final Notificatie.Resource resource) {
+    private ScreenEvent event(final Notificatie.Resource resource) {
         switch (resource.getAction()) {
             case CREATE:
                 return event(CREATED, resource);
@@ -299,47 +299,47 @@ public enum ScreenObjectTypeEnum {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<ScreenUpdateEvent> getEvents(final ChannelEnum channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
-        final Set<ScreenUpdateEvent> events = new HashSet<>();
+    public static Set<ScreenEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+        final Set<ScreenEvent> events = new HashSet<>();
         switch (channel) {
             case INFORMATIEOBJECTEN:
                 switch (resource.getType()) {
                     case INFORMATIEOBJECT:
-                        events.add(ScreenObjectTypeEnum.ENKELVOUDIG_INFORMATIEOBJECT.event(resource));
+                        events.add(ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.event(resource));
                         break;
                     case GEBRUIKSRECHTEN:
-                        events.add(ScreenObjectTypeEnum.ENKELVOUDIG_INFORMATIEOBJECT.event(mainResource));
+                        events.add(ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.event(mainResource));
                         break;
                 }
                 break;
             case ZAKEN:
                 switch (resource.getType()) {
                     case ZAAK:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(resource));
+                        events.add(ScreenEventType.ZAAK.event(resource));
                         break;
                     case STATUS:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                     case ZAAKOBJECT:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                     case ZAAKINFORMATIEOBJECT:
-                        events.add(ScreenObjectTypeEnum.ZAAK_INFORMATIEOBJECTEN.event(mainResource));
+                        events.add(ScreenEventType.ZAAK_INFORMATIEOBJECTEN.event(mainResource));
                         break;
                     case ZAAKEIGENSCHAP:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                     case KLANTCONTACT:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                     case ROL:
-                        events.add(ScreenObjectTypeEnum.ZAAK_ROLLEN.event(mainResource));
+                        events.add(ScreenEventType.ZAAK_ROLLEN.event(mainResource));
                         break;
                     case RESULTAAT:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                     case ZAAKBESLUIT:
-                        events.add(ScreenObjectTypeEnum.ZAAK.event(mainResource));
+                        events.add(ScreenEventType.ZAAK.event(mainResource));
                         break;
                 }
                 break;

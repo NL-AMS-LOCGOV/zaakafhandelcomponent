@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * <p>
  * http://open-zaak.default/ref/kanalen/
  */
-public enum ResourceEnum {
+public enum Resource {
 
     APPLICATIE("applicatie"),
     BESLUIT("besluit"),
@@ -34,24 +34,24 @@ public enum ResourceEnum {
     ZAAKINFORMATIEOBJECT("zaakinformatieobject"),
     ZAAKTYPE("zaaktype");
 
-    private static final Logger LOG = Logger.getLogger(ResourceEnum.class.getName());
+    private static final Logger LOG = Logger.getLogger(Resource.class.getName());
 
     private final String code;
 
-    private static final Map<String, ResourceEnum> VALUES = new HashMap<>();
+    private static final Map<String, Resource> VALUES = new HashMap<>();
 
     static {
-        for (final ResourceEnum value : values()) {
+        for (final Resource value : values()) {
             VALUES.put(value.code, value);
         }
     }
 
-    ResourceEnum(final String code) {
+    Resource(final String code) {
         this.code = code;
     }
 
-    public static ResourceEnum value(final String code) {
-        final ResourceEnum value = VALUES.get(code);
+    public static Resource value(final String code) {
+        final Resource value = VALUES.get(code);
         if (value == null) {
             LOG.warning(String.format("unknown %s resource", code));
         }

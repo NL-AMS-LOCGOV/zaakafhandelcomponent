@@ -25,10 +25,10 @@ import javax.websocket.WebSocketContainer;
 
 import org.junit.jupiter.api.Test;
 
-import net.atos.zac.event.OpcodeEnum;
+import net.atos.zac.event.Opcode;
 import net.atos.zac.websocket.SessionRegistry;
-import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
-import net.atos.zac.websocket.event.ScreenUpdateEvent;
+import net.atos.zac.websocket.event.ScreenEventType;
+import net.atos.zac.websocket.event.ScreenEvent;
 
 public class SessionRegistryTest {
 
@@ -328,17 +328,17 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final ScreenUpdateEvent EVENT1 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenEvent EVENT1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT1a = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"1\"");
+    private static final ScreenEvent EVENT1a = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "\"1\"");
 
-    private static final ScreenUpdateEvent EVENT1b = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "\"\"1\"\"");
+    private static final ScreenEvent EVENT1b = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "\"\"1\"\"");
 
-    private static final ScreenUpdateEvent EVENT2 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.ZAAK, "2");
+    private static final ScreenEvent EVENT2 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "2");
 
-    private static final ScreenUpdateEvent EVENT3 = new ScreenUpdateEvent(OpcodeEnum.CREATED, ScreenObjectTypeEnum.TAAK, "1");
+    private static final ScreenEvent EVENT3 = new ScreenEvent(Opcode.CREATED, ScreenEventType.TAAK, "1");
 
-    private static final ScreenUpdateEvent EVENT4 = new ScreenUpdateEvent(OpcodeEnum.UPDATED, ScreenObjectTypeEnum.ZAAK, "1");
+    private static final ScreenEvent EVENT4 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "1");
 
     @Test
     public void testFixGelijk() {

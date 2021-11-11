@@ -6,7 +6,6 @@
 package net.atos.zac.flowable;
 
 import static java.lang.String.format;
-import static net.atos.zac.websocket.event.ScreenObjectTypeEnum.ZAAK;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -14,6 +13,8 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
+
+import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;

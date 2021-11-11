@@ -5,7 +5,7 @@
 
 package net.atos.client.zgw.shared.cache.event;
 
-import static net.atos.zac.event.OpcodeEnum.UPDATED;
+import static net.atos.zac.event.Opcode.UPDATED;
 
 import java.net.URI;
 import java.util.UUID;
@@ -13,21 +13,21 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 import net.atos.client.zgw.shared.util.URIUtil;
-import net.atos.zac.event.AbstractUpdateEvent;
+import net.atos.zac.event.AbstractEvent;
 
-public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, URI> {
+public class CacheEvent extends AbstractEvent<CacheEventType, URI> {
 
     private static final long serialVersionUID = -329301003012599689L;
 
     @NotNull
-    private CacheObjectTypeEnum objectType;
+    private CacheEventType objectType;
 
     private volatile UUID uuid = null;
 
     /**
      * Constructor for the sake of JAXB
      */
-    public CacheUpdateEvent() {
+    public CacheEvent() {
         super();
     }
 
@@ -37,13 +37,13 @@ public class CacheUpdateEvent extends AbstractUpdateEvent<CacheObjectTypeEnum, U
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public CacheUpdateEvent(final CacheObjectTypeEnum objectType, final URI objectId) {
+    public CacheEvent(final CacheEventType objectType, final URI objectId) {
         super(UPDATED, objectId);
         this.objectType = objectType;
     }
 
     @Override
-    public CacheObjectTypeEnum getObjectType() {
+    public CacheEventType getObjectType() {
         return objectType;
     }
 

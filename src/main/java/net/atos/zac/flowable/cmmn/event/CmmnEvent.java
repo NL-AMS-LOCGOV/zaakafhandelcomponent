@@ -10,20 +10,20 @@ import java.net.URI;
 
 import javax.validation.constraints.NotNull;
 
-import net.atos.zac.event.AbstractUpdateEvent;
-import net.atos.zac.event.OpcodeEnum;
+import net.atos.zac.event.AbstractEvent;
+import net.atos.zac.event.Opcode;
 
-public class CmmnUpdateEvent extends AbstractUpdateEvent<CmmnObjectTypeEnum, URI> {
+public class CmmnEvent extends AbstractEvent<CmmnEventType, URI> {
 
     private static final long serialVersionUID = 4764736142892883842L;
 
     @NotNull
-    private CmmnObjectTypeEnum objectType;
+    private CmmnEventType objectType;
 
     /**
      * Constructor for the sake of JAXB
      */
-    public CmmnUpdateEvent() {
+    public CmmnEvent() {
         super();
     }
 
@@ -34,13 +34,13 @@ public class CmmnUpdateEvent extends AbstractUpdateEvent<CmmnObjectTypeEnum, URI
      * @param objectType het type object waarop de operatie is uitgevoerd
      * @param objectId   de identificatie van het object waarop een operatie is uitgevoerd
      */
-    public CmmnUpdateEvent(final OpcodeEnum operation, final CmmnObjectTypeEnum objectType, final URI objectId) {
+    public CmmnEvent(final Opcode operation, final CmmnEventType objectType, final URI objectId) {
         super(operation, objectId);
         this.objectType = objectType;
     }
 
     @Override
-    public CmmnObjectTypeEnum getObjectType() {
+    public CmmnEventType getObjectType() {
         return objectType;
     }
 }

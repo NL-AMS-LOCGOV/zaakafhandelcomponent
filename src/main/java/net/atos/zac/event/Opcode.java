@@ -6,10 +6,10 @@
 package net.atos.zac.event;
 
 /**
- * Enumeration containing the operations as used by the {@link AbstractUpdateEvent}.
+ * Enumeration containing the operations as used by the {@link AbstractEvent}.
  * Maps to opcode.ts
  */
-public enum OpcodeEnum {
+public enum Opcode {
 
     /**
      * indication that the mentioned object has been added

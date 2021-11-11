@@ -17,27 +17,27 @@ import javax.websocket.Session;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.atos.zac.event.AbstractUpdateObserver;
+import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.websocket.SessionRegistry;
 
 /**
- * This bean listens for {@link ScreenUpdateEvent}, converts them to a Websockets event and then forwards it to the browsers that have subscribed to it.
+ * This bean listens for {@link ScreenEvent}, converts them to a Websockets event and then forwards it to the browsers that have subscribed to it.
  */
 @ManagedBean
-public class ScreenUpdateObserver extends AbstractUpdateObserver<ScreenUpdateEvent> {
+public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
 
-    private static final Logger LOG = Logger.getLogger(ScreenUpdateObserver.class.getName());
+    private static final Logger LOG = Logger.getLogger(ScreenEventObserver.class.getName());
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     @EJB
     private SessionRegistry sessionRegistry;
 
-    public void onFire(final @ObservesAsync ScreenUpdateEvent event) {
+    public void onFire(final @ObservesAsync ScreenEvent event) {
         sendToWebsocketSubscribers(event);
     }
 
-    private void sendToWebsocketSubscribers(final ScreenUpdateEvent event) {
+    private void sendToWebsocketSubscribers(final ScreenEvent event) {
         try {
             final Set<Session> subscribers = sessionRegistry.listSessions(event);
             if (!subscribers.isEmpty()) {

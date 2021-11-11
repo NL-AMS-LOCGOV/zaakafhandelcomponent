@@ -17,7 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
-import net.atos.zac.websocket.event.ScreenUpdateEvent;
+import net.atos.zac.websocket.event.ScreenEvent;
 
 /**
  * This EJB is used to maintain a list of active sessions.
@@ -28,14 +28,14 @@ public class SessionRegistry {
 
     private static final Pattern QUOTED = Pattern.compile("^\"(.*)\"$");
 
-    private final SetMultimap<ScreenUpdateEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    private final SetMultimap<ScreenEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     /**
      * Return a set of all active sessions for a particular event.
      *
      * @return Set with active sessions
      */
-    public Set<Session> listSessions(final ScreenUpdateEvent event) {
+    public Set<Session> listSessions(final ScreenEvent event) { // TODO ESUITEDEV-??? Support wildcards?
         return Collections.unmodifiableSet(eventSessions.get(fix(event)));
     }
 
@@ -45,7 +45,7 @@ public class SessionRegistry {
      * @param event   event
      * @param session session
      */
-    public void create(final ScreenUpdateEvent event, final Session session) {
+    public void create(final ScreenEvent event, final Session session) {
         if (session != null) {
             eventSessions.put(fix(event), session);
         }
@@ -57,7 +57,7 @@ public class SessionRegistry {
      * @param event   event
      * @param session session
      */
-    public void delete(final ScreenUpdateEvent event, final Session session) {
+    public void delete(final ScreenEvent event, final Session session) {
         if (session != null) {
             eventSessions.get(fix(event)).remove(session);
         }
@@ -81,8 +81,8 @@ public class SessionRegistry {
      * @param event the event in which the objectId may have been quoted
      * @return an event in which the objectId is stripped of any quotes
      */
-    public ScreenUpdateEvent fix(final ScreenUpdateEvent event) {
+    public ScreenEvent fix(final ScreenEvent event) {
         final Matcher matcher = QUOTED.matcher(event.getObjectId());
-        return matcher.matches() ? fix(new ScreenUpdateEvent(event.getOperation(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
+        return matcher.matches() ? fix(new ScreenEvent(event.getOperation(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
     }
 }
