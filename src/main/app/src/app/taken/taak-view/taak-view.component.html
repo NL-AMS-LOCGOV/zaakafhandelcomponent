@@ -12,7 +12,7 @@
         <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakLoadedEmitter)="onZaakLoaded($event)"></zac-zaak-verkort>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <mat-card fxFlex="100">
+        <mat-card>
             <mat-card-header>
                 <mat-card-title>{{'taak' | translate}}</mat-card-title>
                 <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'actie.bewerken' | translate }}">

@@ -15,8 +15,7 @@ import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {FormulierModus} from '../../formulieren/model/formulier-modus';
-import {FormulierBuilder} from '../../formulieren/formulier-builder';
-import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
+import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -29,7 +28,7 @@ export class PlanItemDoComponent implements OnInit {
     private planItem: PlanItem;
     private formulier: AbstractFormulier;
 
-    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService,
+    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
                 private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
@@ -38,7 +37,8 @@ export class PlanItemDoComponent implements OnInit {
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
 
-        this.formulier = new FormulierBuilder(new AanvullendeInformatie(FormulierModus.START)).planItem(this.planItem).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier, FormulierModus.START)
+                             .planItem(this.planItem).build();
 
         if (this.planItem.type == PlanItemType.HumanTask) {
             this.formItems = this.formulier.form;

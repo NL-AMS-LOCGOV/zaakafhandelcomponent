@@ -23,10 +23,9 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {TaakRechten} from '../model/taak-rechten';
 import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {AanvullendeInformatie} from '../../formulieren/model/aanvullende-informatie';
 import {FormulierModus} from '../../formulieren/model/formulier-modus';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
-import {FormulierBuilder} from '../../formulieren/formulier-builder';
+import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -47,7 +46,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private websocketService: WebsocketService) {
+                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService) {
         super(store, utilService);
     }
 
@@ -80,7 +79,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.taak = taak;
         this.formConfig = new FormConfig('actie.afronden');
 
-        this.formulier = new FormulierBuilder(new AanvullendeInformatie(FormulierModus.BEHANDEL)).taak(taak).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier, FormulierModus.BEHANDEL).taak(taak).build();
 
         this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();

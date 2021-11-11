@@ -59,7 +59,7 @@ export class InformatieObjectCreateComponent implements OnInit {
             const types = this.getTypes(zaak);
             const titel = new InputFormField('titel', 'titel', null, this.required());
             const beschrijving = new InputFormField('beschrijving', 'beschrijving', null);
-            const inhoud = new FileFormField('bestandsnaam', 'bestandsnaam', this.fileUploadConfig());
+            const inhoud = new FileFormField('bestandsnaam', 'bestandsnaam', null, this.fileUploadConfig());
             const beginRegistratie = new DateFormField('creatiedatum', 'creatiedatum', moment(), this.required());
             const taal = new SelectFormField('taal', 'taal', talen[0], 'label', talen, this.required());
             const status = new SelectFormField('status', 'status', informatieobjectStatussen[0], 'label',

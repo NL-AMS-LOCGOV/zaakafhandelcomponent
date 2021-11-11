@@ -6,7 +6,6 @@
 import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
-import {AanvullendeInformatie} from './model/aanvullende-informatie';
 import {FormulierModus} from './model/formulier-modus';
 
 export class FormulierBuilder {
@@ -15,6 +14,11 @@ export class FormulierBuilder {
 
     constructor(formulier: AbstractFormulier) {
         this._formulier = formulier;
+    }
+
+    modus(modus: FormulierModus): FormulierBuilder {
+        this._formulier.modus = modus;
+        return this;
     }
 
     planItem(planItem: PlanItem): FormulierBuilder {
@@ -29,12 +33,8 @@ export class FormulierBuilder {
         return this;
     }
 
-    build(): AanvullendeInformatie {
-        if (this._formulier.modus == FormulierModus.START) {
-            this._formulier.initStartForm();
-        } else {
-            this._formulier.initBehandelForm();
-        }
+    build(): AbstractFormulier {
+        this._formulier.init();
 
         return this._formulier;
     }
