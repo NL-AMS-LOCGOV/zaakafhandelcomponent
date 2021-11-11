@@ -17,10 +17,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.shared.cache.event.CacheObjectTypeEnum;
+import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.cmmn.event.CmmnObjectTypeEnum;
-import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
+import net.atos.zac.flowable.cmmn.event.CmmnEventType;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
  *
@@ -48,19 +48,19 @@ public class NotificatieReceiver {
 
     private void handleCmmn(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            CmmnObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 
     private void handleCaches(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            CacheObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+            CacheEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 
     private void handleWebsockets(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            ScreenObjectTypeEnum.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 }

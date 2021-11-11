@@ -79,11 +79,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.zaak = data['zaak'];
-            this.websocketService.addListener(Opcode.CREATED, ObjectType.ZAAK, this.zaak.uuid,
+            this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
                 () => this.updateZaak());
-            this.websocketService.addListener(Opcode.CREATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+            this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 () => this.loadTaken());
-            this.websocketService.addListener(Opcode.CREATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 () => this.loadInformatieObjecten());
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
@@ -117,9 +117,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
-        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK, this.zaak.uuid);
-        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
-        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid);
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {

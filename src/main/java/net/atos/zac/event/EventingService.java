@@ -9,21 +9,21 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import net.atos.client.zgw.shared.cache.event.CacheUpdateEvent;
-import net.atos.zac.flowable.cmmn.event.CmmnUpdateEvent;
-import net.atos.zac.websocket.event.ScreenUpdateEvent;
+import net.atos.client.zgw.shared.cache.event.CacheEvent;
+import net.atos.zac.flowable.cmmn.event.CmmnEvent;
+import net.atos.zac.websocket.event.ScreenEvent;
 
 @ApplicationScoped
 public class EventingService {
 
     @Inject
-    private Event<ScreenUpdateEvent> screenUpdateEvent;
+    private Event<ScreenEvent> screenUpdateEvent;
 
     @Inject
-    private Event<CacheUpdateEvent> cacheUpdateEvent;
+    private Event<CacheEvent> cacheUpdateEvent;
 
     @Inject
-    private Event<CmmnUpdateEvent> cmmnUpdateEvent;
+    private Event<CmmnEvent> cmmnUpdateEvent;
 
     /**
      * Send {@link package net.atos.zac.websocket.event.SchermeUpdateEvent}s to Observer(s),
@@ -33,7 +33,7 @@ public class EventingService {
      *
      * @param event
      */
-    public void send(final ScreenUpdateEvent event) {
+    public void send(final ScreenEvent event) {
         screenUpdateEvent.fireAsync(event);
     }
 
@@ -45,7 +45,7 @@ public class EventingService {
      *
      * @param event het te versturen event
      */
-    public void send(final CacheUpdateEvent event) {
+    public void send(final CacheEvent event) {
         cacheUpdateEvent.fireAsync(event);
     }
 
@@ -57,7 +57,7 @@ public class EventingService {
      *
      * @param event het te versturen event
      */
-    public void send(final CmmnUpdateEvent event) {
+    public void send(final CmmnEvent event) {
         cmmnUpdateEvent.fireAsync(event);
     }
 }

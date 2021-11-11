@@ -20,9 +20,9 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
-import net.atos.zac.event.OpcodeEnum;
-import net.atos.zac.websocket.event.ScreenObjectTypeEnum;
-import net.atos.zac.websocket.event.ScreenUpdateEvent;
+import net.atos.zac.event.Opcode;
+import net.atos.zac.websocket.event.ScreenEventType;
+import net.atos.zac.websocket.event.ScreenEvent;
 
 /**
  * Converts websocket messages to SubscriptionType.SubscriptionMessage objects
@@ -37,7 +37,7 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
 
     private static final String EVENT_OPCODE = "opcode";
 
-    private static final String EVENT_OBJECT_TYPE = "objectType";
+    private static final String EVENT_TYPE = "objectType";
 
     private static final String EVENT_OBJECT_ID = "objectId";
 
@@ -52,10 +52,10 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
             }
 
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
-            final OpcodeEnum operatie = OpcodeEnum.valueOf(jsonEvent.getString(EVENT_OPCODE));
-            final ScreenObjectTypeEnum objectType = ScreenObjectTypeEnum.valueOf(jsonEvent.getString(EVENT_OBJECT_TYPE));
-            final JsonValue jsonObjectId = jsonEvent.get(EVENT_OBJECT_ID);
-            return subscriptionType.message(new ScreenUpdateEvent(operatie, objectType, jsonObjectId != null ? jsonObjectId.toString() : null));
+            final Opcode operatie = Opcode.valueOf(jsonEvent.getString(EVENT_OPCODE));
+            final ScreenEventType objectType = ScreenEventType.valueOf(jsonEvent.getString(EVENT_TYPE));
+            final JsonValue objectId = jsonEvent.get(EVENT_OBJECT_ID);
+            return subscriptionType.message(new ScreenEvent(operatie, objectType, objectId != null ? objectId.toString() : null));
         }
     }
 

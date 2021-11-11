@@ -22,8 +22,8 @@ describe('WebsocketService', () => {
 
     const EVENTS = 8192;
     const OPCODES = [
-        Opcode.UPDATED,
         Opcode.CREATED,
+        Opcode.UPDATED,
         Opcode.DELETED];
     const OBJECT_TYPES = [
         ObjectType.ENKELVOUDIG_INFORMATIEOBJECT,

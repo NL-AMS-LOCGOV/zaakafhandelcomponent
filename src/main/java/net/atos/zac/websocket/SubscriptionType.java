@@ -8,7 +8,7 @@ package net.atos.zac.websocket;
 
 import javax.websocket.Session;
 
-import net.atos.zac.websocket.event.ScreenUpdateEvent;
+import net.atos.zac.websocket.event.ScreenEvent;
 
 /**
  * Indicates whether a client subscribes to an event, or whether a client no longer wishes to receive an event (or all events)
@@ -20,7 +20,7 @@ public enum SubscriptionType {
      */
     CREATE {
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenEvent event) {
             registry.create(event, session);
         }
     },
@@ -29,7 +29,7 @@ public enum SubscriptionType {
      */
     DELETE {
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenEvent event) {
             registry.delete(event, session);
         }
     },
@@ -41,12 +41,12 @@ public enum SubscriptionType {
         private final SubscriptionMessage MESSAGE = new SubscriptionMessage(this, null);
 
         @Override
-        protected void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event) {
+        protected void register(final SessionRegistry registry, final Session session, final ScreenEvent event) {
             registry.deleteAll(session);
         }
 
         @Override
-        public SubscriptionMessage message(final ScreenUpdateEvent event) {
+        public SubscriptionMessage message(final ScreenEvent event) {
             if (event != null) {
                 throw new IllegalArgumentException("Unexpected event argument");
             }
@@ -59,7 +59,7 @@ public enum SubscriptionType {
         }
     };
 
-    protected abstract void register(final SessionRegistry registry, final Session session, final ScreenUpdateEvent event);
+    protected abstract void register(final SessionRegistry registry, final Session session, final ScreenEvent event);
 
     /**
      * Factory method for SubscriptionMessages ({@link SubscriptionType#CREATE} and {@link SubscriptionType#DELETE} types).
@@ -67,7 +67,7 @@ public enum SubscriptionType {
      * @param event the event subscribed to.
      * @return message
      */
-    public SubscriptionMessage message(final ScreenUpdateEvent event) {
+    public SubscriptionMessage message(final ScreenEvent event) {
         if (event != null) {
             return new SubscriptionMessage(this, event);
         }
@@ -92,9 +92,9 @@ public enum SubscriptionType {
 
         private final SubscriptionType subscriptionType;
 
-        private final ScreenUpdateEvent event;
+        private final ScreenEvent event;
 
-        private SubscriptionMessage(final SubscriptionType subscriptionType, final ScreenUpdateEvent event) {
+        private SubscriptionMessage(final SubscriptionType subscriptionType, final ScreenEvent event) {
             this.subscriptionType = subscriptionType;
             this.event = event;
         }
@@ -103,7 +103,7 @@ public enum SubscriptionType {
             return subscriptionType;
         }
 
-        public final ScreenUpdateEvent getEvent() {
+        public final ScreenEvent getEvent() {
             return event;
         }
 

@@ -11,13 +11,13 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.event.AbstractUpdateObserver;
+import net.atos.zac.event.AbstractEventObserver;
 
 /**
  * Deze bean luistert naar CacheUpdateEvents, en werkt daar vervolgens de caches mee bij.
  */
 @ManagedBean
-public class CacheUpdateObserver extends AbstractUpdateObserver<CacheUpdateEvent> {
+public class CacheEventObserver extends AbstractEventObserver<CacheEvent> {
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -25,7 +25,7 @@ public class CacheUpdateObserver extends AbstractUpdateObserver<CacheUpdateEvent
     @Inject
     private ZRCClientService zrcClientService;
 
-    public void onFire(final @ObservesAsync CacheUpdateEvent event) {
+    public void onFire(final @ObservesAsync CacheEvent event) {
         switch (event.getObjectType()){
             case ZAAKROL:
                 zrcClientService.updateZaakrolCache(event.getUrl());

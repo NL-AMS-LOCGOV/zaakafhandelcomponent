@@ -14,30 +14,30 @@ import java.util.logging.Logger;
  * <p>
  * http://open-zaak.default/ref/kanalen/
  */
-public enum ActionEnum {
+public enum Action {
 
     CREATE("create"),
     UPDATE("update"),
     DELETE("destroy");
 
-    private static final Logger LOG = Logger.getLogger(ActionEnum.class.getName());
+    private static final Logger LOG = Logger.getLogger(Action.class.getName());
 
     private final String code;
 
-    private static final Map<String, ActionEnum> VALUES = new HashMap<>();
+    private static final Map<String, Action> VALUES = new HashMap<>();
 
     static {
-        for (final ActionEnum value : values()) {
+        for (final Action value : values()) {
             VALUES.put(value.code, value);
         }
     }
 
-    ActionEnum(final String code) {
+    Action(final String code) {
         this.code = code;
     }
 
-    public static ActionEnum value(final String code) {
-        final ActionEnum value = VALUES.get(code);
+    public static Action value(final String code) {
+        final Action value = VALUES.get(code);
         if (value == null) {
             LOG.warning(String.format("unknown %s action", code));
         }

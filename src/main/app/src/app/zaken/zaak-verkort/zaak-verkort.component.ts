@@ -54,8 +54,8 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
             }
         }));
 
-        this.websocketService.addListener(Opcode.CREATED, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
-        this.websocketService.addListener(Opcode.CREATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid,
+        this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
+        this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid,
             () => this.loadInformatieObjecten());
     }
 
@@ -84,8 +84,8 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK, this.zaakUuid);
-        this.websocketService.removeListeners(Opcode.CREATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK, this.zaakUuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid);
         this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
     }
 }

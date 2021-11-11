@@ -5,13 +5,13 @@
 
 package net.atos.zac.notificaties;
 
-import static net.atos.zac.notificaties.ResourceEnum.APPLICATIE;
-import static net.atos.zac.notificaties.ResourceEnum.BESLUIT;
-import static net.atos.zac.notificaties.ResourceEnum.BESLUITTYPE;
-import static net.atos.zac.notificaties.ResourceEnum.INFORMATIEOBJECT;
-import static net.atos.zac.notificaties.ResourceEnum.INFORMATIEOBJECTTYPE;
-import static net.atos.zac.notificaties.ResourceEnum.ZAAK;
-import static net.atos.zac.notificaties.ResourceEnum.ZAAKTYPE;
+import static net.atos.zac.notificaties.Resource.APPLICATIE;
+import static net.atos.zac.notificaties.Resource.BESLUIT;
+import static net.atos.zac.notificaties.Resource.BESLUITTYPE;
+import static net.atos.zac.notificaties.Resource.INFORMATIEOBJECT;
+import static net.atos.zac.notificaties.Resource.INFORMATIEOBJECTTYPE;
+import static net.atos.zac.notificaties.Resource.ZAAK;
+import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * <p>
  * http://open-zaak.default/ref/kanalen/
  */
-public enum ChannelEnum {
+public enum Channel {
     AUTORISATIES("autorisaties", APPLICATIE),
     BESLUITEN("besluiten", BESLUIT),
     BESLUITTYPEN("besluittypen", BESLUITTYPE),
@@ -31,31 +31,31 @@ public enum ChannelEnum {
     ZAKEN("zaken", ZAAK),
     ZAAKTYPEN("zaaktypen", ZAAKTYPE);
 
-    private static final Logger LOG = Logger.getLogger(ChannelEnum.class.getName());
+    private static final Logger LOG = Logger.getLogger(Channel.class.getName());
 
     private final String code;
 
-    private final ResourceEnum resourceType;
+    private final Resource resourceType;
 
-    private static final Map<String, ChannelEnum> VALUES = new HashMap<>();
+    private static final Map<String, Channel> VALUES = new HashMap<>();
 
     static {
-        for (final ChannelEnum value : values()) {
+        for (final Channel value : values()) {
             VALUES.put(value.code, value);
         }
     }
 
-    ChannelEnum(final String code, final ResourceEnum resourceType) {
+    Channel(final String code, final Resource resourceType) {
         this.code = code;
         this.resourceType = resourceType;
     }
 
-    public ResourceEnum getResourceType() {
+    public Resource getResourceType() {
         return resourceType;
     }
 
-    public static ChannelEnum value(final String code) {
-        final ChannelEnum value = VALUES.get(code);
+    public static Channel value(final String code) {
+        final Channel value = VALUES.get(code);
         if (value == null) {
             LOG.warning(String.format("unknown %s channel", code));
         }

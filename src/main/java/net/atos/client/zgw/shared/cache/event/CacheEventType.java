@@ -11,29 +11,29 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import net.atos.zac.notificaties.ChannelEnum;
+import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 
 /**
- * Enumeratie die de soorten object wijzigingen bevat zoals die gebruikt worden door het {@link CacheUpdateEvent}.
+ * Enumeratie die de soorten events (objecttypen) bevat zoals die gebruikt worden door het {@link CacheEvent}.
  */
-public enum CacheObjectTypeEnum {
+public enum CacheEventType {
     ZAAKROL,
     ZAAKSTATUS,
     ZAAKTYPE;
 
-    private static final Logger LOG = Logger.getLogger(CacheObjectTypeEnum.class.getName());
+    private static final Logger LOG = Logger.getLogger(CacheEventType.class.getName());
 
     // Dit is de uiteindelijke echte factory method
-    private static CacheUpdateEvent instance(final CacheObjectTypeEnum objectType, final URI url) {
-        return new CacheUpdateEvent(objectType, url);
+    private static CacheEvent instance(final CacheEventType objectType, final URI url) {
+        return new CacheEvent(objectType, url);
     }
 
-    private CacheUpdateEvent event(final Notificatie.Resource resource) {
+    private CacheEvent event(final Notificatie.Resource resource) {
         return instance(this, resource.getUrl());
     }
 
-    public final CacheUpdateEvent changed(final URI url) {
+    public final CacheEvent changed(final URI url) {
         return instance(this, url);
     }
 
@@ -48,13 +48,13 @@ public enum CacheObjectTypeEnum {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<CacheUpdateEvent> getEvents(final ChannelEnum channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
-        final Set<CacheUpdateEvent> events = new HashSet<>();
+    public static Set<CacheEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+        final Set<CacheEvent> events = new HashSet<>();
         switch (channel) {
             case ZAKEN:
                 switch (resource.getType()) {
                     case ROL:
-                        events.add(CacheObjectTypeEnum.ZAAKROL.event(mainResource));
+                        events.add(CacheEventType.ZAAKROL.event(mainResource));
                         break;
                     case STATUS:
                         switch (resource.getAction()) {
@@ -62,7 +62,7 @@ public enum CacheObjectTypeEnum {
                                 // Not yet in any caches, ignore
                                 break;
                             default:
-                                events.add(CacheObjectTypeEnum.ZAAKSTATUS.event(resource));
+                                events.add(CacheEventType.ZAAKSTATUS.event(resource));
                                 break;
                         }
                         break;
@@ -76,7 +76,7 @@ public enum CacheObjectTypeEnum {
                                 // Not yet in any caches, ignore
                                 break;
                             default:
-                                events.add(CacheObjectTypeEnum.ZAAKTYPE.event(resource));
+                                events.add(CacheEventType.ZAAKTYPE.event(resource));
                                 break;
                         }
                         break;

@@ -6,7 +6,7 @@
 package net.atos.zac.notificaties;
 
 import static net.atos.client.zgw.shared.util.DateTimeUtil.DATE_TIME_FORMAT_WITH_MILLISECONDS;
-import static net.atos.zac.notificaties.ActionEnum.UPDATE;
+import static net.atos.zac.notificaties.Action.UPDATE;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -20,15 +20,15 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class Notificatie {
 
-    private final ChannelEnum channel;
+    private final Channel channel;
 
     private final URI mainResourceUrl;
 
-    private final ResourceEnum resourceType;
+    private final net.atos.zac.notificaties.Resource resourceType;
 
     private final URI resourceUrl;
 
-    private final ActionEnum action;
+    private final Action action;
 
     @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS)
     private final ZonedDateTime creationDateTime;
@@ -43,15 +43,15 @@ public class Notificatie {
             @JsonbProperty("resourceUrl") final URI resourceUrl,
             @JsonbProperty("actie") final String action,
             @JsonbProperty("aanmaakdatum") final ZonedDateTime creationDateTime) {
-        this.channel = ChannelEnum.value(channel);
+        this.channel = Channel.value(channel);
         this.mainResourceUrl = mainResourceUrl;
-        this.resourceType = ResourceEnum.value(resourceType);
+        this.resourceType = net.atos.zac.notificaties.Resource.value(resourceType);
         this.resourceUrl = resourceUrl;
-        this.action = ActionEnum.value(action);
+        this.action = Action.value(action);
         this.creationDateTime = creationDateTime;
     }
 
-    public ChannelEnum getChannel() {
+    public Channel getChannel() {
         return channel;
     }
 
@@ -64,7 +64,7 @@ public class Notificatie {
                         : UPDATE);
     }
 
-    public ResourceEnum getMainResourceType() {
+    public net.atos.zac.notificaties.Resource getMainResourceType() {
         return channel.getResourceType();
     }
 
@@ -79,7 +79,7 @@ public class Notificatie {
                 getAction());
     }
 
-    public ResourceEnum getResourceType() {
+    public net.atos.zac.notificaties.Resource getResourceType() {
         return resourceType;
     }
 
@@ -87,7 +87,7 @@ public class Notificatie {
         return resourceUrl;
     }
 
-    public ActionEnum getAction() {
+    public Action getAction() {
         return action;
     }
 
@@ -108,11 +108,11 @@ public class Notificatie {
     }
 
     public static class Resource {
-        private final ResourceEnum type;
+        private final net.atos.zac.notificaties.Resource type;
 
         private final URI url;
 
-        private final ActionEnum action;
+        private final Action action;
 
         /**
          * Use this for the actually modified resource
@@ -121,13 +121,13 @@ public class Notificatie {
          * @param url    the identification of the resource
          * @param action the type of modification
          */
-        private Resource(final ResourceEnum type, final URI url, final ActionEnum action) {
+        private Resource(final net.atos.zac.notificaties.Resource type, final URI url, final Action action) {
             this.action = action;
             this.type = type;
             this.url = url;
         }
 
-        public ResourceEnum getType() {
+        public net.atos.zac.notificaties.Resource getType() {
             return type;
         }
 
@@ -135,7 +135,7 @@ public class Notificatie {
             return url;
         }
 
-        public ActionEnum getAction() {
+        public Action getAction() {
             return action;
         }
     }
