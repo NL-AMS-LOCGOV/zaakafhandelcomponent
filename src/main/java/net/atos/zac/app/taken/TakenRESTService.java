@@ -105,7 +105,7 @@ public class TakenRESTService {
     public RESTTaak getTaak(@PathParam("taskId") final String taskId) {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
         final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForTask(taskId);
-        final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, task.getTaskDefinitionId());
+        final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, task.getTaskDefinitionKey());
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
         return taakConverter.convertTask(task, taakFormulieren.getBehandelFormulier(), taakdata);
     }
