@@ -5,8 +5,8 @@
 
 package net.atos.client.zgw.shared.cache;
 
-/* Dit is in feite een enum maar in de CacheResult annotatie kunnen alleen een string constanten gebruikt worden.
-   Vandaar deze util implementatie.
+/* Dit is in feite geen enum maar in de CacheResult annotatie kunnen alleen een string constanten gebruikt worden.
+   Vandaar deze util stijl implementatie.
  */
 public class CacheEnum {
 
