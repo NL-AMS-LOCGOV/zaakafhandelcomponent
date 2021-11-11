@@ -22,8 +22,16 @@ export abstract class AbstractFormulier {
     abstract formFieldDefinitions: Array<string>;
     abstract form: Array<AbstractFormField[]>;
 
-    constructor(modus: FormulierModus) {
-        this.modus = modus;
+    constructor() {
+
+    }
+
+    init() {
+        if (this.modus == FormulierModus.START) {
+            this.initStartForm();
+        } else {
+            this.initBehandelForm();
+        }
     }
 
     abstract initStartForm();

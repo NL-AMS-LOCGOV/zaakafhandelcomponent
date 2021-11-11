@@ -4,7 +4,10 @@
  */
 
 import {Injectable} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {AanvullendeInformatie} from './model/aanvullende-informatie';
+import {FormulierModus} from './model/formulier-modus';
+import {FormulierBuilder} from './formulier-builder';
+import {Advies} from './model/advies';
 
 @Injectable({
     providedIn: 'root'
@@ -13,14 +16,21 @@ export class TaakFormulierenService {
 
     constructor() { }
 
-    public getDataElementen(formGroup: FormGroup): Map<string, string> {
-        let dataElementen: Map<string, string> = new Map<string, string>();
+    public getFormulierBuilder(formulierNaam: string, modus: FormulierModus): FormulierBuilder {
+        let formBuilder: FormulierBuilder;
+        switch (formulierNaam) {
+            case 'AANVULLENDE_INFORMATIE':
+                formBuilder = new FormulierBuilder(new AanvullendeInformatie());
+                break;
+            case 'ADVIES':
+                formBuilder = new FormulierBuilder(new Advies());
+                break;
+            default:
+                formBuilder = new FormulierBuilder(new AanvullendeInformatie());
+            // throw `Onbekend formulier: ${formulierNaam}`;
+        }
 
-        Object.keys(formGroup.controls).forEach((key) => {
-            dataElementen.set(key, formGroup.controls[key].value);
-        });
-
-        return dataElementen;
+        return formBuilder.modus(modus);
     }
 
 }
