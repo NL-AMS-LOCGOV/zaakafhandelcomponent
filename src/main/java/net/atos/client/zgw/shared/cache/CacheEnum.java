@@ -10,10 +10,10 @@ package net.atos.client.zgw.shared.cache;
  */
 public class CacheEnum {
 
-    // Deze cache is managed (alleen zaak URI en UUID? als sleutel gebruiken!)
-    public static final String ZRC_ZAAK_STATUS_MANAGED = "zrc-zaak-status-managed-cache";
+    // Deze cache is managed (alleen URI als sleutel gebruiken!)
+    public static final String ZRC_STATUS_MANAGED = "zrc-status-managed-cache";
 
-    // Deze cache is managed (alleen zaak URI en UUID? als sleutel gebruiken!)
+    // Deze cache is managed (alleen zaak URI als sleutel gebruiken!)
     public static final String ZRC_ZAAK_ROL_MANAGED = "zrc-zaak-rol-managed-cache";
 
     public static final String ZTC_RESULTAATTYPE = "ztc-resultaattype-cache";

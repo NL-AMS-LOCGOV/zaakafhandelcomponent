@@ -187,7 +187,7 @@ public class ZakenRESTService {
             rolMedewerker.ifPresent(medewerker -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(medewerker)));
         }
 
-        zrcClientService.updateRollen(zaak.getUrl(), rollen);
+        zrcClientService.updateRollen(zrcClientService.listRollen(zaak.getUrl()), rollen);
         return zaakConverter.convert(zaak);
     }
 
@@ -219,7 +219,8 @@ public class ZakenRESTService {
         ztcClientService.clearZaaktypeUrlCache();
         ztcClientService.clearZaaktypeCache();
         ztcClientService.clearZaaktypeManagedCache();
-// TODO ESUITEDEV-25829 zrc caches
+        zrcClientService.clearZaakstatusManagedCache();
+        zrcClientService.clearZaakrolManagedCache();
         return "all caches cleared";
     }
 
@@ -230,7 +231,7 @@ public class ZakenRESTService {
 
         rollen.add(bepaalRolMedewerker(user, zaak));
 
-        zrcClientService.updateRollen(zaak.getUrl(), rollen);
+        zrcClientService.updateRollen(zrcClientService.listRollen(zaak.getUrl()), rollen);
 
         return zaak;
     }

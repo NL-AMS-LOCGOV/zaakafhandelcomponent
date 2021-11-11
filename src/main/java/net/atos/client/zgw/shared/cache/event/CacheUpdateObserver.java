@@ -28,12 +28,10 @@ public class CacheUpdateObserver extends AbstractUpdateObserver<CacheUpdateEvent
     public void onFire(final @ObservesAsync CacheUpdateEvent event) {
         switch (event.getObjectType()){
             case ZAAKROL:
-                // TODO ESUITEDEV-25829
-                //zrcClientService.clearZaakrolCache(event.getUrl());
+                zrcClientService.updateZaakrolCache(event.getUrl());
                 break;
             case ZAAKSTATUS:
-                // TODO ESUITEDEV-25829
-                //zrcClientService.clearZaakstatusCache(event.getUrl());
+                zrcClientService.updateZaakstatusCache(event.getUrl());
                 break;
             case ZAAKTYPE:
                 ztcClientService.updateZaaktypeStatustypeCache(event.getUrl());

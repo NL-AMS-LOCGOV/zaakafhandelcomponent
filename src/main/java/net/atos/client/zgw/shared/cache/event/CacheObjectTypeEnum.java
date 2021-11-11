@@ -53,18 +53,32 @@ public enum CacheObjectTypeEnum {
         switch (channel) {
             case ZAKEN:
                 switch (resource.getType()) {
-                    case STATUS:
-                        events.add(CacheObjectTypeEnum.ZAAKSTATUS.event(resource));
-                        break;
                     case ROL:
-                        events.add(CacheObjectTypeEnum.ZAAKROL.event(resource));
+                        events.add(CacheObjectTypeEnum.ZAAKROL.event(mainResource));
+                        break;
+                    case STATUS:
+                        switch (resource.getAction()) {
+                            case CREATE:
+                                // Not yet in any caches, ignore
+                                break;
+                            default:
+                                events.add(CacheObjectTypeEnum.ZAAKSTATUS.event(resource));
+                                break;
+                        }
                         break;
                 }
                 break;
             case ZAAKTYPEN:
                 switch (resource.getType()) {
                     case ZAAKTYPE:
-                        events.add(CacheObjectTypeEnum.ZAAKTYPE.event(resource));
+                        switch (resource.getAction()) {
+                            case CREATE:
+                                // Not yet in any caches, ignore
+                                break;
+                            default:
+                                events.add(CacheObjectTypeEnum.ZAAKTYPE.event(resource));
+                                break;
+                        }
                         break;
                 }
                 break;
