@@ -5,7 +5,6 @@
 
 import {Injectable} from '@angular/core';
 import {AanvullendeInformatie} from './model/aanvullende-informatie';
-import {FormulierModus} from './model/formulier-modus';
 import {FormulierBuilder} from './formulier-builder';
 import {Advies} from './model/advies';
 
@@ -16,7 +15,7 @@ export class TaakFormulierenService {
 
     constructor() { }
 
-    public getFormulierBuilder(formulierNaam: string, modus: FormulierModus): FormulierBuilder {
+    public getFormulierBuilder(formulierNaam: string): FormulierBuilder {
         let formBuilder: FormulierBuilder;
         switch (formulierNaam) {
             case 'AANVULLENDE_INFORMATIE':
@@ -30,7 +29,7 @@ export class TaakFormulierenService {
             // throw `Onbekend formulier: ${formulierNaam}`;
         }
 
-        return formBuilder.modus(modus);
+        return formBuilder;
     }
 
 }

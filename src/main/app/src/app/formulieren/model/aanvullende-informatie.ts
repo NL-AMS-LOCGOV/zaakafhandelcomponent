@@ -14,7 +14,6 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
-    formFieldDefinitions: Array<string>;
     form: Array<AbstractFormField[]>;
 
     constructor() {
@@ -22,19 +21,14 @@ export class AanvullendeInformatie extends AbstractFormulier {
     }
 
     initStartForm() {
-        this.formFieldDefinitions = [Fields.TOELICHTING];
-
         this.form = [
             [new HeadingFormField('doPlanItem', 'actie.taak.aanmaken', '1')],
             [new TextareaFormField(Fields.TOELICHTING, Fields.TOELICHTING, this.getDataElement(Fields.TOELICHTING),
-                new FormFieldConfig([Validators.required]))],
-            ...this.getGroepAssignment()
+                new FormFieldConfig([Validators.required]))]
         ];
     }
 
     initBehandelForm() {
-        this.formFieldDefinitions = [Fields.OPGEVRAAGDEINFO, Fields.DATUMGEVRAAGD, Fields.DATUMGELEVERD];
-
         this.form = [
             [new ReadonlyFormField(Fields.TOELICHTING, Fields.TOELICHTING, this.getDataElement(Fields.TOELICHTING))],
             [new TextareaFormField(Fields.OPGEVRAAGDEINFO, Fields.OPGEVRAAGDEINFO, this.getDataElement(Fields.OPGEVRAAGDEINFO),

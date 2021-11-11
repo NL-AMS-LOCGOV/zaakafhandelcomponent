@@ -15,26 +15,20 @@ import {FileFieldConfig} from '../../shared/material-form-builder/model/file-fie
 
 export class Advies extends AbstractFormulier {
     form: Array<AbstractFormField[]>;
-    formFieldDefinitions: Array<string>;
 
     constructor() {
         super();
     }
 
     initStartForm() {
-        this.formFieldDefinitions = [Fields.VRAAG];
-
         this.form = [
             [new HeadingFormField('doPlanItem', 'actie.taak.aanmaken', '1')],
             [new TextareaFormField(Fields.VRAAG, Fields.VRAAG, this.getDataElement(Fields.VRAAG),
-                new FormFieldConfig([Validators.required]))],
-            ...this.getGroepAssignment()
+                new FormFieldConfig([Validators.required]))]
         ];
     }
 
     initBehandelForm() {
-        this.formFieldDefinitions = [Fields.ADVIES, Fields.TOELICHTING, Fields.BIJLAGE];
-
         this.form = [
             [new ReadonlyFormField(Fields.VRAAG, Fields.VRAAG, this.getDataElement(Fields.VRAAG))],
             // [new RadioFormField(Fields.ADVIES, Fields.ADVIES, this.getDataElement(Fields.ADVIES),

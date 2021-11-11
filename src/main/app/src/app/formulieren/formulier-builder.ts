@@ -6,7 +6,6 @@
 import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
-import {FormulierModus} from './model/formulier-modus';
 
 export class FormulierBuilder {
 
@@ -16,26 +15,22 @@ export class FormulierBuilder {
         this._formulier = formulier;
     }
 
-    modus(modus: FormulierModus): FormulierBuilder {
-        this._formulier.modus = modus;
-        return this;
-    }
-
-    planItem(planItem: PlanItem): FormulierBuilder {
+    startForm(planItem: PlanItem): FormulierBuilder {
         this._formulier.planItem = planItem;
         this._formulier.dataElementen = planItem.taakdata;
+        this._formulier.initStartForm();
+        this._formulier.addGroepAssignment();
         return this;
     }
 
-    taak(taak: Taak): FormulierBuilder {
+    behandelForm(taak: Taak): FormulierBuilder {
         this._formulier.taak = taak;
         this._formulier.dataElementen = taak.taakdata;
+        this._formulier.initBehandelForm();
         return this;
     }
 
     build(): AbstractFormulier {
-        this._formulier.init();
-
         return this._formulier;
     }
 }
