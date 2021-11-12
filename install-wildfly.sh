@@ -32,7 +32,7 @@ echo ">>> Configuring WildFly ..."
 # Create WildFly administrative user
 $JBOSS_HOME/bin/add-user.sh --user admin --group admin --password admin
 # Configure WildFly
-${JBOSS_HOME}/bin/jboss-cli.sh --file=wildfly_configuration.cli
+${JBOSS_HOME}/bin/jboss-cli.sh --file=install-wildfly.cli
 
 # Remove the PostgreSQL driver
 rm postgresql-driver.jar
