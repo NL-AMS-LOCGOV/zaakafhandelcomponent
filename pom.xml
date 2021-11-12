@@ -24,7 +24,10 @@
         <flowable.version>6.7.0</flowable.version>
         <node.version>v14.15.3</node.version>
         <mockito.version>3.12.4</mockito.version>
-        <infinispan.version>12.1.4.Final</infinispan.version> <!-- Dependecies op WildFly 24.0.0.Final -->
+        <!-- Begin Dependecies on WildFly version: 24.0.1.Final -->
+        <infinispan.version>12.1.4.Final</infinispan.version>
+        <resteasy-multipart-provider.version>3.15.1.Final</resteasy-multipart-provider.version>
+        <!-- End Dependecies on WildFly -->
     </properties>
 
     <dependencies>
@@ -49,7 +52,7 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
-            <version>3.15.1.Final</version> <!-- Dependecies op WildFly 24.0.0.Final -->
+            <version>${resteasy-multipart-provider.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
