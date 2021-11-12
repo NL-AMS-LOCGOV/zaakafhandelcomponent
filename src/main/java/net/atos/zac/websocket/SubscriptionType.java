@@ -99,11 +99,11 @@ public enum SubscriptionType {
             this.event = event;
         }
 
-        public final SubscriptionType getSubscriptionType() {
+        public SubscriptionType getSubscriptionType() {
             return subscriptionType;
         }
 
-        public final ScreenEvent getEvent() {
+        public ScreenEvent getEvent() {
             return event;
         }
 
@@ -113,7 +113,7 @@ public enum SubscriptionType {
          * @param registry the session registry in which the message must be processed
          * @param session  the session in which the message is to be processed
          */
-        public final void register(final SessionRegistry registry, final Session session) {
+        public void register(final SessionRegistry registry, final Session session) {
             subscriptionType.register(registry, session, event);
         }
     }

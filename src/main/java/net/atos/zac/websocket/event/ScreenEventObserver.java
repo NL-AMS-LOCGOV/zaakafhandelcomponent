@@ -10,8 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
-import javax.ejb.EJB;
 import javax.enterprise.event.ObservesAsync;
+import javax.inject.Inject;
 import javax.websocket.Session;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +30,7 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-    @EJB
+    @Inject
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {

@@ -212,6 +212,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
+                <version>6.1.0.Final</version>
                 <configuration>
                     <feature-packs>
                         <feature-pack>
@@ -247,6 +248,9 @@
                     <cloud>
                         <type>kubernetes</type>
                     </cloud>
+                    <jvmArguments>
+                        <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</arg>
+                    </jvmArguments>
                 </configuration>
                 <executions>
                     <execution>

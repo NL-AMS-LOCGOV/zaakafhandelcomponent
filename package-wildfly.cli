@@ -16,3 +16,6 @@ data-source add \
     --driver-name=postgresql --user-name=${env.DB_USER} --password=${env.DB_PASSWORD} \
     --use-java-context=true \
     --statistics-enabled=${wildfly.datasources.statistics-enabled:${wildfly.statistics-enabled:false}}
+
+# Add system property to enable the usage of JsonB
+/system-property=resteasy.preferJacksonOverJsonB:add(value=false)

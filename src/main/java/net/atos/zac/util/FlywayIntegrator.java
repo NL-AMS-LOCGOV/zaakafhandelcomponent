@@ -10,12 +10,11 @@ import static javax.ejb.TransactionManagementType.BEAN;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
@@ -24,8 +23,7 @@ import org.flywaydb.core.api.MigrationInfo;
 /**
  * See http://are-you-ready.de/blog/2017/06/08/integrating-flyway-with-java-ee-and-using-its-datasource/
  */
-@Singleton
-@Startup
+
 @TransactionManagement(value = BEAN)
 public class FlywayIntegrator {
 
@@ -40,11 +38,9 @@ public class FlywayIntegrator {
     @Resource(lookup = "java:comp/env/jdbc/Datasource")
     private DataSource dataSource;
 
-    @PostConstruct
-    private void onStartup() {
-
+    public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
         if (dataSource == null) {
-            throw new EJBException("No datasource found to execute the db migrations!");
+            throw new RuntimeException("No datasource found to execute the db migrations!");
         }
 
         final Flyway flyway = Flyway.configure()

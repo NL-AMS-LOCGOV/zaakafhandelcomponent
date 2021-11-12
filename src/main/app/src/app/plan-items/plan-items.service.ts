@@ -15,7 +15,7 @@ import {PlanItem} from './model/plan-item';
 })
 export class PlanItemsService {
 
-    private basepath: string = '/zac/rest/planitems';
+    private basepath: string = '/rest/planitems';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
