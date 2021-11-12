@@ -11,8 +11,10 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
-import java.util.stream.Collectors;
 
+import javax.cache.annotation.CacheRemove;
+import javax.cache.annotation.CacheRemoveAll;
+import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -21,7 +23,9 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import net.atos.client.zgw.drc.DRCClient;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
+import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.zrc.ZRCClient;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -42,10 +46,13 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
  *
  */
 @ApplicationScoped
-public class ZGWApiService {
+public class ZGWApiService implements Caching {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
 
     @Inject
     @RestClient
@@ -134,36 +141,37 @@ public class ZGWApiService {
     }
 
     /**
-     * Find {@link RolOrganisatorischeEenheid} for {@link Zaak} with specific {@link AardVanRol}.
+     * Find {@link RolOrganisatorischeEenheid} for {@link Zaak} with behandelaar {@link AardVanRol}.
      *
-     * @param zaak       {@link Zaak}
-     * @param aardVanRol Required {@link AardVanRol}
+     * @param zaakUrl {@link URI}
      * @return {@link RolOrganisatorischeEenheid} or 'null'.
      */
-    public RolOrganisatorischeEenheid findRolOrganisatorischeEenheidForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
-        final Rol<?> rol = findRolForZaak(zaak, BetrokkeneType.ORGANISATORISCHE_EENHEID, aardVanRol);
-        return rol != null ? (RolOrganisatorischeEenheid) rol : null;
+    @CacheResult(cacheName = ZGW_ZAAK_GROEP_MANAGED)
+    public RolOrganisatorischeEenheid findGroepForZaak(final URI zaakUrl) {
+        return (RolOrganisatorischeEenheid) findRolForZaak(zaakUrl, BetrokkeneType.ORGANISATORISCHE_EENHEID, AardVanRol.BEHANDELAAR);
     }
 
     /**
-     * Find {@link RolMedewerker} for {@link Zaak} with specific {@link AardVanRol}.
+     * Find {@link RolMedewerker} for {@link Zaak} with behandelaar {@link AardVanRol}.
      *
-     * @param zaak       {@link Zaak}
-     * @param aardVanRol Required {@link AardVanRol}
+     * @param zaakUrl {@link URI}
      * @return {@link RolMedewerker} or 'null'.
      */
-    public RolMedewerker findRolMedewerkerForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
-        final Rol<?> rol = findRolForZaak(zaak, BetrokkeneType.MEDEWERKER, aardVanRol);
-        return rol != null ? (RolMedewerker) rol : null;
+    @CacheResult(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
+    public RolMedewerker findBehandelaarForZaak(final URI zaakUrl) {
+        return (RolMedewerker) findRolForZaak(zaakUrl, BetrokkeneType.MEDEWERKER, AardVanRol.BEHANDELAAR);
     }
 
-    private Rol<?> findRolForZaak(final Zaak zaak, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
+    private Rol<?> findRolForZaak(final URI zaakUrl, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {
+        final URI zaakType = zrcClientService.readZaak(zaakUrl).getZaaktype();
+        final Roltype roltype = ztcClientService.readRoltype(zaakType, aardVanRol);
         final RolListParameters rolListParameters = new RolListParameters();
-        rolListParameters.setZaak(zaak.getUrl());
+        rolListParameters.setZaak(zaakUrl);
         rolListParameters.setBetrokkeneType(betrokkeneType);
         rolListParameters.setRoltype(roltype.getUrl());
-        return zrcClient.rolList(rolListParameters).getSingleResult().orElse(null);
+        return zrcClientService.listRollen(rolListParameters)
+                .getSingleResult()
+                .orElse(null);
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
@@ -186,5 +194,25 @@ public class ZGWApiService {
             final LocalDate uiterlijkeEindDatumAfdoening = zaak.getStartdatum().plus(fataleDatum);
             zaak.setUiterlijkeEinddatumAfdoening(uiterlijkeEindDatumAfdoening);
         }
+    }
+
+    @CacheRemoveAll(cacheName = ZGW_ZAAK_GROEP_MANAGED)
+    public void clearZaakGroepManagedCache() {
+        cleared(ZGW_ZAAK_GROEP_MANAGED);
+    }
+
+    @CacheRemove(cacheName = ZGW_ZAAK_GROEP_MANAGED)
+    public void updateZaakgroepCache(final URI key) {
+        removed(ZGW_ZAAK_GROEP_MANAGED, key);
+    }
+
+    @CacheRemoveAll(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
+    public void clearZaakBehandelaarManagedCache() {
+        cleared(ZGW_ZAAK_BEHANDELAAR_MANAGED);
+    }
+
+    @CacheRemove(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
+    public void updateZaakbehandelaarCache(final URI key) {
+        removed(ZGW_ZAAK_BEHANDELAAR_MANAGED, key);
     }
 }

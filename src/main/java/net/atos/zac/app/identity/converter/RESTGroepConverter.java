@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.identity.model.RESTGroep;
@@ -38,6 +39,6 @@ public class RESTGroepConverter {
     }
 
     public RESTGroep convertGroupId(final String groepId) {
-        return groepId != null ? convertGroup(flowableService.readGroup(groepId)) : null;
+        return StringUtils.isNotEmpty(groepId) ? convertGroup(flowableService.readGroup(groepId)) : null;
     }
 }

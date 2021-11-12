@@ -9,6 +9,7 @@ import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
+import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.event.AbstractEventObserver;
@@ -25,10 +26,14 @@ public class CacheEventObserver extends AbstractEventObserver<CacheEvent> {
     @Inject
     private ZRCClientService zrcClientService;
 
+    @Inject
+    private ZGWApiService zgwApiService;
+
     public void onFire(final @ObservesAsync CacheEvent event) {
-        switch (event.getObjectType()){
+        switch (event.getObjectType()) {
             case ZAAKROL:
-                zrcClientService.updateZaakrolCache(event.getUrl());
+                zgwApiService.updateZaakbehandelaarCache(event.getUrl());
+                zgwApiService.updateZaakgroepCache(event.getUrl());
                 break;
             case ZAAKSTATUS:
                 zrcClientService.updateZaakstatusCache(event.getUrl());

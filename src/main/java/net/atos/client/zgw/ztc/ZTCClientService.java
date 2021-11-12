@@ -6,21 +6,12 @@
 package net.atos.client.zgw.ztc;
 
 import static java.lang.String.format;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_RESULTAATTYPE;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_STATUSTYPE;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_ROLTYPE;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_STATUSTYPE_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheId.ZTC_ZAAKTYPE_URL;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -35,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
+import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
@@ -55,8 +47,7 @@ import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
  * En bij managed caches geen sleutels anders dan URI en UID introduceren.
  */
 @ApplicationScoped
-public class ZTCClientService {
-    private static final Logger LOG = Logger.getLogger(ZTCClientService.class.getName());
+public class ZTCClientService implements Caching {
 
     @Inject
     @RestClient
@@ -257,12 +248,12 @@ public class ZTCClientService {
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_MANAGED)
     public void updateZaaktypeCache(final URI key) {
-        removed(ZTC_ZAAKTYPE_MANAGED, key.toString());
+        removed(ZTC_ZAAKTYPE_MANAGED, key);
     }
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_MANAGED)
     public void updateZaaktypeCache(final UUID key) {
-        removed(ZTC_ZAAKTYPE_MANAGED, key.toString());
+        removed(ZTC_ZAAKTYPE_MANAGED, key);
     }
 
     @CacheRemoveAll(cacheName = ZTC_STATUSTYPE)
@@ -277,7 +268,7 @@ public class ZTCClientService {
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
     public void updateZaaktypeStatustypeCache(final URI key) {
-        removed(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED, key.toString());
+        removed(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED, key);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_URL)
@@ -297,20 +288,12 @@ public class ZTCClientService {
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
     public void updateZaaktypeResultaattypeCache(final URI key) {
-        removed(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED, key.toString());
+        removed(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED, key);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
     public void clearZaaktypeRoltypeCache() {
         cleared(ZTC_ZAAKTYPE_ROLTYPE);
-    }
-
-    private void cleared(final String cache) {
-        LOG.info(String.format("Cleared %s cache", cache));
-    }
-
-    private void removed(final String cache, final String key) {
-        LOG.info(String.format("Removed from %s cache: %s", cache, key));
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

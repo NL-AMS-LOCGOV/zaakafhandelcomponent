@@ -18,7 +18,6 @@ import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
@@ -105,15 +104,14 @@ public class RESTZaakConverter {
         //restZaakView.communicatiekanaal
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findRolOrganisatorischeEenheidForZaak(zaak, AardVanRol.BEHANDELAAR);
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
         final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.groep = groepConverter.convertGroupId(groepId);
 
-        final RolMedewerker behandelaar = zgwApiService.findRolMedewerkerForZaak(zaak, AardVanRol.BEHANDELAAR);
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
         final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
         restZaak.rechten = getRechten(behandelaarId, groepId);
         return restZaak;
     }
