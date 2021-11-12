@@ -5,8 +5,6 @@
 
 package net.atos.client.zgw.zrc;
 
-import static net.atos.client.zgw.shared.cache.CacheId.ZRC_ZAAK_ROL_MANAGED;
-import static net.atos.client.zgw.shared.cache.CacheId.ZRC_STATUS_MANAGED;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
@@ -14,7 +12,6 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -28,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
+import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -48,8 +46,7 @@ import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
  * En bij managed caches geen sleutels anders dan URI en UID introduceren.
  */
 @ApplicationScoped
-public class ZRCClientService {
-    private static final Logger LOG = Logger.getLogger(ZRCClientService.class.getName());
+public class ZRCClientService implements Caching {
 
     @Inject
     @RestClient
@@ -101,10 +98,11 @@ public class ZRCClientService {
      * Update all instances of {@link Rol} for {@link Zaak}.
      * Replaces all current instances of {@link Rol} with the suplied instances.
      *
-     * @param current de huidige rollen
+     * @param zaakUrl de bij te werken zaak
      * @param rollen  de gewenste rollen
      */
-    public void updateRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    public void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen) {
+        final Collection<Rol<?>> current=listRollen(zaakUrl);
         deleteDeletedRollen(current, rollen);
         deleteUpdatedRollen(current, rollen);
         createUpdatedRollen(current, rollen);
@@ -202,7 +200,6 @@ public class ZRCClientService {
      * @param zaakURI URI of {@link Zaak}
      * @return List of {@link Rol}
      */
-    @CacheResult(cacheName = ZRC_ZAAK_ROL_MANAGED)
     public List<Rol<?>> listRollen(final URI zaakURI) {
         final RolListParameters rolListParameters = new RolListParameters();
         rolListParameters.setZaak(zaakURI);
@@ -254,24 +251,6 @@ public class ZRCClientService {
 
     @CacheRemove(cacheName = ZRC_STATUS_MANAGED)
     public void updateZaakstatusCache(final URI key) {
-        removed(ZRC_STATUS_MANAGED, key.toString());
-    }
-
-    @CacheRemoveAll(cacheName = ZRC_ZAAK_ROL_MANAGED)
-    public void clearZaakrolManagedCache() {
-        cleared(ZRC_ZAAK_ROL_MANAGED);
-    }
-
-    @CacheRemove(cacheName = ZRC_ZAAK_ROL_MANAGED)
-    public void updateZaakrolCache(final URI key) {
-        removed(ZRC_ZAAK_ROL_MANAGED, key.toString());
-    }
-
-    private void cleared(final String cache) {
-        LOG.info(String.format("Cleared %s cache", cache));
-    }
-
-    private void removed(final String cache, final String key) {
-        LOG.info(String.format("Removed from %s cache: %s", cache, key));
+        removed(ZRC_STATUS_MANAGED, key);
     }
 }

@@ -18,8 +18,8 @@ import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
+import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
@@ -44,6 +44,9 @@ public class RESTZaakOverzichtConverter {
     private RESTGroepConverter groepConverter;
 
     @Inject
+    private RESTMedewerkerConverter medewerkerConverter;
+
+    @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
 
@@ -61,16 +64,15 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uiterlijkedatumafdoening = zaak.getUiterlijkeEinddatumAfdoening();
 //      restZaakOverzichtView.aanvrager
 
-        // TODO ESUITEDEV-25829
-        // TODO ESUITEDEV-25802 Behandelaar en groep per zaak voor de werkvoorraad ophalen
-        // restZaakOverzicht.behandelaar = ~
-        // restZaakOverzicht.groep = getGroep();
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        restZaakOverzicht.groep = groepConverter.convertGroupId(groepId);
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrZaak
-        final RolOrganisatorischeEenheid groep = zgwApiService.findRolOrganisatorischeEenheidForZaak(zaak, AardVanRol.BEHANDELAAR);
-        final RolMedewerker behandelaar = zgwApiService.findRolMedewerkerForZaak(zaak, AardVanRol.BEHANDELAAR);
-        restZaakOverzicht.rechten = getRechten(behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null,
-                                               groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null);
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        restZaakOverzicht.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
+
+        restZaakOverzicht.rechten = getRechten(behandelaarId, groepId);
         return restZaakOverzicht;
     }
 

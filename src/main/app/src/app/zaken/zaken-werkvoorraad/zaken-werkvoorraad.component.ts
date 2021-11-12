@@ -108,9 +108,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
         this.zakenService.toekennenAanIngelogdeMedewerkerVanuitLijst(zaakOverzicht).subscribe(zaak => {
             zaakOverzicht.rechten = zaak.rechten;
-            // TODO de vraagtekens zijn overbodig als de Behandelaar weer gevuld wordt in de RESTOverzichtConverter
-            zaakOverzicht['behandelaar.naam'] = zaak.behandelaar?.naam;
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+            zaakOverzicht['behandelaar.naam'] = zaak.behandelaar.naam;
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
         });
     }
 }
