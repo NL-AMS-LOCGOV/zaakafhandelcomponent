@@ -245,6 +245,9 @@
                             <resolve-expressions>false</resolve-expressions>
                         </cli-session>
                     </cli-sessions>
+                    <extra-server-content-dirs>
+                        <extra-content>package-wildfly-extra-content</extra-content>
+                    </extra-server-content-dirs>
                     <cloud>
                         <type>kubernetes</type>
                     </cloud>

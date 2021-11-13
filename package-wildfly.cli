@@ -19,3 +19,9 @@ data-source add \
 
 # Add system property to enable the usage of JsonB
 /system-property=resteasy.preferJacksonOverJsonB:add(value=false)
+
+# Enable HTTPS
+/subsystem=elytron/key-store=keystore:add(relative-to=jboss.server.config.dir, path=keystore.jks, credential-reference={clear-text=password})
+/subsystem=elytron/key-manager=key-manager:add(key-store=keystore, credential-reference={clear-text=password})
+/subsystem=elytron/server-ssl-context=server-ssl-context:add(key-manager=key-manager)
+/subsystem=undertow/server=default-server/https-listener=https:add(ssl-context=server-ssl-context, socket-binding=https, proxy-address-forwarding=true)
