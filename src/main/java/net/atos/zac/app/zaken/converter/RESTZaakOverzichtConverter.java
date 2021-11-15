@@ -64,11 +64,11 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.uiterlijkedatumafdoening = zaak.getUiterlijkeEinddatumAfdoening();
 //      restZaakOverzichtView.aanvrager
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl()).orElse(null);
         final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaakOverzicht.groep = groepConverter.convertGroupId(groepId);
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl()).orElse(null);
         final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaakOverzicht.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
@@ -77,9 +77,10 @@ public class RESTZaakOverzichtConverter {
     }
 
     public List<RESTZaakOverzicht> convertZaakResults(final Results<Zaak> zaakResults, final Pagination pagination) {
-        return PaginationUtil.getZGWClientResults(zaakResults.getResults().stream()
-                                                          .map(this::convert)
-                                                          .collect(Collectors.toList()), pagination);
+        final List<RESTZaakOverzicht> zgwClientResults = PaginationUtil.getZGWClientResults(zaakResults.getResults().stream()
+                                                                                                    .map(this::convert)
+                                                                                                    .collect(Collectors.toList()), pagination);
+        return zgwClientResults;
     }
 
     private Map<RechtOperatie, Boolean> getRechten(final String behandelaarId, final String groepId) {

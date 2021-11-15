@@ -39,6 +39,11 @@ public class RESTGroepConverter {
     }
 
     public RESTGroep convertGroupId(final String groepId) {
-        return StringUtils.isNotEmpty(groepId) ? convertGroup(flowableService.readGroup(groepId)) : null;
+        if (StringUtils.isNotEmpty(groepId)) {
+            final Group group = flowableService.readGroup(groepId);
+            final RESTGroep restGroep = convertGroup(group);
+            return restGroep;
+        }
+        return null;
     }
 }

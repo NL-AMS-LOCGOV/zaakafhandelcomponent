@@ -45,7 +45,8 @@ public class RESTMedewerkerConverter {
     public RESTMedewerker convertUserId(final String medewerkerId) {
         if (medewerkerId != null) {
             final User user = flowableService.readUser(medewerkerId);
-            return convertUser(user);
+            final RESTMedewerker restMedewerker = convertUser(user);
+            return restMedewerker;
         }
         return null;
     }

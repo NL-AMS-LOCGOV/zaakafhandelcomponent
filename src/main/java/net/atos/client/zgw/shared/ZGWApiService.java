@@ -11,6 +11,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -43,7 +44,11 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 
 /**
- *
+ * Let op!
+ * <p>
+ * Methods met caching NOOIT van binnen de service aanroepen (anders werkt de caching niet).
+ * En bij managed caches geen sleutels anders dan URI en UID introduceren.
+ * Bij caches waarbij het resultaat null kan zijn Optional gebruiken want null wordt niet gecachet.
  */
 @ApplicationScoped
 public class ZGWApiService implements Caching {
@@ -147,8 +152,8 @@ public class ZGWApiService implements Caching {
      * @return {@link RolOrganisatorischeEenheid} or 'null'.
      */
     @CacheResult(cacheName = ZGW_ZAAK_GROEP_MANAGED)
-    public RolOrganisatorischeEenheid findGroepForZaak(final URI zaakUrl) {
-        return (RolOrganisatorischeEenheid) findRolForZaak(zaakUrl, BetrokkeneType.ORGANISATORISCHE_EENHEID, AardVanRol.BEHANDELAAR);
+    public Optional<RolOrganisatorischeEenheid> findGroepForZaak(final URI zaakUrl) {
+        return Optional.ofNullable((RolOrganisatorischeEenheid) findRolForZaak(zaakUrl, BetrokkeneType.ORGANISATORISCHE_EENHEID, AardVanRol.BEHANDELAAR));
     }
 
     /**
@@ -158,8 +163,8 @@ public class ZGWApiService implements Caching {
      * @return {@link RolMedewerker} or 'null'.
      */
     @CacheResult(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
-    public RolMedewerker findBehandelaarForZaak(final URI zaakUrl) {
-        return (RolMedewerker) findRolForZaak(zaakUrl, BetrokkeneType.MEDEWERKER, AardVanRol.BEHANDELAAR);
+    public Optional<RolMedewerker> findBehandelaarForZaak(final URI zaakUrl) {
+        return Optional.ofNullable((RolMedewerker) findRolForZaak(zaakUrl, BetrokkeneType.MEDEWERKER, AardVanRol.BEHANDELAAR));
     }
 
     private Rol<?> findRolForZaak(final URI zaakUrl, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {

@@ -2,6 +2,13 @@ package net.atos.client.zgw.shared.cache;
 
 import java.util.logging.Logger;
 
+/**
+ * Let op!
+ * <p>
+ * Methods met caching NOOIT van binnen de service aanroepen (anders werkt de caching niet).
+ * En bij managed caches geen sleutels anders dan URI en UID introduceren.
+ * Bij caches waarbij het resultaat null kan zijn Optional gebruiken want null wordt niet gecachet.
+ */
 public interface Caching {
     Logger LOG = Logger.getLogger(Caching.class.getName());
 

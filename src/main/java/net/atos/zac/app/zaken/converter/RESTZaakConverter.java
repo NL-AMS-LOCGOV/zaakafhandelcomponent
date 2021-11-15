@@ -104,11 +104,11 @@ public class RESTZaakConverter {
         //restZaakView.communicatiekanaal
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl()).orElse(null);
         final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.groep = groepConverter.convertGroupId(groepId);
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl()).orElse(null);
         final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
