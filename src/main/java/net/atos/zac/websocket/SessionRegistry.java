@@ -35,7 +35,7 @@ public class SessionRegistry {
      *
      * @return Set with active sessions
      */
-    public Set<Session> listSessions(final ScreenEvent event) { // TODO ESUITEDEV-??? Support wildcards?
+    public Set<Session> listSessions(final ScreenEvent event) { // TODO ESUITEDEV-25898 Support wildcard for the opcode?
         return Collections.unmodifiableSet(eventSessions.get(fix(event)));
     }
 
