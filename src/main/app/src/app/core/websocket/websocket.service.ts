@@ -27,9 +27,7 @@ export class WebsocketService implements OnDestroy {
 
     private readonly HOST: string = window.location.host;
 
-    private readonly CONTEXT: string = 'zac';
-
-    private readonly URL: string = this.PROTOCOL + '//' + this.HOST + '/' + this.CONTEXT + '/websocket';
+    private readonly URL: string = this.PROTOCOL + '//' + this.HOST + '/websocket';
 
     private connection$: WebSocketSubject<any>;
 

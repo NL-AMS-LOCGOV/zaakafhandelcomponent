@@ -24,7 +24,11 @@
         <flowable.version>6.7.0</flowable.version>
         <node.version>v14.15.3</node.version>
         <mockito.version>3.12.4</mockito.version>
-        <infinispan.version>12.1.4.Final</infinispan.version> <!-- Dependecies op WildFly 24.0.0.Final -->
+        <!-- Begin Dependecies on WildFly -->
+        <wildfly.version>24.0.1.Final</wildfly.version>
+        <infinispan.version>12.1.4.Final</infinispan.version>
+        <resteasy-multipart-provider.version>3.15.1.Final</resteasy-multipart-provider.version>
+        <!-- End Dependecies on WildFly -->
     </properties>
 
     <dependencies>
@@ -49,7 +53,7 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
-            <version>3.15.1.Final</version> <!-- Dependecies op WildFly 24.0.0.Final -->
+            <version>${resteasy-multipart-provider.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -205,7 +209,60 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-jar-maven-plugin</artifactId>
+                <version>6.1.0.Final</version>
+                <configuration>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-datasources-galleon-pack</artifactId>
+                            <version>2.0.5.Final</version>
+                        </feature-pack>
+                        <feature-pack>
+                            <groupId>org.keycloak</groupId>
+                            <artifactId>keycloak-adapter-galleon-pack</artifactId>
+                            <version>15.0.2</version>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <layer>jaxrs-server</layer>
+                        <layer>postgresql-driver</layer>
+                        <layer>keycloak-client-oidc</layer>
+                    </layers>
+                    <excluded-layers>
+                        <layer>deployment-scanner</layer>
+                    </excluded-layers>
+                    <cli-sessions>
+                        <cli-session>
+                            <script-files>
+                                <script>package-wildfly.cli</script>
+                            </script-files>
+                            <resolve-expressions>false</resolve-expressions>
+                        </cli-session>
+                    </cli-sessions>
+                    <extra-server-content-dirs>
+                        <extra-content>package-wildfly-extra-content</extra-content>
+                    </extra-server-content-dirs>
+                    <cloud>
+                        <type>kubernetes</type>
+                    </cloud>
+                    <jvmArguments>
+                        <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</arg>
+                    </jvmArguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
-<!--TEST-->

@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
 
 import com.google.common.collect.HashMultimap;
@@ -20,10 +20,10 @@ import com.google.common.collect.SetMultimap;
 import net.atos.zac.websocket.event.ScreenEvent;
 
 /**
- * This EJB is used to maintain a list of active sessions.
+ * This Registry is used to maintain a list of active sessions.
  * EventSessions contains all (from the browser) registered client sessions
  */
-@Singleton
+@ApplicationScoped
 public class SessionRegistry {
 
     private static final Pattern QUOTED = Pattern.compile("^\"(.*)\"$");

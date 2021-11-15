@@ -61,7 +61,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     private setupMenu(): void {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
-            new DownloadMenuItem('actie.downloaden', `/zac/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
+            new DownloadMenuItem('actie.downloaden', `/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
                 this.infoObject.bestandsnaam,
                 'save_alt')
         ];

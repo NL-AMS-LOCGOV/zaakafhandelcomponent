@@ -18,7 +18,7 @@ import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
 })
 export class TakenService {
 
-    private basepath: string = '/zac/rest/taken';
+    private basepath: string = '/rest/taken';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }

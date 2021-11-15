@@ -15,6 +15,7 @@ import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
+import {IdentityService} from '../../identity/identity.service';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -28,7 +29,7 @@ export class PlanItemDoComponent implements OnInit {
     private formulier: AbstractFormulier;
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
-                private router: Router, private navigation: NavigationService, private utilService: UtilService) {
+                private router: Router, private navigation: NavigationService, private utilService: UtilService, private identityService: IdentityService) {
     }
 
     ngOnInit(): void {
@@ -36,13 +37,14 @@ export class PlanItemDoComponent implements OnInit {
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier).startForm(this.planItem).build();
-
-        if (this.planItem.type == PlanItemType.HumanTask) {
-            this.formItems = this.formulier.form;
-        } else {
-            this.formItems = [[]];
-        }
+        this.identityService.getGroepen().subscribe(groepen => {
+            this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier).startForm(this.planItem, groepen).build();
+            if (this.planItem.type == PlanItemType.HumanTask) {
+                this.formItems = this.formulier.form;
+            } else {
+                this.formItems = [[]];
+            }
+        });
     }
 
     onFormSubmit(formGroup: FormGroup): void {

@@ -17,7 +17,7 @@ import {SessionStorageService} from '../shared/storage/session-storage.service';
 })
 export class IdentityService {
 
-    private basepath: string = '/zac/rest/identity';
+    private basepath: string = '/rest/identity';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private sessionStorageService: SessionStorageService) {
     }

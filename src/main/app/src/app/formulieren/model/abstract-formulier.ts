@@ -5,11 +5,12 @@
 
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {SelectGroepFormField} from '../../shared/material-form-builder/form-components/select/select-groep/select-groep-form-field';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {FormGroup, Validators} from '@angular/forms';
 import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {Taak} from '../../taken/model/taak';
+import {Groep} from '../../identity/model/groep';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 
 export abstract class AbstractFormulier {
 
@@ -55,10 +56,11 @@ export abstract class AbstractFormulier {
         return dataElementen;
     }
 
-    addGroepAssignment(): void {
+    addGroepAssignment(groepen: Groep[]): void {
         let groupForm = [
             [new HeadingFormField('taakToekenning', 'actie.toekennen', '2')],
-            [new SelectGroepFormField(this.planItem.groep, new FormFieldConfig([Validators.required]))]
+            [new SelectFormField('groep', 'groep.-kies-', this.planItem.groep,
+                'naam', groepen, new FormFieldConfig([Validators.required]))]
         ];
 
         this.form = [...this.form, ...groupForm];

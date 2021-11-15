@@ -48,10 +48,6 @@
         <auth-constraint>
             <role-name>zaakafhandelcomponent_user</role-name>
         </auth-constraint>
-        <!--        ToDo -->
-        <!--        <user-data-constraint>-->
-        <!--            <transport-guarantee>INTEGRAL</transport-guarantee>-->
-        <!--        </user-data-constraint>-->
     </security-constraint>
 
     <security-constraint>
@@ -70,6 +66,19 @@
             <url-pattern>/websocket</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>health</web-resource-name>
+            <description>For allowing health checks</description>
+            <url-pattern>/health</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <user-data-constraint>
+            <!-- Enable both HTTP and HTTPS access -->
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
     </security-constraint>
 
     <login-config>

@@ -17,7 +17,7 @@ import {Informatieobjecttype} from './model/informatieobjecttype';
 })
 export class InformatieObjectenService {
 
-    private basepath: string = '/zac/rest/informatieobjecten';
+    private basepath: string = '/rest/informatieobjecten';
     public uploadUrl: string = this.basepath + '/informatieobject/upload/{zaakUuid}';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {

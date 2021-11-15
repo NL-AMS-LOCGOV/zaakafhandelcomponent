@@ -15,7 +15,7 @@ import {catchError} from 'rxjs/operators';
 })
 export class NotitieService {
 
-    private basepath: string = '/zac/rest/notities';
+    private basepath: string = '/rest/notities';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }

@@ -42,7 +42,7 @@ import {ToolbarComponent} from './core/toolbar/toolbar.component';
     exports: [
         ToolbarComponent
     ],
-    providers: [{provide: APP_BASE_HREF, useValue: '/zac'}, {provide: LocationStrategy, useClass: PathLocationStrategy}],
+    providers: [{provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     bootstrap: [AppComponent]
 })
 export class AppModule {
