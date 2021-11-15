@@ -240,13 +240,13 @@
                     <cli-sessions>
                         <cli-session>
                             <script-files>
-                                <script>package-wildfly.cli</script>
+                                <script>configure-wildfly.cli</script>
                             </script-files>
                             <resolve-expressions>false</resolve-expressions>
                         </cli-session>
                     </cli-sessions>
                     <extra-server-content-dirs>
-                        <extra-content>package-wildfly-extra-content</extra-content>
+                        <extra-content>extra-content-wildfly</extra-content>
                     </extra-server-content-dirs>
                     <cloud>
                         <type>kubernetes</type>
