@@ -10,7 +10,6 @@ export enum FieldType {
     TEXTAREA = 'TEXTAREA',
     DATE = 'DATE',
     SELECT = 'SELECT',
-    SELECT_GROEP = 'SELECT_GROEP',
     GOOGLEMAPS = 'GOOGLEMAPS',
     READONLY = 'READONLY'
 }

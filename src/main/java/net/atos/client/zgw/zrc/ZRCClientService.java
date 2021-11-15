@@ -44,6 +44,7 @@ import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
  * <p>
  * Methods met caching NOOIT van binnen de service aanroepen (anders werkt de caching niet).
  * En bij managed caches geen sleutels anders dan URI en UID introduceren.
+ * Bij caches waarbij het resultaat null kan zijn Optional gebruiken want null wordt niet gecachet.
  */
 @ApplicationScoped
 public class ZRCClientService implements Caching {
