@@ -16,7 +16,6 @@ import {SelectComponent} from './form-components/select/select.component';
 import {GoogleMapsComponent} from './form-components/google-maps/google-maps.component';
 import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
-import {SelectGroepComponent} from './form-components/select/select-groep/select-groep.component';
 
 @Injectable({
     providedIn: 'root'
@@ -61,8 +60,6 @@ export class MaterialFormBuilderService {
                 return HeadingComponent;
             case FieldType.SELECT:
                 return SelectComponent;
-            case FieldType.SELECT_GROEP:
-                return SelectGroepComponent;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
             default:
