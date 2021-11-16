@@ -1,7 +1,7 @@
 {
   "realm": "${env.AUTH_REALM}",
   "resource": "${env.AUTH_RESOURCE}",
-  "auth-server-url": "${env.AUTH_SERVER}",
+  "auth-server-url": "${env.AUTH_SERVER}/auth/",
   "ssl-required": "external",
   "confidential-port": 443,
   "public-client": true,
