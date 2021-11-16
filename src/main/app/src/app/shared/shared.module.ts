@@ -28,6 +28,7 @@ import {MaterialFormBuilderModule} from './material-form-builder/material-form-b
 import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
+import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.comp
         StaticTextComponent,
         NotitiesComponent,
         StatusLabelComponent,
+        VerlopenLabelComponent,
         BehandelaarVeldComponent
     ],
     imports: [
@@ -75,6 +77,7 @@ import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.comp
         MaterialFormBuilderModule,
         NotitiesComponent,
         StatusLabelComponent,
+        VerlopenLabelComponent,
         BehandelaarVeldComponent
     ],
     providers: [

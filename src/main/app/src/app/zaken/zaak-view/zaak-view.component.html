@@ -57,12 +57,14 @@
                                                      [value]="zaak.registratiedatum|datum"></zac-static-text>
                                     <zac-static-text fxFlex.sm="25" [label]="'startdatum' | translate"
                                                      [value]="zaak.startdatum|datum"></zac-static-text>
-                                    <zac-static-text fxFlex.sm="25" [label]="'einddatumGepland' | translate"
-                                                     [value]="zaak.einddatumGepland|datum|empty"></zac-static-text>
+                                    <zac-verlopen-label fxFlex.sm="25" [label]="'einddatumGepland' | translate"
+                                                        [value]="zaak.einddatumGepland"
+                                                        [ended]="zaak.einddatum"></zac-verlopen-label>
                                     <zac-static-text fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum| datum | empty"></zac-static-text>
-                                    <zac-static-text fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
-                                                     [value]="zaak.uiterlijkeEinddatumAfdoening | datum | empty"></zac-static-text>
+                                    <zac-verlopen-label fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
+                                                        [value]="zaak.uiterlijkeEinddatumAfdoening"
+                                                        [ended]="zaak.einddatum"></zac-verlopen-label>
                                 </div>
 
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
