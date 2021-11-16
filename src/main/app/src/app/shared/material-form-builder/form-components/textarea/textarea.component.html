@@ -4,9 +4,10 @@
   -->
 
 <mat-form-field appearance="fill" class="full-width">
-    <mat-label>{{data.label | translate}}</mat-label>
+    <mat-label *ngIf="data.label">{{data.label | translate}}</mat-label>
 
-    <textarea [id]="data.id" matInput [formControl]="data.formControl" [required]="data.required" rows="5"></textarea>
+    <textarea [id]="data.id" matInput [formControl]="data.formControl" [required]="data.required"
+              cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15"></textarea>
 
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
