@@ -28,6 +28,7 @@ import {MaterialFormBuilderModule} from './material-form-builder/material-form-b
 import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
+import {EditComponent} from './edit/edit.component';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,8 @@ import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.comp
         StaticTextComponent,
         NotitiesComponent,
         StatusLabelComponent,
-        BehandelaarVeldComponent
+        BehandelaarVeldComponent,
+        EditComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -75,7 +77,8 @@ import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.comp
         MaterialFormBuilderModule,
         NotitiesComponent,
         StatusLabelComponent,
-        BehandelaarVeldComponent
+        BehandelaarVeldComponent,
+        EditComponent
     ],
     providers: [
         Title
