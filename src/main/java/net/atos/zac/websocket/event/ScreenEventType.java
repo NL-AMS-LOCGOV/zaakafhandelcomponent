@@ -287,8 +287,9 @@ public enum ScreenEventType {
                 return event(UPDATED, resource);
             case DELETE:
                 return event(DELETED, resource);
+            default:
+                return null;
         }
-        return null;
     }
 
     /**

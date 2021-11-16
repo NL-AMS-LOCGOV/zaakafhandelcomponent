@@ -16,24 +16,31 @@ import java.util.logging.Logger;
  */
 public enum Action {
 
-    CREATE("create"),
-    UPDATE("update"),
-    DELETE("destroy");
+    CREATE("create", null),
+    READ("read", "list"),
+    UPDATE("update", "partial_update"),
+    DELETE("destroy", null);
 
     private static final Logger LOG = Logger.getLogger(Action.class.getName());
 
     private final String code;
+
+    private final String alt;
 
     private static final Map<String, Action> VALUES = new HashMap<>();
 
     static {
         for (final Action value : values()) {
             VALUES.put(value.code, value);
+            if (value.alt != null) {
+                VALUES.put(value.alt, value);
+            }
         }
     }
 
-    Action(final String code) {
+    Action(final String code, final String alt) {
         this.code = code;
+        this.alt = alt;
     }
 
     public static Action value(final String code) {

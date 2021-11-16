@@ -54,15 +54,23 @@ public enum CacheEventType {
             case ZAKEN:
                 switch (resource.getType()) {
                     case ROL:
-                        events.add(CacheEventType.ZAAKROL.event(mainResource));
+                        switch (resource.getAction()) {
+                            case CREATE:
+                            case UPDATE:
+                            case DELETE:
+                                events.add(CacheEventType.ZAAKROL.event(mainResource));
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case STATUS:
                         switch (resource.getAction()) {
-                            case CREATE:
-                                // Not yet in any caches, ignore
+                            case UPDATE:
+                            case DELETE:
+                                events.add(CacheEventType.ZAAKSTATUS.event(resource));
                                 break;
                             default:
-                                events.add(CacheEventType.ZAAKSTATUS.event(resource));
                                 break;
                         }
                         break;
@@ -72,11 +80,10 @@ public enum CacheEventType {
                 switch (resource.getType()) {
                     case ZAAKTYPE:
                         switch (resource.getAction()) {
-                            case CREATE:
-                                // Not yet in any caches, ignore
-                                break;
-                            default:
+                            case UPDATE:
+                            case DELETE:
                                 events.add(CacheEventType.ZAAKTYPE.event(resource));
+                            default:
                                 break;
                         }
                         break;
