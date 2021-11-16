@@ -1,0 +1,22 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 *ngIf="data.length == 1" mat-dialog-title>1 zaak verdelen</h1>
+<h1 *ngIf="data.length != 1" mat-dialog-title>{{data.length}} zaken verdelen</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill" fxFlex="100">
+        <mat-label>Selecteer een medewerker</mat-label>
+        <mat-select>
+            <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)" [value]="medewerker.gebruikersnaam">
+                {{ medewerker.naam }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Annuleren</button>
+    <button [disabled]="!medewerker" mat-button color="primary" [mat-dialog-close]="medewerker" cdkFocusInitial>Verdelen</button>
+</div>

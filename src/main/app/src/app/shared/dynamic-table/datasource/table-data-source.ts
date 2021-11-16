@@ -75,6 +75,10 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
         this.tableSubject.complete();
     }
 
+    get data(): OBJECT[] {
+        return this.tableSubject.value;
+    }
+
     abstract load();
 
     protected getTableRequest(): TableRequest {

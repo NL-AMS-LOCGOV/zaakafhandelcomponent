@@ -16,6 +16,7 @@ import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZaakToekennenComponent} from './zaak-toekennen/zaak-toekennen.component';
 import {StoreModule} from '@ngrx/store';
 import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
+import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,8 @@ import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
         ZaakEditComponent,
         ZakenWerkvoorraadComponent,
         ZakenMijnComponent,
-        ZaakToekennenComponent
+        ZaakToekennenComponent,
+        ZakenVerdelenDialogComponent,
     ],
     exports: [
         ZaakVerkortComponent
@@ -35,7 +37,7 @@ import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
         ZakenRoutingModule,
         StoreModule.forFeature('zaken', {
             'zaakVerkort': zaakVerkortReducer
-        })
+        }),
     ]
 })
 export class ZakenModule {

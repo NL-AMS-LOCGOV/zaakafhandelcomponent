@@ -64,6 +64,13 @@ public class IdentityRESTService {
     }
 
     @GET
+    @Path("medewerkers")
+    public List<RESTMedewerker> getMedewerkers() {
+        final List<User> users = flowableService.listUsers();
+        return medewerkerConverter.convertUsers(users);
+    }
+
+    @GET
     @Path("ingelogdemedewerker")
     public RESTIngelogdeMedewerker getIngelogdeMedewerker() {
         return ingelogdeMedewerkerConverter.convertIngelogdeMedewerker(ingelogdeMedewerker);
