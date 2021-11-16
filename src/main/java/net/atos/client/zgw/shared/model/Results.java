@@ -31,7 +31,7 @@ public class Results<T> {
 
     private final int count;
 
-    private final List<T> results;
+    private List<T> results;
 
     private final URI next;
 
@@ -63,6 +63,10 @@ public class Results<T> {
 
     public List<T> getResults() {
         return results != null ? results : Collections.EMPTY_LIST;
+    }
+
+    public void setResults(final List<T> results) {
+        this.results = results;
     }
 
     public Optional<T> getSingleResult() {

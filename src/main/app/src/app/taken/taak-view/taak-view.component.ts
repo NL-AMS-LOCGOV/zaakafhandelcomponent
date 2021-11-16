@@ -107,6 +107,13 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
+    editTaak(value: string, field: string): void {
+        this.taak[field] = value;
+        this.takenService.bewerken(this.taak).subscribe((taak) => {
+            this.init(taak);
+        });
+    }
+
     ophalenTaak() {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.getTaak(data['taak'].id).subscribe(taak => {

@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -173,6 +174,22 @@ public class ZRCClientService implements Caching {
      */
     public Results<Zaak> listZaken(final ZaakListParameters filter) {
         return zrcClient.zaakList(filter);
+    }
+
+    /**
+     * List instances of {@link Zaak} filtered which are open.
+     *
+     * @param filters {@link ZaakListParameters}.
+     * @return List of {@link Zaak} instances.
+     */
+    // TODO ESUITEDEV-25904 Oplossing vinden voor paginering van open zaken
+    public Results<Zaak> listOpenZaken(final ZaakListParameters filters) {
+        final Results<Zaak> zakenResult = zrcClient.zaakList(filters);
+        final List<Zaak> zaken = zakenResult.getResults().stream().filter(zaak -> zaak.getArchiefnominatie() == null)
+                .collect(Collectors.toList());
+        zakenResult.setResults(zaken);
+
+        return zakenResult;
     }
 
     /**

@@ -1,0 +1,20 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<div class="wrapper" (click)="editing = true">
+    <label class="label">
+        {{label}}
+        <mat-icon>edit</mat-icon>
+    </label>
+    <div *ngIf="!editing" class="text-content">
+        {{value}}
+        <div class="edit-icon">
+            <mat-icon>edit</mat-icon>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="editing">
+    <mfb-form [formFields]="editField" [config]="formConfig" (formSubmit)="save($event)"></mfb-form>
+</div>

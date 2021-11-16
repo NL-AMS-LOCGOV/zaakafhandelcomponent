@@ -152,7 +152,7 @@ public class ZakenRESTService {
         final TableRequest tableState = TableRequest.getTableState(request);
 
         if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClientService.listZaken(getZaakListParameters(tableState));
+            final Results<Zaak> zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
             final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
                     .convertZaakResults(zaakResults, tableState.getPagination());
             return new TableResponse<>(zaakOverzichten, zaakResults.getCount());

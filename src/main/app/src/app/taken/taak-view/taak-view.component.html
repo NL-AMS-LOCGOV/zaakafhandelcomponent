@@ -15,9 +15,6 @@
         <mat-card>
             <mat-card-header>
                 <mat-card-title>{{'taak' | translate}}</mat-card-title>
-                <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'actie.bewerken' | translate }}">
-                    <mat-icon>edit</mat-icon>
-                </button>
             </mat-card-header>
             <mat-card-content>
                 <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
@@ -42,7 +39,7 @@
                     </div>
 
                     <div fxFlex="100">
-                        <zac-static-text [label]="'toelichting' | translate" [value]="taak.toelichting | empty"></zac-static-text>
+                        <zac-edit [label]="'toelichting' | translate" [value]="taak.toelichting | empty" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
                     </div>
                 </div>
             </mat-card-content>
