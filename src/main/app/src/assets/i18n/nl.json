@@ -70,6 +70,11 @@
   "versie": "Versie",
   "waarde": "Waarde",
   "werkvoorraad.van": "Werkvoorraad van",
+  "selecteer.medewerker": "Selecteer een medewerker",
+  "selecteer": "Selecteer",
+  "deselecteer": "Deselecteer",
+  "selecteer.alles": "Selecteer alles",
+  "deselecteer.alles": "Deselecteer alles",
   " 4 ": ">>--> ENTITEITEN <--<<",
   "informatieobject": "Document",
   "enkelvoudigInformatieObjecten": "Documenten",
@@ -138,6 +143,7 @@
   "actie.taak.toekennen": "Taak toekennen",
   "actie.terug": "Terug",
   "actie.toekennen": "Toekennen",
+  "actie.verdelen": "Verdelen",
   "actie.toevoegen": "Toevoegen",
   "actie.uitloggen": "Uitloggen",
   "actie.versturen": "Versturen",
@@ -161,5 +167,7 @@
   "msg.taak.toegekend": "De taak is toegekend aan {{behandelaar}}",
   "msg.taak.vrijgegeven": "De taak is vrijgegeven",
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "De zaak is vrijgegeven"
+  "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
+  "msg.verdelen.zaak": "Zaak verdelen",
+  "msg.verdelen.zaken": "{{aantal}} zaken verdelen"
 }

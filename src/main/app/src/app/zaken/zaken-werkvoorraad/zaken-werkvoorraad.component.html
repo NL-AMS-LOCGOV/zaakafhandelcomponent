@@ -55,14 +55,14 @@
                 <mat-checkbox (change)="$event ? masterToggle() : null"
                               [checked]="selection.hasValue() && isAllSelected()"
                               [indeterminate]="selection.hasValue() && !isAllSelected()"
-                              [aria-label]="checkboxLabel()">
+                              [aria-label]="checkboxLabel() | translate">
                 </mat-checkbox>
             </th>
             <td mat-cell *matCellDef="let row">
                 <mat-checkbox (click)="$event.stopPropagation()"
                               (change)="$event ? selection.toggle(row) : null"
                               [checked]="selection.isSelected(row)"
-                              [aria-label]="checkboxLabel(row)">
+                              [aria-label]="checkboxLabel(row) | translate">
                 </mat-checkbox>
             </td>
         </ng-container>
@@ -146,7 +146,8 @@
 </div>
 
 <div [hidden]="!isSelected()">
-    <button mat-mini-fab aria-label="Verdelen" class="verdelenBtn" color="primary" (click)="toggleVerdelenScherm()" title="{{ 'verdelen' | translate }}">
-        <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="accent">assignment_ind</mat-icon>
+    <button mat-raised-button class="verdelenBtn" color="accent" (click)="toggleVerdelenScherm()" title="{{ 'actie.verdelen' | translate }}">
+        {{'actie.verdelen' | translate}}
+        <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary">assignment_ind</mat-icon>
     </button>
 </div>

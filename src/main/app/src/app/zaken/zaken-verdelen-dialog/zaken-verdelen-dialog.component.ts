@@ -25,10 +25,9 @@ export class ZakenVerdelenDialogComponent {
         console.log(data);
     }
 
-    onNoClick(): void {
+    close(): void {
         this.dialogRef.close();
     }
-
 
     ngOnInit(): void {
         this.medewerkers = this.identityService.getMedewerkers();

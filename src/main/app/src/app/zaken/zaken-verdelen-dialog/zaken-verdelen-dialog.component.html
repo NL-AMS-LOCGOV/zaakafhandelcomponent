@@ -3,11 +3,11 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<h1 *ngIf="data.length == 1" mat-dialog-title>1 zaak verdelen</h1>
-<h1 *ngIf="data.length != 1" mat-dialog-title>{{data.length}} zaken verdelen</h1>
+<h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.zaak' | translate}}</h1>
+<h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
 <div mat-dialog-content>
     <mat-form-field appearance="fill" fxFlex="100">
-        <mat-label>Selecteer een medewerker</mat-label>
+        <mat-label>{{'selecteer.medewerker' | translate}}</mat-label>
         <mat-select>
             <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)" [value]="medewerker.gebruikersnaam">
                 {{ medewerker.naam }}
@@ -17,6 +17,6 @@
 
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Annuleren</button>
-    <button [disabled]="!medewerker" mat-button color="primary" [mat-dialog-close]="medewerker" cdkFocusInitial>Verdelen</button>
+    <button [disabled]="!medewerker" mat-button color="primary" [mat-dialog-close]="medewerker" cdkFocusInitial>{{'actie.verdelen' | translate}}</button>
+    <button mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
 </div>

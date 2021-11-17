@@ -147,10 +147,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     /** The label for the checkbox on the passed row */
     checkboxLabel(row?: ZaakOverzicht): string {
         if (!row) {
-            return `${this.isAllSelected() ? 'Selecteer' : 'Deselecteer'} all`;
+            return `${this.isAllSelected() ? 'deselecteer' : 'selecteer'}.alles`;
         }
 
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.identificatie}`;
+        return `${this.selection.isSelected(row) ? 'deselecteer' : 'selecteer'}`;
     }
 
     pageChange($e): void {

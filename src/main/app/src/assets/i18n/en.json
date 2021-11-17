@@ -70,6 +70,11 @@
   "versie": "Version",
   "waarde": "Value",
   "werkvoorraad.van": "Queue for",
+  "selecteer.medewerker": "Select an employee",
+  "selecteer": "Select",
+  "deselecteer": "Deselect",
+  "selecteer.alles": "Select all",
+  "deselecteer.alles": "Deselect all",
   " 4 ": ">>--> ENTITEITEN <--<<",
   "informatieobject": "Document",
   "enkelvoudigInformatieObjecten": "Documents",
@@ -139,6 +144,7 @@
   "actie.terug": "Back",
   "actie.toekennen": "Assign",
   "actie.toevoegen": "Add",
+  "actie.verdelen": "Allocate",
   "actie.uitloggen": "Log out",
   "actie.versturen": "Send",
   "actie.verwijderen": "Delete",
@@ -161,5 +167,7 @@
   "msg.taak.toegekend": "The task has been assigned to {{behandelaar}}",
   "msg.taak.vrijgegeven": "The task has been released",
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "The case has been released"
+  "msg.zaak.vrijgegeven": "The case has been released",
+  "msg.verdelen.zaak": "Allocate case",
+  "msg.verdelen.zaken": "Allocate {{aantal}} cases"
 }
