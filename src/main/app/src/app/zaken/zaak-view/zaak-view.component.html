@@ -14,9 +14,6 @@
                 <mat-card-header>
                     <mat-card-title>
                         {{'zaak' | translate}}
-                        <button mat-icon-button routerLink="edit" class="edit-button" title="{{ 'actie.bewerken' | translate }}">
-                            <mat-icon>edit</mat-icon>
-                        </button>
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
@@ -57,12 +54,14 @@
                                                      [value]="zaak.registratiedatum|datum"></zac-static-text>
                                     <zac-static-text fxFlex.sm="25" [label]="'startdatum' | translate"
                                                      [value]="zaak.startdatum|datum"></zac-static-text>
-                                    <zac-static-text fxFlex.sm="25" [label]="'einddatumGepland' | translate"
-                                                     [value]="zaak.einddatumGepland|datum|empty"></zac-static-text>
+                                    <zac-verlopen-label fxFlex.sm="25" [label]="'einddatumGepland' | translate"
+                                                        [value]="zaak.einddatumGepland"
+                                                        [ended]="zaak.einddatum"></zac-verlopen-label>
                                     <zac-static-text fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum| datum | empty"></zac-static-text>
-                                    <zac-static-text fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
-                                                     [value]="zaak.uiterlijkeEinddatumAfdoening | datum | empty"></zac-static-text>
+                                    <zac-verlopen-label fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
+                                                        [value]="zaak.uiterlijkeEinddatumAfdoening"
+                                                        [ended]="zaak.einddatum"></zac-verlopen-label>
                                 </div>
 
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
@@ -86,12 +85,14 @@
                                     <mat-divider></mat-divider>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-static-text [label]="'omschrijving' | translate"
-                                                     [value]="zaak.omschrijving | empty"></zac-static-text>
+                                    <zac-edit [label]="'omschrijving' | translate"
+                                              [value]="zaak.omschrijving | empty"
+                                              (onSave)="editZaak($event, 'omschrijving')"></zac-edit>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-static-text [label]="'toelichting' | translate"
-                                                     [value]="zaak.toelichting | empty"></zac-static-text>
+                                    <zac-edit [label]="'toelichting' | translate"
+                                              [value]="zaak.toelichting | empty"
+                                              (onSave)="editZaak($event, 'toelichting')"></zac-edit>
                                 </div>
                             </div>
                         </mat-tab>

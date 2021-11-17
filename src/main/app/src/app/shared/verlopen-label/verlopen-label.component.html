@@ -1,0 +1,11 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="verlopen-label">
+    <label class="verlopen-label-label">{{label}}</label>
+    <div class="verlopen-label-content">{{value | datum | empty}}
+        <mat-icon class="verlopen-label-icon" *ngIf="bepaalVerlopen(value,ended)">report_problem</mat-icon>
+    </div>
+</div>

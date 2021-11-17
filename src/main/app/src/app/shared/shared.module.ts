@@ -29,6 +29,7 @@ import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
 import {EditComponent} from './edit/edit.component';
+import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import {EditComponent} from './edit/edit.component';
         NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
-        EditComponent
+        EditComponent,
+        VerlopenLabelComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -78,6 +80,7 @@ import {EditComponent} from './edit/edit.component';
         NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
+        VerlopenLabelComponent,
         EditComponent
     ],
     providers: [
