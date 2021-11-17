@@ -16,10 +16,10 @@ import java.util.logging.Logger;
  */
 public enum Action {
 
-    CREATE("create", null),
+    CREATE("create"),
     READ("read", "list"),
     UPDATE("update", "partial_update"),
-    DELETE("destroy", null);
+    DELETE("destroy");
 
     private static final Logger LOG = Logger.getLogger(Action.class.getName());
 
@@ -41,6 +41,10 @@ public enum Action {
     Action(final String code, final String alt) {
         this.code = code;
         this.alt = alt;
+    }
+
+    Action(final String code) {
+        this(code,null);
     }
 
     public static Action value(final String code) {

@@ -7,6 +7,7 @@ package net.atos.client.zgw.shared.cache.event;
 
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -49,47 +50,70 @@ public enum CacheEventType {
      * @return the set of events that the parameters map to
      */
     public static Set<CacheEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
-        final Set<CacheEvent> events = new HashSet<>();
         switch (channel) {
             case ZAKEN:
-                switch (resource.getType()) {
-                    case ROL:
-                        switch (resource.getAction()) {
-                            case CREATE:
-                            case UPDATE:
-                            case DELETE:
-                                events.add(CacheEventType.ZAAKROL.event(mainResource));
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    case STATUS:
-                        switch (resource.getAction()) {
-                            case UPDATE:
-                            case DELETE:
-                                events.add(CacheEventType.ZAAKSTATUS.event(resource));
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                }
-                break;
+                return getChannelZakenEvents(mainResource, resource);
             case ZAAKTYPEN:
-                switch (resource.getType()) {
-                    case ZAAKTYPE:
-                        switch (resource.getAction()) {
-                            case UPDATE:
-                            case DELETE:
-                                events.add(CacheEventType.ZAAKTYPE.event(resource));
-                            default:
-                                break;
-                        }
-                        break;
-                }
-                break;
+                return getChannelZaaktypenEvents(resource);
+            default:
+                return Collections.emptySet();
         }
-        return events;
+    }
+
+    private static Set<CacheEvent> getChannelZakenEvents(final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+        switch (resource.getType()) {
+            case ROL:
+                return getChannelZakenResourceRolEvents(mainResource, resource);
+            case STATUS:
+                return getChannelZakenResourceStatusEvents(resource);
+            default:
+                return Collections.emptySet();
+        }
+    }
+
+    private static Set<CacheEvent> getChannelZakenResourceRolEvents(final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+        switch (resource.getAction()) {
+            case CREATE:
+            case UPDATE:
+            case DELETE:
+                final Set<CacheEvent> events = new HashSet<>();
+                events.add(CacheEventType.ZAAKROL.event(mainResource));
+                return events;
+            default:
+                return Collections.emptySet();
+        }
+    }
+
+    private static Set<CacheEvent> getChannelZakenResourceStatusEvents(final Notificatie.Resource resource) {
+        switch (resource.getAction()) {
+            case UPDATE:
+            case DELETE:
+                final Set<CacheEvent> events = new HashSet<>();
+                events.add(CacheEventType.ZAAKSTATUS.event(resource));
+                return events;
+            default:
+                return Collections.emptySet();
+        }
+    }
+
+    private static Set<CacheEvent> getChannelZaaktypenEvents(final Notificatie.Resource resource) {
+        switch (resource.getType()) {
+            case ZAAKTYPE:
+                return getChannelZaaktypenResourceZaaktypeEvents(resource);
+            default:
+                return Collections.emptySet();
+        }
+    }
+
+    private static Set<CacheEvent> getChannelZaaktypenResourceZaaktypeEvents(final Notificatie.Resource resource) {
+        switch (resource.getAction()) {
+            case UPDATE:
+            case DELETE:
+                final Set<CacheEvent> events = new HashSet<>();
+                events.add(CacheEventType.ZAAKTYPE.event(resource));
+                return events;
+            default:
+                return Collections.emptySet();
+        }
     }
 }
