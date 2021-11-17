@@ -14,6 +14,8 @@ import {Zaaktype} from './model/zaaktype';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {ZaakOverzicht} from './model/zaak-overzicht';
 import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
+import {Medewerker} from '../identity/model/medewerker';
+import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -79,6 +81,15 @@ export class ZakenService {
         zaakBody.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, zaakBody).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    verdelen(zaken: ZaakOverzicht[], medewerker: Medewerker): Observable<void> {
+        const zaakBody: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
+        zaakBody.uuids = zaken.map(zaak => zaak.uuid);
+        zaakBody.behandelaarGebruikersnaam = medewerker.gebruikersnaam;
+        return this.http.put<void>(`${this.basepath}/verdelen`, zaakBody).pipe(
             catchError(this.handleError)
         );
     }

@@ -47,6 +47,7 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
+import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
@@ -186,6 +187,18 @@ public class ZakenRESTService {
 
         zrcClientService.updateRollen(zaak.getUrl(), rollen);
         return zaakConverter.convert(zaak);
+    }
+
+    @PUT
+    @Path("verdelen")
+    public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        final User user = flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam);
+        verdeelGegevens.uuids.forEach(uuid -> {
+            final Zaak zaak = zrcClientService.readZaak(uuid);
+            final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
+            rollen.add(bepaalRolMedewerker(user, zaak));
+            zrcClientService.updateRollen(zaak.getUrl(), rollen);
+        });
     }
 
     @PUT

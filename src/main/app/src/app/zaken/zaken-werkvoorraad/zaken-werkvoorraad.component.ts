@@ -153,25 +153,21 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return `${this.selection.isSelected(row) ? 'deselecteer' : 'selecteer'}`;
     }
 
-    pageChange($e): void {
-        console.log($e);
-       this.selection.clear();
+    pageChange(): void {
+        this.selection.clear();
     }
 
-
-    toggleVerdelenScherm(): void {
+    openVerdelenScherm(): void {
         let zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
             width: '300px',
-            data: zaken,
+            data: zaken
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if(result){
+            if (result) {
                 this.zoekZaken();
             }
-            console.log('The dialog was closed');
-            console.log(result);
         });
     }
 
