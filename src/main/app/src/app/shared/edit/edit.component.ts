@@ -31,7 +31,9 @@ export class EditComponent implements OnInit {
 
     ngOnInit(): void {
         const textarea = new TextareaFormField(this.label, null, this.value);
-        this.formConfig = new FormConfig('actie.opslaan', 'actie.annuleren');
+        this.formConfig = new FormConfig();
+        this.formConfig.saveButtonIcon = 'check';
+        this.formConfig.cancelButtonIcon = 'close';
         this.editField = [[textarea]];
     }
 

@@ -39,7 +39,7 @@
                     </div>
 
                     <div fxFlex="100">
-                        <zac-edit [label]="'toelichting' | translate" [value]="taak.toelichting | empty" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
+                        <zac-edit [label]="'toelichting' | translate" [value]="taak.toelichting" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
                     </div>
                 </div>
             </mat-card-content>
@@ -47,7 +47,9 @@
 
         <mat-card fxFlex="100" *ngIf="formulier">
             <mat-card-content>
-                <mfb-form *ngIf="formulier" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form" [config]="formConfig"></mfb-form>
+                <div class="form">
+                    <mfb-form *ngIf="formulier" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form" [config]="formConfig"></mfb-form>
+                </div>
             </mat-card-content>
         </mat-card>
     </mat-sidenav-content>

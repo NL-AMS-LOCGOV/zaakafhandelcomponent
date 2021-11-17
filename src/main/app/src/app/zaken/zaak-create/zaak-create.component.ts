@@ -68,7 +68,11 @@ export class ZaakCreateComponent implements OnInit {
         if (formGroup) {
             const zaak: Zaak = new Zaak();
             Object.keys(formGroup.controls).forEach((key) => {
-                zaak[key] = formGroup.controls[key].value;
+                if (key == 'vertrouwelijkheidaanduiding') {
+                    zaak[key] = formGroup.controls[key].value?.value;
+                } else {
+                    zaak[key] = formGroup.controls[key].value;
+                }
             });
             this.zakenService.postZaak(zaak).subscribe(newZaak => {
                 this.router.navigate(['/zaken/', newZaak.uuid]);

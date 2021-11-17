@@ -34,6 +34,12 @@ export class IdentityService {
         );
     }
 
+    getMedewerkers(): Observable<Medewerker[]> {
+        return this.http.get<Medewerker[]>(`${this.basepath}/medewerkers`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     getIngelogdeMedewerker(): Observable<Medewerker> {
         const ingelogdeMedewerker = this.sessionStorageService.getSessionStorage('ingelogdeMedewerker');
         if (ingelogdeMedewerker) {

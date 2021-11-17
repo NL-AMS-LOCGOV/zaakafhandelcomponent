@@ -29,7 +29,6 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../shared/notities/model/notitietype.enum';
-import {ThemePalette} from '@angular/material/core';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
@@ -78,7 +77,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
-            this.zaak = data['zaak'];
+            this.init(data['zaak']);
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
                 () => this.updateZaak());
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
@@ -87,7 +86,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 () => this.loadInformatieObjecten());
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
-            this.setupMenu();
+
             this.loadTaken();
             this.loadInformatieObjecten();
         }));
@@ -98,6 +97,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.toonAfgerondeTaken = this.sessionStorageService.getSessionStorage('toonAfgerondeTaken');
 
+    }
+
+    init(zaak: Zaak): void {
+        this.zaak = zaak;
+        this.setupMenu();
     }
 
     ngAfterViewInit() {
@@ -161,10 +165,17 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
+    editZaak(value: string, field: string): void {
+        const patchData: Zaak = new Zaak();
+        patchData[field] = value;
+        this.zakenService.updateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
+    }
+
     updateZaak(): void {
         this.zakenService.getZaak(this.zaak.uuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.setupMenu();
+            this.init(zaak);
         });
     }
 
@@ -185,9 +196,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     vrijgeven = (): void => {
         this.zaak.behandelaar = null;
-        this.zakenService.toekennen(this.zaak).subscribe(() => {
+        this.zakenService.toekennen(this.zaak).subscribe((zaak) => {
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
-            this.ngOnInit();
+            this.init(zaak);
         });
     };
 
@@ -207,19 +218,5 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.takenDataSource.filter = this.takenFilter;
         this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
-    }
-
-    bepaalChipKleur(taak: Taak): ThemePalette {
-        if (taak.status === 'AFGEROND') {
-            return 'accent';
-        } else if (taak.status === 'TOEGEKEND') {
-            return 'primary';
-        } else {
-            return undefined;
-        }
-    }
-
-    bepaalChipSelected(taak: Taak): boolean {
-        return taak.status === 'AFGEROND' || taak.status === 'TOEGEKEND';
     }
 }

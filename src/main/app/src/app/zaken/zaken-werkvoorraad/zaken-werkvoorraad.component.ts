@@ -19,6 +19,9 @@ import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {ZaakRechten} from '../model/zaak-rechten';
+import {SelectionModel} from '@angular/cdk/collections';
+import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -30,6 +33,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
     dataSource: ZakenWerkvoorraadDatasource;
+    selection = new SelectionModel<ZaakOverzicht>(true, []);
 
     @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
 
@@ -42,7 +46,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return ZaakRechten;
     }
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService) {
+    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -83,6 +87,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
 
         this.dataSource.columns = [
+            new TableColumn('select', 'select', true, null, true),
             new TableColumn('zaak.identificatie', 'identificatie', true),
             new TableColumn('status', 'status', true),
             this.dataSource.zoekParameters.selectie === 'groep' ?
@@ -101,6 +106,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     zoekZaken() {
         this.dataSource.zoekZaken();
         this.setColumns();
+        this.selection.clear();
     }
 
     toekennenAanIngelogdeMedewerker(zaakOverzicht: ZaakOverzicht, $event) {
@@ -112,4 +118,63 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
         });
     }
+
+    /** Whether the number of selected elements matches the total number of rows. */
+    isAllSelected() {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected === numRows;
+    }
+
+    isSelected(){
+        return this.selection.selected.length > 0
+    }
+
+    countSelected(){
+        return this.selection.selected.length;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle() {
+        if (this.isAllSelected()) {
+            this.selection.clear();
+            return;
+        }
+
+        this.selection.select(...this.dataSource.data);
+    }
+
+    /** The label for the checkbox on the passed row */
+    checkboxLabel(row?: ZaakOverzicht): string {
+        if (!row) {
+            return `${this.isAllSelected() ? 'Selecteer' : 'Deselecteer'} all`;
+        }
+
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.identificatie}`;
+    }
+
+    pageChange($e): void {
+        console.log($e);
+       this.selection.clear();
+    }
+
+
+    toggleVerdelenScherm(): void {
+        let zaken = this.selection.selected;
+        const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
+            width: '300px',
+            data: zaken,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if(result){
+                this.zoekZaken();
+            }
+            console.log('The dialog was closed');
+            console.log(result);
+        });
+    }
+
+
+
 }

@@ -315,6 +315,10 @@ public class FlowableService {
                 .list();
     }
 
+    public List<User> listUsers() {
+        return idmIdentityService.createUserQuery().list();
+    }
+
     public Map<String, String> readTaakdata(final String taskId) {
         final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariable(taskId, VAR_TASK_TAAKDATA);
         if (taakdata != null) {

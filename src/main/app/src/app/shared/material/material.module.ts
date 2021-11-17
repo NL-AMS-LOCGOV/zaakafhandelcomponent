@@ -26,6 +26,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
     exports: [
@@ -50,7 +51,8 @@ import {MatBadgeModule} from '@angular/material/badge';
         MatRadioModule,
         MatGridListModule,
         MatSlideToggleModule,
-        MatBadgeModule
+        MatBadgeModule,
+        MatDialogModule
     ],
     providers: [{
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
