@@ -79,7 +79,9 @@ import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component'
         MaterialFormBuilderModule,
         NotitiesComponent,
         StatusLabelComponent,
-        BehandelaarVeldComponent
+        BehandelaarVeldComponent,
+        VerlopenLabelComponent,
+        EditComponent
     ],
     providers: [
         Title

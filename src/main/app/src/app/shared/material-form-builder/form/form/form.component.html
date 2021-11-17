@@ -15,9 +15,11 @@
 
     <div fxLayout="row" fxLayoutAlign="start">
         <button mat-flat-button color="primary" [disabled]="formGroup.invalid" type="submit">
+            <mat-icon *ngIf="config.saveButtonIcon">{{config.saveButtonIcon}}</mat-icon>
             {{config.saveButtonText | translate}}
         </button>
-        <button *ngIf="config.cancelButtonText" mat-flat-button type="button" (click)="cancel()">
+        <button *ngIf="config.cancelButtonText || config.cancelButtonIcon" mat-flat-button type="button" (click)="cancel()">
+            <mat-icon *ngIf="config.cancelButtonIcon">{{config.cancelButtonIcon}}</mat-icon>
             {{config.cancelButtonText | translate}}
         </button>
     </div>
