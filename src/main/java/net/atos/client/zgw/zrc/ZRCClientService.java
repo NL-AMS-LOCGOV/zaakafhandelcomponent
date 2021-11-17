@@ -10,7 +10,9 @@ import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJW
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -190,6 +193,22 @@ public class ZRCClientService implements Caching {
         zakenResult.setResults(zaken);
 
         return zakenResult;
+    }
+
+    /**
+     * List instances of {@link Zaak} filtered which are closed.
+     *
+     * @param filters {@link ZaakListParameters}.
+     * @return List of {@link Zaak} instances.
+     */
+    public Results<Zaak> listClosedZaken(final ZaakListParameters filters) {
+        final Set<Archiefnominatie> archiefnominaties = new HashSet<>();
+        archiefnominaties.add(Archiefnominatie.BLIJVEND_BEWAREN);
+        archiefnominaties.add(Archiefnominatie.VERNIETIGEN);
+
+        filters.setArchiefnominatieIn(archiefnominaties);
+
+        return zrcClient.zaakList(filters);
     }
 
     /**

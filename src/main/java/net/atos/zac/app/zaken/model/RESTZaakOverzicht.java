@@ -21,6 +21,8 @@ public class RESTZaakOverzicht extends AbstractRESTObject {
 
     public LocalDate startdatum;
 
+    public LocalDate einddatum;
+
     public String zaaktype;
 
     public String status;
@@ -32,4 +34,7 @@ public class RESTZaakOverzicht extends AbstractRESTObject {
     public LocalDate uiterlijkedatumafdoening;
 
     public RESTGroep groep;
+
+    public RESTZaakResultaat resultaat;
+
 }

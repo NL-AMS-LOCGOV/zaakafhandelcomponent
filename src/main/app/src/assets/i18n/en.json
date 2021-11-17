@@ -16,6 +16,7 @@
   "title.zaak.wijzigen": "Edit case | {{zaak}}",
   "title.zaken.mijn": "My cases",
   "title.zaken.werkvoorraad": "Cases queue",
+  "title.zaken.afgehandeld": "Closed cases",
   " 2 ": ">>--> DATUM EN TIJD VELDEN <--<<",
   "creatiedatum": "Date created",
   "creatiedatumTijd": "Time created",

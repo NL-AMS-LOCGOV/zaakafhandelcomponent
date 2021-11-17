@@ -59,6 +59,14 @@ export class ZakenService {
         );
     }
 
+    getAfgehandeldeZaken(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
+        return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/afgehandeld`, {
+            params: ZakenService.getTableParams(request)
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     getZaaktypes(): Observable<Zaaktype[]> {
         return this.http.get<Zaaktype[]>(`${this.basepath}/zaaktypes`).pipe(
             catchError(this.handleError)

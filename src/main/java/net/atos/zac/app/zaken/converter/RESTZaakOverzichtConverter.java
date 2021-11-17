@@ -38,6 +38,9 @@ public class RESTZaakOverzichtConverter {
     private ZGWApiService zgwApiService;
 
     @Inject
+    private RESTZaakResultaatConverter zaakResultaatConverter;
+
+    @Inject
     private RESTZaakStatusConverter restZaakStatusConverter;
 
     @Inject
@@ -55,6 +58,7 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.identificatie = zaak.getIdentificatie();
         restZaakOverzicht.uuid = zaak.getUuid().toString();
         restZaakOverzicht.startdatum = zaak.getStartdatum();
+        restZaakOverzicht.einddatum = zaak.getEinddatum();
         restZaakOverzicht.toelichting = zaak.getToelichting();
         restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         final RESTZaakStatus status = restZaakStatusConverter.convert(zaak.getStatus());
@@ -69,10 +73,14 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.groep = groepConverter.convertGroupId(groepId);
 
         final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl()).orElse(null);
-        final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie()
+                .getIdentificatie() : null;
         restZaakOverzicht.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
         restZaakOverzicht.rechten = getRechten(behandelaarId, groepId);
+
+        restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
+
         return restZaakOverzicht;
     }
 

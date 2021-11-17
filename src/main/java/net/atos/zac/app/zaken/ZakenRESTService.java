@@ -162,6 +162,21 @@ public class ZakenRESTService {
     }
 
     @GET
+    @Path("afgehandeld")
+    public TableResponse<RESTZaakOverzicht> getAfgerondeZaken(@Context final HttpServletRequest request) {
+        final TableRequest tableState = TableRequest.getTableState(request);
+
+        if (ingelogdeMedewerker.isInAnyGroup()) {
+            final Results<Zaak> zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
+            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
+                    .convertZaakResults(zaakResults, tableState.getPagination());
+            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
+        } else {
+            return new TableResponse<>(Collections.emptyList(), 0);
+        }
+    }
+
+    @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> getZaaktypes() {
         return ztcClientService.listZaaktypen(configurationService.readDefaultCatalogusURI()).stream()
