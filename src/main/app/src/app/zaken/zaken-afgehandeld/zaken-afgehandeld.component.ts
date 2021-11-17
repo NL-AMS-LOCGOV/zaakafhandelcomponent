@@ -65,8 +65,6 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
         const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum', true);
         einddatum.pipe = DatumPipe;
 
-        //besluit toevoegen (indien mogelijk)
-
         this.dataSource.columns = [
             new TableColumn('zaak.identificatie', 'identificatie', true),
             this.dataSource.zoekParameters.selectie === 'groep' ?

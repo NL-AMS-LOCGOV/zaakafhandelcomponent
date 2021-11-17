@@ -149,31 +149,13 @@ public class ZakenRESTService {
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTZaakOverzicht> getWerkvoorraadZaken(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                    .convertZaakResults(zaakResults, tableState.getPagination());
-            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-        } else {
-            return new TableResponse<>(Collections.emptyList(), 0);
-        }
+        return findZaakOverzichten(request, true);
     }
 
     @GET
     @Path("afgehandeld")
     public TableResponse<RESTZaakOverzicht> getAfgerondeZaken(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                    .convertZaakResults(zaakResults, tableState.getPagination());
-            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-        } else {
-            return new TableResponse<>(Collections.emptyList(), 0);
-        }
+        return findZaakOverzichten(request, false);
     }
 
     @GET
@@ -238,6 +220,25 @@ public class ZakenRESTService {
         zgwApiService.clearZaakBehandelaarManagedCache();
         zgwApiService.clearZaakGroepManagedCache();
         return "all caches cleared";
+    }
+
+    private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
+            final boolean getOpenZaken) {
+        final TableRequest tableState = TableRequest.getTableState(request);
+
+        if (ingelogdeMedewerker.isInAnyGroup()) {
+            final Results<Zaak> zaakResults;
+            if (getOpenZaken) {
+                zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
+            } else {
+                zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
+            }
+            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
+                    .convertZaakResults(zaakResults, tableState.getPagination());
+            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
+        } else {
+            return new TableResponse<>(Collections.emptyList(), 0);
+        }
     }
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
