@@ -31,7 +31,9 @@ public class RESTZaakOverzicht extends AbstractRESTObject {
 
     public RESTMedewerker behandelaar;
 
-    public LocalDate uiterlijkedatumafdoening;
+    public LocalDate einddatumGepland;
+
+    public LocalDate uiterlijkeEinddatumAfdoening;
 
     public RESTGroep groep;
 

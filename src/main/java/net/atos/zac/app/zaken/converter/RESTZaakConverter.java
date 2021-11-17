@@ -8,14 +8,13 @@ package net.atos.zac.app.zaken.converter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -104,12 +103,16 @@ public class RESTZaakConverter {
         //restZaakView.communicatiekanaal
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl()).orElse(null);
-        final String groepId = groep != null ? groep.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        final String groepId = zgwApiService.findGroepForZaak(zaak.getUrl())
+                .filter(Objects::nonNull)
+                .map(groep -> groep.getBetrokkeneIdentificatie().getIdentificatie())
+                .orElse(null);
         restZaak.groep = groepConverter.convertGroupId(groepId);
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl()).orElse(null);
-        final String behandelaarId = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        final String behandelaarId = zgwApiService.findBehandelaarForZaak(zaak.getUrl())
+                .filter(Objects::nonNull)
+                .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
+                .orElse(null);
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
         restZaak.rechten = getRechten(behandelaarId, groepId);

@@ -40,15 +40,13 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
             zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'doel', 'identificatie');
 
-            const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
-            startdatum.pipe = DatumPipe;
+            const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
 
-            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
-            einddatumGepland.pipe = DatumPipe;
+            const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
 
-            const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
-                'uiterlijkeDatumAfdoening');
-            uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
+            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland').pipe(DatumPipe,'einddatum'); // TODO ESUITEDEV-25900
+
+            const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening','uiterlijkeEinddatumAfdoening').pipe(DatumPipe); // TODO ESUITEDEV-25900
 
             this.dataSource.columns = [
                 new TableColumn('zaak.identificatie', 'identificatie', true),
@@ -56,6 +54,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
                 zaaktypeColumn,
                 new TableColumn('groep', 'groep.naam', false),
                 startdatum,
+                einddatum,
                 einddatumGepland,
                 new TableColumn('aanvrager', 'aanvrager', true),
                 uiterlijkeEinddatumAfdoening,

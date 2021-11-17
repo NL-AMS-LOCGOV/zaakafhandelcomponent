@@ -76,15 +76,13 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
-        startdatum.pipe = DatumPipe;
+        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
 
-        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
-        einddatumGepland.pipe = DatumPipe;
+        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
 
-        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
-            'uiterlijkeDatumAfdoening');
-        uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
+        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland').pipe(DatumPipe); // TODO ESUITEDEV-25900
+
+        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening').pipe(DatumPipe); // TODO ESUITEDEV-25900
 
         this.dataSource.columns = [
             new TableColumn('select', 'select', true, null, true),
@@ -94,6 +92,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 new TableColumn('zaaktype', 'zaaktype', true) :
                 new TableColumn('groep', 'groep.naam', true),
             startdatum,
+            einddatum,
             einddatumGepland,
             new TableColumn('aanvrager', 'aanvrager', true),
             new TableColumn('behandelaar', 'behandelaar.naam', true),
@@ -126,11 +125,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return numSelected === numRows;
     }
 
-    isSelected(){
-        return this.selection.selected.length > 0
+    isSelected() {
+        return this.selection.selected.length > 0;
     }
 
-    countSelected(){
+    countSelected() {
         return this.selection.selected.length;
     }
 
@@ -170,7 +169,5 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             }
         });
     }
-
-
 
 }
