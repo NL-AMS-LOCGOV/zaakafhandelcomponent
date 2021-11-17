@@ -86,12 +86,12 @@
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit [label]="'omschrijving' | translate"
-                                              [value]="zaak.omschrijving | empty"
+                                              [value]="zaak.omschrijving"
                                               (onSave)="editZaak($event, 'omschrijving')"></zac-edit>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit [label]="'toelichting' | translate"
-                                              [value]="zaak.toelichting | empty"
+                                              [value]="zaak.toelichting"
                                               (onSave)="editZaak($event, 'toelichting')"></zac-edit>
                                 </div>
                             </div>
