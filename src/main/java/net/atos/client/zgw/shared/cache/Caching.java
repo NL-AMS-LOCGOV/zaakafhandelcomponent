@@ -46,10 +46,10 @@ public interface Caching {
     String ZTC_ZAAKTYPE_URL = "ztc-zaaktype-url";
 
     default void cleared(final String cache) {
-        LOG.info(String.format("Cleared %s cache", cache));
+        LOG.fine(() -> String.format("Cleared %s cache", cache));
     }
 
     default <KEY> void removed(final String cache, final KEY key) {
-        LOG.info(String.format("Removed from %s cache: %s", cache, key.toString()));
+        LOG.fine(() -> String.format("Removed from %s cache: %s", cache, key.toString()));
     }
 }

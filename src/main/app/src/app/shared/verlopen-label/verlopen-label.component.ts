@@ -11,7 +11,7 @@ import {StaticTextComponent} from '../static-text/static-text.component';
 @Component({
     selector: 'zac-verlopen-label',
     templateUrl: './verlopen-label.component.html',
-    styleUrls: ['./verlopen-label.component.less']
+    styleUrls: ['../static-text/static-text.component.less','./verlopen-label.component.less']
 })
 export class VerlopenLabelComponent extends StaticTextComponent implements OnInit {
 
