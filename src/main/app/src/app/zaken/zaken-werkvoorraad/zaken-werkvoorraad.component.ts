@@ -165,6 +165,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                if (this.selection.selected.length === 1) {
+                    this.utilService.openSnackbar('msg.verdeeld.zaak');
+                } else {
+                    this.utilService.openSnackbar('msg.verdeeld.zaken', {aantal: this.selection.selected.length});
+                }
                 this.zoekZaken();
             }
         });
