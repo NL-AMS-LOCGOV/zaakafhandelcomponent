@@ -63,7 +63,7 @@ public class RESTTaakConverter {
         if (task instanceof Task) {
             restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
             restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
-            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeIdentificatieForTask(task.getId());
+            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
         }
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
