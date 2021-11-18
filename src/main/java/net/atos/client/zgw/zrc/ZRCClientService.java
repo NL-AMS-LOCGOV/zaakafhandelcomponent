@@ -44,11 +44,11 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 
 /**
- * Let op!
+ * Careful!
  * <p>
- * Methods met caching NOOIT van binnen de service aanroepen (anders werkt de caching niet).
- * En bij managed caches geen sleutels anders dan URI en UID introduceren.
- * Bij caches waarbij het resultaat null kan zijn Optional gebruiken want null wordt niet gecachet.
+ * Never call methods with caching annotations from within the service (or it will not work).
+ * Do not introduce caches with keys other than URI and UUID.
+ * Use Optional for caches that need to hold nulls (Infinispan does not cache nulls).
  */
 @ApplicationScoped
 public class ZRCClientService implements Caching {
