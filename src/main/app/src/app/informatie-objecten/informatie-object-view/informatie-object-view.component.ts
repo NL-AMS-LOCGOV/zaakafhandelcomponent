@@ -48,6 +48,8 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
 
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 () => this.loadInformatieObject());
+            this.websocketService.addListener(Opcode.DELETED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+                () => this.loadInformatieObject());
 
             this.setupMenu();
             this.loadZaken();
@@ -56,6 +58,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
 
     ngOnDestroy() {
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
+        this.websocketService.removeListeners(Opcode.DELETED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
     }
 
     private setupMenu(): void {

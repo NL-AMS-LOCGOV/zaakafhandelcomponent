@@ -80,6 +80,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.init(data['zaak']);
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
                 () => this.updateZaak());
+            this.websocketService.addListener(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid,
+                () => this.updateZaak());
+            this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+                () => this.updateZaak());
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 () => this.loadTaken());
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
@@ -122,6 +126,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid);
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid);
     }

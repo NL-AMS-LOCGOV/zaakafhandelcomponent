@@ -40,10 +40,13 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
         this.initToelichtingVeld();
         this.websocketService.addListenerMetSnackbar(Opcode.UPDATED, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());
+        this.websocketService.addListenerMetSnackbar(Opcode.DELETED, ObjectType.TAAK, this.taak.id,
+            () => this.updateTaak());
     }
 
     ngOnDestroy() {
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.TAAK, this.taak.id);
+        this.websocketService.removeListeners(Opcode.DELETED, ObjectType.TAAK, this.taak.id);
     }
 
     onFormSubmit(formGroup: FormGroup): void {

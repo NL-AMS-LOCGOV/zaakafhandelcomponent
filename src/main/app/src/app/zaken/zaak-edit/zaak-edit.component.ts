@@ -39,11 +39,17 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
         this.zaak = this.route.snapshot.data['zaak'];
         this.websocketService.addListenerMetSnackbar(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
             () => this.updateZaak());
+        this.websocketService.addListenerMetSnackbar(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid,
+            () => this.updateZaak());
+        this.websocketService.addListenerMetSnackbar(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+            () => this.updateZaak());
         this.initForm();
     }
 
     ngOnDestroy(): void {
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid);
     }
 
     private initForm() {
