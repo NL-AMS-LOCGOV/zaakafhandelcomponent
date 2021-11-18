@@ -75,7 +75,7 @@ public class TakenRESTService {
                 .listTasksForGroups(ingelogdeMedewerker.getGroupIds(), TaakSortering.fromValue(tableState.getSort().getPredicate()),
                                     tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
                                     tableState.getPagination().getPageSize());
-        final List<RESTTaak> taken = taakConverter.convertTasks(tasks);
+        final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
         return new TableResponse<>(taken, flowableService.countTasksForGroups(ingelogdeMedewerker.getGroupIds()));
     }
 
@@ -88,7 +88,7 @@ public class TakenRESTService {
                                                                             tableState.getSort().getDirection(),
                                                                             tableState.getPagination().getFirstResult(),
                                                                             tableState.getPagination().getPageSize());
-        final List<RESTTaak> taken = taakConverter.convertTasks(tasks);
+        final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
         return new TableResponse<>(taken, flowableService.countTasksOwnedByMedewerker(ingelogdeMedewerker.getGebruikersnaam()));
     }
 
@@ -97,7 +97,7 @@ public class TakenRESTService {
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> getTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
         final List<TaskInfo> tasks = flowableService.listTaskInfosForZaak(zaakUUID);
-        return taakConverter.convertTasks(tasks);
+        return taakConverter.convertTaskInfoList(tasks);
     }
 
     @GET
@@ -107,7 +107,7 @@ public class TakenRESTService {
         final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForTask(taskId);
         final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, task.getTaskDefinitionKey());
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
-        return taakConverter.convertTask(task, taakFormulieren.getBehandelFormulier(), taakdata);
+        return taakConverter.convertTaskInfo(task, taakFormulieren.getBehandelFormulier(), taakdata);
     }
 
     @PATCH
@@ -119,7 +119,7 @@ public class TakenRESTService {
                                                      restTaak.groep != null ? restTaak.groep.id : null);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
 
-        return taakConverter.convertTask(task);
+        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
@@ -132,7 +132,7 @@ public class TakenRESTService {
                                                      null);
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
 
-        return taakConverter.convertTask(task);
+        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
@@ -141,11 +141,11 @@ public class TakenRESTService {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         Task task = flowableService.readTask(restTaak.id);
-        taakConverter.convertTaak(restTaak, task);
+        taakConverter.convertRESTTaak(restTaak, task);
         task = flowableService.updateTask(task);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertTask(task);
+        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
@@ -156,7 +156,7 @@ public class TakenRESTService {
         final TaskInfo taskInfo = flowableService.completeTask(restTaak.id);
         eventingService.send(TAAK.updated(taskInfo));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertTask(taskInfo);
+        return taakConverter.convertTaskInfo(taskInfo);
     }
 
     private void taakBehandelaarGewijzigd(final Task taak, final UUID zaakUuid) {

@@ -52,49 +52,42 @@ public class RESTTaakConverter {
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
 
-    public List<RESTTaak> convertTasks(final List<? extends TaskInfo> tasks) {
+    public List<RESTTaak> convertTaskInfoList(final List<? extends TaskInfo> tasks) {
         return tasks.stream()
-                .map(this::convertTask)
+                .map(this::convertTaskInfo)
                 .collect(Collectors.toList());
     }
 
-    public RESTTaak convertTask(final TaskInfo task) {
-        final RESTTaak restTaak = convertTaskInfo(task);
-        if (task instanceof Task) {
-            restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
-            restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
-            restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
-        }
+    public RESTTaak convertTaskInfo(final TaskInfo task) {
+        final RESTTaak restTaak = new RESTTaak();
+        restTaak.id = task.getId();
+        restTaak.naam = task.getName();
+        restTaak.toelichting = task.getDescription();
+        restTaak.creatiedatumTijd = convertToZonedDateTime(task.getCreateTime());
+        restTaak.toekenningsdatumTijd = convertToZonedDateTime(task.getClaimTime());
+        restTaak.streefdatum = convertToLocalDate(task.getDueDate());
+        restTaak.behandelaar = medewerkerConverter.convertGebruikersnaam(task.getAssignee());
+        restTaak.groep = groepConverter.convertGroupId(extractGroupId(task.getIdentityLinks()));
+        restTaak.status = convertToStatus(task);
+        restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
+        restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
+        restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         restTaak.rechten = getRechten(task);
         return restTaak;
     }
 
-    public RESTTaak convertTask(final TaskInfo task, final String taakBehandelFormulier, final Map<String, String> taakdata) {
-        final RESTTaak restTaak = convertTask(task);
+    public RESTTaak convertTaskInfo(final TaskInfo task, final String taakBehandelFormulier, final Map<String, String> taakdata) {
+        final RESTTaak restTaak = convertTaskInfo(task);
         restTaak.taakBehandelFormulier = taakBehandelFormulier;
         restTaak.taakdata = taakdata;
         return restTaak;
     }
 
-    public void convertTaak(final RESTTaak restTaak, final Task task) {
+    public void convertRESTTaak(final RESTTaak restTaak, final Task task) {
         task.setDescription(restTaak.toelichting);
         task.setDueDate(convertToDate(restTaak.streefdatum));
-    }
-
-    private RESTTaak convertTaskInfo(final TaskInfo taskInfo) {
-        final RESTTaak restTaak = new RESTTaak();
-        restTaak.id = taskInfo.getId();
-        restTaak.naam = taskInfo.getName();
-        restTaak.toelichting = taskInfo.getDescription();
-        restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());
-        restTaak.toekenningsdatumTijd = convertToZonedDateTime(taskInfo.getClaimTime());
-        restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
-        restTaak.behandelaar = medewerkerConverter.convertGebruikersnaam(taskInfo.getAssignee());
-        restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
-        restTaak.status = convertToStatus(taskInfo);
-        return restTaak;
     }
 
     private static String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
