@@ -9,6 +9,7 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {IdentityService} from '../../identity/identity.service';
 import {Observable} from 'rxjs';
 import {Medewerker} from '../../identity/model/medewerker';
+import {ZakenService} from '../zaken.service';
 
 @Component({
     selector: 'zaken-verdelen-dialog',
@@ -18,11 +19,14 @@ import {Medewerker} from '../../identity/model/medewerker';
 export class ZakenVerdelenDialogComponent {
 
     medewerker: Medewerker;
-    medewerkers: Observable<Medewerker[]>
+    medewerkers: Observable<Medewerker[]>;
+    loading: boolean;
 
     constructor(
-        public dialogRef: MatDialogRef<ZakenVerdelenDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[], private identityService: IdentityService) {
-        console.log(data);
+        public dialogRef: MatDialogRef<ZakenVerdelenDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
+        private zakenService: ZakenService,
+        private identityService: IdentityService) {
     }
 
     close(): void {
@@ -35,5 +39,13 @@ export class ZakenVerdelenDialogComponent {
 
     setMedewerker(medewerker): void {
         this.medewerker = medewerker;
+    }
+
+    verdeel(): void {
+        this.dialogRef.disableClose = true;
+        this.loading = true;
+        this.zakenService.verdelen(this.data, this.medewerker).subscribe(() => {
+            this.dialogRef.close(this.medewerker);
+        });
     }
 }

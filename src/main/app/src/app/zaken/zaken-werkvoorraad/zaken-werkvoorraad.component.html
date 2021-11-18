@@ -139,14 +139,14 @@
                    [length]="dataSource.totalItems"
                    [pageIndex]="0"
                    [pageSize]="25"
-                   (page)="pageChange($event)"
+                   (page)="pageChange()"
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    sticky>
     </mat-paginator>
 </div>
 
 <div [hidden]="!isSelected()">
-    <button mat-raised-button class="verdelenBtn" color="accent" (click)="toggleVerdelenScherm()" title="{{ 'actie.verdelen' | translate }}">
+    <button mat-raised-button class="verdelenBtn" color="accent" (click)="openVerdelenScherm()" title="{{ 'actie.verdelen' | translate }}">
         {{'actie.verdelen' | translate}}
         <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary">assignment_ind</mat-icon>
     </button>

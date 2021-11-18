@@ -47,6 +47,7 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
+import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
@@ -149,31 +150,13 @@ public class ZakenRESTService {
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTZaakOverzicht> getWerkvoorraadZaken(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                    .convertZaakResults(zaakResults, tableState.getPagination());
-            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-        } else {
-            return new TableResponse<>(Collections.emptyList(), 0);
-        }
+        return findZaakOverzichten(request, true);
     }
 
     @GET
     @Path("afgehandeld")
     public TableResponse<RESTZaakOverzicht> getAfgerondeZaken(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        if (ingelogdeMedewerker.isInAnyGroup()) {
-            final Results<Zaak> zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                    .convertZaakResults(zaakResults, tableState.getPagination());
-            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-        } else {
-            return new TableResponse<>(Collections.emptyList(), 0);
-        }
+        return findZaakOverzichten(request, false);
     }
 
     @GET
@@ -204,6 +187,18 @@ public class ZakenRESTService {
 
         zrcClientService.updateRollen(zaak.getUrl(), rollen);
         return zaakConverter.convert(zaak);
+    }
+
+    @PUT
+    @Path("verdelen")
+    public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        final User user = flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam);
+        verdeelGegevens.uuids.forEach(uuid -> {
+            final Zaak zaak = zrcClientService.readZaak(uuid);
+            final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
+            rollen.add(bepaalRolMedewerker(user, zaak));
+            zrcClientService.updateRollen(zaak.getUrl(), rollen);
+        });
     }
 
     @PUT
@@ -238,6 +233,25 @@ public class ZakenRESTService {
         zgwApiService.clearZaakBehandelaarManagedCache();
         zgwApiService.clearZaakGroepManagedCache();
         return "all caches cleared";
+    }
+
+    private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
+            final boolean getOpenZaken) {
+        final TableRequest tableState = TableRequest.getTableState(request);
+
+        if (ingelogdeMedewerker.isInAnyGroup()) {
+            final Results<Zaak> zaakResults;
+            if (getOpenZaken) {
+                zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
+            } else {
+                zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
+            }
+            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
+                    .convertZaakResults(zaakResults, tableState.getPagination());
+            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
+        } else {
+            return new TableResponse<>(Collections.emptyList(), 0);
+        }
     }
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {

@@ -8,7 +8,7 @@
 <div mat-dialog-content>
     <mat-form-field appearance="fill" fxFlex="100">
         <mat-label>{{'selecteer.medewerker' | translate}}</mat-label>
-        <mat-select>
+        <mat-select [disabled]="loading">
             <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)" [value]="medewerker.gebruikersnaam">
                 {{ medewerker.naam }}
             </mat-option>
@@ -17,6 +17,11 @@
 
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="!medewerker" mat-button color="primary" [mat-dialog-close]="medewerker" cdkFocusInitial>{{'actie.verdelen' | translate}}</button>
-    <button mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+    <button [disabled]="!medewerker || loading" mat-button color="primary" (click)="verdeel()">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.verdelen' | translate}}
+    </button>
+    <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
 </div>

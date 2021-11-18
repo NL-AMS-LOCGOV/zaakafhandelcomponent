@@ -113,26 +113,23 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     }
 
     private applyValuePipes(data: OBJECT[]): void {
-        const dynamicPipe = new DynamicPipe();
-
         this.columns.forEach(column => {
-            var model = column.model.split('.');
-            data.forEach(dataObj => {
-                let i = 0, value, obj = dataObj;
-                while (i < model.length) {
-                    if (obj) {
-                        obj = obj.hasOwnProperty(model[i]) ? obj[model[i]] : null;
-                    }
-                    i++;
-                }
-                value = obj;
-                if (column.pipe) {
-                    dataObj[column.model] = dynamicPipe.transform(value, column.pipe, column.pipeArg);
-                } else {
-                    dataObj[column.model] = value;
-                }
+            data.forEach(row => {
+                row[column.model] = column.transform(this.getValue(column.model, row), pipeArg => this.getValue(pipeArg, row));
             });
         });
+    }
+
+    private getValue(columnModel: string, row: OBJECT): OBJECT {
+        var model = columnModel.split('.');
+        let i = 0, value = row;
+        while (i < model.length) {
+            if (value) {
+                value = value.hasOwnProperty(model[i]) ? value[model[i]] : null;
+            }
+            i++;
+        }
+        return value;
     }
 
     public setViewChilds(paginator: MatPaginator, sort: MatSort): void {

@@ -13,7 +13,7 @@ import {StaticTextComponent} from '../static-text/static-text.component';
     templateUrl: './verlopen-label.component.html',
     styleUrls: ['../static-text/static-text.component.less','./verlopen-label.component.less']
 })
-export class VerlopenLabelComponent extends StaticTextComponent implements OnInit {
+export class VerlopenLabelComponent extends StaticTextComponent implements OnInit { // TODO ESUITEDEV-25900 opruimen
 
     @Input() ended: string;
 

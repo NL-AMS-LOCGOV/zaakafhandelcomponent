@@ -46,11 +46,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
 
-        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM);
-        creatieDatum.pipe = DatumPipe;
+        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM).pipe(DatumPipe);
 
-        const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
-        streefDatum.pipe = DatumPipe;
+        const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM).pipe(DatumPipe);
 
         this.dataSource.columns = [
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),

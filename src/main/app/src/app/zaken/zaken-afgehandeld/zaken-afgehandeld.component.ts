@@ -52,20 +52,13 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     }
 
     private setColumns() {
-        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum');
-        startdatum.pipe = DatumPipe;
+        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
 
-        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland');
-        einddatumGepland.pipe = DatumPipe;
+        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum', true).pipe(DatumPipe);
 
-        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening',
-            'uiterlijkeDatumAfdoening');
-        uiterlijkeEinddatumAfdoening.pipe = DatumPipe;
+        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland').pipe(DatumPipe);
 
-        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum', true);
-        einddatum.pipe = DatumPipe;
-
-        //besluit toevoegen (indien mogelijk)
+        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening').pipe(DatumPipe);
 
         this.dataSource.columns = [
             new TableColumn('zaak.identificatie', 'identificatie', true),
@@ -73,8 +66,8 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
                 new TableColumn('zaaktype', 'zaaktype', true) :
                 new TableColumn('groep', 'groep.naam', true),
             startdatum,
-            einddatumGepland,
             einddatum,
+            einddatumGepland,
             new TableColumn('aanvrager', 'aanvrager', true),
             new TableColumn('behandelaar', 'behandelaar.naam', true),
             uiterlijkeEinddatumAfdoening,
