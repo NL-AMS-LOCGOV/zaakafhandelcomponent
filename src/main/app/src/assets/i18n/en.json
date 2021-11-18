@@ -170,5 +170,7 @@
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
   "msg.zaak.vrijgegeven": "The case has been released",
   "msg.verdelen.zaak": "Allocate case",
-  "msg.verdelen.zaken": "Allocate {{aantal}} cases"
+  "msg.verdelen.zaken": "Allocate {{aantal}} cases",
+  "msg.verdeeld.zaken": "{{aantal}} cases are allocated",
+  "msg.verdeeld.zaak": "Case is allacated"
 }

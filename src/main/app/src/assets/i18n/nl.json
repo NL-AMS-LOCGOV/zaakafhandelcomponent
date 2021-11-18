@@ -170,5 +170,7 @@
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
   "msg.verdelen.zaak": "Zaak verdelen",
-  "msg.verdelen.zaken": "{{aantal}} zaken verdelen"
+  "msg.verdelen.zaken": "{{aantal}} zaken verdelen",
+  "msg.verdeeld.zaken": "{{aantal}} zaken zijn verdeeld",
+  "msg.verdeeld.zaak": "De zaak is verdeeld"
 }

@@ -58,6 +58,8 @@ public class FlowableService {
 
     public static final String VAR_CASE_ZAAKTYPE_IDENTIFICATIE = "zaaktypeIdentificatie";
 
+    public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
@@ -91,6 +93,10 @@ public class FlowableService {
 
     public String readZaakIdentificatieForTask(final String taskId) {
         return (String) readVariableForTask(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
+    }
+
+    public String readZaaktypeOmschrijvingorTask(final String taskId) {
+        return (String) readVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
     }
 
     public String readZaaktypeIdentificatieForTask(final String taskId) {
@@ -168,6 +174,7 @@ public class FlowableService {
                     .variable(VAR_CASE_ZAAK_IDENTIFICATIE, zaak.getIdentificatie())
                     .variable(VAR_CASE_ZAAKTYPE_URI, zaaktype.getUrl())
                     .variable(VAR_CASE_ZAAKTYPE_IDENTIFICATIE, zaaktype.getIdentificatie())
+                    .variable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
                     .start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {
             LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.", caseDefinitionKey, zaak.getUuid()));
