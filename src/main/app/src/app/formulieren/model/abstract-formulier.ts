@@ -29,7 +29,7 @@ export abstract class AbstractFormulier {
     abstract initBehandelForm();
 
     getPlanItem(formGroup: FormGroup): PlanItem {
-        this.planItem.groep = formGroup.controls['groep'].value;
+        this.planItem.groep = formGroup.controls['groep']?.value;
         this.planItem.taakdata = this.getDataElementen(formGroup);
         return this.planItem;
     }
