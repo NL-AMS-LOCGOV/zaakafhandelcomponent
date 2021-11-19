@@ -62,11 +62,11 @@ public class FlowableService {
 
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 
-    private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
-
     private static final String ID_GROEP_ZAAK_OPEN = "*";
 
     private static final String ID_GROEP_ZAAK_CLOSE = "*";
+
+    private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
     @Inject
     private CmmnRuntimeService cmmnRuntimeService;
@@ -428,5 +428,17 @@ public class FlowableService {
         }
 
         return taskQuery;
+    }
+
+    public void fixIt() {
+        // Fix VAR_CASE_ZAAKTYPE_IDENTIFICATIE
+        List<CaseInstance> cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_IDENTIFICATIE).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_IDENTIFICATIE, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_IDENTIFICATIE, "melding-klein-evenement"));
+
+        // Fix VAR_CASE_ZAAKTYPE_OMSCHRIJVING
+        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_OMSCHRIJVING).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_OMSCHRIJVING, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING, "melding klein evenement"));
     }
 }
