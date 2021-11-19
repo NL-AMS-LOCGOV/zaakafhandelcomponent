@@ -49,7 +49,7 @@ export class BehandelaarVeldComponent {
         taak.id = this.taakId;
         taak.zaakUUID = this.zaakUuid;
 
-        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(response => {
+        this.takenService.assignToLoggedOnUser(taak).subscribe(response => {
             this.geefBehandelaarWijzigingDoor(response.behandelaar);
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: response.behandelaar.naam});
         });

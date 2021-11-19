@@ -111,14 +111,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     editTaak(value: string, field: string): void {
         this.taak[field] = value;
-        this.takenService.bewerken(this.taak).subscribe((taak) => {
+        this.takenService.update(this.taak).subscribe((taak) => {
             this.init(taak);
         });
     }
 
     ophalenTaak() {
         this.subscriptions$.push(this.route.data.subscribe(data => {
-            this.takenService.getTaak(data['taak'].id).subscribe(taak => {
+            this.takenService.readTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);
             });
         }));
@@ -126,14 +126,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     vrijgeven = (): void => {
         this.taak.behandelaar = null;
-        this.takenService.toekennen(this.taak).subscribe(taak => {
+        this.takenService.assign(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.vrijgegeven');
             this.init(taak);
         });
     };
 
     afronden = (): void => {
-        this.takenService.afronden(this.taak).subscribe(taak => {
+        this.takenService.complete(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });

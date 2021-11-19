@@ -20,9 +20,7 @@ export abstract class AbstractFormulier {
 
     abstract form: Array<AbstractFormField[]>;
 
-    constructor() {
-
-    }
+    constructor() {}
 
     abstract initStartForm();
 
@@ -47,7 +45,7 @@ export abstract class AbstractFormulier {
     }
 
     private getDataElementen(formGroup: FormGroup): {} {
-        let dataElementen: {} = {};
+        const dataElementen: {} = {};
 
         Object.keys(formGroup.controls).forEach((key) => {
             dataElementen[key] = formGroup.controls[key]?.value;
@@ -57,7 +55,7 @@ export abstract class AbstractFormulier {
     }
 
     addGroepAssignment(groepen: Groep[]): void {
-        let groupForm = [
+        const groupForm = [
             [new HeadingFormField('taakToekenning', 'actie.toekennen', '2')],
             [new SelectFormField('groep', 'groep.-kies-', this.planItem.groep,
                 'naam', groepen, new FormFieldConfig([Validators.required]))]
@@ -65,5 +63,4 @@ export abstract class AbstractFormulier {
 
         this.form = [...this.form, ...groupForm];
     }
-
 }

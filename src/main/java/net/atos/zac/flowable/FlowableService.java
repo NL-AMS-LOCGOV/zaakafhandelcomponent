@@ -107,7 +107,7 @@ public class FlowableService {
         return (String) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
     }
 
-    public List<TaskInfo> listTaskInfosForZaak(final UUID zaakUUID) {
+    public List<? extends TaskInfo> listTasksForZaak(final UUID zaakUUID) {
         final String caseInstanceId = findCaseInstanceIdForZaak(zaakUUID);
         if (caseInstanceId != null) {
             final List<TaskInfo> taken = new ArrayList<>(listTasksForCase(caseInstanceId));
@@ -133,14 +133,14 @@ public class FlowableService {
                 .list();
     }
 
-    public List<Task> listTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
+    public List<? extends TaskInfo> listTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
             final int firstResult, final int maxResults) {
         return createTaskQueryWithSorting(sortering, direction)
                 .taskAssignee(gebruikersnaam)
                 .listPage(firstResult, maxResults);
     }
 
-    public List<Task> listTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
+    public List<? extends TaskInfo> listTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
             final int firstResult,
             final int maxResults) {
         return createTaskQueryWithSorting(sortering, direction)
@@ -218,7 +218,7 @@ public class FlowableService {
      * Met als gevolg:
      * - Wanneer de huidige behandelaar geen onderdeel is van de groep dan wordt de taak ook meteen vrijgegeven.
      */
-    public Task assignTask(final String taskId, final String userId, final String groupId) {
+    public TaskInfo assignTask(final String taskId, final String userId, final String groupId) {
         if (userId != null) {
             final Task task = readTask(taskId);
             if (!userId.equals(task.getAssignee())) {
@@ -328,6 +328,11 @@ public class FlowableService {
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
+        cmmnTaskService.setVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
+        return taakdata;
     }
 
     private Object readVariableForCase(final String caseInstanceId, final String variableName) {

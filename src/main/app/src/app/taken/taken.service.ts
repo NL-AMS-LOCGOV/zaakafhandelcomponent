@@ -18,24 +18,29 @@ import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
 })
 export class TakenService {
 
-    private basepath: string = '/rest/taken';
-
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    getTaak(id: string): Observable<Taak> {
+    private basepath = '/rest/taken';
+
+    private static getTableParams(request: TableRequest): HttpParams {
+        return new HttpParams()
+        .set('tableRequest', JSON.stringify(request));
+    }
+
+    readTaak(id: string): Observable<Taak> {
         return this.http.get<Taak>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getTakenVoorZaak(uuid: string): Observable<Taak[]> {
+    listTakenVoorZaak(uuid: string): Observable<Taak[]> {
         return this.http.get<Taak[]>(`${this.basepath}/zaak/${uuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getMijnTaken(request: TableRequest): Observable<TableResponse<Taak>> {
+    listMijnTaken(request: TableRequest): Observable<TableResponse<Taak>> {
         return this.http.get<TableResponse<Taak>>(`${this.basepath}/mijn`, {
             params: TakenService.getTableParams(request)
         }).pipe(
@@ -43,7 +48,7 @@ export class TakenService {
         );
     }
 
-    getWerkvoorraadTaken(request: TableRequest): Observable<TableResponse<Taak>> {
+    listWerkvoorraadTaken(request: TableRequest): Observable<TableResponse<Taak>> {
         return this.http.get<TableResponse<Taak>>(`${this.basepath}/werkvoorraad`, {
             params: TakenService.getTableParams(request)
         }).pipe(
@@ -51,36 +56,37 @@ export class TakenService {
         );
     }
 
-    toekennen(taak: Taak): Observable<Taak> {
-        return this.http.patch<Taak>(`${this.basepath}/toekennen`, taak).pipe(
+    assign(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}/assign`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    toekennenAanIngelogdeMedewerker(taak: Taak): Observable<Taak> {
-        let taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
+    assignToLoggedOnUser(taak: Taak): Observable<Taak> {
+        const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUUID;
 
-        return this.http.patch<Taak>(`${this.basepath}/toekennen/mij`, taakToekennenGegevens).pipe(
+        return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    bewerken(taak: Taak): Observable<Taak> {
-        return this.http.patch<Taak>(`${this.basepath}/bewerken`, taak).pipe(
+    update(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    afronden(taak: Taak): Observable<Taak> {
-        return this.http.patch<Taak>(`${this.basepath}/afronden`, taak).pipe(
+    updateTaakdata(taak: Taak): Observable<Taak> {
+        return this.http.put<Taak>(`${this.basepath}/taakdata`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    private static getTableParams(request: TableRequest): HttpParams {
-        return new HttpParams()
-        .set('tableRequest', JSON.stringify(request));
+    complete(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}/complete`, taak).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
     }
 }

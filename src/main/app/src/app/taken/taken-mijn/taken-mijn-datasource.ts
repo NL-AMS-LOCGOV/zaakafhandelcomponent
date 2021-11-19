@@ -18,7 +18,7 @@ export class TakenMijnDatasource extends TableDataSource<Taak> {
 
     load(): void {
         this.utilService.setLoading(true);
-        this.takenService.getMijnTaken(this.getTableRequest())
+        this.takenService.listMijnTaken(this.getTableRequest())
             .pipe(
                 catchError(() => of({data: [], totalItems: 0})),
                 finalize(() => this.utilService.setLoading(false))
