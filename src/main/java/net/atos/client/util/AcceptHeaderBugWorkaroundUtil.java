@@ -6,7 +6,7 @@
 package net.atos.client.util;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static net.atos.client.or.shared.util.Constant.APPLICATION_PROBLEM_JSON;
+import static net.atos.client.util.Constant.APPLICATION_PROBLEM_JSON;
 
 import javax.ws.rs.core.MultivaluedMap;
 
