@@ -192,7 +192,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private loadTaken(): void {
-        this.takenService.getTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
+        this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
@@ -209,7 +209,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     };
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
-        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
+        this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;

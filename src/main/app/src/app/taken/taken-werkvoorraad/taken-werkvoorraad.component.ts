@@ -70,7 +70,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     toekennenAanIngelogdeMedewerker(taak: Taak, event) {
         event.stopPropagation();
-        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(taakResponse => {
+        this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
             taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
             taak.rechten = taakResponse.rechten;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});

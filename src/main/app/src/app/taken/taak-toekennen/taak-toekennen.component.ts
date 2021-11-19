@@ -55,7 +55,7 @@ export class TaakToekennenComponent implements OnInit {
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.taak.behandelaar = formGroup.controls['medewerker']?.value;
-            this.takenService.toekennen(this.taak).subscribe(() => {
+            this.takenService.assign(this.taak).subscribe(() => {
                 this.navigation.back();
             });
         } else {

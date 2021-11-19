@@ -19,6 +19,6 @@ export class TaakResolver implements Resolve<Taak> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Taak> {
         const taakID: string = route.paramMap.get('id');
-        return this.takenService.getTaak(taakID);
+        return this.takenService.readTaak(taakID);
     }
 }

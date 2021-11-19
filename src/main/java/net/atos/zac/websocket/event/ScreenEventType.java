@@ -39,8 +39,8 @@ public enum ScreenEventType {
 
     TAAK {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final TaskInfo taak) {
-            return instance(opcode, this, taak);
+        protected ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
+            return instance(opcode, this, taskInfo);
         }
     },
 
@@ -123,7 +123,7 @@ public enum ScreenEventType {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenEvent event(final Opcode opcode, final TaskInfo taak) {
+    protected ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
@@ -222,11 +222,11 @@ public enum ScreenEventType {
     /**
      * Factory method for ScreenUpdateEvent (with identification of a task).
      *
-     * @param taak modifierd task
+     * @param taskInfo modifierd task
      * @return instance of the event
      */
-    public final ScreenEvent updated(final TaskInfo taak) {
-        return event(UPDATED, taak);
+    public final ScreenEvent updated(final TaskInfo taskInfo) {
+        return event(UPDATED, taskInfo);
     }
 
     /**

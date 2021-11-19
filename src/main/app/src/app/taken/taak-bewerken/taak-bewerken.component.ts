@@ -52,7 +52,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.taak.toelichting = formGroup.controls['toelichting'] ? formGroup.controls['toelichting'].value : null;
-            this.takenService.bewerken(this.taak).subscribe(() => {
+            this.takenService.update(this.taak).subscribe(() => {
                 this.navigation.back();
             });
         } else {
@@ -66,7 +66,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     }
 
     private updateTaak() {
-        this.takenService.getTaak(this.taak.id).subscribe(taak => {
+        this.takenService.readTaak(this.taak.id).subscribe(taak => {
             this.taak = taak;
             this.initToelichtingVeld();
         });
