@@ -6,6 +6,7 @@
 package net.atos.zac.flowable;
 
 import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_LOCAL_CANDIDATE_GROUP_ID;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
@@ -48,17 +49,15 @@ import net.atos.zac.app.taken.model.TaakSortering;
 @Transactional
 public class FlowableService {
 
-    public static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
+    private static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
-    public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
+    private static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
 
-    public static final String VAR_CASE_ZAAK_URI = "zaakURI";
+    private static final String VAR_CASE_ZAAKTYPE_UUUID = "zaaktypeUUID";
 
-    public static final String VAR_CASE_ZAAKTYPE_URI = "zaaktypeURI";
+    private static final String VAR_CASE_ZAAKTYPE_IDENTIFICATIE = "zaaktypeIdentificatie";
 
-    public static final String VAR_CASE_ZAAKTYPE_IDENTIFICATIE = "zaaktypeIdentificatie";
-
-    public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+    private static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
     private static final String VAR_TASK_TAAKDATA = "taakdata";
 
@@ -168,9 +167,8 @@ public class FlowableService {
                     .caseDefinitionKey(caseDefinitionKey)
                     .businessKey(zaak.getUuid().toString())
                     .variable(VAR_CASE_ZAAK_UUID, zaak.getUuid())
-                    .variable(VAR_CASE_ZAAK_URI, zaak.getUrl())
                     .variable(VAR_CASE_ZAAK_IDENTIFICATIE, zaak.getIdentificatie())
-                    .variable(VAR_CASE_ZAAKTYPE_URI, zaaktype.getUrl())
+                    .variable(VAR_CASE_ZAAKTYPE_UUUID, uuidFromURI(zaaktype.getUrl()))
                     .variable(VAR_CASE_ZAAKTYPE_IDENTIFICATIE, zaaktype.getIdentificatie())
                     .variable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
                     .start();
@@ -428,17 +426,5 @@ public class FlowableService {
         }
 
         return taskQuery;
-    }
-
-    public void fixIt() {
-        // Fix VAR_CASE_ZAAKTYPE_IDENTIFICATIE
-        List<CaseInstance> cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_IDENTIFICATIE).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_IDENTIFICATIE, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_IDENTIFICATIE, "melding-klein-evenement"));
-
-        // Fix VAR_CASE_ZAAKTYPE_OMSCHRIJVING
-        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_OMSCHRIJVING).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_OMSCHRIJVING, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING, "melding klein evenement"));
     }
 }
