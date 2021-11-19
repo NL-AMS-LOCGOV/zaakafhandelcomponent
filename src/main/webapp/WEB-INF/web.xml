@@ -75,10 +75,6 @@
             <url-pattern>/health</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
-        <user-data-constraint>
-            <!-- Enable both HTTP and HTTPS access -->
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
     </security-constraint>
 
     <login-config>

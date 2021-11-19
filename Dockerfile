@@ -14,4 +14,4 @@ COPY --from=build /target/zaakafhandelcomponent-bootable.jar /
 
 # Start zaakafhandelcomponent
 CMD ["java", "-jar", "zaakafhandelcomponent-bootable.jar"]
-EXPOSE 8080 8443
+EXPOSE 8080
