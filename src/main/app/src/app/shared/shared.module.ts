@@ -4,7 +4,7 @@
  */
 
 import {NgModule} from '@angular/core';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {Title} from '@angular/platform-browser';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -30,6 +30,8 @@ import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
 import {EditComponent} from './edit/edit.component';
 import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component';
+import {MatPaginatorIntl} from '@angular/material/paginator';
+import {PaginatorTranslator} from './paginator/paginator-translator';
 
 @NgModule({
     declarations: [
@@ -84,7 +86,13 @@ import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component'
         EditComponent
     ],
     providers: [
-        Title
+        Title,
+        {
+            provide: MatPaginatorIntl,
+            deps: [TranslateService],
+            useFactory: (translateService: TranslateService) => new PaginatorTranslator(
+                translateService).getTranslatedPaginator()
+        }
     ]
 })
 export class SharedModule {
