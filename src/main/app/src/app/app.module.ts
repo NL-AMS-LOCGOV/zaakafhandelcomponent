@@ -4,7 +4,7 @@
  */
 
 import {Injector, NgModule} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -20,6 +20,10 @@ import {InformatieObjectenModule} from './informatie-objecten/informatie-objecte
 import {PlanItemsModule} from './plan-items/plan-items.module';
 import {TakenModule} from './taken/taken.module';
 import {ToolbarComponent} from './core/toolbar/toolbar.component';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+
+const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
     declarations: [
@@ -37,12 +41,22 @@ import {ToolbarComponent} from './core/toolbar/toolbar.component';
         InformatieObjectenModule,
         PlanItemsModule,
         TakenModule,
-        AppRoutingModule
+        AppRoutingModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })
     ],
     exports: [
         ToolbarComponent
     ],
-    providers: [{provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}],
+    providers: [
+        {provide: APP_BASE_HREF, useValue: '/'},
+        {provide: LocationStrategy, useClass: PathLocationStrategy}
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {

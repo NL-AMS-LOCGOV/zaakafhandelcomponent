@@ -172,5 +172,10 @@
   "msg.verdelen.zaak": "Zaak verdelen",
   "msg.verdelen.zaken": "{{aantal}} zaken verdelen",
   "msg.verdeeld.zaken": "{{aantal}} zaken zijn verdeeld",
-  "msg.verdeeld.zaak": "De zaak is verdeeld"
+  "msg.verdeeld.zaak": "De zaak is verdeeld",
+  " 8 ": ">>--> PAGINATOR <--<<",
+  "paginator.items.per.pagina": "Items per pagina",
+  "paginator.volgende": "Volgende pagina",
+  "paginator.vorige": "Vorige pagina",
+  "paginator.van": "van"
 }

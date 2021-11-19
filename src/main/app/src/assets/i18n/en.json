@@ -172,5 +172,10 @@
   "msg.verdelen.zaak": "Allocate case",
   "msg.verdelen.zaken": "Allocate {{aantal}} cases",
   "msg.verdeeld.zaken": "{{aantal}} cases are allocated",
-  "msg.verdeeld.zaak": "Case is allacated"
+  "msg.verdeeld.zaak": "Case is allacated",
+  " 8 ": ">>--> PAGINATOR <--<<",
+  "paginator.items.per.pagina": "Items per page",
+  "paginator.volgende": "Next page",
+  "paginator.vorige": "Previous page",
+  "paginator.van": "of"
 }
