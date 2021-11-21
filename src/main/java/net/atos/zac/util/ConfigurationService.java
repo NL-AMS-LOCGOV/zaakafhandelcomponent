@@ -24,7 +24,7 @@ public class ConfigurationService {
 
     public static final String VERANTWOORDELIJKE_ORGANISATIE = "316245124";
 
-    private static final String CATALOGUS_DOMEIN = "ALG";
+    public static final String CATALOGUS_DOMEIN = "ALG";
 
     @Inject
     private ZTCClientService ztcClientService;

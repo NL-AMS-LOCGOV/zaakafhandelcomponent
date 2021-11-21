@@ -72,7 +72,7 @@
         <web-resource-collection>
             <web-resource-name>health</web-resource-name>
             <description>For allowing health checks</description>
-            <url-pattern>/health</url-pattern>
+            <url-pattern>/rest/health/*</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
