@@ -10,6 +10,7 @@ import static net.atos.zac.event.Opcode.DELETED;
 import static net.atos.zac.event.Opcode.UPDATED;
 
 import java.net.URI;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -70,7 +71,13 @@ public enum ScreenEventType {
         protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
-    };
+    },
+
+    ANY;
+
+    public static Set<ScreenEventType> any() {
+        return EnumSet.complementOf(EnumSet.of(ANY));
+    }
 
     private static final Logger LOG = Logger.getLogger(ScreenEventType.class.getName());
 

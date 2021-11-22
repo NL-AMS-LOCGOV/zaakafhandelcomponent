@@ -6,9 +6,11 @@
 package net.atos.zac.websocket;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
@@ -17,7 +19,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
+import net.atos.zac.event.Opcode;
 import net.atos.zac.websocket.event.ScreenEvent;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
  * This Registry is used to maintain a list of active sessions.
@@ -35,31 +39,31 @@ public class SessionRegistry {
      *
      * @return Set with active sessions
      */
-    public Set<Session> listSessions(final ScreenEvent event) { // TODO ESUITEDEV-25898 Support wildcard for the opcode?
+    public Set<Session> listSessions(final ScreenEvent event) {
         return Collections.unmodifiableSet(eventSessions.get(fix(event)));
     }
 
     /**
      * Add a session for a specific event
      *
-     * @param event   event
-     * @param session session
+     * @param wildcarded event
+     * @param session    session
      */
-    public void create(final ScreenEvent event, final Session session) {
+    public void create(final ScreenEvent wildcarded, final Session session) {
         if (session != null) {
-            eventSessions.put(fix(event), session);
+            glob(fix(wildcarded)).forEach(event -> eventSessions.put(event, session));
         }
     }
 
     /**
      * Delete a session for a specific event
      *
-     * @param event   event
-     * @param session session
+     * @param wildcarded event
+     * @param session    session
      */
-    public void delete(final ScreenEvent event, final Session session) {
+    public void delete(final ScreenEvent wildcarded, final Session session) {
         if (session != null) {
-            eventSessions.get(fix(event)).remove(session);
+            glob(fix(wildcarded)).forEach(event -> eventSessions.get(fix(event)).remove(session));
         }
     }
 
@@ -71,6 +75,38 @@ public class SessionRegistry {
     public void deleteAll(final Session session) {
         if (session != null) {
             eventSessions.values().removeAll(Collections.singleton(session));
+        }
+    }
+
+    private List<ScreenEvent> glob(final ScreenEvent event) {
+        if (event.getOperation() == Opcode.ANY) {
+            if (event.getObjectType() == ScreenEventType.ANY) {
+                return Opcode.any().stream()
+                        .flatMap(operation -> ScreenEventType.any().stream()
+                                .map(objecType -> new Wrapper(operation, objecType)))
+                        .map(wrapper -> new ScreenEvent(wrapper.opcode, wrapper.objecType, event.getObjectId()))
+                        .collect(Collectors.toList());
+            }
+            return Opcode.any().stream()
+                    .map(operation -> new ScreenEvent(operation, event.getObjectType(), event.getObjectId()))
+                    .collect(Collectors.toList());
+        }
+        if (event.getObjectType() == ScreenEventType.ANY) {
+            return ScreenEventType.any().stream()
+                    .map(objectType -> new ScreenEvent(event.getOperation(), objectType, event.getObjectId()))
+                    .collect(Collectors.toList());
+        }
+        return Collections.singletonList(event);
+    }
+
+    private static class Wrapper {
+        private final Opcode opcode;
+
+        private final ScreenEventType objecType;
+
+        private Wrapper(final Opcode opcode, final ScreenEventType objecType) {
+            this.opcode = opcode;
+            this.objecType = objecType;
         }
     }
 
