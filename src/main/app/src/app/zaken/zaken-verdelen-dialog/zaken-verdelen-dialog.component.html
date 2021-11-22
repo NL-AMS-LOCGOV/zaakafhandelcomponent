@@ -7,7 +7,7 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
 <div mat-dialog-content>
     <mat-form-field appearance="fill" fxFlex="100">
-        <mat-label>{{'selecteer.medewerker' | translate}}</mat-label>
+        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
         <mat-select [disabled]="loading">
             <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)" [value]="medewerker.gebruikersnaam">
                 {{ medewerker.naam }}
