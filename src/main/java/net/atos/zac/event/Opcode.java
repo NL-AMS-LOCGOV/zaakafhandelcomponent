@@ -5,6 +5,9 @@
 
 package net.atos.zac.event;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * Enumeration containing the operations as used by the {@link AbstractEvent}.
  * Maps to opcode.ts
@@ -24,5 +27,14 @@ public enum Opcode {
     /**
      * indication that the mentioned object has been deleted
      */
-    DELETED
+    DELETED,
+
+    /**
+     * indication that something has happened to the mentioned object
+     */
+    ANY;
+
+    public static Set<Opcode> any() {
+        return EnumSet.complementOf(EnumSet.of(ANY));
+    }
 }

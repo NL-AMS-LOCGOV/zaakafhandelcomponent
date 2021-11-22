@@ -9,5 +9,6 @@
 export enum Opcode {
     CREATED = 'CREATED',
     UPDATED = 'UPDATED',
-    DELETED = 'DELETED'
+    DELETED = 'DELETED',
+    ANY ='ANY'
 }
