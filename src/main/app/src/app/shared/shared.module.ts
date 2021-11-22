@@ -29,15 +29,17 @@ import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
 import {EditComponent} from './edit/edit.component';
-import {VerlopenLabelComponent} from './verlopen-label/verlopen-label.component';
+import {DatumOverschredenComponent} from './datum-overschreden/datum-overschreden.component';
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
+import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 
 @NgModule({
     declarations: [
         SideNavComponent,
         EmptyPipe,
         DatumPipe,
+        DatumOverschredenPipe,
         NoStickyColumnPipe,
         ColumnToStringPipe,
         VisibleColumnPipe,
@@ -49,7 +51,7 @@ import {PaginatorTranslator} from './paginator/paginator-translator';
         StatusLabelComponent,
         BehandelaarVeldComponent,
         EditComponent,
-        VerlopenLabelComponent
+        DatumOverschredenComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -70,6 +72,7 @@ import {PaginatorTranslator} from './paginator/paginator-translator';
         SideNavComponent,
         EmptyPipe,
         DatumPipe,
+        DatumOverschredenPipe,
         NoStickyColumnPipe,
         ColumnToStringPipe,
         VisibleColumnPipe,
@@ -82,7 +85,7 @@ import {PaginatorTranslator} from './paginator/paginator-translator';
         NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
-        VerlopenLabelComponent,
+        DatumOverschredenComponent,
         EditComponent
     ],
     providers: [

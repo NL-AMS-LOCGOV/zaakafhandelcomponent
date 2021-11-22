@@ -17,6 +17,7 @@ import {TakenMijnDatasource} from './taken-mijn-datasource';
 import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
+import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -44,7 +45,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         .pipe(DatumPipe);
 
         const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM)
-        .pipe(DatumPipe);
+        .pipe(DatumOverschredenPipe);
 
         this.dataSource.columns = [
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),

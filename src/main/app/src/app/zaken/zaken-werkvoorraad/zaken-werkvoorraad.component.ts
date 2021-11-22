@@ -22,7 +22,7 @@ import {ZaakRechten} from '../model/zaak-rechten';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {DatumVerlopenPipe} from '../../shared/pipes/datumVerlopen.pipe';
+import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -84,10 +84,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         .pipe(DatumPipe);
 
         const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
-        .pipe(DatumPipe,'einddatum');
+        .pipe(DatumOverschredenPipe,'einddatum');
 
         const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
-        .pipe(DatumPipe,'einddatum');
+        .pipe(DatumOverschredenPipe,'einddatum');
 
         this.dataSource.columns = [
             new TableColumn('select', 'select', true, null, true),

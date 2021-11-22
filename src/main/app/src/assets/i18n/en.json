@@ -154,7 +154,7 @@
   "actie.zaak.bekijken": "View case",
   "actie.zaak.toekennen": "Assign case",
   " 7 ": ">>--> MELDINGEN <--<<",
-  "msg.datum.verlopen": "This date has expired",
+  "msg.datum.overschreden": "This date has passed",
   "msg.geen.gegevens.gevonden": "No data found",
   "msg.gewijzigd.objecttype.DOCUMENT": "This document",
   "msg.gewijzigd.objecttype.TAAK": "This task",

@@ -154,7 +154,7 @@
   "actie.zaak.bekijken": "Zaak bekijken",
   "actie.zaak.toekennen": "Zaak toekennen",
   " 7 ": ">>--> MELDINGEN <--<<",
-  "msg.datum.verlopen": "Deze datum is verlopen",
+  "msg.datum.overschreden": "Deze datum is overschreden",
   "msg.geen.gegevens.gevonden": "Geen gegevens gevonden",
   "msg.gewijzigd.objecttype.DOCUMENT": "Dit document",
   "msg.gewijzigd.objecttype.TAAK": "Deze taak",
