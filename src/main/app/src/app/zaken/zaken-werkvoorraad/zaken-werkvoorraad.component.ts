@@ -22,6 +22,7 @@ import {ZaakRechten} from '../model/zaak-rechten';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {DatumVerlopenPipe} from '../../shared/pipes/datumVerlopen.pipe';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -76,13 +77,17 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
+        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
+        .pipe(DatumPipe);
 
-        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
+        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum')
+        .pipe(DatumPipe);
 
-        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland').pipe(DatumPipe); // TODO ESUITEDEV-25900
+        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
+        .pipe(DatumPipe,'einddatum');
 
-        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening').pipe(DatumPipe); // TODO ESUITEDEV-25900
+        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
+        .pipe(DatumPipe,'einddatum');
 
         this.dataSource.columns = [
             new TableColumn('select', 'select', true, null, true),
@@ -146,10 +151,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     /** The label for the checkbox on the passed row */
     checkboxLabel(row?: ZaakOverzicht): string {
         if (!row) {
-            return `${this.isAllSelected() ? 'deselecteer' : 'selecteer'}.alles`;
+            return `actie.alles.${this.isAllSelected() ? 'deselecteren' : 'selecteren'}`;
         }
 
-        return `${this.selection.isSelected(row) ? 'deselecteer' : 'selecteer'}`;
+        return `actie.${this.selection.isSelected(row) ? 'deselecteren' : 'selecteren'}`;
     }
 
     pageChange(): void {
