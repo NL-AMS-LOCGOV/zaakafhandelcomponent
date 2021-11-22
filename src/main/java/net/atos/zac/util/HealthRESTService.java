@@ -60,7 +60,7 @@ public class HealthRESTService {
             responseBuilder = Response.ok();
             LOG.finest(() -> String.format("ReadyStatus: %s", JsonbBuilder.create().toJson(readyStatus)));
         } else {
-            responseBuilder = Response.serverError();
+            responseBuilder = Response.status(Response.Status.SERVICE_UNAVAILABLE);
             LOG.severe(String.format("ReadyStatus: %s", JsonbBuilder.create().toJson(readyStatus)));
         }
         return responseBuilder.entity(readyStatus).build();
