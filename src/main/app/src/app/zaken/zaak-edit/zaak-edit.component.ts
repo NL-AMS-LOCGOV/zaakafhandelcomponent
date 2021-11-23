@@ -16,7 +16,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     templateUrl: './zaak-edit.component.html',
@@ -27,8 +27,8 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
     editZaakFields: Array<AbstractFormField[]>;
     private zaak: Zaak;
     formConfig: FormConfig;
-    private zaakListener: Listener;
-    private zaakRollenListener: Listener;
+    private zaakListener: WebsocketListener;
+    private zaakRollenListener: WebsocketListener;
 
     constructor(private zakenService: ZakenService,
                 private navigation: NavigationService,

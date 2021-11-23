@@ -28,7 +28,7 @@ import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service
 import {AutocompleteFormField} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field';
 import {IdentityService} from '../../identity/identity.service';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -45,7 +45,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
-    private taakListener: Listener;
+    private taakListener: WebsocketListener;
 
     get taakRechten(): typeof TaakRechten {
         return TaakRechten;

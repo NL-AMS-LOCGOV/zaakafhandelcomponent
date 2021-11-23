@@ -19,7 +19,7 @@ import {Subscription} from 'rxjs';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -38,9 +38,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     lowValue: number = 0;
     highValue: number = 5;
     private subscriptions$: Subscription[] = [];
-    private zaakListener: Listener;
-    private zaakRollenListener: Listener;
-    private zaakDocumentenListener: Listener;
+    private zaakListener: WebsocketListener;
+    private zaakRollenListener: WebsocketListener;
+    private zaakDocumentenListener: WebsocketListener;
 
     constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService, private websocketService: WebsocketService) {
     }

@@ -20,7 +20,7 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -32,7 +32,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     menu: MenuItem[];
     zaken: ZaakInformatieObjectKoppeling[];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
-    private documentListener: Listener;
+    private documentListener: WebsocketListener;
 
     constructor(store: Store<State>,
                 private zakenService: ZakenService,

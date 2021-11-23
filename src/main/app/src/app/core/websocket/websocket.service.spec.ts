@@ -6,11 +6,11 @@
 import {WebsocketService} from './websocket.service';
 import {Opcode} from './model/opcode';
 import {ObjectType} from './model/object-type';
-import {Listener} from './model/listener';
+import {WebsocketListener} from './model/websocket-listener';
 
 describe('WebsocketService', () => {
     let service: WebsocketService;
-    let listeners: Listener[] = [];
+    let listeners: WebsocketListener[] = [];
 
     beforeEach(() => {
         // Gebruik de mock. N.B. daarmee kan ALLEEN de listeners-logica getest worden.

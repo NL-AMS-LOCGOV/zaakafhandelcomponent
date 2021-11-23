@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ScreenUpdateEvent} from './screen-update-event';
+import {ScreenEvent} from './screen-event';
 
 export interface EventCallback {
-    (event: ScreenUpdateEvent): void;
+    (event: ScreenEvent): void;
 }

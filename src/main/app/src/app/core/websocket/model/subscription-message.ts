@@ -4,13 +4,13 @@
  */
 
 import {SubscriptionType} from './subscription-type';
-import {ScreenUpdateEvent} from './screen-update-event';
+import {ScreenEvent} from './screen-event';
 
 export class SubscriptionMessage {
     subscriptionType: SubscriptionType;
-    event: ScreenUpdateEvent;
+    event: ScreenEvent;
 
-    constructor(subscriptionType: SubscriptionType, event: ScreenUpdateEvent) {
+    constructor(subscriptionType: SubscriptionType, event: ScreenEvent) {
         this.subscriptionType = subscriptionType;
         this.event = event;
     }

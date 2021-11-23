@@ -16,7 +16,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     templateUrl: './taak-bewerken.component.html',
@@ -27,7 +27,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     taak: Taak;
-    private taakListener: Listener;
+    private taakListener: WebsocketListener;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService,
                 private navigation: NavigationService,

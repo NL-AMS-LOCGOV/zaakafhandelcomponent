@@ -33,7 +33,7 @@ import {SessionStorageService} from '../../shared/storage/session-storage.servic
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
-import {Listener} from '../../core/websocket/model/listener';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -52,10 +52,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     notitieType = NotitieType.ZAAK;
 
-    private zaakListener: Listener;
-    private zaakRollenListener: Listener;
-    private zaakTakenListener: Listener;
-    private zaakDocumentenListener: Listener;
+    private zaakListener: WebsocketListener;
+    private zaakRollenListener: WebsocketListener;
+    private zaakTakenListener: WebsocketListener;
+    private zaakDocumentenListener: WebsocketListener;
 
     get zaakRechten(): typeof ZaakRechten {
         return ZaakRechten;

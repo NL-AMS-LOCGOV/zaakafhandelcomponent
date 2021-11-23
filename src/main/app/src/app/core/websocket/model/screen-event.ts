@@ -6,7 +6,7 @@
 import {ObjectType} from './object-type';
 import {Opcode} from './opcode';
 
-export class ScreenUpdateEvent {
+export class ScreenEvent {
     timestamp: number;
     opcode: Opcode;
     objectType: ObjectType;
