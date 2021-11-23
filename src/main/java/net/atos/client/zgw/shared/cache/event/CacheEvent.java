@@ -10,10 +10,12 @@ import static net.atos.zac.event.Opcode.UPDATED;
 import java.net.URI;
 import java.util.UUID;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.zac.event.AbstractEvent;
+import net.atos.zac.event.Opcode;
 
 public class CacheEvent extends AbstractEvent<CacheEventType, URI> {
 
@@ -56,5 +58,10 @@ public class CacheEvent extends AbstractEvent<CacheEventType, URI> {
             uuid = URIUtil.parseUUIDFromResourceURI(getObjectId());
         }
         return uuid;
+    }
+
+    @AssertTrue(message = "Cache entries for CREATED objectIds cannot exist (the new id has not yet been cached)")
+    boolean isValid() {
+        return getOperation() != Opcode.CREATED;
     }
 }

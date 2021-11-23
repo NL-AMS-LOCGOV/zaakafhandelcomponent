@@ -5,7 +5,6 @@
 
 package net.atos.zac.websocket.event;
 
-import static net.atos.zac.event.Opcode.CREATED;
 import static net.atos.zac.event.Opcode.DELETED;
 import static net.atos.zac.event.Opcode.UPDATED;
 
@@ -134,57 +133,8 @@ public enum ScreenEventType {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    // These are factory methods to create handy and unambiguous ScreenUpdateEvents for an object type
-
-    /**
-     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other creation methods.
-     *
-     * @param uuid indentificatie of the created object
-     * @return instance of the event
-     */
-    public final ScreenEvent created(final UUID uuid) {
-        return event(CREATED, uuid);
-    }
-
-    /**
-     * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other creation methods.
-     *
-     * @param url indentificatie of the created object
-     * @return instance of the event
-     */
-    public final ScreenEvent created(final URI url) {
-        return event(CREATED, url);
-    }
-
-    /**
-     * Factory method for ScreenUpdateEvent (with case identification).
-     *
-     * @param zaak created zaak.
-     * @return instance of the event
-     */
-    public final ScreenEvent created(final Zaak zaak) {
-        return event(CREATED, zaak);
-    }
-
-    /**
-     * Factory method for ScreenUpdateEvent (identifying a single Information object).
-     *
-     * @param enkelvoudigInformatieobject created enkelvoudigInformatieobject.
-     * @return instance of the event
-     */
-    public final ScreenEvent created(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return event(CREATED, enkelvoudigInformatieobject);
-    }
-
-    /**
-     * Factory method for ScreenUpdateEvent (with identification of a task).
-     *
-     * @param taak created task.
-     * @return instance of the event
-     */
-    public final ScreenEvent created(final TaskInfo taak) {
-        return event(CREATED, taak);
-    }
+    // These are factory methods to create handy and unambiguous ScreenEvents for an object type
+    // Note that there are no "created" factory methods as there will never be a listener for those (the new objectId is unknown client side).
 
     /**
      * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other modification methods.
@@ -207,7 +157,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (with case identification).
+     * Factory method for ScreenEvent (with case identification).
      *
      * @param zaak modified zaak.
      * @return instance of the event
@@ -217,7 +167,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (identifying a single Information object).
+     * Factory method for ScreenEvent (identifying a single Information object).
      *
      * @param enkelvoudigInformatieobject modified enkelvoudigInformatieobject.
      * @return instance of the event
@@ -227,7 +177,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (with identification of a task).
+     * Factory method for ScreenEvent (with identification of a task).
      *
      * @param taskInfo modifierd task
      * @return instance of the event
@@ -257,7 +207,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (with case identification).
+     * Factory method for ScreenEvent (with case identification).
      *
      * @param zaak deleted zaak.
      * @return instance of the event
@@ -267,7 +217,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (with case identification).
+     * Factory method for ScreenEvent (with case identification).
      *
      * @param enkelvoudigInformatieobject deleted enkelvoudigInformatieobject.
      * @return instance of the event
@@ -277,7 +227,7 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenUpdateEvent (with identification of a task).
+     * Factory method for ScreenEvent (with identification of a task).
      *
      * @param taak deleted task.
      * @return instance of the event
@@ -286,16 +236,20 @@ public enum ScreenEventType {
         return event(DELETED, taak);
     }
 
-    private ScreenEvent event(final Notificatie.Resource resource) {
+    private void addEvent(final Set<ScreenEvent> events,final Notificatie.Resource resource) {
         switch (resource.getAction()) {
             case CREATE:
-                return event(CREATED, resource);
+                // There cannot be any websockets listeners for Opcode.CREATED, so don't send the event.
+                // (The new objectId would have to be known client side before it exists to subscribe to it. ;-)
+                break;
             case UPDATE:
-                return event(UPDATED, resource);
+                events.add(event(UPDATED, resource));
+                break;
             case DELETE:
-                return event(DELETED, resource);
+                events.add(event(DELETED, resource));
+                break;
             default:
-                return null;
+                break;
         }
     }
 
@@ -313,41 +267,41 @@ public enum ScreenEventType {
             case INFORMATIEOBJECTEN:
                 switch (resource.getType()) {
                     case INFORMATIEOBJECT:
-                        events.add(ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.event(resource));
+                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, resource);
                         break;
                     case GEBRUIKSRECHTEN:
-                        events.add(ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.event(mainResource));
+                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, mainResource);
                         break;
                 }
                 break;
             case ZAKEN:
                 switch (resource.getType()) {
                     case ZAAK:
-                        events.add(ScreenEventType.ZAAK.event(resource));
+                        ScreenEventType.ZAAK.addEvent(events, resource);
                         break;
                     case STATUS:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                     case ZAAKOBJECT:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                     case ZAAKINFORMATIEOBJECT:
-                        events.add(ScreenEventType.ZAAK_INFORMATIEOBJECTEN.event(mainResource));
+                        ScreenEventType.ZAAK_INFORMATIEOBJECTEN.addEvent(events, mainResource);
                         break;
                     case ZAAKEIGENSCHAP:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                     case KLANTCONTACT:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                     case ROL:
-                        events.add(ScreenEventType.ZAAK_ROLLEN.event(mainResource));
+                        ScreenEventType.ZAAK_ROLLEN.addEvent(events, mainResource);
                         break;
                     case RESULTAAT:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                     case ZAAKBESLUIT:
-                        events.add(ScreenEventType.ZAAK.event(mainResource));
+                        ScreenEventType.ZAAK.addEvent(events, mainResource);
                         break;
                 }
                 break;
