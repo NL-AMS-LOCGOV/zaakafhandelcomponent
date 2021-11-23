@@ -13,12 +13,10 @@ export class PaginatorTranslator {
     getTranslatedPaginator() {
         const paginator = new MatPaginatorIntl();
 
-        this.translateService.get(['']).subscribe(() => {
-            paginator.itemsPerPageLabel = this.translateService.instant('paginator.items.per.pagina');
-            paginator.nextPageLabel = this.translateService.instant('paginator.volgende');
-            paginator.previousPageLabel = this.translateService.instant('paginator.vorige');
-            paginator.getRangeLabel = this.translatedRangeLabel;
-        });
+        paginator.itemsPerPageLabel = this.translateService.instant('paginator.items.per.pagina');
+        paginator.nextPageLabel = this.translateService.instant('paginator.volgende');
+        paginator.previousPageLabel = this.translateService.instant('paginator.vorige');
+        paginator.getRangeLabel = this.translatedRangeLabel;
 
         return paginator;
     }

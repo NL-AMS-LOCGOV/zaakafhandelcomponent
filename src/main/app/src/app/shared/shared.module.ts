@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, Injector, NgModule} from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {Title} from '@angular/platform-browser';
@@ -33,6 +33,7 @@ import {DatumOverschredenComponent} from './datum-overschreden/datum-overschrede
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
 import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
+import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 
 @NgModule({
     declarations: [
@@ -95,6 +96,12 @@ import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
             deps: [TranslateService],
             useFactory: (translateService: TranslateService) => new PaginatorTranslator(
                 translateService).getTranslatedPaginator()
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: paginatorLanguageInitializerFactory,
+            deps: [TranslateService, Injector],
+            multi: true
         }
     ]
 })
