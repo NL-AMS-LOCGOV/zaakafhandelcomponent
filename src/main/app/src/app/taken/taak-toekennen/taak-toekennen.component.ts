@@ -42,13 +42,12 @@ export class TaakToekennenComponent implements OnInit {
         this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
         const titel = new HeadingFormField('toekennenTaak', 'actie.taak.toekennen', '1');
         const naam = new ReadonlyFormField('naam', 'naam', this.taak.naam);
-        this.identityService.getMedewerkersInGroep(this.taak.groep.id).subscribe(medewerkers => {
-            this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-                const medewerker = new SelectFormField('medewerker', 'medewerker',
-                    this.taak.behandelaar ? this.taak.behandelaar : ingelogdeMedewerker, 'naam', medewerkers,
-                    new FormFieldConfig([Validators.required]));
-                this.formItems = [[titel], [naam], [medewerker]];
-            });
+
+        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            const medewerker = new SelectFormField('medewerker', 'medewerker',
+                this.taak.behandelaar ? this.taak.behandelaar : ingelogdeMedewerker, 'naam',
+                this.identityService.getMedewerkersInGroep(this.taak.groep.id), new FormFieldConfig([Validators.required]));
+            this.formItems = [[titel], [naam], [medewerker]];
         });
     }
 

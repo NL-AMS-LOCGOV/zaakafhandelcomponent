@@ -39,13 +39,12 @@ export class ZaakToekennenComponent implements OnInit {
     }
 
     private initForm() {
-        this.identityService.getMedewerkersInGroep(this.zaak.groep.id).subscribe(medewerkers => {
-            this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-                const medewerker = new SelectFormField('medewerker', 'medewerker',
-                    this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam', medewerkers,
-                    new FormFieldConfig([Validators.required]));
-                this.formItems = [[medewerker]];
-            });
+
+        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            const medewerker = new SelectFormField('medewerker', 'medewerker',
+                this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam',
+                this.identityService.getMedewerkersInGroep(this.zaak.groep.id), new FormFieldConfig([Validators.required]));
+            this.formItems = [[medewerker]];
         });
         this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
     }

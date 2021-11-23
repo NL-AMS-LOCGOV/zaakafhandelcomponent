@@ -22,7 +22,6 @@ describe('WebsocketService', () => {
 
     const EVENTS = 8192;
     const OPCODES = [
-        Opcode.CREATED,
         Opcode.UPDATED,
         Opcode.DELETED];
     const OBJECT_TYPES = [

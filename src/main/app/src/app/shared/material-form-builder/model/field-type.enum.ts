@@ -4,6 +4,7 @@
  */
 
 export enum FieldType {
+    AUTOCOMPLETE = 'AUTOCOMPLETE',
     INPUT = 'INPUT',
     FILE = 'FILE',
     HEADING = 'HEADING',

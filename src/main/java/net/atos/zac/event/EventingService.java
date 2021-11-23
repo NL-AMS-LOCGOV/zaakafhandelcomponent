@@ -26,10 +26,10 @@ public class EventingService {
     private Event<CmmnEvent> cmmnUpdateEvent;
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.SchermeUpdateEvent}s to Observer(s),
+     * Send {@link package net.atos.zac.websocket.event.SchermEvent}s to Observer(s),
      * die ze vervolgens weer afleveren bij de juiste websocket clients.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.ObjectTypeEvent} om het event aan te maken!
+     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.ScreenEventType} om het event aan te maken!
      *
      * @param event
      */
@@ -38,10 +38,10 @@ public class EventingService {
     }
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.CacheUpdateEvent}s to Observer(s),
+     * Send {@link package net.atos.zac.websocket.event.CacheEvent}s to Observer(s),
      * die ze vervolgens gebruiken om caches bij te werken.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CacheFlushEvent} om het event aan te maken!
+     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CacheEventType} om het event aan te maken!
      *
      * @param event het te versturen event
      */
@@ -50,10 +50,10 @@ public class EventingService {
     }
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.CmmnUpdateEvent}s to Observer(s),
+     * Send {@link package net.atos.zac.websocket.event.CmmnEvent}s to Observer(s),
      * die ze vervolgens gebruiken om flowable bij te werken.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CacheFlushEvent} om het event aan te maken!
+     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CmmnEventType} om het event aan te maken!
      *
      * @param event het te versturen event
      */

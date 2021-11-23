@@ -25,6 +25,7 @@ import {FileFormField} from '../../shared/material-form-builder/form-components/
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {Observable, of} from 'rxjs';
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -100,7 +101,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         }
     }
 
-    getTypes(zaak): string[] {
+    getTypes(zaak): Observable<string[]> {
         let types = [];
         this.informatieObjectenService.getInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
             this.informatieobjecttypes = [];
@@ -109,7 +110,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                 types.push(type.omschrijving);
             });
         });
-        return types;
+        return of(types);
     }
 
     required(): FormFieldConfig {

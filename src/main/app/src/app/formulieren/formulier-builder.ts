@@ -7,6 +7,7 @@ import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
 import {Groep} from '../identity/model/groep';
+import {Observable} from 'rxjs';
 
 export class FormulierBuilder {
 
@@ -16,7 +17,7 @@ export class FormulierBuilder {
         this._formulier = formulier;
     }
 
-    startForm(planItem: PlanItem, groepen: Groep[]): FormulierBuilder {
+    startForm(planItem: PlanItem, groepen: Observable<Groep[]>): FormulierBuilder {
         this._formulier.planItem = planItem;
         this._formulier.dataElementen = planItem.taakdata;
         this._formulier.initStartForm();

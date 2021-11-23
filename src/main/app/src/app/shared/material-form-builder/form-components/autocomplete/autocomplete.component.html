@@ -5,11 +5,12 @@
 
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{data.label | translate}}</mat-label>
-    <mat-select [id]="data.id" [formControl]="data.formControl" [required]="data.required" [compareWith]="data.compareWithFn">
-        <mat-option *ngFor="let option of data.options | async" [value]="option">
+    <input type="text" matInput [formControl]="data.formControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" autoActiveFirstOption="true">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
             {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
         </mat-option>
-    </mat-select>
+    </mat-autocomplete>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
 </mat-form-field>

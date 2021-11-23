@@ -32,6 +32,7 @@ import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -78,9 +79,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
-            this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid,
-                () => this.updateZaak());
-            this.websocketService.addListener(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid,
+            this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
                 () => this.updateZaak());
             this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
                 () => this.updateZaak());
@@ -125,8 +124,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
-        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK, this.zaak.uuid);
-        this.websocketService.removeListeners(Opcode.DELETED, ObjectType.ZAAK, this.zaak.uuid);
+        this.websocketService.removeListeners(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid);
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid);
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid);
         this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid);
@@ -169,6 +167,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (this.zaak.rechten[this.zaakRechten.VRIJGEVEN]) {
             this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
         }
+    }
+
+    getTextAreaFormField(field: string): TextareaFormField {
+        return new TextareaFormField(field, field, this.zaak[field]);
     }
 
     editZaak(value: string, field: string): void {
