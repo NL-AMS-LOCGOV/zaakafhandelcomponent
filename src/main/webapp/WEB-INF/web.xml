@@ -68,15 +68,6 @@
         </web-resource-collection>
     </security-constraint>
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>health</web-resource-name>
-            <description>For allowing health checks</description>
-            <url-pattern>/rest/health/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-    </security-constraint>
-
     <login-config>
         <auth-method>KEYCLOAK</auth-method>
     </login-config>

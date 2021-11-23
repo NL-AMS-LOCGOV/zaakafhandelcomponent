@@ -14,4 +14,4 @@ COPY --from=build /target/zaakafhandelcomponent-bootable.jar /
 
 # Start zaakafhandelcomponent
 ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent-bootable.jar"]
-EXPOSE 8080 8787
+EXPOSE 8080 8787 9990

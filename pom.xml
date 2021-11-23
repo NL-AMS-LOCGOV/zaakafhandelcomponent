@@ -51,6 +51,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.microprofile.health</groupId>
+            <artifactId>microprofile-health-api</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
             <version>${resteasy-multipart-provider.version}</version>
@@ -231,6 +237,7 @@
                     </feature-packs>
                     <layers>
                         <layer>jaxrs-server</layer>
+                        <layer>microprofile-health</layer>
                         <layer>postgresql-driver</layer>
                         <layer>keycloak-client-oidc</layer>
                     </layers>
