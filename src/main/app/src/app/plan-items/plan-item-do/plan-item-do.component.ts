@@ -37,14 +37,13 @@ export class PlanItemDoComponent implements OnInit {
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
 
-        this.identityService.getGroepen().subscribe(groepen => {
-            this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier).startForm(this.planItem, groepen).build();
-            if (this.planItem.type == PlanItemType.HumanTask) {
-                this.formItems = this.formulier.form;
-            } else {
-                this.formItems = [[]];
-            }
-        });
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier)
+                             .startForm(this.planItem, this.identityService.getGroepen()).build();
+        if (this.planItem.type == PlanItemType.HumanTask) {
+            this.formItems = this.formulier.form;
+        } else {
+            this.formItems = [[]];
+        }
     }
 
     onFormSubmit(formGroup: FormGroup): void {

@@ -31,6 +31,8 @@ import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {BUILDER_CONFIG, MaterialFormBuilderConfig} from './material-form-builder-config';
 import {FileComponent} from './form-components/file/file.component';
 import {TranslateModule} from '@ngx-translate/core';
+import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
     declarations: [
@@ -44,7 +46,8 @@ import {TranslateModule} from '@ngx-translate/core';
         TextareaComponent,
         GoogleMapsComponent,
         FormFieldDirective,
-        ReadonlyComponent
+        ReadonlyComponent,
+        AutocompleteComponent
     ],
     imports: [
         CommonModule,
@@ -61,17 +64,20 @@ import {TranslateModule} from '@ngx-translate/core';
         MatSelectModule,
         MatMomentDateModule,
         MatDatepickerModule,
+        MatAutocompleteModule,
         TranslateModule
     ],
     exports: [
         FormComponent,
+        FormFieldComponent,
         DateComponent,
         HeadingComponent,
         InputComponent,
         FileComponent,
         SelectComponent,
         TextareaComponent,
-        GoogleMapsComponent
+        GoogleMapsComponent,
+        AutocompleteComponent
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}

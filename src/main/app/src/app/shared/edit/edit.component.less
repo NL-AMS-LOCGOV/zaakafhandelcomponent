@@ -9,10 +9,7 @@
   background-color: @box-shadow-color-light;
 }
 
-.label {
-  font-size: small;
-  font-weight: 500;
-
+.static-text-label {
   .mat-icon {
     font-size: 14px;
     height: 14px;
@@ -21,14 +18,18 @@
   }
 }
 
-.wrapper {
+.form-buttons {
+  display: flex;
+  justify-content: end;
+}
+
+.static-text {
   margin: 10px 5px;
   padding-right: 24px;
   cursor: text;
 
-  .text-content {
+  .static-text-content {
     min-height: 24px;
-    margin-top: 5px;
     flex: 1 1 100%;
     display: flex;
     justify-content: space-between;
@@ -43,11 +44,11 @@
       align-items: center;
     }
 
-    .text-content {
+    .static-text-content {
       box-shadow: 0 0 0 1px @box-shadow-color-light;
     }
 
-    .label .mat-icon {
+    .static-text-label .mat-icon {
       color: @box-shadow-color;
     }
   }

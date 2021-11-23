@@ -11,6 +11,7 @@ import {HeadingFormField} from '../../shared/material-form-builder/form-componen
 import {Taak} from '../../taken/model/taak';
 import {Groep} from '../../identity/model/groep';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {Observable} from 'rxjs';
 
 export abstract class AbstractFormulier {
 
@@ -54,7 +55,7 @@ export abstract class AbstractFormulier {
         return dataElementen;
     }
 
-    addGroepAssignment(groepen: Groep[]): void {
+    addGroepAssignment(groepen: Observable<Groep[]>): void {
         const groupForm = [
             [new HeadingFormField('taakToekenning', 'actie.toekennen', '2')],
             [new SelectFormField('groep', 'groep.-kies-', this.planItem.groep,

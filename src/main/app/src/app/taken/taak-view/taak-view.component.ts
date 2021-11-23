@@ -25,6 +25,9 @@ import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
+import {AutocompleteFormField} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field';
+import {IdentityService} from '../../identity/identity.service';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -36,6 +39,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     taak: Taak;
     menu: MenuItem[] = [];
+    taakBehandelaarFormField: AutocompleteFormField;
+    toelichtingFormfield: TextareaFormField;
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
@@ -45,7 +50,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService) {
+                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService) {
         super(store, utilService);
     }
 
@@ -76,6 +81,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     init(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
+
+        this.taakBehandelaarFormField = new AutocompleteFormField('taakBehandelaar', 'behandelaar',
+            this.taak.behandelaar, 'naam', this.identityService.getMedewerkersInGroep(this.taak.groep.id));
+
+        this.toelichtingFormfield = new TextareaFormField('toelichting', 'toelichting', taak.toelichting);
         this.formConfig = new FormConfig('actie.afronden');
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
@@ -105,6 +115,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             let taak1: Taak = this.formulier.getTaak(formGroup);
             console.log(taak1);
         }
+    }
+
+    editBehandelaar(behandelaar): void {
+        this.taak.behandelaar = behandelaar;
+        this.takenService.toekennen(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
+            this.init(taak);
+        });
     }
 
     editTaak(value: string, field: string): void {

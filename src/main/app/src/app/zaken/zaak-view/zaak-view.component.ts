@@ -32,6 +32,7 @@ import {NotitieType} from '../../shared/notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
+import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -166,6 +167,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (this.zaak.rechten[this.zaakRechten.VRIJGEVEN]) {
             this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
         }
+    }
+
+    getTextAreaFormField(field: string): TextareaFormField {
+        return new TextareaFormField(field, field, this.zaak[field]);
     }
 
     editZaak(value: string, field: string): void {

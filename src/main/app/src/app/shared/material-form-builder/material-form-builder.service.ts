@@ -16,6 +16,7 @@ import {SelectComponent} from './form-components/select/select.component';
 import {GoogleMapsComponent} from './form-components/google-maps/google-maps.component';
 import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
+import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 
 @Injectable({
     providedIn: 'root'
@@ -35,17 +36,22 @@ export class MaterialFormBuilderService {
         return form;
     }
 
+    public getFormItem(formField: AbstractFormField): FormItem {
+        return new FormItem(MaterialFormBuilderService.getType(formField.fieldType), formField);
+    }
+
     private createFormRow(formFields: AbstractFormField[]): FormItem[] {
         let formRow: FormItem[] = [];
         formFields.forEach(formField => {
-            formRow.push(new FormItem(MaterialFormBuilderService.getType(formField.fieldType), formField));
+            formRow.push(this.getFormItem(formField));
         });
         return formRow;
     }
 
     private static getType(type: FieldType): Type<IFormComponent> {
         switch (type) {
-
+            case FieldType.AUTOCOMPLETE:
+                return AutocompleteComponent;
             case FieldType.READONLY:
                 return ReadonlyComponent;
             case FieldType.DATE:

@@ -8,7 +8,6 @@ import {FormGroup, Validators} from '@angular/forms';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {Router} from '@angular/router';
-import {Zaaktype} from '../model/zaaktype';
 import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import * as moment from 'moment/moment';
@@ -21,6 +20,7 @@ import {DateFormField} from '../../shared/material-form-builder/form-components/
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {of} from 'rxjs';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -37,31 +37,28 @@ export class ZaakCreateComponent implements OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaak.aanmaken');
         this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
-        this.zakenService.getZaaktypes().subscribe(value => {
-            const zaaktypes: Zaaktype[] = value;
-            const communicatiekanalen: object[] = [{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}];
-            const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
-                Vertrouwelijkheidaanduiding);
+        const communicatiekanalen = of([{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}]);
+        const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+            Vertrouwelijkheidaanduiding);
 
-            const titel = new HeadingFormField('aanmakenZaak', 'actie.zaak.aanmaken', '1');
-            const tussenTitel = new HeadingFormField('overigegegevens', 'gegevens.overig', '2');
+        const titel = new HeadingFormField('aanmakenZaak', 'actie.zaak.aanmaken', '1');
+        const tussenTitel = new HeadingFormField('overigegegevens', 'gegevens.overig', '2');
 
-            const zaaktype = new SelectFormField('zaaktype', 'zaaktype', null, 'omschrijving', zaaktypes,
-                new FormFieldConfig([Validators.required]));
+        const zaaktype = new SelectFormField('zaaktype', 'zaaktype', null, 'omschrijving', this.zakenService.getZaaktypes(),
+            new FormFieldConfig([Validators.required]));
 
-            const startdatum = new DateFormField('startdatum', 'startdatum', moment(),
-                new FormFieldConfig([Validators.required]));
-            const registratiedatum = new DateFormField('registratiedatum', 'registratiedatum', moment());
+        const startdatum = new DateFormField('startdatum', 'startdatum', moment(),
+            new FormFieldConfig([Validators.required]));
+        const registratiedatum = new DateFormField('registratiedatum', 'registratiedatum', moment());
 
-            const communicatiekanaal = new SelectFormField('communicatiekanaal', 'communicatiekanaal', null,
-                'doel', communicatiekanalen);
-            const vertrouwelijkheidaanduiding = new SelectFormField('vertrouwelijkheidaanduiding',
-                'vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
-            const omschrijving = new InputFormField('omschrijving', 'omschrijving', null);
-            const toelichting = new TextareaFormField('toelichting', 'toelichting', null);
-            this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
-                [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
-        });
+        const communicatiekanaal = new SelectFormField('communicatiekanaal', 'communicatiekanaal', null,
+            'doel', communicatiekanalen);
+        const vertrouwelijkheidaanduiding = new SelectFormField('vertrouwelijkheidaanduiding',
+            'vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
+        const omschrijving = new InputFormField('omschrijving', 'omschrijving', null);
+        const toelichting = new TextareaFormField('toelichting', 'toelichting', null);
+        this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
+            [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {

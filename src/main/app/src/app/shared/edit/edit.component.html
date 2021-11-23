@@ -2,12 +2,12 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<div class="wrapper" (click)="editing = true">
-    <label class="label">
-        {{label}}
+<div class="static-text" (click)="edit(true)">
+    <label class="static-text-label">
+        {{formField.label | translate}}
         <mat-icon>edit</mat-icon>
     </label>
-    <div *ngIf="!editing" class="text-content">
+    <div *ngIf="!editing" class="static-text-content">
         {{value | empty}}
         <div class="edit-icon">
             <mat-icon>edit</mat-icon>
@@ -16,5 +16,13 @@
 </div>
 
 <div *ngIf="editing">
-    <mfb-form [formFields]="editField" [config]="formConfig" (formSubmit)="save($event)"></mfb-form>
+    <mfb-form-field [field]="formItem"></mfb-form-field>
+    <div class="form-buttons">
+        <button mat-mini-fab color="primary" (click)="save()">
+            <mat-icon>check</mat-icon>
+        </button>
+        <button mat-mini-fab (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
 </div>

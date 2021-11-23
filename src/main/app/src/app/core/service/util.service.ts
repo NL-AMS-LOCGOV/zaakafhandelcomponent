@@ -63,7 +63,7 @@ export class UtilService {
         this.loading.next(loading);
     }
 
-    getEnumAsSelectList(prefix: string, enumValue: any): { label: string, value: string }[] {
+    getEnumAsSelectList(prefix: string, enumValue: any): Observable<{ label: string, value: string }[]> {
         let list: { label: string, value: string }[] = [];
         Object.keys(enumValue).forEach(value => {
             this.translate.get(`${prefix}.${value}`).subscribe(result => {
@@ -71,7 +71,7 @@ export class UtilService {
             });
         });
 
-        return list;
+        return of(list);
     }
 
     openSnackbar(message: string, params?: Object) {

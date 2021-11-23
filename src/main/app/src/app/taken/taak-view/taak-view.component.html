@@ -25,9 +25,7 @@
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
-                        <zac-behandelaar-veld [taakId]="taak.id" [zaakUuid]="taak.zaakUUID" [behandelaar]="taak.behandelaar"
-                                              [laatKnopZien]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
-                                              (behandelaarGewijzigd)="ophalenTaak()"></zac-behandelaar-veld>
+                        <zac-edit [formField]="taakBehandelaarFormField" (onSave)="editBehandelaar($event)"></zac-edit>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
@@ -41,7 +39,7 @@
                     </div>
 
                     <div fxFlex="100">
-                        <zac-edit [label]="'toelichting' | translate" [value]="taak.toelichting" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
+                        <zac-edit [formField]="toelichtingFormfield" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
                     </div>
                 </div>
             </mat-card-content>
