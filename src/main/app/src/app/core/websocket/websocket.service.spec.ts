@@ -6,9 +6,11 @@
 import {WebsocketService} from './websocket.service';
 import {Opcode} from './model/opcode';
 import {ObjectType} from './model/object-type';
+import {Listener} from './model/listener';
 
 describe('WebsocketService', () => {
     let service: WebsocketService;
+    let listeners: Listener[] = [];
 
     beforeEach(() => {
         // Gebruik de mock. N.B. daarmee kan ALLEEN de listeners-logica getest worden.
@@ -38,7 +40,7 @@ describe('WebsocketService', () => {
             var opcode: Opcode = OPCODES[Math.floor(Math.random() * OPCODES.length)];
             var objectType: ObjectType = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
             var delay: string = Math.floor(Math.random() * MAX_DELAY).toString();
-            service.addListener(opcode, objectType, delay, callback(opcode, objectType, delay, done));
+            listeners.push(service.addListener(opcode, objectType, delay, callback(opcode, objectType, delay, done)));
         }
     });
 
@@ -59,12 +61,9 @@ describe('WebsocketService', () => {
     }
 
     function cleanup() {
-        for (var i = 0; i < MAX_DELAY; i++) {
-            for (const opcodeKey in Opcode) {
-                for (const objectType in ObjectType) {
-                    service.removeListeners(Opcode[opcodeKey], ObjectType[objectType], i.toString());
-                }
-            }
+        for (var i = 0; i < listeners.length; i++) {
+            service.removeListener(listeners[i]);
         }
+        listeners.length = 0;
     }
 });

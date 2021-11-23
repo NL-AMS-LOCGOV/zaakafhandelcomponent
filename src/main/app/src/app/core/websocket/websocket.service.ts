@@ -15,6 +15,7 @@ import {ScreenUpdateEvent} from './model/screen-update-event';
 import {EventCallback} from './model/event-callback';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
+import {Listener} from './model/listener';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +23,8 @@ import {TranslateService} from '@ngx-translate/core';
 export class WebsocketService implements OnDestroy {
 
     public static test: boolean = false; // Als true dan wordt de mock gebruikt
+
+    private static listenerId = 0;
 
     private readonly PROTOCOL: string = window.location.protocol.replace(/^http/, 'ws');
 
@@ -104,12 +107,14 @@ export class WebsocketService implements OnDestroy {
     private onMessage = (message: any) => {
         var event: ScreenUpdateEvent = new ScreenUpdateEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
         var callbacks: EventCallback[] = this.getCallbacks(event);
-        for (var i = 0; i < callbacks.length; i++) {
-            try {
-                callbacks[i](event);
-            } catch (error) {
-                console.warn('Websocket callback error: ');
-                console.debug(error);
+        for (var listenerId in callbacks) {
+            if (callbacks.hasOwnProperty(listenerId) && listenerId != 'length') {
+                try {
+                    callbacks[listenerId](event);
+                } catch (error) {
+                    console.warn('Websocket callback error: ');
+                    console.debug(error);
+                }
             }
         }
     };
@@ -119,14 +124,15 @@ export class WebsocketService implements OnDestroy {
         console.debug(error);
     };
 
-    public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): void {
+    public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): Listener {
         var event: ScreenUpdateEvent = new ScreenUpdateEvent(opcode, objectType, objectId);
-        this.addCallback(event, callback);
+        var listener: Listener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
+        return listener;
     }
 
-    public addListenerMetSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): void {
-        this.addListener(opcode, objectType, objectId, (event) => {
+    public addListenerMetSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): Listener {
+        return this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
                 snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + objectType),
                 snackbar2: this.translate.get('msg.gewijzigd.2'),
@@ -140,10 +146,29 @@ export class WebsocketService implements OnDestroy {
         });
     }
 
-    public removeListeners(opcode: Opcode, objectType: ObjectType, objectId: string): void {
-        var event: ScreenUpdateEvent = new ScreenUpdateEvent(opcode, objectType, objectId);
-        this.removeCallbacks(event);
-        this.send(new SubscriptionMessage(SubscriptionType.DELETE, event));
+    public suspendListener(listener: Listener): void {
+        if (listener) {
+            // TODO ESUITEDEV-25959
+        }
+    }
+
+    public removeListener(listener: Listener): void {
+        if (listener) {
+            this.removeCallback(listener);
+            this.send(new SubscriptionMessage(SubscriptionType.DELETE, listener.event));
+        }
+    }
+
+    private addCallback(event: ScreenUpdateEvent, callback: EventCallback): Listener {
+        var listener: Listener = WebsocketService.eventListener(event);
+        var callbacks: EventCallback[] = this.getCallbacks(event);
+        callbacks[listener.id] = callback;
+        return listener;
+    }
+
+    private removeCallback(listener: Listener): void {
+        var callbacks: EventCallback[] = this.getCallbacks(listener.event);
+        delete callbacks[listener.id];
     }
 
     private getCallbacks(event: ScreenUpdateEvent): EventCallback[] {
@@ -153,13 +178,7 @@ export class WebsocketService implements OnDestroy {
         return this.listeners[event.key];
     }
 
-    private addCallback(event: ScreenUpdateEvent, callback: EventCallback): void {
-        var callbacks: EventCallback[] = this.getCallbacks(event);
-        callbacks.push(callback);
-    }
-
-    private removeCallbacks(event: ScreenUpdateEvent): void {
-        var callbacks: EventCallback[] = this.getCallbacks(event);
-        callbacks.length = 0;
+    private static eventListener(event: ScreenUpdateEvent) {
+        return new Listener('lid' + (WebsocketService.listenerId++), event);
     }
 }

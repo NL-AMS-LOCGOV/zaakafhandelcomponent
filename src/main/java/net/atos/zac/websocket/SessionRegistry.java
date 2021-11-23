@@ -113,7 +113,7 @@ public class SessionRegistry {
     }
 
     /**
-     * This method is applied to all event arguments to make sure that the opbjectId being quoted (by Angular?) doesn't cause any problems.
+     * This method is applied to all event arguments to make sure that the objectId being quoted (by Angular?) doesn't cause any problems.
      * Events that are otherwise equal except for the quoted/unquoted objectIds should in all cases be regarded as the same event.
      *
      * @param event the event in which the objectId may have been quoted

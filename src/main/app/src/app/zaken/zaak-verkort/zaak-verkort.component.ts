@@ -19,6 +19,7 @@ import {Subscription} from 'rxjs';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
+import {Listener} from '../../core/websocket/model/listener';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -37,6 +38,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     lowValue: number = 0;
     highValue: number = 5;
     private subscriptions$: Subscription[] = [];
+    private zaakListener: Listener;
+    private zaakRollenListener: Listener;
+    private zaakDocumentenListener: Listener;
 
     constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService, private websocketService: WebsocketService) {
     }
@@ -54,9 +58,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
             }
         }));
 
-        this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
-        this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid, () => this.loadZaak());
-        this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid,
+        this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
+        this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid, () => this.loadZaak());
+        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid,
             () => this.loadInformatieObjecten());
     }
 
@@ -85,9 +89,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.websocketService.removeListeners(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid);
-        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid);
-        this.websocketService.removeListeners(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid);
+        this.websocketService.removeListener(this.zaakListener);
+        this.websocketService.removeListener(this.zaakRollenListener);
+        this.websocketService.removeListener(this.zaakDocumentenListener);
         this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
     }
 }

@@ -20,6 +20,7 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
+import {Listener} from '../../core/websocket/model/listener';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -31,6 +32,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     menu: MenuItem[];
     zaken: ZaakInformatieObjectKoppeling[];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    private documentListener: Listener;
 
     constructor(store: Store<State>,
                 private zakenService: ZakenService,
@@ -46,7 +48,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.infoObject = data['informatieObject'];
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+            this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 () => this.loadInformatieObject());
 
             this.setupMenu();
@@ -55,7 +57,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     ngOnDestroy() {
-        this.websocketService.removeListeners(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid);
+        this.websocketService.removeListener(this.documentListener);
     }
 
     private setupMenu(): void {

@@ -28,6 +28,7 @@ import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service
 import {AutocompleteFormField} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field';
 import {IdentityService} from '../../identity/identity.service';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
+import {Listener} from '../../core/websocket/model/listener';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -44,6 +45,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
+    private taakListener: Listener;
 
     get taakRechten(): typeof TaakRechten {
         return TaakRechten;
@@ -64,12 +66,12 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngAfterViewInit();
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
-        this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
+        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
     }
 
     ngOnDestroy() {
         super.ngOnDestroy();
-        this.websocketService.removeListeners(Opcode.ANY, ObjectType.TAAK, this.taak.id);
+        this.websocketService.removeListener(this.taakListener);
     }
 
     onZaakLoaded($event): void {
