@@ -547,4 +547,45 @@ public class SessionRegistryTest {
         assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
         assertTrue(registry.listSessions(DELETED_ZAAK2).isEmpty());
     }
+
+    @Test
+    public void testRemoveAnyOpcode() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(ANY_ZAAK1, SESSION1);
+        registry.delete(ANY_ZAAK1, SESSION1);
+
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK1).isEmpty());
+    }
+
+    @Test
+    public void testRemoveAnyObjectType() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(UPDATED_ANY1, SESSION1);
+        registry.delete(UPDATED_ANY1, SESSION1);
+
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_DOCUMENT1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKROLLEN1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKTAKEN1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKDOCUMENTEN1).isEmpty());
+    }
+
+    @Test
+    public void testRemoveAnyOpcodeAnyObjectType() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(ANY_ANY1, SESSION1);
+        registry.delete(ANY_ANY1, SESSION1);
+
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_DOCUMENT1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKROLLEN1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKTAKEN1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAKDOCUMENTEN1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_DOCUMENT1).isEmpty());
+    }
 }
