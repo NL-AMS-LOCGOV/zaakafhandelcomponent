@@ -82,9 +82,8 @@ export class WebsocketService implements OnDestroy {
             // Simuleert een inkomend websocketbericht na een vertraging (in ms) die uit het objectId gehaald wordt
             var delay: number = Number(data.event.objectId);
             var event: ScreenEvent = data.event;
-            event.timestamp = 0;
             setInterval(() => {
-                this.onMessage(event);
+                this.onMessage(new ScreenEvent(event.opcode, event.objectType, event.objectId, 0));
             }, delay);
         };
     }
@@ -168,7 +167,7 @@ export class WebsocketService implements OnDestroy {
     }
 
     private addCallback(event: ScreenEvent, callback: EventCallback): WebsocketListener {
-        var listener: WebsocketListener = new WebsocketListener(event);
+        var listener: WebsocketListener = new WebsocketListener(event, callback);
         var callbacks: EventCallback[] = this.getCallbacks(event);
         callbacks[listener.id] = callback;
         return listener;

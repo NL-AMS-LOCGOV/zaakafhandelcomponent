@@ -182,6 +182,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     editZaak(value: string, field: string): void {
         const patchData: Zaak = new Zaak();
         patchData[field] = value;
+        this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.updateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });

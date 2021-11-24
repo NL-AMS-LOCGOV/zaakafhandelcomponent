@@ -66,7 +66,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngAfterViewInit();
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
-        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id, () => this.ophalenTaak());
+        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id, this.ophalenTaak);
     }
 
     ngOnDestroy() {
@@ -129,6 +129,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     editTaak(value: string, field: string): void {
         this.taak[field] = value;
+        this.websocketService.suspendListener(this.taakListener);
         this.takenService.update(this.taak).subscribe((taak) => {
             this.init(taak);
         });
