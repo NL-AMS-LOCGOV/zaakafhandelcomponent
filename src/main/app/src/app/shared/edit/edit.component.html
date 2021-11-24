@@ -15,8 +15,8 @@
     </div>
 </div>
 
-<div *ngIf="editing">
-    <mfb-form-field [field]="formItem"></mfb-form-field>
+<div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
+    <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
     <div class="form-buttons">
         <button mat-mini-fab color="primary" (click)="save()">
             <mat-icon>check</mat-icon>

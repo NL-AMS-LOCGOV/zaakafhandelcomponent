@@ -85,11 +85,11 @@
                                     <mat-divider></mat-divider>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit [formField]="getTextAreaFormField('omschrijving')"
+                                    <zac-edit [formField]="getTextAreaFormField('omschrijving', zaak.omschrijving)"
                                               (onSave)="editZaak($event, 'omschrijving')"></zac-edit>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit [formField]="getTextAreaFormField('toelichting')"
+                                    <zac-edit [formField]="getTextAreaFormField('toelichting', zaak.toelichting)"
                                               (onSave)="editZaak($event, 'toelichting')"></zac-edit>
                                 </div>
                             </div>

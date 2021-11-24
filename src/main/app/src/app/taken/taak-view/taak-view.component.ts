@@ -10,7 +10,6 @@ import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
-import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
 import {AbstractView} from '../../shared/abstract-view/abstract-view';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
@@ -99,14 +98,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (this.taak.rechten[this.taakRechten.TOEKENNEN]) {
-            this.menu.push(new LinkMenuTitem('actie.toekennen', `/taken/${this.taak.id}/toekennen`, 'assignment_ind'));
-        }
-
-        if (this.taak.rechten[this.taakRechten.VRIJGEVEN]) {
-            this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
-        }
-
         if (this.taak.rechten[this.taakRechten.BEHANDELEN]) {
             this.menu.push(new ButtonMenuItem('actie.afronden', this.afronden, 'assignment_turned_in'));
         }
@@ -120,11 +111,15 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     editBehandelaar(behandelaar): void {
-        this.taak.behandelaar = behandelaar;
-        this.takenService.assign(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
-            this.init(taak);
-        });
+        if (behandelaar) {
+            this.taak.behandelaar = behandelaar;
+            this.takenService.assign(this.taak).subscribe(taak => {
+                this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
+                this.init(taak);
+            });
+        } else {
+            this.vrijgeven();
+        }
     }
 
     editTaak(value: string, field: string): void {
