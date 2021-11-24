@@ -12,6 +12,7 @@ import {Taak} from './model/taak';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
 import {TableResponse} from '../shared/dynamic-table/datasource/table-response';
 import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
+import {Medewerker} from '../identity/model/medewerker';
 
 @Injectable({
     providedIn: 'root'
@@ -86,6 +87,14 @@ export class TakenService {
 
     complete(taak: Taak): Observable<Taak> {
         return this.http.patch<Taak>(`${this.basepath}/complete`, taak).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    // TODO ESUITEDEV-25965
+    verdelen(taken: Taak[], medewerker: Medewerker): Observable<void> {
+        const taakBody: any = {};
+        return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
