@@ -30,6 +30,15 @@ public class RolVestiging extends Rol<Vestiging> {
     }
 
     @Override
+    public String getNaam() {
+        final Vestiging ves = getBetrokkeneIdentificatie();
+        if (ves == null) {
+            return "-";
+        }
+        return ves.getVestigingsNummer();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getVestigingsNummer());
     }

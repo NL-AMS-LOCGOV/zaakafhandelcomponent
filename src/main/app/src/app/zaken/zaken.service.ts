@@ -16,6 +16,7 @@ import {ZaakOverzicht} from './model/zaak-overzicht';
 import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
 import {Medewerker} from '../identity/model/medewerker';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
+import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
 
 @Injectable({
     providedIn: 'root'
@@ -109,6 +110,12 @@ export class ZakenService {
 
         return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, zaakBody).pipe(
             catchError(this.handleError)
+        );
+    }
+
+    getAuditTrailVoorZaak(uuid: string): Observable<AuditTrailRegel[]> {
+        return this.http.get<AuditTrailRegel[]>(`${this.basepath}/zaak/${uuid}/auditTrail`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 

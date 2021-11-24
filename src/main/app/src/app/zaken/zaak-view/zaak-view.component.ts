@@ -110,6 +110,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
+        this.zakenService.getAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
+            //todo show auditTrail
+
+            console.log(auditTrail);
+        });
         this.setupMenu();
     }
 

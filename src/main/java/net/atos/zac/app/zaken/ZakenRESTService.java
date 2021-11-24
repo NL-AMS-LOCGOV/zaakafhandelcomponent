@@ -40,6 +40,8 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.zac.app.audit.converter.RESTAuditTrailRegelConverter;
+import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -84,6 +86,9 @@ public class ZakenRESTService {
 
     @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
+
+    @Inject
+    private RESTAuditTrailRegelConverter auditTrailRegelConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -299,5 +304,11 @@ public class ZakenRESTService {
         medewerker.setAchternaam(user.getLastName());
         final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
+    }
+
+    @GET
+    @Path("zaak/{uuid}/auditTrail")
+    public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
+        return zrcClientService.listAuditTrail(uuid).stream().map(auditTrailRegelConverter::convert).collect(Collectors.toList());
     }
 }
