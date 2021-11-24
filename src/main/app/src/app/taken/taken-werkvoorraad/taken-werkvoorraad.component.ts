@@ -19,6 +19,9 @@ import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {TaakRechten} from '../model/taak-rechten';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
+import {SelectionModel} from '@angular/cdk/collections';
+import {WerkvoorraadVerdelenDialogComponent} from '../../shared/werkvoorraad-verdelen-dialog/werkvoorraad-verdelen-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -34,26 +37,37 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
+    selection = new SelectionModel<Taak>(true, []);
 
     get taakRechten(): typeof TaakRechten {
         return TaakRechten;
     }
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.werkvoorraad');
-
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
+        this.setColumns();
+    }
 
-        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM)
+    ngAfterViewInit(): void {
+        this.dataSource.setViewChilds(this.paginator, this.sort);
+        this.dataSource.load();
+        this.table.dataSource = this.dataSource;
+    }
+
+    private setColumns() {
+        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
+            TaakSortering.CREATIEDATUM)
         .pipe(DatumPipe);
 
         const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM)
         .pipe(DatumOverschredenPipe);
 
         this.dataSource.columns = [
+            new TableColumn('select', 'select', true, null, true),
             new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
             new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true),
             new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true),
@@ -65,12 +79,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         ];
     }
 
-    ngAfterViewInit(): void {
-        this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.dataSource.load();
-        this.table.dataSource = this.dataSource;
-    }
-
     toekennenAanIngelogdeMedewerker(taak: Taak, event) {
         event.stopPropagation();
         this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
@@ -78,5 +86,64 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             taak.rechten = taakResponse.rechten;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
         });
+    }
+
+    /** Whether the number of selected elements matches the total number of rows. */
+    isAllSelected(): boolean {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected === numRows;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle() {
+        if (this.isAllSelected()) {
+            this.selection.clear();
+            return;
+        }
+
+        this.selection.select(...this.dataSource.data);
+    }
+
+    /** The label for the checkbox on the passed row */
+    checkboxLabel(row?: Taak): string {
+        if (!row) {
+            return `actie.alles.${this.isAllSelected() ? 'deselecteren' : 'selecteren'}`;
+        }
+
+        return `actie.${this.selection.isSelected(row) ? 'deselecteren' : 'selecteren'}`;
+    }
+
+    isSelected(): boolean {
+        return this.selection.selected.length > 0;
+    }
+
+    countSelected(): number {
+        return this.selection.selected.length;
+    }
+
+    openVerdelenScherm() {
+        let taken = this.selection.selected;
+        const dialogRef = this.dialog.open(WerkvoorraadVerdelenDialogComponent, {
+            width: '300px',
+            data: taken
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (this.selection.selected.length === 1) {
+                    this.utilService.openSnackbar('msg.verdeeld.taak');
+                } else {
+                    this.utilService.openSnackbar('msg.verdeeld.taken', {aantal: this.selection.selected.length});
+                }
+                this.zoekTaken();
+            }
+        });
+    }
+
+    private zoekTaken() {
+        this.dataSource.load();
+        this.setColumns();
+        this.selection.clear();
     }
 }
