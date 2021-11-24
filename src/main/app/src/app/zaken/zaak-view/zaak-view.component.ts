@@ -175,8 +175,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    getTextAreaFormField(field: string): TextareaFormField {
-        return new TextareaFormField(field, field, this.zaak[field]);
+    getTextAreaFormField(label, field: string): TextareaFormField {
+        return new TextareaFormField(label, label, field);
     }
 
     editZaak(value: string, field: string): void {

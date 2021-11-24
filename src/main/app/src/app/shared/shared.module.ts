@@ -34,6 +34,7 @@ import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
 import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
+import {OutsideClickDirective} from './directives/outside-click.directive';
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import {paginatorLanguageInitializerFactory} from './paginator/paginator-languag
         StatusLabelComponent,
         BehandelaarVeldComponent,
         EditComponent,
-        DatumOverschredenComponent
+        DatumOverschredenComponent,
+        OutsideClickDirective
     ],
     imports: [
         BrowserAnimationsModule,
