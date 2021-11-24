@@ -32,7 +32,7 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
         return objectType;
     }
 
-    @AssertTrue(message = "Websocket subscriptions for CREATED objectIds cannot exist (the new is unknown client side)")
+    @AssertTrue(message = "Websocket subscriptions for CREATED objectIds cannot exist (the new id is unknown client side)")
     boolean isValid() {
         return getOperation() != Opcode.CREATED;
     }

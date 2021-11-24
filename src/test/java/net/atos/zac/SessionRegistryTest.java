@@ -328,151 +328,223 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final ScreenEvent EVENT1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "1");
+    private static final ScreenEvent CREATED_ZAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "1");
 
-    private static final ScreenEvent EVENT1a = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "\"1\"");
+    private static final ScreenEvent CREATED_TAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.TAAK, "1");
 
-    private static final ScreenEvent EVENT1b = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "\"\"1\"\"");
+    private static final ScreenEvent CREATED_DOCUMENT1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
 
-    private static final ScreenEvent EVENT2 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "2");
+    private static final ScreenEvent UPDATED_ZAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "1");
 
-    private static final ScreenEvent EVENT3 = new ScreenEvent(Opcode.CREATED, ScreenEventType.TAAK, "1");
+    private static final ScreenEvent UPDATED_ZAAK1a = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "\"1\"");
 
-    private static final ScreenEvent EVENT4 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "1");
+    private static final ScreenEvent UPDATED_ZAAK1b = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "\"\"1\"\"");
+
+    private static final ScreenEvent UPDATED_ZAAK2 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "2");
+
+    private static final ScreenEvent DELETED_ZAAK2 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, "2");
+
+    private static final ScreenEvent UPDATED_TAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.TAAK, "1");
+
+    private static final ScreenEvent UPDATED_DOCUMENT1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
+
+    private static final ScreenEvent UPDATED_ZAAKROLLEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_ROLLEN, "1");
+
+    private static final ScreenEvent UPDATED_ZAAKTAKEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_TAKEN, "1");
+
+    private static final ScreenEvent UPDATED_ZAAKDOCUMENTEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_INFORMATIEOBJECTEN, "1");
+
+    private static final ScreenEvent DELETED_ZAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, "1");
+
+    private static final ScreenEvent DELETED_TAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.TAAK, "1");
+
+    private static final ScreenEvent DELETED_DOCUMENT1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
+
+    private static final ScreenEvent ANY_ZAAK1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ZAAK, "1");
+
+    private static final ScreenEvent UPDATED_ANY1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ANY, "1");
+
+    private static final ScreenEvent ANY_ANY1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ANY, "1");
 
     @Test
     public void testFixGelijk() {
-        assertEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT1));
-        assertEquals(sessionRegistry.fix(EVENT1a), sessionRegistry.fix(EVENT1a));
-        assertEquals(sessionRegistry.fix(EVENT1b), sessionRegistry.fix(EVENT1b));
-        assertEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT1a));
-        assertEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT1b));
-        assertEquals(sessionRegistry.fix(EVENT1a), sessionRegistry.fix(EVENT1b));
-        assertEquals(sessionRegistry.fix(EVENT2), sessionRegistry.fix(EVENT2));
-        assertEquals(sessionRegistry.fix(EVENT3), sessionRegistry.fix(EVENT3));
-        assertEquals(sessionRegistry.fix(EVENT4), sessionRegistry.fix(EVENT4));
+        assertEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(UPDATED_ZAAK1));
+        assertEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(UPDATED_ZAAK1a));
+        assertEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(UPDATED_ZAAK1b));
+        assertEquals(sessionRegistry.fix(UPDATED_ZAAK1a), sessionRegistry.fix(UPDATED_ZAAK1b));
+        assertEquals(sessionRegistry.fix(UPDATED_TAAK1), sessionRegistry.fix(UPDATED_TAAK1));
+        assertEquals(sessionRegistry.fix(DELETED_ZAAK1), sessionRegistry.fix(DELETED_ZAAK1));
     }
 
     @Test
     public void testFixNietGelijk() {
-        assertNotEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT2));
-        assertNotEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT3));
-        assertNotEquals(sessionRegistry.fix(EVENT1), sessionRegistry.fix(EVENT4));
-        assertNotEquals(sessionRegistry.fix(EVENT1a), sessionRegistry.fix(EVENT2));
-        assertNotEquals(sessionRegistry.fix(EVENT1a), sessionRegistry.fix(EVENT3));
-        assertNotEquals(sessionRegistry.fix(EVENT1a), sessionRegistry.fix(EVENT4));
-        assertNotEquals(sessionRegistry.fix(EVENT1b), sessionRegistry.fix(EVENT2));
-        assertNotEquals(sessionRegistry.fix(EVENT1b), sessionRegistry.fix(EVENT3));
-        assertNotEquals(sessionRegistry.fix(EVENT1b), sessionRegistry.fix(EVENT4));
-        assertNotEquals(sessionRegistry.fix(EVENT2), sessionRegistry.fix(EVENT3));
-        assertNotEquals(sessionRegistry.fix(EVENT2), sessionRegistry.fix(EVENT4));
-        assertNotEquals(sessionRegistry.fix(EVENT3), sessionRegistry.fix(EVENT4));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(UPDATED_ZAAK2));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(UPDATED_TAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1), sessionRegistry.fix(DELETED_ZAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1a), sessionRegistry.fix(UPDATED_ZAAK2));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1a), sessionRegistry.fix(UPDATED_TAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1a), sessionRegistry.fix(DELETED_ZAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1b), sessionRegistry.fix(UPDATED_ZAAK2));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1b), sessionRegistry.fix(UPDATED_TAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK1b), sessionRegistry.fix(DELETED_ZAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK2), sessionRegistry.fix(UPDATED_TAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_ZAAK2), sessionRegistry.fix(DELETED_ZAAK1));
+        assertNotEquals(sessionRegistry.fix(UPDATED_TAAK1), sessionRegistry.fix(DELETED_ZAAK1));
     }
 
     @Test
     public void testAdd() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
 
-        assertEquals(1, registry.listSessions(EVENT1).size());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION1));
     }
 
     @Test
     public void testAddDubbel() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.create(EVENT1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
 
-        assertEquals(1, registry.listSessions(EVENT1).size());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION1));
     }
 
     @Test
     public void testAddFixed() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.create(EVENT1a, SESSION1);
-        registry.create(EVENT1b, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.create(UPDATED_ZAAK1a, SESSION1);
+        registry.create(UPDATED_ZAAK1b, SESSION1);
 
-        assertEquals(1, registry.listSessions(EVENT1).size());
-        assertEquals(1, registry.listSessions(EVENT1a).size());
-        assertEquals(1, registry.listSessions(EVENT1b).size());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
-        assertTrue(registry.listSessions(EVENT1a).contains(SESSION1));
-        assertTrue(registry.listSessions(EVENT1b).contains(SESSION1));
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1a).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1b).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION1));
+        assertTrue(registry.listSessions(UPDATED_ZAAK1a).contains(SESSION1));
+        assertTrue(registry.listSessions(UPDATED_ZAAK1b).contains(SESSION1));
     }
 
     @Test
     public void testAddAndere() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.create(EVENT1, SESSION2);
-        registry.create(EVENT2, SESSION1);
-        registry.create(EVENT3, SESSION1);
-        registry.create(EVENT4, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION2);
+        registry.create(UPDATED_ZAAK2, SESSION1);
+        registry.create(UPDATED_TAAK1, SESSION1);
+        registry.create(DELETED_ZAAK1, SESSION1);
 
-        assertEquals(2, registry.listSessions(EVENT1).size());
-        assertEquals(1, registry.listSessions(EVENT2).size());
-        assertEquals(1, registry.listSessions(EVENT3).size());
-        assertEquals(1, registry.listSessions(EVENT4).size());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION2));
-        assertTrue(registry.listSessions(EVENT2).contains(SESSION1));
-        assertTrue(registry.listSessions(EVENT3).contains(SESSION1));
-        assertTrue(registry.listSessions(EVENT4).contains(SESSION1));
+        assertEquals(2, registry.listSessions(UPDATED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK2).size());
+        assertEquals(1, registry.listSessions(UPDATED_TAAK1).size());
+        assertEquals(1, registry.listSessions(DELETED_ZAAK1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION1));
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION2));
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).contains(SESSION1));
+        assertTrue(registry.listSessions(UPDATED_TAAK1).contains(SESSION1));
+        assertTrue(registry.listSessions(DELETED_ZAAK1).contains(SESSION1));
     }
 
     @Test
     public void testRemove() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.delete(EVENT1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.delete(UPDATED_ZAAK1, SESSION1);
 
-        assertTrue(registry.listSessions(EVENT1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).isEmpty());
     }
 
     @Test
     public void testRemoveFixed() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.delete(EVENT1a, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.delete(UPDATED_ZAAK1a, SESSION1);
 
-        registry.listSessions(EVENT1).forEach(session -> System.out.println(session.getId()));
-        assertTrue(registry.listSessions(EVENT1).isEmpty());
-        assertTrue(registry.listSessions(EVENT1a).isEmpty());
+        registry.listSessions(UPDATED_ZAAK1).forEach(session -> System.out.println(session.getId()));
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1a).isEmpty());
     }
 
     @Test
     public void testRemoveAndere() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.delete(EVENT1, SESSION2);
-        registry.delete(EVENT2, SESSION1);
-        registry.delete(EVENT3, SESSION1);
-        registry.delete(EVENT4, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.delete(UPDATED_ZAAK1, SESSION2);
+        registry.delete(UPDATED_ZAAK2, SESSION1);
+        registry.delete(UPDATED_TAAK1, SESSION1);
+        registry.delete(DELETED_ZAAK1, SESSION1);
 
-        assertTrue(registry.listSessions(EVENT2).isEmpty());
-        assertTrue(registry.listSessions(EVENT3).isEmpty());
-        assertTrue(registry.listSessions(EVENT4).isEmpty());
-        assertEquals(1, registry.listSessions(EVENT1).size());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION1));
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK1).isEmpty());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION1));
     }
 
     @Test
     public void testRemoveAll() {
         final SessionRegistry registry = new SessionRegistry();
-        registry.create(EVENT1, SESSION1);
-        registry.create(EVENT1, SESSION2);
-        registry.create(EVENT2, SESSION1);
-        registry.create(EVENT3, SESSION1);
-        registry.create(EVENT4, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION1);
+        registry.create(UPDATED_ZAAK1, SESSION2);
+        registry.create(UPDATED_ZAAK2, SESSION1);
+        registry.create(UPDATED_TAAK1, SESSION1);
+        registry.create(DELETED_ZAAK1, SESSION1);
         registry.deleteAll(SESSION1);
 
-        assertEquals(1, registry.listSessions(EVENT1).size());
-        assertTrue(registry.listSessions(EVENT2).isEmpty());
-        assertTrue(registry.listSessions(EVENT3).isEmpty());
-        assertTrue(registry.listSessions(EVENT4).isEmpty());
-        assertTrue(registry.listSessions(EVENT1).contains(SESSION2));
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAK1).contains(SESSION2));
+    }
+
+    @Test
+    public void testAddAnyOpcode() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(ANY_ZAAK1, SESSION1);
+
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(DELETED_ZAAK1).size());
+        assertTrue(registry.listSessions(CREATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_TAAK1).isEmpty());
+    }
+
+    @Test
+    public void testAddAnyObjectType() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(UPDATED_ANY1, SESSION1);
+
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_TAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_DOCUMENT1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKROLLEN1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKTAKEN1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKDOCUMENTEN1).size());
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(CREATED_ZAAK1).isEmpty());
+    }
+
+    @Test
+    public void testAddAnyOpcodeAnyObjectType() {
+        final SessionRegistry registry = new SessionRegistry();
+        registry.create(ANY_ANY1, SESSION1);
+
+        assertEquals(1, registry.listSessions(UPDATED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_TAAK1).size());
+        assertEquals(1, registry.listSessions(UPDATED_DOCUMENT1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKROLLEN1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKTAKEN1).size());
+        assertEquals(1, registry.listSessions(UPDATED_ZAAKDOCUMENTEN1).size());
+        assertEquals(1, registry.listSessions(DELETED_ZAAK1).size());
+        assertEquals(1, registry.listSessions(DELETED_TAAK1).size());
+        assertEquals(1, registry.listSessions(DELETED_DOCUMENT1).size());
+        assertTrue(registry.listSessions(CREATED_ZAAK1).isEmpty());
+        assertTrue(registry.listSessions(CREATED_TAAK1).isEmpty());
+        assertTrue(registry.listSessions(CREATED_DOCUMENT1).isEmpty());
+        assertTrue(registry.listSessions(UPDATED_ZAAK2).isEmpty());
+        assertTrue(registry.listSessions(DELETED_ZAAK2).isEmpty());
     }
 }
