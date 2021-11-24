@@ -154,6 +154,8 @@
   "actie.zaak.aanmaken": "Create case",
   "actie.zaak.bekijken": "View case",
   "actie.zaak.toekennen": "Assign case",
+  "actie.pagina.volgende": "Next page",
+  "actie.pagina.vorige": "Previous page",
   " 7 ": ">>--> MELDINGEN <--<<",
   "msg.datum.overschreden": "This date has passed",
   "msg.geen.gegevens.gevonden": "No data found",
@@ -178,9 +180,6 @@
   "msg.verdelen.taken": "Allocate {{aantal}} tasks",
   "msg.verdeeld.taken": "{{aantal}} cases have been allocated",
   "msg.verdeeld.taak": "The task has been allocated",
-  " 8 ": ">>--> PAGINATOR <--<<",
-  "paginator.items.per.pagina": "Items per page",
-  "paginator.volgende": "Next page",
-  "paginator.vorige": "Previous page",
-  "paginator.van": "of"
+  "msg.pagina.items": "Items per page",
+  "msg.pagina": "of"
 }

@@ -154,6 +154,8 @@
   "actie.zaak.aanmaken": "Zaak aanmaken",
   "actie.zaak.bekijken": "Zaak bekijken",
   "actie.zaak.toekennen": "Zaak toekennen",
+  "actie.pagina.volgende": "Volgende pagina",
+  "actie.pagina.vorige": "Vorige pagina",
   " 7 ": ">>--> MELDINGEN <--<<",
   "msg.datum.overschreden": "Deze datum is overschreden",
   "msg.geen.gegevens.gevonden": "Geen gegevens gevonden",
@@ -178,9 +180,6 @@
   "msg.verdelen.taken": "{{aantal}} taken verdelen",
   "msg.verdeeld.taken": "{{aantal}} taken zijn verdeeld",
   "msg.verdeeld.taak": "De taak is verdeeld",
-  " 8 ": ">>--> PAGINATOR <--<<",
-  "paginator.items.per.pagina": "Items per pagina",
-  "paginator.volgende": "Volgende pagina",
-  "paginator.vorige": "Vorige pagina",
-  "paginator.van": "van"
+  "msg.pagina.items": "Items per pagina",
+  "msg.pagina": "van"
 }
