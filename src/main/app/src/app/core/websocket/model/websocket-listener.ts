@@ -27,6 +27,7 @@ export class WebsocketListener {
     }
 
     callback(): void {
-        this._callback(this._event); // This no real incoming event! (it has no timestamp)
+        // Warning: This no real incoming event! (it has no timestamp and it may even have an ANY opcode and/or objectType)
+        this._callback(this._event);
     }
 }
