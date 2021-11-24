@@ -41,7 +41,6 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
     }
 
     private static isOrContainsClickTarget(element: HTMLElement, clickTarget: HTMLElement) {
-        // cdk-overlay-pane
         return element == clickTarget || element.contains(clickTarget) || clickTarget.classList.contains('mat-option-text');
     }
 }
