@@ -4,7 +4,6 @@
  */
 
 import {Component, Inject, Input, LOCALE_ID, OnInit} from '@angular/core';
-import {TaakStatus} from '../../taken/model/taak-status.enum';
 import * as moment from 'moment';
 import {StaticTextComponent} from '../static-text/static-text.component';
 
@@ -17,7 +16,7 @@ export class DatumOverschredenComponent extends StaticTextComponent implements O
 
     @Input() ended: string;
 
-    constructor(@Inject(LOCALE_ID) public locale: string) {
+    constructor() {
         super();
     }
 
