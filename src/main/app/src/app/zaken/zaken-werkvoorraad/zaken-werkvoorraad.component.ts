@@ -20,7 +20,7 @@ import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {SelectionModel} from '@angular/cdk/collections';
-import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
+import {WerkvoorraadVerdelenDialogComponent} from '../../shared/werkvoorraad-verdelen-dialog/werkvoorraad-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 
@@ -163,7 +163,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     openVerdelenScherm(): void {
         let zaken = this.selection.selected;
-        const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
+        const dialogRef = this.dialog.open(WerkvoorraadVerdelenDialogComponent, {
             width: '300px',
             data: zaken
         });

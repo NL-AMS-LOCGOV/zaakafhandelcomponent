@@ -9,7 +9,25 @@
            cdkDropListOrientation="horizontal"
            (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container [matColumnDef]="column.model" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+        <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                              [checked]="selection.hasValue() && isAllSelected()"
+                              [indeterminate]="selection.hasValue() && !isAllSelected()"
+                              [aria-label]="checkboxLabel() | translate">
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? selection.toggle(row) : null"
+                              [checked]="selection.isSelected(row)"
+                              [aria-label]="checkboxLabel(row) | translate">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.model"
+                      *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
             <th mat-header-cell cdkDrag *matHeaderCellDef
                 [mat-sort-header]="column.sort"
                 [disabled]="!column.sort">
@@ -104,4 +122,14 @@
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    sticky>
     </mat-paginator>
+</div>
+
+<div [hidden]="!isSelected()">
+    <button mat-raised-button class="verdelenBtn" color="accent" (click)="openVerdelenScherm()"
+            title="{{ 'actie.verdelen' | translate }}">
+        {{'actie.verdelen' | translate}}
+        <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected()
+                  matBadgeColor="primary">assignment_ind
+        </mat-icon>
+    </button>
 </div>

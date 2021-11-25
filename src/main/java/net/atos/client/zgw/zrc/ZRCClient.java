@@ -32,6 +32,7 @@ import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -142,4 +143,8 @@ public interface ZRCClient {
     @POST
     @Path("zaakobjecten")
     Zaakobject zaakobjectCreate(final Zaakobject zaakobject);
+
+    @GET
+    @Path("zaken/{zaak_uuid}/audittrail")
+    List<AuditTrailRegel> listAuditTrail(@PathParam("zaak_uuid") final UUID zaakUUID);
 }

@@ -31,6 +31,7 @@ import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
@@ -290,4 +291,15 @@ public class ZRCClientService implements Caching {
     public void updateZaakstatusCache(final URI key) {
         removed(ZRC_STATUS_MANAGED, key);
     }
+
+    /**
+     * List all instances of {@link AuditTrailRegel} for a specific {@link Zaak}.
+     *
+     * @param zaakUUID UUID of {@link Zaak}.
+     * @return List of {@link AuditTrailRegel} instances.
+     */
+    public List<AuditTrailRegel> listAuditTrail(final UUID zaakUUID) {
+        return zrcClient.listAuditTrail(zaakUUID);
+    }
+
 }

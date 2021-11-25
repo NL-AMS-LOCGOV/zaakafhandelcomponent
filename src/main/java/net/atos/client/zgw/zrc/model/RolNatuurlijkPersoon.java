@@ -40,6 +40,15 @@ public class RolNatuurlijkPersoon extends Rol<NatuurlijkPersoon> {
     }
 
     @Override
+    public String getNaam() {
+        final NatuurlijkPersoon persoon = getBetrokkeneIdentificatie();
+        if (persoon == null) {
+            return "-";
+        }
+        return persoon.getInpBsn();
+    }
+
+    @Override
     public int hashCode() {
         if (getBetrokkeneIdentificatie().getAnpIdentificatie() != null) {
             return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getAnpIdentificatie());

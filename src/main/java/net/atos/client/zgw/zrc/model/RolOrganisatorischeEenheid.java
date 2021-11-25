@@ -30,6 +30,14 @@ public class RolOrganisatorischeEenheid extends Rol<OrganisatorischeEenheid> {
     }
 
     @Override
+    public String getNaam() {
+        if (getBetrokkeneIdentificatie() == null) {
+            return "-";
+        }
+        return getBetrokkeneIdentificatie().getNaam();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getIdentificatie());
     }

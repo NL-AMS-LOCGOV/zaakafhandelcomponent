@@ -8,6 +8,8 @@ package net.atos.client.zgw.zrc.model;
 import java.net.URI;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class RolMedewerker extends Rol<Medewerker> {
 
     public RolMedewerker() {
@@ -27,6 +29,22 @@ public class RolMedewerker extends Rol<Medewerker> {
             return false;
         }
         return Objects.equals(betrokkeneIdentificatie.getIdentificatie(), identificatie.getIdentificatie());
+    }
+
+    public String getNaam() {
+        final Medewerker medewerker = getBetrokkeneIdentificatie();
+        if (medewerker == null) {
+            return "-";
+        }
+        final StringBuilder sb = new StringBuilder();
+        sb.append(medewerker.getVoorletters());
+        sb.append(StringUtils.SPACE);
+        if (StringUtils.isNotEmpty(medewerker.getVoorvoegselAchternaam())) {
+            sb.append(medewerker.getVoorvoegselAchternaam());
+            sb.append(StringUtils.SPACE);
+        }
+        sb.append(medewerker.getAchternaam());
+        return sb.toString();
     }
 
     @Override

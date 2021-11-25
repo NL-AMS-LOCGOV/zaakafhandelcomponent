@@ -37,6 +37,15 @@ public class RolNietNatuurlijkPersoon extends Rol<NietNatuurlijkPersoon> {
     }
 
     @Override
+    public String getNaam() {
+        final NietNatuurlijkPersoon nnp = getBetrokkeneIdentificatie();
+        if (nnp == null) {
+            return "-";
+        }
+        return nnp.getStatutaireNaam();
+    }
+
+    @Override
     public int hashCode() {
         if (getBetrokkeneIdentificatie().getAnnIdentificatie() != null) {
             return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getAnnIdentificatie());
