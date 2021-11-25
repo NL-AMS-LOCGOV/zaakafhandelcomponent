@@ -25,6 +25,6 @@ export class EventSuspension {
     }
 
     isExpired(): boolean {
-        return new Date().getTime() < this._expires;
+        return this._expires < new Date().getTime();
     }
 }
