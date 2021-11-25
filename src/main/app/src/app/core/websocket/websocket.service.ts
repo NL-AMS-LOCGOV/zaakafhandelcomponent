@@ -79,10 +79,10 @@ export class WebsocketService implements OnDestroy {
     private mock() {
         console.warn('Websocket is een mock');
         this.send = function (data: any) {
-            // Simuleert een inkomend websocketbericht na een vertraging (in ms) die uit het objectId gehaald wordt
+            // Simuleert 1x een inkomend websocketbericht na een vertraging (in ms) die uit het objectId gehaald wordt
             var delay: number = Number(data.event.objectId);
             var event: ScreenEvent = data.event;
-            setInterval(() => {
+            setTimeout(() => {
                 this.onMessage(new ScreenEvent(event.opcode, event.objectType, event.objectId, 0));
             }, delay);
         };
@@ -186,12 +186,12 @@ export class WebsocketService implements OnDestroy {
         return this.listeners[event.key];
     }
 
-    private isSuspended(listnerId: string): boolean {
-        var suspension: EventSuspension = this.suspended[listnerId];
+    private isSuspended(listenerId: string): boolean {
+        var suspension: EventSuspension = this.suspended[listenerId];
         if (suspension) {
             var expired: boolean = suspension.isExpired();
             if (suspension.isDone() || expired) { // Don't change the order (side effects)
-                delete this.suspended[listnerId];
+                delete this.suspended[listenerId];
             }
             return !expired;
         }

@@ -18,29 +18,31 @@ describe('WebsocketService', () => {
         WebsocketService.test = true;
         service = new WebsocketService(null, null);
     });
-
     it('should be created', () => {
+        reset();
         expect(service).toBeTruthy();
     });
 
     it('should dispatch events to the correct listeners', (done) => {
         const EVENTS = 10000;
+        const EXPECTED = EVENTS;
         reset();
         for (var i = 0; i < EVENTS; i++) {
-            listeners.push(addRandomListener(EVENTS, done));
+            listeners.push(addRandomListener(EXPECTED, done));
         }
     });
 
     it('should not dispatch events to suspended listeners', (done) => {
+        const EVENTS = 1000;
+        const EXPECTED = EVENTS / 2;
         reset();
-        // TODO ESUITEDEV-25959
-        listeners.push(addRandomListener(1, done));
-    });
-
-    it('should not dispatch events to removed listeners', (done) => {
-        reset();
-        // TODO ESUITEDEV-25959
-        listeners.push(addRandomListener(1, done));
+        for (var i = 0; i < EVENTS; i++) {
+            var listener: WebsocketListener = addRandomListener(EXPECTED, done);
+            listeners.push(listener);
+            if (i % 2 == 0) {
+                service.suspendListener(listener);
+            }
+        }
     });
 
     // Does not test ANY opcode and/or ANY objectType because the mock doesn't support it (see SessionRegistryTest for those)
