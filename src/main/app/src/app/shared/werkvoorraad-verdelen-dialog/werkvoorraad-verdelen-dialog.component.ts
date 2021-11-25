@@ -45,7 +45,7 @@ export class WerkvoorraadVerdelenDialogComponent {
     verdeel(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        if (this.bepaalVerdeelZaken()) {
+        if (this.determineAllocationZaken()) {
             this.zakenService.verdelen(this.data, this.medewerker).subscribe(() => {
                 this.dialogRef.close(this.medewerker);
             });
@@ -59,7 +59,7 @@ export class WerkvoorraadVerdelenDialogComponent {
     /**
      * Check whether the first item in the array does not contain zaakUUID. If true, array contains objects of type Zaak
      */
-    bepaalVerdeelZaken(): boolean {
+    determineAllocationZaken(): boolean {
         return !this.data[0]['zaakUUID'];
     }
 }

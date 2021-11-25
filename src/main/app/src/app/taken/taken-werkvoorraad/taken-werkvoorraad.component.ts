@@ -136,12 +136,12 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 } else {
                     this.utilService.openSnackbar('msg.verdeeld.taken', {aantal: this.selection.selected.length});
                 }
-                this.zoekTaken();
+                this.findTaken();
             }
         });
     }
 
-    private zoekTaken() {
+    private findTaken() {
         this.dataSource.load();
         this.setColumns();
         this.selection.clear();
