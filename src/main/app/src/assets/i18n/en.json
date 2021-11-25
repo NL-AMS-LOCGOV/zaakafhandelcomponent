@@ -178,7 +178,7 @@
   "msg.verdeeld.zaak": "The case has been allocated",
   "msg.verdelen.taak": "Allocate task",
   "msg.verdelen.taken": "Allocate {{aantal}} tasks",
-  "msg.verdeeld.taken": "{{aantal}} cases have been allocated",
+  "msg.verdeeld.taken": "{{aantal}} tasks have been allocated",
   "msg.verdeeld.taak": "The task has been allocated",
   "msg.pagina.items": "Items per page",
   "msg.pagina": "of"
