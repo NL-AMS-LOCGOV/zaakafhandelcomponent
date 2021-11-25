@@ -148,13 +148,13 @@ export class WebsocketService implements OnDestroy {
         });
     }
 
-    public suspendListener(listener: WebsocketListener): void {
+    public suspendListener(listener: WebsocketListener, timeout: number = 5): void {
         if (listener) {
             var suspension: EventSuspension = this.suspended[listener.id];
             if (suspension) {
                 suspension.increment();
             } else {
-                this.suspended[listener.id] = new EventSuspension();
+                this.suspended[listener.id] = new EventSuspension(timeout);
             }
         }
     }
@@ -190,7 +190,7 @@ export class WebsocketService implements OnDestroy {
         var suspension: EventSuspension = this.suspended[listenerId];
         if (suspension) {
             var expired: boolean = suspension.isExpired();
-            if (suspension.isDone() || expired) { // Don't change the order (side effects)
+            if (suspension.isDone() || expired) { // Don't change the order (here be side effects)
                 delete this.suspended[listenerId];
             }
             return !expired;

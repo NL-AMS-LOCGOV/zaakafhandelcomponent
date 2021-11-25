@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ScreenEvent} from './screen-event';
-
 export class EventSuspension {
     private _ttl: number;
     private _expires: number;
     private _count: number = 0;
 
-    constructor(seconds: number = 5) {
+    constructor(seconds: number) {
         this._ttl = seconds * 1000;
         this.increment();
     }
