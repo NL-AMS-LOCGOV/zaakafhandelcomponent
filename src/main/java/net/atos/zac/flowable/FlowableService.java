@@ -420,28 +420,4 @@ public class FlowableService {
 
         return taskQuery;
     }
-
-    public void fixIt() {
-        // Fix VAR_CASE_ZAAKTYPE_IDENTIFICATIE
-        List<CaseInstance> cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_IDENTIFICATIE).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_IDENTIFICATIE, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_IDENTIFICATIE, "melding-klein-evenement"));
-
-        // Fix VAR_CASE_ZAAKTYPE_OMSCHRIJVING
-        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_OMSCHRIJVING).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_OMSCHRIJVING, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING, "melding klein evenement"));
-
-        // Fix VAR_CASE_ZAAK_UUID
-        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAK_UUID).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAK_UUID, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAK_UUID, UUID.randomUUID()));
-
-        // Fix VAR_CASE_ZAAK_IDENTIFICATIE
-        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAK_IDENTIFICATIE).list();
-        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAK_IDENTIFICATIE, cases.size()));
-        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAK_IDENTIFICATIE, "ONBEKEND"));
-
-        LOG.info("Klaar met fixen!");
-    }
 }
