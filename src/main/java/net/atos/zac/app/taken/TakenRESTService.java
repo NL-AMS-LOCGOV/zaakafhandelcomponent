@@ -32,6 +32,7 @@ import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
+import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
@@ -119,11 +120,22 @@ public class TakenRESTService {
         return restTaak;
     }
 
+    @PUT
+    @Path("verdelen")
+    public void allocateTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
+            final TaskInfo taskInfo = flowableService.assignTask(task.taakId,
+                                                                 restTaakVerdelenGegevens.behandelaarGebruikersnaam);
+            taakBehandelaarGewijzigd(taskInfo, task.zaakUuid);
+        });
+    }
+
     @PATCH
     @Path("assign")
     public RESTTaak assignTaak(final RESTTaak restTaak) {
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        final Task task = flowableService.assignTask(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null);
+        final Task task = flowableService.assignTask(restTaak.id,
+                                                     restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
         return taakConverter.convertTaskInfo(task);
     }
