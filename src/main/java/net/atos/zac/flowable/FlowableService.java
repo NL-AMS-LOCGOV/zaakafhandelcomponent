@@ -106,25 +106,25 @@ public class FlowableService {
         return (String) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
     }
 
-    public List<? extends TaskInfo> listTasksForZaak(final UUID zaakUUID) {
+    public List<TaskInfo> listAllTasksForZaak(final UUID zaakUUID) {
         final String caseInstanceId = findCaseInstanceIdForZaak(zaakUUID);
         if (caseInstanceId != null) {
-            final List<TaskInfo> taken = new ArrayList<>(listTasksForCase(caseInstanceId));
-            taken.addAll(listHistoricTasksForCase(caseInstanceId));
+            final List<TaskInfo> taken = new ArrayList<>(listOpenTasksForCase(caseInstanceId));
+            taken.addAll(listCompletedTasksForCase(caseInstanceId));
             return taken;
         } else {
             return Collections.emptyList();
         }
     }
 
-    private List<Task> listTasksForCase(final String caseInstanceId) {
+    private List<Task> listOpenTasksForCase(final String caseInstanceId) {
         return cmmnTaskService.createTaskQuery()
                 .caseInstanceId(caseInstanceId)
                 .includeIdentityLinks()
                 .list();
     }
 
-    private List<HistoricTaskInstance> listHistoricTasksForCase(final String caseInstanceId) {
+    private List<HistoricTaskInstance> listCompletedTasksForCase(final String caseInstanceId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .caseInstanceId(caseInstanceId)
                 .finished()
@@ -132,27 +132,27 @@ public class FlowableService {
                 .list();
     }
 
-    public List<? extends TaskInfo> listTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
             final int firstResult, final int maxResults) {
-        return createTaskQueryWithSorting(sortering, direction)
+        return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskAssignee(gebruikersnaam)
                 .listPage(firstResult, maxResults);
     }
 
-    public List<? extends TaskInfo> listTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
-            final int firstResult,
-            final int maxResults) {
-        return createTaskQueryWithSorting(sortering, direction)
+    public List<Task> listOpenTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
+            final int firstResult, final int maxResults) {
+        return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskCandidateGroupIn(groupIds)
+                .ignoreAssigneeValue()
                 .listPage(firstResult, maxResults);
     }
 
-    public int countTasksOwnedByMedewerker(final String gebruikersnaam) {
+    public int countOpenTasksOwnedByMedewerker(final String gebruikersnaam) {
         return (int) cmmnTaskService.createTaskQuery().taskAssignee(gebruikersnaam).count();
     }
 
-    public int countTasksForGroups(final List<String> groupIds) {
-        return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).count();
+    public int countOpenTasksForGroups(final List<String> groupIds) {
+        return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
     }
 
     public List<PlanItemInstance> listPlanItemsForZaak(final UUID zaakUUID) {
@@ -205,24 +205,17 @@ public class FlowableService {
     }
 
     /**
-     * Toekennen van een taak.
-     * Dit kan zijn het wijzigen van:
-     * - de behandelaar.
-     * Met de mogelijkheden:
-     * - toekennen aan jezelf (de ingelogde medewerker).
-     * - toekennen aan een andere medewerker.
-     * - Wanneer de behandelaar null is dan wordt de taak vrijgegeven.
-     * - De groep
-     * Met als gevolg:
-     * - Wanneer de huidige behandelaar geen onderdeel is van de groep dan wordt de taak ook meteen vrijgegeven.
+     * Assign task to user.
+     * When the userId is null the task is released.
+     *
+     * @param taskId Id of the task to assign or release.
+     * @param userId Id of the user to assign the task to or null which implies that the task is released.
+     * @return Assigned or released task.
      */
-    public TaskInfo assignTask(final String taskId, final String userId, final String groupId) {
+    public Task assignTask(final String taskId, final String userId) {
         if (userId != null) {
-            final Task task = readTask(taskId);
-            if (!userId.equals(task.getAssignee())) {
-                cmmnTaskService.unclaim(taskId);
-                cmmnTaskService.claim(taskId, userId);
-            }
+            cmmnTaskService.unclaim(taskId);
+            cmmnTaskService.claim(taskId, userId);
         } else {
             cmmnTaskService.unclaim(taskId);
         }
@@ -234,15 +227,15 @@ public class FlowableService {
         return readTask(task.getId());
     }
 
-    public TaskInfo completeTask(final String taskId) {
+    public HistoricTaskInstance completeTask(final String taskId) {
         cmmnTaskService.complete(taskId);
-        return readHistoricTask(taskId);
+        return readCompletedTask(taskId);
     }
 
     public TaskInfo readTaskInfo(final String taskId) {
-        TaskInfo taskInfo = findTask(taskId);
+        TaskInfo taskInfo = findOpenTask(taskId);
         if (taskInfo == null) {
-            taskInfo = findHistoricTask(taskId);
+            taskInfo = findCompletedTask(taskId);
         }
         if (taskInfo != null) {
             return taskInfo;
@@ -252,7 +245,7 @@ public class FlowableService {
     }
 
     public Task readTask(final String taskId) {
-        final Task task = findTask(taskId);
+        final Task task = findOpenTask(taskId);
         if (task != null) {
             return task;
         } else {
@@ -356,15 +349,15 @@ public class FlowableService {
         }
     }
 
-    private Task findTask(final String taskId) {
+    private Task findOpenTask(final String taskId) {
         return cmmnTaskService.createTaskQuery()
                 .taskId(taskId)
                 .includeIdentityLinks()
                 .singleResult();
     }
 
-    private HistoricTaskInstance readHistoricTask(final String taskId) {
-        final HistoricTaskInstance historicTask = findHistoricTask(taskId);
+    private HistoricTaskInstance readCompletedTask(final String taskId) {
+        final HistoricTaskInstance historicTask = findCompletedTask(taskId);
         if (historicTask != null) {
             return historicTask;
         } else {
@@ -372,7 +365,7 @@ public class FlowableService {
         }
     }
 
-    private HistoricTaskInstance findHistoricTask(final String taskId) {
+    private HistoricTaskInstance findCompletedTask(final String taskId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .taskId(taskId)
                 .includeIdentityLinks()
@@ -401,7 +394,7 @@ public class FlowableService {
         return caseInstance != null ? caseInstance.getId() : null;
     }
 
-    private TaskQuery createTaskQueryWithSorting(final TaakSortering sortering, final String direction) {
+    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final String direction) {
         final TaskQuery taskQuery = cmmnTaskService.createTaskQuery().includeIdentityLinks();
         if (sortering != null) {
             final TaskQuery sortedTaskQuery;
@@ -426,5 +419,29 @@ public class FlowableService {
         }
 
         return taskQuery;
+    }
+
+    public void fixIt() {
+        // Fix VAR_CASE_ZAAKTYPE_IDENTIFICATIE
+        List<CaseInstance> cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_IDENTIFICATIE).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_IDENTIFICATIE, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_IDENTIFICATIE, "melding-klein-evenement"));
+
+        // Fix VAR_CASE_ZAAKTYPE_OMSCHRIJVING
+        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_OMSCHRIJVING).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAKTYPE_OMSCHRIJVING, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING, "melding klein evenement"));
+
+        // Fix VAR_CASE_ZAAK_UUID
+        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAK_UUID).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAK_UUID, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAK_UUID, UUID.randomUUID()));
+
+        // Fix VAR_CASE_ZAAK_IDENTIFICATIE
+        cases = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAK_IDENTIFICATIE).list();
+        LOG.info(String.format("Number of cases without variable '%s' : %d", VAR_CASE_ZAAK_IDENTIFICATIE, cases.size()));
+        cases.forEach(caseInstance -> cmmnRuntimeService.setVariable(caseInstance.getId(), VAR_CASE_ZAAK_IDENTIFICATIE, "ONBEKEND"));
+
+        LOG.info("Klaar met fixen!");
     }
 }
