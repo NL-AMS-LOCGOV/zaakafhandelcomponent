@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -34,6 +35,8 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.audit.converter.RESTAuditTrailRegelConverter;
+import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieObjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieObjectConverter;
@@ -71,6 +74,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
+
+    @Inject
+    private RESTAuditTrailRegelConverter restAuditTrailRegelConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -169,6 +175,12 @@ public class InformatieObjectenRESTService {
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("informatieobject/{uuid}/auditTrail")
+    public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
+        return drcClientService.listAuditTrail(uuid).stream().map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
     }
 
     private String lockEigenaar() {

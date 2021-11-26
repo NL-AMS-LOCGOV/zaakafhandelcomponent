@@ -11,6 +11,7 @@ import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJW
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.Lock;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 
 /**
  *
@@ -108,6 +110,16 @@ public class DRCClientService {
                                                      enkelvoudigInformatieobjectUUID.toString(), versie));
         }
         return (ByteArrayInputStream) response.getEntity();
+    }
+
+    /**
+     * List all instances of {@link AuditTrailRegel} for a specific {@link EnkelvoudigInformatieobject}.
+     *
+     * @param enkelvoudigInformatieobjectUUID UUID of {@link EnkelvoudigInformatieobject}.
+     * @return List of {@link AuditTrailRegel} instances.
+     */
+    public List<AuditTrailRegel> listAuditTrail(final UUID enkelvoudigInformatieobjectUUID) {
+        return drcClient.listAuditTrail(enkelvoudigInformatieobjectUUID);
     }
 
     private String generateLockId(final UUID enkelvoudigInformatieobjectUUID, final String lockOwner) {

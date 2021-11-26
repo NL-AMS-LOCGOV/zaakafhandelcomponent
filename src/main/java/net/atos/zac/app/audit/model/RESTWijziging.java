@@ -14,12 +14,17 @@ public class RESTWijziging {
     public String nieuweWaarde;
 
     //public String doorGebruiker;
-    //public String reden;
+    public String omschrijving;
 
     public RESTWijziging(final String veld, final String oudeWaarde, final String nieuweWaarde) {
         this.veld = veld;
         this.oudeWaarde = oudeWaarde;
         this.nieuweWaarde = nieuweWaarde;
+    }
+
+
+    public RESTWijziging(final String omschrijving) {
+        this.omschrijving = omschrijving;
     }
 
 }

@@ -9,6 +9,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.BeanParam;
@@ -39,6 +40,7 @@ import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
 import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 
 /**
@@ -97,4 +99,8 @@ public interface DRCClient {
     @GET
     @Path("objectinformatieobjecten")
     Results<ObjectInformatieobject> objectInformatieobjectList(@BeanParam final ObjectInformatieobjectListParameters parameters);
+
+    @GET
+    @Path("enkelvoudiginformatieobjecten/{uuid}/audittrail")
+    List<AuditTrailRegel> listAuditTrail(@PathParam("uuid") UUID enkelvoudigInformatieobjectUUID);
 }
