@@ -11,6 +11,8 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.cache.annotation.CacheRemove;
@@ -202,8 +204,8 @@ public class ZGWApiService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZGW_ZAAK_GROEP_MANAGED)
-    public void clearZaakGroepManagedCache() {
-        cleared(ZGW_ZAAK_GROEP_MANAGED);
+    public String clearZaakGroepManagedCache() {
+        return cleared(ZGW_ZAAK_GROEP_MANAGED);
     }
 
     @CacheRemove(cacheName = ZGW_ZAAK_GROEP_MANAGED)
@@ -212,12 +214,20 @@ public class ZGWApiService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
-    public void clearZaakBehandelaarManagedCache() {
-        cleared(ZGW_ZAAK_BEHANDELAAR_MANAGED);
+    public String clearZaakBehandelaarManagedCache() {
+        return cleared(ZGW_ZAAK_BEHANDELAAR_MANAGED);
     }
 
     @CacheRemove(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
     public void updateZaakbehandelaarCache(final URI key) {
         removed(ZGW_ZAAK_BEHANDELAAR_MANAGED, key);
+    }
+
+    @Override
+    public List<String> cacheNames() {
+        final List<String> names = new ArrayList<>();
+        names.add(ZGW_ZAAK_BEHANDELAAR_MANAGED);
+        names.add(ZGW_ZAAK_GROEP_MANAGED);
+        return names;
     }
 }

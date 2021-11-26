@@ -9,6 +9,7 @@ import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -108,7 +109,7 @@ public class ZRCClientService implements Caching {
      * @param rollen  de gewenste rollen
      */
     public void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen) {
-        final Collection<Rol<?>> current=listRollen(zaakUrl);
+        final Collection<Rol<?>> current = listRollen(zaakUrl);
         deleteDeletedRollen(current, rollen);
         deleteUpdatedRollen(current, rollen);
         createUpdatedRollen(current, rollen);
@@ -283,13 +284,20 @@ public class ZRCClientService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
-    public void clearZaakstatusManagedCache() {
-        cleared(ZRC_STATUS_MANAGED);
+    public String clearZaakstatusManagedCache() {
+        return cleared(ZRC_STATUS_MANAGED);
     }
 
     @CacheRemove(cacheName = ZRC_STATUS_MANAGED)
     public void updateZaakstatusCache(final URI key) {
         removed(ZRC_STATUS_MANAGED, key);
+    }
+
+    @Override
+    public List<String> cacheNames() {
+        final List<String> names = new ArrayList<>();
+        names.add(ZRC_STATUS_MANAGED);
+        return names;
     }
 
     /**
