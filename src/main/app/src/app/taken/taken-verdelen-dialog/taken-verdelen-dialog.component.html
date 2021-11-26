@@ -1,0 +1,29 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.taak' | translate}}</h1>
+<h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.taken' | translate:{aantal: data.length} }}</h1>
+
+<div mat-dialog-content>
+    <mat-form-field appearance="fill" fxFlex="100">
+        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
+        <mat-select [disabled]="loading">
+            <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)"
+                        [value]="medewerker.gebruikersnaam">
+                {{ medewerker.naam }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="!medewerker || loading" mat-button color="primary" (click)="verdeel()">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.verdelen' | translate}}
+    </button>
+    <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+</div>

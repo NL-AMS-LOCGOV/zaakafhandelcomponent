@@ -20,8 +20,8 @@ import {detailExpand} from '../../shared/animations/animations';
 import {TaakRechten} from '../model/taak-rechten';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {SelectionModel} from '@angular/cdk/collections';
-import {WerkvoorraadVerdelenDialogComponent} from '../../shared/werkvoorraad-verdelen-dialog/werkvoorraad-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -124,7 +124,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     openVerdelenScherm() {
         let taken = this.selection.selected;
-        const dialogRef = this.dialog.open(WerkvoorraadVerdelenDialogComponent, {
+        const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
             width: '300px',
             data: taken
         });
