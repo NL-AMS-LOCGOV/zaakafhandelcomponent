@@ -7,7 +7,7 @@ package net.atos.zac.app.audit.model;
 
 public class RESTWijziging {
 
-    public String veld;
+    public String wijziging;
 
     public String oudeWaarde;
 
@@ -16,15 +16,16 @@ public class RESTWijziging {
     //public String doorGebruiker;
     public String omschrijving;
 
-    public RESTWijziging(final String veld, final String oudeWaarde, final String nieuweWaarde) {
-        this.veld = veld;
+    public RESTWijziging(final String wijziging, final String oudeWaarde, final String nieuweWaarde) {
+        this.wijziging = wijziging;
         this.oudeWaarde = oudeWaarde;
         this.nieuweWaarde = nieuweWaarde;
     }
 
-
-    public RESTWijziging(final String omschrijving) {
-        this.omschrijving = omschrijving;
+    public RESTWijziging(final String wijziging) {
+        this.wijziging = wijziging;
+        this.oudeWaarde = "";
+        this.nieuweWaarde = "";
     }
 
 }

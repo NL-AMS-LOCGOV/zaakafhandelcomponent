@@ -4,7 +4,7 @@
  */
 
 export class Wijziging {
+    wijziging: string;
     oudeWaarde: string;
-
     nieuweWaarde: string;
 }
