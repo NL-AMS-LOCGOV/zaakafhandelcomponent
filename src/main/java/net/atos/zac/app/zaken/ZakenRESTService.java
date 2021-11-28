@@ -222,24 +222,6 @@ public class ZakenRESTService {
         return zaakOverzichtConverter.convert(zaak);
     }
 
-    @GET
-    @Path("caches/clear")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String clearCaches() {
-        ztcClientService.clearStatustypeCache();
-        ztcClientService.clearZaaktypeStatustypeManagedCache();
-        ztcClientService.clearResultaattypeCache();
-        ztcClientService.clearZaaktypeResultaattypeManagedCache();
-        ztcClientService.clearZaaktypeRoltypeCache();
-        ztcClientService.clearZaaktypeUrlCache();
-        ztcClientService.clearZaaktypeCache();
-        ztcClientService.clearZaaktypeManagedCache();
-        zrcClientService.clearZaakstatusManagedCache();
-        zgwApiService.clearZaakBehandelaarManagedCache();
-        zgwApiService.clearZaakGroepManagedCache();
-        return "all caches cleared";
-    }
-
     private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
             final boolean getOpenZaken) {
         final TableRequest tableState = TableRequest.getTableState(request);

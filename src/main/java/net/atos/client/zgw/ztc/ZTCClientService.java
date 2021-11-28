@@ -10,6 +10,7 @@ import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON
 import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -240,11 +241,13 @@ public class ZTCClientService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE)
-    public void clearZaaktypeCache() {cleared(ZTC_ZAAKTYPE);}
+    public String clearZaaktypeCache() {
+        return cleared(ZTC_ZAAKTYPE);
+    }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_MANAGED)
-    public void clearZaaktypeManagedCache() {
-        cleared(ZTC_ZAAKTYPE_MANAGED);
+    public String clearZaaktypeManagedCache() {
+        return cleared(ZTC_ZAAKTYPE_MANAGED);
     }
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_MANAGED)
@@ -258,13 +261,13 @@ public class ZTCClientService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZTC_STATUSTYPE)
-    public void clearStatustypeCache() {
-        cleared(ZTC_STATUSTYPE);
+    public String clearStatustypeCache() {
+        return cleared(ZTC_STATUSTYPE);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
-    public void clearZaaktypeStatustypeManagedCache() {
-        cleared(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED);
+    public String clearZaaktypeStatustypeManagedCache() {
+        return cleared(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED);
     }
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
@@ -273,18 +276,18 @@ public class ZTCClientService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_URL)
-    public void clearZaaktypeUrlCache() {
-        cleared(ZTC_ZAAKTYPE_URL);
+    public String clearZaaktypeUrlCache() {
+        return cleared(ZTC_ZAAKTYPE_URL);
     }
 
     @CacheRemoveAll(cacheName = ZTC_RESULTAATTYPE)
-    public void clearResultaattypeCache() {
-        cleared(ZTC_RESULTAATTYPE);
+    public String clearResultaattypeCache() {
+        return cleared(ZTC_RESULTAATTYPE);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
-    public void clearZaaktypeResultaattypeManagedCache() {
-        cleared(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
+    public String clearZaaktypeResultaattypeManagedCache() {
+        return cleared(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
     }
 
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
@@ -293,8 +296,22 @@ public class ZTCClientService implements Caching {
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
-    public void clearZaaktypeRoltypeCache() {
-        cleared(ZTC_ZAAKTYPE_ROLTYPE);
+    public String clearZaaktypeRoltypeCache() {
+        return cleared(ZTC_ZAAKTYPE_ROLTYPE);
+    }
+
+    @Override
+    public List<String> cacheNames() {
+        final List<String> names = new ArrayList<>();
+        names.add(ZTC_RESULTAATTYPE);
+        names.add(ZTC_STATUSTYPE);
+        names.add(ZTC_ZAAKTYPE);
+        names.add(ZTC_ZAAKTYPE_MANAGED);
+        names.add(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
+        names.add(ZTC_ZAAKTYPE_ROLTYPE);
+        names.add(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED);
+        names.add(ZTC_ZAAKTYPE_URL);
+        return names;
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

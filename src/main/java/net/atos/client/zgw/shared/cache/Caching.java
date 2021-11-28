@@ -5,6 +5,7 @@
 
 package net.atos.client.zgw.shared.cache;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -45,8 +46,12 @@ public interface Caching {
 
     String ZTC_ZAAKTYPE_URL = "ztc-zaaktype-url";
 
-    default void cleared(final String cache) {
-        LOG.fine(() -> String.format("Cleared %s cache", cache));
+    abstract List<String> cacheNames();
+
+    default String cleared(final String cache) {
+        final String message = String.format("%s cache cleared", cache);
+        LOG.info(message);
+        return message;
     }
 
     default <KEY> void removed(final String cache, final KEY key) {

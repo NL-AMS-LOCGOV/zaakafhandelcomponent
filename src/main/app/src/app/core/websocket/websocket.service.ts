@@ -25,6 +25,8 @@ export class WebsocketService implements OnDestroy {
 
     public static test: boolean = false; // Als true dan wordt de mock gebruikt
 
+    private static DEFAULT_SUSPENSION_TIMEOUT: number = 5; // seconds
+
     private readonly PROTOCOL: string = window.location.protocol.replace(/^http/, 'ws');
 
     private readonly HOST: string = window.location.host;
@@ -79,7 +81,7 @@ export class WebsocketService implements OnDestroy {
     private mock() {
         console.warn('Websocket is een mock');
         this.send = function (data: any) {
-            // Simuleert 1x een inkomend websocketbericht na een vertraging (in ms) die uit het objectId gehaald wordt
+            // Simulates one (i.e. 1) incoming websocket message for the event, after a delay (in ms) which gets derived from the objectId.
             var delay: number = Number(data.event.objectId);
             var event: ScreenEvent = data.event;
             setTimeout(() => {
@@ -148,7 +150,7 @@ export class WebsocketService implements OnDestroy {
         });
     }
 
-    public suspendListener(listener: WebsocketListener, timeout: number = 5): void {
+    public suspendListener(listener: WebsocketListener, timeout: number = WebsocketService.DEFAULT_SUSPENSION_TIMEOUT): void {
         if (listener) {
             var suspension: EventSuspension = this.suspended[listener.id];
             if (suspension) {
@@ -190,7 +192,8 @@ export class WebsocketService implements OnDestroy {
         var suspension: EventSuspension = this.suspended[listenerId];
         if (suspension) {
             var expired: boolean = suspension.isExpired();
-            if (suspension.isDone() || expired) { // Don't change the order (here be side effects)
+            var done = suspension.isDone(); // Do not short circuit calling this method (here be side effects)
+            if (done || expired) {
                 delete this.suspended[listenerId];
             }
             return !expired;

@@ -34,6 +34,7 @@ import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -48,6 +49,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieObject[] = [];
+    auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
+    auditTrailColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
@@ -98,6 +101,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
             this.loadTaken();
             this.loadInformatieObjecten();
+            this.loadAuditTrail();
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
@@ -110,11 +114,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.zakenService.getAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
-            //todo show auditTrail
 
-            console.log(auditTrail);
-        });
         this.setupMenu();
     }
 
@@ -197,11 +197,18 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.getZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
+        this.loadAuditTrail();
     }
 
     private loadInformatieObjecten(): void {
         this.informatieObjectenService.getEnkelvoudigInformatieObjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
+        });
+    }
+
+    private loadAuditTrail(): void {
+        this.zakenService.getAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
+            this.auditTrail.data = auditTrail;
         });
     }
 

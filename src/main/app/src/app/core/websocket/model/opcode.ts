@@ -5,10 +5,11 @@
 
 /**
  * Maps to OpcodeEnum.java
+ *
+ * Note that the CREATED value is not available for subscription (reason: new objectIds will be unknown client side ;-)
  */
 export enum Opcode {
-    // CREATED = 'CREATED', Not available for subscription (new objectIds will be unknown client side ;-)
     UPDATED = 'UPDATED',
     DELETED = 'DELETED',
-    ANY ='ANY'
+    ANY = 'ANY'
 }

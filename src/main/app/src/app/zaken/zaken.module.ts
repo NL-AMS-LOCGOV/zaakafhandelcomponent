@@ -17,6 +17,7 @@ import {ZaakToekennenComponent} from './zaak-toekennen/zaak-toekennen.component'
 import {StoreModule} from '@ngrx/store';
 import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
+import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.c
         ZakenMijnComponent,
         ZaakToekennenComponent,
         ZaakToekennenComponent,
-        ZakenAfgehandeldComponent
+        ZakenAfgehandeldComponent,
+        ZakenVerdelenDialogComponent
     ],
     exports: [
         ZaakVerkortComponent

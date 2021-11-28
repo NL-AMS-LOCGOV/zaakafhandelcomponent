@@ -2,14 +2,9 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<ng-container *ngIf="determineAllocationZaken()">
-    <h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.zaak' | translate}}</h1>
-    <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
-</ng-container>
-<ng-container *ngIf="!determineAllocationZaken()">
-    <h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.taak' | translate}}</h1>
-    <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.taken' | translate:{aantal: data.length} }}</h1>
-</ng-container>
+
+<h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.zaak' | translate}}</h1>
+<h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
     <mat-form-field appearance="fill" fxFlex="100">

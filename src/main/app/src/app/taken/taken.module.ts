@@ -13,9 +13,10 @@ import {TakenMijnComponent} from './taken-mijn/taken-mijn.component';
 import {TakenWerkvoorraadComponent} from './taken-werkvoorraad/taken-werkvoorraad.component';
 import {TaakToekennenComponent} from './taak-toekennen/taak-toekennen.component';
 import {TaakBewerkenComponent} from './taak-bewerken/taak-bewerken.component';
+import {TakenVerdelenDialogComponent} from './taken-verdelen-dialog/taken-verdelen-dialog.component';
 
 @NgModule({
-    declarations: [TaakViewComponent, TakenWerkvoorraadComponent, TakenMijnComponent, TaakToekennenComponent, TaakBewerkenComponent],
+    declarations: [TaakViewComponent, TakenWerkvoorraadComponent, TakenMijnComponent, TaakToekennenComponent, TaakBewerkenComponent, TakenVerdelenDialogComponent],
     imports: [
         SharedModule,
         TakenRoutingModule,

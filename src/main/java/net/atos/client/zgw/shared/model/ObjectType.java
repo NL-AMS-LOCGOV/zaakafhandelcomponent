@@ -9,5 +9,7 @@ public enum ObjectType {
     ZAAK,
     RESULTAAT,
     STATUS,
-    ROL
+    ROL,
+    ENKELVOUDIG_INFORMATIEOBJECT,
+    ZAAK_INFORMATIEOBJECT
 }

@@ -35,7 +35,6 @@ import {PaginatorTranslator} from './paginator/paginator-translator';
 import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 import {OutsideClickDirective} from './directives/outside-click.directive';
-import {WerkvoorraadVerdelenDialogComponent} from './werkvoorraad-verdelen-dialog/werkvoorraad-verdelen-dialog.component';
 
 @NgModule({
     declarations: [
@@ -56,8 +55,7 @@ import {WerkvoorraadVerdelenDialogComponent} from './werkvoorraad-verdelen-dialo
         EditComponent,
         DatumOverschredenComponent,
         OutsideClickDirective,
-        DatumOverschredenComponent,
-        WerkvoorraadVerdelenDialogComponent
+        DatumOverschredenComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -92,8 +90,7 @@ import {WerkvoorraadVerdelenDialogComponent} from './werkvoorraad-verdelen-dialo
         StatusLabelComponent,
         BehandelaarVeldComponent,
         DatumOverschredenComponent,
-        EditComponent,
-        WerkvoorraadVerdelenDialogComponent
+        EditComponent
     ],
     providers: [
         Title,
