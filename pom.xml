@@ -283,7 +283,7 @@
 
     <profiles>
         <profile>
-            <id>build-image</id>
+            <id>build-container-image</id>
             <build>
                 <plugins>
                     <plugin>
@@ -311,7 +311,7 @@
                             <execution>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>dockerBuild</goal>
+                                    <goal>build</goal>
                                 </goals>
                             </execution>
                         </executions>
