@@ -11,7 +11,7 @@
     <groupId>net.atos.common-ground</groupId>
     <artifactId>zaakafhandelcomponent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>Zaakafhandelcomponent</name>
 
@@ -204,6 +204,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.2</version>
                 <configuration>
@@ -214,50 +215,60 @@
                         </resource>
                     </webResources>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
                 <version>6.1.0.Final</version>
                 <configuration>
-                    <feature-packs>
-                        <feature-pack>
+                    <featurePacks>
+                        <featurePack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
-                        </feature-pack>
-                        <feature-pack>
+                        </featurePack>
+                        <featurePack>
                             <groupId>org.wildfly</groupId>
                             <artifactId>wildfly-datasources-galleon-pack</artifactId>
                             <version>2.0.5.Final</version>
-                        </feature-pack>
-                        <feature-pack>
+                        </featurePack>
+                        <featurePackk>
                             <groupId>org.keycloak</groupId>
                             <artifactId>keycloak-adapter-galleon-pack</artifactId>
                             <version>15.0.2</version>
-                        </feature-pack>
-                    </feature-packs>
+                        </featurePackk>
+                    </featurePacks>
                     <layers>
                         <layer>jaxrs-server</layer>
                         <layer>microprofile-health</layer>
                         <layer>postgresql-driver</layer>
                         <layer>keycloak-client-oidc</layer>
                     </layers>
-                    <excluded-layers>
+                    <excludedLayers>
                         <layer>deployment-scanner</layer>
-                    </excluded-layers>
-                    <cli-sessions>
-                        <cli-session>
-                            <script-files>
+                    </excludedLayers>
+                    <cliSessions>
+                        <cliSession>
+                            <scriptFiles>
                                 <script>configure-wildfly.cli</script>
-                            </script-files>
-                            <resolve-expressions>false</resolve-expressions>
-                        </cli-session>
-                    </cli-sessions>
+                            </scriptFiles>
+                            <resolveExpressions>false</resolveExpressions>
+                        </cliSession>
+                    </cliSessions>
                     <cloud>
                         <type>kubernetes</type>
                     </cloud>
                     <jvmArguments>
                         <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</arg>
                     </jvmArguments>
+                    <outputFileName>${project.artifactId}.jar</outputFileName>
+                    <jarFileName>${project.artifactId}.jar</jarFileName>
                 </configuration>
                 <executions>
                     <execution>
@@ -269,4 +280,44 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>build-image</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>3.1.4</version>
+                        <configuration>
+                            <containerizingMode>packaged</containerizingMode>
+                            <from>
+                                <image>adoptopenjdk:11-jre</image>
+                            </from>
+                            <to>
+                                <image>europe-west4-docker.pkg.dev/dimpact-dev-20201130/common-ground/zaakafhandelcomponent</image>
+                            </to>
+                            <container>
+                                <ports>
+                                    <port>8080</port>
+                                    <port>8787</port>
+                                    <port>9990</port>
+                                </ports>
+                                <mainClass>org.wildfly.core.jar.boot.Main</mainClass>
+                            </container>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>dockerBuild</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -10,8 +10,8 @@ RUN mvn -DskipTests package
 FROM adoptopenjdk/openjdk11 as runtime
 
 # Copy zaakafhandelcomponent bootable jar
-COPY --from=build /target/zaakafhandelcomponent-bootable.jar /
+COPY --from=build /target/zaakafhandelcomponent.jar /
 
 # Start zaakafhandelcomponent
-ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent-bootable.jar"]
+ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent.jar"]
 EXPOSE 8080 8787 9990
