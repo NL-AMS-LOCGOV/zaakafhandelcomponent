@@ -9,8 +9,6 @@ import {TaakViewComponent} from './taak-view/taak-view.component';
 import {TaakResolver} from './taak.resolver';
 import {TakenMijnComponent} from './taken-mijn/taken-mijn.component';
 import {TakenWerkvoorraadComponent} from './taken-werkvoorraad/taken-werkvoorraad.component';
-import {TaakBewerkenComponent} from './taak-bewerken/taak-bewerken.component';
-import {TaakToekennenComponent} from './taak-toekennen/taak-toekennen.component';
 
 const routes: Routes = [
     {
@@ -19,8 +17,6 @@ const routes: Routes = [
             {path: 'werkvoorraad', component: TakenWerkvoorraadComponent},
             {path: 'mijn', component: TakenMijnComponent},
             {path: ':id', component: TaakViewComponent, resolve: {taak: TaakResolver}},
-            {path: ':id/edit', component: TaakBewerkenComponent, resolve: {taak: TaakResolver}},
-            {path: ':id/toekennen', component: TaakToekennenComponent, resolve: {taak: TaakResolver}}
         ]
     }
 ];
