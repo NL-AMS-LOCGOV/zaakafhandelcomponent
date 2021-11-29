@@ -51,6 +51,11 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
                 return subscriptionType.message();
             }
 
+            LOG.info("===========================");
+            for (final String key : jsonObject.keySet()) {
+                LOG.info(key);
+            }
+
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
             final Opcode operatie = Opcode.valueOf(jsonEvent.getString(EVENT_OPCODE));
             final ScreenEventType objectType = ScreenEventType.valueOf(jsonEvent.getString(EVENT_TYPE));
