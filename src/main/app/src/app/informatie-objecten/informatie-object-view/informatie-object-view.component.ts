@@ -21,6 +21,8 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {MatTableDataSource} from '@angular/material/table';
+import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -31,6 +33,8 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     infoObject: EnkelvoudigInformatieObject;
     menu: MenuItem[];
     zaken: ZaakInformatieObjectKoppeling[];
+    auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
+    auditTrailColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
     private documentListener: WebsocketListener;
 
@@ -53,6 +57,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
 
             this.setupMenu();
             this.loadZaken();
+            this.loadAuditTrail();
         }));
     }
 
@@ -72,6 +77,12 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     private loadZaken(): void {
         this.informatieObjectenService.getZaakKoppelingen(this.infoObject.uuid).subscribe(zaken => {
             this.zaken = zaken;
+        });
+    }
+
+    private loadAuditTrail(): void {
+        this.informatieObjectenService.listAuditTrail(this.infoObject.uuid).subscribe(auditTrail => {
+            this.auditTrail.data = auditTrail;
         });
     }
 

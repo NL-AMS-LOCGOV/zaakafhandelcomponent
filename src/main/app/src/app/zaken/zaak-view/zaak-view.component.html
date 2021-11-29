@@ -107,6 +107,7 @@
                                 </table>
                             </div>
                         </mat-tab>
+
                         <mat-tab label="{{'audittrail' | translate}}">
                             <div class="table-wrapper">
                                 <table mat-table [dataSource]="auditTrail" matSort>
@@ -126,14 +127,12 @@
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'nieuweWaarde' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel"> {{regel.wijziging.nieuweWaarde}} </td>
                                     </ng-container>
-
                                     <tr mat-header-row *matHeaderRowDef="auditTrailColumns"></tr>
                                     <tr mat-row *matRowDef="let row; columns: auditTrailColumns;"></tr>
                                 </table>
                                 <p *ngIf="auditTrail.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
-
 
                         <mat-tab label="{{'betrokkenen' | translate}}">
                             <div class="table-wrapper">

@@ -15,42 +15,74 @@
                     <mat-card-title>{{'informatieobject' | translate}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                            <zac-static-text [label]="'titel' | translate" [value]="infoObject.titel"></zac-static-text>
-                            <zac-static-text [label]="'identificatie' | translate" [value]="infoObject.identificatie"></zac-static-text>
-                            <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
-                                             [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
-                            <zac-static-text [label]="'bestandsnaam' | translate" [value]="infoObject.bestandsnaam"></zac-static-text>
-                            <zac-static-text [label]="'indicatieGebruiksrecht' | translate"
-                                             [value]="infoObject.indicatieGebruiksrecht ? 'Ja' : 'Nee'"></zac-static-text>
-                            <zac-static-text [label]="'taal' | translate" [value]="'taal.'+infoObject.taal | translate"></zac-static-text>
-                        </div>
-                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                <mat-divider></mat-divider>
+                    <mat-tab-group>
+                        <mat-tab label="{{'gegevens.algemeen' | translate}}">
+
+                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <zac-static-text [label]="'titel' | translate" [value]="infoObject.titel"></zac-static-text>
+                                    <zac-static-text [label]="'identificatie' | translate" [value]="infoObject.identificatie"></zac-static-text>
+                                    <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
+                                                     [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
+                                    <zac-static-text [label]="'bestandsnaam' | translate" [value]="infoObject.bestandsnaam"></zac-static-text>
+                                    <zac-static-text [label]="'indicatieGebruiksrecht' | translate"
+                                                     [value]="infoObject.indicatieGebruiksrecht ? 'Ja' : 'Nee'"></zac-static-text>
+                                    <zac-static-text [label]="'taal' | translate" [value]="'taal.'+infoObject.taal | translate"></zac-static-text>
+                                </div>
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'documentType' | translate" [value]="infoObject.documentType"></zac-static-text>
+                                    <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
+                                    <zac-static-text [label]="'ontvangstdatum' | translate"
+                                                     [value]="infoObject.ontvangstdatum | datum | empty"></zac-static-text>
+                                    <zac-static-text [label]="'registratiedatum' | translate"
+                                                     [value]="infoObject.registratiedatumTijd | datum | empty"></zac-static-text>
+                                    <zac-static-text [label]="'locked' | translate" [value]="infoObject.locked ? 'Ja' : 'Nee'"></zac-static-text>
+                                    <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie|empty"></zac-static-text>
+                                </div>
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'informatieobject.status' | translate"
+                                                     [value]="'informatieobject.status.'+infoObject.status | translate | empty"></zac-static-text>
+                                    <zac-static-text [label]="'bronorganisatie' | translate" [value]="infoObject.bronorganisatie|empty"></zac-static-text>
+                                    <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum | empty"></zac-static-text>
+                                    <zac-static-text [label]="'formaat' | translate" [value]="infoObject.formaat | empty"></zac-static-text>
+                                    <zac-static-text [label]="'ondertekening' | translate" [value]="infoObject.ondertekening|empty"></zac-static-text>
+                                    <zac-static-text [label]="'creatiedatum' | translate" [value]="infoObject.creatiedatum | datum | empty"></zac-static-text>
+                                </div>
                             </div>
-                            <zac-static-text [label]="'documentType' | translate" [value]="infoObject.documentType"></zac-static-text>
-                            <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
-                            <zac-static-text [label]="'ontvangstdatum' | translate" [value]="infoObject.ontvangstdatum | datum | empty"></zac-static-text>
-                            <zac-static-text [label]="'registratiedatum' | translate"
-                                             [value]="infoObject.registratiedatumTijd | datum | empty"></zac-static-text>
-                            <zac-static-text [label]="'locked' | translate" [value]="infoObject.locked ? 'Ja' : 'Nee'"></zac-static-text>
-                            <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie|empty"></zac-static-text>
-                        </div>
-                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                <mat-divider></mat-divider>
+                        </mat-tab>
+
+                        <mat-tab label="{{'audittrail' | translate}}">
+                            <div class="table-wrapper">
+                                <table mat-table [dataSource]="auditTrail" matSort>
+                                    <ng-container matColumnDef="datum">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'datum' | translate}} </th>
+                                        <td mat-cell *matCellDef="let regel"> {{regel.wijzigingsDatumTijd | datum | empty}} </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="wijziging">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'wijziging' | translate}} </th>
+                                        <td mat-cell *matCellDef="let regel"> {{regel.wijziging.wijziging}} </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="oudeWaarde">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'oudeWaarde' | translate}} </th>
+                                        <td mat-cell *matCellDef="let regel"> {{regel.wijziging.oudeWaarde}} </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="nieuweWaarde">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'nieuweWaarde' | translate}} </th>
+                                        <td mat-cell *matCellDef="let regel"> {{regel.wijziging.nieuweWaarde}} </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="auditTrailColumns"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: auditTrailColumns;"></tr>
+                                </table>
+                                <p *ngIf="auditTrail.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
-                            <zac-static-text [label]="'informatieobject.status' | translate"
-                                             [value]="'informatieobject.status.'+infoObject.status | translate | empty"></zac-static-text>
-                            <zac-static-text [label]="'bronorganisatie' | translate" [value]="infoObject.bronorganisatie|empty"></zac-static-text>
-                            <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum | empty"></zac-static-text>
-                            <zac-static-text [label]="'formaat' | translate" [value]="infoObject.formaat | empty"></zac-static-text>
-                            <zac-static-text [label]="'ondertekening' | translate" [value]="infoObject.ondertekening|empty"></zac-static-text>
-                            <zac-static-text [label]="'creatiedatum' | translate" [value]="infoObject.creatiedatum | datum | empty"></zac-static-text>
-                        </div>
-                    </div>
+                        </mat-tab>
+                    </mat-tab-group>
                 </mat-card-content>
             </mat-card>
 
