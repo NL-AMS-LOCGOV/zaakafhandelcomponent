@@ -21,11 +21,13 @@ import net.atos.client.zgw.shared.model.audit.ResultaatWijziging;
 import net.atos.client.zgw.shared.model.audit.StatusWijziging;
 import net.atos.client.zgw.shared.model.audit.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.ZaakWijziging;
+import net.atos.client.zgw.shared.model.audit.ZaakobjectWijziging;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -65,6 +67,8 @@ public class RESTAuditTrailRegelConverter {
                 return convertResultaatWijziging((ResultaatWijziging) wijziging);
             case STATUS:
                 return convertStatusWijziging((StatusWijziging) wijziging);
+            case ZAAKOBJECT:
+                return convertZaakobjectWijziging((ZaakobjectWijziging) wijziging);
             case ROL:
                 return convertRolWijziging(wijziging);
             case ENKELVOUDIG_INFORMATIEOBJECT:
@@ -76,6 +80,18 @@ public class RESTAuditTrailRegelConverter {
             default:
                 throw new IllegalStateException("Unexpected value: " + wijziging.getObjectType());
         }
+    }
+
+    private RESTWijziging convertZaakobjectWijziging(final ZaakobjectWijziging wijziging) {
+        final Zaakobject nieuw = wijziging.getNieuw();
+        final Zaakobject oud = wijziging.getOud();
+        if (oud == null) {
+            return new RESTWijziging(String.format("Object '%s' is toegevoegd aan zaak", nieuw.getObjectType().toValue()));
+        }
+        if (nieuw == null) {
+            return new RESTWijziging(String.format("Object '%s' is verwijderd aan zaak", oud.getObjectType().toValue()));
+        }
+        return new RESTWijziging("Object is gewijzigd", nieuw.getObjectType().toValue(), oud.getObjectType().toValue());
     }
 
     private RESTWijziging convertGebuiksRechtenWijziging(final GebuiksrechtenWijziging wijziging) {

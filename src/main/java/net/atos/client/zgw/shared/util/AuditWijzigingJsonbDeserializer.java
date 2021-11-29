@@ -27,6 +27,7 @@ import net.atos.client.zgw.shared.model.audit.RolVestigingWijziging;
 import net.atos.client.zgw.shared.model.audit.StatusWijziging;
 import net.atos.client.zgw.shared.model.audit.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.ZaakWijziging;
+import net.atos.client.zgw.shared.model.audit.ZaakobjectWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 
 public class AuditWijzigingJsonbDeserializer implements JsonbDeserializer<AuditWijziging<?>> {
@@ -57,6 +58,8 @@ public class AuditWijzigingJsonbDeserializer implements JsonbDeserializer<AuditW
                 return JSONB.fromJson(wijzigingObject.toString(), ZaakInformatieobjectWijziging.class);
             case GEBRUIKSRECHTEN:
                 return JSONB.fromJson(wijzigingObject.toString(), GebuiksrechtenWijziging.class);
+            case ZAAKOBJECT:
+                return JSONB.fromJson(wijzigingObject.toString(), ZaakobjectWijziging.class);
             case ROL:
                 final BetrokkeneType betrokkenetype = BetrokkeneType.fromValue(waardeObject.getJsonString("betrokkeneType").getString());
                 return getRolWijziging(wijzigingObject, betrokkenetype);

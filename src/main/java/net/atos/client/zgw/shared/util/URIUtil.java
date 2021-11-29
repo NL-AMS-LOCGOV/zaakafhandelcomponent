@@ -38,6 +38,8 @@ public final class URIUtil {
             return ObjectType.RESULTAAT;
         } else if (contains(url, "/zaken/api/v1/zaakinformatieobjecten")) {
             return ObjectType.ZAAK_INFORMATIEOBJECT;
+        } else if (contains(url, "zaken/api/v1/zaakobjecten")) {
+            return ObjectType.ZAAKOBJECT;
         } else if (contains(url, "documenten/api/v1/enkelvoudiginformatieobjecten/")) {
             return ObjectType.ENKELVOUDIG_INFORMATIEOBJECT;
         } else if (contains(url, "/documenten/api/v1/gebruiksrechten")) {
