@@ -16,6 +16,7 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
@@ -35,7 +36,7 @@ export class PlanItemDoComponent implements OnInit {
     ngOnInit(): void {
         this.planItem = this.route.snapshot.data['planItem'];
         this.utilService.setTitle('title.taak.aanmaken');
-        this.formConfig = new FormConfig('actie.starten', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier)
                              .startForm(this.planItem, this.identityService.getGroepen()).build();

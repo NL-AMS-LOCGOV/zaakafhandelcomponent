@@ -5,16 +5,15 @@
 
 import {Component, OnInit} from '@angular/core';
 import {Zaak} from '../model/zaak';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute} from '@angular/router';
 import {IdentityService} from '../../identity/identity.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './zaak-toekennen.component.html',
@@ -41,12 +40,12 @@ export class ZaakToekennenComponent implements OnInit {
     private initForm() {
 
         this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-            const medewerker = new SelectFormField('medewerker', 'medewerker',
-                this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam',
-                this.identityService.getMedewerkersInGroep(this.zaak.groep.id), new FormFieldConfig([Validators.required]));
-            this.formItems = [[medewerker]];
+            // const medewerker = new SelectFormField('medewerker', 'medewerker',
+            //     this.zaak.behandelaar ? this.zaak.behandelaar : ingelogdeMedewerker, 'naam',
+            //     this.identityService.getMedewerkersInGroep(this.zaak.groep.id), new FormFieldConfig([Validators.required]));
+            // this.formItems = [[medewerker]];
         });
-        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.toekennen').cancelText('actie.annuleren').build();
     }
 
     onFormSubmit(formGroup: FormGroup): void {

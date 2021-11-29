@@ -11,8 +11,8 @@ export class FileFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.FILE;
     uploadError: string;
 
-    constructor(id: string, label: string, value: any, config?: FileFieldConfig) {
-        super(id, label, null, config);
+    constructor() {
+        super();
     }
 
     getErrorMessage(): string {
@@ -25,4 +25,9 @@ export class FileFormField extends AbstractFormField {
     get config(): FileFieldConfig {
         return super.config as FileFieldConfig;
     }
+
+    set config(value: FileFieldConfig) {
+        super.config = value;
+    }
+
 }

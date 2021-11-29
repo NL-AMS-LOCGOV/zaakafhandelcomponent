@@ -36,10 +36,12 @@ public final class URIUtil {
             return ObjectType.STATUS;
         } else if (contains(url, "zaken/api/v1/resultaten/")) {
             return ObjectType.RESULTAAT;
-        } else if (contains(url, "documenten/api/v1/enkelvoudiginformatieobjecten/")) {
-            return ObjectType.ENKELVOUDIG_INFORMATIEOBJECT;
         } else if (contains(url, "/zaken/api/v1/zaakinformatieobjecten")) {
             return ObjectType.ZAAK_INFORMATIEOBJECT;
+        } else if (contains(url, "documenten/api/v1/enkelvoudiginformatieobjecten/")) {
+            return ObjectType.ENKELVOUDIG_INFORMATIEOBJECT;
+        } else if (contains(url, "/documenten/api/v1/gebruiksrechten")) {
+            return ObjectType.GEBRUIKSRECHTEN;
         } else {
             throw new RuntimeException(String.format("URL '%s' wordt niet ondersteund", url));
         }

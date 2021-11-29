@@ -11,6 +11,7 @@ import {catchError} from 'rxjs/operators';
 import {EnkelvoudigInformatieObject} from './model/enkelvoudig-informatie-object';
 import {ZaakInformatieObjectKoppeling} from './model/zaak-informatie-object-koppeling';
 import {Informatieobjecttype} from './model/informatieobjecttype';
+import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
 
 @Injectable({
     providedIn: 'root'
@@ -49,6 +50,12 @@ export class InformatieObjectenService {
 
     getZaakKoppelingen(uuid: string): Observable<ZaakInformatieObjectKoppeling[]> {
         return this.http.get<ZaakInformatieObjectKoppeling[]>(`${this.basepath}/informatieobject/${uuid}/zaken`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listAuditTrail(uuid: string): Observable<AuditTrailRegel[]> {
+        return this.http.get<AuditTrailRegel[]>(`${this.basepath}/informatieobject/${uuid}/auditTrail`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

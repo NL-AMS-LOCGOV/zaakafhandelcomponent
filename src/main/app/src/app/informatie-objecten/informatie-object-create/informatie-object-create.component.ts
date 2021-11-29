@@ -11,7 +11,6 @@ import {UtilService} from '../../core/service/util.service';
 import {Zaak} from '../../zaken/model/zaak';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {FormGroup, Validators} from '@angular/forms';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {EnkelvoudigInformatieObject} from '../model/enkelvoudig-informatie-object';
 import * as moment from 'moment/moment';
 import {Informatieobjecttype} from '../model/informatieobjecttype';
@@ -20,12 +19,16 @@ import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
-import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
-import {FileFormField} from '../../shared/material-form-builder/form-components/file/file-form-field';
-import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {Observable, of} from 'rxjs';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
+import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+
+class SelectFormFieldBuiler {
+}
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -48,7 +51,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
@@ -58,18 +61,47 @@ export class InformatieObjectCreateComponent implements OnInit {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
             const types = this.getTypes(zaak);
-            const titel = new InputFormField('titel', 'titel', null, this.required());
-            const beschrijving = new InputFormField('beschrijving', 'beschrijving', null);
-            const inhoud = new FileFormField('bestandsnaam', 'bestandsnaam', null, this.fileUploadConfig());
-            const beginRegistratie = new DateFormField('creatiedatum', 'creatiedatum', moment(), this.required());
-            const taal = new SelectFormField('taal', 'taal', talen[0], 'label', talen, this.required());
-            const status = new SelectFormField('status', 'status', informatieobjectStatussen[0], 'label',
-                informatieobjectStatussen);
-            const documentType = new SelectFormField('informatieobjectType', 'informatieobjectType', null, null, types, this.required());
-            const auteur = new InputFormField('auteur', 'auteur', null, this.required());
-            const vertrouwelijk = new SelectFormField('vertrouwelijkheidaanduiding', 'vertrouwelijkheidaanduiding',
-                vertrouwelijkheidsAanduidingen[0],
-                'label', vertrouwelijkheidsAanduidingen, this.required());
+            const titel = new InputFormFieldBuilder().id('titel').label('titel')
+                                                     .validators(Validators.required)
+                                                     .build();
+
+            const beschrijving = new InputFormFieldBuilder().id('beschrijving').label('beschrijving')
+                                                            .build();
+
+            const inhoud = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
+                                                     .config(this.fileUploadConfig())
+                                                     .build();
+
+            const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum').label('creatiedatum')
+                                                               .value(moment())
+                                                               .validators(Validators.required)
+                                                               .build();
+
+            const taal = new SelectFormFieldBuilder().id('taal').label('taal')
+                                                     .value(talen[0])
+                                                     .optionLabel('label').options(talen)
+                                                     .validators(Validators.required)
+                                                     .build();
+
+            const status = new SelectFormFieldBuilder().id('status').label('status')
+                                                       .value(informatieobjectStatussen[0])
+                                                       .optionLabel('label').options(informatieobjectStatussen)
+                                                       .build();
+
+            const documentType = new SelectFormFieldBuilder().id('informatieobjectType').label('informatieobjectType')
+                                                             .options(types)
+                                                             .validators(Validators.required)
+                                                             .build();
+
+            const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
+                                                      .validators(Validators.required)
+                                                      .build();
+
+            const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                              .value(vertrouwelijkheidsAanduidingen[0])
+                                                              .optionLabel('label').options(vertrouwelijkheidsAanduidingen)
+                                                              .validators(Validators.required)
+                                                              .build();
 
             this.fields =
                 [[titel], [beschrijving], [inhoud], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal]];
@@ -111,10 +143,6 @@ export class InformatieObjectCreateComponent implements OnInit {
             });
         });
         return of(types);
-    }
-
-    required(): FormFieldConfig {
-        return new FormFieldConfig([Validators.required]);
     }
 
     fileUploadConfig(): FileFieldConfig {

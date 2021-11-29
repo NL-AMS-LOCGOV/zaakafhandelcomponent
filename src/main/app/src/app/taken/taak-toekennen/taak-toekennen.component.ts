@@ -4,19 +4,16 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute} from '@angular/router';
 import {Taak} from '../model/taak';
 import {IdentityService} from '../../identity/identity.service';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {TakenService} from '../taken.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
-import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
@@ -39,16 +36,17 @@ export class TaakToekennenComponent implements OnInit {
 
     private initForm() {
         this.utilService.setTitle('title.taak.toekennen', {taak: this.taak.naam});
-        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
-        const titel = new HeadingFormField('toekennenTaak', 'actie.taak.toekennen', '1');
-        const naam = new ReadonlyFormField('naam', 'naam', this.taak.naam);
 
-        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
-            const medewerker = new SelectFormField('medewerker', 'medewerker',
-                this.taak.behandelaar ? this.taak.behandelaar : ingelogdeMedewerker, 'naam',
-                this.identityService.getMedewerkersInGroep(this.taak.groep.id), new FormFieldConfig([Validators.required]));
-            this.formItems = [[titel], [naam], [medewerker]];
-        });
+        this.formConfig = new FormConfigBuilder().saveText('actie.toekennen').cancelText('actie.annuleren').build();
+        // const titel = new HeadingFormField('toekennenTaak', 'actie.taak.toekennen', '1');
+        // const naam = new ReadonlyFormField('naam', 'naam', this.taak.naam);
+        //
+        // this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        //     const medewerker = new SelectFormField('medewerker', 'medewerker',
+        //         this.taak.behandelaar ? this.taak.behandelaar : ingelogdeMedewerker, 'naam',
+        //         this.identityService.getMedewerkersInGroep(this.taak.groep.id), new FormFieldConfig([Validators.required]));
+        //     this.formItems = [[titel], [naam], [medewerker]];
+        // });
     }
 
     onFormSubmit(formGroup: FormGroup): void {

@@ -11,7 +11,6 @@ import {ZaakResolver} from './zaak.resolver';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZaakEditComponent} from './zaak-edit/zaak-edit.component';
-import {ZaakToekennenComponent} from './zaak-toekennen/zaak-toekennen.component';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 
 const routes: Routes = [
@@ -23,8 +22,7 @@ const routes: Routes = [
             {path: 'create', component: ZaakCreateComponent},
             {path: 'afgehandeld', component: ZakenAfgehandeldComponent},
             {path: ':uuid', component: ZaakViewComponent, resolve: {zaak: ZaakResolver}},
-            {path: ':uuid/edit', component: ZaakEditComponent, resolve: {zaak: ZaakResolver}},
-            {path: ':uuid/toekennen', component: ZaakToekennenComponent, resolve: {zaak: ZaakResolver}}
+            {path: ':uuid/edit', component: ZaakEditComponent, resolve: {zaak: ZaakResolver}}
         ]
     }
 ];

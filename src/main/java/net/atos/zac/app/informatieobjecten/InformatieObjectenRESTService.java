@@ -29,6 +29,7 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
@@ -180,7 +181,8 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/auditTrail")
     public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
-        return drcClientService.listAuditTrail(uuid).stream().map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
+        List<AuditTrailRegel> auditTrailRegels = drcClientService.listAuditTrail(uuid);
+        return auditTrailRegels.stream().map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
     }
 
     private String lockEigenaar() {

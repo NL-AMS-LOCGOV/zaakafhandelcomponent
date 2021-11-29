@@ -12,9 +12,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.client.zgw.shared.model.audit.EnkelvoudigInformatieobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.GebuiksrechtenWijziging;
 import net.atos.client.zgw.shared.model.audit.ResultaatWijziging;
 import net.atos.client.zgw.shared.model.audit.StatusWijziging;
 import net.atos.client.zgw.shared.model.audit.ZaakInformatieobjectWijziging;
@@ -69,9 +71,25 @@ public class RESTAuditTrailRegelConverter {
                 return convertEnkelvoudigInformatieobjectWijziging((EnkelvoudigInformatieobjectWijziging) wijziging);
             case ZAAK_INFORMATIEOBJECT:
                 return convertZaakInformatieobjectWijziging((ZaakInformatieobjectWijziging) wijziging);
+            case GEBRUIKSRECHTEN:
+                return convertGebuiksRechtenWijziging((GebuiksrechtenWijziging) wijziging);
             default:
                 throw new IllegalStateException("Unexpected value: " + wijziging.getObjectType());
         }
+    }
+
+    private RESTWijziging convertGebuiksRechtenWijziging(final GebuiksrechtenWijziging wijziging) {
+        final Gebruiksrechten nieuw = wijziging.getNieuw();
+        final Gebruiksrechten oud = wijziging.getOud();
+
+        if (oud == null) {
+            return new RESTWijziging(String.format("Gebruiksrecht '%s' is toegevoegd aan zaak", nieuw.getOmschrijvingVoorwaarden()));
+        }
+        if (nieuw == null) {
+            return new RESTWijziging(String.format("Gebruiksrecht '%s' is verwijderd van zaak", oud.getOmschrijvingVoorwaarden()));
+        }
+        return new RESTWijziging("Gebruiksrecht is gewijzigd", nieuw.getOmschrijvingVoorwaarden(), oud.getOmschrijvingVoorwaarden());
+
     }
 
     private RESTWijziging convertZaakInformatieobjectWijziging(final ZaakInformatieobjectWijziging wijziging) {

@@ -8,19 +8,19 @@ import {FormGroup, Validators} from '@angular/forms';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {Router} from '@angular/router';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import * as moment from 'moment/moment';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
-import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
-import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {of} from 'rxjs';
+import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -36,27 +36,35 @@ export class ZaakCreateComponent implements OnInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaak.aanmaken');
-        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
+
+        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
         const communicatiekanalen = of([{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}]);
         const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
-        const titel = new HeadingFormField('aanmakenZaak', 'actie.zaak.aanmaken', '1');
-        const tussenTitel = new HeadingFormField('overigegegevens', 'gegevens.overig', '2');
+        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level('1').build();
 
-        const zaaktype = new SelectFormField('zaaktype', 'zaaktype', null, 'omschrijving', this.zakenService.getZaaktypes(),
-            new FormFieldConfig([Validators.required]));
+        const tussenTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig').level('2').build();
 
-        const startdatum = new DateFormField('startdatum', 'startdatum', moment(),
-            new FormFieldConfig([Validators.required]));
-        const registratiedatum = new DateFormField('registratiedatum', 'registratiedatum', moment());
+        const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
+                                                     .validators(Validators.required)
+                                                     .optionLabel('omschrijving').options(this.zakenService.getZaaktypes())
+                                                     .build();
 
-        const communicatiekanaal = new SelectFormField('communicatiekanaal', 'communicatiekanaal', null,
-            'doel', communicatiekanalen);
-        const vertrouwelijkheidaanduiding = new SelectFormField('vertrouwelijkheidaanduiding',
-            'vertrouwelijkheidaanduiding', null, 'label', vertrouwelijkheidaanduidingen);
-        const omschrijving = new InputFormField('omschrijving', 'omschrijving', null);
-        const toelichting = new TextareaFormField('toelichting', 'toelichting', null);
+        const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
+                                                     .value(moment()).validators(Validators.required).build();
+
+        const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
+
+        const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
+                                                               .optionLabel('doel').options(communicatiekanalen)
+                                                               .build();
+
+        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                                        .optionLabel('label').options(vertrouwelijkheidaanduidingen).build();
+
+        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').build();
+        const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').build();
         this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
     }
