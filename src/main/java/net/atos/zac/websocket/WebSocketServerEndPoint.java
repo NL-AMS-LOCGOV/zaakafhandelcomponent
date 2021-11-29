@@ -11,6 +11,7 @@ import static net.atos.zac.websocket.SubscriptionType.DELETE_ALL;
 import static net.atos.zac.websocket.WebsocketHandshakeInterceptor.HTTP_SESSION;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -58,7 +59,7 @@ public class WebSocketServerEndPoint {
     @OnError
     public void log(final Session session, final Throwable e) {
         final String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
-        LOG.info(() -> String.format("WebSocket error for %s (%s)", user(session), message));
+        LOG.log(Level.INFO, String.format("WebSocket error for %s (%s)", user(session), message), e);
     }
 
     @OnClose
