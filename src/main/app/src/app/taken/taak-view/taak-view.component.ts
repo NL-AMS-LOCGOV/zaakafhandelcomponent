@@ -24,10 +24,10 @@ import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
-import {AutocompleteFormField} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field';
 import {IdentityService} from '../../identity/identity.service';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -39,8 +39,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     taak: Taak;
     menu: MenuItem[] = [];
-    taakBehandelaarFormField: AutocompleteFormField;
-    toelichtingFormfield: TextareaFormField;
+    taakBehandelaarFormField;
+    toelichtingFormfield;
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
@@ -83,10 +83,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.menu = [];
         this.taak = taak;
 
-        this.taakBehandelaarFormField = new AutocompleteFormField('taakBehandelaar', 'behandelaar',
-            this.taak.behandelaar, 'naam', this.identityService.getMedewerkersInGroep(this.taak.groep.id));
+        this.taakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
+                                                                          .value(this.taak.behandelaar).optionLabel('naam')
+                                                                          .options(this.identityService.getMedewerkersInGroep(this.taak.groep.id)).build();
 
-        this.toelichtingFormfield = new TextareaFormField('toelichting', 'toelichting', taak.toelichting);
+        this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
         this.formConfig = new FormConfig('actie.afronden');
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();

@@ -5,13 +5,12 @@
 
 import {AbstractFormulier} from './abstract-formulier';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {Validators} from '@angular/forms';
-import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
-import {FileFormField} from '../../shared/material-form-builder/form-components/file/file-form-field';
 import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
+import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 
 export class Advies extends AbstractFormulier {
     form: Array<AbstractFormField[]>;
@@ -22,19 +21,17 @@ export class Advies extends AbstractFormulier {
 
     initStartForm() {
         this.form = [
-            [new HeadingFormField('doPlanItem', 'actie.taak.aanmaken', '1')],
-            [new TextareaFormField(Fields.VRAAG, Fields.VRAAG, this.getDataElement(Fields.VRAAG),
-                new FormFieldConfig([Validators.required]))]
+            [new HeadingFormFieldBuilder().id('doPlanItem').label('actie.taak.aanmaken').level('1').build()],
+            [new TextareaFormFieldBuilder().id(Fields.VRAAG).label(Fields.VRAAG).value(this.getDataElement(Fields.VRAAG))
+                                           .validators(Validators.required).build()]
         ];
     }
 
     initBehandelForm() {
         this.form = [
-            [new ReadonlyFormField(Fields.VRAAG, Fields.VRAAG, this.getDataElement(Fields.VRAAG))],
-            // [new RadioFormField(Fields.ADVIES, Fields.ADVIES, this.getDataElement(Fields.ADVIES),
-            //     new FormFieldConfig([Validators.required]))],
-            [new TextareaFormField(Fields.TOELICHTING, Fields.TOELICHTING, this.getDataElement(Fields.TOELICHTING))],
-            [new FileFormField(Fields.BIJLAGE, Fields.BIJLAGE, null, this.fileUploadConfig())]
+            [new ReadonlyFormFieldBuilder().id(Fields.VRAAG).label(Fields.VRAAG).value(this.getDataElement(Fields.VRAAG)).build()],
+            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).build()],
+            [new FileFormFieldBuilder().id(Fields.BIJLAGE).label(Fields.BIJLAGE).config(this.fileUploadConfig()).build()]
         ];
     }
 

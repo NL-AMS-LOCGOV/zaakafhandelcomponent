@@ -14,7 +14,6 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
@@ -57,11 +56,11 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
 
         this.formConfig = new FormConfig('actie.opslaan', 'actie.annuleren');
 
-        const omschrijving =
-            new TextareaFormField('omschrijving', 'omschrijving', this.zaak.omschrijving);
-        const toelichting =
-            new TextareaFormField('toelichting', 'toelichting', this.zaak.toelichting);
-        this.editZaakFields = [[omschrijving], [toelichting]];
+        // const omschrijving =
+        //     new TextareaFormField('omschrijving', 'omschrijving', this.zaak.omschrijving);
+        // const toelichting =
+        //     new TextareaFormField('toelichting', 'toelichting', this.zaak.toelichting);
+        // this.editZaakFields = [[omschrijving], [toelichting]];
     }
 
     private updateZaak() {

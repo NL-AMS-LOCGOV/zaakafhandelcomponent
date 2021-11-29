@@ -4,13 +4,12 @@
  */
 
 import {AbstractFormulier} from './abstract-formulier';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
-import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {Validators} from '@angular/forms';
-import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
@@ -22,19 +21,20 @@ export class AanvullendeInformatie extends AbstractFormulier {
 
     initStartForm() {
         this.form = [
-            [new HeadingFormField('doPlanItem', 'actie.taak.aanmaken', '1')],
-            [new TextareaFormField(Fields.TOELICHTING, Fields.TOELICHTING, this.getDataElement(Fields.TOELICHTING),
-                new FormFieldConfig([Validators.required]))]
+            [new HeadingFormFieldBuilder().id('doPlanItem').label('actie.taak.aanmaken').level('1').build()],
+            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING)
+                                           .value(this.getDataElement(Fields.TOELICHTING))
+                                           .validators(Validators.required).build()]
         ];
     }
 
     initBehandelForm() {
         this.form = [
-            [new ReadonlyFormField(Fields.TOELICHTING, Fields.TOELICHTING, this.getDataElement(Fields.TOELICHTING))],
-            [new TextareaFormField(Fields.OPGEVRAAGDEINFO, Fields.OPGEVRAAGDEINFO, this.getDataElement(Fields.OPGEVRAAGDEINFO),
-                new FormFieldConfig([Validators.required]))],
-            [new DateFormField(Fields.DATUMGEVRAAGD, Fields.DATUMGEVRAAGD, null),
-                new DateFormField(Fields.DATUMGELEVERD, Fields.DATUMGELEVERD, null)]
+            [new ReadonlyFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).build()],
+            [new TextareaFormFieldBuilder().id(Fields.OPGEVRAAGDEINFO).label(Fields.OPGEVRAAGDEINFO).value(this.getDataElement(Fields.OPGEVRAAGDEINFO))
+                                           .validators(Validators.required).build()],
+            [new DateFormFieldBuilder().id(Fields.DATUMGEVRAAGD).label(Fields.DATUMGEVRAAGD).build(),
+                new DateFormFieldBuilder().id(Fields.DATUMGELEVERD).label(Fields.DATUMGELEVERD).build()]
         ];
     }
 

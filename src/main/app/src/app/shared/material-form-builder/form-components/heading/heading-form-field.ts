@@ -9,7 +9,9 @@ import {AbstractFormField} from '../../model/abstract-form-field';
 export class HeadingFormField extends AbstractFormField {
     fieldType = FieldType.HEADING;
 
-    constructor(id: string, label: string, public value: any) {
-        super(id, label, value);
+    level: string;
+
+    constructor() {
+        super();
     }
 }

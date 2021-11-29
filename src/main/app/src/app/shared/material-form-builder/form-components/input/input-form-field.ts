@@ -5,12 +5,11 @@
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
-import {FormFieldConfig} from '../../model/form-field-config';
 
 export class InputFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.INPUT;
 
-    constructor(id: string, label: string, value: any, config?: FormFieldConfig) {
-        super(id, label, value, config);
+    constructor() {
+        super();
     }
 }

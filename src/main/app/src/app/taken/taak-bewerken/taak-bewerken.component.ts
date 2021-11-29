@@ -14,7 +14,6 @@ import {UtilService} from '../../core/service/util.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 
@@ -60,8 +59,8 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     }
 
     private initToelichtingVeld() {
-        const toelichting = new TextareaFormField('toelichting', 'toelichting', this.taak.toelichting);
-        this.formItems = [[toelichting]];
+        // const toelichting = new TextareaFormField('toelichting', 'toelichting', this.taak.toelichting);
+        // this.formItems = [[toelichting]];
     }
 
     private updateTaak() {

@@ -5,13 +5,12 @@
 
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {FormFieldConfig} from '../../shared/material-form-builder/model/form-field-config';
 import {FormGroup, Validators} from '@angular/forms';
-import {HeadingFormField} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {Taak} from '../../taken/model/taak';
 import {Groep} from '../../identity/model/groep';
-import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 import {Observable} from 'rxjs';
+import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 
 export abstract class AbstractFormulier {
 
@@ -57,9 +56,10 @@ export abstract class AbstractFormulier {
 
     addGroepAssignment(groepen: Observable<Groep[]>): void {
         const groupForm = [
-            [new HeadingFormField('taakToekenning', 'actie.toekennen', '2')],
-            [new SelectFormField('groep', 'groep.-kies-', this.planItem.groep,
-                'naam', groepen, new FormFieldConfig([Validators.required]))]
+            [new HeadingFormFieldBuilder().id('taakToekenning').label('actie.toekennen').level('2').build()],
+            [new SelectFormFieldBuilder().id('groep').label('groep.-kies-').value(this.planItem.groep)
+                                         .optionLabel('naam').options(groepen)
+                                         .validators(Validators.required).build()]
         ];
 
         this.form = [...this.form, ...groupForm];

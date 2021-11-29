@@ -35,6 +35,7 @@ import {TaakRechten} from '../../taken/model/taak-rechten';
 import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -180,8 +181,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    getTextAreaFormField(label, field: string): TextareaFormField {
-        return new TextareaFormField(label, label, field);
+    getTextAreaFormField(label, value: string): TextareaFormField {
+        return new TextareaFormFieldBuilder().id(label).label(label).value(value).build();
     }
 
     editZaak(value: string, field: string): void {

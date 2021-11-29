@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldConfig, FormFieldHint} from './form-field-config';
 
@@ -12,35 +12,22 @@ export abstract class AbstractFormField {
     label: string;
     required: boolean;
 
-    private readonly _formControl: FormControl;
-    private readonly _hint: FormFieldHint;
-    private readonly _config: FormFieldConfig;
+    private readonly _formControl: FormControl = new FormControl();
+    private _hint: FormFieldHint;
+    private _config: FormFieldConfig;
 
     abstract fieldType: FieldType;
 
-    protected constructor(id: string, label: string, value: any, config?: FormFieldConfig) {
-        this.id = id;
-        this.label = label;
-        this._config = config;
-        this._formControl = new FormControl(value);
+    protected constructor() {
 
-        if (config) {
-            if (config.validators) {
-                if (config.validators.find((v) => v === Validators.required) ||
-                    config.validators.find((v) => v === Validators.requiredTrue)) {
-                    this.required = true;
-                }
-                this._formControl.setValidators(config.validators);
-            }
-
-            if (config.hint) {
-                this._hint = config.hint;
-            }
-        }
     }
 
     get hint(): FormFieldHint {
         return this._hint;
+    }
+
+    set hint(value: FormFieldHint) {
+        this._hint = value;
     }
 
     get formControl(): FormControl {
@@ -49,6 +36,10 @@ export abstract class AbstractFormField {
 
     get config(): FormFieldConfig {
         return this._config;
+    }
+
+    set config(value: FormFieldConfig) {
+        this._config = value;
     }
 
     getErrorMessage(): string {
