@@ -112,7 +112,7 @@
                                 <table mat-table [dataSource]="auditTrail" matSort>
                                     <ng-container matColumnDef="datum">
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'datum' | translate}} </th>
-                                        <td mat-cell *matCellDef="let regel"> {{regel.WijzigingsDatumTijd | datum | empty}} </td>
+                                        <td mat-cell *matCellDef="let regel"> {{regel.wijzigingsDatumTijd | datum | empty}} </td>
                                     </ng-container>
                                     <ng-container matColumnDef="wijziging">
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'wijziging' | translate}} </th>

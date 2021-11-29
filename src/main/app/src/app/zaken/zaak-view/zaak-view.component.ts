@@ -207,7 +207,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private loadAuditTrail(): void {
-        this.zakenService.getAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
+        this.zakenService.listAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
             this.auditTrail.data = auditTrail;
         });
     }

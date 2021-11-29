@@ -9,10 +9,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-
 import net.atos.client.zgw.shared.model.Bron;
-import net.atos.client.zgw.shared.util.AuditWijzigingJsonbDeserializer;
 
 /**
  * Gegevens mbt een wijziging gedaan op een object
@@ -117,7 +114,6 @@ public class AuditTrailRegel {
     /**
      * object (Wijzigingen) oud en nieuw
      */
-    @JsonbTypeDeserializer(AuditWijzigingJsonbDeserializer.class)
     private AuditWijziging<?> wijzigingen;
 
 

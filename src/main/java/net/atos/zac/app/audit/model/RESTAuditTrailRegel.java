@@ -30,7 +30,7 @@ public class RESTAuditTrailRegel {
 
     public String resourceWeergave;
 
-    public ZonedDateTime WijzigingsDatumTijd;
+    public ZonedDateTime wijzigingsDatumTijd;
 
     public String toelichting;
 

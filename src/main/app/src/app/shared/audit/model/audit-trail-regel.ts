@@ -16,7 +16,7 @@ export class AuditTrailRegel {
     resource: number;
     resourceID: string;
     resourceWeergave: string;
-    WijzigingsDatumTijd: string;
+    wijzigingsDatumTijd: string;
     toelichting: string;
     wijziging: Wijziging[];
 }
