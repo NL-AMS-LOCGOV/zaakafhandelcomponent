@@ -10,10 +10,8 @@ import {ZaakViewComponent} from './zaak-view/zaak-view.component';
 import {ZaakVerkortComponent} from './zaak-verkort/zaak-verkort.component';
 import {SharedModule} from '../shared/shared.module';
 import {ZaakCreateComponent} from './zaak-create/zaak-create.component';
-import {ZaakEditComponent} from './zaak-edit/zaak-edit.component';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
-import {ZaakToekennenComponent} from './zaak-toekennen/zaak-toekennen.component';
 import {StoreModule} from '@ngrx/store';
 import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
@@ -24,11 +22,8 @@ import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdel
         ZaakViewComponent,
         ZaakVerkortComponent,
         ZaakCreateComponent,
-        ZaakEditComponent,
         ZakenWerkvoorraadComponent,
         ZakenMijnComponent,
-        ZaakToekennenComponent,
-        ZaakToekennenComponent,
         ZakenAfgehandeldComponent,
         ZakenVerdelenDialogComponent
     ],

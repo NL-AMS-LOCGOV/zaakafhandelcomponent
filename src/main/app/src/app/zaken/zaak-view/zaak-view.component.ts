@@ -23,7 +23,6 @@ import {MatSidenavContainer} from '@angular/material/sidenav';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
 import {AbstractView} from '../../shared/abstract-view/abstract-view';
-import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {ZakenService} from '../zaken.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
@@ -36,6 +35,9 @@ import {TextareaFormField} from '../../shared/material-form-builder/form-compone
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {Medewerker} from '../../identity/model/medewerker';
+import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
+import {IdentityService} from '../../identity/identity.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -55,6 +57,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
+
+    zaakBehandelaarFormField;
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -78,6 +82,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private informatieObjectenService: InformatieObjectenService,
                 private takenService: TakenService,
                 private zakenService: ZakenService,
+                private identityService: IdentityService,
                 private planItemsService: PlanItemsService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
@@ -116,6 +121,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     init(zaak: Zaak): void {
         this.zaak = zaak;
 
+        this.zaakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
+                                                                          .value(zaak.behandelaar).optionLabel('naam')
+                                                                          .options(this.identityService.getMedewerkersInGroep(zaak.groep.id)).build();
         this.setupMenu();
     }
 
@@ -171,18 +179,22 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
             });
         }
-
-        if (this.zaak.rechten[this.zaakRechten.TOEKENNEN]) {
-            this.menu.push(new LinkMenuTitem('actie.toekennen', `/zaken/${this.zaak.uuid}/toekennen`, 'assignment_ind'));
-        }
-
-        if (this.zaak.rechten[this.zaakRechten.VRIJGEVEN]) {
-            this.menu.push(new ButtonMenuItem('actie.vrijgeven', this.vrijgeven, 'assignment_return'));
-        }
     }
 
     getTextAreaFormField(label: string, value: string): TextareaFormField {
         return new TextareaFormFieldBuilder().id(label).label(label).value(value).build();
+    }
+
+    editBehandelaar(behandelaar: Medewerker): void {
+        if (behandelaar) {
+            this.zaak.behandelaar = behandelaar;
+            this.zakenService.toekennen(this.zaak).subscribe(zaak => {
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
+                this.init(zaak);
+            });
+        } else {
+            this.vrijgeven();
+        }
     }
 
     editZaak(value: string, field: string): void {
@@ -222,13 +234,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    vrijgeven = (): void => {
+    vrijgeven(): void {
         this.zaak.behandelaar = null;
         this.zakenService.toekennen(this.zaak).subscribe((zaak) => {
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
             this.init(zaak);
         });
-    };
+    }
 
     taakToekennenAanIngelogdeMedewerker(taak: Taak) {
         this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
