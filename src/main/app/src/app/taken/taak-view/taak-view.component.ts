@@ -29,6 +29,7 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -113,7 +114,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    editBehandelaar(behandelaar): void {
+    editBehandelaar(behandelaar: Medewerker): void {
         if (behandelaar) {
             this.taak.behandelaar = behandelaar;
             this.takenService.assign(this.taak).subscribe(taak => {
