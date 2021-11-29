@@ -13,6 +13,7 @@ import {TakenService} from '../taken.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './taak-toekennen.component.html',
@@ -35,7 +36,8 @@ export class TaakToekennenComponent implements OnInit {
 
     private initForm() {
         this.utilService.setTitle('title.taak.toekennen', {taak: this.taak.naam});
-        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
+
+        this.formConfig = new FormConfigBuilder().saveText('actie.toekennen').cancelText('actie.annuleren').build();
         // const titel = new HeadingFormField('toekennenTaak', 'actie.taak.toekennen', '1');
         // const naam = new ReadonlyFormField('naam', 'naam', this.taak.naam);
         //

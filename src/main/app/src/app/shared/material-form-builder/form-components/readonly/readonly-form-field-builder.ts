@@ -15,6 +15,4 @@ export class ReadonlyFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField = new ReadonlyFormField();
     }
 
-    //TODO validate alleen id, label, value
-
 }

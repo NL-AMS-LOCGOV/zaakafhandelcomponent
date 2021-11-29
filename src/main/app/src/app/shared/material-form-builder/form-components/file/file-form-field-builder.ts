@@ -16,9 +16,7 @@ export class FileFormFieldBuilder extends AbstractFormFieldBuilder {
     }
 
     config(config: FileFieldConfig): this {
-        // this.formField.config = config;
+        this.formField.config = config;
         return this;
     }
-
-    //TODO validate geen value
 }

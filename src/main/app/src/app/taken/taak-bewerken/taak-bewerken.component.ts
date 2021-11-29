@@ -16,6 +16,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './taak-bewerken.component.html',
@@ -37,7 +38,7 @@ export class TaakBewerkenComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.taak = this.route.snapshot.data['taak'];
         this.utilService.setTitle('title.taak.wijzigen', {taak: this.taak.naam});
-        this.formConfig = new FormConfig('actie.bewerken', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.bewerken').cancelText('actie.annuleren').build();
         this.initToelichtingVeld();
         this.taakListener = this.websocketService.addListenerMetSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
             () => this.updateTaak());

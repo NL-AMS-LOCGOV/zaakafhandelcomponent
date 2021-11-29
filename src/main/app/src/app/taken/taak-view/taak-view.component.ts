@@ -28,6 +28,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -88,7 +89,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                           .options(this.identityService.getMedewerkersInGroep(this.taak.groep.id)).build();
 
         this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
-        this.formConfig = new FormConfig('actie.afronden');
+
+        this.formConfig = new FormConfigBuilder().saveText('actie.afronden').build();
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
 

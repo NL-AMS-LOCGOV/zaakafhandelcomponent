@@ -13,6 +13,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './zaak-toekennen.component.html',
@@ -44,7 +45,7 @@ export class ZaakToekennenComponent implements OnInit {
             //     this.identityService.getMedewerkersInGroep(this.zaak.groep.id), new FormFieldConfig([Validators.required]));
             // this.formItems = [[medewerker]];
         });
-        this.formConfig = new FormConfig('actie.toekennen', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.toekennen').cancelText('actie.annuleren').build();
     }
 
     onFormSubmit(formGroup: FormGroup): void {

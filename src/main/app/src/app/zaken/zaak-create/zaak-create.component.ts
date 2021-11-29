@@ -20,6 +20,7 @@ import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-co
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -35,7 +36,8 @@ export class ZaakCreateComponent implements OnInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaak.aanmaken');
-        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
+
+        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
         const communicatiekanalen = of([{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}]);
         const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);

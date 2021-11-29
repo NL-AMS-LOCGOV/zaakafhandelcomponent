@@ -25,6 +25,7 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 class SelectFormFieldBuiler {
 }
@@ -50,7 +51,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfig('actie.versturen', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);

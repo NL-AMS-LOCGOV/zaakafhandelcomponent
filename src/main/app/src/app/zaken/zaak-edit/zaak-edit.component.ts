@@ -16,6 +16,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
     templateUrl: './zaak-edit.component.html',
@@ -54,7 +55,7 @@ export class ZaakEditComponent implements OnInit, OnDestroy {
     private initForm() {
         this.utilService.setTitle('title.zaak.wijzigen', {zaak: this.zaak.identificatie});
 
-        this.formConfig = new FormConfig('actie.opslaan', 'actie.annuleren');
+        this.formConfig = new FormConfigBuilder().saveText('actie.opslaan').cancelText('actie.annuleren').build();
 
         // const omschrijving =
         //     new TextareaFormField('omschrijving', 'omschrijving', this.zaak.omschrijving);

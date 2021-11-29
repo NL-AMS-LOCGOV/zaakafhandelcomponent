@@ -25,4 +25,9 @@ export class FileFormField extends AbstractFormField {
     get config(): FileFieldConfig {
         return super.config as FileFieldConfig;
     }
+
+    set config(value: FileFieldConfig) {
+        super.config = value;
+    }
+
 }
