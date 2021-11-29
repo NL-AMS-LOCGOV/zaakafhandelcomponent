@@ -113,7 +113,7 @@ export class ZakenService {
         );
     }
 
-    getAuditTrailVoorZaak(uuid: string): Observable<AuditTrailRegel[]> {
+    listAuditTrailVoorZaak(uuid: string): Observable<AuditTrailRegel[]> {
         return this.http.get<AuditTrailRegel[]>(`${this.basepath}/zaak/${uuid}/auditTrail`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

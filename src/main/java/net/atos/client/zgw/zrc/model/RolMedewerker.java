@@ -34,7 +34,7 @@ public class RolMedewerker extends Rol<Medewerker> {
     public String getNaam() {
         final Medewerker medewerker = getBetrokkeneIdentificatie();
         if (medewerker == null) {
-            return "-";
+            return null;
         }
         final StringBuilder sb = new StringBuilder();
         sb.append(medewerker.getVoorletters());

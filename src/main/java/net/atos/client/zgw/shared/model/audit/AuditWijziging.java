@@ -6,7 +6,6 @@
 package net.atos.client.zgw.shared.model.audit;
 
 import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.validation.constraints.AssertTrue;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.util.AuditWijzigingJsonbDeserializer;
@@ -34,10 +33,5 @@ public abstract class AuditWijziging<OBJECT> {
     }
 
     public abstract ObjectType getObjectType();
-
-    @AssertTrue(message = "oud en/of nieuw moet een waarde hebben")
-    public boolean isValid() {
-        return oud != null || nieuw != null;
-    }
 
 }

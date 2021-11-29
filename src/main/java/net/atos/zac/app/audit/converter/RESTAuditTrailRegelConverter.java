@@ -48,7 +48,7 @@ public class RESTAuditTrailRegelConverter {
         rest.resource = auditTrailRegel.getResource();
         rest.resourceID = UriUtil.uuidFromURI(auditTrailRegel.getResourceUrl());
         rest.toelichting = auditTrailRegel.getToelichting();
-        rest.WijzigingsDatumTijd = auditTrailRegel.getAanmaakdatum();
+        rest.wijzigingsDatumTijd = auditTrailRegel.getAanmaakdatum();
         rest.wijziging = convertWijziging(auditTrailRegel);
         return rest;
     }
@@ -75,8 +75,6 @@ public class RESTAuditTrailRegelConverter {
     }
 
     private RESTWijziging convertZaakInformatieobjectWijziging(final ZaakInformatieobjectWijziging wijziging) {
-
-
         final ZaakInformatieobject nieuw = wijziging.getNieuw();
         final ZaakInformatieobject oud = wijziging.getOud();
 
@@ -90,7 +88,6 @@ public class RESTAuditTrailRegelConverter {
     }
 
     private RESTWijziging convertEnkelvoudigInformatieobjectWijziging(final EnkelvoudigInformatieobjectWijziging wijziging) {
-
         final EnkelvoudigInformatieobject nieuw = wijziging.getNieuw();
         final EnkelvoudigInformatieobject oud = wijziging.getOud();
 
@@ -119,7 +116,7 @@ public class RESTAuditTrailRegelConverter {
             return new RESTWijziging(String.format("%s '%s' is toegevoegd", nieuw.getBetrokkeneType().toValue(), nieuw.getNaam()));
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("%s '%s' is toegevoegd", oud.getBetrokkeneType().toValue(), oud.getNaam()));
+            return new RESTWijziging(String.format("%s '%s' is verwijderd", oud.getBetrokkeneType().toValue(), oud.getNaam()));
         }
 
         return new RESTWijziging(nieuw.getBetrokkeneType().toValue(), oud.getNaam(), nieuw.getNaam());
