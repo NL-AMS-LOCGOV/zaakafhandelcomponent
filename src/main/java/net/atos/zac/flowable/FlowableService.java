@@ -5,7 +5,8 @@
 
 package net.atos.zac.flowable;
 
-import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_LOCAL_CANDIDATE_GROUP_ID;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
+import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
@@ -178,8 +179,10 @@ public class FlowableService {
     }
 
     public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId, final Map<String, String> taakdata) {
+        final UUID zaakUUID = readZaakUuidForCase(readPlanItem(planItemInstanceId).getCaseInstanceId());
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
-                .transientVariable(VAR_LOCAL_CANDIDATE_GROUP_ID, groupId)
+                .transientVariable(VAR_TASK_CANDIDATE_GROUP_ID, groupId)
+                .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
                 .localVariable(VAR_TASK_TAAKDATA, taakdata)
                 .start();
     }
@@ -263,7 +266,7 @@ public class FlowableService {
     }
 
     public Group findGroupForPlanItem(final String planItemInstanceId) {
-        final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_LOCAL_CANDIDATE_GROUP_ID);
+        final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_TASK_CANDIDATE_GROUP_ID);
         return groupId != null ? readGroup(groupId) : null;
     }
 

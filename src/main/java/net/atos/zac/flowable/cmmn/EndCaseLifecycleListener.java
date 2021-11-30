@@ -5,17 +5,24 @@
 
 package net.atos.zac.flowable.cmmn;
 
+import static java.lang.String.format;
+
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.flowable.cmmn.api.listener.CaseInstanceLifecycleListener;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 
-import net.atos.zac.flowable.CaseHandlingService;
+import net.atos.zac.flowable.FlowableHelper;
 
 /**
  *
  */
 public class EndCaseLifecycleListener implements CaseInstanceLifecycleListener {
+
+    private static final Logger LOG = Logger.getLogger(EndCaseLifecycleListener.class.getName());
+
+    private static final String EINDSTATUS_TOELICHTING = "Zaak beeindigd vanuit Case";
 
     private final String sourceState;
 
@@ -36,9 +43,9 @@ public class EndCaseLifecycleListener implements CaseInstanceLifecycleListener {
         return targetState;
     }
 
-
     @Override
     public void stateChanged(final CaseInstance caseInstance, final String oldState, final String newState) {
-        CaseHandlingService.getHandleService().endZaak(UUID.fromString(caseInstance.getBusinessKey()));
+        LOG.info(format("Zaak %s: End Zaak", caseInstance.getBusinessKey()));
+        FlowableHelper.getInstance().getZgwApiService().endZaak(UUID.fromString(caseInstance.getBusinessKey()), EINDSTATUS_TOELICHTING);
     }
 }

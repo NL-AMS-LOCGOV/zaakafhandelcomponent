@@ -10,12 +10,12 @@ import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.cmmn.model.HumanTask;
 
 /**
- * Wanneer een Human task plan item actief wordt,
- * wordt de waarde uit het 'Assigments' attribuut uitgelezen en vertaald naar een local variable.
+ * When a Human task plan item becomes active:
+ * - the value of the 'Assigments' attribute of the Human Task Plan Item in the CMMN model is read and added as a variable to the plan item instance.
  */
 public class ExtraheerGroepLifecycleListener implements PlanItemInstanceLifecycleListener {
 
-    public static final String VAR_LOCAL_CANDIDATE_GROUP_ID = "candidateGroupId";
+    public static final String VAR_TASK_CANDIDATE_GROUP_ID = "candidateGroupId";
 
     private final String sourceState;
 
@@ -41,11 +41,11 @@ public class ExtraheerGroepLifecycleListener implements PlanItemInstanceLifecycl
         final HumanTask humanTask = (HumanTask) planItemInstance.getPlanItemDefinition();
         if (!humanTask.getCandidateGroups().isEmpty()) {
             if (humanTask.getCandidateGroups().size() > 1) {
-                throw new RuntimeException(String.format("Human task plan item met name '%s' heeft meer dan 1  candidate group. Dit wordt niet ondersteund.",
+                throw new RuntimeException(String.format("Human task plan item with name '%s' has more than 1 candidate group. This is not supported.",
                                                          planItemInstance.getName()));
             }
             final String groupId = humanTask.getCandidateGroups().get(0);
-            planItemInstance.setVariableLocal(VAR_LOCAL_CANDIDATE_GROUP_ID, groupId);
+            planItemInstance.setVariableLocal(VAR_TASK_CANDIDATE_GROUP_ID, groupId);
         }
     }
 }
