@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -118,9 +119,20 @@ public class ZGWApiService implements Caching {
      * @return Created Eind {@link Status}.
      */
     public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = ztcClientService.getStatustypeEind(
-                ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
+        final Statustype eindStatustype = ztcClientService.getStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+    }
+
+    /**
+     * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
+     *
+     * @param zaakUUID              UUID of the {@link Zaak}
+     * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
+     * @return Created Eind {@link Status}.
+     */
+    public Status endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return endZaak(zaak, eindstatusToelichting);
     }
 
     /**

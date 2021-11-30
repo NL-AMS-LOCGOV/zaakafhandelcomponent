@@ -93,7 +93,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
 
-        this.formConfig = new FormConfigBuilder().partialText('actie.opslaan.afronden').saveText('actie.afronden').build();
+        this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
 
@@ -110,9 +110,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     onFormPartial(formGroup: FormGroup): void {
-        // TODO create task patch from form
-        console.log('takenService.update');
-        this.takenService.update(this.taak).subscribe(taak => {
+        this.websocketService.suspendListener(this.taakListener);
+        this.takenService.update(this.patch(formGroup)).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
             this.init(taak);
         });
@@ -120,9 +119,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            // TODO create task patch from form
-            console.log('takenService.update');
-            this.takenService.update(this.taak).subscribe(taak => {
+            this.takenService.update(this.patch(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.opgeslagen');
                 console.log('takenService.complete');
                 this.takenService.complete(taak).subscribe(taak => {
@@ -131,6 +128,15 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
                 });
             });
         }
+    }
+
+    patch(formGroup: FormGroup): Taak {
+        const patchData: Taak = new Taak();
+        patchData.id = this.taak.id;
+        Object.keys(formGroup.controls).forEach((key) => {
+            patchData[key] = formGroup.controls[key].value;
+        });
+        return patchData;
     }
 
     editBehandelaar(behandelaar: Medewerker): void {
