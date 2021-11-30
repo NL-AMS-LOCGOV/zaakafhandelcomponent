@@ -110,7 +110,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     onFormPartial(formGroup: FormGroup): void {
-        console.log('takenService.update');
+        this.websocketService.suspendListener(this.taakListener);
         this.takenService.update(this.patch(formGroup)).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
             this.init(taak);
@@ -119,7 +119,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            console.log('takenService.update');
             this.takenService.update(this.patch(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.opgeslagen');
                 console.log('takenService.complete');
@@ -135,10 +134,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         const patchData: Taak = new Taak();
         patchData.id = this.taak.id;
         Object.keys(formGroup.controls).forEach((key) => {
-            console.log(key);
-            console.debug(formGroup.controls[key].value);
+            patchData[key] = formGroup.controls[key].value;
         });
-        return this.taak; // TODO ESUITEDEV-25978
+        return patchData;
     }
 
     editBehandelaar(behandelaar: Medewerker): void {
