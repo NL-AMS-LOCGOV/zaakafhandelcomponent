@@ -29,6 +29,8 @@ import {MatBadgeModule} from '@angular/material/badge';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
     exports: [
@@ -56,7 +58,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
         MatBadgeModule,
         MatDialogModule,
         MatProgressSpinnerModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule
     ],
     providers: [{
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {

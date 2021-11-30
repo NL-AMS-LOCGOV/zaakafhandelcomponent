@@ -9,17 +9,15 @@
 <div mat-dialog-content>
     <mat-form-field appearance="fill" fxFlex="100">
         <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
-        <mat-select [disabled]="loading">
-            <mat-option (onSelectionChange)="setMedewerker(medewerker)" *ngFor="let medewerker of (medewerkers | async)"
-                        [value]="medewerker.gebruikersnaam">
-                {{ medewerker.naam }}
-            </mat-option>
-        </mat-select>
+        <input type="text" matInput [formControl]="medewerkerControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNaam">
+            <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
+        </mat-autocomplete>
     </mat-form-field>
 
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="!medewerker || loading" mat-button color="primary" (click)="verdeel()">
+    <button [disabled]="getMedewerker() == null || loading" mat-button color="primary" (click)="verdeel()">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
