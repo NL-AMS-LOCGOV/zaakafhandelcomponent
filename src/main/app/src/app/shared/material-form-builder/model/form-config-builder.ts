@@ -13,6 +13,16 @@ export class FormConfigBuilder {
         this.formConfig = new FormConfig();
     }
 
+    partialText(text: string): this {
+        this.formConfig.partialButtonText = text;
+        return this;
+    }
+
+    partialIcon(icon: string): this {
+        this.formConfig.partialButtonIcon = icon;
+        return this;
+    }
+
     saveText(text: string): this {
         this.formConfig.saveButtonText = text;
         return this;

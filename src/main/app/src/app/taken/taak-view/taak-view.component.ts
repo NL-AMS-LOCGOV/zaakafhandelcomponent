@@ -30,6 +30,7 @@ import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/f
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {Medewerker} from '../../identity/model/medewerker';
+import {NavigationService} from '../../shared/navigation/navigation.service';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -53,7 +54,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService) {
+                private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
+                private navigation: NavigationService) {
         super(store, utilService);
     }
 
@@ -91,7 +93,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
 
-        this.formConfig = new FormConfigBuilder().saveText('actie.afronden').build();
+        this.formConfig = new FormConfigBuilder().partialText('actie.opslaan.afronden').saveText('actie.afronden').build();
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
 
@@ -107,10 +109,27 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
+    onFormPartial(formGroup: FormGroup): void {
+        // TODO create task patch from form
+        console.log('takenService.update');
+        this.takenService.update(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.opgeslagen');
+            this.init(taak);
+        });
+    }
+
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            let taak1: Taak = this.formulier.getTaak(formGroup);
-            console.log(taak1);
+            // TODO create task patch from form
+            console.log('takenService.update');
+            this.takenService.update(this.taak).subscribe(taak => {
+                this.utilService.openSnackbar('msg.taak.opgeslagen');
+                console.log('takenService.complete');
+                this.takenService.complete(taak).subscribe(taak => {
+                    this.utilService.openSnackbar('msg.taak.afgerond');
+                    this.navigation.back();
+                });
+            });
         }
     }
 

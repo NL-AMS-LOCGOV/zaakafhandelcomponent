@@ -14,11 +14,22 @@
     </ng-container>
 
     <div fxLayout="row" fxLayoutAlign="start">
-        <button mat-flat-button color="primary" [disabled]="formGroup.invalid" type="submit">
+        <button mat-flat-button color="accent"
+                *ngIf="config.partialButtonText || config.partialButtonIcon"
+                [disabled]="formGroup.invalid"
+                type="button" (click)="partial()">
+            <mat-icon *ngIf="config.partialButtonIcon">{{config.partialButtonIcon}}</mat-icon>
+            {{config.partialButtonText | translate}}
+        </button>
+        <button mat-flat-button color="primary"
+                [disabled]="formGroup.invalid"
+                type="submit">
             <mat-icon *ngIf="config.saveButtonIcon">{{config.saveButtonIcon}}</mat-icon>
             {{config.saveButtonText | translate}}
         </button>
-        <button *ngIf="config.cancelButtonText || config.cancelButtonIcon" mat-flat-button type="button" (click)="cancel()">
+        <button mat-flat-button
+                *ngIf="config.cancelButtonText || config.cancelButtonIcon"
+                type="button" (click)="cancel()">
             <mat-icon *ngIf="config.cancelButtonIcon">{{config.cancelButtonIcon}}</mat-icon>
             {{config.cancelButtonText | translate}}
         </button>

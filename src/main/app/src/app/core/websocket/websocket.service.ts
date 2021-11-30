@@ -135,14 +135,14 @@ export class WebsocketService implements OnDestroy {
         return listener;
     }
 
-    public addListenerMetSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
+    public addListenerWithSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
         return this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
-                snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + objectType),
+                snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + event.objectType),
                 snackbar2: this.translate.get('msg.gewijzigd.2'),
-                snackbar3: this.translate.get('msg.gewijzigd.operatie.' + opcode),
+                snackbar3: this.translate.get('msg.gewijzigd.operatie.' + event.opcode),
                 snackbar4: this.translate.get('msg.gewijzigd.4'),
-                actie: this.translate.get('actie.scherm.verversen')
+                actie: this.translate.get('actie.verversen')
             }).subscribe(result => {
                 this.snackbar.open(result.snackbar1 + result.snackbar2 + result.snackbar3 + result.snackbar4, result.actie)
                     .onAction().subscribe(() => callback(event));

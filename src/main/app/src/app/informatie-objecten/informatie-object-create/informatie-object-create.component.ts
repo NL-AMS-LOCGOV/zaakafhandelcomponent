@@ -51,7 +51,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
+        this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
