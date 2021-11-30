@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.joda.time.IllegalInstantException;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -291,6 +293,8 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/{uuid}/auditTrail")
     public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
-        return zrcClientService.listAuditTrail(uuid).stream().map(auditTrailRegelConverter::convert).collect(Collectors.toList());
+        return zrcClientService.listAuditTrail(uuid).stream()
+                .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
+                .map(auditTrailRegelConverter::convert).collect(Collectors.toList());
     }
 }

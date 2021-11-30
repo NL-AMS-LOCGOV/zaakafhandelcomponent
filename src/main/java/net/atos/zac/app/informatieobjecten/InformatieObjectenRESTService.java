@@ -8,6 +8,7 @@ package net.atos.zac.app.informatieobjecten;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -182,7 +183,9 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}/auditTrail")
     public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
         List<AuditTrailRegel> auditTrailRegels = drcClientService.listAuditTrail(uuid);
-        return auditTrailRegels.stream().map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
+        return auditTrailRegels.stream()
+                .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
+                .map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
     }
 
     private String lockEigenaar() {

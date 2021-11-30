@@ -139,7 +139,18 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                     return item[property];
             }
         };
-        this.takenDataSource.sort = this.sort;
+
+        this.auditTrail.sortingDataAccessor = (item, property) => {
+            switch (property) {
+                case 'datum':
+                    return item.wijzigingsDatumTijd;
+                case 'gebruiker' :
+                    return item.gebruikersWeergave;
+                default:
+                    return item[property];
+            }
+        };
+        this.auditTrail.sort = this.sort;
     }
 
     ngOnDestroy(): void {

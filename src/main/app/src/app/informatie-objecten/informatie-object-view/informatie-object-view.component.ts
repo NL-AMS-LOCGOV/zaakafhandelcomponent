@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EnkelvoudigInformatieObject} from '../model/enkelvoudig-informatie-object';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ZakenService} from '../../zaken/zaken.service';
@@ -23,12 +23,13 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {MatTableDataSource} from '@angular/material/table';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
+import {MatSort} from '@angular/material/sort';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
-export class InformatieObjectViewComponent extends AbstractView implements OnInit, OnDestroy {
+export class InformatieObjectViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieObject;
     menu: MenuItem[];
@@ -36,6 +37,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
     auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    @ViewChild(MatSort) sort: MatSort;
     private documentListener: WebsocketListener;
 
     constructor(store: Store<State>,
@@ -59,6 +61,21 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.loadZaken();
             this.loadAuditTrail();
         }));
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        this.auditTrail.sortingDataAccessor = (item, property) => {
+            switch (property) {
+                case 'datum':
+                    return item.wijzigingsDatumTijd;
+                case 'gebruiker' :
+                    return item.gebruikersWeergave;
+                default:
+                    return item[property];
+            }
+        };
+        this.auditTrail.sort = this.sort;
     }
 
     ngOnDestroy() {
