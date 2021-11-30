@@ -28,6 +28,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
     exports: [
@@ -54,7 +55,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         MatSlideToggleModule,
         MatBadgeModule,
         MatDialogModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatTooltipModule
     ],
     providers: [{
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {

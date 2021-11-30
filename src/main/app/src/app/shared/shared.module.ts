@@ -35,6 +35,7 @@ import {PaginatorTranslator} from './paginator/paginator-translator';
 import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 import {OutsideClickDirective} from './directives/outside-click.directive';
+import {ReadMoreComponent} from './read-more/read-more.component';
 
 @NgModule({
     declarations: [
@@ -49,6 +50,7 @@ import {OutsideClickDirective} from './directives/outside-click.directive';
         BackButtonDirective,
         DynamicPipe,
         StaticTextComponent,
+        ReadMoreComponent,
         NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
@@ -84,6 +86,7 @@ import {OutsideClickDirective} from './directives/outside-click.directive';
         BackButtonDirective,
         DynamicPipe,
         StaticTextComponent,
+        ReadMoreComponent,
         MaterialModule,
         MaterialFormBuilderModule,
         NotitiesComponent,

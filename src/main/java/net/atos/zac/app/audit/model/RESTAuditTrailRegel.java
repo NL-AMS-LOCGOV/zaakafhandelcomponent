@@ -18,6 +18,8 @@ public class RESTAuditTrailRegel {
 
     public String gebruikersId;
 
+    public String gebruikersWeergave;
+
     public String actie;
 
     public String actieWeergave;

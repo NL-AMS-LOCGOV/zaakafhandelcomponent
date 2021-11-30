@@ -40,6 +40,8 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.StatustypeListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 
 /**
  * Careful!
@@ -54,6 +56,10 @@ public class ZTCClientService implements Caching {
     @Inject
     @RestClient
     private ZTCClient ztcClient;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker ingelogdeMedewerker;
 
     /**
      * Read {@link Catalogus} filtered by {@link CatalogusListParameters}.
@@ -317,6 +323,6 @@ public class ZTCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken());
+                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
     }
 }

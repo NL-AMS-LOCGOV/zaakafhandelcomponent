@@ -75,6 +75,8 @@
   "wijziging": "Change",
   "oudeWaarde": "Old value",
   "nieuweWaarde": "New value",
+  "datum": "Date",
+  "door": "By",
   " 4 ": ">>--> ENTITEITEN <--<<",
   "informatieobject": "Document",
   "enkelvoudigInformatieObjecten": "Documents",

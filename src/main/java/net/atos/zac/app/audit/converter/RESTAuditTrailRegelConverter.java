@@ -46,6 +46,7 @@ public class RESTAuditTrailRegelConverter {
         rest.applicatieId = auditTrailRegel.getApplicatieId();
         rest.applicatieWeergave = auditTrailRegel.getApplicatieWeergave();
         rest.gebruikersId = auditTrailRegel.getGebruikersId();
+        rest.gebruikersWeergave = auditTrailRegel.getGebruikersWeergave();
         rest.actie = auditTrailRegel.getActie();
         rest.actieWeergave = auditTrailRegel.getActieWeergave();
         rest.httpStatusCode = auditTrailRegel.getResultaat();
@@ -155,7 +156,6 @@ public class RESTAuditTrailRegelConverter {
 
         return new RESTWijziging(nieuw.getBetrokkeneType().toValue(), oud.getNaam(), nieuw.getNaam());
     }
-
 
     private RESTWijziging convertZaakWijziging(final ZaakWijziging zaakWijziging) {
         final Zaak nieuw = zaakWijziging.getNieuw();

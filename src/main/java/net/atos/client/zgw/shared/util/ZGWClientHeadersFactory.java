@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -21,11 +22,17 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import net.atos.client.util.AcceptHeaderBugWorkaroundUtil;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 
 /**
  *
  */
 public class ZGWClientHeadersFactory implements ClientHeadersFactory {
+
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker ingelogdeMedewerker;
 
     private static final Config config = ConfigProvider.getConfig();
 
@@ -36,21 +43,35 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken());
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
         AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
 
+    public static String generateJWTToken(final Medewerker user) {
+        return generateJWTToken(user.getGebruikersnaam(), user.getNaam());
+    }
+
     public static String generateJWTToken() {
+        return generateJWTToken(null, null);
+    }
+
+    private static String generateJWTToken(final String userID, final String userName) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
-        final String jwtToken = jwtBuilder
-                .withIssuer(CLIENT_ID)
+        jwtBuilder.withIssuer(CLIENT_ID)
                 .withIssuedAt(new Date())
                 .withHeader(headerClaims)
-                .withClaim("client_id", CLIENT_ID)
-                .sign(Algorithm.HMAC256(SECRET));
+                .withClaim("client_id", CLIENT_ID);
+        if (userID != null) {
+            jwtBuilder.withClaim("user_id", userID);
+        }
+        if (userName != null) {
+            jwtBuilder.withClaim("user_representation", userName);
+        }
+        String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
         return "Bearer " + jwtToken;
     }
+
 }

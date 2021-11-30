@@ -34,7 +34,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     menu: MenuItem[];
     zaken: ZaakInformatieObjectKoppeling[];
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
-    auditTrailColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
     private documentListener: WebsocketListener;
 

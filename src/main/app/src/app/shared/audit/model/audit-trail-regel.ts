@@ -10,6 +10,7 @@ export class AuditTrailRegel {
     applicatieId: string;
     applicatieWeergave: string;
     gebruikersId: string;
+    gebruikersWeergave: string;
     actie: string;
     actieWeergave: string;
     httpStatusCode: number;

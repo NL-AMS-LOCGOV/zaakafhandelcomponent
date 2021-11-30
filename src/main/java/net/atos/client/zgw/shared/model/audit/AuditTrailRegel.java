@@ -51,6 +51,12 @@ public class AuditTrailRegel {
     private String gebruikersId;
 
     /**
+     * Vriendelijke naam van de gebruiker.
+     * maxLenght: 255
+     */
+    private String gebruikersWeergave;
+
+    /**
      * De uitgevoerde handeling.
      * maxLength: 50
      * <p>
@@ -163,6 +169,14 @@ public class AuditTrailRegel {
 
     public void setGebruikersId(final String gebruikersId) {
         this.gebruikersId = gebruikersId;
+    }
+
+    public String getGebruikersWeergave() {
+        return gebruikersWeergave;
+    }
+
+    public void setGebruikersWeergave(final String gebruikersWeergave) {
+        this.gebruikersWeergave = gebruikersWeergave;
     }
 
     public String getActie() {

@@ -44,6 +44,8 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 
 /**
  * Careful!
@@ -58,6 +60,10 @@ public class ZRCClientService implements Caching {
     @Inject
     @RestClient
     private ZRCClient zrcClient;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker ingelogdeMedewerker;
 
     /**
      * Create {@link Rol}.
@@ -278,7 +284,7 @@ public class ZRCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken())
+                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker))
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
                 .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
     }

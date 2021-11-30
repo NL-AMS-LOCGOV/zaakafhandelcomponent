@@ -91,7 +91,7 @@ public class Results<T> {
         return uri != null ? createInvocationBuilder(uri).get(new GenericType<Results<T>>() {}) : null;
     }
 
-    private static Invocation.Builder createInvocationBuilder(final URI uri) {
+    private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
                 .header(HttpHeaders.AUTHORIZATION, generateJWTToken())

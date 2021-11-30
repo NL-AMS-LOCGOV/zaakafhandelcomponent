@@ -28,6 +28,8 @@ import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 
 /**
  *
@@ -38,6 +40,10 @@ public class DRCClientService {
     @Inject
     @RestClient
     private DRCClient drcClient;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Medewerker ingelogdeMedewerker;
 
     /*
      * In memory persistance map of locks.
@@ -129,6 +135,6 @@ public class DRCClientService {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken());
+                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
     }
 }
