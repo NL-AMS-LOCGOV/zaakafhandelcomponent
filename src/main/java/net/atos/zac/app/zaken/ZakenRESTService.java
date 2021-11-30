@@ -209,6 +209,19 @@ public class ZakenRESTService {
     }
 
     @PUT
+    @Path("vrijgeven")
+    public void verdelen(List<UUID> zaakIds) {
+        zaakIds.forEach(uuid -> {
+            final Zaak zaak = zrcClientService.readZaak(uuid);
+            final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
+            final Optional<Rol<?>> rolMedewerker =
+                    rollen.stream().filter(rol -> rol.getBetrokkeneType() == BetrokkeneType.MEDEWERKER).findFirst();
+            rolMedewerker.ifPresent(medewerker -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(medewerker)));
+            zrcClientService.updateRollen(zaak.getUrl(), rollen);
+        });
+    }
+
+    @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens restZaak) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak

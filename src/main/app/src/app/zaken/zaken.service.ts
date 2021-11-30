@@ -95,6 +95,12 @@ export class ZakenService {
         );
     }
 
+    vrijgeven(zaken: ZaakOverzicht[]): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/vrijgeven`, zaken.map(zaak => zaak.uuid)).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     toekennenAanIngelogdeMedewerker(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         zaakBody.uuid = zaak.uuid;
