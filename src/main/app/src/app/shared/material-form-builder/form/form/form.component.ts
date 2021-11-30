@@ -21,6 +21,7 @@ export class FormComponent implements OnInit {
     @Input() formFields: Array<AbstractFormField[]>;
     @Input() config: FormConfig;
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+    @Output() formPartial: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
     data: Array<FormItem[]>;
     formGroup: FormGroup = new FormGroup({});
 
@@ -38,6 +39,10 @@ export class FormComponent implements OnInit {
                 }
             });
         }
+    }
+
+    partial() {
+        this.formPartial.emit(this.formGroup);
     }
 
     submit(): void {

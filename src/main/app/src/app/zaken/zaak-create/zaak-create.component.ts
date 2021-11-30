@@ -37,7 +37,7 @@ export class ZaakCreateComponent implements OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaak.aanmaken');
 
-        this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
+        this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
         const communicatiekanalen = of([{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}]);
         const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
