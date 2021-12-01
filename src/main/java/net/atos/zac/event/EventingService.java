@@ -58,6 +58,6 @@ public class EventingService {
      * @param event het te versturen event
      */
     public void send(final CmmnEvent event) {
-        cmmnUpdateEvent.fireAsync(event);
+        cmmnUpdateEvent.fire(event);
     }
 }

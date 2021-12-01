@@ -40,8 +40,8 @@ public class NotificatieReceiver {
         LOG.info(() -> String
                 .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
                         notificatie.getChannel(), notificatie.getResourceType(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
-        handleCmmn(notificatie);
         handleCaches(notificatie);
+        handleCmmn(notificatie);
         handleWebsockets(notificatie);
         return noContent().build();
     }
