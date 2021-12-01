@@ -11,7 +11,6 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,6 +54,10 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
  */
 @ApplicationScoped
 public class ZGWApiService implements Caching {
+
+    private static final List<String> CACHES = List.of(
+            ZGW_ZAAK_BEHANDELAAR_MANAGED,
+            ZGW_ZAAK_GROEP_MANAGED);
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -237,9 +240,6 @@ public class ZGWApiService implements Caching {
 
     @Override
     public List<String> cacheNames() {
-        final List<String> names = new ArrayList<>();
-        names.add(ZGW_ZAAK_BEHANDELAAR_MANAGED);
-        names.add(ZGW_ZAAK_GROEP_MANAGED);
-        return names;
+        return CACHES;
     }
 }

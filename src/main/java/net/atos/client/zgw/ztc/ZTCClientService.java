@@ -51,6 +51,16 @@ import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 @ApplicationScoped
 public class ZTCClientService implements Caching {
 
+    private static final List<String> CACHES = List.of(
+            ZTC_RESULTAATTYPE,
+            ZTC_STATUSTYPE,
+            ZTC_ZAAKTYPE,
+            ZTC_ZAAKTYPE_MANAGED,
+            ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED,
+            ZTC_ZAAKTYPE_ROLTYPE,
+            ZTC_ZAAKTYPE_STATUSTYPE_MANAGED,
+            ZTC_ZAAKTYPE_URL);
+
     @Inject
     @RestClient
     private ZTCClient ztcClient;
@@ -305,16 +315,7 @@ public class ZTCClientService implements Caching {
 
     @Override
     public List<String> cacheNames() {
-        final List<String> names = new ArrayList<>();
-        names.add(ZTC_RESULTAATTYPE);
-        names.add(ZTC_STATUSTYPE);
-        names.add(ZTC_ZAAKTYPE);
-        names.add(ZTC_ZAAKTYPE_MANAGED);
-        names.add(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
-        names.add(ZTC_ZAAKTYPE_ROLTYPE);
-        names.add(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED);
-        names.add(ZTC_ZAAKTYPE_URL);
-        return names;
+        return CACHES;
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
