@@ -6,7 +6,7 @@
 package net.atos.client.zgw.shared.cache.event;
 
 import javax.annotation.ManagedBean;
-import javax.enterprise.event.ObservesAsync;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -29,7 +29,7 @@ public class CacheEventObserver extends AbstractEventObserver<CacheEvent> {
     @Inject
     private ZGWApiService zgwApiService;
 
-    public void onFire(final @ObservesAsync CacheEvent event) {
+    public void onFire(final @Observes CacheEvent event) {
         switch (event.getObjectType()) {
             case ZAAKROL:
                 zgwApiService.updateZaakbehandelaarCache(event.getUrl());

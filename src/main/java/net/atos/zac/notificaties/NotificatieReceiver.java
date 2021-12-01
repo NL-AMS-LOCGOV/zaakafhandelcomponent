@@ -46,15 +46,15 @@ public class NotificatieReceiver {
         return noContent().build();
     }
 
-    private void handleCmmn(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
-        }
-    }
-
     private void handleCaches(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
             CacheEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+        }
+    }
+
+    private void handleCmmn(final Notificatie notificatie) {
+        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
+            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
         }
     }
 

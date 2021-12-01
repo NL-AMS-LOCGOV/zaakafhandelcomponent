@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
-import javax.enterprise.event.Observes;
+import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     private FlowableService flowableService;
 
     @Override
-    public void onFire(final @Observes CmmnEvent event) {
+    public void onFire(final @ObservesAsync CmmnEvent event) {
         startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
     }
 
