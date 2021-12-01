@@ -48,15 +48,11 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         return clientOutgoingHeaders;
     }
 
-    public static String generateJWTToken(final Medewerker user) {
-        return generateJWTToken(user.getGebruikersnaam(), user.getNaam());
-    }
-
     public static String generateJWTToken() {
-        return generateJWTToken(null, null);
+        return generateJWTToken(null);
     }
 
-    private static String generateJWTToken(final String userID, final String userName) {
+    public static String generateJWTToken(final Medewerker user) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
@@ -64,14 +60,15 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
                 .withIssuedAt(new Date())
                 .withHeader(headerClaims)
                 .withClaim("client_id", CLIENT_ID);
-        if (userID != null) {
-            jwtBuilder.withClaim("user_id", userID);
-        }
-        if (userName != null) {
-            jwtBuilder.withClaim("user_representation", userName);
+        if (user != null) {
+            if (user.getGebruikersnaam() != null) {
+                jwtBuilder.withClaim("user_id", user.getGebruikersnaam());
+            }
+            if (user.getNaam() != null) {
+                jwtBuilder.withClaim("user_representation", user.getNaam());
+            }
         }
         String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
         return "Bearer " + jwtToken;
     }
-
 }
