@@ -103,10 +103,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
-
-        if (this.taak.rechten[this.taakRechten.BEHANDELEN]) {
-            this.menu.push(new ButtonMenuItem('actie.afronden', this.afronden, 'assignment_turned_in'));
-        }
     }
 
     onFormPartial(formGroup: FormGroup): void {
