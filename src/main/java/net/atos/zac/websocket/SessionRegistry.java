@@ -79,7 +79,7 @@ public class SessionRegistry {
     }
 
     private List<ScreenEvent> glob(final ScreenEvent event) {
-        if (event.getOperation() == Opcode.ANY) {
+        if (event.getOpcode() == Opcode.ANY) {
             final Set<Opcode> anyOpcode = Opcode.any();
             anyOpcode.remove(Opcode.CREATED);// There will not be any websocket subscriptions with this opcode, so skip it in globbing.
             if (event.getObjectType() == ScreenEventType.ANY) {
@@ -95,7 +95,7 @@ public class SessionRegistry {
         }
         if (event.getObjectType() == ScreenEventType.ANY) {
             return ScreenEventType.any().stream()
-                    .map(objectType -> new ScreenEvent(event.getOperation(), objectType, event.getObjectId()))
+                    .map(objectType -> new ScreenEvent(event.getOpcode(), objectType, event.getObjectId()))
                     .collect(Collectors.toList());
         }
         return Collections.singletonList(event);
@@ -121,6 +121,6 @@ public class SessionRegistry {
      */
     public ScreenEvent fix(final ScreenEvent event) {
         final Matcher matcher = QUOTED.matcher(event.getObjectId());
-        return matcher.matches() ? fix(new ScreenEvent(event.getOperation(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
+        return matcher.matches() ? fix(new ScreenEvent(event.getOpcode(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
     }
 }

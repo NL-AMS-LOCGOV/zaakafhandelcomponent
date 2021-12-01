@@ -6,6 +6,7 @@
 package net.atos.zac.websocket.event;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,13 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
+        if (event.getSecondsToWait() != null) {
+            try {
+                TimeUnit.SECONDS.sleep(event.getSecondsToWait());
+            } catch (InterruptedException e) {
+                // Ignore exception
+            }
+        }
         sendToWebsocketSubscribers(event);
     }
 

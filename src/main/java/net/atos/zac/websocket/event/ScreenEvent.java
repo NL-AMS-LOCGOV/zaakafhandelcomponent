@@ -5,9 +5,6 @@
 
 package net.atos.zac.websocket.event;
 
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
-
 import net.atos.zac.event.AbstractEvent;
 import net.atos.zac.event.Opcode;
 
@@ -15,8 +12,9 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
 
     private static final long serialVersionUID = -740125186878024703L;
 
-    @NotNull
     private ScreenEventType objectType;
+
+    private Integer secondsToWait;
 
     public ScreenEvent() {
         super();
@@ -32,8 +30,11 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
         return objectType;
     }
 
-    @AssertTrue(message = "Websocket subscriptions for CREATED objectIds cannot exist (the new id is unknown client side)")
-    boolean isValid() {
-        return getOperation() != Opcode.CREATED;
+    public Integer getSecondsToWait() {
+        return secondsToWait;
+    }
+
+    public void setSecondsToWait(final Integer secondsToWait) {
+        this.secondsToWait = secondsToWait;
     }
 }

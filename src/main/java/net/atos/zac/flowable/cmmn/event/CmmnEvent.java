@@ -8,8 +8,6 @@ package net.atos.zac.flowable.cmmn.event;
 
 import java.net.URI;
 
-import javax.validation.constraints.NotNull;
-
 import net.atos.zac.event.AbstractEvent;
 import net.atos.zac.event.Opcode;
 
@@ -17,7 +15,6 @@ public class CmmnEvent extends AbstractEvent<CmmnEventType, URI> {
 
     private static final long serialVersionUID = 4764736142892883842L;
 
-    @NotNull
     private CmmnEventType objectType;
 
     /**

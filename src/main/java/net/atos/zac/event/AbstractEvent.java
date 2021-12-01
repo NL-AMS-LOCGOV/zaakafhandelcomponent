@@ -8,21 +8,14 @@ package net.atos.zac.event;
 import java.io.Serializable;
 import java.time.Instant;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import net.atos.zac.websocket.event.ScreenEvent;
 
 public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     private long timestamp;
 
-    @NotNull
-    private Opcode operation;
+    private Opcode opcode;
 
-    @NotBlank
-    @Valid
     private ID objectId;
 
     /**
@@ -32,9 +25,9 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
         super();
     }
 
-    public AbstractEvent(final Opcode operation, final ID objectId) {
+    public AbstractEvent(final Opcode opcode, final ID objectId) {
         this.timestamp = Instant.now().getEpochSecond();
-        this.operation = operation;
+        this.opcode = opcode;
         this.objectId = objectId;
     }
 
@@ -42,8 +35,8 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
         return timestamp;
     }
 
-    public Opcode getOperation() {
-        return operation;
+    public Opcode getOpcode() {
+        return opcode;
     }
 
     public abstract TYPE getObjectType();
@@ -64,7 +57,7 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
         }
         // cast en vergelijk
         final ScreenEvent other = (ScreenEvent) obj;
-        if (getOperation() != other.getOperation()) {
+        if (getOpcode() != other.getOpcode()) {
             return false;
         }
         if (getObjectType() != other.getObjectType()) {
@@ -75,7 +68,7 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = getOperation().hashCode();
+        int result = getOpcode().hashCode();
         result = 31 * result + getObjectType().hashCode();
         result = 31 * result + getObjectId().hashCode();
         return result;
@@ -83,6 +76,6 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s %s", getClass().getSimpleName(), getOperation(), getObjectType(), getObjectId());
+        return String.format("%s %s %s %s", getClass().getSimpleName(), getOpcode(), getObjectType(), getObjectId());
     }
 }
