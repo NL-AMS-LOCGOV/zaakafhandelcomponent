@@ -133,6 +133,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     patch(formGroup: FormGroup): Taak {
         const patchData: Taak = new Taak();
         patchData.id = this.taak.id;
+        patchData.zaakUUID = this.taak.zaakUUID;
         Object.keys(formGroup.controls).forEach((key) => {
             patchData[key] = formGroup.controls[key].value;
         });
