@@ -25,7 +25,11 @@
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
-                        <zac-edit [formField]="taakBehandelaarFormField" (onSave)="editBehandelaar($event)"></zac-edit>
+                        <zac-edit [formField]="taakBehandelaarFormField"
+                                  (onSave)="editBehandelaar($event)"
+                                  [showShortcut]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                  (onShortCut)="assignToMe()">
+                        </zac-edit>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">

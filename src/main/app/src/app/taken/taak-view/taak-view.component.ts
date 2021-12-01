@@ -139,6 +139,13 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         return patchData;
     }
 
+    assignToMe(): void {
+        this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
+            this.init(taak);
+        });
+    }
+
     editBehandelaar(behandelaar: Medewerker): void {
         if (behandelaar) {
             this.taak.behandelaar = behandelaar;

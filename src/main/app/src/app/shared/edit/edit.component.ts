@@ -23,6 +23,8 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
     formItem: FormItem;
 
     @Input() formField: AbstractFormField;
+    @Input() showShortcut: boolean = false;
+    @Output() onShortCut: EventEmitter<any> = new EventEmitter<any>();
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
 
     subscription: Subscription;
@@ -38,8 +40,8 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
     }
 
     init(formField: AbstractFormField): void {
-        if (formField instanceof AbstractChoicesFormField && formField.formControl.value) {
-            this.value = this.formField.formControl.value[formField.optionLabel];
+        if (formField instanceof AbstractChoicesFormField) {
+            this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
         } else {
             this.value = formField.formControl.value;
         }
@@ -81,6 +83,11 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
     }
 
     cancel(): void {
+        this.editing = false;
+    }
+
+    shortcut(): void {
+        this.onShortCut.emit();
         this.editing = false;
     }
 }
