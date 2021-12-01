@@ -7,7 +7,6 @@ package net.atos.client.zgw.ztc;
 
 import static java.lang.String.format;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
-import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
@@ -40,8 +40,6 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.StatustypeListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
 
 /**
  * Careful!
@@ -58,8 +56,7 @@ public class ZTCClientService implements Caching {
     private ZTCClient ztcClient;
 
     @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
     /**
      * Read {@link Catalogus} filtered by {@link CatalogusListParameters}.
@@ -323,6 +320,6 @@ public class ZTCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser());
     }
 }
