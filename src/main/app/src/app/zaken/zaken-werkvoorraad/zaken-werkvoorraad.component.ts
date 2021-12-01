@@ -23,6 +23,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
+import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -174,6 +175,25 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                     this.utilService.openSnackbar('msg.verdeeld.zaak');
                 } else {
                     this.utilService.openSnackbar('msg.verdeeld.zaken', {aantal: this.selection.selected.length});
+                }
+                this.zoekZaken();
+            }
+        });
+    }
+
+    openVrijgevenScherm(): void {
+        let zaken = this.selection.selected;
+        const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
+            width: '350px',
+            data: zaken
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (this.selection.selected.length === 1) {
+                    this.utilService.openSnackbar('msg.vrijgegeven.zaak');
+                } else {
+                    this.utilService.openSnackbar('msg.vrijgegeven.zaken', {aantal: this.selection.selected.length});
                 }
                 this.zoekZaken();
             }

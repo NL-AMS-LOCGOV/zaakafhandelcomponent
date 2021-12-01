@@ -17,12 +17,20 @@
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
     <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
+
     <div class="form-buttons">
-        <button mat-mini-fab color="primary" (click)="save()">
-            <mat-icon>check</mat-icon>
-        </button>
-        <button mat-mini-fab (click)="cancel()">
-            <mat-icon>close</mat-icon>
-        </button>
+        <div>
+            <button *ngIf="showShortcut" mat-mini-fab color="warn" (click)="shortcut()">
+                <mat-icon>person_add_alt</mat-icon>
+            </button>
+        </div>
+        <div>
+            <button mat-mini-fab color="primary" (click)="save()">
+                <mat-icon>check</mat-icon>
+            </button>
+            <button mat-mini-fab (click)="cancel()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
     </div>
 </div>

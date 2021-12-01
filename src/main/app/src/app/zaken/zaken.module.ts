@@ -16,6 +16,7 @@ import {StoreModule} from '@ngrx/store';
 import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
+import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,8 @@ import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdel
         ZakenWerkvoorraadComponent,
         ZakenMijnComponent,
         ZakenAfgehandeldComponent,
-        ZakenVerdelenDialogComponent
+        ZakenVerdelenDialogComponent,
+        ZakenVrijgevenDialogComponent
     ],
     exports: [
         ZaakVerkortComponent
