@@ -6,7 +6,6 @@
 package net.atos.client.zgw.zrc;
 
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
-import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
@@ -44,8 +44,6 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
 
 /**
  * Careful!
@@ -62,8 +60,7 @@ public class ZRCClientService implements Caching {
     private ZRCClient zrcClient;
 
     @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
     /**
      * Create {@link Rol}.
@@ -284,7 +281,7 @@ public class ZRCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker))
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser())
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
                 .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
     }

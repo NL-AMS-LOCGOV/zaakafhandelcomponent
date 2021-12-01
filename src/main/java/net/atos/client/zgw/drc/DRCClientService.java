@@ -6,7 +6,6 @@
 package net.atos.client.zgw.drc;
 
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
-import static net.atos.client.zgw.shared.util.ZGWClientHeadersFactory.generateJWTToken;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
@@ -28,8 +27,7 @@ import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 
 /**
  *
@@ -42,8 +40,7 @@ public class DRCClientService {
     private DRCClient drcClient;
 
     @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
     /*
      * In memory persistance map of locks.
@@ -135,6 +132,6 @@ public class DRCClientService {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser());
     }
 }

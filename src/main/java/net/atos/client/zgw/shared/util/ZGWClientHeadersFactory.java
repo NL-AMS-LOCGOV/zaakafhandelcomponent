@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -28,6 +29,7 @@ import net.atos.zac.authentication.Medewerker;
 /**
  *
  */
+@ApplicationScoped
 public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     @Inject
@@ -43,16 +45,20 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(ingelogdeMedewerker));
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(ingelogdeMedewerker));
         AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
 
     public static String generateJWTToken() {
-        return generateJWTToken(null);
+        return generateJWTTokenWithUser(null);
     }
 
-    public static String generateJWTToken(final Medewerker user) {
+    public String generateJWTTokenWithUser() {
+        return generateJWTTokenWithUser(ingelogdeMedewerker);
+    }
+
+    private static String generateJWTTokenWithUser(final Medewerker ingelogdeMedewerker) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
@@ -60,12 +66,12 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
                 .withIssuedAt(new Date())
                 .withHeader(headerClaims)
                 .withClaim("client_id", CLIENT_ID);
-        if (user != null) {
-            if (user.getGebruikersnaam() != null) {
-                jwtBuilder.withClaim("user_id", user.getGebruikersnaam());
+        if (ingelogdeMedewerker != null) {
+            if (ingelogdeMedewerker.getGebruikersnaam() != null) {
+                jwtBuilder.withClaim("user_id", ingelogdeMedewerker.getGebruikersnaam());
             }
-            if (user.getNaam() != null) {
-                jwtBuilder.withClaim("user_representation", user.getNaam());
+            if (ingelogdeMedewerker.getNaam() != null) {
+                jwtBuilder.withClaim("user_representation", ingelogdeMedewerker.getNaam());
             }
         }
         String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
