@@ -129,6 +129,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     taakdata(formGroup: FormGroup): Taak {
         const putData: Taak = new Taak();
         putData.id = this.taak.id;
+        putData.zaakUUID = this.taak.zaakUUID;
         putData.taakdata = {};
         Object.keys(formGroup.controls).forEach((key) => {
             putData.taakdata[key] = formGroup.controls[key].value;
