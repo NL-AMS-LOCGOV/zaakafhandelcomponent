@@ -23,13 +23,14 @@ import {EventSuspension} from './model/event-suspension';
 })
 export class WebsocketService implements OnDestroy {
 
-    public static test: boolean = false; // Als true dan wordt de mock gebruikt
+    public static test = false; // Als true dan wordt de mock gebruikt
 
-    private static DEFAULT_SUSPENSION_TIMEOUT: number = 5; // seconds
+    // This must be bigger then the SECONDS_TO_DELAY defined in ScreenEventObserver.java
+    private static DEFAULT_SUSPENSION_TIMEOUT = 5; // seconds
 
     private readonly PROTOCOL: string = window.location.protocol.replace(/^http/, 'ws');
 
-    private readonly HOST: string = window.location.host;
+    private readonly HOST: string = window.location.host.replace('localhost:4200', 'localhost:8080');
 
     private readonly URL: string = this.PROTOCOL + '//' + this.HOST + '/websocket';
 
@@ -41,8 +42,7 @@ export class WebsocketService implements OnDestroy {
 
     private suspended: EventSuspension[] = [];
 
-    constructor(private snackbar: MatSnackBar,
-                private translate: TranslateService) {
+    constructor(private snackbar: MatSnackBar, private translate: TranslateService) {
         if (WebsocketService.test) {
             this.mock();
         } else {
@@ -82,8 +82,8 @@ export class WebsocketService implements OnDestroy {
         console.warn('Websocket is een mock');
         this.send = function (data: any) {
             // Simulates one (i.e. 1) incoming websocket message for the event, after a delay (in ms) which gets derived from the objectId.
-            var delay: number = Number(data.event.objectId);
-            var event: ScreenEvent = data.event;
+            const delay: number = Number(data.event.objectId);
+            const event: ScreenEvent = data.event;
             setTimeout(() => {
                 this.onMessage(new ScreenEvent(event.opcode, event.objectType, event.objectId, 0));
             }, delay);
@@ -107,10 +107,11 @@ export class WebsocketService implements OnDestroy {
     }
 
     private onMessage = (message: any) => {
-        var event: ScreenEvent = new ScreenEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
-        var callbacks: EventCallback[] = this.getCallbacks(event);
-        for (var listenerId in callbacks) {
-            if (callbacks.hasOwnProperty(listenerId) && listenerId != 'length') {
+        // message is a JSON representation of ScreenEvent.java
+        const event: ScreenEvent = new ScreenEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
+        const callbacks: EventCallback[] = this.getCallbacks(event);
+        for (const listenerId in callbacks) {
+            if (callbacks.hasOwnProperty(listenerId) && listenerId !== 'length') {
                 try {
                     if (!this.isSuspended(listenerId)) {
                         callbacks[listenerId](event);
@@ -121,16 +122,16 @@ export class WebsocketService implements OnDestroy {
                 }
             }
         }
-    };
+    }
 
     private onError = (error: any) => {
         console.error('Websocket error:');
         console.debug(error);
-    };
+    }
 
     public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
-        var event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
-        var listener: WebsocketListener = this.addCallback(event, callback);
+        const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
+        const listener: WebsocketListener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
         return listener;
     }
@@ -152,7 +153,7 @@ export class WebsocketService implements OnDestroy {
 
     public suspendListener(listener: WebsocketListener, timeout: number = WebsocketService.DEFAULT_SUSPENSION_TIMEOUT): void {
         if (listener) {
-            var suspension: EventSuspension = this.suspended[listener.id];
+            const suspension: EventSuspension = this.suspended[listener.id];
             if (suspension) {
                 suspension.increment();
             } else {
@@ -169,14 +170,14 @@ export class WebsocketService implements OnDestroy {
     }
 
     private addCallback(event: ScreenEvent, callback: EventCallback): WebsocketListener {
-        var listener: WebsocketListener = new WebsocketListener(event, callback);
-        var callbacks: EventCallback[] = this.getCallbacks(event);
+        const listener: WebsocketListener = new WebsocketListener(event, callback);
+        const callbacks: EventCallback[] = this.getCallbacks(event);
         callbacks[listener.id] = callback;
         return listener;
     }
 
     private removeCallback(listener: WebsocketListener): void {
-        var callbacks: EventCallback[] = this.getCallbacks(listener.event);
+        const callbacks: EventCallback[] = this.getCallbacks(listener.event);
         delete callbacks[listener.id];
         delete this.suspended[listener.id];
     }
@@ -189,10 +190,10 @@ export class WebsocketService implements OnDestroy {
     }
 
     private isSuspended(listenerId: string): boolean {
-        var suspension: EventSuspension = this.suspended[listenerId];
+        const suspension: EventSuspension = this.suspended[listenerId];
         if (suspension) {
-            var expired: boolean = suspension.isExpired();
-            var done = suspension.isDone(); // Do not short circuit calling this method (here be side effects)
+            const expired: boolean = suspension.isExpired();
+            const done = suspension.isDone(); // Do not short circuit calling this method (here be side effects)
             if (done || expired) {
                 delete this.suspended[listenerId];
             }

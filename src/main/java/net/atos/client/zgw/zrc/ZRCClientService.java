@@ -55,6 +55,9 @@ import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 @ApplicationScoped
 public class ZRCClientService implements Caching {
 
+    private static final List<String> CACHES = List.of(
+            ZRC_STATUS_MANAGED);
+
     @Inject
     @RestClient
     private ZRCClient zrcClient;
@@ -298,9 +301,7 @@ public class ZRCClientService implements Caching {
 
     @Override
     public List<String> cacheNames() {
-        final List<String> names = new ArrayList<>();
-        names.add(ZRC_STATUS_MANAGED);
-        return names;
+        return CACHES;
     }
 
     /**
