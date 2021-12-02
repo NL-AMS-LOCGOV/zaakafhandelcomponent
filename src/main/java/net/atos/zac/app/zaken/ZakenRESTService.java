@@ -210,7 +210,7 @@ public class ZakenRESTService {
 
     @PUT
     @Path("vrijgeven")
-    public void verdelen(List<UUID> zaakIds) {
+    public void verdelen(final List<UUID> zaakIds) {
         zaakIds.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());

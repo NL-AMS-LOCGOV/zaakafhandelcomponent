@@ -37,8 +37,10 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.identityService.getMedewerkers().subscribe(m => {
-            this.medewerkers = m;
+        this.medewerkerControl.disable();
+        this.identityService.getMedewerkers().subscribe(medewerkers => {
+            this.medewerkers = medewerkers;
+            this.medewerkerControl.enable();
             this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
                 startWith(''),
                 map(value => (typeof value === 'string' ? value : value.naam)),
