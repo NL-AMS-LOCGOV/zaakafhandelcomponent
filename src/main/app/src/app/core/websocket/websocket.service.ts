@@ -25,6 +25,7 @@ export class WebsocketService implements OnDestroy {
 
     public static test = false; // Als true dan wordt de mock gebruikt
 
+    // This must be bigger then the SECONDS_TO_DELAY defined in ScreenEventObserver.java
     private static DEFAULT_SUSPENSION_TIMEOUT = 5; // seconds
 
     private readonly PROTOCOL: string = window.location.protocol.replace(/^http/, 'ws');

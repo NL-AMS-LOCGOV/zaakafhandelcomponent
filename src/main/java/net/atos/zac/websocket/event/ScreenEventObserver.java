@@ -31,13 +31,16 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
+    // This must be lower then the DEFAULT_SUSPENSION_TIMEOUT defined in websockets.service.ts
+    private static final int SECONDS_TO_DELAY = 3;
+
     @Inject
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
-        if (event.getSecondsToWait() != null) {
+        if (event.isDelay()) {
             try {
-                TimeUnit.SECONDS.sleep(event.getSecondsToWait());
+                TimeUnit.SECONDS.sleep(SECONDS_TO_DELAY);
             } catch (InterruptedException e) {
                 // Ignore exception
             }

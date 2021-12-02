@@ -5,6 +5,8 @@
 
 package net.atos.zac.websocket.event;
 
+import javax.json.bind.annotation.JsonbTransient;
+
 import net.atos.zac.event.AbstractEvent;
 import net.atos.zac.event.Opcode;
 
@@ -14,7 +16,8 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
 
     private ScreenEventType objectType;
 
-    private Integer secondsToWait;
+    @JsonbTransient
+    private boolean delay;
 
     public ScreenEvent() {
         super();
@@ -30,11 +33,11 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
         return objectType;
     }
 
-    public Integer getSecondsToWait() {
-        return secondsToWait;
+    public boolean isDelay() {
+        return delay;
     }
 
-    public void setSecondsToWait(final Integer secondsToWait) {
-        this.secondsToWait = secondsToWait;
+    public void setDelay(final boolean delay) {
+        this.delay = delay;
     }
 }

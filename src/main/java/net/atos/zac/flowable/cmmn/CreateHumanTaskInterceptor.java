@@ -21,8 +21,6 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
     public static final String VAR_TASK_ZAAK_UUID = "zaakUUID";
 
-    private static final int SECONDS_TO_WAIT = 3;
-
     @Override
     public void beforeCreateHumanTask(final CreateHumanTaskBeforeContext context) {
         final String candidateGroupId = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_CANDIDATE_GROUP_ID);
@@ -35,8 +33,8 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
     public void afterCreateHumanTask(final CreateHumanTaskAfterContext context) {
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_ZAAK_UUID);
         final ScreenEvent screenEvent = ScreenEventType.ZAAK_TAKEN.updated(zaakUUID);
-        // Wait a few seconds before sending the event to the screen to make sure that the task is created.
-        screenEvent.setSecondsToWait(SECONDS_TO_WAIT);
+        // Wait some time before sending the event to the screen to make sure that the task is created.
+        screenEvent.setDelay(true);
         FlowableHelper.getInstance().getEventingService().send(screenEvent);
     }
 }
