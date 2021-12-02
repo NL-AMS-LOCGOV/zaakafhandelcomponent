@@ -118,7 +118,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.takenService.updateTaakdata(this.taakdata(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.opgeslagen');
                 console.log('takenService.complete');
-                this.takenService.complete(taak).subscribe(taak => {
+                this.takenService.complete(this.taak).subscribe(taak => {
                     this.utilService.openSnackbar('msg.taak.afgerond');
                     this.navigation.back();
                 });
@@ -129,7 +129,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     taakdata(formGroup: FormGroup): Taak {
         const putData: Taak = new Taak();
         putData.id = this.taak.id;
-        putData.zaakUUID = this.taak.zaakUUID;
         putData.taakdata = {};
         Object.keys(formGroup.controls).forEach((key) => {
             putData.taakdata[key] = formGroup.controls[key].value;
