@@ -28,19 +28,19 @@ public final class URIUtil {
     }
 
     public static ObjectType getObjectTypeFromResourceURL(final String url) {
-        if (contains(url, "zaken/api/v1/rollen/")) {
+        if (contains(url, "/zaken/api/v1/rollen/")) {
             return ObjectType.ROL;
-        } else if (contains(url, "zaken/api/v1/zaken/")) {
+        } else if (contains(url, "/zaken/api/v1/zaken/")) {
             return ObjectType.ZAAK;
-        } else if (contains(url, "zaken/api/v1/statussen/")) {
+        } else if (contains(url, "/zaken/api/v1/statussen/")) {
             return ObjectType.STATUS;
-        } else if (contains(url, "zaken/api/v1/resultaten/")) {
+        } else if (contains(url, "/zaken/api/v1/resultaten/")) {
             return ObjectType.RESULTAAT;
         } else if (contains(url, "/zaken/api/v1/zaakinformatieobjecten")) {
             return ObjectType.ZAAK_INFORMATIEOBJECT;
-        } else if (contains(url, "zaken/api/v1/zaakobjecten")) {
+        } else if (contains(url, "/zaken/api/v1/zaakobjecten")) {
             return ObjectType.ZAAKOBJECT;
-        } else if (contains(url, "documenten/api/v1/enkelvoudiginformatieobjecten/")) {
+        } else if (contains(url, "/documenten/api/v1/enkelvoudiginformatieobjecten/")) {
             return ObjectType.ENKELVOUDIG_INFORMATIEOBJECT;
         } else if (contains(url, "/documenten/api/v1/gebruiksrechten")) {
             return ObjectType.GEBRUIKSRECHTEN;
