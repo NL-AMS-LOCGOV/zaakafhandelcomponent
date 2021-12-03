@@ -23,30 +23,34 @@ import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
 })
 export class ZakenService {
 
-    private basepath = '/rest/zaken';
-
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    getZaak(uuid: string): Observable<Zaak> {
+    private basepath = '/rest/zaken';
+
+    private static getTableParams(request: TableRequest): HttpParams {
+        return new HttpParams().set('tableRequest', JSON.stringify(request));
+    }
+
+    readZaak(uuid: string): Observable<Zaak> {
         return this.http.get<Zaak>(`${this.basepath}/zaak/${uuid}`).pipe(
             catchError(this.handleError)
         );
     }
 
-    postZaak(zaak: Zaak): Observable<Zaak> {
+    createZaak(zaak: Zaak): Observable<Zaak> {
         return this.http.post<Zaak>(`${this.basepath}/zaak`, zaak).pipe(
             catchError(this.handleError)
         );
     }
 
-    updateZaak(uuid: string, zaak: Zaak): Observable<Zaak> {
+    partialUpdateZaak(uuid: string, zaak: Zaak): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaak).pipe(
             catchError(this.handleError)
         );
     }
 
-    getWerkvoorraadZaken(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
+    listZakenWerkvoorraad(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
         return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/werkvoorraad`, {
             params: ZakenService.getTableParams(request)
         }).pipe(
@@ -54,7 +58,7 @@ export class ZakenService {
         );
     }
 
-    getMijnZaken(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
+    listZakenMijn(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
         return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/mijn`, {
             params: ZakenService.getTableParams(request)
         }).pipe(
@@ -62,7 +66,7 @@ export class ZakenService {
         );
     }
 
-    getAfgehandeldeZaken(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
+    listZakenAfgehandeld(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
         return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/afgehandeld`, {
             params: ZakenService.getTableParams(request)
         }).pipe(
@@ -70,7 +74,7 @@ export class ZakenService {
         );
     }
 
-    getZaaktypes(): Observable<Zaaktype[]> {
+    listZaaktypes(): Observable<Zaaktype[]> {
         return this.http.get<Zaaktype[]>(`${this.basepath}/zaaktypes`).pipe(
             catchError(this.handleError)
         );
@@ -123,10 +127,6 @@ export class ZakenService {
         return this.http.get<AuditTrailRegel[]>(`${this.basepath}/zaak/${uuid}/auditTrail`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private static getTableParams(request: TableRequest): HttpParams {
-        return new HttpParams().set('tableRequest', JSON.stringify(request));
     }
 
     private handleError(err: HttpErrorResponse): Observable<never> {

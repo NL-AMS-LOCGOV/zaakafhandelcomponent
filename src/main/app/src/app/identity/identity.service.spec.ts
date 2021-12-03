@@ -49,7 +49,7 @@ describe('IdentityService', () => {
 
         spyOn(mockHttpClient, 'get').and.returnValue(of(groepen));
 
-        service.getGroepen().subscribe(response => {
+        service.listGroepen().subscribe(response => {
             expect(response).toEqual(groepen);
         });
     });
@@ -62,7 +62,7 @@ describe('IdentityService', () => {
 
         spyOn(mockHttpClient, 'get').and.returnValue(of(medewerkers));
 
-        service.getMedewerkersInGroep('groepb').subscribe(response => {
+        service.listMedewerkersInGroep('groepb').subscribe(response => {
             expect(response).toEqual(medewerkers);
         });
     });
@@ -70,7 +70,7 @@ describe('IdentityService', () => {
     it('should return user jaap@mail.com', () => {
         spyOn(mockSessionStorageService, 'getSessionStorage').and.returnValue(jaap);
 
-        service.getIngelogdeMedewerker().subscribe(response => {
+        service.readIngelogdeMedewerker().subscribe(response => {
             expect(response).toEqual(jaap);
         });
         expect(mockSessionStorageService.getSessionStorage).toHaveBeenCalled();
@@ -81,7 +81,7 @@ describe('IdentityService', () => {
         spyOn(mockHttpClient, 'get').and.returnValue(of(jaap));
         spyOn(mockSessionStorageService, 'setSessionStorage');
 
-        service.getIngelogdeMedewerker().subscribe(response => {
+        service.readIngelogdeMedewerker().subscribe(response => {
             expect(response).toEqual(jaap);
         });
         expect(mockHttpClient.get).toHaveBeenCalled();

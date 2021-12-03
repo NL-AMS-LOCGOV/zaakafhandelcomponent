@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 /**
  *
  */
-public class RESTInformatieObject {
+public class RESTEnkelvoudigInformatieobject {
     public String zaakRelatie;
 
     public String uuid;

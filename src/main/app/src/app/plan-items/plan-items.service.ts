@@ -20,13 +20,13 @@ export class PlanItemsService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    getPlanItem(id: string): Observable<PlanItem> {
+    readPlanItem(id: string): Observable<PlanItem> {
         return this.http.get<PlanItem>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getPlanItemsForZaak(uuid: string): Observable<PlanItem[]> {
+    listPlanItemsForZaak(uuid: string): Observable<PlanItem[]> {
         return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${uuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

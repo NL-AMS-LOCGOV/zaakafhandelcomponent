@@ -22,25 +22,25 @@ export class IdentityService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private sessionStorageService: SessionStorageService) {
     }
 
-    getGroepen(): Observable<Groep[]> {
+    listGroepen(): Observable<Groep[]> {
         return this.http.get<Groep[]>(`${this.basepath}/groepen`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getMedewerkersInGroep(groepId: string): Observable<Medewerker[]> {
+    listMedewerkersInGroep(groepId: string): Observable<Medewerker[]> {
         return this.http.get<Medewerker[]>(`${this.basepath}/groepen/${groepId}/medewerkers`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getMedewerkers(): Observable<Medewerker[]> {
+    listMedewerkers(): Observable<Medewerker[]> {
         return this.http.get<Medewerker[]>(`${this.basepath}/medewerkers`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getIngelogdeMedewerker(): Observable<Medewerker> {
+    readIngelogdeMedewerker(): Observable<Medewerker> {
         const ingelogdeMedewerker = this.sessionStorageService.getSessionStorage('ingelogdeMedewerker');
         if (ingelogdeMedewerker) {
             return of(ingelogdeMedewerker);

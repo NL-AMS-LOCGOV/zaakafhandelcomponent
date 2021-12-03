@@ -5,7 +5,7 @@
 
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {FoutAfhandelingService} from '../../fout-afhandeling/fout-afhandeling.service';
+import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {Notitie} from './model/notitie';
 import {catchError} from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class NotitieService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    getNotities(type: string, uuid: string): Observable<Notitie[]> {
+    listNotities(type: string, uuid: string): Observable<Notitie[]> {
 
         return this.http.get<Notitie[]>(`${this.basepath}/${type}/${uuid}`).pipe(
             catchError(this.handleError)
@@ -48,5 +48,4 @@ export class NotitieService {
     private handleError(err: HttpErrorResponse): Observable<never> {
         return this.foutAfhandelingService.redirect(err);
     }
-
 }

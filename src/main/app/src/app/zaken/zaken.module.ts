@@ -17,6 +17,7 @@ import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
+import {NotitiesComponent} from '../notities/notities.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrij
         ZakenMijnComponent,
         ZakenAfgehandeldComponent,
         ZakenVerdelenDialogComponent,
-        ZakenVrijgevenDialogComponent
+        ZakenVrijgevenDialogComponent,
+        NotitiesComponent
     ],
     exports: [
         ZaakVerkortComponent

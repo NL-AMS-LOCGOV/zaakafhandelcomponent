@@ -19,7 +19,7 @@ export class ZakenMijnDatasource extends TableDataSource<ZaakOverzicht> {
     load() {
         this.utilService.setLoading(true);
 
-        this.zakenService.getMijnZaken(this.getTableRequest())
+        this.zakenService.listZakenMijn(this.getTableRequest())
             .pipe(
                 catchError(() => of({data: [], totalItems: 0})),
                 finalize(() => this.utilService.setLoading(false)))

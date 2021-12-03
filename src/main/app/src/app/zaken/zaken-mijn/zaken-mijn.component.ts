@@ -37,7 +37,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
-        this.zakenService.getZaaktypes().subscribe(zaaktypes => {
+        this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
             zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'doel', 'identificatie');
 

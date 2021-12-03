@@ -12,10 +12,10 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieObject;
+import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.app.zaken.converter.RESTZaakStatusConverter;
 
-public class RESTZaakInformatieObjectConverter {
+public class RESTZaakInformatieobjectConverter {
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -26,20 +26,18 @@ public class RESTZaakInformatieObjectConverter {
     @Inject
     private RESTZaakStatusConverter restZaakStatusConverter;
 
-    public RESTZaakInformatieObject convert(final ZaakInformatieobject zaakInformatieObject) {
-        final RESTZaakInformatieObject restZaakInformatieObject = new RESTZaakInformatieObject();
+    public RESTZaakInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
+        final RESTZaakInformatieobject restZaakInformatieobject = new RESTZaakInformatieobject();
 
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
 
-        restZaakInformatieObject.status = restZaakStatusConverter.convert(zaak.getStatus());
-        restZaakInformatieObject.zaakUuid = zaak.getUuid().toString();
-        restZaakInformatieObject.zaakIdentificatie = zaak.getIdentificatie();
-        restZaakInformatieObject.zaakStartDatum = zaak.getStartdatum();
-        restZaakInformatieObject.zaakEinddatumGepland = zaak.getEinddatumGepland();
+        restZaakInformatieobject.status = restZaakStatusConverter.convert(zaak.getStatus());
+        restZaakInformatieobject.zaakUuid = zaak.getUuid().toString();
+        restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
+        restZaakInformatieobject.zaakStartDatum = zaak.getStartdatum();
+        restZaakInformatieobject.zaakEinddatumGepland = zaak.getEinddatumGepland();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        restZaakInformatieObject.zaaktype = zaaktype.getOmschrijving();
-        return restZaakInformatieObject;
+        restZaakInformatieobject.zaaktype = zaaktype.getOmschrijving();
+        return restZaakInformatieobject;
     }
-
-
 }

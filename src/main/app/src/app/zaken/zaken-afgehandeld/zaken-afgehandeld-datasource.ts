@@ -31,7 +31,7 @@ export class ZakenAfgehandeldDatasource extends TableDataSource<ZaakOverzicht> {
     load() {
         this.utilService.setLoading(true);
 
-        this.zakenService.getAfgehandeldeZaken(this.getTableRequest())
+        this.zakenService.listZakenAfgehandeld(this.getTableRequest())
             .pipe(
                 catchError(() => of({data: [], totalItems: 0})),
                 finalize(() => this.utilService.setLoading(false)))

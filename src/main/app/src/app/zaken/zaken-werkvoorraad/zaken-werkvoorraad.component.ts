@@ -66,13 +66,13 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private zaaktypesOphalen() {
-        this.zakenService.getZaaktypes().subscribe(zaakTypes => {
+        this.zakenService.listZaaktypes().subscribe(zaakTypes => {
             this.zaakTypes = zaakTypes;
         });
     }
 
     private groepenOphalen() {
-        this.identityService.getGroepen().subscribe(groepen => {
+        this.identityService.listGroepen().subscribe(groepen => {
             this.groepen = groepen;
         });
     }

@@ -44,14 +44,14 @@ export class UtilService {
     constructor(private breakpointObserver: BreakpointObserver, private translate: TranslateService, private titleService: Title, private snackbar: MatSnackBar) {
     }
 
-    getGemeenteNaam(): string {
+    readGemeenteNaam(): string {
         // TODO Configuratie uitlezen
         return 'zaakafhandelcomponent';
     }
 
     setTitle(title: string, params?: Object): void {
         forkJoin({
-            prefix: this.translate.get('title.prefix', {gemeente: this.getGemeenteNaam()}),
+            prefix: this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()}),
             title: this.translate.get(title, params)
         }).subscribe(result => {
             this.titleService.setTitle(result.prefix + result.title);

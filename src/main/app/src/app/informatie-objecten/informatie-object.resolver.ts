@@ -6,18 +6,18 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
-import {EnkelvoudigInformatieObject} from './model/enkelvoudig-informatie-object';
+import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject';
 import {InformatieObjectenService} from './informatie-objecten.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class InformatieObjectResolver implements Resolve<EnkelvoudigInformatieObject> {
+export class InformatieObjectResolver implements Resolve<EnkelvoudigInformatieobject> {
     constructor(private informatieObjectenService: InformatieObjectenService) {
     }
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<EnkelvoudigInformatieObject> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<EnkelvoudigInformatieobject> {
         const informatieObjectUUID: string = route.paramMap.get('uuid');
-        return this.informatieObjectenService.getEnkelvoudigInformatieObject(informatieObjectUUID);
+        return this.informatieObjectenService.readEnkelvoudigInformatieobject(informatieObjectUUID);
     }
 }

@@ -34,7 +34,7 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.medewerkers = this.identityService.getMedewerkers();
+        this.medewerkers = this.identityService.listMedewerkers();
     }
 
     setMedewerker(medewerker): void {

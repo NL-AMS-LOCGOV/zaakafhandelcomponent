@@ -28,7 +28,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.subscription$ = this.utilService.headerTitle$.subscribe(value => this.headerTitle = value);
 
-        this.identityService.getIngelogdeMedewerker().subscribe(medewerker => {
+        this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
     }

@@ -45,14 +45,14 @@ public class PlanItemsRESTService {
 
     @GET
     @Path("zaak/{uuid}")
-    public List<RESTPlanItem> getPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
+    public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = flowableService.listPlanItemsForZaak(zaakUUID);
         return planItemConverter.convertPlanItems(planItems);
     }
 
     @GET
     @Path("{id}")
-    public RESTPlanItem getPlanItem(@PathParam("id") final String planItemId) {
+    public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
         final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForCase(planItem.getCaseInstanceId());
         final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, planItem.getPlanItemDefinitionId());

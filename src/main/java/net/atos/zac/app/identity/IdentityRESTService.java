@@ -51,28 +51,28 @@ public class IdentityRESTService {
 
     @GET
     @Path("groepen")
-    public List<RESTGroep> getGroepen() {
+    public List<RESTGroep> listGroepen() {
         final List<Group> groups = flowableService.listGroups();
         return groepConverter.convertGroups(groups);
     }
 
     @GET
     @Path("groepen/{groepId}/medewerkers")
-    public List<RESTMedewerker> getMedewerkersInGroep(@PathParam("groepId") final String groepId) {
+    public List<RESTMedewerker> listMedewerkersInGroep(@PathParam("groepId") final String groepId) {
         final List<User> users = flowableService.listUsersInGroup(groepId);
         return medewerkerConverter.convertUsers(users);
     }
 
     @GET
     @Path("medewerkers")
-    public List<RESTMedewerker> getMedewerkers() {
+    public List<RESTMedewerker> listMedewerkers() {
         final List<User> users = flowableService.listUsers();
         return medewerkerConverter.convertUsers(users);
     }
 
     @GET
     @Path("ingelogdemedewerker")
-    public RESTIngelogdeMedewerker getIngelogdeMedewerker() {
+    public RESTIngelogdeMedewerker readIngelogdeMedewerker() {
         return ingelogdeMedewerkerConverter.convertIngelogdeMedewerker(ingelogdeMedewerker);
     }
 }

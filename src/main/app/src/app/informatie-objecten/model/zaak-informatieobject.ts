@@ -5,7 +5,7 @@
 
 import {ZaakStatus} from '../../zaken/model/zaak-status';
 
-export class ZaakInformatieObjectKoppeling {
+export class ZaakInformatieobject {
     status: ZaakStatus;
     zaakUuid: string;
     zaakIdentificatie: string;

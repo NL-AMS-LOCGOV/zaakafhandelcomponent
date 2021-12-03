@@ -39,7 +39,7 @@ export class PlanItemDoComponent implements OnInit {
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier)
-                             .startForm(this.planItem, this.identityService.getGroepen()).build();
+                             .startForm(this.planItem, this.identityService.listGroepen()).build();
         if (this.planItem.type == PlanItemType.HumanTask) {
             this.formItems = this.formulier.form;
         } else {

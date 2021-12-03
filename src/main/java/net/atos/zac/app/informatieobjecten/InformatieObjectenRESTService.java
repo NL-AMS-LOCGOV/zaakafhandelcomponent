@@ -39,13 +39,13 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTAuditTrailRegelConverter;
 import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
-import net.atos.zac.app.informatieobjecten.converter.RESTInformatieObjectConverter;
+import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
-import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieObjectConverter;
+import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
-import net.atos.zac.app.informatieobjecten.model.RESTInformatieObject;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
-import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieObject;
+import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
@@ -69,10 +69,10 @@ public class InformatieObjectenRESTService {
     private ZGWApiService zgwApiService;
 
     @Inject
-    private RESTZaakInformatieObjectConverter restZaakInformatieObjectConverter;
+    private RESTZaakInformatieobjectConverter restZaakInformatieobjectConverter;
 
     @Inject
-    private RESTInformatieObjectConverter restInformatieObjectConverter;
+    private RESTInformatieobjectConverter restInformatieobjectConverter;
 
     @Inject
     private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
@@ -90,32 +90,33 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("informatieobject/{uuid}")
-    public RESTInformatieObject getObject(@PathParam("uuid") final UUID uuid) {
+    public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        return restInformatieObjectConverter.convert(enkelvoudigInformatieObject);
+        return restInformatieobjectConverter.convert(enkelvoudigInformatieObject);
     }
 
     @POST
     @Path("informatieobject/{zaakUuid}")
-    public UUID postObject(@PathParam("zaakUuid") final UUID zaakUuid, final RESTInformatieObject restInformatieObject) {
+    public UUID createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
+            final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         final RESTFileUpload file = (RESTFileUpload) httpSession.getAttribute("FILE_" + zaakUuid);
-        final EnkelvoudigInformatieobjectWithInhoud data = restInformatieObjectConverter.convert(restInformatieObject, file);
-        final ZaakInformatieobject zaakInformatieObject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restInformatieObject.titel,
-                                                                                                          restInformatieObject.beschrijving, "-");
-        return UriUtil.uuidFromURI(zaakInformatieObject.getInformatieobject());
+        final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
+        final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
+                                                                                                          restEnkelvoudigInformatieobject.beschrijving, "-");
+        return UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject());
     }
 
     @GET
     @Path("informatieobjecttypes/{zaakTypeUuid}")
-    public List<RESTInformatieobjecttype> getInformatieobjecttypes(@PathParam("zaakTypeUuid") final UUID zaakTypeID) {
+    public List<RESTInformatieobjecttype> listInformatieobjecttypes(@PathParam("zaakTypeUuid") final UUID zaakTypeID) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaakTypeID);
         return restInformatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
     }
 
 
     @POST
-    @Path("/informatieobject/upload/{zaakUuid}")
+    @Path("informatieobject/upload/{zaakUuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(@PathParam("zaakUuid") final String zaakUuid, @MultipartForm final RESTFileUpload data) {
         httpSession.setAttribute("FILE_" + zaakUuid, data);
@@ -124,35 +125,29 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("zaak/{uuid}")
-    public List<RESTInformatieObject> getObjectenForZaak(@PathParam("uuid") final UUID uuid) {
+    public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        final List<RESTInformatieObject> restList = new ArrayList<>();
+        final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setZaak(zaak.getUrl());
         final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
-        zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieObjectConverter.convert(zaakInformatieObject)));
+        zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieobjectConverter.convert(zaakInformatieObject)));
         return restList;
     }
 
     @GET
     @Path("informatieobject/{uuid}/zaken")
-    public List<RESTZaakInformatieObject> getGekoppeldeZaken(@PathParam("uuid") final UUID uuid) {
-        final List<RESTZaakInformatieObject> restList = new ArrayList<>();
-        getZaakInformatieObjects(uuid)
-                .forEach(i -> restList.add(restZaakInformatieObjectConverter.convert(i)));
+    public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
+        final List<RESTZaakInformatieobject> restList = new ArrayList<>();
+        listZaakInformatieobjectenHelper(uuid)
+                .forEach(i -> restList.add(restZaakInformatieobjectConverter.convert(i)));
         return restList;
-    }
-
-    private List<ZaakInformatieobject> getZaakInformatieObjects(final UUID uuid) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
-        return zrcClientService.listZaakinformatieobjecten(parameters);
     }
 
     @GET
     @Path("/informatieobject/{uuid}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("uuid") final UUID uuid) {
+    public Response readFile(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
         try (final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid, enkelvoudigInformatieObject.getVersie())) {
             return Response.ok(inhoud)
@@ -181,11 +176,17 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("informatieobject/{uuid}/auditTrail")
-    public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
+    public List<RESTAuditTrailRegel> listAuditTrail(@PathParam("uuid") final UUID uuid) {
         List<AuditTrailRegel> auditTrailRegels = drcClientService.listAuditTrail(uuid);
         return auditTrailRegels.stream()
                 .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
                 .map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
+    }
+
+    private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
+        return zrcClientService.listZaakinformatieobjecten(parameters);
     }
 
     private String lockEigenaar() {

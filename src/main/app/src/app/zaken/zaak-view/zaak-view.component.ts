@@ -10,7 +10,7 @@ import {UtilService} from '../../core/service/util.service';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../../taken/taken.service';
-import {EnkelvoudigInformatieObject} from '../../informatie-objecten/model/enkelvoudig-informatie-object';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {Zaak} from '../model/zaak';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
@@ -27,7 +27,7 @@ import {ZakenService} from '../zaken.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {NotitieType} from '../../shared/notities/model/notitietype.enum';
+import {NotitieType} from '../../notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
@@ -51,7 +51,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     toonAfgerondeTaken: boolean = false;
 
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
-    enkelvoudigInformatieObjecten: EnkelvoudigInformatieObject[] = [];
+    enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
     auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
@@ -120,7 +120,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.zaakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
                                                                           .value(zaak.behandelaar).optionLabel('naam')
-                                                                          .options(this.identityService.getMedewerkersInGroep(zaak.groep.id)).build();
+                                                                          .options(this.identityService.listMedewerkersInGroep(zaak.groep.id)).build();
         this.setupMenu();
     }
 
@@ -180,7 +180,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (this.zaak.rechten[this.zaakRechten.BEHANDELEN]) {
             this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
-            this.planItemsService.getPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
+            this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
                 if (planItems.length > 0) {
                     this.menu.push(new HeaderMenuItem('planItems'));
                 }
@@ -209,20 +209,20 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         const patchData: Zaak = new Zaak();
         patchData[field] = value;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
 
     updateZaak(): void {
-        this.zakenService.getZaak(this.zaak.uuid).subscribe(zaak => {
+        this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
         this.loadAuditTrail();
     }
 
     private loadInformatieObjecten(): void {
-        this.informatieObjectenService.getEnkelvoudigInformatieObjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
+        this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }

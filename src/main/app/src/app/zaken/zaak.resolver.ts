@@ -19,6 +19,6 @@ export class ZaakResolver implements Resolve<Zaak> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Zaak> {
         const zaakUUID: string = route.paramMap.get('uuid');
-        return this.zakenService.getZaak(zaakUUID);
+        return this.zakenService.readZaak(zaakUUID);
     }
 }

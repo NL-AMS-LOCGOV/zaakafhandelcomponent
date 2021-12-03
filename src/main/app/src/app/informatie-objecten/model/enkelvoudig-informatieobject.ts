@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class EnkelvoudigInformatieObject {
+export class EnkelvoudigInformatieobject {
     uuid: string;
     titel: string;
     beschrijving: string;

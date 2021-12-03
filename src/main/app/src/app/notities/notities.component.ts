@@ -5,8 +5,8 @@
 
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Notitie} from './model/notitie';
-import {Medewerker} from '../../identity/model/medewerker';
-import {IdentityService} from '../../identity/identity.service';
+import {Medewerker} from '../identity/model/medewerker';
+import {IdentityService} from '../identity/identity.service';
 import {NotitieService} from './notities.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class NotitiesComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.identityService.getIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
         this.haalNotitiesOp();
@@ -49,7 +49,7 @@ export class NotitiesComponent implements OnInit {
     }
 
     haalNotitiesOp() {
-        this.notitieService.getNotities(this.type, this.uuid).subscribe(notities => {
+        this.notitieService.listNotities(this.type, this.uuid).subscribe(notities => {
             this.notities = notities;
             this.notities.sort((a, b) => a.tijdstipLaatsteWijziging.localeCompare(b.tijdstipLaatsteWijziging)).reverse();
             this.aantalNotities = this.notities.length;

@@ -4,13 +4,13 @@
  */
 
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {EnkelvoudigInformatieObject} from '../model/enkelvoudig-informatie-object';
+import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {ActivatedRoute} from '@angular/router';
 import {UtilService} from '../../core/service/util.service';
-import {ZaakInformatieObjectKoppeling} from '../model/zaak-informatie-object-koppeling';
+import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {DownloadMenuItem} from '../../shared/side-nav/menu-item/download-menu-item';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {AbstractView} from '../../shared/abstract-view/abstract-view';
@@ -31,9 +31,9 @@ import {MatSort} from '@angular/material/sort';
 })
 export class InformatieObjectViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
 
-    infoObject: EnkelvoudigInformatieObject;
+    infoObject: EnkelvoudigInformatieobject;
     menu: MenuItem[];
-    zaken: ZaakInformatieObjectKoppeling[];
+    zaken: ZaakInformatieobject[];
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
     auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
@@ -92,7 +92,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     private loadZaken(): void {
-        this.informatieObjectenService.getZaakKoppelingen(this.infoObject.uuid).subscribe(zaken => {
+        this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaken => {
             this.zaken = zaken;
         });
     }
@@ -104,7 +104,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     private loadInformatieObject() {
-        this.informatieObjectenService.getEnkelvoudigInformatieObject(this.infoObject.uuid)
+        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
             });

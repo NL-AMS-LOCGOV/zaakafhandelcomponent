@@ -25,7 +25,6 @@ import {sideNavReducer} from './state/side-nav.reducer';
 import {StaticTextComponent} from './static-text/static-text.component';
 import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
-import {NotitiesComponent} from './notities/notities.component';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
 import {EditComponent} from './edit/edit.component';
@@ -51,7 +50,6 @@ import {ReadMoreComponent} from './read-more/read-more.component';
         DynamicPipe,
         StaticTextComponent,
         ReadMoreComponent,
-        NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
         EditComponent,
@@ -89,7 +87,6 @@ import {ReadMoreComponent} from './read-more/read-more.component';
         ReadMoreComponent,
         MaterialModule,
         MaterialFormBuilderModule,
-        NotitiesComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
         DatumOverschredenComponent,

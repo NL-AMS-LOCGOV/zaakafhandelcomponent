@@ -33,7 +33,7 @@ export class ZakenWerkvoorraadDatasource extends TableDataSource<ZaakOverzicht> 
 
     load(): void {
         this.utilService.setLoading(true);
-        this.zakenService.getWerkvoorraadZaken(this.getTableRequest())
+        this.zakenService.listZakenWerkvoorraad(this.getTableRequest())
             .pipe(
                 catchError(() => of({data: [], totalItems: 0})),
                 finalize(() => this.utilService.setLoading(false))

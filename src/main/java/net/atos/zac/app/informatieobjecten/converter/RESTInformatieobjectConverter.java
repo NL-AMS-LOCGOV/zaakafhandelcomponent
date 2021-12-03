@@ -19,12 +19,12 @@ import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
-import net.atos.zac.app.informatieobjecten.model.RESTInformatieObject;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 
-public class RESTInformatieObjectConverter {
+public class RESTInformatieobjectConverter {
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -32,21 +32,21 @@ public class RESTInformatieObjectConverter {
     @Inject
     private DRCClientService drcClientService;
 
-    public RESTInformatieObject convert(final ZaakInformatieobject zaakInformatieObject) {
-        final RESTInformatieObject restObject = convert(zaakInformatieObject.getInformatieobject());
+    public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
+        final RESTEnkelvoudigInformatieobject restObject = convert(zaakInformatieObject.getInformatieobject());
         if (zaakInformatieObject.getAardRelatieWeergave() != null) {
             restObject.zaakRelatie = zaakInformatieObject.getAardRelatieWeergave().name();
         }
         return restObject;
     }
 
-    public RESTInformatieObject convert(final URI informatieObjectURI) {
+    public RESTEnkelvoudigInformatieobject convert(final URI informatieObjectURI) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(informatieObjectURI);
         return convert(enkelvoudigInformatieObject);
     }
 
-    public RESTInformatieObject convert(final EnkelvoudigInformatieobject enkelvoudigInformatieObject) {
-        final RESTInformatieObject restObject = new RESTInformatieObject();
+    public RESTEnkelvoudigInformatieobject convert(final EnkelvoudigInformatieobject enkelvoudigInformatieObject) {
+        final RESTEnkelvoudigInformatieobject restObject = new RESTEnkelvoudigInformatieobject();
         restObject.url = enkelvoudigInformatieObject.getUrl().toString();
         restObject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
         restObject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
@@ -80,22 +80,22 @@ public class RESTInformatieObjectConverter {
         return restObject;
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTInformatieObject restInformatieObject, final RESTFileUpload bestand) {
+    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfigurationService.BRON_ORGANISATIE,
-                restInformatieObject.creatiedatum,
-                restInformatieObject.titel,
-                restInformatieObject.auteur,
-                restInformatieObject.taal,
-                URI.create(restInformatieObject.informatieobjectType),
+                restEnkelvoudigInformatieobject.creatiedatum,
+                restEnkelvoudigInformatieobject.titel,
+                restEnkelvoudigInformatieobject.auteur,
+                restEnkelvoudigInformatieobject.taal,
+                URI.create(restEnkelvoudigInformatieobject.informatieobjectType),
                 Base64.encodeBytes(bestand.file)
         );
         data.setFormaat(bestand.type);
-        data.setBestandsnaam(restInformatieObject.bestandsnaam);
-        data.setBeschrijving(restInformatieObject.beschrijving);
-        data.setStatus(InformatieobjectStatus.valueOf(restInformatieObject.status));
+        data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
+        data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
+        data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
         data.setIndicatieGebruiksrecht(false);
-        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(restInformatieObject.vertrouwelijkheidaanduiding));
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
         return data;
     }
 

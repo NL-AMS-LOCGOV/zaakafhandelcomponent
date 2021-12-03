@@ -101,14 +101,14 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaak/{uuid}")
-    public RESTZaak getZaak(@PathParam("uuid") final UUID uuid) {
+    public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
         return zaakConverter.convert(zaak);
     }
 
     @POST
     @Path("zaak")
-    public RESTZaak postZaak(final RESTZaak restZaak) {
+    public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         return zaakConverter.convert(nieuweZaak);
@@ -116,7 +116,7 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("zaak/{uuid}")
-    public RESTZaak updateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
+    public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
         final Zaak zaak = new Zaak();
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
@@ -140,7 +140,7 @@ public class ZakenRESTService {
 
     @GET
     @Path("mijn")
-    public TableResponse<RESTZaakOverzicht> getMijnZaken(@Context final HttpServletRequest request) {
+    public TableResponse<RESTZaakOverzicht> listZakenMijn(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
 
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
@@ -156,19 +156,19 @@ public class ZakenRESTService {
 
     @GET
     @Path("werkvoorraad")
-    public TableResponse<RESTZaakOverzicht> getWerkvoorraadZaken(@Context final HttpServletRequest request) {
+    public TableResponse<RESTZaakOverzicht> listZakenWerkvoorraad(@Context final HttpServletRequest request) {
         return findZaakOverzichten(request, true);
     }
 
     @GET
     @Path("afgehandeld")
-    public TableResponse<RESTZaakOverzicht> getAfgerondeZaken(@Context final HttpServletRequest request) {
+    public TableResponse<RESTZaakOverzicht> listZakenAfgehandeld(@Context final HttpServletRequest request) {
         return findZaakOverzichten(request, false);
     }
 
     @GET
     @Path("zaaktypes")
-    public List<RESTZaaktype> getZaaktypes() {
+    public List<RESTZaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configurationService.readDefaultCatalogusURI()).stream()
                 .map(zaaktypeConverter::convert)
                 .collect(Collectors.toList());
@@ -210,7 +210,7 @@ public class ZakenRESTService {
 
     @PUT
     @Path("vrijgeven")
-    public void verdelen(final List<UUID> zaakIds) {
+    public void vrijgeven(final List<UUID> zaakIds) {
         zaakIds.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
@@ -305,7 +305,7 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaak/{uuid}/auditTrail")
-    public List<RESTAuditTrailRegel> getAuditTrail(@PathParam("uuid") final UUID uuid) {
+    public List<RESTAuditTrailRegel> listAuditTrailVoorZaak(@PathParam("uuid") final UUID uuid) {
         return zrcClientService.listAuditTrail(uuid).stream()
                 .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
                 .map(auditTrailRegelConverter::convert).collect(Collectors.toList());

@@ -9,7 +9,6 @@ import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
-import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {AbstractView} from '../../shared/abstract-view/abstract-view';
 import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
@@ -89,7 +88,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.taakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
                                                                           .value(this.taak.behandelaar).optionLabel('naam')
-                                                                          .options(this.identityService.getMedewerkersInGroep(this.taak.groep.id)).build();
+                                                                          .options(this.identityService.listMedewerkersInGroep(this.taak.groep.id)).build();
 
         this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
 

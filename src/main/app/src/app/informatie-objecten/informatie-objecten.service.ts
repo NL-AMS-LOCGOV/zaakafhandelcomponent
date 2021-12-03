@@ -8,8 +8,8 @@ import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {EnkelvoudigInformatieObject} from './model/enkelvoudig-informatie-object';
-import {ZaakInformatieObjectKoppeling} from './model/zaak-informatie-object-koppeling';
+import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject';
+import {ZaakInformatieobject} from './model/zaak-informatieobject';
 import {Informatieobjecttype} from './model/informatieobjecttype';
 import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
 
@@ -24,32 +24,32 @@ export class InformatieObjectenService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    getEnkelvoudigInformatieObject(uuid: string): Observable<EnkelvoudigInformatieObject> {
-        return this.http.get<EnkelvoudigInformatieObject>(`${this.basepath}/informatieobject/${uuid}`).pipe(
+    readEnkelvoudigInformatieobject(uuid: string): Observable<EnkelvoudigInformatieobject> {
+        return this.http.get<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/${uuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
+    listInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/${zaakTypeID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    postEnkelvoudigInformatieObject(zaakUuid: string, infoObject: EnkelvoudigInformatieObject): Observable<EnkelvoudigInformatieObject> {
-        return this.http.post<EnkelvoudigInformatieObject>(`${this.basepath}/informatieobject/${zaakUuid}`, infoObject).pipe(
+    createEnkelvoudigInformatieobject(zaakUuid: string, infoObject: EnkelvoudigInformatieobject): Observable<EnkelvoudigInformatieobject> {
+        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/${zaakUuid}`, infoObject).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getEnkelvoudigInformatieObjectenVoorZaak(uuid: string): Observable<EnkelvoudigInformatieObject[]> {
-        return this.http.get<EnkelvoudigInformatieObject[]>(`${this.basepath}/zaak/${uuid}`).pipe(
+    listEnkelvoudigInformatieobjectenVoorZaak(uuid: string): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/zaak/${uuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    getZaakKoppelingen(uuid: string): Observable<ZaakInformatieObjectKoppeling[]> {
-        return this.http.get<ZaakInformatieObjectKoppeling[]>(`${this.basepath}/informatieobject/${uuid}/zaken`).pipe(
+    listZaakInformatieobjecten(uuid: string): Observable<ZaakInformatieobject[]> {
+        return this.http.get<ZaakInformatieobject[]>(`${this.basepath}/informatieobject/${uuid}/zaken`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

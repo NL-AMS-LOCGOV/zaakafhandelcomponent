@@ -19,6 +19,6 @@ export class PlanItemResolver implements Resolve<PlanItem> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<PlanItem> {
         const planItemID: string = route.paramMap.get('id');
-        return this.planItemsService.getPlanItem(planItemID);
+        return this.planItemsService.readPlanItem(planItemID);
     }
 }

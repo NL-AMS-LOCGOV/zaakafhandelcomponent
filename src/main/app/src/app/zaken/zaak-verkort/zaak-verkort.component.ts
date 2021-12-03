@@ -11,7 +11,7 @@ import {State} from '../state/zaken.state';
 import {Store} from '@ngrx/store';
 import {isZaakVerkortCollapsed} from '../state/zaak-verkort.reducer';
 import {toggleCollapseZaakVerkort} from '../state/zaak-verkort.actions';
-import {EnkelvoudigInformatieObject} from '../../informatie-objecten/model/enkelvoudig-informatie-object';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {PageEvent} from '@angular/material/paginator';
 import {UtilService} from '../../core/service/util.service';
@@ -33,7 +33,7 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
 
     zaak: Zaak;
     collapsed: boolean = false;
-    enkelvoudigInformatieObjecten: EnkelvoudigInformatieObject[] = [];
+    enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     objectenColumnsToDisplay: string[] = ['titel', 'status', 'url'];
     lowValue: number = 0;
     highValue: number = 5;
@@ -69,13 +69,13 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     private loadInformatieObjecten(): void {
-        this.informatieObjectenService.getEnkelvoudigInformatieObjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
+        this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }
 
     private loadZaak() {
-        this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
+        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.zaakLoadedEmitter.emit(true);
             this.loadInformatieObjecten();

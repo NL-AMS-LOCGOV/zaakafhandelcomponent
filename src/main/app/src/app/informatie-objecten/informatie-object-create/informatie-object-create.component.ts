@@ -11,7 +11,7 @@ import {UtilService} from '../../core/service/util.service';
 import {Zaak} from '../../zaken/model/zaak';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {FormGroup, Validators} from '@angular/forms';
-import {EnkelvoudigInformatieObject} from '../model/enkelvoudig-informatie-object';
+import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import * as moment from 'moment/moment';
 import {Informatieobjecttype} from '../model/informatieobjecttype';
 import {Taal} from '../model/taal.enum';
@@ -57,7 +57,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         let talen = this.utilService.getEnumAsSelectList('taal', Taal);
         let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
-        this.zakenService.getZaak(this.zaakUuid).subscribe(zaak => {
+        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
             const types = this.getTypes(zaak);
@@ -110,7 +110,7 @@ export class InformatieObjectCreateComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            const infoObject = new EnkelvoudigInformatieObject();
+            const infoObject = new EnkelvoudigInformatieobject();
             Object.keys(formGroup.controls).forEach((key) => {
                 let control = formGroup.controls[key];
                 let value = control.value;
@@ -125,7 +125,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                 }
             });
 
-            this.informatieObjectenService.postEnkelvoudigInformatieObject(this.zaak.uuid, infoObject).subscribe(newObject => {
+            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak.uuid, infoObject).subscribe(newObject => {
                 this.router.navigate(['/informatie-objecten', newObject]);
             });
         } else {
@@ -135,7 +135,7 @@ export class InformatieObjectCreateComponent implements OnInit {
 
     getTypes(zaak): Observable<string[]> {
         let types = [];
-        this.informatieObjectenService.getInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
+        this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
             this.informatieobjecttypes = [];
             response.forEach(type => {
                 this.informatieobjecttypes[type.omschrijving] = type;

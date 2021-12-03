@@ -48,7 +48,7 @@ export class ZaakCreateComponent implements OnInit {
 
         const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
                                                      .validators(Validators.required)
-                                                     .optionLabel('omschrijving').options(this.zakenService.getZaaktypes())
+                                                     .optionLabel('omschrijving').options(this.zakenService.listZaaktypes())
                                                      .build();
 
         const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
@@ -79,7 +79,7 @@ export class ZaakCreateComponent implements OnInit {
                     zaak[key] = formGroup.controls[key].value;
                 }
             });
-            this.zakenService.postZaak(zaak).subscribe(newZaak => {
+            this.zakenService.createZaak(zaak).subscribe(newZaak => {
                 this.router.navigate(['/zaken/', newZaak.uuid]);
             });
         } else {
