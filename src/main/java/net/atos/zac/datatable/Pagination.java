@@ -9,6 +9,7 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class Pagination {
 
+    // Counting starts with 0
     @JsonbProperty("pageNumber")
     private int pageNumber;
 
