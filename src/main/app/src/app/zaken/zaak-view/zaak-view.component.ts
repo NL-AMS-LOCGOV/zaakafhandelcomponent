@@ -193,6 +193,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         return new TextareaFormFieldBuilder().id(label).label(label).value(value).build();
     }
 
+    assignToMe(): void {
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(zaak => {
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
+            this.init(zaak);
+        });
+    }
+
     editBehandelaar(behandelaar: Medewerker): void {
         if (behandelaar) {
             this.zaak.behandelaar = behandelaar;

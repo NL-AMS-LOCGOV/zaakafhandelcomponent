@@ -23,9 +23,10 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
     formItem: FormItem;
 
     @Input() formField: AbstractFormField;
+    @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
+
     @Input() showShortcut: boolean = false;
     @Output() onShortCut: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
 
     subscription: Subscription;
 
