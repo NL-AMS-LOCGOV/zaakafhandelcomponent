@@ -15,6 +15,7 @@ import {StaticTextComponent} from '../static-text/static-text.component';
 export class DatumOverschredenComponent extends StaticTextComponent implements OnInit {
 
     @Input() ended: string;
+    @Input() fatal: boolean;
 
     constructor() {
         super();
