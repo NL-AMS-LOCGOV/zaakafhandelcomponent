@@ -61,7 +61,8 @@
                                                      [value]="zaak.einddatum"></zac-static-text>
                                     <zac-datum-overschreden fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
                                                             [value]="zaak.uiterlijkeEinddatumAfdoening"
-                                                            [ended]="zaak.einddatum"></zac-datum-overschreden>
+                                                            [ended]="zaak.einddatum"
+                                                            [fatal]="true"></zac-datum-overschreden>
                                 </div>
 
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
