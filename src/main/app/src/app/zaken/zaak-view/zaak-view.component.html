@@ -40,7 +40,9 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-edit [formField]="zaakBehandelaarFormField" (onSave)="editBehandelaar($event)"></zac-edit>
+                                    <zac-edit [formField]="zaakBehandelaarFormField" (onSave)="editBehandelaar($event)"
+                                              [showShortcut]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                              (onShortCut)="assignToMe()"></zac-edit>
                                     <zac-static-text [label]="'groep' | translate"
                                                      [value]="zaak.groep| empty:'naam'"></zac-static-text>
                                 </div>
