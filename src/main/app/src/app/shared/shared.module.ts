@@ -27,7 +27,6 @@ import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
 import {StatusLabelComponent} from './status-label/status-label.component';
 import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
-import {EditComponent} from './edit/edit.component';
 import {DatumOverschredenComponent} from './datum-overschreden/datum-overschreden.component';
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
@@ -35,6 +34,8 @@ import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 import {OutsideClickDirective} from './directives/outside-click.directive';
 import {ReadMoreComponent} from './read-more/read-more.component';
+import {EditBehandelaarComponent} from './edit/edit-behandelaar/edit-behandelaar.component';
+import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
 
 @NgModule({
     declarations: [
@@ -52,10 +53,11 @@ import {ReadMoreComponent} from './read-more/read-more.component';
         ReadMoreComponent,
         StatusLabelComponent,
         BehandelaarVeldComponent,
-        EditComponent,
         DatumOverschredenComponent,
         OutsideClickDirective,
-        DatumOverschredenComponent
+        DatumOverschredenComponent,
+        EditBehandelaarComponent,
+        EditTekstComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -90,7 +92,8 @@ import {ReadMoreComponent} from './read-more/read-more.component';
         StatusLabelComponent,
         BehandelaarVeldComponent,
         DatumOverschredenComponent,
-        EditComponent
+        EditBehandelaarComponent,
+        EditTekstComponent
     ],
     providers: [
         Title,

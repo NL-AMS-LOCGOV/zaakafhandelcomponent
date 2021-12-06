@@ -1,0 +1,29 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<div class="static-text" (click)="edit(true)">
+    <label class="static-text-label">
+        {{formField.label | translate}}
+        <mat-icon>edit</mat-icon>
+    </label>
+    <div *ngIf="!editing" class="static-text-content">
+        {{value | empty}}
+        <div class="edit-icon">
+            <mat-icon>edit</mat-icon>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
+    <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
+
+    <div class="form-buttons">
+        <button mat-mini-fab color="primary" (click)="save()" title="{{'actie.opslaan' | translate}}">
+            <mat-icon>check</mat-icon>
+        </button>
+        <button mat-mini-fab (click)="cancel()" title="{{'actie.annuleren' | translate}}">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
