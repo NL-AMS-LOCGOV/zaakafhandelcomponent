@@ -20,6 +20,7 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -58,23 +59,29 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
             }
         }));
 
-        this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid, () => this.loadZaak());
-        this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid, () => this.loadZaak());
+        this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaakUuid,
+            (event) => this.loadZaak(event));
+        this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaakUuid,
+            (event) => this.loadZaak(event));
         this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaakUuid,
-            () => this.loadInformatieObjecten());
+            (event) => this.loadInformatieObjecten(event));
     }
 
     toggleMenu(): void {
         this.store.dispatch(toggleCollapseZaakVerkort());
     }
 
-    private loadInformatieObjecten(): void {
+    private loadInformatieObjecten(event?: ScreenEvent): void {
+        console.log('loadInformatieObjecten');
+        console.debug(event);
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }
 
-    private loadZaak() {
+    private loadZaak(event?: ScreenEvent) {
+        console.log('loadZaak');
+        console.debug(event);
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.zaakLoadedEmitter.emit(true);

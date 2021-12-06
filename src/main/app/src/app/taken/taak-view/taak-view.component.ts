@@ -30,6 +30,7 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {Medewerker} from '../../identity/model/medewerker';
 import {NavigationService} from '../../shared/navigation/navigation.service';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -68,7 +69,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngAfterViewInit();
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
-        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id, this.ophalenTaak);
+        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id,
+            (event)=>this.ophalenTaak(event));
     }
 
     ngOnDestroy() {
@@ -162,7 +164,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    ophalenTaak() {
+    private ophalenTaak(event?: ScreenEvent) {
+        console.log('ophalenTaak');
+        console.debug(event);
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);

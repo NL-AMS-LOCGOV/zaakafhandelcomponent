@@ -38,6 +38,7 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {Medewerker} from '../../identity/model/medewerker';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -94,11 +95,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
-            this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid, () => this.updateZaak());
-            this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid, () => this.updateZaak());
-            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid, () => this.loadTaken());
+            this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
+                (event) => this.updateZaak(event));
+            this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+                (event) => this.updateZaak(event));
+            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+                (event) => this.loadTaken(event));
             this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
-                () => this.loadInformatieObjecten());
+                (event) => this.loadInformatieObjecten(event));
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
@@ -221,14 +225,18 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    updateZaak(): void {
+    private updateZaak(event?: ScreenEvent): void {
+        console.log('updateZaak');
+        console.debug(event);
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
         this.loadAuditTrail();
     }
 
-    private loadInformatieObjecten(): void {
+    private loadInformatieObjecten(event?: ScreenEvent): void {
+        console.log('loadInformatieObjecten');
+        console.debug(event);
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
@@ -240,7 +248,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    private loadTaken(): void {
+    private loadTaken(event?: ScreenEvent): void {
+        console.log('loadTaken');
+        console.debug(event);
         this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));

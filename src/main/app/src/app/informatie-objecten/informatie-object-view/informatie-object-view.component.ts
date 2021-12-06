@@ -24,6 +24,7 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {MatTableDataSource} from '@angular/material/table';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 import {MatSort} from '@angular/material/sort';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -55,7 +56,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
             this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
-                () => this.loadInformatieObject());
+                (event) => this.loadInformatieObject(event));
 
             this.setupMenu();
             this.loadZaken();
@@ -103,7 +104,9 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
         });
     }
 
-    private loadInformatieObject() {
+    private loadInformatieObject(event?: ScreenEvent) {
+        console.log('loadInformatieObject');
+        console.debug(event);
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;

@@ -122,17 +122,18 @@ export class WebsocketService implements OnDestroy {
                 }
             }
         }
-    }
+    };
 
     private onError = (error: any) => {
         console.error('Websocket error:');
         console.debug(error);
-    }
+    };
 
     public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
         const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
         const listener: WebsocketListener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
+        console.log('addListener ' + listener.debug());
         return listener;
     }
 
@@ -153,6 +154,7 @@ export class WebsocketService implements OnDestroy {
 
     public suspendListener(listener: WebsocketListener, timeout: number = WebsocketService.DEFAULT_SUSPENSION_TIMEOUT): void {
         if (listener) {
+            console.log('suspendListener ' + listener.debug());
             const suspension: EventSuspension = this.suspended[listener.id];
             if (suspension) {
                 suspension.increment();
@@ -164,6 +166,7 @@ export class WebsocketService implements OnDestroy {
 
     public removeListener(listener: WebsocketListener): void {
         if (listener) {
+            console.log('removeListener ' + listener.debug());
             this.removeCallback(listener);
             this.send(new SubscriptionMessage(SubscriptionType.DELETE, listener.event));
         }
