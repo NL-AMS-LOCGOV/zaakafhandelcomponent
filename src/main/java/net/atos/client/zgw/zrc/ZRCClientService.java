@@ -23,6 +23,7 @@ import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -202,7 +203,14 @@ public class ZRCClientService implements Caching {
          */
         final int page = filters.getPage();
         filters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
-        final List<Zaak> allZaken = zrcClient.zaakList(filters).getResultsUntilEnd();
+
+        Results<Zaak> results = zrcClient.zaakList(filters);
+        final List<Zaak> allZaken = results.getResults();
+        while (results.getNext() != null) {
+            results = createInvocationBuilder(results.getNext()).get(new GenericType<Results<Zaak>>() {});
+            allZaken.addAll(results.getResults());
+        }
+
         final List<Zaak> zakenOnPage = allZaken.stream()
                 .filter(zaak -> zaak.getArchiefnominatie() == null)
                 .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
