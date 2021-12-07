@@ -58,7 +58,7 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
-import net.atos.zac.util.PaginationUtil;
+import net.atos.zac.util.OpenZaakPaginationUtil;
 
 /**
  *
@@ -271,7 +271,7 @@ public class ZakenRESTService {
     private ZaakListParameters getZaakListParameters(final TableRequest tableState) {
         final ZaakListParameters zaakListParameters = new ZaakListParameters();
 
-        zaakListParameters.setPage(PaginationUtil.getZGWClientPage(tableState.getPagination()));
+        zaakListParameters.setPage(OpenZaakPaginationUtil.calculateOpenZaakPageNumber(tableState.getPagination()));
 
         final boolean desc = "desc".equals(tableState.getSort().getDirection());
         zaakListParameters

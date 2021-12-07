@@ -26,7 +26,7 @@ import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.Pagination;
 import net.atos.zac.rechten.RechtOperatie;
 import net.atos.zac.rechten.ZaakRechten;
-import net.atos.zac.util.PaginationUtil;
+import net.atos.zac.util.OpenZaakPaginationUtil;
 
 public class RESTZaakOverzichtConverter {
 
@@ -88,9 +88,9 @@ public class RESTZaakOverzichtConverter {
     }
 
     public List<RESTZaakOverzicht> convertZaakResults(final Results<Zaak> zaakResults, final Pagination pagination) {
-        final List<RESTZaakOverzicht> zgwClientResults = PaginationUtil.getZGWClientResults(zaakResults.getResults().stream()
-                                                                                                    .map(this::convert)
-                                                                                                    .collect(Collectors.toList()), pagination);
+        final List<RESTZaakOverzicht> zgwClientResults = OpenZaakPaginationUtil.filterPageFromOpenZaakResult(zaakResults.getResults().stream()
+                                                                                                                     .map(this::convert)
+                                                                                                                     .collect(Collectors.toList()), pagination);
         return zgwClientResults;
     }
 

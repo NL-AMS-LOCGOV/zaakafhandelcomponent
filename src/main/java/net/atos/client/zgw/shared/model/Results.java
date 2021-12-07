@@ -37,6 +37,13 @@ public class Results<T> {
 
     private final URI previous;
 
+    public Results(final List<T> results, final int count) {
+        this.results = results;
+        this.count = count;
+        previous = null;
+        next = null;
+    }
+
     @JsonbCreator
     public Results(@JsonbProperty("count") final int count,
             @JsonbProperty("results") final List<T> results,
@@ -52,7 +59,6 @@ public class Results<T> {
         return count;
     }
 
-
     public Results<T> getPrevious() {
         return get(previous);
     }
@@ -63,10 +69,6 @@ public class Results<T> {
 
     public List<T> getResults() {
         return results != null ? results : Collections.EMPTY_LIST;
-    }
-
-    public void setResults(final List<T> results) {
-        this.results = results;
     }
 
     public Optional<T> getSingleResult() {
@@ -85,6 +87,16 @@ public class Results<T> {
         } else {
             throw new IllegalStateException(String.format("More then one page found (count: %d, results: %d)", count, results.size()));
         }
+    }
+
+    public List<T> getResultsUntilEnd() {
+        URI next = this.next;
+        while (next != null) {
+            final Results<T> nextResults = get(next);
+            results.addAll(nextResults.results);
+            next = nextResults.next;
+        }
+        return results;
     }
 
     private Results<T> get(final URI uri) {

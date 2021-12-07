@@ -5,10 +5,11 @@
 
 package net.atos.client.zgw.zrc;
 
+import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
+import static net.atos.zac.util.OpenZaakPaginationUtil.PAGE_SIZE_OPEN_ZAAK;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -193,14 +194,21 @@ public class ZRCClientService implements Caching {
      * @param filters {@link ZaakListParameters}.
      * @return List of {@link Zaak} instances.
      */
-    // TODO ESUITEDEV-25904 Oplossing vinden voor paginering van open zaken
     public Results<Zaak> listOpenZaken(final ZaakListParameters filters) {
-        final Results<Zaak> zakenResult = zrcClient.zaakList(filters);
-        final List<Zaak> zaken = zakenResult.getResults().stream().filter(zaak -> zaak.getArchiefnominatie() == null)
+        /*
+         * Using a filter to retrieve a list of 'Open Zaken' is not supported by the current version of the ZGW API's.
+         * This will be fixed in a future version of the ZGW APIś. see https://github.com/VNG-Realisatie/gemma-zaken/issues/1659
+         * Until then this method provide a workaround by retrieving all Zaken, filtering out the closed ones and then returning the required page.
+         */
+        final int page = filters.getPage();
+        filters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
+        final List<Zaak> allZaken = zrcClient.zaakList(filters).getResultsUntilEnd();
+        final List<Zaak> zakenOnPage = allZaken.stream()
+                .filter(zaak -> zaak.getArchiefnominatie() == null)
+                .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
+                .limit(PAGE_SIZE_OPEN_ZAAK)
                 .collect(Collectors.toList());
-        zakenResult.setResults(zaken);
-
-        return zakenResult;
+        return new Results<Zaak>(zakenOnPage, allZaken.size());
     }
 
     /**
@@ -313,5 +321,4 @@ public class ZRCClientService implements Caching {
     public List<AuditTrailRegel> listAuditTrail(final UUID zaakUUID) {
         return zrcClient.listAuditTrail(zaakUUID);
     }
-
 }

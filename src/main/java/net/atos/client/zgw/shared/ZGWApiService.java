@@ -55,6 +55,9 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 @ApplicationScoped
 public class ZGWApiService implements Caching {
 
+    // Page numbering in ZGW Api's starts with 1
+    public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
+
     private static final List<String> CACHES = List.of(
             ZGW_ZAAK_BEHANDELAAR_MANAGED,
             ZGW_ZAAK_GROEP_MANAGED);
