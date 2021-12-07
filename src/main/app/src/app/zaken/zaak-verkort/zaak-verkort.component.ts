@@ -72,16 +72,18 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
-        console.log('loadInformatieObjecten');
-        console.debug(event);
+        if (event) {
+            console.log('callback loadInformatieObjecten: ' + event.key);
+        }
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }
 
     private loadZaak(event?: ScreenEvent) {
-        console.log('loadZaak');
-        console.debug(event);
+        if (event) {
+            console.log('callback loadZaak: ' + event.key);
+        }
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.zaakLoadedEmitter.emit(true);

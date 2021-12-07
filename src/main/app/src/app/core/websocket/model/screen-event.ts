@@ -18,7 +18,7 @@ export class ScreenEvent {
         this.opcode = opcode;
         this.objectType = objectType;
         this.objectId = objectId;
-        this._key = this.opcode + ';' + this.objectType + ';' + this.objectId;
+        this._key = this.makeKey(this.opcode, this.objectType, this.objectId);
     }
 
     get timestamp(): number {
@@ -27,5 +27,21 @@ export class ScreenEvent {
 
     get key(): string {
         return this._key;
+    }
+
+    get keyAnyOpcode(): string {
+        return this.makeKey(Opcode.ANY, this.objectType, this.objectId);
+    }
+
+    get keyAnyObjectType(): string {
+        return this.makeKey(this.opcode, ObjectType.ANY, this.objectId);
+    }
+
+    get keyAnyOpcodeAndObjectType(): string {
+        return this.makeKey(Opcode.ANY, ObjectType.ANY, this.objectId);
+    }
+
+    private makeKey(opcode: Opcode, objectType: ObjectType, objectId: string): string {
+        return opcode + ';' + objectType + ';' + objectId;
     }
 }

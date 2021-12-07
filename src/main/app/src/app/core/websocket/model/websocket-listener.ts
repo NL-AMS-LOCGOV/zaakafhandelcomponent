@@ -31,7 +31,7 @@ export class WebsocketListener {
         this._callback(this._event);
     }
 
-    debug(): string {
-        return this._id + ' ' + this._event.objectType + ' ' + this._event.opcode;
+    get key(): string {
+        return this._id + ' (' + this._event.key + ')';
     }
 }

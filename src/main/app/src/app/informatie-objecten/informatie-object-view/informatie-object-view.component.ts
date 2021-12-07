@@ -105,8 +105,9 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     }
 
     private loadInformatieObject(event?: ScreenEvent) {
-        console.log('loadInformatieObject');
-        console.debug(event);
+        if (event) {
+            console.log('callback loadInformatieObject: ' + event.key);
+        }
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;

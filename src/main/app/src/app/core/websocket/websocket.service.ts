@@ -109,7 +109,14 @@ export class WebsocketService implements OnDestroy {
     private onMessage = (message: any) => {
         // message is a JSON representation of ScreenEvent.java
         const event: ScreenEvent = new ScreenEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
-        const callbacks: EventCallback[] = this.getCallbacks(event);
+        this.dispatch(event, event.key);
+        this.dispatch(event, event.keyAnyOpcode);
+        this.dispatch(event, event.keyAnyObjectType);
+        this.dispatch(event, event.keyAnyOpcodeAndObjectType);
+    };
+
+    private dispatch(event: ScreenEvent, key: string) {
+        const callbacks: EventCallback[] = this.getCallbacks(key);
         for (const listenerId in callbacks) {
             if (callbacks.hasOwnProperty(listenerId) && listenerId !== 'length') {
                 try {
@@ -122,7 +129,7 @@ export class WebsocketService implements OnDestroy {
                 }
             }
         }
-    };
+    }
 
     private onError = (error: any) => {
         console.error('Websocket error:');
@@ -133,7 +140,7 @@ export class WebsocketService implements OnDestroy {
         const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
         const listener: WebsocketListener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
-        console.log('addListener ' + listener.debug());
+        console.log('listener added: ' + listener.key);
         return listener;
     }
 
@@ -154,42 +161,42 @@ export class WebsocketService implements OnDestroy {
 
     public suspendListener(listener: WebsocketListener, timeout: number = WebsocketService.DEFAULT_SUSPENSION_TIMEOUT): void {
         if (listener) {
-            console.log('suspendListener ' + listener.debug());
             const suspension: EventSuspension = this.suspended[listener.id];
             if (suspension) {
                 suspension.increment();
             } else {
                 this.suspended[listener.id] = new EventSuspension(timeout);
             }
+            console.log('listener suspended: ' + listener.key);
         }
     }
 
     public removeListener(listener: WebsocketListener): void {
         if (listener) {
-            console.log('removeListener ' + listener.debug());
             this.removeCallback(listener);
             this.send(new SubscriptionMessage(SubscriptionType.DELETE, listener.event));
+            console.log('listener removed: ' + listener.key);
         }
     }
 
     private addCallback(event: ScreenEvent, callback: EventCallback): WebsocketListener {
         const listener: WebsocketListener = new WebsocketListener(event, callback);
-        const callbacks: EventCallback[] = this.getCallbacks(event);
+        const callbacks: EventCallback[] = this.getCallbacks(event.key);
         callbacks[listener.id] = callback;
         return listener;
     }
 
     private removeCallback(listener: WebsocketListener): void {
-        const callbacks: EventCallback[] = this.getCallbacks(listener.event);
+        const callbacks: EventCallback[] = this.getCallbacks(listener.event.key);
         delete callbacks[listener.id];
         delete this.suspended[listener.id];
     }
 
-    private getCallbacks(event: ScreenEvent): EventCallback[] {
-        if (!this.listeners[event.key]) {
-            this.listeners[event.key] = [];
+    private getCallbacks(key: string): EventCallback[] {
+        if (!this.listeners[key]) {
+            this.listeners[key] = [];
         }
-        return this.listeners[event.key];
+        return this.listeners[key];
     }
 
     private isSuspended(listenerId: string): boolean {

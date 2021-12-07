@@ -226,8 +226,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private updateZaak(event?: ScreenEvent): void {
-        console.log('updateZaak');
-        console.debug(event);
+        if (event) {
+            console.log('callback updateZaak: ' + event.key);
+        }
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
@@ -235,8 +236,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
-        console.log('loadInformatieObjecten');
-        console.debug(event);
+        if (event) {
+            console.log('callback loadInformatieObjecten: ' + event.key);
+        }
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
@@ -249,8 +251,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private loadTaken(event?: ScreenEvent): void {
-        console.log('loadTaken');
-        console.debug(event);
+        if (event) {
+            console.log('callback loadTaken: ' + event.key);
+        }
         this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));

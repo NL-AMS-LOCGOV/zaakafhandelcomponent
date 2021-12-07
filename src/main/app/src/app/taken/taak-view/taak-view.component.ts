@@ -165,8 +165,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private ophalenTaak(event?: ScreenEvent) {
-        console.log('ophalenTaak');
-        console.debug(event);
+        if (event) {
+            console.log('callback ophalenTaak: ' + event.key);
+        }
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {
                 this.init(taak);
