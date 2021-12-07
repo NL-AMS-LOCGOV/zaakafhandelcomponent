@@ -7,30 +7,25 @@ import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnI
 import {AbstractFormField} from '../material-form-builder/model/abstract-form-field';
 import {MaterialFormBuilderService} from '../material-form-builder/material-form-builder.service';
 import {FormItem} from '../material-form-builder/model/form-item';
-import {AbstractChoicesFormField} from '../material-form-builder/model/abstract-choices-form-field';
 import {StaticTextComponent} from '../static-text/static-text.component';
 import {Subscription} from 'rxjs';
 
 @Component({
-    selector: 'zac-edit',
-    templateUrl: './edit.component.html',
+    template: '',
     styleUrls: ['../static-text/static-text.component.less', './edit.component.less']
 })
-export class EditComponent extends StaticTextComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export abstract class EditComponent extends StaticTextComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
     editing: boolean;
     dirty: boolean = false;
     formItem: FormItem;
 
-    @Input() formField: AbstractFormField;
+    @Input() abstract formField: AbstractFormField;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
-
-    @Input() showShortcut: boolean = false;
-    @Output() onShortCut: EventEmitter<any> = new EventEmitter<any>();
 
     subscription: Subscription;
 
-    constructor(private mfbService: MaterialFormBuilderService) {
+    protected constructor(private mfbService: MaterialFormBuilderService) {
         super();
     }
 
@@ -40,17 +35,7 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
         this.init(this.formField);
     }
 
-    init(formField: AbstractFormField): void {
-        if (formField instanceof AbstractChoicesFormField) {
-            this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
-        } else {
-            this.value = formField.formControl.value;
-        }
-
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
-    }
+    abstract init(formField: AbstractFormField): void;
 
     ngAfterViewInit(): void {
         this.formItem = this.mfbService.getFormItem(this.formField);
@@ -84,11 +69,6 @@ export class EditComponent extends StaticTextComponent implements OnInit, AfterV
     }
 
     cancel(): void {
-        this.editing = false;
-    }
-
-    shortcut(): void {
-        this.onShortCut.emit();
         this.editing = false;
     }
 }

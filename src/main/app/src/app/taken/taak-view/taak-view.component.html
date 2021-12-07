@@ -25,11 +25,11 @@
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
-                        <zac-edit [formField]="taakBehandelaarFormField"
-                                  (onSave)="editBehandelaar($event)"
-                                  [showShortcut]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
-                                  (onShortCut)="assignToMe()">
-                        </zac-edit>
+                        <zac-edit-behandelaar [formField]="taakBehandelaarFormField"
+                                              (onSave)="editBehandelaar($event)"
+                                              [showAssignToMe]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                              (onAssignToMe)="assignToMe()">
+                        </zac-edit-behandelaar>
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
@@ -43,7 +43,7 @@
                     </div>
 
                     <div fxFlex="100">
-                        <zac-edit [formField]="toelichtingFormfield" (onSave)="editTaak($event, 'toelichting')"></zac-edit>
+                        <zac-edit-tekst [formField]="toelichtingFormfield" (onSave)="editTaak($event, 'toelichting')"></zac-edit-tekst>
                     </div>
                 </div>
             </mat-card-content>
@@ -52,7 +52,8 @@
         <mat-card fxFlex="100" *ngIf="formulier">
             <mat-card-content>
                 <div class="form">
-                    <mfb-form (formPartial)="onFormPartial($event)" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form" [config]="formConfig"></mfb-form>
+                    <mfb-form (formPartial)="onFormPartial($event)" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form"
+                              [config]="formConfig"></mfb-form>
                 </div>
             </mat-card-content>
         </mat-card>

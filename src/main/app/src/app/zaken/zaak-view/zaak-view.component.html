@@ -40,9 +40,9 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-edit [formField]="zaakBehandelaarFormField" (onSave)="editBehandelaar($event)"
-                                              [showShortcut]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
-                                              (onShortCut)="assignToMe()"></zac-edit>
+                                    <zac-edit-behandelaar [formField]="zaakBehandelaarFormField" (onSave)="editBehandelaar($event)"
+                                                          [showAssignToMe]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                                          (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
                                     <zac-static-text [label]="'groep' | translate"
                                                      [value]="zaak.groep| empty:'naam'"></zac-static-text>
                                 </div>
@@ -86,12 +86,12 @@
                                     <mat-divider></mat-divider>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit [formField]="getTextAreaFormField('omschrijving', zaak.omschrijving)"
-                                              (onSave)="editZaak($event, 'omschrijving')"></zac-edit>
+                                    <zac-edit-tekst [formField]="getTextAreaFormField('omschrijving', zaak.omschrijving)"
+                                                    (onSave)="editZaak($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit [formField]="getTextAreaFormField('toelichting', zaak.toelichting)"
-                                              (onSave)="editZaak($event, 'toelichting')"></zac-edit>
+                                    <zac-edit-tekst [formField]="getTextAreaFormField('toelichting', zaak.toelichting)"
+                                                    (onSave)="editZaak($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
                         </mat-tab>
