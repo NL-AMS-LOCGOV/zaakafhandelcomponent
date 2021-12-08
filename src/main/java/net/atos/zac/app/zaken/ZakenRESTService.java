@@ -6,7 +6,6 @@
 package net.atos.zac.app.zaken;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +41,7 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.app.audit.converter.RESTAuditTrailRegelConverter;
+import net.atos.zac.app.audit.converter.RESTAuditTrailConverter;
 import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
@@ -90,7 +89,7 @@ public class ZakenRESTService {
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
 
     @Inject
-    private RESTAuditTrailRegelConverter auditTrailRegelConverter;
+    private RESTAuditTrailConverter auditTrailConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -306,8 +305,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/{uuid}/auditTrail")
     public List<RESTAuditTrailRegel> listAuditTrailVoorZaak(@PathParam("uuid") final UUID uuid) {
-        return zrcClientService.listAuditTrail(uuid).stream()
-                .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
-                .map(auditTrailRegelConverter::convert).collect(Collectors.toList());
+        final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
+        return auditTrailConverter.convert(auditTrail);
     }
 }

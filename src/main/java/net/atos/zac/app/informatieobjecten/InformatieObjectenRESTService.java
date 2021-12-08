@@ -8,10 +8,8 @@ package net.atos.zac.app.informatieobjecten;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -37,7 +35,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.audit.converter.RESTAuditTrailRegelConverter;
+import net.atos.zac.app.audit.converter.RESTAuditTrailConverter;
 import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
@@ -78,7 +76,7 @@ public class InformatieObjectenRESTService {
     private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
 
     @Inject
-    private RESTAuditTrailRegelConverter restAuditTrailRegelConverter;
+    private RESTAuditTrailConverter restAuditTrailConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -177,10 +175,8 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/auditTrail")
     public List<RESTAuditTrailRegel> listAuditTrail(@PathParam("uuid") final UUID uuid) {
-        List<AuditTrailRegel> auditTrailRegels = drcClientService.listAuditTrail(uuid);
-        return auditTrailRegels.stream()
-                .sorted(Comparator.comparing(AuditTrailRegel::getAanmaakdatum).reversed())
-                .map(restAuditTrailRegelConverter::convert).collect(Collectors.toList());
+        List<AuditTrailRegel> auditTrail = drcClientService.listAuditTrail(uuid);
+        return restAuditTrailConverter.convert(auditTrail);
     }
 
     private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {

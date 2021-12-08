@@ -1,0 +1,40 @@
+package net.atos.zac.app.audit.converter;
+
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.shared.model.ObjectType;
+import net.atos.client.zgw.shared.model.audit.EnkelvoudigInformatieobjectWijziging;
+import net.atos.zac.app.audit.model.RESTWijziging;
+
+public class RESTAuditEnkelvoudigInformatieobjectConverter extends AbstractRESTAuditWijzigingConverter<EnkelvoudigInformatieobjectWijziging> {
+
+    @Override
+    public boolean supports(final ObjectType objectType) {
+        return ObjectType.ENKELVOUDIG_INFORMATIEOBJECT == objectType;
+    }
+
+    @Override
+    protected RESTWijziging doConvert(final EnkelvoudigInformatieobjectWijziging wijziging) {
+        final EnkelvoudigInformatieobject nieuw = wijziging.getNieuw();
+        final EnkelvoudigInformatieobject oud = wijziging.getOud();
+
+        if (oud == null) {
+            return new RESTWijziging(String.format("Document '%s' is toegevoegd", nieuw.getIdentificatie()));
+        }
+        if (nieuw == null) {
+            return new RESTWijziging(String.format("Document '%s' is verwijderd", oud.getIdentificatie()));
+        }
+
+        if (!Objects.equals(nieuw.getVersie(), oud.getVersie())) {
+            return new RESTWijziging("Versie", Integer.toString(oud.getVersie()), Integer.toString(nieuw.getVersie()));
+        }
+        if (!StringUtils.equals(nieuw.getBeschrijving(), oud.getBeschrijving())) {
+            return new RESTWijziging("Beschrijving", oud.getBeschrijving(), nieuw.getBeschrijving());
+        }
+
+        return new RESTWijziging("Onbekend wijziging", "-", "-");
+    }
+}
