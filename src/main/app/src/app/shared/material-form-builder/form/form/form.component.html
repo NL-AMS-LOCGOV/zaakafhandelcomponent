@@ -23,13 +23,15 @@
         </button>
         <button mat-flat-button color="primary"
                 [disabled]="formGroup.invalid"
+                id="opslaan_button"
                 type="submit">
             <mat-icon *ngIf="config.saveButtonIcon">{{config.saveButtonIcon}}</mat-icon>
             {{config.saveButtonText | translate}}
         </button>
         <button mat-flat-button
                 *ngIf="config.cancelButtonText || config.cancelButtonIcon"
-                type="button" (click)="cancel()">
+                (click)="cancel()" id="annuleren_button"
+                type="button">
             <mat-icon *ngIf="config.cancelButtonIcon">{{config.cancelButtonIcon}}</mat-icon>
             {{config.cancelButtonText | translate}}
         </button>

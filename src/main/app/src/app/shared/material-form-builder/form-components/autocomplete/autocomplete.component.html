@@ -5,9 +5,10 @@
 
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{data.label | translate}}</mat-label>
-    <input type="text" matInput [formControl]="data.formControl" [matAutocomplete]="auto">
+    <input [formControl]="data.formControl" [id]="data.id + '_autocompletefield'" [matAutocomplete]="auto"
+           matInputtype="text">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" autoActiveFirstOption="true">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">ÆÆÆ
             {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
         </mat-option>
     </mat-autocomplete>

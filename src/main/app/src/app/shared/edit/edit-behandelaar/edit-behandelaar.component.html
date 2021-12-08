@@ -20,15 +20,18 @@
 
     <div class="form-buttons">
         <div>
-            <button *ngIf="showAssignToMe" mat-mini-fab color="warn" (click)="assignToMe()" title="{{'actie.mij.toekennen' | translate}}">
+            <button (click)="assignToMe()" *ngIf="showAssignToMe" color="warn" id="kenAanMijToe_button" mat-mini-fab
+                    title="{{'actie.mij.toekennen' | translate}}">
                 <mat-icon>person_add_alt</mat-icon>
             </button>
         </div>
         <div>
-            <button mat-mini-fab color="primary" (click)="save()" title="{{'actie.opslaan' | translate}}">
+            <button (click)="save()" color="primary" id="behandelaarOpslaan_button" mat-mini-fab
+                    title="{{'actie.opslaan' | translate}}">
                 <mat-icon>check</mat-icon>
             </button>
-            <button mat-mini-fab (click)="cancel()" title="{{'actie.annuleren' | translate}}">
+            <button (click)="cancel()" id="behandelaarAnnuleren_button" mat-mini-fab
+                    title="{{'actie.annuleren' | translate}}">
                 <mat-icon>close</mat-icon>
             </button>
         </div>

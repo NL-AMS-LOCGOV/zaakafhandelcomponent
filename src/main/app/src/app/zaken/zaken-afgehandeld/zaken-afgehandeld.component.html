@@ -10,7 +10,8 @@
 
         <mat-radio-group id="radio-groep-selectie" aria-labelledby="radio-groep-selectie"
                          [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75">
-            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [value]="selectie">
+            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
+                              [value]="selectie">
                 {{ selectie | translate}}
             </mat-radio-button>
         </mat-radio-group>
@@ -20,7 +21,7 @@
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
             <mat-form-field appearance="standard" id="groep-selectie" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'groep' | translate}}</mat-label>
-                <mat-select [(value)]="dataSource.zoekParameters.groep" (valueChange)="zoekZaken()">
+                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.groep" id="groep_filter">
                     <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
@@ -33,7 +34,8 @@
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
             <mat-form-field appearance="standard" id="zaaktype-selectie" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'zaaktype' | translate}}</mat-label>
-                <mat-select [(value)]="dataSource.zoekParameters.zaaktype" (valueChange)="zoekZaken()">
+                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.zaaktype"
+                            id="zaaktype_filter">
                     <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
                         {{zaakType.omschrijving}}
@@ -82,6 +84,7 @@
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
+                        [id]="'zaakBekijken_' + row.identificatie +'_button'"
                         title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>

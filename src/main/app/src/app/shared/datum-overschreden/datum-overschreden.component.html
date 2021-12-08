@@ -9,6 +9,7 @@
         <mat-icon class="verlopen-label-icon"
                   [ngClass]="fatal ? 'verlopen-error' : 'verlopen-warning'"
                   *ngIf="isOverschreden(value,ended)"
+                  [id]="fatal ? 'verlopen-error_icon' : 'verlopen-warning_icon'"
                   title="{{ 'msg.datum.overschreden' | translate}}">report_problem
         </mat-icon>
     </div>

@@ -6,7 +6,8 @@
 <div *ngIf="zaak" [@sideNavToggle]="{value:!collapsed ? 'open' : 'close', params: {width: '72px'}}">
     <mat-toolbar class="toolbar-footer" fxLayout="row">
         <ng-container *ngIf="collapsed">
-            <button mat-icon-button color="default" (click)="toggleMenu()" title="{{ 'actie.paneel.openen' | translate }}">
+            <button (click)="toggleMenu()" color="default" id="verkorteZaakUitklappen_button" mat-icon-button
+                    title="{{ 'actie.paneel.openen' | translate }}">
                 <mat-icon>menu_open</mat-icon>
             </button>
         </ng-container>
@@ -18,14 +19,16 @@
             </div>
 
             <div fxLayout="row" fxFlex fxLayoutAlign="end center" *ngIf="!(utilService.isTablet$|async)">
-                <button mat-icon-button (click)="toggleMenu()" title="{{ 'actie.paneel.sluiten' | translate }}">
+                <button (click)="toggleMenu()" id="verkorteZaakInklappen_button" mat-icon-button
+                        title="{{ 'actie.paneel.sluiten' | translate }}">
                     <mat-icon>cancel</mat-icon>
                 </button>
             </div>
         </ng-container>
     </mat-toolbar>
     <div class="content" fxLayout="column wrap" *ngIf="collapsed">
-        <button mat-icon-button [routerLink]="['/zaken', zaak.uuid]" [title]="zaak.identificatie + ' openen'">
+        <button [routerLink]="['/zaken', zaak.uuid]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+                mat-icon-button>
             <mat-icon>visibility</mat-icon>
         </button>
     </div>

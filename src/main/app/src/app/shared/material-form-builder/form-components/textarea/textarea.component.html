@@ -6,7 +6,7 @@
 <mat-form-field appearance="fill" class="full-width">
     <mat-label *ngIf="data.label">{{data.label | translate}}</mat-label>
 
-    <textarea [id]="data.id" matInput [formControl]="data.formControl" [required]="data.required"
+    <textarea [formControl]="data.formControl" [id]="data.id + '_tekstarea'" [required]="data.required" matInput
               cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15"></textarea>
 
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
