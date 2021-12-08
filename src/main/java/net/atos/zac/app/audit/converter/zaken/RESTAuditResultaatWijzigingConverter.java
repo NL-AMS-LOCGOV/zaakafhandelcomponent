@@ -1,12 +1,13 @@
-package net.atos.zac.app.audit.converter;
+package net.atos.zac.app.audit.converter.zaken;
 
 import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.model.ObjectType;
-import net.atos.client.zgw.shared.model.audit.ResultaatWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ResultaatWijziging;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Resultaattype;
+import net.atos.zac.app.audit.converter.AbstractRESTAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTWijziging;
 
 public class RESTAuditResultaatWijzigingConverter extends AbstractRESTAuditWijzigingConverter<ResultaatWijziging> {

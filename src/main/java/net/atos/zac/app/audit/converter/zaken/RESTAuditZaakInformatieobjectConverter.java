@@ -1,8 +1,9 @@
-package net.atos.zac.app.audit.converter;
+package net.atos.zac.app.audit.converter.zaken;
 
 import net.atos.client.zgw.shared.model.ObjectType;
-import net.atos.client.zgw.shared.model.audit.ZaakInformatieobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.zac.app.audit.converter.AbstractRESTAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTWijziging;
 
 public class RESTAuditZaakInformatieobjectConverter extends AbstractRESTAuditWijzigingConverter<ZaakInformatieobjectWijziging> {

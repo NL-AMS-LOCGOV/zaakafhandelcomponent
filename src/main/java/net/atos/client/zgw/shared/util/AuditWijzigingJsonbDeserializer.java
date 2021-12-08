@@ -16,18 +16,18 @@ import javax.json.stream.JsonParser;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
-import net.atos.client.zgw.shared.model.audit.EnkelvoudigInformatieobjectWijziging;
-import net.atos.client.zgw.shared.model.audit.GebuiksrechtenWijziging;
-import net.atos.client.zgw.shared.model.audit.ResultaatWijziging;
-import net.atos.client.zgw.shared.model.audit.RolMedewerkerWijziging;
-import net.atos.client.zgw.shared.model.audit.RolNatuurlijkPersoonWijziging;
-import net.atos.client.zgw.shared.model.audit.RolNietNatuurlijkPersoonWijziging;
-import net.atos.client.zgw.shared.model.audit.RolOrganisatorischeEenheidWijziging;
-import net.atos.client.zgw.shared.model.audit.RolVestigingWijziging;
-import net.atos.client.zgw.shared.model.audit.StatusWijziging;
-import net.atos.client.zgw.shared.model.audit.ZaakInformatieobjectWijziging;
-import net.atos.client.zgw.shared.model.audit.ZaakWijziging;
-import net.atos.client.zgw.shared.model.audit.ZaakobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.documenten.EnkelvoudigInformatieobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.documenten.GebuiksrechtenWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ResultaatWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.RolMedewerkerWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.RolNatuurlijkPersoonWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.RolNietNatuurlijkPersoonWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.RolOrganisatorischeEenheidWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.RolVestigingWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.StatusWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ZaakobjectWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 
 public class AuditWijzigingJsonbDeserializer implements JsonbDeserializer<AuditWijziging<?>> {

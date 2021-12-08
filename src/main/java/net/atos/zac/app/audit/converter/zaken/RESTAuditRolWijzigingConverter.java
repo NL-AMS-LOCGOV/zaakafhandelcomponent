@@ -1,8 +1,9 @@
-package net.atos.zac.app.audit.converter;
+package net.atos.zac.app.audit.converter.zaken;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.zac.app.audit.converter.AbstractRESTAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTWijziging;
 
 public class RESTAuditRolWijzigingConverter extends AbstractRESTAuditWijzigingConverter<AuditWijziging<Rol>> {
