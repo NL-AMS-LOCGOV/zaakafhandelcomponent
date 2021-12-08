@@ -38,6 +38,7 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -88,19 +89,19 @@ public class FlowableService {
     }
 
     public UUID readZaakUuidForTask(final String taskId) {
-        return (UUID) readVariableForTask(taskId, VAR_CASE_ZAAK_UUID);
+        return (UUID) readCaseVariableForTask(taskId, VAR_CASE_ZAAK_UUID);
     }
 
     public String readZaakIdentificatieForTask(final String taskId) {
-        return (String) readVariableForTask(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
+        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
     }
 
     public String readZaaktypeOmschrijvingorTask(final String taskId) {
-        return (String) readVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
     }
 
     public String readZaaktypeIdentificatieForTask(final String taskId) {
-        return (String) readVariableForTask(taskId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
+        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
     }
 
     public String readZaaktypeIdentificatieForCase(final String caseInstanceId) {
@@ -316,16 +317,22 @@ public class FlowableService {
     }
 
     public Map<String, String> readTaakdata(final String taskId) {
-        final Map<String, String> taakdata = (Map<String, String>) findVariableForTask(taskId, VAR_TASK_TAAKDATA);
-        if (taakdata != null) {
-            return taakdata;
+        final Map<String, String> taakdata;
+        if (isOpenTask(taskId)) {
+            taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, VAR_TASK_TAAKDATA);
         } else {
-            return Collections.emptyMap();
+            final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                    .taskId(taskId)
+                    .variableName(VAR_TASK_TAAKDATA)
+                    .singleResult();
+            taakdata = historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : null;
         }
+
+        return taakdata != null ? taakdata : Collections.emptyMap();
     }
 
     public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
-        cmmnTaskService.setVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
+        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDATA, taakdata);
         return taakdata;
     }
 
@@ -338,13 +345,13 @@ public class FlowableService {
         }
     }
 
-    private Object findVariableForTask(final String taskId, final String variableName) {
+    private Object findCaseVariableForTask(final String taskId, final String variableName) {
         final TaskInfo taskInfo = readTaskInfo(taskId);
         return cmmnRuntimeService.getVariable(taskInfo.getScopeId(), variableName);
     }
 
-    private Object readVariableForTask(final String taskId, final String variableName) {
-        final Object variableValue = findVariableForTask(taskId, variableName);
+    private Object readCaseVariableForTask(final String taskId, final String variableName) {
+        final Object variableValue = findCaseVariableForTask(taskId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
@@ -357,6 +364,12 @@ public class FlowableService {
                 .taskId(taskId)
                 .includeIdentityLinks()
                 .singleResult();
+    }
+
+    private boolean isOpenTask(final String taskId) {
+        return cmmnTaskService.createTaskQuery()
+                .taskId(taskId)
+                .count() > 0;
     }
 
     private HistoricTaskInstance readCompletedTask(final String taskId) {
