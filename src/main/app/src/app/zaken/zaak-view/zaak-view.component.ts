@@ -31,7 +31,6 @@ import {NotitieType} from '../../notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {ZaakRechten} from '../model/zaak-rechten';
 import {TaakRechten} from '../../taken/model/taak-rechten';
-import {TextareaFormField} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
@@ -59,7 +58,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     notitieType = NotitieType.ZAAK;
 
-    zaakBehandelaarFormField;
+    editFormFields: Map<string, any> = new Map<string, any>();
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -121,10 +120,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
+        this.setEditableFormFields();
 
-        this.zaakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
-                                                                          .value(zaak.behandelaar).optionLabel('naam')
-                                                                          .options(this.identityService.listMedewerkersInGroep(zaak.groep.id)).build();
         this.setupMenu();
     }
 
@@ -162,6 +159,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.websocketService.removeListener(this.zaakDocumentenListener);
     }
 
+    private setEditableFormFields(): void {
+        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
+                                                                                 .value(this.zaak.behandelaar).optionLabel('naam')
+                                                                                 .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving').value(this.zaak.omschrijving).build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.zaak.toelichting).build());
+    }
+
     private createMenuItem(planItem: PlanItem): MenuItem {
         let icon: string;
         switch (planItem.type) {
@@ -191,10 +196,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
             });
         }
-    }
-
-    getTextAreaFormField(label: string, value: string): TextareaFormField {
-        return new TextareaFormFieldBuilder().id(label).label(label).value(value).build();
     }
 
     assignToMe(): void {

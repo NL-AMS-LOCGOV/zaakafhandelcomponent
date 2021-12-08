@@ -31,8 +31,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     ngOnInit(): void {
         super.ngOnInit();
-
-        this.init(this.formField);
     }
 
     abstract init(formField: AbstractFormField): void;
