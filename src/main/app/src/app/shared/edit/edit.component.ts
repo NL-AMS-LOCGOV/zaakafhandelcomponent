@@ -42,7 +42,9 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.init(changes.formField.currentValue);
+        if (changes.formField.currentValue) {
+            this.init(changes.formField.currentValue);
+        }
     }
 
     ngOnDestroy(): void {
