@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -34,7 +35,7 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     private static final Config config = ConfigProvider.getConfig();
 
@@ -45,7 +46,7 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(ingelogdeMedewerker));
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(ingelogdeMedewerker.get()));
         AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
@@ -55,7 +56,7 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     }
 
     public String generateJWTTokenWithUser() {
-        return generateJWTTokenWithUser(ingelogdeMedewerker);
+        return generateJWTTokenWithUser(ingelogdeMedewerker.get());
     }
 
     private static String generateJWTTokenWithUser(final Medewerker ingelogdeMedewerker) {
