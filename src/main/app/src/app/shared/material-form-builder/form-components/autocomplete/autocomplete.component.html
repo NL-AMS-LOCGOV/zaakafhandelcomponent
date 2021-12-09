@@ -6,7 +6,7 @@
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_autocompletefield'" [matAutocomplete]="auto"
-           matInputtype="text">
+           matInput type="text">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" autoActiveFirstOption="true">
         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">ÆÆÆ
             {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
