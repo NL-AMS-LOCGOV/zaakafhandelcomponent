@@ -5,7 +5,8 @@
 
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{data.label | translate}}</mat-label>
-    <mat-select [id]="data.id" [formControl]="data.formControl" [required]="data.required" [compareWith]="data.compareWithFn">
+    <mat-select [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'"
+                [required]="data.required">
         <mat-option *ngFor="let option of data.options | async" [value]="option">
             {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
         </mat-option>

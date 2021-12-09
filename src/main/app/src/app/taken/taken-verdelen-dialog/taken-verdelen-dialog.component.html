@@ -18,11 +18,13 @@
 
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="getMedewerker() == null || loading" mat-button color="primary" (click)="verdeel()">
+    <button (click)="verdeel()" [disabled]="getMedewerker() == null || loading" color="primary" id="verdelen_button"
+            mat-button>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
         {{'actie.verdelen' | translate}}
     </button>
-    <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+    <button (click)="close()" [disabled]="loading" id="annuleren_button"
+            mat-button>{{'actie.annuleren' | translate}}</button>
 </div>

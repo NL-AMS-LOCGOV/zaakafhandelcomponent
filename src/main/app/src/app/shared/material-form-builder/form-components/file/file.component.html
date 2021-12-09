@@ -5,7 +5,8 @@
 
 <mat-form-field appearance="fill" class="full-width" (click)="fileInput.click()">
     <mat-label>{{data.label | translate}}</mat-label>
-    <input [id]="data.id" matInput [formControl]="data.formControl" [readonly]="true" [required]="data.required"/>
+    <input [formControl]="data.formControl" [id]="data.id + '_filefield'" [readonly]="true" [required]="data.required"
+           matInput/>
     <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
         <mat-icon>upload</mat-icon>
     </button>
