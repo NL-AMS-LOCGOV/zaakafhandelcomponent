@@ -17,7 +17,8 @@
         <button mat-flat-button color="accent"
                 *ngIf="config.partialButtonText || config.partialButtonIcon"
                 [disabled]="formGroup.invalid"
-                type="button" (click)="partial()">
+                (click)="partial()" id="partial_button"
+                type="button">
             <mat-icon *ngIf="config.partialButtonIcon">{{config.partialButtonIcon}}</mat-icon>
             {{config.partialButtonText | translate}}
         </button>

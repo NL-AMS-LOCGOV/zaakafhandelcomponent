@@ -18,7 +18,7 @@
             <mat-icon class="notitieHeaderStickyIcon">sticky_note_2</mat-icon>
             <span class="notitieHeaderTekst">{{ 'notities' | translate }}</span>
         </span>
-        <span (click)="toggleNotitieContainer()" class="minBtn" id="minimaliserenNotitie_icon"
+        <span (click)="toggleNotitieContainer()" class="minBtn" id="notitieMinimaliseer_icon"
               title="{{ 'actie.minimaliseren' | translate }}">
             <mat-icon>remove</mat-icon>
         </span>
@@ -40,7 +40,7 @@
                             <textarea matInput cdkTextareaAutosize [maxLength]="maxLengteTextArea" #notitieTekst>{{ notitie.tekst }}</textarea>
                         </mat-form-field>
                         <button fxLayoutAlign="center center" mat-icon-button aria-label="Opslaan" color="primary"
-                                (click)="updateNotitie(notitie, notitieTekst.value)" id="opslaanEnkeleNotitie_button"
+                                (click)="updateNotitie(notitie, notitieTekst.value)" id="notitieUpdate_button"
                                 title="{{ 'actie.opslaan' | translate }}">
                             <mat-icon>done</mat-icon>
                         </button>
@@ -49,11 +49,11 @@
                 <div class="notitieContentFooter">
                     <ng-container
                             *ngIf="(notitie.bewerkenToegestaan && !geselecteerdeNotitieId) || geselecteerdeNotitieId !== notitie.id">
-                        <button (click)="pasNotitieAan(notitie.id)" id="bewerkenNotitie_button" mat-icon-button
+                        <button (click)="pasNotitieAan(notitie.id)" id="notitieBewerk_button" mat-icon-button
                                 title="{{ 'actie.bewerken' | translate }}">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button (click)="verwijderNotitie(notitie.id)" id="verwijderenNotitie_button" mat-icon-button
+                        <button (click)="verwijderNotitie(notitie.id)" id="notitieVerwijder_button" mat-icon-button
                                 title="{{ 'actie.verwijderen' | translate }}">
                             <mat-icon>delete</mat-icon>
                         </button>
@@ -69,7 +69,7 @@
                       maxlength="1000"></textarea>
         </mat-form-field>
         <button (click)="maakNotitieAan(notitieTekst.value)" aria-label="Opslaan" color="primary"
-                id="opslaanNotitie_button" mat-mini-fab
+                id="notitieOpslaan_button" mat-mini-fab
                 title="{{ 'actie.opslaan' | translate }}">
             <mat-icon>send</mat-icon>
         </button>

@@ -6,7 +6,7 @@
 <mat-toolbar color="primary">
     <mat-toolbar-row>
         <button mat-mini-fab aria-label="Mijn dashboard"
-                color="primary" id="mijnDashboard_button" routerLink="" title="{{ 'dashboard' | translate }}">
+                color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
             <mat-icon mat-list-icon>home</mat-icon>
         </button>
         <button *ngIf="utilService.isHandset$ |async" [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
@@ -27,16 +27,16 @@
             <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #zakenMenu="matMenu">
-            <button [routerLink]="['/zaken/werkvoorraad']" id="zaken-werkvoorraad_Button" mat-menu-item
+            <button [routerLink]="['/zaken/werkvoorraad']" id="zakenWerkvoorraad_button" mat-menu-item
                     routerLinkActive="active">
                 <mat-icon mat-list-icon>source</mat-icon>
                 <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
             </button>
-            <button [routerLink]="['/zaken/mijn']" id="mijnZaken_button" mat-menu-item routerLinkActive="active">
+            <button [routerLink]="['/zaken/mijn']" id="zakenMijn_button" mat-menu-item routerLinkActive="active">
                 <mat-icon mat-list-icon>folder_shared</mat-icon>
                 <span>{{ 'title.zaken.mijn' | translate }}</span>
             </button>
-            <button [routerLink]="['/zaken/afgehandeld']" id="afgehandeldeZaken_button" mat-menu-item
+            <button [routerLink]="['/zaken/afgehandeld']" id="zakenAfgehandeld_button" mat-menu-item
                     routerLinkActive="active">
                 <mat-icon mat-list-icon>rule_folder</mat-icon>
                 <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
@@ -50,12 +50,12 @@
             <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #takenMenu="matMenu">
-            <button [routerLink]="['/taken/werkvoorraad']" id="taken-werkvoorraad_button" mat-menu-item
+            <button [routerLink]="['/taken/werkvoorraad']" id="takenWerkvoorraad_button" mat-menu-item
                     routerLinkActive="active">
                 <mat-icon mat-list-icon>description</mat-icon>
                 <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
             </button>
-            <button [routerLink]="['/taken/mijn']" id="mijnTaken_button" mat-menu-item routerLinkActive="active">
+            <button [routerLink]="['/taken/mijn']" id="takenMijn_button" mat-menu-item routerLinkActive="active">
                 <mat-icon mat-list-icon>contact_page</mat-icon>
                 <span>{{ 'title.taken.mijn' | translate }}</span>
             </button>

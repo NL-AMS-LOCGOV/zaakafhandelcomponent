@@ -28,7 +28,7 @@
                 <mat-form-field *ngIf="column.filter" appearance="standard" class="full-width">
                     <mat-label>- Kies een {{column.model}} -</mat-label>
                     <mat-select (valueChange)="dataSource.filter(column.filter)" [(value)]="column.filter.value"
-                                [id]="column.model + '_filter'">
+                                [id]="column.filter.id + '_filter'">
                         <mat-option>- Kies een {{column.model}} -</mat-option>
                         <mat-option *ngFor="let value of column.filter.values" [value]="value">
                             {{column.filter.viewValue ? value[column.filter.viewValue] : value}}
