@@ -6,49 +6,56 @@
 <mat-toolbar color="primary">
     <mat-toolbar-row>
         <button mat-mini-fab aria-label="Mijn dashboard"
-                color="primary" routerLink="" title="{{ 'dashboard' | translate }}">
+                color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
             <mat-icon mat-list-icon>home</mat-icon>
         </button>
-        <button *ngIf="utilService.isHandset$ |async" mat-icon-button aria-label="Terug" [disabled]="navigation.backDisabled$ | async"
+        <button *ngIf="utilService.isHandset$ |async" [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
+                mat-icon-button
                 title="{{ 'actie.terug' | translate }}" zacBackButton>
             <mat-icon>arrow_back</mat-icon>
         </button>
 
-        <button mat-mini-fab aria-label="Zaak toevoegen" routerLink="/zaken/create" title="{{ 'actie.zaak.aanmaken' | translate }}">
+        <button aria-label="Zaak toevoegen" id="zaakAanmaken_button" mat-mini-fab routerLink="/zaken/create"
+                title="{{ 'actie.zaak.aanmaken' | translate }}">
             <mat-icon>create_new_folder</mat-icon>
         </button>
 
-        <button mat-flat-button [matMenuTriggerFor]="zakenMenu" aria-label="Menu voor zaken"
+        <button [matMenuTriggerFor]="zakenMenu" aria-label="Menu voor zaken" id="zakenWerklijsten_button"
+                mat-flat-button
                 color="primary">
             {{'zaken' |translate }}
             <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #zakenMenu="matMenu">
-            <button mat-menu-item [routerLink]="['/zaken/werkvoorraad']" routerLinkActive="active">
+            <button [routerLink]="['/zaken/werkvoorraad']" id="zakenWerkvoorraad_button" mat-menu-item
+                    routerLinkActive="active">
                 <mat-icon mat-list-icon>source</mat-icon>
                 <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
             </button>
-            <button mat-menu-item [routerLink]="['/zaken/mijn']" routerLinkActive="active">
+            <button [routerLink]="['/zaken/mijn']" id="zakenMijn_button" mat-menu-item routerLinkActive="active">
                 <mat-icon mat-list-icon>folder_shared</mat-icon>
                 <span>{{ 'title.zaken.mijn' | translate }}</span>
             </button>
-            <button mat-menu-item [routerLink]="['/zaken/afgehandeld']" routerLinkActive="active">
+            <button [routerLink]="['/zaken/afgehandeld']" id="zakenAfgehandeld_button" mat-menu-item
+                    routerLinkActive="active">
                 <mat-icon mat-list-icon>rule_folder</mat-icon>
                 <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
             </button>
         </mat-menu>
 
-        <button mat-flat-button [matMenuTriggerFor]="takenMenu" aria-label="Menu voor zaken"
+        <button [matMenuTriggerFor]="takenMenu" aria-label="Menu voor taken" id="takenWerklijsten_button"
+                mat-flat-button
                 color="primary">
             {{'taken' |translate }}
             <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #takenMenu="matMenu">
-            <button mat-menu-item [routerLink]="['/taken/werkvoorraad']" routerLinkActive="active">
+            <button [routerLink]="['/taken/werkvoorraad']" id="takenWerkvoorraad_button" mat-menu-item
+                    routerLinkActive="active">
                 <mat-icon mat-list-icon>description</mat-icon>
                 <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
             </button>
-            <button mat-menu-item [routerLink]="['/taken/mijn']" routerLinkActive="active">
+            <button [routerLink]="['/taken/mijn']" id="takenMijn_button" mat-menu-item routerLinkActive="active">
                 <mat-icon mat-list-icon>contact_page</mat-icon>
                 <span>{{ 'title.taken.mijn' | translate }}</span>
             </button>
@@ -58,7 +65,7 @@
         <span class="spacer"></span>
 
         <button mat-flat-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
-                color="primary" title="{{ 'toolbar.profiel' | translate }}">
+                color="primary" id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
             <ng-container *ngIf="!(utilService.isTablet$ |async)">
                 {{ ingelogdeMedewerker?.naam }}
             </ng-container>
@@ -68,7 +75,7 @@
         <mat-menu #accountMenu="matMenu">
             <h4 *ngIf="utilService.isTablet$ |async">{{ingelogdeMedewerker}}</h4>
             <mat-divider></mat-divider>
-            <button mat-menu-item aria-label="Uitloggen">
+            <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
                 <mat-icon>logout</mat-icon>
                 <span>{{'actie.uitloggen' | translate}}</span>
             </button>

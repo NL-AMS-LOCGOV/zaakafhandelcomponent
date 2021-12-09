@@ -10,7 +10,8 @@
            cdkDropListOrientation="horizontal"
            (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container [matColumnDef]="column.model" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+        <ng-container *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn"
+                      [matColumnDef]="column.model">
             <th mat-header-cell cdkDrag *matHeaderCellDef
                 [mat-sort-header]="column.sort"
                 [disabled]="!column.sort">
@@ -21,11 +22,13 @@
             </td>
         </ng-container>
 
-        <ng-container [matColumnDef]="column.model + '_filter'" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+        <ng-container *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn"
+                      [matColumnDef]="column.model + '_filter'">
             <th mat-header-cell *matHeaderCellDef>
                 <mat-form-field *ngIf="column.filter" appearance="standard" class="full-width">
                     <mat-label>- Kies een {{column.model}} -</mat-label>
-                    <mat-select [id]="column.filter.viewValue" [(value)]="column.filter.value" (valueChange)="dataSource.filter(column.filter)">
+                    <mat-select (valueChange)="dataSource.filter(column.filter)" [(value)]="column.filter.value"
+                                [id]="column.filter.id + '_filter'">
                         <mat-option>- Kies een {{column.model}} -</mat-option>
                         <mat-option *ngFor="let value of column.filter.values" [value]="value">
                             {{column.filter.viewValue ? value[column.filter.viewValue] : value}}
@@ -40,7 +43,8 @@
         </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button mat-flat-button [matMenuTriggerFor]="menu" (menuClosed)="dataSource.updateColumns()" title="{{ 'filters' | translate }}">
+                <button (menuClosed)="dataSource.updateColumns()" [matMenuTriggerFor]="menu" mat-flat-button
+                        title="{{ 'filters' | translate }}">
                     <mat-icon>view_column</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -55,7 +59,10 @@
                 </mat-menu>
             </th>
             <td mat-cell *matCellDef=" let row">
-                <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()" title="{{ 'actie.zaak.bekijken' | translate }}">
+                <button (click)="$event.stopPropagation()" [id]="'zaakBekijken_' + row.identificatie +'_button'"
+                        [routerLink]="['/zaken', row.uuid]"
+                        mat-flat-button
+                        title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
             </td>
