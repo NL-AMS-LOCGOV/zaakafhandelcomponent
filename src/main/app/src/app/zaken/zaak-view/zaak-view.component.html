@@ -18,7 +18,7 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
-                        <mat-tab label="{{'gegevens.algemeen' | translate}}">
+                        <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
                             <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <zac-static-text [label]="'zaak.identificatie' | translate"
@@ -40,7 +40,8 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-edit-behandelaar [formField]="zaakBehandelaarFormField" (onSave)="editBehandelaar($event)"
+                                    <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
+                                                          (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
                                                           (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
                                     <zac-static-text [label]="'groep' | translate"
@@ -86,20 +87,22 @@
                                     <mat-divider></mat-divider>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit-tekst [formField]="getTextAreaFormField('omschrijving', zaak.omschrijving)"
+                                    <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     (onSave)="editZaak($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
-                                    <zac-edit-tekst [formField]="getTextAreaFormField('toelichting', zaak.toelichting)"
+                                    <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
                                                     (onSave)="editZaak($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'gerelateerdeZaken' | translate}}" *ngIf="zaak.gerelateerdeZaken.length > 0">
+                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0" id="gerelateerdeZaken_tab"
+                                 label="{{'gerelateerdeZaken' | translate}}">
                             <div class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.gerelateerdeZaken">
-                                    <ng-container [matColumnDef]="column" *ngFor="let column of gerelateerdeZaakColumns">
+                                    <ng-container *ngFor="let column of gerelateerdeZaakColumns"
+                                                  [matColumnDef]="column">
                                         <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
                                         <td mat-cell *matCellDef="let row"> {{row[column] | empty}} </td>
                                     </ng-container>
@@ -109,16 +112,20 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'audittrail' | translate}}">
+                        <mat-tab id="historie_tab" label="{{'audittrail' | translate}}">
                             <div class="table-wrapper audit-table">
                                 <table mat-table [dataSource]="auditTrail" matSort>
                                     <ng-container matColumnDef="datum">
-                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'datum' | translate}} </th>
-                                        <td mat-cell *matCellDef="let regel"> {{regel.wijzigingsDatumTijd | datum | empty}} </td>
+                                        <th *matHeaderCellDef mat-header-cell
+                                            mat-sort-header> {{'datum' | translate}} </th>
+                                        <td *matCellDef="let regel"
+                                            mat-cell> {{regel.wijzigingsDatumTijd | datum | empty}} </td>
                                     </ng-container>
                                     <ng-container matColumnDef="gebruiker">
-                                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'door' | translate}} </th>
-                                        <td mat-cell *matCellDef="let regel"> {{regel.gebruikersWeergave |  empty}} </td>
+                                        <th *matHeaderCellDef mat-header-cell
+                                            mat-sort-header> {{'door' | translate}} </th>
+                                        <td *matCellDef="let regel"
+                                            mat-cell> {{regel.gebruikersWeergave |  empty}} </td>
                                     </ng-container>
                                     <ng-container matColumnDef="wijziging">
                                         <th mat-header-cell *matHeaderCellDef> {{'wijziging' | translate}} </th>
@@ -143,13 +150,13 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'betrokkenen' | translate}}">
+                        <mat-tab id="betrokkenen_tab" label="{{'betrokkenen' | translate}}">
                             <div class="table-wrapper">
                                 <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'gegevens.overig'|translate}}">
+                        <mat-tab id="overigeGegevens_tab" label="{{'gegevens.overig'|translate}}">
                             <div class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.eigenschappen">
                                     <caption><h4>{{'eigenschappen' | translate}}</h4></caption>
@@ -189,7 +196,8 @@
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
                     <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>
-                    <mat-slide-toggle fxLayout="row" color="primary" [(ngModel)]="toonAfgerondeTaken"
+                    <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" fxLayout="row"
+                                      id="takenAfgerondeToon_toggle"
                                       (change)="filterTakenOpStatus()">{{ 'toonAfgerondeTaken' | translate }}</mat-slide-toggle>
                 </mat-card-header>
                 <mat-card-content>

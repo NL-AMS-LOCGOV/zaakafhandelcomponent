@@ -10,7 +10,8 @@
            cdkDropListOrientation="horizontal"
            (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container [matColumnDef]="column.model" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+        <ng-container *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn"
+                      [matColumnDef]="column.model">
             <th mat-header-cell cdkDrag *matHeaderCellDef
                 [mat-sort-header]="column.sort"
                 [disabled]="!column.sort">
@@ -22,11 +23,13 @@
         </ng-container>
 
         <ng-container *ngIf="dataSource.hasFilter()">
-            <ng-container [matColumnDef]="column.model + '_filter'" *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+            <ng-container *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn"
+                          [matColumnDef]="column.model + '_filter'">
                 <th mat-header-cell *matHeaderCellDef>
                     <mat-form-field *ngIf="column.filter" appearance="standard" class="full-width">
                         <mat-label>- Kies een {{column.model}} -</mat-label>
-                        <mat-select [id]="column.filter.viewValue" [(value)]="column.filter.value" (valueChange)="dataSource.filter(column.filter)">
+                        <mat-select (valueChange)="dataSource.filter(column.filter)" [(value)]="column.filter.value"
+                                    [id]="column.filter.id + '_select'">
                             <mat-option>- Kies een {{column.model}} -</mat-option>
                             <mat-option *ngFor="let value of column.filter.values" [value]="value">
                                 {{column.filter.viewValue ? value[column.filter.viewValue] : value}}
@@ -42,7 +45,8 @@
         </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button mat-flat-button [matMenuTriggerFor]="menu" (menuClosed)="dataSource.updateColumns()" title="{{ 'filters' | translate }}">
+                <button (menuClosed)="dataSource.updateColumns()" [matMenuTriggerFor]="menu" mat-flat-button
+                        title="{{ 'filters' | translate }}">
                     <mat-icon>view_column</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -58,7 +62,9 @@
             </th>
             <td mat-cell *matCellDef="let row">
                 <button mat-flat-button
-                        [routerLink]="['/taken', row.id]" (click)="$event.stopPropagation()" title="{{ 'actie.taak.bekijken' | translate }}">
+                        (click)="$event.stopPropagation()" [id]="'taakBekijken_' + row.id +'_button'"
+                        [routerLink]="['/taken', row.id]"
+                        title="{{ 'actie.taak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
             </td>
@@ -70,14 +76,17 @@
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
                         <ng-container *ngFor="let column of dataSource.columns | visibleColumn:false">
-                            <zac-static-text fxFlex="33" [label]="column.label | translate" [value]="row[column.model] | translate | empty"></zac-static-text>
+                            <zac-static-text [label]="column.label | translate"
+                                             [value]="row[column.model] | translate | empty"
+                                             fxFlex="33"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>
             </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString; sticky:true"></tr>
+        <tr *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString; sticky:true"
+            mat-header-row></tr>
         <ng-container *ngIf="dataSource.hasFilter()">
             <tr mat-header-row
                 *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString:'_filter'; sticky:true"></tr>

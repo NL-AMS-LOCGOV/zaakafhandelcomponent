@@ -5,11 +5,13 @@
 
 <div class="zoek-wrapper" fxLayout="column" fxLayoutGap="5px">
     <div fxLayoutGap="16px">
-        <label class="form-label" for="radio-groep-selectie" fxFlex="15" fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
+        <label class="form-label" for="werkvoorraadVan_radio" fxFlex="15"
+               fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
 
-        <mat-radio-group id="radio-groep-selectie" aria-labelledby="radio-groep-selectie"
+        <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
                          [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75">
-            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [value]="selectie">
+            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
+                              [value]="selectie">
                 {{ selectie | translate}}
             </mat-radio-button>
         </mat-radio-group>
@@ -17,9 +19,9 @@
     <div fxLayoutGap="16px">
         <label fxFlex="15" fxFlex.lt-md="25"></label>
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
-            <mat-form-field appearance="standard" id="groep-selectie" fxFlex="35" fxFlex.lt-md="75">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'groep' | translate}}</mat-label>
-                <mat-select [(value)]="dataSource.zoekParameters.groep" (valueChange)="zoekZaken()">
+                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.groep" id="groep_filter">
                     <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
@@ -30,9 +32,10 @@
         </ng-container>
 
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
-            <mat-form-field appearance="standard" id="zaaktype-selectie" fxFlex="35" fxFlex.lt-md="75">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'zaaktype' | translate}}</mat-label>
-                <mat-select [(value)]="dataSource.zoekParameters.zaaktype" (valueChange)="zoekZaken()">
+                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.zaaktype"
+                            id="zaaktype_filter">
                     <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
                         {{zaakType.omschrijving}}
@@ -55,14 +58,17 @@
                 <mat-checkbox (change)="$event ? masterToggle() : null"
                               [checked]="selection.hasValue() && isAllSelected()"
                               [indeterminate]="selection.hasValue() && !isAllSelected()"
-                              [aria-label]="checkboxLabel() | translate">
+                              [aria-label]="checkboxLabel() | translate"
+                              id="selectAll_checkbox">
                 </mat-checkbox>
             </th>
             <td mat-cell *matCellDef="let row">
                 <mat-checkbox (click)="$event.stopPropagation()"
                               (change)="$event ? selection.toggle(row) : null"
                               [checked]="selection.isSelected(row)"
-                              [aria-label]="checkboxLabel(row) | translate">
+                              [aria-label]="checkboxLabel(row) | translate"
+                              [id]="row.identificatie +'_checkbox'">
+
                 </mat-checkbox>
             </td>
         </ng-container>
@@ -81,7 +87,8 @@
 
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button mat-flat-button [matMenuTriggerFor]="menu" (menuClosed)="dataSource.updateColumns()" title="{{ 'filters' | translate }}">
+                <button (menuClosed)="dataSource.updateColumns()" [matMenuTriggerFor]="menu" mat-flat-button
+                        title="{{ 'filters' | translate }}">
                     <mat-icon>view_column</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -97,10 +104,14 @@
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
+                        [id]="'zaakBekijken_' + row.identificatie +'_button'"
                         title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
-                <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}" (click)="toekennenAanIngelogdeMedewerker(row, $event)"
+                <button (click)="toekennenAanIngelogdeMedewerker(row, $event)"
+                        [id]="'kenZaakAanMijToe_' + row.identificatie +'_button'"
+                        mat-flat-button
+                        title="{{ 'actie.mij.toekennen' | translate }}"
                         *ngIf="row.rechten[zaakRechten.TOEKENNEN_AAN_MIJ]">
                     <mat-icon>person_add_alt</mat-icon>
                 </button>
@@ -147,13 +158,19 @@
 
 <div [hidden]="!isSelected()">
     <div class="buttons">
-        <button mat-raised-button color="accent" (click)="openVerdelenScherm()" title="{{ 'actie.verdelen' | translate }}">
+        <button (click)="openVerdelenScherm()" color="accent" id="verdelen_button" mat-raised-button
+                title="{{ 'actie.verdelen' | translate }}">
             {{'actie.verdelen' | translate}}
-            <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary">assignment_ind</mat-icon>
+            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"
+                      matBadgeSize="small">assignment_ind
+            </mat-icon>
         </button>
-        <button mat-raised-button color="accent" (click)="openVrijgevenScherm()" title="{{ 'actie.vrijgeven' | translate }}">
+        <button (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button
+                title="{{ 'actie.vrijgeven' | translate }}">
             {{'actie.vrijgeven' | translate}}
-            <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary">clear_all</mat-icon>
+            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"
+                      matBadgeSize="small">clear_all
+            </mat-icon>
         </button>
     </div>
 </div>

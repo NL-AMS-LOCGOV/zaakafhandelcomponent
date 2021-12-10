@@ -42,8 +42,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     taak: Taak;
     menu: MenuItem[] = [];
-    taakBehandelaarFormField;
-    toelichtingFormfield;
+
+    editFormFields: Map<string, any> = new Map<string, any>();
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
@@ -70,7 +70,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
         this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id,
-            (event)=>this.ophalenTaak(event));
+            (event) => this.ophalenTaak(event));
     }
 
     ngOnDestroy() {
@@ -88,18 +88,20 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.menu = [];
         this.taak = taak;
 
-        this.taakBehandelaarFormField = new AutocompleteFormFieldBuilder().id('taakBehandelaar').label('behandelaar')
-                                                                          .value(this.taak.behandelaar).optionLabel('naam')
-                                                                          .options(this.identityService.listMedewerkersInGroep(this.taak.groep.id)).build();
-
-        this.toelichtingFormfield = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(taak.toelichting).build();
+        this.setEditableFormFields();
 
         this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
-
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
 
         this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();
+    }
+
+    setEditableFormFields(): void {
+        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
+                                                                                 .value(this.taak.behandelaar).optionLabel('naam')
+                                                                                 .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
     }
 
     private setupMenu(): void {
