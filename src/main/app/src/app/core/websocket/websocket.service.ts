@@ -36,7 +36,7 @@ export class WebsocketService implements OnDestroy {
 
     private connection$: WebSocketSubject<any>;
 
-    private destroyed$ = new Subject();
+    private destroyed$ = new Subject<void>();
 
     private listeners: EventCallback[][] = [];
 
@@ -73,9 +73,10 @@ export class WebsocketService implements OnDestroy {
     private receive(websocket: string) {
         this.open(websocket).pipe(
             takeUntil(this.destroyed$)
-        ).subscribe(
-            this.onMessage,
-            this.onError);
+        ).subscribe({
+            next: this.onMessage,
+            error: this.onError
+        });
     }
 
     private mock() {
