@@ -9,5 +9,6 @@
 **/node
 **/node_modules
 **/dist
+**/.angular
 wildfly-*
 .editorconfig
