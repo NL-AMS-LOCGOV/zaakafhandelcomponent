@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.shared.model.audit.documenten.EnkelvoudigInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.GebuiksrechtenWijziging;
+import net.atos.client.zgw.shared.model.audit.documenten.ObjectInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.KlantContactWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ResultaatWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.RolMedewerkerWijziging;
@@ -35,6 +36,7 @@ public enum ObjectType {
     ZAAK_INFORMATIEOBJECT("/zaken/api/v1/zaakinformatieobjecten", ZaakInformatieobjectWijziging.class),
     ENKELVOUDIG_INFORMATIEOBJECT("/documenten/api/v1/enkelvoudiginformatieobjecten/", EnkelvoudigInformatieobjectWijziging.class),
     GEBRUIKSRECHTEN("/documenten/api/v1/gebruiksrechten", GebuiksrechtenWijziging.class),
+    OBJECT_INFORMATIEOBJECT("documenten/api/v1/objectinformatieobjecten", ObjectInformatieobjectWijziging.class),
     KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantContactWijziging.class);
 
     private final String url;
