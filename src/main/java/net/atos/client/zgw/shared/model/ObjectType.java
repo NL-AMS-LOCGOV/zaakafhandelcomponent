@@ -25,18 +25,44 @@ import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijzigin
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakobjectWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.ZaakBesluit;
 
 public enum ObjectType {
+
+    /** http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/zaakeigenschappen */
     ZAAKEIGENSCHAP("/zaakeigenschappen/", ZaakEigenschapWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/besluiten/{uuid} */
+    ZAAKBESLUIT("/besluiten/", ZaakBesluit.class),
+
+    /** http://open-zaak/zaken/api/v1/zaken/{uuid} */
     ZAAK("/zaken/api/v1/zaken/", ZaakWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/resultaten/{uuid} */
     RESULTAAT("/zaken/api/v1/resultaten/", ResultaatWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/statussen/{uuid} */
     STATUS("/zaken/api/v1/statussen/", StatusWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/rollen/{uuid} */
     ROL("/zaken/api/v1/rollen/", null),
+
+    /** http://open-zaak/zaken/api/v1/zaakobjecten/{uuid} */
     ZAAKOBJECT("/zaken/api/v1/zaakobjecten", ZaakobjectWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/zaakinformatieobjecten/{uuid} */
     ZAAK_INFORMATIEOBJECT("/zaken/api/v1/zaakinformatieobjecten", ZaakInformatieobjectWijziging.class),
+
+    /** http://open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/{uuid} */
     ENKELVOUDIG_INFORMATIEOBJECT("/documenten/api/v1/enkelvoudiginformatieobjecten/", EnkelvoudigInformatieobjectWijziging.class),
+
+    /** http://open-zaak/documenten/api/v1/gebruiksrechten/{uuid} */
     GEBRUIKSRECHTEN("/documenten/api/v1/gebruiksrechten", GebuiksrechtenWijziging.class),
+
+    /** http://open-zaak/documenten/api/v1/objectinformatieobjecten/{uuid} */
     OBJECT_INFORMATIEOBJECT("documenten/api/v1/objectinformatieobjecten", ObjectInformatieobjectWijziging.class),
+
+    /** http://open-zaak/zaken/api/v1/klantcontacten/{uuid} */
     KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantContactWijziging.class);
 
     private final String url;
