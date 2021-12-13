@@ -27,12 +27,14 @@ export class Advies extends AbstractFormulier {
         ];
     }
 
-    initBehandelForm() {
+    initBehandelForm(afgerond: boolean) {
         this.form = [
             [new ReadonlyFormFieldBuilder().id(Fields.VRAAG).label(Fields.VRAAG).value(this.getDataElement(Fields.VRAAG)).build()],
-            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).build()],
-            [new FileFormFieldBuilder().id(Fields.BIJLAGE).label(Fields.BIJLAGE).config(this.fileUploadConfig()).build()]
+            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).readonly(afgerond)
+                                           .build()],
+            [new FileFormFieldBuilder().id(Fields.BIJLAGE).label(Fields.BIJLAGE).config(this.fileUploadConfig()).readonly(afgerond).build()]
         ];
+
     }
 
     fileUploadConfig(): FileFieldConfig {

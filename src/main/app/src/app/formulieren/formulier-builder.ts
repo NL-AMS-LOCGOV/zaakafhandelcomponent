@@ -8,6 +8,7 @@ import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
 import {Groep} from '../identity/model/groep';
 import {Observable} from 'rxjs';
+import {TaakStatus} from '../taken/model/taak-status.enum';
 
 export class FormulierBuilder {
 
@@ -28,7 +29,7 @@ export class FormulierBuilder {
     behandelForm(taak: Taak): FormulierBuilder {
         this._formulier.taak = taak;
         this._formulier.dataElementen = taak.taakdata;
-        this._formulier.initBehandelForm();
+        this._formulier.initBehandelForm(TaakStatus.Afgerond === taak.status);
         return this;
     }
 

@@ -31,6 +31,7 @@ import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-c
 import {Medewerker} from '../../identity/model/medewerker';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
+import {TaakStatus} from '../model/taak-status.enum';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -90,7 +91,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.setEditableFormFields();
 
-        this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
+        if (TaakStatus.Afgerond !== this.taak.status) {
+            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
+        }
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
 
         this.utilService.setTitle('title.taak', {taak: taak.naam});
@@ -110,7 +113,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     onFormPartial(formGroup: FormGroup): void {
         this.websocketService.suspendListener(this.taakListener);
-        this.takenService.updateTaakdata(this.taakdata(formGroup)).subscribe(taak => {
+        this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
             this.init(taak);
         });
@@ -118,25 +121,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            this.takenService.updateTaakdata(this.taakdata(formGroup)).subscribe(taak => {
+            this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.opgeslagen');
-                console.log('takenService.complete');
                 this.takenService.complete(this.taak).subscribe(taak => {
                     this.utilService.openSnackbar('msg.taak.afgerond');
                     this.navigation.back();
                 });
             });
         }
-    }
-
-    taakdata(formGroup: FormGroup): Taak {
-        const putData: Taak = new Taak();
-        putData.id = this.taak.id;
-        putData.taakdata = {};
-        Object.keys(formGroup.controls).forEach((key) => {
-            putData.taakdata[key] = formGroup.controls[key].value;
-        });
-        return putData;
     }
 
     assignToMe(): void {
