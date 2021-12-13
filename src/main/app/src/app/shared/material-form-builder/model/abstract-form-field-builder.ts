@@ -24,6 +24,11 @@ export abstract class AbstractFormFieldBuilder {
         return this;
     }
 
+    readonly(readonly: boolean): this {
+        this.formField.readonly = readonly;
+        return this;
+    }
+
     value(value: any): this {
         this.formField.formControl.setValue(value);
         return this;

@@ -11,6 +11,7 @@ export abstract class AbstractFormField {
     id: string;
     label: string;
     required: boolean;
+    readonly: boolean;
 
     private readonly _formControl: FormControl = new FormControl();
     private _hint: FormFieldHint;

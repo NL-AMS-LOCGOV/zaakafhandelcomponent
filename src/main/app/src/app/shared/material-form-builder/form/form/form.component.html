@@ -13,7 +13,7 @@
         </div>
     </ng-container>
 
-    <div fxLayout="row" fxLayoutAlign="start">
+    <div fxLayout="row" fxLayoutAlign="start" *ngIf="config">
         <button mat-flat-button color="accent"
                 *ngIf="config.partialButtonText || config.partialButtonIcon"
                 [disabled]="formGroup.invalid"

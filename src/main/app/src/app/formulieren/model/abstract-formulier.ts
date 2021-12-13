@@ -17,6 +17,7 @@ export abstract class AbstractFormulier {
     planItem: PlanItem;
     taak: Taak;
     dataElementen: {};
+    afgerond: boolean;
 
     abstract form: Array<AbstractFormField[]>;
 
@@ -24,7 +25,7 @@ export abstract class AbstractFormulier {
 
     abstract initStartForm();
 
-    abstract initBehandelForm();
+    abstract initBehandelForm(afgerond: boolean);
 
     getPlanItem(formGroup: FormGroup): PlanItem {
         this.planItem.groep = formGroup.controls['groep']?.value;
@@ -48,7 +49,9 @@ export abstract class AbstractFormulier {
         const dataElementen: {} = {};
 
         Object.keys(formGroup.controls).forEach((key) => {
-            dataElementen[key] = formGroup.controls[key]?.value;
+            if (key !== 'groep') {
+                dataElementen[key] = formGroup.controls[key]?.value;
+            }
         });
 
         return dataElementen;

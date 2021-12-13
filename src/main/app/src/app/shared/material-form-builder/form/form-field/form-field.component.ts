@@ -6,6 +6,8 @@
 import {AfterViewInit, Component, ComponentFactoryResolver, Input, ViewChild} from '@angular/core';
 import {FormItem} from '../../model/form-item';
 import {FormFieldDirective} from './form-field.directive';
+import {ReadonlyFormFieldBuilder} from '../../form-components/readonly/readonly-form-field-builder';
+import {ReadonlyComponent} from '../../form-components/readonly/readonly.component';
 
 @Component({
     selector: 'mfb-form-field',
@@ -25,6 +27,11 @@ export class FormFieldComponent implements AfterViewInit {
     }
 
     loadComponent() {
+        if (this.field.data.readonly) {
+            this.field = new FormItem(ReadonlyComponent,
+                new ReadonlyFormFieldBuilder().id(this.field.data.id).label(this.field.data.label).value(this.field.data.formControl.value)
+                                              .build());
+        }
         // create component with ComponentFactory
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.field.component);
         const componentRef = this.formField.viewContainerRef.createComponent(componentFactory);

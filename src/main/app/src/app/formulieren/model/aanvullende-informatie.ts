@@ -28,13 +28,15 @@ export class AanvullendeInformatie extends AbstractFormulier {
         ];
     }
 
-    initBehandelForm() {
+    initBehandelForm(afgerond: boolean) {
         this.form = [
             [new ReadonlyFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).build()],
             [new TextareaFormFieldBuilder().id(Fields.OPGEVRAAGDEINFO).label(Fields.OPGEVRAAGDEINFO).value(this.getDataElement(Fields.OPGEVRAAGDEINFO))
-                                           .validators(Validators.required).build()],
-            [new DateFormFieldBuilder().id(Fields.DATUMGEVRAAGD).label(Fields.DATUMGEVRAAGD).build(),
-                new DateFormFieldBuilder().id(Fields.DATUMGELEVERD).label(Fields.DATUMGELEVERD).build()]
+                                           .validators(Validators.required).readonly(afgerond).build()],
+            [new DateFormFieldBuilder().id(Fields.DATUMGEVRAAGD).label(Fields.DATUMGEVRAAGD).value(this.getDataElement(Fields.DATUMGEVRAAGD)).readonly(afgerond)
+                                       .build(),
+                new DateFormFieldBuilder().id(Fields.DATUMGELEVERD).label(Fields.DATUMGELEVERD).value(this.getDataElement(Fields.DATUMGELEVERD))
+                                          .readonly(afgerond).build()]
         ];
     }
 
