@@ -9,6 +9,9 @@ import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.client.zgw.zrc.model.Status;
 
+/**
+ * StatusWijziging
+ */
 public class StatusWijziging extends AuditWijziging<Status> {
 
     @Override
