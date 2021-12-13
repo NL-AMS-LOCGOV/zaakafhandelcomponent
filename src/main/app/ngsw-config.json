@@ -9,8 +9,8 @@
       "resources": {
         "files": [
           "/favicon.ico",
-          "/index.html",
-          "/manifest.webmanifest",
+          "!/index.html",
+          "!/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]
@@ -25,6 +25,20 @@
           "/assets/**",
           "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api",
+      "urls": [
+        "/rest/*",
+        "?state*"
+      ],
+      "cacheConfig": {
+        "maxSize": 0,
+        "maxAge": "0u",
+        "strategy": "freshness"
       }
     }
   ]
