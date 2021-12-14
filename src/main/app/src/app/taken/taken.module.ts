@@ -12,13 +12,15 @@ import {ZakenModule} from '../zaken/zaken.module';
 import {TakenMijnComponent} from './taken-mijn/taken-mijn.component';
 import {TakenWerkvoorraadComponent} from './taken-werkvoorraad/taken-werkvoorraad.component';
 import {TakenVerdelenDialogComponent} from './taken-verdelen-dialog/taken-verdelen-dialog.component';
+import {TakenVrijgevenDialogComponent} from './taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 
 @NgModule({
     declarations: [
         TaakViewComponent,
         TakenWerkvoorraadComponent,
         TakenMijnComponent,
-        TakenVerdelenDialogComponent
+        TakenVerdelenDialogComponent,
+        TakenVrijgevenDialogComponent
     ],
     imports: [
         SharedModule,

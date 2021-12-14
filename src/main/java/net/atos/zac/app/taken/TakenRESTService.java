@@ -130,6 +130,15 @@ public class TakenRESTService {
         });
     }
 
+    @PUT
+    @Path("vrijgeven")
+    public void releaseTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
+            final TaskInfo taskInfo = flowableService.assignTask(task.taakId, null);
+            taakBehandelaarGewijzigd(taskInfo, task.zaakUuid);
+        });
+    }
+
     @PATCH
     @Path("assign")
     public RESTTaak assignTaak(final RESTTaak restTaak) {

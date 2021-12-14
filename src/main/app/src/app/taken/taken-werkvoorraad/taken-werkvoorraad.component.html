@@ -141,11 +141,20 @@
 </div>
 
 <div [hidden]="!isSelected()">
-    <button (click)="openVerdelenScherm()" class="verdelenBtn" color="accent" id="verdelen_button" mat-raised-button
-            title="{{ 'actie.verdelen' | translate }}">
-        {{'actie.verdelen' | translate}}
-        <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected()
-                  matBadgeColor="primary">assignment_ind
-        </mat-icon>
-    </button>
+    <div class="buttons">
+        <button (click)="openVerdelenScherm()" color="accent" id="verdelen_button" mat-raised-button
+                title="{{ 'actie.verdelen' | translate }}">
+            {{'actie.verdelen' | translate}}
+            <mat-icon matBadgeSize="small" [matBadgeHidden]="!isSelected()" [matBadge]=countSelected()
+                      matBadgeColor="primary">assignment_ind
+            </mat-icon>
+        </button>
+        <button (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button
+                title="{{ 'actie.vrijgeven' | translate }}">
+            {{'actie.vrijgeven' | translate}}
+            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"
+                      matBadgeSize="small">clear_all
+            </mat-icon>
+        </button>
+    </div>
 </div>
