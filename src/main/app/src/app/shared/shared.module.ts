@@ -36,6 +36,7 @@ import {OutsideClickDirective} from './directives/outside-click.directive';
 import {ReadMoreComponent} from './read-more/read-more.component';
 import {EditBehandelaarComponent} from './edit/edit-behandelaar/edit-behandelaar.component';
 import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
+import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
         OutsideClickDirective,
         DatumOverschredenComponent,
         EditBehandelaarComponent,
+        EditGroepComponent,
         EditTekstComponent
     ],
     imports: [
@@ -93,6 +95,7 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
         BehandelaarVeldComponent,
         DatumOverschredenComponent,
         EditBehandelaarComponent,
+        EditGroepComponent,
         EditTekstComponent
     ],
     providers: [

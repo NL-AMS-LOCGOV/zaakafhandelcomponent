@@ -151,6 +151,14 @@ public class TakenRESTService {
     }
 
     @PATCH
+    @Path("assign/group")
+    public RESTTaak assignGroup(final RESTTaak restTaak) {
+        final Task task = flowableService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
+        taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
+        return taakConverter.convertTaskInfo(task);
+    }
+
+    @PATCH
     @Path("")
     public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
 

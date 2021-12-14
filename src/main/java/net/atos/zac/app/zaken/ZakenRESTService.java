@@ -26,6 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
@@ -34,8 +35,10 @@ import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -236,6 +239,20 @@ public class ZakenRESTService {
         return zaakOverzichtConverter.convert(zaak);
     }
 
+    @PUT
+    @Path("toekennen/groep")
+    public RESTZaak groepToekennen(final RESTZaakToekennenGegevens restZaakToekennenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(restZaakToekennenGegevens.uuid);
+        final List<Rol<?>> rollen = zrcClientService.listRollen(zaak.getUrl());
+
+        final Group group = flowableService.readGroup(restZaakToekennenGegevens.groepId);
+        rollen.add(bepaalRolGroep(group, zaak));
+
+        zrcClientService.updateRollen(zaak.getUrl(), rollen);
+
+        return zaakConverter.convert(zrcClientService.readZaak(restZaakToekennenGegevens.uuid));
+    }
+
     private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
             final boolean getOpenZaken) {
         final TableRequest tableState = TableRequest.getTableState(request);
@@ -291,6 +308,14 @@ public class ZakenRESTService {
         }
 
         return zaakListParameters;
+    }
+
+    private RolOrganisatorischeEenheid bepaalRolGroep(final Group group, final Zaak zaak) {
+        final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
+        groep.setIdentificatie(group.getId());
+        groep.setNaam(group.getName());
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
     }
 
     private RolMedewerker bepaalRolMedewerker(final User user, final Zaak zaak) {

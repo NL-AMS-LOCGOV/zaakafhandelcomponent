@@ -90,6 +90,16 @@ export class ZakenService {
         );
     }
 
+    toekennenGroep(zaak: Zaak): Observable<Zaak> {
+        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        zaakBody.uuid = zaak.uuid;
+        zaakBody.groepId = zaak.groep?.id;
+
+        return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, zaakBody).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     verdelen(zaken: ZaakOverzicht[], medewerker: Medewerker): Observable<void> {
         const zaakBody: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         zaakBody.uuids = zaken.map(zaak => zaak.uuid);

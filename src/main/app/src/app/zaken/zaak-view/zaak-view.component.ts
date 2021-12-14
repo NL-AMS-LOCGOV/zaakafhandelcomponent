@@ -38,6 +38,7 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
+import {Groep} from '../../identity/model/groep';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -163,6 +164,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
                                                                                  .value(this.zaak.behandelaar).optionLabel('naam')
                                                                                  .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
+                                                                           .value(this.zaak.groep).optionLabel('naam')
+                                                                           .options(this.identityService.listGroepen()).build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving').value(this.zaak.omschrijving).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.zaak.toelichting).build());
     }
@@ -215,6 +219,15 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         } else {
             this.vrijgeven();
         }
+    }
+
+    editGroep(groep: Groep): void {
+        this.zaak.groep = groep;
+
+        this.zakenService.toekennenGroep(this.zaak).subscribe(zaak => {
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
+            this.init(zaak);
+        });
     }
 
     editZaak(value: string, field: string): void {

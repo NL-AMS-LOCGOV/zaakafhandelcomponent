@@ -44,8 +44,8 @@
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
                                                           (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
-                                    <zac-static-text [label]="'groep' | translate"
-                                                     [value]="zaak.groep| empty:'naam'"></zac-static-text>
+                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
+                                                    (onSave)="editGroep($event)"></zac-edit-groep>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

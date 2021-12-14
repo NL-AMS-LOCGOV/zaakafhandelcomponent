@@ -31,6 +31,8 @@ import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
+import org.flowable.identitylink.api.IdentityLinkInfo;
+import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.IdmIdentityService;
 import org.flowable.idm.api.User;
@@ -223,6 +225,29 @@ public class FlowableService {
         } else {
             cmmnTaskService.unclaim(taskId);
         }
+        return readTask(taskId);
+    }
+
+    /**
+     * Assign task to a group
+     *
+     * @param taskId  Id of the task to assign
+     * @param groupId Id of the new group
+     * @return Assigned Task
+     */
+    public Task assignTaskToGroup(final String taskId, final String groupId) {
+        final Task task = readTask(taskId);
+        final String currentGroupId = task.getIdentityLinks().stream()
+                .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
+                .findAny()
+                .map(IdentityLinkInfo::getGroupId)
+                .orElse(null);
+
+        if (currentGroupId != null) {
+            cmmnTaskService.deleteGroupIdentityLink(taskId, currentGroupId, IdentityLinkType.CANDIDATE);
+        }
+        cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
+
         return readTask(taskId);
     }
 

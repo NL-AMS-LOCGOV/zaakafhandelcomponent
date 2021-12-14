@@ -11,4 +11,6 @@ public class RESTZaakToekennenGegevens {
     public UUID uuid;
 
     public String behandelaarGebruikersnaam;
+
+    public String groepId;
 }
