@@ -16,7 +16,7 @@ import javax.json.bind.annotation.JsonbDateFormat;
 /**
  * KLANTCONTACT
  */
-public class KlantContact {
+public class Klantcontact {
 
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.
@@ -62,7 +62,7 @@ public class KlantContact {
      */
     private String toelichting;
 
-    public KlantContact() {
+    public Klantcontact() {
     }
 
 

@@ -9,10 +9,11 @@ import java.lang.reflect.Type;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.EnkelvoudigInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.GebuiksrechtenWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.ObjectInformatieobjectWijziging;
-import net.atos.client.zgw.shared.model.audit.zaken.KlantContactWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.KlantcontactWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ResultaatWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.RolMedewerkerWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.RolNatuurlijkPersoonWijziging;
@@ -20,20 +21,27 @@ import net.atos.client.zgw.shared.model.audit.zaken.RolNietNatuurlijkPersoonWijz
 import net.atos.client.zgw.shared.model.audit.zaken.RolOrganisatorischeEenheidWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.RolVestigingWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.StatusWijziging;
+import net.atos.client.zgw.shared.model.audit.zaken.ZaakBesluitWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakEigenschapWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakobjectWijziging;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
-import net.atos.client.zgw.zrc.model.ZaakBesluit;
+import net.atos.client.zgw.zrc.model.Rol;
 
 public enum ObjectType {
 
-    /** http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/zaakeigenschappen */
+    /**
+     * LETOP: Volgorde is belangrijk. ZAAKEIGENSCHAP moet boven ZAAK; ZAAK url matcht ook op ZAAKEIGENSCHAP url
+     * http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/zaakeigenschappen
+     */
     ZAAKEIGENSCHAP("/zaakeigenschappen/", ZaakEigenschapWijziging.class),
 
-    /** http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/besluiten/{uuid} */
-    ZAAKBESLUIT("/besluiten/", ZaakBesluit.class),
+    /**
+     * LETOP: Volgorde is belangrijk. ZAAKBESLUIT moet boven ZAAK; ZAAK url matcht ook op ZAAKBESLUIT url
+     * http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/besluiten/{uuid}
+     */
+    ZAAKBESLUIT("/besluiten/", ZaakBesluitWijziging.class),
 
     /** http://open-zaak/zaken/api/v1/zaken/{uuid} */
     ZAAK("/zaken/api/v1/zaken/", ZaakWijziging.class),
@@ -63,13 +71,13 @@ public enum ObjectType {
     OBJECT_INFORMATIEOBJECT("documenten/api/v1/objectinformatieobjecten", ObjectInformatieobjectWijziging.class),
 
     /** http://open-zaak/zaken/api/v1/klantcontacten/{uuid} */
-    KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantContactWijziging.class);
+    KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantcontactWijziging.class);
 
     private final String url;
 
     public final Type auditClass;
 
-    ObjectType(final String url, Type classType) {
+    ObjectType(final String url, final Class<? extends AuditWijziging<?>> classType) {
         this.url = url;
         this.auditClass = classType;
     }
@@ -83,7 +91,7 @@ public enum ObjectType {
         throw new RuntimeException(String.format("URL '%s' wordt niet ondersteund", url));
     }
 
-    public Type getAuditClass(final BetrokkeneType betrokkenetype) {
+    public Class<? extends AuditWijziging<? extends Rol<?>>> getAuditClass(final BetrokkeneType betrokkenetype) {
         switch (betrokkenetype) {
             case VESTIGING:
                 return RolVestigingWijziging.class;

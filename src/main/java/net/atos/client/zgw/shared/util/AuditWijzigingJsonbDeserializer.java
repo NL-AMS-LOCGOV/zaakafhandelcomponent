@@ -32,7 +32,7 @@ public class AuditWijzigingJsonbDeserializer implements JsonbDeserializer<AuditW
             return null;
         }
 
-        final ObjectType type = ObjectType.getObjectType(waardeObject.get("url").toString());
+        final ObjectType type = ObjectType.getObjectType(waardeObject.getJsonString("url").getString());
         if (type == ObjectType.ROL) {
             final BetrokkeneType betrokkenetype = BetrokkeneType.fromValue(waardeObject.getJsonString("betrokkeneType").getString());
             return JSONB.fromJson(wijzigingObject.toString(), type.getAuditClass(betrokkenetype));

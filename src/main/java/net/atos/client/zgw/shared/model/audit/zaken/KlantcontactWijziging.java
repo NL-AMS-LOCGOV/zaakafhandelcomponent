@@ -7,9 +7,9 @@ package net.atos.client.zgw.shared.model.audit.zaken;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
-import net.atos.client.zgw.zrc.model.KlantContact;
+import net.atos.client.zgw.zrc.model.Klantcontact;
 
-public class KlantContactWijziging extends AuditWijziging<KlantContact> {
+public class KlantcontactWijziging extends AuditWijziging<Klantcontact> {
 
     @Override
     public ObjectType getObjectType() {
