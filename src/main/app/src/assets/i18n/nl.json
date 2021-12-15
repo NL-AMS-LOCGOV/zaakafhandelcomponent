@@ -10,6 +10,7 @@
   "title.taak.wijzigen": "Taak wijzigen | {{taak}}",
   "title.taken.mijn": "Mijn taken",
   "title.taken.werkvoorraad": "Taken-werkvoorraad",
+  "title.taken.vrijgeven": "Taken vrijgeven",
   "title.zaak": "Zaak | {{zaak}}",
   "title.zaak.aanmaken": "Zaak aanmaken",
   "title.zaak.toekennen": "Zaak toekennen | {{zaak}}",
@@ -193,6 +194,10 @@
   "msg.verdeeld.taak": "De taak is verdeeld",
   "msg.verdelen.taken": "{{aantal}} taken verdelen",
   "msg.verdeeld.taken": "{{aantal}} taken zijn verdeeld",
+  "msg.vrijgeven.taak": "Taak vrijgeven?",
+  "msg.vrijgeven.taken": "{{aantal}} taken vrijgeven?",
+  "msg.vrijgegeven.taken": "{{aantal}} taken zijn vrijgegeven",
+  "msg.vrijgegeven.taak": "De taak is vrijgegeven",
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven"
 }

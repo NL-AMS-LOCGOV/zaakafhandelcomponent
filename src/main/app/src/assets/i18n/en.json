@@ -10,6 +10,7 @@
   "title.taak.wijzigen": "Edit task | {{taak}}",
   "title.taken.mijn": "My tasks",
   "title.taken.werkvoorraad": "Tasks queue",
+  "title.taken.vrijgeven": "Release tasks",
   "title.zaak": "Case | {{zaak}}",
   "title.zaak.aanmaken": "Create case",
   "title.zaak.toekennen": "Assign case | {{zaak}}",
@@ -193,6 +194,10 @@
   "msg.verdeeld.taak": "The task has been allocated",
   "msg.verdelen.taken": "Allocate {{aantal}} tasks",
   "msg.verdeeld.taken": "{{aantal}} tasks have been allocated",
+  "msg.vrijgeven.taak": "Release task?",
+  "msg.vrijgeven.taken": "Release {{aantal}} tasks?",
+  "msg.vrijgegeven.taken": "{{aantal}} tasks have been released",
+  "msg.vrijgegeven.taak": "The task has been released",
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
   "msg.zaak.vrijgegeven": "The case has been released"
 }

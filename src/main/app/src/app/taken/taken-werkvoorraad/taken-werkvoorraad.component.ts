@@ -22,6 +22,7 @@ import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
+import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -125,7 +126,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     openVerdelenScherm() {
         let taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
-            width: '300px',
+            width: '350px',
             data: taken
         });
 
@@ -135,6 +136,25 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                     this.utilService.openSnackbar('msg.verdeeld.taak');
                 } else {
                     this.utilService.openSnackbar('msg.verdeeld.taken', {aantal: this.selection.selected.length});
+                }
+                this.findTaken();
+            }
+        });
+    }
+
+    openVrijgevenScherm() {
+        let taken = this.selection.selected;
+        const dialogRef = this.dialog.open(TakenVrijgevenDialogComponent, {
+            width: '350px',
+            data: taken
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (this.selection.selected.length === 1) {
+                    this.utilService.openSnackbar('msg.vrijgegeven.taak');
+                } else {
+                    this.utilService.openSnackbar('msg.vrijgegeven.taken', {aantal: this.selection.selected.length});
                 }
                 this.findTaken();
             }
