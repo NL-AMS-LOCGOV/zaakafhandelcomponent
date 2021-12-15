@@ -174,11 +174,13 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
+        final Map<String, String> taakdata = flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
+
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertTaskInfo(task);
+
+        return taakConverter.convertTaskInfo(task, taakdata);
     }
 
     private void taakBehandelaarGewijzigd(final TaskInfo taskInfo, final UUID zaakUuid) {

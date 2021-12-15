@@ -33,6 +33,7 @@ import {FileComponent} from './form-components/file/file.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {PipesModule} from '../pipes/pipes.module';
 
 @NgModule({
     declarations: [
@@ -65,7 +66,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
         MatMomentDateModule,
         MatDatepickerModule,
         MatAutocompleteModule,
-        TranslateModule
+        TranslateModule,
+        PipesModule
     ],
     exports: [
         FormComponent,
