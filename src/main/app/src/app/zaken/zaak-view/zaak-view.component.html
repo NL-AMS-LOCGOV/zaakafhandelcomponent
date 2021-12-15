@@ -118,14 +118,20 @@
                                     <ng-container matColumnDef="datum">
                                         <th *matHeaderCellDef mat-header-cell
                                             mat-sort-header> {{'datum' | translate}} </th>
-                                        <td *matCellDef="let regel"
-                                            mat-cell> {{regel.wijzigingsDatumTijd | datum | empty}} </td>
+                                        <td *matCellDef="let regel" mat-cell>
+                                            <div matTooltip="{{regel.wijzigingsDatumTijd | datum:'short'}}">
+                                                {{regel.wijzigingsDatumTijd | datum | empty}}
+                                            </div>
+                                        </td>
                                     </ng-container>
                                     <ng-container matColumnDef="gebruiker">
                                         <th *matHeaderCellDef mat-header-cell
                                             mat-sort-header> {{'door' | translate}} </th>
-                                        <td *matCellDef="let regel"
-                                            mat-cell> {{regel.gebruikersWeergave |  empty}} </td>
+                                        <td *matCellDef="let regel" mat-cell>
+                                            <div matTooltip="{{regel.applicatieWeergave}}">
+                                                {{regel.gebruikersWeergave |  empty}}
+                                            </div>
+                                        </td>
                                     </ng-container>
                                     <ng-container matColumnDef="wijziging">
                                         <th mat-header-cell *matHeaderCellDef> {{'wijziging' | translate}} </th>

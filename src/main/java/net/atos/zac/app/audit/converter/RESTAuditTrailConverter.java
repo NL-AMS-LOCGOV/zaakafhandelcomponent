@@ -13,8 +13,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
 import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
@@ -51,14 +49,14 @@ public class RESTAuditTrailConverter {
         return rest;
     }
 
-    private RESTWijziging convertWijziging(AuditTrailRegel regel) {
+    private RESTWijziging convertWijziging(final AuditTrailRegel regel) {
         final AuditWijziging<?> wijziging = regel.getWijzigingen();
         for (AbstractRESTAuditWijzigingConverter<?> wijzigingConverter : wijzigingConverterInstance) {
             if (wijzigingConverter.supports(wijziging.getObjectType())) {
                 return wijzigingConverter.convert(wijziging);
             }
         }
-        throw new NotImplementedException("No converter supports: " + wijziging.getObjectType());
+        return new RESTWijziging(String.format("Onbekend (%s): %s", regel.getResource(), regel.getActieWeergave()));
     }
 
 }
