@@ -211,12 +211,16 @@ public class ZRCClientService implements Caching {
             allZaken.addAll(results.getResults());
         }
 
-        final List<Zaak> zakenOnPage = allZaken.stream()
+        final List<Zaak> openZaken = allZaken.stream()
                 .filter(zaak -> zaak.getArchiefnominatie() == null)
+                .collect(Collectors.toList());
+
+        final List<Zaak> zakenOnPage = openZaken.stream()
                 .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
                 .limit(PAGE_SIZE_OPEN_ZAAK)
                 .collect(Collectors.toList());
-        return new Results<Zaak>(zakenOnPage, allZaken.size());
+
+        return new Results<Zaak>(zakenOnPage, openZaken.size());
     }
 
     /**

@@ -1,0 +1,21 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 mat-dialog-title>{{'title.taken.vrijgeven' | translate}}</h1>
+
+<div mat-dialog-content>
+    <p *ngIf="data.length == 1">{{'msg.vrijgeven.taak' | translate }}</p>
+    <p *ngIf="data.length != 1">{{ 'msg.vrijgeven.taken' | translate:{aantal: data.length} }}</p>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="loading" mat-button color="primary" (click)="vrijgeven()" id="taakVrijgeven_button">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.vrijgeven' | translate}}
+    </button>
+    <button [disabled]="loading" mat-button (click)="close()"
+            id="dialogClose_button">{{'actie.annuleren' | translate}}</button>
+</div>

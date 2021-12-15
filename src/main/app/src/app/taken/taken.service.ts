@@ -106,4 +106,12 @@ export class TakenService {
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
+
+    vrijgeven(taken: Taak[]): Observable<void> {
+        const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
+        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUUID}));
+        return this.http.put<void>(`${this.basepath}/vrijgeven`, taakBody).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
 }
