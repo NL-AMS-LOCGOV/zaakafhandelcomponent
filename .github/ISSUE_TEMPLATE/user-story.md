@@ -13,5 +13,15 @@ assignees: ''
 
 ***Zodat*** 
 
-**Acceptance criteria:**
+***
+
+### Acceptance criteria:
 -
+
+***
+### Prioriteit
+
+- [ ] Must haves
+- [ ] Should haves
+- [ ] Could haves
+- [ ] Won't haves
