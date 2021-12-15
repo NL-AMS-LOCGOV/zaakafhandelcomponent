@@ -14,7 +14,10 @@ export class DatumPipe implements PipeTransform {
 
     transform(value: Date | moment.Moment | string, dateFormat?: string): any {
         if (value) {
-            return moment(value, moment.ISO_8601).locale(this.locale).format(this.getFormat(dateFormat));
+            let m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
+            if (m.isValid()) {
+                return m.format(this.getFormat(dateFormat));
+            }
         }
         return value;
     }

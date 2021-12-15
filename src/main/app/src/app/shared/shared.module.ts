@@ -11,13 +11,11 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {SideNavComponent} from './side-nav/side-nav.component';
 import {RouterModule} from '@angular/router';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {EmptyPipe} from './pipes/empty.pipe';
 import {FormsModule} from '@angular/forms';
 import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 import {ColumnToStringPipe} from './dynamic-table/pipes/column-to-string.pipe';
 import {VisibleColumnPipe} from './dynamic-table/pipes/visible-column.pipe';
 import {FilterColumnPipe} from './dynamic-table/pipes/filter-column.pipe';
-import {DatumPipe} from './pipes/datum.pipe';
 import {BackButtonDirective} from './navigation/back-button.directive';
 import {DynamicPipe} from './dynamic-table/pipes/dynamic.pipe';
 import {StoreModule} from '@ngrx/store';
@@ -30,19 +28,16 @@ import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.comp
 import {DatumOverschredenComponent} from './datum-overschreden/datum-overschreden.component';
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
-import {DatumOverschredenPipe} from './pipes/datumOverschreden.pipe';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
 import {OutsideClickDirective} from './directives/outside-click.directive';
 import {ReadMoreComponent} from './read-more/read-more.component';
 import {EditBehandelaarComponent} from './edit/edit-behandelaar/edit-behandelaar.component';
 import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
+import {PipesModule} from './pipes/pipes.module';
 
 @NgModule({
     declarations: [
         SideNavComponent,
-        EmptyPipe,
-        DatumPipe,
-        DatumOverschredenPipe,
         NoStickyColumnPipe,
         ColumnToStringPipe,
         VisibleColumnPipe,
@@ -62,6 +57,7 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
     imports: [
         BrowserAnimationsModule,
         RouterModule,
+        PipesModule,
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
         StoreModule.forFeature('shared', {
@@ -76,9 +72,6 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
         DragDropModule,
         FlexLayoutModule,
         SideNavComponent,
-        EmptyPipe,
-        DatumPipe,
-        DatumOverschredenPipe,
         NoStickyColumnPipe,
         ColumnToStringPipe,
         VisibleColumnPipe,
@@ -87,6 +80,7 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
         DynamicPipe,
         StaticTextComponent,
         ReadMoreComponent,
+        PipesModule,
         MaterialModule,
         MaterialFormBuilderModule,
         StatusLabelComponent,

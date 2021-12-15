@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormItem} from '../../model/form-item';
 import {FormGroup} from '@angular/forms';
 import {FieldType} from '../../model/field-type.enum';
@@ -16,22 +16,31 @@ import {MaterialFormBuilderService} from '../../material-form-builder.service';
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.less']
 })
-export class FormComponent implements OnInit {
+export class FormComponent {
 
-    @Input() formFields: Array<AbstractFormField[]>;
-    @Input() config: FormConfig;
+    @Input() set formFields(formfields: Array<AbstractFormField[]>) {
+        this.refreshFormfields(formfields);
+    }
+
+    @Input() set config(config: FormConfig) {
+        this._config = config;
+    };
+
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
     @Output() formPartial: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+
     data: Array<FormItem[]>;
-    formGroup: FormGroup = new FormGroup({});
+    formGroup: FormGroup;
+
+    private _config: FormConfig;
 
     constructor(private mfbService: MaterialFormBuilderService) {
     }
 
-    ngOnInit(): void {
+    refreshFormfields(formFields: Array<AbstractFormField[]>): void {
+        this.data = this.mfbService.createForm(formFields);
 
-        this.data = this.mfbService.createForm(this.formFields);
-
+        this.formGroup = new FormGroup({});
         for (const value of this.data.values()) {
             value.forEach((formItem) => {
                 if (formItem.data.fieldType !== FieldType.HEADING) {
@@ -53,4 +62,7 @@ export class FormComponent implements OnInit {
         this.formSubmit.emit(null);
     }
 
+    get config(): FormConfig {
+        return this._config;
+    }
 }
