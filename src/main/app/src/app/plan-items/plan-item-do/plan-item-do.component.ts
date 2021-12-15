@@ -40,7 +40,7 @@ export class PlanItemDoComponent implements OnInit {
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier)
                              .startForm(this.planItem, this.identityService.listGroepen()).build();
-        if (this.planItem.type == PlanItemType.HumanTask) {
+        if (this.planItem.type === PlanItemType.HumanTask) {
             this.formItems = this.formulier.form;
         } else {
             this.formItems = [[]];

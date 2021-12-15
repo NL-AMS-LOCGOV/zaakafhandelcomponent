@@ -5,9 +5,11 @@
 
 package net.atos.zac.flowable.cmmn;
 
+import static net.atos.zac.flowable.FlowableService.VAR_TASK_TAAKDATA;
 import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.flowable.cmmn.engine.interceptor.CreateHumanTaskAfterContext;
@@ -31,6 +33,9 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
     @Override
     public void afterCreateHumanTask(final CreateHumanTaskAfterContext context) {
+        final Map<String, String> taakdata = (Map<String, String>) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_TAAKDATA);
+        FlowableHelper.getInstance().getFlowableService().updateTaakdata(context.getTaskEntity().getId(), taakdata);
+
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_ZAAK_UUID);
         final ScreenEvent screenEvent = ScreenEventType.ZAAK_TAKEN.updated(zaakUUID);
         // Wait some time before sending the event to the screen to make sure that the task is created.
