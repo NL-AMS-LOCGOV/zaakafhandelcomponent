@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
 package net.atos.zac.app.audit.converter.zaken;
 
 import net.atos.client.zgw.shared.model.ObjectType;

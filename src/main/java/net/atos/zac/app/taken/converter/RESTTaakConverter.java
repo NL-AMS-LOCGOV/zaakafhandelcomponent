@@ -78,10 +78,15 @@ public class RESTTaakConverter {
         return restTaak;
     }
 
-    public RESTTaak convertTaskInfo(final TaskInfo task, final String taakBehandelFormulier, final Map<String, String> taakdata) {
+    public RESTTaak convertTaskInfo(final TaskInfo task, final Map<String, String> taakdata) {
         final RESTTaak restTaak = convertTaskInfo(task);
-        restTaak.taakBehandelFormulier = taakBehandelFormulier;
         restTaak.taakdata = taakdata;
+        return restTaak;
+    }
+
+    public RESTTaak convertTaskInfo(final TaskInfo task, final String taakBehandelFormulier, final Map<String, String> taakdata) {
+        final RESTTaak restTaak = convertTaskInfo(task, taakdata);
+        restTaak.taakBehandelFormulier = taakBehandelFormulier;
         return restTaak;
     }
 

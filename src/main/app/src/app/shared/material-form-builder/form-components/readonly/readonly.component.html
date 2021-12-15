@@ -7,7 +7,7 @@
         <div>{{data.label | translate}}</div>
     </label>
     <div [id]="data.id" class="value">
-        {{data.formControl.value}}
+        {{data.formControl.value | datum | empty}}
     </div>
 </div>
 
