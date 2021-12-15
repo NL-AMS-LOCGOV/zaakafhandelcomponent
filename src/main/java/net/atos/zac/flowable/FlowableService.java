@@ -63,7 +63,7 @@ public class FlowableService {
 
     private static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
-    private static final String VAR_TASK_TAAKDATA = "taakdata";
+    public static final String VAR_TASK_TAAKDATA = "taakdata";
 
     private static final String ID_GROEP_ZAAK_OPEN = "*";
 
@@ -186,7 +186,7 @@ public class FlowableService {
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
                 .transientVariable(VAR_TASK_CANDIDATE_GROUP_ID, groupId)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
-                .localVariable(VAR_TASK_TAAKDATA, taakdata)
+                .transientVariable(VAR_TASK_TAAKDATA, taakdata)
                 .start();
     }
 
