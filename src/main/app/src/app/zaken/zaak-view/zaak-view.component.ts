@@ -39,6 +39,7 @@ import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/f
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {Groep} from '../../identity/model/groep';
+import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -169,6 +170,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                            .options(this.identityService.listGroepen()).build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving').value(this.zaak.omschrijving).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.zaak.toelichting).build());
+        this.editFormFields.set('startdatum', new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {

@@ -122,6 +122,7 @@ public class ZakenRESTService {
         final Zaak zaak = new Zaak();
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
+        zaak.setStartdatum(restZaak.startdatum);
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaak);
         return zaakConverter.convert(updatedZaak);
     }
