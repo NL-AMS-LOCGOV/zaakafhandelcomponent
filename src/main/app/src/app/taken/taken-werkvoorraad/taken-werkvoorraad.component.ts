@@ -17,12 +17,13 @@ import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {TaakRechten} from '../model/taak-rechten';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
+import {IdentityService} from '../../identity/identity.service';
+import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -39,16 +40,14 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
     selection = new SelectionModel<Taak>(true, []);
+    private ingelogdeMedewerker: Medewerker;
 
-    get taakRechten(): typeof TaakRechten {
-        return TaakRechten;
-    }
-
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, public dialog: MatDialog) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.werkvoorraad');
+        this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
         this.setColumns();
     }
@@ -80,11 +79,20 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         ];
     }
 
-    toekennenAanIngelogdeMedewerker(taak: Taak, event) {
+    private getIngelogdeMedewerker() {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
+    }
+
+    showAssignToMe(taak: Taak): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != taak.behandelaar?.gebruikersnaam;
+    }
+
+    assignToMe(taak: Taak, event) {
         event.stopPropagation();
         this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
             taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
-            taak.rechten = taakResponse.rechten;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
         });
     }

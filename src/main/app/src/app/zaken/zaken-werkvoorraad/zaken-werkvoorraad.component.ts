@@ -18,12 +18,12 @@ import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {ZaakRechten} from '../model/zaak-rechten';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
+import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -43,16 +43,14 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
-
-    get zaakRechten(): typeof ZaakRechten {
-        return ZaakRechten;
-    }
+    private ingelogdeMedewerker: Medewerker;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
         this.utilService.setTitle('title.zaken.werkvoorraad');
+        this.getIngelogdeMedewerker();
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
         this.setColumns();
 
@@ -77,6 +75,12 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         });
     }
 
+    private getIngelogdeMedewerker() {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
+    }
+
     private setColumns() {
         const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
         .pipe(DatumPipe);
@@ -85,7 +89,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         .pipe(DatumPipe);
 
         const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
-        .pipe(DatumOverschredenPipe,'einddatum');
+        .pipe(DatumOverschredenPipe, 'einddatum');
 
         const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
         .pipe(DatumOverschredenPipe,'einddatum');
@@ -114,14 +118,17 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.selection.clear();
     }
 
-    toekennenAanIngelogdeMedewerker(zaakOverzicht: ZaakOverzicht, $event) {
+    assignToMe(zaakOverzicht: ZaakOverzicht, $event) {
         $event.stopPropagation();
 
         this.zakenService.toekennenAanIngelogdeMedewerkerVanuitLijst(zaakOverzicht).subscribe(zaak => {
-            zaakOverzicht.rechten = zaak.rechten;
             zaakOverzicht['behandelaar.naam'] = zaak.behandelaar.naam;
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
         });
+    }
+
+    showAssignToMe(row: ZaakOverzicht): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != row.behandelaar?.gebruikersnaam;
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

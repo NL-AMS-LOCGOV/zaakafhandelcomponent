@@ -9,9 +9,7 @@ import java.time.LocalDate;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.util.AbstractRESTObject;
-
-public class RESTZaakOverzicht extends AbstractRESTObject {
+public class RESTZaakOverzicht {
 
     public String identificatie;
 

@@ -27,7 +27,7 @@
                         <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
                         <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                               (onSave)="editBehandelaar($event)"
-                                              [showAssignToMe]="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                              [showAssignToMe]="showAssignToMe(taak)"
                                               (onAssignToMe)="assignToMe()">
                         </zac-edit-behandelaar>
                     </div>

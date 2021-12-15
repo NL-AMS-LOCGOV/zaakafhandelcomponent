@@ -5,9 +5,7 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -21,11 +19,7 @@ import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.Pagination;
-import net.atos.zac.rechten.RechtOperatie;
-import net.atos.zac.rechten.ZaakRechten;
 import net.atos.zac.util.OpenZaakPaginationUtil;
 
 public class RESTZaakOverzichtConverter {
@@ -48,9 +42,6 @@ public class RESTZaakOverzichtConverter {
     @Inject
     private RESTMedewerkerConverter medewerkerConverter;
 
-    @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
 
     public RESTZaakOverzicht convert(final Zaak zaak) {
         final RESTZaakOverzicht restZaakOverzicht = new RESTZaakOverzicht();
@@ -80,8 +71,6 @@ public class RESTZaakOverzichtConverter {
                 .orElse(null);
         restZaakOverzicht.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
-        restZaakOverzicht.rechten = getRechten(behandelaarId, groepId);
-
         restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         return restZaakOverzicht;
@@ -92,13 +81,5 @@ public class RESTZaakOverzichtConverter {
                                                                                                                      .map(this::convert)
                                                                                                                      .collect(Collectors.toList()), pagination);
         return zgwClientResults;
-    }
-
-    private Map<RechtOperatie, Boolean> getRechten(final String behandelaarId, final String groepId) {
-        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
-
-        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-
-        return rechten;
     }
 }

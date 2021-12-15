@@ -6,8 +6,6 @@
 package net.atos.zac.app.zaken.converter;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -25,8 +23,6 @@ import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.rechten.RechtOperatie;
-import net.atos.zac.rechten.ZaakRechten;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.PeriodUtil;
 
@@ -115,7 +111,6 @@ public class RESTZaakConverter {
                 .orElse(null);
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
-        restZaak.rechten = getRechten(behandelaarId, groepId);
         return restZaak;
     }
 
@@ -148,16 +143,6 @@ public class RESTZaakConverter {
         return id != null ? URI.create(id) : null;
     }
 
-    private Map<RechtOperatie, Boolean> getRechten(final String behandelaarId, final String groepId) {
-        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
-
-        rechten.put(RechtOperatie.TOEKENNEN, ZaakRechten.isToekennenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put(RechtOperatie.VRIJGEVEN, ZaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, ZaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-        rechten.put(RechtOperatie.BEHANDELEN, ZaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, behandelaarId, groepId));
-
-        return rechten;
-    }
 }
 
 

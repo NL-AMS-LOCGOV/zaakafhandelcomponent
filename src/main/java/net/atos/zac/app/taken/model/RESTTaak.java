@@ -12,12 +12,11 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.util.AbstractRESTObject;
 
 /**
  *
  */
-public class RESTTaak extends AbstractRESTObject {
+public class RESTTaak {
 
     public String id;
 

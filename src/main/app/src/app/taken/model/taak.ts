@@ -22,5 +22,4 @@ export class Taak {
     status: TaakStatus;
     taakBehandelFormulier: string;
     taakdata: {};
-    rechten: {};
 }
