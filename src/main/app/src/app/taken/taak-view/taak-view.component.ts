@@ -91,13 +91,20 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.setEditableFormFields();
 
-        if (TaakStatus.Afgerond !== this.taak.status) {
-            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
-        }
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
+        this.createTaakForm(taak);
 
         this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();
+    }
+
+    createTaakForm(taak: Taak): void {
+        if (TaakStatus.Afgerond !== this.taak.status) {
+            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
+        } else {
+            this.formConfig = null;
+        }
+
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
     }
 
     setEditableFormFields(): void {
@@ -121,12 +128,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
-                this.utilService.openSnackbar('msg.taak.opgeslagen');
-                this.takenService.complete(this.taak).subscribe(taak => {
-                    this.utilService.openSnackbar('msg.taak.afgerond');
-                    this.navigation.back();
-                });
+            this.websocketService.suspendListener(this.taakListener);
+
+            this.takenService.complete(this.formulier.getTaak(formGroup)).subscribe(taak => {
+                this.utilService.openSnackbar('msg.taak.afgerond');
+                this.init(taak);
             });
         }
     }
