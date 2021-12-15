@@ -54,7 +54,7 @@
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
                                                      [value]="zaak.registratiedatum | datum"></zac-static-text>
 
-                                    <zac-edit-datum [formField]="editFormFields.get('startdatum')"
+                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('startdatum')"
                                                     (onSave)="editZaak($event, 'startdatum')"></zac-edit-datum>
 
                                     <zac-datum-overschreden fxFlex.sm="25" [label]="'einddatumGepland' | translate"
