@@ -44,8 +44,8 @@
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
                                                           (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
-                                    <zac-static-text [label]="'groep' | translate"
-                                                     [value]="zaak.groep| empty:'naam'"></zac-static-text>
+                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
+                                                    (onSave)="editGroep($event)"></zac-edit-groep>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -53,13 +53,15 @@
                                     </div>
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
                                                      [value]="zaak.registratiedatum | datum"></zac-static-text>
-                                    <zac-static-text fxFlex.sm="25" [label]="'startdatum' | translate"
-                                                     [value]="zaak.startdatum | datum"></zac-static-text>
+
+                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('startdatum')"
+                                                    (onSave)="editZaak($event, 'startdatum')"></zac-edit-datum>
+
                                     <zac-datum-overschreden fxFlex.sm="25" [label]="'einddatumGepland' | translate"
                                                             [value]="zaak.einddatumGepland"
                                                             [ended]="zaak.einddatum"></zac-datum-overschreden>
                                     <zac-static-text fxFlex.sm="25" [label]="'einddatum' | translate"
-                                                     [value]="zaak.einddatum"></zac-static-text>
+                                                     [value]="zaak.einddatum | datum | empty"></zac-static-text>
                                     <zac-datum-overschreden fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
                                                             [value]="zaak.uiterlijkeEinddatumAfdoening"
                                                             [ended]="zaak.einddatum"

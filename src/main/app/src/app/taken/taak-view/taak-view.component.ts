@@ -32,6 +32,7 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
+import {Groep} from '../../identity/model/groep';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -111,6 +112,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
                                                                                  .value(this.taak.behandelaar).optionLabel('naam')
                                                                                  .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
+                                                                           .value(this.taak.groep).optionLabel('naam')
+                                                                           .options(this.identityService.listGroepen()).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
     }
 
@@ -140,6 +144,15 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     assignToMe(): void {
         this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
+            this.init(taak);
+        });
+    }
+
+    editGroep(groep: Groep): void {
+        this.taak.groep = groep;
+
+        this.takenService.assignGroup(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.groep.naam});
             this.init(taak);
         });
     }

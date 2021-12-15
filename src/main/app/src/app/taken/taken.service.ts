@@ -64,6 +64,12 @@ export class TakenService {
         );
     }
 
+    assignGroup(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}/assign/group`, taak).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     assignToLoggedOnUser(taak: Taak): Observable<Taak> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
