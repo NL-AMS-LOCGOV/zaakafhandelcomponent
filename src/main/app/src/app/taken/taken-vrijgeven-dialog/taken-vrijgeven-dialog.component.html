@@ -10,11 +10,12 @@
     <p *ngIf="data.length != 1">{{ 'msg.vrijgeven.taken' | translate:{aantal: data.length} }}</p>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="loading" mat-button color="primary" (click)="vrijgeven()">
+    <button [disabled]="loading" mat-button color="primary" (click)="vrijgeven()" id="taakVrijgeven_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
         {{'actie.vrijgeven' | translate}}
     </button>
-    <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+    <button [disabled]="loading" mat-button (click)="close()"
+            id="dialogClose_button">{{'actie.annuleren' | translate}}</button>
 </div>
