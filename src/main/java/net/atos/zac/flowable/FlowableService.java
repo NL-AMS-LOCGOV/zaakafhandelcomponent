@@ -237,15 +237,12 @@ public class FlowableService {
      */
     public Task assignTaskToGroup(final String taskId, final String groupId) {
         final Task task = readTask(taskId);
-        final String currentGroupId = task.getIdentityLinks().stream()
-                .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
-                .findAny()
-                .map(IdentityLinkInfo::getGroupId)
-                .orElse(null);
 
-        if (currentGroupId != null) {
-            cmmnTaskService.deleteGroupIdentityLink(taskId, currentGroupId, IdentityLinkType.CANDIDATE);
-        }
+        task.getIdentityLinks().stream()
+                .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
+                .map(IdentityLinkInfo::getGroupId)
+                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(taskId, currentGroupId, IdentityLinkType.CANDIDATE));
+
         cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
 
         return readTask(taskId);

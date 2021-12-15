@@ -82,7 +82,7 @@ export class ZakenService {
 
     toekennen(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.uuid = zaak.uuid;
+        zaakBody.zaakUUID = zaak.uuid;
         zaakBody.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, zaakBody).pipe(
@@ -92,7 +92,7 @@ export class ZakenService {
 
     toekennenGroep(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.uuid = zaak.uuid;
+        zaakBody.zaakUUID = zaak.uuid;
         zaakBody.groepId = zaak.groep?.id;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, zaakBody).pipe(
@@ -117,7 +117,7 @@ export class ZakenService {
 
     toekennenAanIngelogdeMedewerker(zaak: Zaak): Observable<Zaak> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.uuid = zaak.uuid;
+        zaakBody.zaakUUID = zaak.uuid;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, zaakBody).pipe(
             catchError(this.handleError)
@@ -126,7 +126,7 @@ export class ZakenService {
 
     toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht): Observable<ZaakOverzicht> {
         const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.uuid = zaak.uuid;
+        zaakBody.zaakUUID = zaak.uuid;
 
         return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, zaakBody).pipe(
             catchError(this.handleError)

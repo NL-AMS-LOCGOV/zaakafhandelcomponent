@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
+import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
@@ -116,12 +118,29 @@ public class ZRCClientService implements Caching {
      * @param zaakUrl de bij te werken zaak
      * @param rollen  de gewenste rollen
      */
-    public void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen) {
+    private void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen) {
         final Collection<Rol<?>> current = listRollen(zaakUrl);
         deleteDeletedRollen(current, rollen);
         deleteUpdatedRollen(current, rollen);
         createUpdatedRollen(current, rollen);
         createCreatedRollen(current, rollen);
+    }
+
+    public void updateRol(final URI zaakUrl, final Rol<?> rol) {
+        final List<Rol<?>> rollen = listRollen(zaakUrl);
+        rollen.add(rol);
+
+        updateRollen(zaakUrl, rollen);
+    }
+
+    public void deleteRol(final URI zaakUrl, final BetrokkeneType betrokkeneType) {
+        final List<Rol<?>> rollen = listRollen(zaakUrl);
+
+        final Optional<Rol<?>> rolMedewerker =
+                rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType).findFirst();
+
+        rolMedewerker.ifPresent(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
+        updateRollen(zaakUrl, rollen);
     }
 
     /**

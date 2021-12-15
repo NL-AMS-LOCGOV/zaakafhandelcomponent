@@ -8,7 +8,7 @@ package net.atos.zac.app.zaken.model;
 import java.util.UUID;
 
 public class RESTZaakToekennenGegevens {
-    public UUID uuid;
+    public UUID zaakUUID;
 
     public String behandelaarGebruikersnaam;
 
