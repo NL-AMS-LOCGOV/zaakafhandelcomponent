@@ -20,6 +20,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     dirty: boolean = false;
     formItem: FormItem;
 
+    @Input() readonly: boolean = false;
     @Input() abstract formField: AbstractFormField;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -60,7 +61,9 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     edit(editing: boolean): void {
-        this.editing = editing;
+        if (!this.readonly) {
+            this.editing = editing;
+        }
     }
 
     save(): void {

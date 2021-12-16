@@ -24,11 +24,13 @@
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                        <zac-edit-groep [formField]="editFormFields.get('groep')"
+                        <zac-edit-groep [readonly]="isAfgerond()"
+                                        [formField]="editFormFields.get('groep')"
                                         (onSave)="editGroep($event)"></zac-edit-groep>
-                        <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
+                        <zac-edit-behandelaar [readonly]="isAfgerond()"
+                                              [formField]="editFormFields.get('behandelaar')"
                                               (onSave)="editBehandelaar($event)"
-                                              [showAssignToMe]="showAssignToMe(taak)"
+                                              [showAssignToMe]="showAssignToMe()"
                                               (onAssignToMe)="assignToMe()">
                         </zac-edit-behandelaar>
                     </div>
@@ -44,7 +46,10 @@
                     </div>
 
                     <div fxFlex="100">
-                        <zac-edit-tekst [formField]="editFormFields.get('toelichting')" (onSave)="editTaak($event, 'toelichting')"></zac-edit-tekst>
+                        <zac-edit-tekst [readonly]="isAfgerond()"
+                                        [formField]="editFormFields.get('toelichting')"
+                                        (onSave)="editTaak($event, 'toelichting')">
+                        </zac-edit-tekst>
                     </div>
                 </div>
             </mat-card-content>

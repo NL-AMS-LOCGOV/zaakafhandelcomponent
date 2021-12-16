@@ -206,7 +206,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    showAssignToMe(taak: Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != taak.behandelaar?.gebruikersnaam;
+    showAssignToMe(): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam;
+    }
+
+    isAfgerond() {
+        return this.taak.status == TaakStatus.Afgerond;
     }
 }
