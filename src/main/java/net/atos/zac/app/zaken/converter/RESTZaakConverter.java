@@ -133,6 +133,14 @@ public class RESTZaakConverter {
         return zaak;
     }
 
+    public Zaak convertToPatch(final RESTZaak restZaak) {
+        final Zaak zaak = new Zaak();
+        zaak.setToelichting(restZaak.toelichting);
+        zaak.setOmschrijving(restZaak.omschrijving);
+        zaak.setStartdatum(restZaak.startdatum);
+        return zaak;
+    }
+
     private RESTZaaktype getZaaktype(final URI zaaktypeURI) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeURI);
         return zaaktypeConverter.convert(zaaktype);

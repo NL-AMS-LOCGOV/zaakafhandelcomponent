@@ -24,7 +24,8 @@
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                        <zac-static-text [label]="'groep' | translate" [value]="taak.groep.naam"></zac-static-text>
+                        <zac-edit-groep [formField]="editFormFields.get('groep')"
+                                        (onSave)="editGroep($event)"></zac-edit-groep>
                         <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                               (onSave)="editBehandelaar($event)"
                                               [showAssignToMe]="showAssignToMe(taak)"
