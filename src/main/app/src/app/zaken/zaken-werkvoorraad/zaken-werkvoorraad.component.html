@@ -11,7 +11,7 @@
         <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
                          [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75">
             <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
-                              [value]="selectie">
+                              [value]="selectie" (change)="switchTypeAndSearch()">
                 {{ selectie | translate}}
             </mat-radio-button>
         </mat-radio-group>
