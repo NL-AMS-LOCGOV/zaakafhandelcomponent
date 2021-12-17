@@ -108,6 +108,13 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         ];
     }
 
+    switchTypeAndSearch() {
+        if (this.dataSource.zoekParameters.selectie == 'groep' && this.dataSource.zoekParameters.groep ||
+            this.dataSource.zoekParameters.selectie == 'zaaktype' && this.dataSource.zoekParameters.zaaktype) {
+            this.zoekZaken();
+        }
+    }
+
     zoekZaken() {
         this.dataSource.zoekZaken();
         this.setColumns();
