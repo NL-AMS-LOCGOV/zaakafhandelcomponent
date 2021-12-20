@@ -39,13 +39,14 @@
                          [value]="zaak.status | empty:'naam'"></zac-static-text>
 
         <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
-                         [value]="zaak.startdatum | datum"></zac-static-text>
-        <zac-datum-overschreden fxFlex.sm="50" [label]="'einddatumGepland' | translate"
-                                [value]="zaak.einddatumGepland"
-                                [ended]="zaak.einddatum"></zac-datum-overschreden>
+                         [value]="zaak.startdatum"></zac-static-text>
+
+        <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
+                         [value]="zaak.einddatumGepland"
+                         [icon]="einddatumGeplandIcon"></zac-static-text>
 
         <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
-                         [value]="zaak.toelichting | empty"></zac-static-text>
+                         [value]="zaak.toelichting"></zac-static-text>
     </div>
 </div>
 <div class="table-wrapper" *ngIf="!collapsed">

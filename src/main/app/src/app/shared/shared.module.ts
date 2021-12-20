@@ -24,8 +24,6 @@ import {StaticTextComponent} from './static-text/static-text.component';
 import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
 import {StatusLabelComponent} from './status-label/status-label.component';
-import {BehandelaarVeldComponent} from './behandelaar-veld/behandelaar-veld.component';
-import {DatumOverschredenComponent} from './datum-overschreden/datum-overschreden.component';
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {PaginatorTranslator} from './paginator/paginator-translator';
 import {paginatorLanguageInitializerFactory} from './paginator/paginator-language-initializer';
@@ -49,10 +47,7 @@ import {PipesModule} from './pipes/pipes.module';
         StaticTextComponent,
         ReadMoreComponent,
         StatusLabelComponent,
-        BehandelaarVeldComponent,
-        DatumOverschredenComponent,
         OutsideClickDirective,
-        DatumOverschredenComponent,
         EditBehandelaarComponent,
         EditDatumComponent,
         EditGroepComponent,
@@ -88,8 +83,6 @@ import {PipesModule} from './pipes/pipes.module';
         MaterialModule,
         MaterialFormBuilderModule,
         StatusLabelComponent,
-        BehandelaarVeldComponent,
-        DatumOverschredenComponent,
         EditBehandelaarComponent,
         EditDatumComponent,
         EditGroepComponent,

@@ -18,8 +18,8 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
-                        <mat-tab id="algemeneGegevens_tab" label="{{'gegevens.algemeen' | translate}}">
-                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                        <mat-tab label="{{'gegevens.algemeen' | translate}}">
+                            <div id="algemeneGegevens_tab" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <zac-static-text [label]="'zaak.identificatie' | translate"
                                                      [value]="zaak.identificatie"></zac-static-text>
@@ -52,20 +52,19 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
-                                                     [value]="zaak.registratiedatum | datum"></zac-static-text>
+                                                     [value]="zaak.registratiedatum"></zac-static-text>
 
                                     <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('startdatum')"
                                                     (onSave)="editZaak($event, 'startdatum')"></zac-edit-datum>
 
-                                    <zac-datum-overschreden fxFlex.sm="25" [label]="'einddatumGepland' | translate"
-                                                            [value]="zaak.einddatumGepland"
-                                                            [ended]="zaak.einddatum"></zac-datum-overschreden>
+                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('einddatumGepland')"
+                                                    (onSave)="editZaak($event, 'einddatumGepland')"
+                                                    [icon]="editFormFieldIcons.get('einddatumGepland')"></zac-edit-datum>
                                     <zac-static-text fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
-                                    <zac-datum-overschreden fxFlex.sm="25" [label]="'uiterlijkeEinddatumAfdoening' | translate"
-                                                            [value]="zaak.uiterlijkeEinddatumAfdoening"
-                                                            [ended]="zaak.einddatum"
-                                                            [fatal]="true"></zac-datum-overschreden>
+                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
+                                                    (onSave)="editZaak($event, 'uiterlijkeEinddatumAfdoening')"
+                                                    [icon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"></zac-edit-datum>
                                 </div>
 
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
@@ -99,9 +98,9 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0" id="gerelateerdeZaken_tab"
+                        <mat-tab *ngIf="zaak.gerelateerdeZaken.length > 0"
                                  label="{{'gerelateerdeZaken' | translate}}">
-                            <div class="table-wrapper">
+                            <div id="gerelateerdeZaken_tab" class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.gerelateerdeZaken">
                                     <ng-container *ngFor="let column of gerelateerdeZaakColumns"
                                                   [matColumnDef]="column">
@@ -114,8 +113,8 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab id="historie_tab" label="{{'audittrail' | translate}}">
-                            <div class="table-wrapper audit-table">
+                        <mat-tab label="{{'audittrail' | translate}}">
+                            <div id="historie_tab" class="table-wrapper audit-table">
                                 <table mat-table [dataSource]="auditTrail" matSort>
                                     <ng-container matColumnDef="datum">
                                         <th *matHeaderCellDef mat-header-cell
@@ -158,14 +157,14 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab id="betrokkenen_tab" label="{{'betrokkenen' | translate}}">
-                            <div class="table-wrapper">
+                        <mat-tab label="{{'betrokkenen' | translate}}">
+                            <div id="betrokkenen_tab" class="table-wrapper">
                                 <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
-                        <mat-tab id="overigeGegevens_tab" label="{{'gegevens.overig'|translate}}">
-                            <div class="table-wrapper">
+                        <mat-tab label="{{'gegevens.overig'|translate}}">
+                            <div id="overigeGegevens_tab" class="table-wrapper">
                                 <table mat-table [dataSource]="zaak.eigenschappen">
                                     <caption><h4>{{'eigenschappen' | translate}}</h4></caption>
                                     <ng-container [matColumnDef]="column" *ngFor="let column of ['naam', 'waarde']">

@@ -29,10 +29,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
         super();
     }
 
-    ngOnInit(): void {
-        super.ngOnInit();
-    }
-
     abstract init(formField: AbstractFormField): void;
 
     ngAfterViewInit(): void {
@@ -40,8 +36,16 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.formField.currentValue) {
-            this.init(changes.formField.currentValue);
+        for (const propName in changes) {
+            if (changes.hasOwnProperty(propName)) {
+                switch (propName) {
+                    case 'formField':
+                        this.init(changes.formField.currentValue);
+                        break;
+                    case 'icon':
+                        this.showIcon = this.icon?.showIcon(this.formField.formControl);
+                }
+            }
         }
     }
 

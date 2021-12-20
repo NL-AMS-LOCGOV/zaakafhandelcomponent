@@ -5,5 +5,13 @@
 
 <div class="static-text">
     <label class="static-text-label">{{label}}</label>
-    <div class="static-text-content">{{value}}</div>
+    <div class="static-text-content">
+        {{value | datum | empty}}
+        <mat-icon class="label-icon"
+                  [ngClass]="icon.styleClass"
+                  *ngIf="hasIcon"
+                  title="{{ icon.title | translate}}">
+            {{icon.icon}}
+        </mat-icon>
+    </div>
 </div>

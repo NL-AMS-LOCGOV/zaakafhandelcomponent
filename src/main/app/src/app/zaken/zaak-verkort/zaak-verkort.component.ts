@@ -21,6 +21,8 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
+import {TextIcon} from '../../shared/edit/text-icon';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -33,6 +35,7 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     @Output() zaakLoadedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     zaak: Zaak;
+    einddatumGeplandIcon: TextIcon;
     collapsed: boolean = false;
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     objectenColumnsToDisplay: string[] = ['titel', 'status', 'url'];
@@ -86,6 +89,8 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
         }
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
+            this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
+                'msg.datum.overschreden', 'warning');
             this.zaakLoadedEmitter.emit(true);
             this.loadInformatieObjecten();
         });
