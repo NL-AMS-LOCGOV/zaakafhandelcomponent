@@ -44,12 +44,30 @@
       align-items: center;
     }
 
-    .static-text-content:not(.readonly) {
+    .static-text-content {
       box-shadow: 0 0 0 1px @box-shadow-color-light;
     }
 
     .static-text-label .edit-icon {
       color: @box-shadow-color;
+    }
+  }
+}
+
+.static-text.readonly {
+  .static-text-label {
+    .mat-icon {
+      display: none;
+    }
+  }
+
+  &:hover {
+    .edit-icon {
+      display: none;
+    }
+
+    .static-text-content {
+      box-shadow: none;
     }
   }
 }

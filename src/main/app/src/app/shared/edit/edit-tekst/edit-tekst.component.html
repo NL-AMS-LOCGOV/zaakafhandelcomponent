@@ -2,14 +2,14 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-<div class="static-text" (click)="edit(true)">
+<div class="static-text" (click)="edit(true)" [class.readonly]="readonly">
     <label class="static-text-label">
         {{formField.label | translate}}
-        <mat-icon *ngIf="!readonly">edit</mat-icon>
+        <mat-icon>edit</mat-icon>
     </label>
-    <div *ngIf="!editing" class="static-text-content" [class.readonly]="readonly">
+    <div *ngIf="!editing" class="static-text-content">
         {{value | empty}}
-        <div *ngIf="!readonly" class="edit-icon">
+        <div class="edit-icon">
             <mat-icon>edit</mat-icon>
         </div>
     </div>
