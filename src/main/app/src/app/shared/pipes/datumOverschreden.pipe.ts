@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Inject, LOCALE_ID, Pipe, PipeTransform} from '@angular/core';
+import {Inject, LOCALE_ID, Pipe} from '@angular/core';
 import * as moment from 'moment';
 import {DatumPipe} from './datum.pipe';
-import {DatumOverschredenComponent} from '../datum-overschreden/datum-overschreden.component';
 
 @Pipe({name: 'datumOverschreden'})
 export class DatumOverschredenPipe extends DatumPipe {
@@ -17,9 +16,22 @@ export class DatumOverschredenPipe extends DatumPipe {
 
     transform(value: Date | moment.Moment | string, ended: Date | moment.Moment | string): any {
         var datum: string = super.transform(value);
-        if (DatumOverschredenComponent.isOverschreden(value, ended)) {
+        if (DatumOverschredenPipe.isOverschreden(value, ended)) {
             return datum + ' !';
         }
         return datum;
     }
+
+    static isOverschreden(value: Date | moment.Moment | string, actual: Date | moment.Moment | string): boolean {
+        if (value) {
+            var limit: moment.Moment = moment(value, moment.ISO_8601);
+            if (actual) {
+                return limit.isBefore(moment(actual, moment.ISO_8601));
+            } else {
+                return limit.isBefore();
+            }
+        }
+        return false;
+    }
+
 }

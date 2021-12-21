@@ -125,7 +125,7 @@
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
                         <ng-container *ngFor="let column of dataSource.columns | visibleColumn:false">
                             <zac-static-text fxFlex="33" [label]="column.label | translate"
-                                             [value]="row[column.model] | translate | empty"></zac-static-text>
+                                             [value]="row[column.model] | translate"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>

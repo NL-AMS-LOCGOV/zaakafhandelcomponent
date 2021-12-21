@@ -8,7 +8,15 @@
         <mat-icon *ngIf="!readonly">edit</mat-icon>
     </label>
     <div *ngIf="!editing" class="static-text-content" [class.readonly]="readonly">
-        {{value | datum | empty}}
+        <div>
+            {{value | datum | empty}}
+            <mat-icon class="label-icon"
+                      [ngClass]="icon.styleClass"
+                      *ngIf="hasIcon"
+                      title="{{ icon.title | translate}}">
+                {{icon.icon}}
+            </mat-icon>
+        </div>
         <div *ngIf="!readonly" class="edit-icon">
             <mat-icon>edit</mat-icon>
         </div>

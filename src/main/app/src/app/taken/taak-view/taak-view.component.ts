@@ -32,6 +32,8 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
 import {Groep} from '../../identity/model/groep';
+import {TextIcon} from '../../shared/edit/text-icon';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -45,6 +47,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     menu: MenuItem[] = [];
 
     editFormFields: Map<string, any> = new Map<string, any>();
+    streefdatumIcon: TextIcon;
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
@@ -113,6 +116,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                            .value(this.taak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
+
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+            'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {

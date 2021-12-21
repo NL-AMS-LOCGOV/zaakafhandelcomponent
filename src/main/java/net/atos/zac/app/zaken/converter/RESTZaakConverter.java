@@ -138,6 +138,8 @@ public class RESTZaakConverter {
         zaak.setToelichting(restZaak.toelichting);
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setStartdatum(restZaak.startdatum);
+        zaak.setEinddatumGepland(restZaak.einddatumGepland);
+        zaak.setUiterlijkeEinddatumAfdoening(restZaak.uiterlijkeEinddatumAfdoening);
         return zaak;
     }
 

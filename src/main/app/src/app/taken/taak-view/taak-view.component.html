@@ -39,10 +39,10 @@
                         <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                             <mat-divider></mat-divider>
                         </div>
-                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd | datum | empty"></zac-static-text>
-                        <zac-datum-overschreden fxFlex.sm="50" [label]="'streefdatum' | translate"
-                                                [value]="taak.streefdatum"
-                                                [ended]="null"></zac-datum-overschreden>
+                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd"></zac-static-text>
+                        <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate"
+                                         [value]="taak.streefdatum"
+                                         [icon]="streefdatumIcon"></zac-static-text>
                     </div>
 
                     <div fxFlex="100">

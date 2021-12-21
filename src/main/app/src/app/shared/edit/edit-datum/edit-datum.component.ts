@@ -28,5 +28,4 @@ export class EditDatumComponent extends EditComponent {
             this.dirty = true;
         });
     }
-
 }
