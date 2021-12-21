@@ -15,7 +15,7 @@ import {FormControl} from '@angular/forms';
 export class StaticTextComponent implements OnInit {
 
     @Input() label: string;
-    @Input() value: string | number | null;
+    @Input() value: any;
     @Input() icon: TextIcon;
 
     showIcon: boolean;
