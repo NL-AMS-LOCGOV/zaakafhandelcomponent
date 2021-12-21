@@ -12,8 +12,8 @@ export class TextIcon {
     title: string;
     styleClass: string;
 
-    constructor(conditionalFn: ConditionalFn, icon: string, id: string, title: string, styleClass: string) {
-        this.showIcon = conditionalFn;
+    constructor(showIcon: ConditionalFn, icon: string, id: string, title: string, styleClass: string) {
+        this.showIcon = showIcon;
         this.icon = icon;
         this.id = id;
         this.title = title;

@@ -48,7 +48,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     menu: MenuItem[] = [];
 
     editFormFields: Map<string, any> = new Map<string, any>();
-    streefDatumIcon: TextIcon;
+    streefdatumIcon: TextIcon;
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
@@ -120,7 +120,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                            .options(this.identityService.listGroepen()).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
 
-        this.streefDatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
             'msg.datum.overschreden', 'warning');
     }
 
