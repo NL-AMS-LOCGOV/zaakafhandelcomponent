@@ -5,11 +5,11 @@
 <div class="static-text" (click)="edit(true)">
     <label class="static-text-label">
         {{formField.label | translate}}
-        <mat-icon>edit</mat-icon>
+        <mat-icon *ngIf="!readonly">edit</mat-icon>
     </label>
-    <div *ngIf="!editing" class="static-text-content">
+    <div *ngIf="!editing" class="static-text-content" [class.readonly]="readonly">
         {{value | empty}}
-        <div class="edit-icon">
+        <div *ngIf="!readonly" class="edit-icon">
             <mat-icon>edit</mat-icon>
         </div>
     </div>

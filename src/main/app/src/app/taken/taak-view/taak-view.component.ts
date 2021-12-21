@@ -18,7 +18,6 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
-import {TaakRechten} from '../model/taak-rechten';
 import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
@@ -53,10 +52,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     formulier: AbstractFormulier;
     formConfig: FormConfig;
     private taakListener: WebsocketListener;
-
-    get taakRechten(): typeof TaakRechten {
-        return TaakRechten;
-    }
+    private ingelogdeMedewerker: Medewerker;
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
@@ -65,6 +61,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ngOnInit(): void {
+        this.getIngelogdeMedewerker();
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['taak']);
         }));
@@ -208,4 +205,18 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.init(taak);
         });
     };
+
+    private getIngelogdeMedewerker() {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
+    }
+
+    showAssignToMe(): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam;
+    }
+
+    isAfgerond() {
+        return this.taak.status == TaakStatus.Afgerond;
+    }
 }
