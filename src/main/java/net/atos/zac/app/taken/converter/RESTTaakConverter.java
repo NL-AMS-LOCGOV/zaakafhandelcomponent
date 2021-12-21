@@ -12,7 +12,6 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,8 +30,6 @@ import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
-import net.atos.zac.rechten.RechtOperatie;
-import net.atos.zac.rechten.TaakRechten;
 
 /**
  *
@@ -73,8 +70,6 @@ public class RESTTaakConverter {
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
         restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
 
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        restTaak.rechten = getRechten(task);
         return restTaak;
     }
 
@@ -113,19 +108,5 @@ public class RESTTaakConverter {
         } else {
             return AFGEROND;
         }
-    }
-
-    private Map<RechtOperatie, Boolean> getRechten(final TaskInfo taskInfo) {
-        final Map<RechtOperatie, Boolean> rechten = new HashMap<>();
-
-        final String groepId = extractGroupId(taskInfo.getIdentityLinks());
-        final TaakStatus status = convertToStatus(taskInfo);
-
-        rechten.put(RechtOperatie.TOEKENNEN, TaakRechten.isToekennenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId));
-        rechten.put(RechtOperatie.VRIJGEVEN, TaakRechten.isVrijgevenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
-        rechten.put(RechtOperatie.TOEKENNEN_AAN_MIJ, TaakRechten.isKenToeAanMijToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
-        rechten.put(RechtOperatie.BEHANDELEN, TaakRechten.isBehandelenToegestaan(ingelogdeMedewerker, taskInfo.getAssignee(), groepId, status));
-
-        return rechten;
     }
 }

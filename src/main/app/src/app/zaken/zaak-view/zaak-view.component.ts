@@ -29,8 +29,6 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
-import {ZaakRechten} from '../model/zaak-rechten';
-import {TaakRechten} from '../../taken/model/taak-rechten';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
@@ -66,14 +64,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
     private zaakDocumentenListener: WebsocketListener;
-
-    get zaakRechten(): typeof ZaakRechten {
-        return ZaakRechten;
-    };
-
-    get taakRechten(): typeof TaakRechten {
-        return TaakRechten;
-    };
+    private ingelogdeMedewerker: Medewerker;
 
     takenFilter: any = {};
 
@@ -107,6 +98,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
+            this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
             this.loadAuditTrail();
@@ -125,6 +117,12 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.setEditableFormFields();
 
         this.setupMenu();
+    }
+
+    private getIngelogdeMedewerker() {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
     }
 
     ngAfterViewInit() {
@@ -192,7 +190,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.rechten[this.zaakRechten.BEHANDELEN]) {
             this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
             this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
@@ -201,7 +198,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 }
                 this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
             });
-        }
     }
 
     assignToMe(): void {
@@ -286,13 +282,16 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    taakToekennenAanIngelogdeMedewerker(taak: Taak) {
+    assignTaskToMe(taak: Taak) {
         this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
-            taak.rechten = taakResponse.rechten;
         });
+    }
+
+    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
     }
 
     filterTakenOpStatus() {

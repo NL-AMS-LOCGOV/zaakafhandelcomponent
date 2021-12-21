@@ -42,7 +42,7 @@
                                                      [value]="'-'"></zac-static-text>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                                           (onSave)="editBehandelaar($event)"
-                                                          [showAssignToMe]="zaak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]"
+                                                          [showAssignToMe]="showAssignToMe(zaak)"
                                                           (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
@@ -248,7 +248,7 @@
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
-                                            (click)="taakToekennenAanIngelogdeMedewerker(taak)" *ngIf="taak.rechten[taakRechten.TOEKENNEN_AAN_MIJ]">
+                                            (click)="assignTaskToMe(taak)" *ngIf="showAssignToMe(taak)">
                                         <mat-icon>person_add_alt</mat-icon>
                                     </button>
                                 </td>

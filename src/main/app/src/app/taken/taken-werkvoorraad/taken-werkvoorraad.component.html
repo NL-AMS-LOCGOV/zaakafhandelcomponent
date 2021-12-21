@@ -88,11 +88,11 @@
                         title="{{ 'actie.taak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
-                <button (click)="toekennenAanIngelogdeMedewerker(row, $event)"
+                <button (click)="assignToMe(row, $event)"
                         [id]="'kenTaakAanMijToe_' + row.id +'_button'"
                         mat-flat-button
                         title="{{ 'actie.mij.toekennen' | translate }}"
-                        *ngIf="row.rechten[taakRechten.TOEKENNEN_AAN_MIJ]">
+                        *ngIf="showAssignToMe(row)">
                     <mat-icon>person_add_alt</mat-icon>
                 </button>
             </td>
