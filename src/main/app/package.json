@@ -4,7 +4,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "start-pwa": "ng build --configuration=production && http-server -p 4200 -c-1 dist/zaakafhandelcomponent -P http://localhost:8080?",
     "build": "ng build --configuration=production --base-href=/",
     "test": "ng test",
     "lint": "ng lint",
@@ -25,13 +24,11 @@
     "@angular/platform-browser": "~13.0.3",
     "@angular/platform-browser-dynamic": "~13.0.3",
     "@angular/router": "~13.0.3",
-    "@angular/service-worker": "~13.0.3",
     "@ngrx/store": "^13.0.2",
     "@ngrx/store-devtools": "^13.0.2",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "moment": "^2.29.1",
-    "pwacompat": "^2.0.17",
     "rxjs": "^7.4.0",
     "tslib": "^2.3.1",
     "zone.js": "~0.11.4"

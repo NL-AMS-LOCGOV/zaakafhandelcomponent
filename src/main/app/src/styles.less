@@ -12,8 +12,6 @@ html, body {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  overscroll-behavior-y: contain;
 }
 
 .zoek-wrapper {
@@ -23,7 +21,7 @@ body {
     display: flex;
     align-items: center;
     font-weight: 500;
-    justify-content: end;
+    justify-content: flex-end;
   }
 
   .mat-radio-button ~ .mat-radio-button {
@@ -240,35 +238,4 @@ mat-card {
 
 .cdk-drag-placeholder {
   opacity: 0.6;
-}
-
-/*****PWA specfiek*****/
-
-.disable-content-selection {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-a {
-  -webkit-touch-callout: none;
-}
-
-.container {
-  /*margin voor mobiele devices*/
-  height: 100%;
-  margin: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) !important;
-}
-
-@supports (-webkit-touch-callout: none) {
-  @media (display-mode: standalone) {
-    //specifiek voor iOS/iPadOS op geinstalleerde PWA
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  //animaties uitschakelen
-}
-
-@media (prefers-color-scheme: dark) {
-  //darkmode
 }
