@@ -4,6 +4,8 @@
  */
 
 import {Component, Input, OnInit} from '@angular/core';
+import {TextIcon} from '../edit/text-icon';
+import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'zac-static-text',
@@ -13,12 +15,19 @@ import {Component, Input, OnInit} from '@angular/core';
 export class StaticTextComponent implements OnInit {
 
     @Input() label: string;
-    @Input() value: string;
+    @Input() value: any;
+    @Input() icon: TextIcon;
+
+    showIcon: boolean;
 
     constructor() {
     }
 
     ngOnInit(): void {
+        this.showIcon = this.icon?.showIcon(new FormControl(this.value));
     }
 
+    get hasIcon(): boolean {
+        return this.showIcon;
+    }
 }

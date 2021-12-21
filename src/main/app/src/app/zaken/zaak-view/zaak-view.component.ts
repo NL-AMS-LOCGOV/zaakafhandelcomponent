@@ -38,6 +38,8 @@ import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {Groep} from '../../identity/model/groep';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
+import {TextIcon} from '../../shared/edit/text-icon';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -59,6 +61,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     notitieType = NotitieType.ZAAK;
 
     editFormFields: Map<string, any> = new Map<string, any>();
+    editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -169,6 +172,19 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving').value(this.zaak.omschrijving).build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.zaak.toelichting).build());
         this.editFormFields.set('startdatum', new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
+
+        this.editFormFields.set('einddatumGepland',
+            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland').value(this.zaak.einddatumGepland).build());
+        this.editFormFieldIcons.set('einddatumGepland', new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
+            'msg.datum.overschreden', 'warning'));
+
+        this.editFormFields.set('uiterlijkeEinddatumAfdoening',
+            new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening').value(this.zaak.uiterlijkeEinddatumAfdoening)
+                                      .build());
+        this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
+            new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
+                'msg.datum.overschreden', 'error'));
+
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {
