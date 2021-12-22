@@ -2,6 +2,7 @@ import {Directive, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Optional
 import {fromEvent, Subscription} from 'rxjs';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {filter} from 'rxjs/operators';
+import {UtilService} from '../../core/service/util.service';
 
 @Directive({
     selector: '[zacOutsideClick]'
@@ -15,7 +16,8 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
     constructor(
         private element: ElementRef,
         @Optional() @Inject(DOCUMENT) private document: any,
-        @Inject(PLATFORM_ID) private platformId: Object) { }
+        @Inject(PLATFORM_ID) private platformId: Object,
+        private utilService: UtilService) { }
 
     ngOnInit() {
         if (!isPlatformBrowser(this.platformId)) {
@@ -26,12 +28,9 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
             this.subscription = fromEvent<MouseEvent>(this.document, 'click')
             .pipe(
                 filter(event => {
-                    //block the outside click when an overlay is on the screen e.g. datepicker/select list
-                    let overlayElements: HTMLCollection[] = this.document.getElementsByClassName('cdk-overlay-pane');
-                    if (overlayElements.length > 0) {
+                    if (this.utilService.hasEditOverlay()) {
                         return false;
                     }
-
                     const clickTarget = event.target as HTMLElement;
                     return !OutsideClickDirective.isOrContainsClickTarget(this.element.nativeElement, clickTarget);
                 })

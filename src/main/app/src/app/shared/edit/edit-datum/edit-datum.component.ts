@@ -7,6 +7,7 @@ import {Component, Input} from '@angular/core';
 import {EditComponent} from '../edit.component';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {DateFormField} from '../../material-form-builder/form-components/date/date-form-field';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-edit-datum',
@@ -17,8 +18,8 @@ export class EditDatumComponent extends EditComponent {
 
     @Input() formField: DateFormField;
 
-    constructor(mfbService: MaterialFormBuilderService) {
-        super(mfbService);
+    constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
+        super(mfbService, utilService);
     }
 
     init(formField: DateFormField): void {

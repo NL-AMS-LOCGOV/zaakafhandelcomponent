@@ -7,6 +7,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {EditComponent} from '../edit.component';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {AutocompleteFormField} from '../../material-form-builder/form-components/autocomplete/autocomplete-form-field';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-edit-behandelaar',
@@ -19,8 +20,8 @@ export class EditBehandelaarComponent extends EditComponent {
     @Input() showAssignToMe: boolean = false;
     @Output() onAssignToMe: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor(mfbService: MaterialFormBuilderService) {
-        super(mfbService);
+    constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
+        super(mfbService, utilService);
     }
 
     assignToMe(): void {
