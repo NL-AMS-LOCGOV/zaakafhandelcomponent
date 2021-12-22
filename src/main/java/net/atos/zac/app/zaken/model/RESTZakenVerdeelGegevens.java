@@ -12,4 +12,6 @@ public class RESTZakenVerdeelGegevens {
     public List<UUID> uuids;
 
     public String behandelaarGebruikersnaam;
+
+    public String groepId;
 }

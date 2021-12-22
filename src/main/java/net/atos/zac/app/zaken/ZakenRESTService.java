@@ -192,10 +192,31 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        if (StringUtils.isEmpty(verdeelGegevens.groepId)) {
+            verdeelNaarMedewerker(verdeelGegevens);
+        } else if (StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam)) {
+            verdeelNaarGroep(verdeelGegevens);
+        } else {
+            verdeelNaarGroep(verdeelGegevens);
+            verdeelNaarMedewerker(verdeelGegevens);
+        }
+    }
+
+    private void verdeelNaarMedewerker(final RESTZakenVerdeelGegevens verdeelGegevens) {
         final User user = flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam);
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak));
+        });
+    }
+
+    private void verdeelNaarGroep(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        verdeelGegevens.uuids.forEach(uuid -> {
+            final RESTZaakToekennenGegevens restZaakToekennenGegevens = new RESTZaakToekennenGegevens();
+            restZaakToekennenGegevens.zaakUUID = uuid;
+            restZaakToekennenGegevens.groepId = verdeelGegevens.groepId;
+            restZaakToekennenGegevens.behandelaarGebruikersnaam = verdeelGegevens.behandelaarGebruikersnaam;
+            groepToekennen(restZaakToekennenGegevens);
         });
     }
 

@@ -7,17 +7,25 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mat-form-field appearance="fill" fxFlex="100">
-        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
-        <input type="text" matInput [formControl]="medewerkerControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNaam">
-            <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
+    <mat-form-field appearance="fill">
+        <mat-label>{{'actie.groep.selecteren' | translate}}</mat-label>
+        <input type="text" matInput [formControl]="groepenControl" [matAutocomplete]="autoGroep">
+        <mat-autocomplete #autoGroep="matAutocomplete" [displayWith]="getGroepNaam"
+                          (optionSelected)="groepChangeEvent($event)">
+            <mat-option *ngFor="let groep of filteredGroepen | async" [value]="groep">{{ groep.naam }}</mat-option>
         </mat-autocomplete>
     </mat-form-field>
-
+    <mat-form-field appearance="fill">
+        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
+        <input type="text" matInput [formControl]="medewerkerControl" [matAutocomplete]="autoMedewerker">
+        <mat-autocomplete #autoMedewerker="matAutocomplete" [displayWith]="getMedewerkerNaam">
+            <mat-option *ngFor="let medewerker of filteredMedewerkers | async"
+                        [value]="medewerker">{{ medewerker.naam }}</mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="getMedewerker() == null || loading" mat-button color="primary" (click)="verdeel()">
+    <button [disabled]="disableButton()" mat-button color="primary" (click)="verdeel()">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>

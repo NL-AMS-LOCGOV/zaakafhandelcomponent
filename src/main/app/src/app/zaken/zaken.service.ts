@@ -17,6 +17,7 @@ import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
 import {Medewerker} from '../identity/model/medewerker';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
+import {Groep} from '../identity/model/groep';
 
 @Injectable({
     providedIn: 'root'
@@ -100,10 +101,12 @@ export class ZakenService {
         );
     }
 
-    verdelen(zaken: ZaakOverzicht[], medewerker: Medewerker): Observable<void> {
+    verdelen(zaken: ZaakOverzicht[], medewerker: Medewerker, groep: Groep): Observable<void> {
         const zaakBody: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         zaakBody.uuids = zaken.map(zaak => zaak.uuid);
-        zaakBody.behandelaarGebruikersnaam = medewerker.gebruikersnaam;
+        zaakBody.behandelaarGebruikersnaam = medewerker?.gebruikersnaam;
+        zaakBody.groepId = groep?.id;
+
         return this.http.put<void>(`${this.basepath}/verdelen`, zaakBody).pipe(
             catchError(this.handleError)
         );
