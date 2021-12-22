@@ -26,6 +26,12 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
             this.subscription = fromEvent<MouseEvent>(this.document, 'click')
             .pipe(
                 filter(event => {
+                    //block the outside click when an overlay is on the screen e.g. datepicker/select list
+                    let overlayElements: HTMLCollection[] = this.document.getElementsByClassName('cdk-overlay-pane');
+                    if (overlayElements.length > 0) {
+                        return false;
+                    }
+
                     const clickTarget = event.target as HTMLElement;
                     return !OutsideClickDirective.isOrContainsClickTarget(this.element.nativeElement, clickTarget);
                 })
@@ -41,6 +47,6 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
     }
 
     private static isOrContainsClickTarget(element: HTMLElement, clickTarget: HTMLElement) {
-        return element == clickTarget || element.contains(clickTarget) || clickTarget.classList.contains('mat-option-text');
+        return element == clickTarget || element.contains(clickTarget);
     }
 }
