@@ -64,22 +64,24 @@
         <div class="title" *ngIf="!(utilService.isTablet$ |async)">{{headerTitle | translate}}</div>
         <span class="spacer"></span>
 
-        <button mat-flat-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
-                color="primary" id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
-            <ng-container *ngIf="!(utilService.isHandset$ |async)">
-                {{ ingelogdeMedewerker?.naam }}
-            </ng-container>
-            <mat-icon>account_circle</mat-icon>
-        </button>
-
-        <mat-menu #accountMenu="matMenu">
-            <h4 *ngIf="utilService.isHandset$ |async">{{ingelogdeMedewerker?.naam}}</h4>
-            <mat-divider></mat-divider>
-            <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
-                <mat-icon>logout</mat-icon>
-                <span>{{'actie.uitloggen' | translate}}</span>
+        <div>
+            <button mat-flat-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
+                    color="primary" id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
+                <ng-container *ngIf="!(utilService.isHandset$ |async)">
+                    {{ ingelogdeMedewerker?.naam }}
+                </ng-container>
+                <mat-icon>account_circle</mat-icon>
             </button>
-        </mat-menu>
+
+            <mat-menu #accountMenu="matMenu">
+                <h4 *ngIf="utilService.isHandset$ |async">{{ingelogdeMedewerker?.naam}}</h4>
+                <mat-divider></mat-divider>
+                <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
+                    <mat-icon>logout</mat-icon>
+                    <span>{{'actie.uitloggen' | translate}}</span>
+                </button>
+            </mat-menu>
+        </div>
     </mat-toolbar-row>
 </mat-toolbar>
 
