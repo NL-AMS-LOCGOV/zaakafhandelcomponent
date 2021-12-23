@@ -137,12 +137,10 @@
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
-<mat-toolbar class="bottom-toolbar" *ngIf="utilService.isTablet$|async">
-
+<mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
     <div fxLayout="row" fxLayoutAlign="start center">
         <button mat-icon-button (click)="informatieObjectMenuSideNav.toggle()">
             <mat-icon>menu</mat-icon>
         </button>
     </div>
-
 </mat-toolbar>

@@ -44,8 +44,8 @@
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="showAssignToMe(zaak)"
                                                           (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
-                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
-                                                    (onSave)="editGroep($event)"></zac-edit-groep>
+                                    <zac-edit-autocomplete [formField]="editFormFields.get('groep')"
+                                                           (onSave)="editGroep($event)"></zac-edit-autocomplete>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -304,7 +304,7 @@
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-sidenav-content>
 </mat-sidenav-container>
-<mat-toolbar class="bottom-toolbar" *ngIf="utilService.isTablet$|async">
+<mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
 
     <div fxLayout="row" fxLayoutAlign="start center">
         <button mat-icon-button (click)="zaakMenuSideNav.toggle()">
