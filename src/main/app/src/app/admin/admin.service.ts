@@ -4,16 +4,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
-import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {Zaaktype} from '../zaken/model/zaaktype';
 import {catchError} from 'rxjs/operators';
-import {Zaak} from '../zaken/model/zaak';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 import {CaseModel} from './model/case-model';
-import {ZaakOverzicht} from '../zaken/model/zaak-overzicht';
 import {FormulierDefinitieVerwijzing} from './model/formulier-definitie-verwijzing';
 
 @Injectable({
@@ -33,13 +30,13 @@ export class AdminService {
     }
 
     listZaakafhandelParameters(): Observable<ZaakafhandelParameters[]> {
-        return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}/params`).pipe(
+        return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}/parameters`).pipe(
             catchError(this.handleError)
         );
     }
 
     readZaakafhandelparameters(zaaktypeUuid: string): Observable<ZaakafhandelParameters> {
-        return this.http.get<ZaakafhandelParameters>(`${this.basepath}/params/${zaaktypeUuid}`).pipe(
+        return this.http.get<ZaakafhandelParameters>(`${this.basepath}/parameters/${zaaktypeUuid}`).pipe(
             catchError(this.handleError)
         );
     }
@@ -63,7 +60,7 @@ export class AdminService {
     }
 
     updateZaakafhandelparameters(zaakafhandelparameters): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/params`, zaakafhandelparameters).pipe(
+        return this.http.put<void>(`${this.basepath}/parameters`, zaakafhandelparameters).pipe(
             catchError(this.handleError)
         );
     }

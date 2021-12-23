@@ -5,18 +5,16 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {ParamsComponent} from './params/params.component';
-import {ZaakViewComponent} from '../zaken/zaak-view/zaak-view.component';
-import {ZaakResolver} from '../zaken/zaak.resolver';
-import {ParamViewComponent} from './param-view/param-view.component';
+import {ParametersComponent} from './parameters/parameters.component';
+import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZaakafhandelParametersResolver} from './zaakafhandel-parameters-resolver.service';
 
 const routes: Routes = [
     {
         path: 'admin', children: [
-            {path: '', redirectTo: 'params', pathMatch: 'full'},
-            {path: 'params', component: ParamsComponent},
-            {path: 'params/:uuid', component: ParamViewComponent, resolve: {parameters: ZaakafhandelParametersResolver}}
+            {path: '', redirectTo: 'parameters', pathMatch: 'full'},
+            {path: 'parameters', component: ParametersComponent},
+            {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}}
         ]
     }
 ];

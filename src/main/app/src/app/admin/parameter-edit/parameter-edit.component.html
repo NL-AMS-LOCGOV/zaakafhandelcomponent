@@ -1,0 +1,41 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-stepper orientation="vertical">
+    <mat-step [stepControl]="algemeenFormGroup">
+        <ng-template matStepLabel>{{"gegevens.algemeen" | translate}}</ng-template>
+
+        <form [formGroup]="algemeenFormGroup" fxLayout="row wrap">
+
+            <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'naam' | translate"
+                             [value]="parameters.zaaktype.omschrijving"></zac-static-text>
+            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'doel' | translate"
+                             [value]="parameters.zaaktype.doel"></zac-static-text>
+            <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'identificatie' | translate"
+                             [value]="parameters.zaaktype.identificatie"></zac-static-text>
+            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'uuid' | translate"
+                             [value]="parameters.zaaktype.uuid"></zac-static-text>
+            <zac-static-text fxFlex="33" [label]="'defaultBehandelaar' | translate"
+                             [value]="parameters.defaultBehandelaar?.naam"></zac-static-text>
+            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'defaultGroep' | translate"
+                             [value]="parameters.defaultGroep?.naam | empty"></zac-static-text>
+            <zac-static-text fxFlex="33" [label]="'caseModel' | translate"
+                             [value]="parameters.caseModel.naam"></zac-static-text>
+            <div class="buttons" fxFlex="100">
+                <button mat-raised-button color="primary" matStepperNext>{{"actie.volgende" | translate}}</button>
+                <button mat-raised-button (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="planitemFormGroup">
+        <form [formGroup]="planitemFormGroup">
+            <ng-template matStepLabel>{{"gegevens.planitems" | translate}}</ng-template>
+            <div class="buttons" fxFlex="100">
+                <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                <button mat-raised-button color="primary" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+            </div>
+        </form>
+    </mat-step>
+</mat-stepper>

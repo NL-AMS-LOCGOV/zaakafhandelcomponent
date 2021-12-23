@@ -6,14 +6,14 @@
 import {NgModule} from '@angular/core';
 
 import {SharedModule} from '../shared/shared.module';
-import {ParamsComponent} from './params/params.component';
+import {ParametersComponent} from './parameters/parameters.component';
 import {AdminRoutingModule} from './admin-routing.module';
-import {ParamViewComponent} from './param-view/param-view.component';
+import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 
 @NgModule({
     declarations: [
-        ParamsComponent,
-        ParamViewComponent
+        ParametersComponent,
+        ParameterEditComponent
     ],
     exports: [],
     imports: [

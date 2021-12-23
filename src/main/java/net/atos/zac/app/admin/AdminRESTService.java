@@ -92,7 +92,7 @@ public class AdminRESTService {
      * @return LIST of ZAAKAFHANDELPARAMETERS
      */
     @GET
-    @Path("params")
+    @Path("parameters")
     public List<RESTZaakafhandelParameters> listZaakafhandelParameters() {
         //todo ZaakafhandelParameters opslaan #168
         List<RESTZaakafhandelParameters> parametersList = new ArrayList<>();
@@ -113,7 +113,7 @@ public class AdminRESTService {
      * @return ZAAKAFHANDELPARAMETERS for a ZAAKTYPE by uuid of the ZAAKTYPE
      */
     @GET
-    @Path("params/{zaaktypeUuid}")
+    @Path("parameters/{zaaktypeUuid}")
     public RESTZaakafhandelParameters readZaakafhandelParameters(@PathParam("zaaktypeUuid") final UUID zaaktypeUuid) {
         //todo ZaakafhandelParameters opslaan #168
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUuid);
@@ -130,7 +130,7 @@ public class AdminRESTService {
      * @param params ZAAKAFHANDELPARAMETERS
      */
     @PUT
-    @Path("params")
+    @Path("parameters")
     public void updateZaakafhandelparameters(RESTZaakafhandelParameters params) {
         //todo ZaakafhandelParameters opslaan #168
     }

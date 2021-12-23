@@ -1,0 +1,65 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar">
+    <mat-sidenav #menuSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)"
+                 (mouseenter)="collapseSideNav(false)" (mouseleave)="collapseSideNav(true)">
+        <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+        <mat-card>
+            <mat-card-content>
+                <div class="table-wrapper audit-table">
+                    <table mat-table [dataSource]="parameters" matSort>
+                        <ng-container matColumnDef="identificatie">
+                            <th mat-header-cell *matHeaderCellDef> {{'identificatie' | translate}} </th>
+                            <td mat-cell *matCellDef="let row">{{row.zaaktype.identificatie}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="omschrijving">
+                            <th mat-header-cell *matHeaderCellDef> {{'naam' | translate}} </th>
+                            <td mat-cell *matCellDef="let row">
+                                <read-more [text]="row.zaaktype.omschrijving" [maxLength]="100"></read-more>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="doel">
+                            <th mat-header-cell *matHeaderCellDef> {{'doel' | translate}} </th>
+                            <td mat-cell *matCellDef="let row">
+                                <read-more [text]="row.zaaktype.doel" [maxLength]="100"></read-more>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="model">
+                            <th mat-header-cell *matHeaderCellDef> {{'caseModel' | translate}} </th>
+                            <td mat-cell *matCellDef="let row"> {{row.caseModel?.naam | empty}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="groep">
+                            <th mat-header-cell *matHeaderCellDef> {{'groep' | translate}} </th>
+                            <td mat-cell *matCellDef="let row"> {{row.groep?.naam | empty}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="url" stickyEnd>
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-flat-button [routerLink]="['/admin/parameters/', row.zaaktype.uuid]"
+                                        title="{{ 'actie.bewerken' | translate}}">
+                                    <mat-icon>visibility</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="['identificatie','omschrijving', 'doel', 'model', 'groep', 'url']; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['identificatie', 'omschrijving', 'doel', 'model', 'groep', 'url'];"></tr>
+                    </table>
+                    <p *ngIf="parameters.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+<mat-toolbar color="primary" class="bottom-toolbar" fxHide.gt-sm>
+    <div fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button (click)="menuSideNav.toggle();">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>
