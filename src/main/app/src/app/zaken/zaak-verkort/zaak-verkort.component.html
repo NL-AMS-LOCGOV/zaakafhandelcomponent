@@ -18,7 +18,7 @@
                 </button>
             </div>
 
-            <div fxLayout="row" fxFlex fxLayoutAlign="end center" *ngIf="!(utilService.isTablet$|async)">
+            <div fxLayout="row" fxFlex fxLayoutAlign="end center" fxHide.lt-md>
                 <button (click)="toggleMenu()" id="zaakVerkortInklappen_button" mat-icon-button
                         title="{{ 'actie.paneel.sluiten' | translate }}">
                     <mat-icon>cancel</mat-icon>
