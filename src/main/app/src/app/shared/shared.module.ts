@@ -31,7 +31,7 @@ import {OutsideClickDirective} from './directives/outside-click.directive';
 import {ReadMoreComponent} from './read-more/read-more.component';
 import {EditBehandelaarComponent} from './edit/edit-behandelaar/edit-behandelaar.component';
 import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
-import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
+import {EditAutocompleteComponent} from './edit/edit-autocomplete/edit-autocomplete.component';
 import {EditDatumComponent} from './edit/edit-datum/edit-datum.component';
 import {PipesModule} from './pipes/pipes.module';
 
@@ -50,7 +50,7 @@ import {PipesModule} from './pipes/pipes.module';
         OutsideClickDirective,
         EditBehandelaarComponent,
         EditDatumComponent,
-        EditGroepComponent,
+        EditAutocompleteComponent,
         EditTekstComponent
     ],
     imports: [
@@ -85,7 +85,7 @@ import {PipesModule} from './pipes/pipes.module';
         StatusLabelComponent,
         EditBehandelaarComponent,
         EditDatumComponent,
-        EditGroepComponent,
+        EditAutocompleteComponent,
         EditTekstComponent
     ],
     providers: [

@@ -10,11 +10,11 @@ import {AutocompleteFormField} from '../../material-form-builder/form-components
 import {UtilService} from '../../../core/service/util.service';
 
 @Component({
-    selector: 'zac-edit-groep',
-    templateUrl: './edit-groep.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-groep.component.less']
+    selector: 'zac-edit-autocomplete',
+    templateUrl: './edit-autocomplete.component.html',
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-autocomplete.component.less']
 })
-export class EditGroepComponent extends EditComponent {
+export class EditAutocompleteComponent extends EditComponent {
 
     @Input() formField: AutocompleteFormField;
 

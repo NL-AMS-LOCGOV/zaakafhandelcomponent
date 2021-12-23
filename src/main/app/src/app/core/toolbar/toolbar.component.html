@@ -9,7 +9,7 @@
                 color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
             <mat-icon mat-list-icon>home</mat-icon>
         </button>
-        <button *ngIf="utilService.isHandset$ |async" [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
+        <button fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
                 mat-icon-button
                 title="{{ 'actie.terug' | translate }}" zacBackButton>
             <mat-icon>arrow_back</mat-icon>
@@ -61,20 +61,22 @@
             </button>
         </mat-menu>
 
-        <div class="title" *ngIf="!(utilService.isTablet$ |async)">{{headerTitle | translate}}</div>
+        <div class="title" fxHide.lt-md>{{headerTitle | translate}}</div>
         <span class="spacer"></span>
-
-        <button mat-flat-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
-                color="primary" id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
-            <ng-container *ngIf="!(utilService.isHandset$ |async)">
-                {{ ingelogdeMedewerker?.naam }}
-            </ng-container>
+        <div class="user-name" fxHide.xs>
+            {{ ingelogdeMedewerker?.naam }}
+        </div>
+        <button mat-icon-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
+                id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
             <mat-icon>account_circle</mat-icon>
         </button>
-
+        <button id="admin_button" mat-icon-button routerLink="/admin"
+                title="{{ 'actie.admin' | translate }}">
+            <mat-icon>settings</mat-icon>
+        </button>
         <mat-menu #accountMenu="matMenu">
-            <h4 *ngIf="utilService.isHandset$ |async">{{ingelogdeMedewerker?.naam}}</h4>
-            <mat-divider></mat-divider>
+            <h4 class="user-name" fxHide.xs>{{ingelogdeMedewerker?.naam}}</h4>
+            <mat-divider fxHide.gt-xs></mat-divider>
             <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
                 <mat-icon>logout</mat-icon>
                 <span>{{'actie.uitloggen' | translate}}</span>
@@ -83,4 +85,4 @@
     </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="mat-subheading-2 title" *ngIf="utilService.isTablet$ |async">{{headerTitle | translate}}</div>
+<div class="mat-subheading-2 title" fxHide.gt-sm>{{headerTitle | translate}}</div>

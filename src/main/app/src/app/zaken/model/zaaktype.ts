@@ -8,4 +8,5 @@ export class Zaaktype {
     identificatie: string;
     doel: string;
     omschrijving: string;
+    referentieproces: string;
 }

@@ -20,6 +20,7 @@ import {TakenModule} from './taken/taken.module';
 import {ToolbarComponent} from './core/toolbar/toolbar.component';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {AdminModule} from './admin/admin.module';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -38,6 +39,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
         InformatieObjectenModule,
         PlanItemsModule,
         TakenModule,
+        AdminModule,
         AppRoutingModule,
         TranslateModule.forRoot({
             loader: {
