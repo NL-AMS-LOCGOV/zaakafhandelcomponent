@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import {BehaviorSubject, forkJoin, iif, Observable, of} from 'rxjs';
 import {delay, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {DOCUMENT} from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -41,7 +42,27 @@ export class UtilService {
                                                     shareReplay()
                                                 );
 
-    constructor(private breakpointObserver: BreakpointObserver, private translate: TranslateService, private titleService: Title, private snackbar: MatSnackBar) {
+    constructor(@Optional() @Inject(DOCUMENT) private document: any,
+                private breakpointObserver: BreakpointObserver,
+                private translate: TranslateService,
+                private titleService: Title,
+                private snackbar: MatSnackBar) {
+    }
+
+    /**
+     * Check whether or not there is an active edit overlay on the screen eg. autocomplete or datepicker
+     */
+    hasEditOverlay(): boolean {
+        let overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-datepicker-popup');
+        return overlayElements.length > 0;
+    }
+
+    private getOverlayElements(...classList): any[] {
+        let overlayElements: any[] = [];
+        for (const styleClass of classList) {
+            overlayElements.push(...this.document.getElementsByClassName(styleClass));
+        }
+        return overlayElements;
     }
 
     readGemeenteNaam(): string {

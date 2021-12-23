@@ -8,6 +8,7 @@ import {EditComponent} from '../edit.component';
 import {SelectFormField} from '../../material-form-builder/form-components/select/select-form-field';
 import {TextareaFormField} from '../../material-form-builder/form-components/textarea/textarea-form-field';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
+import {UtilService} from '../../../core/service/util.service';
 
 @Component({
     selector: 'zac-edit-tekst',
@@ -18,8 +19,8 @@ export class EditTekstComponent extends EditComponent {
 
     @Input() formField: TextareaFormField;
 
-    constructor(mfbService: MaterialFormBuilderService) {
-        super(mfbService);
+    constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
+        super(mfbService, utilService);
     }
 
     init(formField: SelectFormField): void {

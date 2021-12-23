@@ -9,6 +9,7 @@ import {MaterialFormBuilderService} from '../material-form-builder/material-form
 import {FormItem} from '../material-form-builder/model/form-item';
 import {StaticTextComponent} from '../static-text/static-text.component';
 import {Subscription} from 'rxjs';
+import {UtilService} from '../../core/service/util.service';
 
 @Component({
     template: '',
@@ -26,7 +27,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     subscription: Subscription;
 
-    protected constructor(private mfbService: MaterialFormBuilderService) {
+    protected constructor(private mfbService: MaterialFormBuilderService, private utilService: UtilService) {
         super();
     }
 
@@ -65,7 +66,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     edit(editing: boolean): void {
-        if (!this.readonly) {
+        if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = editing;
         }
     }
