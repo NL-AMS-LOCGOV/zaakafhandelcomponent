@@ -5,7 +5,7 @@
 
 import {PlanItemType} from '../../plan-items/model/plan-item-type.enum';
 
-export class PlanItemDefinitie {
+export class PlanItemDefinition {
     id: string;
     naam: string;
     type: PlanItemType;

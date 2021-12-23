@@ -6,7 +6,8 @@
 import {Groep} from '../../identity/model/groep';
 
 export class PlanItemParameters {
-    formulierDefinitieID: string;
+    planItemDefinitionId: string;
+    formulierDefinitieId: string;
     defaultGroep: Groep;
     streefdatum: string;
 }

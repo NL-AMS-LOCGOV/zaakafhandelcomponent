@@ -10,7 +10,7 @@ import {Observable} from 'rxjs';
 import {Zaaktype} from '../zaken/model/zaaktype';
 import {catchError} from 'rxjs/operators';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
-import {CaseModel} from './model/case-model';
+import {CaseDefinition} from './model/case-definition';
 import {FormulierDefinitieVerwijzing} from './model/formulier-definitie-verwijzing';
 
 @Injectable({
@@ -41,14 +41,14 @@ export class AdminService {
         );
     }
 
-    listCaseModels(): Observable<CaseModel[]> {
-        return this.http.get<CaseModel[]>(`${this.basepath}/caseModel`).pipe(
+    listCaseDefinitions(): Observable<CaseDefinition[]> {
+        return this.http.get<CaseDefinition[]>(`${this.basepath}/caseDefinition`).pipe(
             catchError(this.handleError)
         );
     }
 
-    readCasemodel(key: string): Observable<CaseModel> {
-        return this.http.get<CaseModel>(`${this.basepath}/caseModel/${key}`).pipe(
+    readCaseDefinition(key: string): Observable<CaseDefinition> {
+        return this.http.get<CaseDefinition>(`${this.basepath}/caseDefinition/${key}`).pipe(
             catchError(this.handleError)
         );
     }

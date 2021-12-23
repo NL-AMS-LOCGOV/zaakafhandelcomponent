@@ -15,7 +15,7 @@ import net.atos.zac.app.zaken.model.RESTZaaktype;
 public class RESTZaakafhandelParameters {
     public RESTZaaktype zaaktype;
 
-    public RESTCaseModel caseModel;
+    public RESTCaseDefinition caseDefinition;
 
     public RESTMedewerker defaultBehandelaar;
 

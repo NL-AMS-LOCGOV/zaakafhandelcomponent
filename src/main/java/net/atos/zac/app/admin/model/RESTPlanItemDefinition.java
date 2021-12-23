@@ -7,14 +7,14 @@ package net.atos.zac.app.admin.model;
 
 import net.atos.zac.app.planitems.model.PlanItemType;
 
-public class RESTPlanItemDefinitie {
+public class RESTPlanItemDefinition {
     public String naam;
 
     public String id;
 
     public PlanItemType type;
 
-    public RESTPlanItemDefinitie(final String naam, final String id, final PlanItemType type) {
+    public RESTPlanItemDefinition(final String naam, final String id, final PlanItemType type) {
         this.naam = naam;
         this.id = id;
         this.type = type;

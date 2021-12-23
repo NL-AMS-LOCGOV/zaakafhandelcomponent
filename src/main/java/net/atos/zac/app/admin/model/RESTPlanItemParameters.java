@@ -10,7 +10,8 @@ import java.time.LocalDate;
 import net.atos.zac.app.identity.model.RESTGroep;
 
 public class RESTPlanItemParameters {
-    public String planItemId;
+
+    public String planItemDefinitionId;
 
     public String formulierDefinitieId;
 
@@ -18,8 +19,8 @@ public class RESTPlanItemParameters {
 
     public RESTGroep defaultGroep;
 
-    public RESTPlanItemParameters(final String planItemId, final String schermId) {
-        this.planItemId = planItemId;
-        this.formulierDefinitieId = schermId;
+    public RESTPlanItemParameters(final String planItemDefinitionId, final String formulierDefinitieId) {
+        this.planItemDefinitionId = planItemDefinitionId;
+        this.formulierDefinitieId = formulierDefinitieId;
     }
 }

@@ -13,22 +13,22 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import net.atos.zac.app.planitems.model.PlanItemType;
 
-public class RESTCaseModel {
+public class RESTCaseDefinition {
     public String naam;
 
     public String key;
 
-    public List<RESTPlanItemDefinitie> planItemDefinities;
+    public List<RESTPlanItemDefinition> planItemDefinitions;
 
-    public RESTCaseModel(final String naam, final String key) {
+    public RESTCaseDefinition(final String naam, final String key) {
         this.naam = naam;
         this.key = key;
     }
 
-    public List<RESTPlanItemDefinitie> getHumanTaskPlanItemDefinities() {
-        if (CollectionUtils.isEmpty(planItemDefinities)) {
+    public List<RESTPlanItemDefinition> getHumanTaskPlanItemDefinitions() {
+        if (CollectionUtils.isEmpty(planItemDefinitions)) {
             return Collections.emptyList();
         }
-        return planItemDefinities.stream().filter(planItemDefinition -> PlanItemType.HUMAN_TASK == planItemDefinition.type).collect(Collectors.toList());
+        return planItemDefinitions.stream().filter(planItemDefinition -> PlanItemType.HUMAN_TASK == planItemDefinition.type).collect(Collectors.toList());
     }
 }
