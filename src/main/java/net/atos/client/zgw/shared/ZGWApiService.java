@@ -96,7 +96,7 @@ public class ZGWApiService implements Caching {
      * @return Created {@link Status}.
      */
     public Status createStatusForZaak(final Zaak zaak, final String statustypeOmschrijving, final String statusToelichting) {
-        final Statustype statustype = ztcClientService.getStatustype(
+        final Statustype statustype = ztcClientService.readStatustype(
                 ztcClientService.readStatustypen(zaak.getZaaktype()), statustypeOmschrijving, zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), statustype.getUrl(), statusToelichting);
     }
@@ -110,7 +110,7 @@ public class ZGWApiService implements Caching {
      * @return Created {@link Resultaat}.
      */
     public Resultaat createResultaatForZaak(final Zaak zaak, final String resultaattypeOmschrijving, final String resultaatToelichting) {
-        final Resultaattype resultaattype = ztcClientService.getResultaattype(
+        final Resultaattype resultaattype = ztcClientService.readResultaattype(
                 ztcClientService.readResultaattypen(zaak.getZaaktype()), resultaattypeOmschrijving, zaak.getZaaktype());
         final Resultaat resultaat = new Resultaat(zaak.getUrl(), resultaattype.getUrl());
         resultaat.setToelichting(resultaatToelichting);
@@ -125,7 +125,7 @@ public class ZGWApiService implements Caching {
      * @return Created Eind {@link Status}.
      */
     public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = ztcClientService.getStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
+        final Statustype eindStatustype = ztcClientService.readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
     }
 

@@ -26,6 +26,8 @@ public class ConfigurationService {
 
     public static final String CATALOGUS_DOMEIN = "ALG";
 
+    public static final String MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE = "melding-klein-evenement";
+
     @Inject
     private ZTCClientService ztcClientService;
 

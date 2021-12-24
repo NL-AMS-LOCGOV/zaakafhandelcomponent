@@ -6,9 +6,7 @@
 package net.atos.client.or.object.model;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-
-import javax.json.bind.annotation.JsonbTransient;
+import java.util.Map;
 
 /**
  *
@@ -33,7 +31,7 @@ public class ObjectRecord {
     /**
      * Object data, based on OBJECTTYPE
      */
-    private Object data;
+    private Map<String, Object> data;
 
     // ToDo geometry;
 
@@ -85,17 +83,12 @@ public class ObjectRecord {
         this.typeVersion = typeVersion;
     }
 
-    public Object getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(final Object data) {
+    public void setData(final Map<String, Object> data) {
         this.data = data;
-    }
-
-    @JsonbTransient
-    public HashMap<String, Object> getDataAsHashMap() {
-        return (HashMap<String, Object>) this.data;
     }
 
     public LocalDate getStartAt() {

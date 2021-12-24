@@ -5,14 +5,94 @@
 
 package net.atos.zac.aanvraag;
 
+import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
+import static net.atos.zac.util.ConfigurationService.BRON_ORGANISATIE;
+import static net.atos.zac.util.ConfigurationService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
+
 import java.net.URI;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import net.atos.client.or.object.ObjectsClientService;
+import net.atos.client.or.object.model.ORObject;
+import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.Zaakobject;
+import net.atos.client.zgw.ztc.ZTCClientService;
 
 @ApplicationScoped
 public class ProductAanvraagService {
 
+    private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
+
+    private static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
+
+    private static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
+
+    private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
+
+    @Inject
+    private ObjectsClientService objectsClientService;
+
+    @Inject
+    private ZGWApiService zgwApiService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
+    private ZTCClientService ztcClientService;
+
     public void createZaak(final URI productAanvraagUrl) {
-        // ToDo Zaak aanmaken
+        final ORObject object = objectsClientService.readObject(productAanvraagUrl);
+        final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
+
+        Zaak zaak;
+        switch (productAanvraag.getType()) {
+            case "melding_klein_evenement":
+                zaak = createMeldingKleinEvenement(productAanvraag.getData());
+                break;
+            default:
+                LOG.warning(String.format("Onbekend product aanvraag type '%s'", productAanvraag.getType()));
+                return;
+        }
+        zaak.setStartdatum(object.getRecord().getStartAt());
+        zaak.setBronorganisatie(BRON_ORGANISATIE);
+        zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
+        zaak = zgwApiService.createZaak(zaak);
+
+        pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
+        pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
+    }
+
+    private Zaak createMeldingKleinEvenement(final Map<String, Object> aanvraagData) {
+        final Zaak zaak = new Zaak();
+        zaak.setZaaktype(ztcClientService.readZaaktypeUrl(MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE));
+        zaak.setOmschrijving((String) aanvraagData.get("naamEvenement"));
+        zaak.setToelichting((String) aanvraagData.get("omschrijvingEvenement"));
+        return zaak;
+    }
+
+    private void pairProductAanvraagWithZaak(final URI productAanvraagUrl, final URI zaakUrl) {
+        final Zaakobject zaakobject = new Zaakobject();
+        zaakobject.setZaak(zaakUrl);
+        zaakobject.setObject(productAanvraagUrl);
+        zaakobject.setObjectType(OVERIGE);
+        zaakobject.setObjectTypeOverige(OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG);
+        zrcClientService.createZaakobject(zaakobject);
+    }
+
+    private void pairAanvraagPDFWithZaak(final ProductAanvraag productAanvraag, final URI zaakUrl) {
+        final ZaakInformatieobject zaakInformatieobject = new ZaakInformatieobject();
+        zaakInformatieobject.setInformatieobject(productAanvraag.getPdfUrl());
+        zaakInformatieobject.setZaak(zaakUrl);
+        zaakInformatieobject.setTitel(ZAAK_INFORMATIEOBJECT_TITEL);
+        zaakInformatieobject.setBeschrijving(ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
+        zrcClientService.createZaakInformatieobject(zaakInformatieobject);
     }
 }
