@@ -30,7 +30,7 @@ public enum CacheEventType {
         return new CacheEvent(objectType, url);
     }
 
-    private CacheEvent event(final Notificatie.Resource resource) {
+    private CacheEvent event(final Notificatie.ResourceInfo resource) {
         return instance(this, resource.getUrl());
     }
 
@@ -49,7 +49,7 @@ public enum CacheEventType {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<CacheEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+    public static Set<CacheEvent> getEvents(final Channel channel, final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
         switch (channel) {
             case ZAKEN:
                 return getChannelZakenEvents(mainResource, resource);
@@ -60,7 +60,7 @@ public enum CacheEventType {
         }
     }
 
-    private static Set<CacheEvent> getChannelZakenEvents(final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+    private static Set<CacheEvent> getChannelZakenEvents(final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
         switch (resource.getType()) {
             case ROL:
                 return getChannelZakenResourceRolEvents(mainResource, resource);
@@ -71,7 +71,7 @@ public enum CacheEventType {
         }
     }
 
-    private static Set<CacheEvent> getChannelZakenResourceRolEvents(final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+    private static Set<CacheEvent> getChannelZakenResourceRolEvents(final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
         switch (resource.getAction()) {
             case CREATE:
             case UPDATE:
@@ -84,7 +84,7 @@ public enum CacheEventType {
         }
     }
 
-    private static Set<CacheEvent> getChannelZakenResourceStatusEvents(final Notificatie.Resource resource) {
+    private static Set<CacheEvent> getChannelZakenResourceStatusEvents(final Notificatie.ResourceInfo resource) {
         switch (resource.getAction()) {
             case UPDATE:
             case DELETE:
@@ -96,7 +96,7 @@ public enum CacheEventType {
         }
     }
 
-    private static Set<CacheEvent> getChannelZaaktypenEvents(final Notificatie.Resource resource) {
+    private static Set<CacheEvent> getChannelZaaktypenEvents(final Notificatie.ResourceInfo resource) {
         switch (resource.getType()) {
             case ZAAKTYPE:
                 return getChannelZaaktypenResourceZaaktypeEvents(resource);
@@ -105,7 +105,7 @@ public enum CacheEventType {
         }
     }
 
-    private static Set<CacheEvent> getChannelZaaktypenResourceZaaktypeEvents(final Notificatie.Resource resource) {
+    private static Set<CacheEvent> getChannelZaaktypenResourceZaaktypeEvents(final Notificatie.ResourceInfo resource) {
         switch (resource.getAction()) {
             case UPDATE:
             case DELETE:

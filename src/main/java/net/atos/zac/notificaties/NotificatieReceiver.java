@@ -6,6 +6,8 @@
 package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
+import static net.atos.zac.notificaties.Action.CREATE;
+import static net.atos.zac.notificaties.Resource.OBJECT;
 
 import java.util.logging.Logger;
 
@@ -18,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
+import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.websocket.event.ScreenEventType;
@@ -32,35 +35,52 @@ public class NotificatieReceiver {
 
     private static final Logger LOG = Logger.getLogger(NotificatieReceiver.class.getName());
 
+    private static final String PRODUCT_AANVRAAG_KENMERK_KEY = "objectType";
+
+    private static final String PRODUCT_AANVRAAG_KENMERK_VALUE = "objecttypes: ProductAanvraag";
+
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private ProductAanvraagService productAanvraagService;
 
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
                 .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
-                        notificatie.getChannel(), notificatie.getResourceType(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
+                        notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleCmmn(notificatie);
         handleWebsockets(notificatie);
+        handleProductAanvraag(notificatie);
         return noContent().build();
     }
 
     private void handleCaches(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            CacheEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            CacheEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
         }
     }
 
     private void handleCmmn(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
         }
     }
 
     private void handleWebsockets(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResourceType() != null) {
-            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResource(), notificatie.getResource()).forEach(eventingService::send);
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+                    .forEach(eventingService::send);
+        }
+    }
+
+    private void handleProductAanvraag(final Notificatie notificatie) {
+        if (notificatie.getResource() == OBJECT && notificatie.getAction() == CREATE &&
+                notificatie.getProperties().containsKey(PRODUCT_AANVRAAG_KENMERK_KEY) &&
+                notificatie.getProperties().containsValue(PRODUCT_AANVRAAG_KENMERK_VALUE)) {
+            productAanvraagService.createZaak(notificatie.getResourceUrl());
         }
     }
 }

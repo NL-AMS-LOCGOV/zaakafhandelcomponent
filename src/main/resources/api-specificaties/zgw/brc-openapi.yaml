@@ -1307,13 +1307,13 @@ components:
           maxLength: 1000
           minLength: 1
         resource:
-          title: Resource
+          title: ResourceInfo
           description: Het type resource waarop de actie gebeurde.
           type: string
           maxLength: 50
           minLength: 1
         resourceUrl:
-          title: Resource url
+          title: ResourceInfo url
           description: De URL naar het object.
           type: string
           format: uri
@@ -1324,7 +1324,7 @@ components:
           description: Toelichting waarom de handeling is uitgevoerd.
           type: string
         resourceWeergave:
-          title: Resource weergave
+          title: ResourceInfo weergave
           description: Vriendelijke identificatie van het object.
           type: string
           maxLength: 200

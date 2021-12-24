@@ -11,104 +11,113 @@ import static net.atos.zac.notificaties.Action.UPDATE;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 public class Notificatie {
 
-    private final Channel channel;
+    private Channel channel;
 
-    private final URI mainResourceUrl;
+    private URI mainResourceUrl;
 
-    private final net.atos.zac.notificaties.Resource resourceType;
+    private Resource resource;
 
-    private final URI resourceUrl;
+    private URI resourceUrl;
 
-    private final Action action;
+    private Action action;
 
     @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS)
-    private final ZonedDateTime creationDateTime;
+    private ZonedDateTime creationDateTime;
 
-    private final Map<String, String> properties = new HashMap<>();
-
-    @JsonbCreator
-    public Notificatie(
-            @JsonbProperty("kanaal") final String channel,
-            @JsonbProperty("hoofdObject") final URI mainResourceUrl,
-            @JsonbProperty("resource") final String resourceType,
-            @JsonbProperty("resourceUrl") final URI resourceUrl,
-            @JsonbProperty("actie") final String action,
-            @JsonbProperty("aanmaakdatum") final ZonedDateTime creationDateTime) {
-        this.channel = Channel.value(channel);
-        this.mainResourceUrl = mainResourceUrl;
-        this.resourceType = net.atos.zac.notificaties.Resource.value(resourceType);
-        this.resourceUrl = resourceUrl;
-        this.action = Action.value(action);
-        this.creationDateTime = creationDateTime;
-    }
+    private Map<String, String> properties;
 
     public Channel getChannel() {
         return channel;
     }
 
-    public Resource getMainResource() {
-        return new Resource(
-                getMainResourceType(),
-                getMainResourceUrl(),
-                getMainResourceType() == getResourceType() && getMainResourceUrl().equals(getResourceUrl())
-                        ? getAction()
-                        : UPDATE);
-    }
-
-    public net.atos.zac.notificaties.Resource getMainResourceType() {
-        return channel.getResourceType();
+    @JsonbProperty("kanaal")
+    public void setChannel(final Channel channel) {
+        this.channel = channel;
     }
 
     public URI getMainResourceUrl() {
         return mainResourceUrl;
     }
 
-    public Resource getResource() {
-        return new Resource(
-                getResourceType(),
-                getResourceUrl(),
-                getAction());
+    @JsonbProperty("hoofdObject")
+    public void setMainResourceUrl(final URI mainResourceUrl) {
+        this.mainResourceUrl = mainResourceUrl;
     }
 
-    public net.atos.zac.notificaties.Resource getResourceType() {
-        return resourceType;
+    public Resource getResource() {
+        return resource;
+    }
+
+    @JsonbProperty("resource")
+    public void setResource(final Resource resource) {
+        this.resource = resource;
     }
 
     public URI getResourceUrl() {
         return resourceUrl;
     }
 
+    @JsonbProperty("resourceUrl")
+    public void setResourceUrl(final URI resourceUrl) {
+        this.resourceUrl = resourceUrl;
+    }
+
     public Action getAction() {
         return action;
+    }
+
+    @JsonbProperty("actie")
+    public void setAction(final Action action) {
+        this.action = action;
     }
 
     public ZonedDateTime getCreationDateTime() {
         return creationDateTime;
     }
 
+    @JsonbProperty("aanmaakdatum")
+    public void setCreationDateTime(final ZonedDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
     public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(properties);
+        return properties != null ? properties : Collections.emptyMap();
     }
 
-    public void setProperty(final String key, final String value) {
-        if (value == null) {
-            properties.remove(key);
-        } else {
-            properties.put(key, value);
-        }
+    @JsonbProperty("kenmerken")
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
     }
 
-    public static class Resource {
-        private final net.atos.zac.notificaties.Resource type;
+    @JsonbTransient
+    public ResourceInfo getResourceInfo() {
+        return new ResourceInfo(getResource(), getResourceUrl(), getAction());
+    }
+
+    @JsonbTransient
+    public Resource getMainResourceType() {
+        return channel.getResourceType();
+    }
+
+    @JsonbTransient
+    public ResourceInfo getMainResourceInfo() {
+        return new ResourceInfo(
+                getMainResourceType(),
+                getMainResourceUrl(),
+                getMainResourceType() == getResource() && getMainResourceUrl().equals(getResourceUrl()) ? getAction() : UPDATE);
+    }
+
+    public static class ResourceInfo {
+
+        private final Resource type;
 
         private final URI url;
 
@@ -121,13 +130,13 @@ public class Notificatie {
          * @param url    the identification of the resource
          * @param action the type of modification
          */
-        private Resource(final net.atos.zac.notificaties.Resource type, final URI url, final Action action) {
+        private ResourceInfo(final Resource type, final URI url, final Action action) {
             this.action = action;
             this.type = type;
             this.url = url;
         }
 
-        public net.atos.zac.notificaties.Resource getType() {
+        public Resource getType() {
             return type;
         }
 
