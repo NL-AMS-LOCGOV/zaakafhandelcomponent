@@ -117,7 +117,7 @@ public enum ScreenEventType {
         return instance(opcode, this, url); // Allowed with all object types
     }
 
-    private ScreenEvent event(final Opcode opcode, final Notificatie.Resource resource) {
+    private ScreenEvent event(final Opcode opcode, final Notificatie.ResourceInfo resource) {
         return instance(opcode, this, resource.getUrl()); // Allowed with all object types
     }
 
@@ -236,7 +236,7 @@ public enum ScreenEventType {
         return event(DELETED, taak);
     }
 
-    private void addEvent(final Set<ScreenEvent> events,final Notificatie.Resource resource) {
+    private void addEvent(final Set<ScreenEvent> events, final Notificatie.ResourceInfo resource) {
         switch (resource.getAction()) {
             case CREATE:
                 // There cannot be any websockets listeners for Opcode.CREATED, so don't send the event.
@@ -261,7 +261,7 @@ public enum ScreenEventType {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<ScreenEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+    public static Set<ScreenEvent> getEvents(final Channel channel, final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
         final Set<ScreenEvent> events = new HashSet<>();
         switch (channel) {
             case INFORMATIEOBJECTEN:

@@ -21,7 +21,7 @@ import net.atos.zac.notificaties.Notificatie;
 public enum CmmnEventType {
     ZAAK;
 
-    public final CmmnEvent created(final Notificatie.Resource resource) {
+    public final CmmnEvent created(final Notificatie.ResourceInfo resource) {
         return new CmmnEvent(CREATED, this, resource.getUrl());
     }
 
@@ -33,7 +33,7 @@ public enum CmmnEventType {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<CmmnEvent> getEvents(final Channel channel, final Notificatie.Resource mainResource, final Notificatie.Resource resource) {
+    public static Set<CmmnEvent> getEvents(final Channel channel, final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
         final Set<CmmnEvent> events = new HashSet<>();
         switch (channel) {
             case ZAKEN:

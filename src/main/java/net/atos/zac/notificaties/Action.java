@@ -9,11 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.json.bind.adapter.JsonbAdapter;
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
+import org.apache.commons.lang3.NotImplementedException;
+
 /**
  * Enumeratie die de acties bevat zoals die binnenkomen op de {@link NotificatieReceiver}.
  * <p>
  * http://open-zaak.default/ref/kanalen/
  */
+@JsonbTypeAdapter(Action.Adapter.class)
 public enum Action {
 
     CREATE("create"),
@@ -44,14 +50,27 @@ public enum Action {
     }
 
     Action(final String code) {
-        this(code,null);
+        this(code, null);
     }
 
-    public static Action value(final String code) {
+    public static Action fromCode(final String code) {
         final Action value = VALUES.get(code);
         if (value == null) {
             LOG.warning(String.format("unknown %s action", code));
         }
         return value;
+    }
+
+    static class Adapter implements JsonbAdapter<Action, String> {
+
+        @Override
+        public String adaptToJson(final Action action) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public Action adaptFromJson(final String code) {
+            return fromCode(code);
+        }
     }
 }

@@ -9,11 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.json.bind.adapter.JsonbAdapter;
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
+import org.apache.commons.lang3.NotImplementedException;
+
 /**
  * Enumeratie die de resources bevat zoals die binnenkomen op de {@link NotificatieReceiver}.
  * <p>
  * http://open-zaak.default/ref/kanalen/
  */
+@JsonbTypeAdapter(Resource.Adapter.class)
 public enum Resource {
 
     APPLICATIE("applicatie"),
@@ -24,6 +30,7 @@ public enum Resource {
     INFORMATIEOBJECT("enkelvoudiginformatieobject"),
     INFORMATIEOBJECTTYPE("informatieobjecttype"),
     KLANTCONTACT("klantcontact"),
+    OBJECT("object"),
     RESULTAAT("resultaat"),
     ROL("rol"),
     STATUS("status"),
@@ -50,11 +57,24 @@ public enum Resource {
         this.code = code;
     }
 
-    public static Resource value(final String code) {
+    public static Resource fromCode(final String code) {
         final Resource value = VALUES.get(code);
         if (value == null) {
             LOG.warning(String.format("unknown %s resource", code));
         }
         return value;
+    }
+
+    static class Adapter implements JsonbAdapter<Resource, String> {
+
+        @Override
+        public String adaptToJson(final Resource resource) {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public Resource adaptFromJson(final String code) {
+            return fromCode(code);
+        }
     }
 }
