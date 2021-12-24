@@ -17,12 +17,35 @@
                              [value]="parameters.zaaktype.identificatie"></zac-static-text>
             <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'uuid' | translate"
                              [value]="parameters.zaaktype.uuid"></zac-static-text>
-            <zac-static-text fxFlex="33" [label]="'defaultBehandelaar' | translate"
-                             [value]="parameters.defaultBehandelaar?.naam"></zac-static-text>
-            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'defaultGroep' | translate"
-                             [value]="parameters.defaultGroep?.naam | empty"></zac-static-text>
-            <zac-static-text fxFlex="33" [label]="'caseDefinition' | translate"
-                             [value]="parameters.caseDefinition.naam"></zac-static-text>
+
+
+            <div fxFlex="100">
+                <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
+                    <mat-label>{{'defaultBehandelaar' | translate}}</mat-label>
+                    <mat-select placeholder="Selecteer een optie" [formControl]="behandelaarControl" [compareWith]="compareObject">
+                        <mat-option (onSelectionChange)="parameters.defaultBehandelaar = b" *ngFor="let b of medewerkers | async" [value]="b">
+                            {{ b.naam }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
+                    <mat-label>{{'defaultGroep' | translate}}</mat-label>
+                    <mat-select placeholder="Selecteer een optie" [formControl]="groepControl" [compareWith]="compareObject">
+                        <mat-option (onSelectionChange)="parameters.defaultGroep = groep" *ngFor="let groep of groepen | async" [value]="groep">
+                            {{ groep.naam }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
+                <mat-label>{{'caseDefinition' | translate}}</mat-label>
+                <mat-select placeholder="Selecteer een optie" [formControl]="caseDefinitionControl" [compareWith]="compareObject">
+                    <mat-option (onSelectionChange)="parameters.caseDefinition = cd" *ngFor="let cd of caseDefinitions | async" [value]="cd">
+                        {{ cd.naam }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
             <div class="buttons" fxFlex="100">
                 <button mat-raised-button color="primary" matStepperNext>{{"actie.volgende" | translate}}</button>
                 <button mat-raised-button (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
