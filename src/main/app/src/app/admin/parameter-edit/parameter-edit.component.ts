@@ -14,6 +14,8 @@ import {AdminService} from '../admin.service';
 import {Groep} from '../../identity/model/groep';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
+import {PlanItemParameter} from '../model/plan-item-parameter';
+import {FormulierDefinitieVerwijzing} from '../model/formulier-definitie-verwijzing';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -23,9 +25,10 @@ export class ParameterEditComponent implements OnInit {
 
     parameters: ZaakafhandelParameters;
     algemeenFormGroup: FormGroup;
-    planitemFormGroup: FormGroup;
+    planItemParametersFormGroup: FormGroup;
 
     caseDefinitions: Observable<CaseDefinition[]>;
+    formulierDefinities: Observable<FormulierDefinitieVerwijzing[]>;
     caseDefinitionControl = new FormControl(null, [Validators.required]);
 
     groepen: Observable<Groep[]>;
@@ -33,20 +36,47 @@ export class ParameterEditComponent implements OnInit {
 
     medewerkers: Observable<Medewerker[]>;
     behandelaarControl = new FormControl();
+    planItemParameters: PlanItemParameter[];
+    caseDefinition: CaseDefinition;
 
     constructor(private utilService: UtilService, private adminService: AdminService, private identityService: IdentityService, private route: ActivatedRoute, private _formBuilder: FormBuilder) {
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
+            this.caseDefinition = this.parameters.caseDefinition;
+            this.planItemParameters = this.parameters.planItemParameters;
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroepen();
         this.medewerkers = identityService.listMedewerkers();
+        this.formulierDefinities = adminService.listFormulierDefinities();
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.parameters.edit');
         this.createForm();
+    }
+
+    readPlanItemParameters(cd: CaseDefinition): void {
+        this.caseDefinition = cd;
+        if (this.compareObject(this.caseDefinition, this.parameters.caseDefinition)) {
+            this.planItemParameters = this.parameters.planItemParameters;
+        } else {
+            this.adminService.readCaseDefinition(this.parameters.caseDefinition.key).subscribe(data => {
+                this.planItemParameters = [];
+                data.planItemDefinitions.forEach(planItemDefinition => {
+                    let planItemParameter: PlanItemParameter = new PlanItemParameter();
+                    planItemParameter.planItemDefinition = planItemDefinition;
+                    planItemParameter.defaultGroep = this.parameters.defaultGroep;
+                    this.planItemParameters.push(planItemParameter);
+                });
+            });
+        }
+        this.updateForm();
+    }
+
+    getControl(planItemParameter: PlanItemParameter, field: string): FormControl {
+        return <FormControl>this.planItemParametersFormGroup.get(`${planItemParameter.planItemDefinition.id}__${field}`);
     }
 
     createForm() {
@@ -55,9 +85,24 @@ export class ParameterEditComponent implements OnInit {
             groepControl: this.groepControl,
             behandelaarControl: this.behandelaarControl
         });
-        this.planitemFormGroup = this._formBuilder.group({
-            //moet nog
+        this.updateForm();
+    }
+
+    updateForm() {
+        this.planItemParametersFormGroup = this._formBuilder.group({});
+        this.planItemParameters.forEach(params => {
+            this.planItemParametersFormGroup.addControl(params.planItemDefinition.id + '__defaultGroep', new FormControl(params.defaultGroep));
+            this.planItemParametersFormGroup.addControl(params.planItemDefinition.id + '__formulierDefinitie',
+                new FormControl(params.formulierDefinitie, [Validators.required]));
+            this.planItemParametersFormGroup.addControl(params.planItemDefinition.id + '__doorlooptijd',
+                new FormControl(params.doorlooptijd, [Validators.required, Validators.min(0)]));
         });
+    }
+
+    isPlanItemParameterValid(p: PlanItemParameter): boolean {
+        return this.getControl(p, 'defaultGroep').valid &&
+            this.getControl(p, 'formulierDefinitie').valid &&
+            this.getControl(p, 'doorlooptijd').valid;
     }
 
     opslaan(): void {
