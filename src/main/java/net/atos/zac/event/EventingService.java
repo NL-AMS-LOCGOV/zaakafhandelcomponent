@@ -61,9 +61,11 @@ public class EventingService {
         screenUpdateEvent.fireAsync(event);
     }
 
-    public static int password;
+    public static final Integer m = null;
 
-    private void test(Integer i) {
-        password = i + 2;
+    public static String password;
+
+    private void test() {
+        password = m.toString() + 2;
     }
 }
