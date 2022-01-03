@@ -55,9 +55,13 @@ public class EventingService {
      * <p>
      * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.ScreenEventType} om het event aan te maken!
      *
-     * @param event
+     * @param event het te versturen event
      */
     public void send(final ScreenEvent event) {
         screenUpdateEvent.fireAsync(event);
+    }
+
+    private void test(Integer i) {
+        i += 2;
     }
 }
