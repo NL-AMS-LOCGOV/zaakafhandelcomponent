@@ -169,8 +169,12 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
-        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving').value(this.zaak.omschrijving).build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.zaak.toelichting).build());
+
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
+                                                                              .value(this.zaak.omschrijving).maxlength(80)
+                                                                              .build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
+                                                                             .value(this.zaak.toelichting).maxlength(1000).build());
         this.editFormFields.set('startdatum', new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
         this.editFormFields.set('einddatumGepland',
@@ -206,14 +210,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-            this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
-            this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
-                if (planItems.length > 0) {
-                    this.menu.push(new HeaderMenuItem('planItems'));
-                }
-                this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
-            });
+        this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
+            if (planItems.length > 0) {
+                this.menu.push(new HeaderMenuItem('planItems'));
+            }
+            this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
+        });
     }
 
     assignToMe(): void {

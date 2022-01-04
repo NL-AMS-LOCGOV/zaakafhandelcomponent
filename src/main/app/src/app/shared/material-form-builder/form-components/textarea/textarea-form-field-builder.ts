@@ -15,4 +15,9 @@ export class TextareaFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField = new TextareaFormField();
     }
 
+    maxlength(maxlength: number): this {
+        this.formField.maxlength = maxlength;
+        return this;
+    }
+
 }

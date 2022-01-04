@@ -15,7 +15,7 @@ export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField = new HeadingFormField();
     }
 
-    level(level: string): AbstractFormFieldBuilder {
+    level(level: string): this {
         this.formField.level = level;
         return this;
     }
