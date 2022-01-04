@@ -212,5 +212,6 @@
   "msg.vrijgegeven.taken": "{{aantal}} taken zijn vrijgegeven",
   "msg.vrijgegeven.taak": "De taak is vrijgegeven",
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "De zaak is vrijgegeven"
+  "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
+  "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen"
 }

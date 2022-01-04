@@ -213,5 +213,6 @@
   "msg.vrijgegeven.taken": "{{aantal}} tasks have been released",
   "msg.vrijgegeven.taak": "The task has been released",
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
-  "msg.zaak.vrijgegeven": "The case has been released"
+  "msg.zaak.vrijgegeven": "The case has been released",
+  "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved"
 }

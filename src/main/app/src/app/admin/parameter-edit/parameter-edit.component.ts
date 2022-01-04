@@ -112,7 +112,6 @@ export class ParameterEditComponent implements OnInit {
     }
 
     opslaan(): void {
-
         this.parameters.caseDefinition = this.caseDefinitionControl.value;
         this.parameters.defaultGroep = this.groepControl.value;
         this.parameters.defaultBehandelaar = this.behandelaarControl.value;
@@ -124,7 +123,7 @@ export class ParameterEditComponent implements OnInit {
         });
         this.parameters.planItemParameters = this.planItemParameters;
         this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(() => {
-            this.utilService.openSnackbar('Zaakafhandelparameters zijn opgeslagen');
+            this.utilService.openSnackbar('msg.zaakafhandelparameters.opgeslagen');
         });
     }
 
