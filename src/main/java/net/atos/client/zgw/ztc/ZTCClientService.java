@@ -9,7 +9,6 @@ import static java.lang.String.format;
 import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -165,7 +164,7 @@ public class ZTCClientService implements Caching {
      * @param omschrijving Omschrijving of {@link Statustype}/
      * @return {@link Statustype}. Never 'null'!
      */
-    public Statustype getStatustype(final List<Statustype> statustypes, final String omschrijving, final URI zaaktypeURI) {
+    public Statustype readStatustype(final List<Statustype> statustypes, final String omschrijving, final URI zaaktypeURI) {
         return statustypes.stream()
                 .filter(statustype -> omschrijving.equals(statustype.getOmschrijving()))
                 .findAny()
@@ -180,7 +179,7 @@ public class ZTCClientService implements Caching {
      * @param zaaktypeURI URI of {@link Zaaktype}.
      * @return {@link Statustype}. Never 'null'!
      */
-    public Statustype getStatustypeEind(final List<Statustype> statustypes, final URI zaaktypeURI) {
+    public Statustype readStatustypeEind(final List<Statustype> statustypes, final URI zaaktypeURI) {
         return statustypes.stream()
                 .filter(Statustype::getEindstatus)
                 .findAny()
@@ -218,7 +217,7 @@ public class ZTCClientService implements Caching {
      * @param omschrijving Omschrijving of {@link Resultaattype}/
      * @return {@link Resultaattype}. Never 'null'!
      */
-    public Resultaattype getResultaattype(List<Resultaattype> resultaattypes, final String omschrijving, final URI zaaktypeURI) {
+    public Resultaattype readResultaattype(List<Resultaattype> resultaattypes, final String omschrijving, final URI zaaktypeURI) {
         return resultaattypes.stream()
                 .filter(resultaattype -> StringUtils.equals(resultaattype.getOmschrijving(), omschrijving))
                 .findAny()

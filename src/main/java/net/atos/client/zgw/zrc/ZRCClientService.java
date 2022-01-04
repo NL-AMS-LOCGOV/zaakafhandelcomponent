@@ -89,6 +89,16 @@ public class ZRCClientService implements Caching {
     }
 
     /**
+     * Create {@link ZaakInformatieobject}
+     *
+     * @param zaakInformatieobject
+     * @return
+     */
+    public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject) {
+        return zrcClient.zaakinformatieobjectCreate(zaakInformatieobject);
+    }
+
+    /**
      * Read {@link Zaak} via its UUID.
      * Throws a RuntimeException if the {@link Zaak} can not be read.
      *

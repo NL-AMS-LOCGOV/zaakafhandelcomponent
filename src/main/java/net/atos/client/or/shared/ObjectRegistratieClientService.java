@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ public class ObjectRegistratieClientService {
      * @param data           Data stored in the ObjectRecord of the newly created Object
      * @return New Object
      */
-    public ORObject createObject(final String objecttypeNaam, final Object data) {
+    public ORObject createObject(final String objecttypeNaam, final Map<String, Object> data) {
         // Search Objecttype
         final Objecttype objecttype = objecttypesClientService.listObjecttypes().stream()
                 .filter(_objecttype -> equalsIgnoreCase(_objecttype.getName(), objecttypeNaam))
