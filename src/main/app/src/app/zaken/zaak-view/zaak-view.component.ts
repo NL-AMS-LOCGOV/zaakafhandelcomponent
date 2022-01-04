@@ -90,13 +90,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
-            this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
+            this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
                 (event) => this.updateZaak(event));
-            this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+            this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
                 (event) => this.updateZaak(event));
-            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+            this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.zaakDocumentenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
@@ -104,7 +104,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
-            this.loadAuditTrail();
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
@@ -117,8 +116,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
+        this.loadAuditTrail();
         this.setEditableFormFields();
-
         this.setupMenu();
     }
 
@@ -264,7 +263,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
-        this.loadAuditTrail();
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
