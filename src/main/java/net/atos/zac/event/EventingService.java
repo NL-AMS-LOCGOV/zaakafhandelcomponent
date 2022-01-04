@@ -60,12 +60,4 @@ public class EventingService {
     public void send(final ScreenEvent event) {
         screenUpdateEvent.fireAsync(event);
     }
-
-    public static final Integer m = null;
-
-    public static String password;
-
-    private void test() {
-        password = m.toString() + 2;
-    }
 }
