@@ -6,7 +6,6 @@
 package net.atos.client.zgw.ztc;
 
 import static java.lang.String.format;
-import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
 import java.net.URI;
 import java.util.List;
@@ -319,7 +318,7 @@ public class ZTCClientService implements Caching {
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
-                .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
+                .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser());
     }
 }

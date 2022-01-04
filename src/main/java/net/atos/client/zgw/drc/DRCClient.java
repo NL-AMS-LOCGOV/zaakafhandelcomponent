@@ -7,7 +7,6 @@ package net.atos.client.zgw.drc;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
-import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +52,7 @@ import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
         @RegisterProvider(ValidatieFoutExceptionMapper.class),
         @RegisterProvider(RuntimeExceptionMapper.class)})
 @Path("documenten/api/v1")
-@Produces({APPLICATION_JSON, APPLICATION_PROBLEM_JSON})
+@Produces(APPLICATION_JSON)
 public interface DRCClient {
 
     @POST

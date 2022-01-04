@@ -5,8 +5,6 @@
 
 package net.atos.client.zgw.drc;
 
-import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
-
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.HashMap;
@@ -131,7 +129,7 @@ public class DRCClientService {
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
-                .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
+                .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser());
     }
 }

@@ -12,8 +12,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 
-import net.atos.client.util.AcceptHeaderBugWorkaroundUtil;
-
 /**
  *
  */
@@ -25,7 +23,6 @@ public class ObjectsClientHeadersFactory implements ClientHeadersFactory {
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
         clientOutgoingHeaders.add(AUTHORIZATION, generateToken());
-        AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
 
