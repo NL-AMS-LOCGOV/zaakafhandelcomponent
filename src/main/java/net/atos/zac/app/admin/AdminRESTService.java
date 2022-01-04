@@ -24,6 +24,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
 import net.atos.zac.app.admin.model.RESTFormulierDefinitieVerwijzing;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
+import net.atos.zac.app.admin.model.RESTPlanItemParameters;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -78,7 +79,7 @@ public class AdminRESTService {
      */
     @GET
     @Path("caseDefinition/{key}")
-    public RESTCaseDefinition readCaseModel(@PathParam("key") String key) {
+    public RESTCaseDefinition readCaseDefinition(@PathParam("key") String key) {
         //todo ZaakafhandelParameterBeheerService - zaakafhandelcomponent #167
         RESTCaseDefinition caseModel = new RESTCaseDefinition(key, key);
         caseModel.planItemDefinitions = List.of(new RESTPlanItemDefinition(String.format("Taak 1 (%s)", key), "task1_" + key, PlanItemType.HUMAN_TASK),
@@ -121,6 +122,9 @@ public class AdminRESTService {
         params.zaaktype = zaaktypeConverter.convert(zaaktype);
         params.caseDefinition = new RESTCaseDefinition(zaaktype.getReferentieproces().getNaam(), zaaktype.getReferentieproces().getNaam());
         params.planItemParameters = new ArrayList<>();
+        readCaseDefinition(zaaktype.getReferentieproces().getNaam()).planItemDefinitions.forEach(restPlanItemDefinition -> {
+            params.planItemParameters.add(new RESTPlanItemParameters(restPlanItemDefinition, null));
+        });
         return params;
     }
 

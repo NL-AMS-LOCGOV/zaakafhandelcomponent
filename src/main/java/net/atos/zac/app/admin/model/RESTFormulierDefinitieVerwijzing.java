@@ -10,6 +10,9 @@ public class RESTFormulierDefinitieVerwijzing {
 
     public String id;
 
+    public RESTFormulierDefinitieVerwijzing() {
+    }
+
     public RESTFormulierDefinitieVerwijzing(final String naam, final String id) {
         this.naam = naam;
         this.id = id;
