@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-stepper orientation="vertical" linear="true" #stepper>
+<mat-stepper orientation="vertical" linear="true">
     <mat-step [stepControl]="algemeenFormGroup">
         <ng-template matStepLabel>{{"gegevens.algemeen" | translate}}</ng-template>
         <form [formGroup]="algemeenFormGroup" fxLayout="column">
