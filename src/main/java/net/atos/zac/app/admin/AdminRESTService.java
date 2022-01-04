@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -30,6 +31,7 @@ import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.util.ConfigurationService;
 
+@Singleton
 @Path("admin")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -29,6 +30,7 @@ import net.atos.zac.zaaksturing.model.TaakFormulieren;
 /**
  *
  */
+@Singleton
 @Path("planitems")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

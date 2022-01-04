@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -28,7 +30,6 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
 
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
@@ -46,6 +47,7 @@ import net.atos.zac.zaaksturing.model.TaakFormulieren;
 /**
  *
  */
+@Singleton
 @Path("taken")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -65,34 +67,31 @@ public class TakenRESTService {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
-
-    @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<Task> tasks = flowableService.listOpenTasksForGroups(ingelogdeMedewerker.getGroupIds(),
+        final List<Task> tasks = flowableService.listOpenTasksForGroups(ingelogdeMedewerker.get().getGroupIds(),
                                                                         TaakSortering.fromValue(tableState.getSort().getPredicate()),
                                                                         tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
                                                                         tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksForGroups(ingelogdeMedewerker.getGroupIds()));
+        return new TableResponse<>(taken, flowableService.countOpenTasksForGroups(ingelogdeMedewerker.get().getGroupIds()));
     }
 
     @GET
     @Path("mijn")
     public TableResponse<RESTTaak> listMijnTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<Task> tasks = flowableService.listOpenTasksOwnedByMedewerker(ingelogdeMedewerker.getGebruikersnaam(),
+        final List<Task> tasks = flowableService.listOpenTasksOwnedByMedewerker(ingelogdeMedewerker.get().getGebruikersnaam(),
                                                                                 TaakSortering.fromValue(tableState.getSort().getPredicate()),
                                                                                 tableState.getSort().getDirection(),
                                                                                 tableState.getPagination().getFirstResult(),
                                                                                 tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksOwnedByMedewerker(ingelogdeMedewerker.getGebruikersnaam()));
+        return new TableResponse<>(taken, flowableService.countOpenTasksOwnedByMedewerker(ingelogdeMedewerker.get().getGebruikersnaam()));
     }
 
 
@@ -154,7 +153,7 @@ public class TakenRESTService {
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
 
         //TODO ESUITEDEV-25820 rechtencheck met solrTaak
-        final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.getGebruikersnaam());
+        final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam());
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
         return taakConverter.convertTaskInfo(task);
     }
