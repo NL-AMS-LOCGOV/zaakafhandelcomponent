@@ -17,6 +17,9 @@ public class RESTPlanItemParameters {
 
     public RESTGroep defaultGroep;
 
+    public RESTPlanItemParameters() {
+    }
+
     public RESTPlanItemParameters(final RESTPlanItemDefinition planItemDefinition, final RESTFormulierDefinitieVerwijzing formulierDefinitie) {
         this.planItemDefinition = planItemDefinition;
         this.formulierDefinitie = formulierDefinitie;
