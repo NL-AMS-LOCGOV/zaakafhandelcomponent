@@ -9,14 +9,15 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.Liveness;
+import org.eclipse.microprofile.health.Readiness;
 
-@Liveness
+@Readiness
 @ApplicationScoped
-public class LivenessHealthCheck implements HealthCheck {
+public class DatabaseReadinessHealthCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        return HealthCheckResponse.up(LivenessHealthCheck.class.getSimpleName());
+        // ToDo
+        return HealthCheckResponse.up(DatabaseReadinessHealthCheck.class.getSimpleName());
     }
 }
