@@ -29,6 +29,11 @@ export class EditBehandelaarComponent extends EditComponent {
         this.editing = false;
     }
 
+    release(): void {
+        this.formItem.data.formControl.setValue(null);
+        this.save();
+    }
+
     init(formField: AutocompleteFormField): void {
         this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
 
@@ -37,4 +42,9 @@ export class EditBehandelaarComponent extends EditComponent {
         });
     }
 
+    edit(editing: boolean): void {
+        super.edit(editing);
+        this.formItem.data.formControl.setValue(null);
+        this.dirty = false;
+    }
 }
