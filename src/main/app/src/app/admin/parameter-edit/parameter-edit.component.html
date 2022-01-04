@@ -22,7 +22,7 @@
             <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
                 <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                     <mat-label>{{'groep' | translate}}</mat-label>
-                    <mat-select placeholder="{{'selecteer.groep' | translate}}" [formControl]="groepControl" [compareWith]="compareObject">
+                    <mat-select placeholder="{{'groep.-kies-' | translate}}" [formControl]="groepControl" [compareWith]="compareObject">
                         <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -36,7 +36,7 @@
             <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
                 <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                     <mat-label>{{'caseDefinition' | translate}}</mat-label>
-                    <mat-select placeholder="{{'selecteer.caseDefinition' | translate}}"
+                    <mat-select placeholder="{{'model.-kies-' | translate}}"
                                 (selectionChange)="readPlanItemParameters($event)"
                                 [formControl]="caseDefinitionControl" [compareWith]="compareObject">
                         <mat-option *ngFor="let cd of caseDefinitions | async" [value]="cd">{{ cd.naam }}</mat-option>
@@ -66,7 +66,7 @@
                         <div fxLayout="row wrap">
                             <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                 <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
-                                <mat-select placeholder="{{'selecteer.formulierDefinitie' | translate}}"
+                                <mat-select placeholder="{{'formulier.-kies-' | translate}}"
                                             [formControl]="getControl(planItemParameter, 'formulierDefinitie')" [compareWith]="compareObject">
                                     <mat-option *ngFor="let formDef of formulierDefinities | async" [value]="formDef">{{ formDef.naam }}</mat-option>
                                 </mat-select>
@@ -75,7 +75,7 @@
                         <div fxLayout="row wrap">
                             <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                 <mat-label>{{'groep' | translate}}</mat-label>
-                                <mat-select placeholder="{{'selecteer.groep' | translate}}"
+                                <mat-select placeholder="{{'groep.-kies-' | translate}}"
                                             [formControl]="getControl(planItemParameter, 'defaultGroep')" [compareWith]="compareObject">
                                     <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                                 </mat-select>

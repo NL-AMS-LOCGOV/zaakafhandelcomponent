@@ -54,7 +54,7 @@ export class ParameterEditComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.utilService.setTitle('title.parameters.edit');
+        this.utilService.setTitle('title.parameters.wijzigen');
         this.createForm();
     }
 
