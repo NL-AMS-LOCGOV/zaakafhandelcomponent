@@ -7,8 +7,10 @@
     <mat-label *ngIf="data.label">{{data.label | translate}}</mat-label>
 
     <textarea [formControl]="data.formControl" [id]="data.id + '_textarea'" [required]="data.required" matInput
-              cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15"></textarea>
+              cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15"
+              [maxlength]="data.maxlength"></textarea>
 
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
+    <mat-hint *ngIf="data.maxlength">{{data.formControl.value?.length || 0}}/{{data.maxlength}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
 </mat-form-field>
