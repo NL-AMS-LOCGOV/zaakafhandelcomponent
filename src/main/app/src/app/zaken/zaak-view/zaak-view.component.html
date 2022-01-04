@@ -139,13 +139,13 @@
                                         <td mat-cell *matCellDef="let regel"> {{regel.wijziging.wijziging}} </td>
                                     </ng-container>
                                     <ng-container matColumnDef="oudeWaarde">
-                                        <th mat-header-cell *matHeaderCellDef> {{'oudeWaarde' | translate}} </th>
+                                        <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more [text]="regel.wijziging.oudeWaarde" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="nieuweWaarde">
-                                        <th mat-header-cell *matHeaderCellDef> {{'nieuweWaarde' | translate}} </th>
+                                        <th mat-header-cell *matHeaderCellDef> {{'waarde.nieuw' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more [text]="regel.wijziging.nieuweWaarde" [maxLength]="20"></read-more>
                                         </td>

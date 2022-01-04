@@ -3,62 +3,98 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-stepper orientation="vertical">
+<mat-stepper orientation="vertical" linear="true">
     <mat-step [stepControl]="algemeenFormGroup">
         <ng-template matStepLabel>{{"gegevens.algemeen" | translate}}</ng-template>
-
-        <form [formGroup]="algemeenFormGroup" fxLayout="row wrap">
-
-            <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'naam' | translate"
-                             [value]="parameters.zaaktype.omschrijving"></zac-static-text>
-            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'doel' | translate"
-                             [value]="parameters.zaaktype.doel"></zac-static-text>
-            <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'identificatie' | translate"
-                             [value]="parameters.zaaktype.identificatie"></zac-static-text>
-            <zac-static-text fxFlex="66" fxFlex.lt-md="100" [label]="'uuid' | translate"
-                             [value]="parameters.zaaktype.uuid"></zac-static-text>
-
-
-            <div fxFlex="100">
-                <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
-                    <mat-label>{{'defaultBehandelaar' | translate}}</mat-label>
-                    <mat-select placeholder="Selecteer een optie" [formControl]="behandelaarControl" [compareWith]="compareObject">
-                        <mat-option (onSelectionChange)="parameters.defaultBehandelaar = b" *ngFor="let b of medewerkers | async" [value]="b">
-                            {{ b.naam }}
-                        </mat-option>
+        <form [formGroup]="algemeenFormGroup" fxLayout="column">
+            <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'naam' | translate"
+                                 [value]="parameters.zaaktype.omschrijving"></zac-static-text>
+                <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'doel' | translate"
+                                 [value]="parameters.zaaktype.doel"></zac-static-text>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'identificatie' | translate"
+                                 [value]="parameters.zaaktype.identificatie"></zac-static-text>
+                <zac-static-text fxFlex="33" fxFlex.lt-md="100" [label]="'uuid' | translate"
+                                 [value]="parameters.zaaktype.uuid"></zac-static-text>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                    <mat-label>{{'groep' | translate}}</mat-label>
+                    <mat-select placeholder="{{'groep.-kies-' | translate}}" [formControl]="groepControl" [compareWith]="compareObject">
+                        <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
-                    <mat-label>{{'defaultGroep' | translate}}</mat-label>
-                    <mat-select placeholder="Selecteer een optie" [formControl]="groepControl" [compareWith]="compareObject">
-                        <mat-option (onSelectionChange)="parameters.defaultGroep = groep" *ngFor="let groep of groepen | async" [value]="groep">
-                            {{ groep.naam }}
-                        </mat-option>
+                <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                    <mat-label>{{'behandelaar' | translate}}</mat-label>
+                    <mat-select placeholder="{{'selecteer.behandelaar' | translate}}" [formControl]="behandelaarControl" [compareWith]="compareObject">
+                        <mat-option *ngFor="let b of medewerkers | async" [value]="b">{{ b.naam }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
-            <mat-form-field fxFlex="33" appearance="standard" floatLabel="always">
-                <mat-label>{{'caseDefinition' | translate}}</mat-label>
-                <mat-select placeholder="Selecteer een optie" [formControl]="caseDefinitionControl" [compareWith]="compareObject">
-                    <mat-option (onSelectionChange)="parameters.caseDefinition = cd" *ngFor="let cd of caseDefinitions | async" [value]="cd">
-                        {{ cd.naam }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                    <mat-label>{{'caseDefinition' | translate}}</mat-label>
+                    <mat-select placeholder="{{'model.-kies-' | translate}}"
+                                (selectionChange)="readPlanItemParameters($event)"
+                                [formControl]="caseDefinitionControl" [compareWith]="compareObject">
+                        <mat-option *ngFor="let cd of caseDefinitions | async" [value]="cd">{{ cd.naam }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
-            <div class="buttons" fxFlex="100">
-                <button mat-raised-button color="primary" matStepperNext>{{"actie.volgende" | translate}}</button>
-                <button mat-raised-button (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+            <div class="button-group" fxLayout="row wrap">
+                <button mat-raised-button color="primary" [disabled]="planItemParameters.length == 0" matStepperNext>{{"actie.volgende" | translate}}</button>
+                <button mat-raised-button [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
             </div>
         </form>
     </mat-step>
-    <mat-step [stepControl]="planitemFormGroup">
-        <form [formGroup]="planitemFormGroup">
-            <ng-template matStepLabel>{{"gegevens.planitems" | translate}}</ng-template>
-            <div class="buttons" fxFlex="100">
-                <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
-                <button mat-raised-button color="primary" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
-            </div>
-        </form>
+    <mat-step [stepControl]="planItemFormGroup">
+        <ng-template matStepLabel>{{"gegevens.planitems" | translate}}</ng-template>
+        <ng-template matStepContent>
+            <form [formGroup]="planItemFormGroup" fxLayout="column">
+                <mat-accordion>
+                    <mat-expansion-panel fxLayout="column" *ngFor="let planItemParameter of planItemParameters">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <mat-icon *ngIf="isPlanItemParameterValid(planItemParameter)" color="primary">check_circle_outline</mat-icon>
+                                <mat-icon *ngIf="!isPlanItemParameterValid(planItemParameter)" color="warn">error_outline</mat-icon>
+                                {{planItemParameter.planItemDefinition.naam}}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <div fxLayout="row wrap">
+                            <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                                <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
+                                <mat-select placeholder="{{'formulier.-kies-' | translate}}"
+                                            [formControl]="getControl(planItemParameter, 'formulierDefinitie')" [compareWith]="compareObject">
+                                    <mat-option *ngFor="let formDef of formulierDefinities | async" [value]="formDef">{{ formDef.naam }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="row wrap">
+                            <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                                <mat-label>{{'groep' | translate}}</mat-label>
+                                <mat-select placeholder="{{'groep.-kies-' | translate}}"
+                                            [formControl]="getControl(planItemParameter, 'defaultGroep')" [compareWith]="compareObject">
+                                    <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="row wrap">
+                            <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                                <mat-label>{{'doorlooptijd.gewenst' | translate}}</mat-label>
+                                <input matInput type="number" [formControl]="getControl(planItemParameter, 'doorlooptijd')" min="0" max="2147483647">
+                                <span matSuffix>{{'dagen' | translate}}</span>
+                            </mat-form-field>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <div class="button-group" fxLayout="row wrap">
+                    <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                    <button mat-raised-button color="primary" (click)="opslaan()" [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
+                </div>
+            </form>
+        </ng-template>
     </mat-step>
 </mat-stepper>

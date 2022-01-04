@@ -20,6 +20,9 @@ public class RESTCaseDefinition {
 
     public List<RESTPlanItemDefinition> planItemDefinitions;
 
+    public RESTCaseDefinition() {
+    }
+
     public RESTCaseDefinition(final String naam, final String key) {
         this.naam = naam;
         this.key = key;
