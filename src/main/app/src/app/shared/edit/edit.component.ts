@@ -68,11 +68,28 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     edit(editing: boolean): void {
         if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = editing;
+            this.formItem.data.formControl.markAsUntouched();
         }
     }
 
     save(): void {
-        this.onSave.emit(this.formItem.data.formControl.value);
+        //Wait for an async validator is it is present.
+        if (this.formItem.data.formControl.pending) {
+            let sub = this.formItem.data.formControl.statusChanges.subscribe((res) => {
+                if (this.formItem.data.formControl.valid) {
+                    this.submitSave();
+                }
+                sub.unsubscribe();
+            });
+        } else {
+            this.submitSave();
+        }
+    }
+
+    private submitSave(): void {
+        if (this.formItem.data.formControl.valid) {
+            this.onSave.emit(this.formItem.data.formControl.value);
+        }
         this.editing = false;
     }
 
