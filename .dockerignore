@@ -3,7 +3,8 @@
 **/*.iml
 # The git repository
 .git
-#
+# Github specific files
+.github
 **/target
 **/generated
 **/node
@@ -12,3 +13,4 @@
 **/.angular
 wildfly-*
 .editorconfig
+*.md
