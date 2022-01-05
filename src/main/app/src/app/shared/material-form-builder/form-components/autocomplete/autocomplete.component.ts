@@ -24,15 +24,21 @@ export class AutocompleteComponent implements AfterViewInit, IFormComponent {
     constructor() { }
 
     ngAfterViewInit() {
-        this.data.options.subscribe(value => {
-            this.options = value;
+        this.data.options.subscribe(options => {
+            this.options = options;
+
             this.filteredOptions = this.data.formControl.valueChanges.pipe(
                 startWith(''),
-                map(value => (typeof value === 'string' ? value : value[this.data.optionLabel])),
+                map(value => (typeof value === 'string' ? value : value ? value[this.data.optionLabel] : null)),
                 map(name => (name ? this._filter(name) : this.options.slice()))
             );
         });
 
+        //Check if the actual value is present in the list of options
+        this.data.formControl.valueChanges.subscribe(value => {
+            let selectedOption = this.options.find(option => option == value);
+            this.data.formControl.setErrors(value && !selectedOption ? {match: true} : null);
+        });
     }
 
     displayFn = (obj: any): string => {
