@@ -93,7 +93,7 @@
   "informatieobjectType": "Document type",
   "documentType": "Document type",
   "formulierDefinitie": "Form definition",
-  "formulier.-kies-": "Select a form definition",
+  "formulierDefinitie.-kies-": "- Select a form definition -",
   "groep": "Group",
   "groep.-kies-": "- Select a group -",
   "audittrail": "History",
