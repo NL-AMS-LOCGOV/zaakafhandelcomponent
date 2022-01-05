@@ -73,6 +73,20 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     save(): void {
+        //Wait for an async validator is it is present.
+        if (this.formItem.data.formControl.pending) {
+            let sub = this.formItem.data.formControl.statusChanges.subscribe((res) => {
+                if (this.formItem.data.formControl.valid) {
+                    this.submitSave();
+                }
+                sub.unsubscribe();
+            });
+        } else {
+            this.submitSave();
+        }
+    }
+
+    private submitSave(): void {
         if (this.formItem.data.formControl.valid) {
             this.onSave.emit(this.formItem.data.formControl.value);
         }

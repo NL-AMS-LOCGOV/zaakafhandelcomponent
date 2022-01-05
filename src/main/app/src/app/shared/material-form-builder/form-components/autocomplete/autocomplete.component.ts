@@ -33,12 +33,6 @@ export class AutocompleteComponent implements AfterViewInit, IFormComponent {
                 map(name => (name ? this._filter(name) : this.options.slice()))
             );
         });
-
-        //Check if the actual value is present in the list of options
-        this.data.formControl.valueChanges.subscribe(value => {
-            let selectedOption = this.options.find(option => option == value);
-            this.data.formControl.setErrors(value && !selectedOption ? {match: true} : null);
-        });
     }
 
     displayFn = (obj: any): string => {

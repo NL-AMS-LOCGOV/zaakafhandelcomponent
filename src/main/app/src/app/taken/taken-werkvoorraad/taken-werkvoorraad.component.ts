@@ -135,7 +135,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         let taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
             width: '350px',
-            data: taken
+            data: taken,
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -154,7 +155,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         let taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVrijgevenDialogComponent, {
             width: '350px',
-            data: taken
+            data: taken,
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {

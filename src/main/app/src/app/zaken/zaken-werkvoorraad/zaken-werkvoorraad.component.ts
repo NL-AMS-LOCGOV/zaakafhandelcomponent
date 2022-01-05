@@ -181,7 +181,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
             width: '300px',
             data: zaken,
-            autoFocus: false
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -200,7 +200,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         let zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
             width: '350px',
-            data: zaken
+            data: zaken,
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {
