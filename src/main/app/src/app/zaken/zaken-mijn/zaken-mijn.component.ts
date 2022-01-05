@@ -39,7 +39,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
-            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'doel', 'identificatie');
+            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving', 'identificatie');
 
             const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
             .pipe(DatumPipe);
