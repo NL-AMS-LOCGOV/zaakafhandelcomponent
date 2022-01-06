@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -66,6 +68,7 @@ import net.atos.zac.util.OpenZaakPaginationUtil;
 @Path("zaken")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Singleton
 public class ZakenRESTService {
 
     @Inject
@@ -94,7 +97,7 @@ public class ZakenRESTService {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     @Inject
     private ConfigurationService configurationService;
@@ -139,15 +142,10 @@ public class ZakenRESTService {
     @Path("mijn")
     public TableResponse<RESTZaakOverzicht> listZakenMijn(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        zaakListParameters
-                .setRolBetrokkeneIdentificatieMedewerkerIdentificatie(ingelogdeMedewerker.getGebruikersnaam());
+        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(ingelogdeMedewerker.get().getGebruikersnaam());
         final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-
-        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                .convertZaakResults(zaakResults, tableState.getPagination());
-
+        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults, tableState.getPagination());
         return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
     }
 
@@ -239,7 +237,7 @@ public class ZakenRESTService {
             final boolean getOpenZaken) {
         final TableRequest tableState = TableRequest.getTableState(request);
 
-        if (ingelogdeMedewerker.isInAnyGroup()) {
+        if (ingelogdeMedewerker.get().isInAnyGroup()) {
             final Results<Zaak> zaakResults;
             if (getOpenZaken) {
                 zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
@@ -256,7 +254,7 @@ public class ZakenRESTService {
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
         final Zaak zaak = zrcClientService.readZaak(restZaak.zaakUUID);
-        final User user = flowableService.readUser(ingelogdeMedewerker.getGebruikersnaam());
+        final User user = flowableService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak));
 
         return zaak;

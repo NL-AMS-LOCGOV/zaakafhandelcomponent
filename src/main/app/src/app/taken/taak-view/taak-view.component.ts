@@ -191,7 +191,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }));
     }
 
-    vrijgeven = (): void => {
+    private vrijgeven(): void {
         this.taak.behandelaar = null;
         this.takenService.assign(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.vrijgegeven');

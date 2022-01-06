@@ -92,7 +92,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         .pipe(DatumOverschredenPipe, 'einddatum');
 
         const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
-        .pipe(DatumOverschredenPipe,'einddatum');
+        .pipe(DatumOverschredenPipe, 'einddatum');
 
         this.dataSource.columns = [
             new TableColumn('select', 'select', true, null, true),
@@ -113,8 +113,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     switchTypeAndSearch() {
-        if (this.dataSource.zoekParameters.selectie == 'groep' && this.dataSource.zoekParameters.groep ||
-            this.dataSource.zoekParameters.selectie == 'zaaktype' && this.dataSource.zoekParameters.zaaktype) {
+        if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
             this.zoekZaken();
         }
     }
@@ -181,7 +180,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
             width: '300px',
             data: zaken,
-            autoFocus: false
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -200,7 +199,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         let zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
             width: '350px',
-            data: zaken
+            data: zaken,
+            autoFocus: 'dialog'
         });
 
         dialogRef.afterClosed().subscribe(result => {
