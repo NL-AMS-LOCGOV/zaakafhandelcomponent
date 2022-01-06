@@ -25,10 +25,10 @@ public class RESTAuditZaakWijzigingConverter extends AbstractRESTAuditWijzigingC
         final Zaak nieuw = zaakWijziging.getNieuw();
         final Zaak oud = zaakWijziging.getOud();
         if (oud == null) {
-            return new RESTWijziging(String.format("Zaak '%s' is toegevoegd", nieuw.getIdentificatie()));
+            return new RESTWijziging("Zaak toegevoegd");
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("Zaak '%s' is verwijderd", oud.getIdentificatie()));
+            return new RESTWijziging("Zaak verwijderd");
         }
 
         if (!StringUtils.equals(nieuw.getToelichting(), oud.getToelichting())) {
@@ -37,6 +37,6 @@ public class RESTAuditZaakWijzigingConverter extends AbstractRESTAuditWijzigingC
         if (!StringUtils.equals(nieuw.getOmschrijving(), oud.getOmschrijving())) {
             return new RESTWijziging("Omschrijving", oud.getOmschrijving(), nieuw.getOmschrijving());
         }
-        return new RESTWijziging("Onbekend", "-", "-");
+        return new RESTWijziging();
     }
 }
