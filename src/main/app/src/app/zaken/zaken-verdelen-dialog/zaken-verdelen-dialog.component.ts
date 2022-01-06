@@ -46,7 +46,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     verdeel(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.verdelen(this.data, this.medewerkerFormItem.data.formControl.value).subscribe(() => {
+        this.zakenService.verdelen(this.data, null, this.medewerkerFormItem.data.formControl.value, 'TODO #158').subscribe(() => {
             this.dialogRef.close(this.medewerkerFormItem.data.formControl.value);
         });
     }
