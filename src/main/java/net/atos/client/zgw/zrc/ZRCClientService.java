@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -145,8 +146,10 @@ public class ZRCClientService implements Caching {
     public void deleteRol(final URI zaakUrl, final BetrokkeneType betrokkeneType) {
         final List<Rol<?>> rollen = listRollen(zaakUrl);
 
-        rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType)
-                .forEach(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
+        final Optional<Rol<?>> rolMedewerker =
+                rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType).findFirst();
+
+        rolMedewerker.ifPresent(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
 
         updateRollen(zaakUrl, rollen);
     }
