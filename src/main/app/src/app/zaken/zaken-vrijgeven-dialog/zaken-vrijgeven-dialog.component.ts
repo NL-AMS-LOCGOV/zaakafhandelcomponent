@@ -7,6 +7,9 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
+import {FormItem} from '../../shared/material-form-builder/model/form-item';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 
 @Component({
     selector: 'werkvoorraad-vrijgeven-dialog',
@@ -15,12 +18,20 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 })
 export class ZakenVrijgevenDialogComponent {
 
+    redenFormItem: FormItem;
     loading: boolean;
 
     constructor(
         public dialogRef: MatDialogRef<ZakenVrijgevenDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
+        private mfbService: MaterialFormBuilderService,
         private zakenService: ZakenService) {
+    }
+
+    ngOnInit(): void {
+        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder().id('reden')
+                                                                                       .label('reden')
+                                                                                       .build());
     }
 
     close(): void {
@@ -30,7 +41,9 @@ export class ZakenVrijgevenDialogComponent {
     vrijgeven(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.vrijgeven(this.data, 'TODO #158').subscribe(() => {
+        this.zakenService.vrijgeven(
+            this.data, this.redenFormItem.data.formControl.value
+        ).subscribe(() => {
             this.dialogRef.close(true);
         });
     }
