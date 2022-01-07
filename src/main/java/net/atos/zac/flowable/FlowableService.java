@@ -24,13 +24,14 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
-import org.flowable.cmmn.api.CmmnManagementService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.CmmnTaskService;
 import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
+import org.flowable.cmmn.model.CmmnModel;
+import org.flowable.cmmn.model.HumanTask;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
@@ -357,6 +358,22 @@ public class FlowableService {
     public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
         cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDATA, taakdata);
         return taakdata;
+    }
+
+    public List<CaseDefinition> listCaseDefinitions() {
+        return cmmnRepositoryService.createCaseDefinitionQuery().latestVersion().list();
+    }
+
+    public CaseDefinition readCaseDefinition(final String caseDefinitionKey) {
+        return cmmnRepositoryService.createCaseDefinitionQuery()
+                .caseDefinitionKey(caseDefinitionKey)
+                .latestVersion()
+                .singleResult();
+    }
+
+    public List<HumanTask> readHumanTasks(final String caseDefinitionKey) {
+        final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
+        return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
     }
 
     private Object readVariableForCase(final String caseInstanceId, final String variableName) {
