@@ -88,7 +88,9 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     }
 
     public void putMedewerkerToelichting(final String toelichting) {
-        TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+        if (toelichting != null) {
+            TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+        }
     }
 
     public void removeMedewerkerToelichting() {
