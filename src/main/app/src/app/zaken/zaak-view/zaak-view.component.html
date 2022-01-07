@@ -73,14 +73,14 @@
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting">
                                     <zac-static-text [fxFlex]="100/3" [label]="'indicatieOpschorting' | translate"
                                                      [value]="zaak.indicatieOpschorting ? 'Ja' : 'Nee'"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100/3*2" [label]="'redenOpschorting' | translate"
+                                    <zac-static-text [fxFlex]="100/3*2" [label]="'reden' | translate"
                                                      [value]="zaak.redenOpschorting"></zac-static-text>
                                 </div>
 
                                 <div fxFlex="100" *ngIf="zaak.indicatieVerlenging">
                                     <zac-static-text [fxFlex]="100/3" [label]="'duurVerlenging' | translate"
                                                      [value]="zaak.duurVerlenging ? 'Ja' : 'Nee'"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100/3*2" [label]="'redenVerlenging' | translate"
+                                    <zac-static-text [fxFlex]="100/3*2" [label]="'reden' | translate"
                                                      [value]="zaak.redenVerlenging"></zac-static-text>
                                 </div>
 

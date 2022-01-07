@@ -12,6 +12,7 @@ import {Validators} from '@angular/forms';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 @Component({
     selector: 'werkvoorraad-verdelen-dialog',
@@ -21,6 +22,7 @@ import {MaterialFormBuilderService} from '../../shared/material-form-builder/mat
 export class ZakenVerdelenDialogComponent implements OnInit {
 
     medewerkerFormItem: FormItem;
+    redenFormItem: FormItem;
     loading: boolean;
 
     constructor(
@@ -36,17 +38,26 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
-                                                                    .optionLabel('naam')
-                                                                    .options(this.identityService.listMedewerkers())
-                                                                    .validators(Validators.required).build();
-        this.medewerkerFormItem = this.mfbService.getFormItem(medewerkerFormField);
+        this.medewerkerFormItem = this.mfbService.getFormItem(new AutocompleteFormFieldBuilder().id('behandelaar')
+                                                                                                .label('behandelaar')
+                                                                                                .optionLabel('naam')
+                                                                                                .options(this.identityService.listMedewerkers())
+                                                                                                .validators(Validators.required)
+                                                                                                .build());
+        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder().id('reden')
+                                                                                       .label('reden')
+                                                                                       .build());
     }
 
     verdeel(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.verdelen(this.data, null, this.medewerkerFormItem.data.formControl.value, 'TODO #158').subscribe(() => {
+        this.zakenService.verdelen(
+            this.data,
+            null,
+            this.medewerkerFormItem.data.formControl.value,
+            this.redenFormItem.data.formControl.value
+        ).subscribe(() => {
             this.dialogRef.close(this.medewerkerFormItem.data.formControl.value);
         });
     }
