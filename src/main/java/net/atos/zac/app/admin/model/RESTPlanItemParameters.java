@@ -9,9 +9,11 @@ import net.atos.zac.app.identity.model.RESTGroep;
 
 public class RESTPlanItemParameters {
 
+    public Long id;
+
     public RESTPlanItemDefinition planItemDefinition;
 
-    public RESTFormulierDefinitieVerwijzing formulierDefinitie;
+    public RESTFormulierDefinition formulierDefinitie;
 
     public Integer doorlooptijd;
 
@@ -20,7 +22,7 @@ public class RESTPlanItemParameters {
     public RESTPlanItemParameters() {
     }
 
-    public RESTPlanItemParameters(final RESTPlanItemDefinition planItemDefinition, final RESTFormulierDefinitieVerwijzing formulierDefinitie) {
+    public RESTPlanItemParameters(final RESTPlanItemDefinition planItemDefinition, final RESTFormulierDefinition formulierDefinitie) {
         this.planItemDefinition = planItemDefinition;
         this.formulierDefinitie = formulierDefinitie;
     }

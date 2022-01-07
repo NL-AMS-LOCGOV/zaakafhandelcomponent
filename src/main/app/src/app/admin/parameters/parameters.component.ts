@@ -11,7 +11,7 @@ import {Store} from '@ngrx/store';
 import {State} from '../../state/app.state';
 import {MatSidenavContainer} from '@angular/material/sidenav';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {AdminService} from '../admin.service';
+import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 
@@ -26,7 +26,7 @@ export class ParametersComponent extends AbstractView implements OnInit {
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
     loading: boolean;
 
-    constructor(store: Store<State>, private adminService: AdminService, public utilService: UtilService) {
+    constructor(store: Store<State>, private adminService: ZaakafhandelParametersService, public utilService: UtilService) {
         super(store, utilService);
     }
 

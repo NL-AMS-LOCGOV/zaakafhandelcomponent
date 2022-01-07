@@ -7,7 +7,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
-import {Zaaktype} from '../zaken/model/zaaktype';
 import {catchError} from 'rxjs/operators';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 import {CaseDefinition} from './model/case-definition';
@@ -16,18 +15,12 @@ import {FormulierDefinitieVerwijzing} from './model/formulier-definitie-verwijzi
 @Injectable({
     providedIn: 'root'
 })
-export class AdminService {
+export class ZaakafhandelParametersService {
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    private basepath = '/rest/admin';
-
-    listZaaktypes(): Observable<Zaaktype[]> {
-        return this.http.get<Zaaktype[]>(`${this.basepath}/zaaktype`).pipe(
-            catchError(this.handleError)
-        );
-    }
+    private basepath = '/rest/parameters';
 
     listZaakafhandelParameters(): Observable<ZaakafhandelParameters[]> {
         return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}/parameters`).pipe(
