@@ -10,7 +10,7 @@ import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {CaseDefinition} from '../model/case-definition';
-import {AdminService} from '../admin.service';
+import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {Groep} from '../../identity/model/groep';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
@@ -38,13 +38,15 @@ export class ParameterEditComponent implements OnInit {
     groepen: Observable<Groep[]>;
     medewerkers: Observable<Medewerker[]>;
 
-    constructor(private utilService: UtilService, private adminService: AdminService, private identityService: IdentityService,
+    constructor(private utilService: UtilService, private adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
 
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
             this.planItemParameters = this.parameters.planItemParameters;
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
+            this.groepControl.setValue(this.parameters.defaultGroep);
+            this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
         });
 
         this.caseDefinitions = adminService.listCaseDefinitions();
