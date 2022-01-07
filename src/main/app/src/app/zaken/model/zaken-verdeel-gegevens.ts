@@ -5,5 +5,7 @@
 
 export class ZakenVerdeelGegevens {
     uuids: string[];
+    groepId: string;
     behandelaarGebruikersnaam: string;
+    reden: string;
 }

@@ -30,7 +30,7 @@ export class ZakenVrijgevenDialogComponent {
     vrijgeven(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.vrijgeven(this.data).subscribe(() => {
+        this.zakenService.vrijgeven(this.data, 'TODO #158').subscribe(() => {
             this.dialogRef.close(true);
         });
     }

@@ -171,17 +171,17 @@ public class ZakenRESTService {
 
     @PUT
     @Path("toekennen")
-    public RESTZaak toekennen(final RESTZaakToekennenGegevens restZaak) {
+    public RESTZaak toekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
-        final Zaak zaak = zrcClientService.readZaak(restZaak.zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
 
-        // Toekennen of overdragen
-        if (!StringUtils.isEmpty(restZaak.behandelaarGebruikersnaam)) {
-            final User user = flowableService.readUser(restZaak.behandelaarGebruikersnaam);
-            zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak));
+        if (!StringUtils.isEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
+            // Toekennen of overdragen
+            final User user = flowableService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+            zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         } else {
             // Vrijgeven
-            zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER);
+            zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
         }
 
         return zaakConverter.convert(zaak);
@@ -190,45 +190,55 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        final User user = flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam);
+        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId)
+                ? flowableService.readGroup(verdeelGegevens.groepId)
+                : null;
+        final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam)
+                ? flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam)
+                : null;
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
-            zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak));
+            if (group != null) {
+                zrcClientService.updateRol(zaak.getUrl(), bepaalRolGroep(group, zaak), verdeelGegevens.reden);
+            }
+            if (user != null) {
+                zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), verdeelGegevens.reden);
+            }
         });
     }
 
     @PUT
     @Path("vrijgeven")
-    public void vrijgeven(final List<UUID> zaakIds) {
-        zaakIds.forEach(uuid -> {
+    public void vrijgeven(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
-            zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER);
+            zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
         });
     }
 
     @PUT
     @Path("toekennen/mij")
-    public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens restZaak) {
+    public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens toekennenGegevens) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
-        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakConverter.convert(zaak);
     }
 
     @PUT
     @Path("toekennen/mij/lijst")
-    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens restZaak) {
+    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
-        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(restZaak);
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakOverzichtConverter.convert(zaak);
     }
 
     @PUT
     @Path("toekennen/groep")
-    public RESTZaak groepToekennen(final RESTZaakToekennenGegevens restZaakToekennenGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(restZaakToekennenGegevens.zaakUUID);
+    public RESTZaak groepToekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
 
-        final Group group = flowableService.readGroup(restZaakToekennenGegevens.groepId);
-        zrcClientService.updateRol(zaak.getUrl(), bepaalRolGroep(group, zaak));
+        final Group group = flowableService.readGroup(toekennenGegevens.groepId);
+        zrcClientService.updateRol(zaak.getUrl(), bepaalRolGroep(group, zaak), toekennenGegevens.reden);
 
         return zaakConverter.convert(zaak);
     }
@@ -252,10 +262,10 @@ public class ZakenRESTService {
         }
     }
 
-    private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens restZaak) {
-        final Zaak zaak = zrcClientService.readZaak(restZaak.zaakUUID);
+    private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         final User user = flowableService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
-        zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak));
+        zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
 
         return zaak;
     }

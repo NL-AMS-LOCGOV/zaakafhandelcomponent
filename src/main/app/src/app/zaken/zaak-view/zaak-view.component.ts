@@ -55,7 +55,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
-    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
@@ -229,7 +229,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     editBehandelaar(behandelaar: Medewerker): void {
         if (behandelaar) {
             this.zaak.behandelaar = behandelaar;
-            this.zakenService.toekennen(this.zaak).subscribe(zaak => {
+            this.zakenService.toekennen(this.zaak, 'TODO #158').subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
                 this.init(zaak);
             });
@@ -241,7 +241,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     editGroep(groep: Groep): void {
         this.zaak.groep = groep;
 
-        this.zakenService.toekennenGroep(this.zaak).subscribe(zaak => {
+        this.zakenService.toekennenGroep(this.zaak, 'TODO #158').subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
         });
