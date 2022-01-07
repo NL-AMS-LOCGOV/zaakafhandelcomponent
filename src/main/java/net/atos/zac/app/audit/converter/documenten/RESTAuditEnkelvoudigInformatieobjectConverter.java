@@ -23,10 +23,10 @@ public class RESTAuditEnkelvoudigInformatieobjectConverter extends AbstractRESTA
         final EnkelvoudigInformatieobject oud = wijziging.getOud();
 
         if (oud == null) {
-            return new RESTWijziging(String.format("Document '%s' is toegevoegd", nieuw.getIdentificatie()));
+            return new RESTWijziging("Document toegevoegd");
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("Document '%s' is verwijderd", oud.getIdentificatie()));
+            return new RESTWijziging("Document verwijderd");
         }
 
         if (!Objects.equals(nieuw.getVersie(), oud.getVersie())) {
@@ -36,6 +36,6 @@ public class RESTAuditEnkelvoudigInformatieobjectConverter extends AbstractRESTA
             return new RESTWijziging("Beschrijving", oud.getBeschrijving(), nieuw.getBeschrijving());
         }
 
-        return new RESTWijziging("Onbekend wijziging", "-", "-");
+        return new RESTWijziging();
     }
 }

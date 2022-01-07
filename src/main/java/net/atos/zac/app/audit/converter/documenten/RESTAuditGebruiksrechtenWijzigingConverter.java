@@ -14,15 +14,10 @@ public class RESTAuditGebruiksrechtenWijzigingConverter extends AbstractRESTAudi
     }
 
     protected RESTWijziging doConvert(final GebuiksrechtenWijziging wijziging) {
-        final Gebruiksrechten nieuw = wijziging.getNieuw();
-        final Gebruiksrechten oud = wijziging.getOud();
-        if (oud == null) {
-            return new RESTWijziging(String.format("Gebruiksrecht '%s' is toegevoegd aan zaak", nieuw.getOmschrijvingVoorwaarden()));
-        }
-        if (nieuw == null) {
-            return new RESTWijziging(String.format("Gebruiksrecht '%s' is verwijderd van zaak", oud.getOmschrijvingVoorwaarden()));
-        }
-        return new RESTWijziging("Gebruiksrecht is gewijzigd", nieuw.getOmschrijvingVoorwaarden(), oud.getOmschrijvingVoorwaarden());
+        return new RESTWijziging("Gebruiksrecht", gebruiksRechten(wijziging.getNieuw()), gebruiksRechten(wijziging.getOud()));
     }
 
+    private String gebruiksRechten(final Gebruiksrechten gebruiksrechten) {
+        return gebruiksrechten == null ? null : gebruiksrechten.getOmschrijvingVoorwaarden();
+    }
 }

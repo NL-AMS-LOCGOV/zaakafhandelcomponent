@@ -24,11 +24,11 @@ public class RESTAuditZaakInformatieobjectConverter extends AbstractRESTAuditWij
         final ZaakInformatieobject oud = wijziging.getOud();
 
         if (oud == null) {
-            return new RESTWijziging(String.format("Informatieobject '%s' is toegevoegd aan zaak", nieuw.getTitel()));
+            return new RESTWijziging(String.format("Document '%s' toegevoegd", nieuw.getTitel()));
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("Informatieobject '%s' is verwijderd van zaak", oud.getTitel()));
+            return new RESTWijziging(String.format("Document '%s' verwijderd", oud.getTitel()));
         }
-        return new RESTWijziging(String.format("Informatieobject '%s' is gewijzigd", nieuw.getTitel()));
+        return new RESTWijziging(String.format("Document '%s' gewijzigd", nieuw.getTitel()));
     }
 }
