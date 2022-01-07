@@ -20,14 +20,10 @@ public class RESTAuditKlantcontactWijzigingConverter extends AbstractRESTAuditWi
 
     @Override
     protected RESTWijziging doConvert(final KlantcontactWijziging wijziging) {
-        final Klantcontact oud = wijziging.getOud();
-        final Klantcontact nieuw = wijziging.getNieuw();
-        if (oud == null) {
-            return new RESTWijziging(String.format("Klant contact '%s' is toegevoegd", nieuw.getIdentificatie()));
-        }
-        if (nieuw == null) {
-            return new RESTWijziging(String.format("Klant contact '%s' is verwijderd", oud.getIdentificatie()));
-        }
-        return new RESTWijziging("Klant contact", oud.getToelichting(), nieuw.getToelichting());
+        return new RESTWijziging("Klantcontact", klantContact(wijziging.getOud()), klantContact(wijziging.getNieuw()));
+    }
+
+    private String klantContact(final Klantcontact klantcontact) {
+        return klantcontact == null ? null : klantcontact.getToelichting();
     }
 }

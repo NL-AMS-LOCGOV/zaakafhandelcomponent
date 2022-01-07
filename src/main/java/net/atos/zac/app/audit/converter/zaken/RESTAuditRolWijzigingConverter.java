@@ -20,14 +20,28 @@ public class RESTAuditRolWijzigingConverter extends AbstractRESTAuditWijzigingCo
 
     @Override
     protected RESTWijziging doConvert(final AuditWijziging<Rol> wijziging) {
-        final Rol oud = wijziging.getOud();
-        final Rol nieuw = wijziging.getNieuw();
+        final Rol<?> oud = wijziging.getOud();
+        final Rol<?> nieuw = wijziging.getNieuw();
         if (oud == null) {
-            return new RESTWijziging(String.format("%s '%s' is toegevoegd", nieuw.getBetrokkeneType().toValue(), nieuw.getNaam()));
+            return new RESTWijziging(betrokkeneType(nieuw), null, nieuw.getNaam());
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("%s '%s' is verwijderd", oud.getBetrokkeneType().toValue(), oud.getNaam()));
+            return new RESTWijziging(betrokkeneType(oud), oud.getNaam(), null);
         }
-        return new RESTWijziging(nieuw.getBetrokkeneType().toValue(), oud.getNaam(), nieuw.getNaam());
+        return new RESTWijziging(betrokkeneType(nieuw), oud.getNaam(), nieuw.getNaam());
+    }
+
+    private String betrokkeneType(final Rol<?> rol) {
+        switch (rol.getBetrokkeneType()) {
+            case NATUURLIJK_PERSOON:
+            case NIET_NATUURLIJK_PERSOON:
+            case VESTIGING:
+                return "Initiator";
+            case ORGANISATORISCHE_EENHEID:
+            case MEDEWERKER:
+                return "Behandelaar";
+            default:
+                return rol.getBetrokkeneType().toValue();
+        }
     }
 }

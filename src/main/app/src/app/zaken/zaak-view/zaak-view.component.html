@@ -136,7 +136,9 @@
                                     </ng-container>
                                     <ng-container matColumnDef="wijziging">
                                         <th mat-header-cell *matHeaderCellDef> {{'wijziging' | translate}} </th>
-                                        <td mat-cell *matCellDef="let regel"> {{regel.wijziging.wijziging}} </td>
+                                        <td mat-cell *matCellDef="let regel">
+                                            <read-more [text]="regel.wijziging.wijziging" [maxLength]="20"></read-more>
+                                        </td>
                                     </ng-container>
                                     <ng-container matColumnDef="oudeWaarde">
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
@@ -148,6 +150,12 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.nieuw' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more [text]="regel.wijziging.nieuweWaarde" [maxLength]="20"></read-more>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="toelichting">
+                                        <th mat-header-cell *matHeaderCellDef> {{'toelichting' | translate}} </th>
+                                        <td mat-cell *matCellDef="let regel">
+                                            <read-more [text]="regel.toelichting" [maxLength]="20"></read-more>
                                         </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="auditTrailColumns; sticky: true"></tr>
