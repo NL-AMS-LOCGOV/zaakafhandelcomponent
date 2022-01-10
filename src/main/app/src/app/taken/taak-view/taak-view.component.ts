@@ -31,7 +31,6 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
-import {Groep} from '../../identity/model/groep';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 
@@ -144,8 +143,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    editGroep(groep: Groep): void {
-        this.taak.groep = groep;
+    editGroep(event: any): void {
+        this.taak.groep = event.groep;
 
         this.takenService.assignGroup(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.groep.naam});
