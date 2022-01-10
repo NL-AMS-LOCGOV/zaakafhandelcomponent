@@ -16,8 +16,8 @@
     <name>Zaakafhandelcomponent</name>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -25,9 +25,9 @@
         <node.version>v14.15.3</node.version>
         <mockito.version>3.12.4</mockito.version>
         <!-- Begin Dependecies on WildFly -->
-        <wildfly.version>24.0.1.Final</wildfly.version>
-        <infinispan.version>12.1.4.Final</infinispan.version>
-        <resteasy-multipart-provider.version>3.15.1.Final</resteasy-multipart-provider.version>
+        <wildfly.version>26.0.0.Final</wildfly.version>
+        <infinispan.version>12.1.7.Final</infinispan.version>
+        <resteasy-multipart-provider.version>4.7.4.Final</resteasy-multipart-provider.version>
         <!-- End Dependecies on WildFly -->
     </properties>
 
@@ -146,6 +146,7 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
@@ -227,7 +228,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
-                <version>6.1.0.Final</version>
+                <version>7.0.0.Final</version>
                 <configuration>
                     <featurePacks>
                         <featurePack>
@@ -238,17 +239,12 @@
                             <artifactId>wildfly-datasources-galleon-pack</artifactId>
                             <version>2.0.5.Final</version>
                         </featurePack>
-                        <featurePackk>
-                            <groupId>org.keycloak</groupId>
-                            <artifactId>keycloak-adapter-galleon-pack</artifactId>
-                            <version>15.0.2</version>
-                        </featurePackk>
                     </featurePacks>
                     <layers>
                         <layer>jaxrs-server</layer>
                         <layer>microprofile-health</layer>
+                        <layer>elytron-oidc-client</layer>
                         <layer>postgresql-driver</layer>
-                        <layer>keycloak-client-oidc</layer>
                     </layers>
                     <excludedLayers>
                         <layer>deployment-scanner</layer>
@@ -293,7 +289,7 @@
                         <configuration>
                             <containerizingMode>packaged</containerizingMode>
                             <from>
-                                <image>adoptopenjdk:11-jre</image>
+                                <image>eclipse-temurin:17-jre-focal</image>
                             </from>
                             <to>
                                 <image>europe-west4-docker.pkg.dev/dimpact-dev-20201130/common-ground/zaakafhandelcomponent</image>
