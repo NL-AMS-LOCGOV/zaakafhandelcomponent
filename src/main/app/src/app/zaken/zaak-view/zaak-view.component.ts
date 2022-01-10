@@ -40,6 +40,7 @@ import {Groep} from '../../identity/model/groep';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -169,6 +170,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
 
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving).maxlength(80)
                                                                               .build());
@@ -219,30 +221,31 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    assignToMe(): void {
-        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
-            this.init(zaak);
-        });
-    }
-
-    editBehandelaar(behandelaar: Medewerker): void {
-        if (behandelaar) {
-            this.zaak.behandelaar = behandelaar;
-            this.zakenService.toekennen(this.zaak, 'TODO #158').subscribe(zaak => {
-                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
-                this.init(zaak);
-            });
-        } else {
-            this.vrijgeven();
-        }
-    }
-
     editGroep(groep: Groep): void {
         this.zaak.groep = groep;
 
         this.zakenService.toekennenGroep(this.zaak, 'TODO #158').subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
+            this.init(zaak);
+        });
+    }
+
+    editBehandelaar(event: any): void {
+        if (event.behandelaar) {
+            this.zaak.behandelaar = event.behandelaar;
+            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
+                this.init(zaak);
+            });
+        } else {
+            this.vrijgeven(event.reden);
+        }
+    }
+
+    private vrijgeven(reden: string): void {
+        this.zaak.behandelaar = null;
+        this.zakenService.toekennen(this.zaak, reden).subscribe((zaak) => {
+            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
             this.init(zaak);
         });
     }
@@ -292,10 +295,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    vrijgeven(): void {
-        this.zaak.behandelaar = null;
-        this.zakenService.toekennen(this.zaak).subscribe((zaak) => {
-            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
+    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
+    }
+
+    assignToMe(event: any): void {
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
             this.init(zaak);
         });
     }
@@ -306,10 +312,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
         });
-    }
-
-    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
     }
 
     filterTakenOpStatus() {
