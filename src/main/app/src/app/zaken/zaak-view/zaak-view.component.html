@@ -43,9 +43,10 @@
                                     <zac-edit-autocomplete [formField]="editFormFields.get('groep')"
                                                            (onSave)="editGroep($event)"></zac-edit-autocomplete>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
+                                                          [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="showAssignToMe(zaak)"
-                                                          (onAssignToMe)="assignToMe()"></zac-edit-behandelaar>
+                                                          (onAssignToMe)="assignToMe($event)"></zac-edit-behandelaar>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

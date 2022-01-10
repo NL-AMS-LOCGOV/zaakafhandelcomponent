@@ -27,7 +27,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     subscription: Subscription;
 
-    protected constructor(private mfbService: MaterialFormBuilderService, private utilService: UtilService) {
+    protected constructor(protected mfbService: MaterialFormBuilderService, private utilService: UtilService) {
         super();
     }
 
@@ -86,7 +86,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
         }
     }
 
-    private submitSave(): void {
+    protected submitSave(): void {
         if (this.formItem.data.formControl.valid) {
             this.onSave.emit(this.formItem.data.formControl.value);
         }

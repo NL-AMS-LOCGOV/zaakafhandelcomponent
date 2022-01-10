@@ -16,7 +16,9 @@
 </div>
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
-    <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
+
+<mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
+    <mfb-form-field [field]="reasonItem" (click)="$event.stopPropagation()"></mfb-form-field>
 
     <div class="form-buttons">
         <div>
