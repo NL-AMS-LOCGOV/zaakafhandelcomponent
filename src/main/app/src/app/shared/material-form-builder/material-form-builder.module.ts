@@ -34,6 +34,8 @@ import {TranslateModule} from '@ngx-translate/core';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {PipesModule} from '../pipes/pipes.module';
+import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
     declarations: [
@@ -44,6 +46,7 @@ import {PipesModule} from '../pipes/pipes.module';
         InputComponent,
         FileComponent,
         SelectComponent,
+        CheckboxComponent,
         TextareaComponent,
         GoogleMapsComponent,
         FormFieldDirective,
@@ -63,6 +66,7 @@ import {PipesModule} from '../pipes/pipes.module';
         MatIconModule,
         MatButtonModule,
         MatSelectModule,
+        MatCheckboxModule,
         MatMomentDateModule,
         MatDatepickerModule,
         MatAutocompleteModule,
@@ -77,6 +81,7 @@ import {PipesModule} from '../pipes/pipes.module';
         InputComponent,
         FileComponent,
         SelectComponent,
+        CheckboxComponent,
         TextareaComponent,
         GoogleMapsComponent,
         AutocompleteComponent

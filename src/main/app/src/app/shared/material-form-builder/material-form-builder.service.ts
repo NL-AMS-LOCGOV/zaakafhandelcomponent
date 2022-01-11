@@ -17,6 +17,7 @@ import {GoogleMapsComponent} from './form-components/google-maps/google-maps.com
 import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
+import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 
 @Injectable({
     providedIn: 'root'
@@ -66,6 +67,8 @@ export class MaterialFormBuilderService {
                 return HeadingComponent;
             case FieldType.SELECT:
                 return SelectComponent;
+            case FieldType.CHECKBOX:
+                return CheckboxComponent;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
             default:
