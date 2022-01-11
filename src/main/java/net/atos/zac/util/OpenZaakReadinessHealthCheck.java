@@ -38,9 +38,9 @@ public class OpenZaakReadinessHealthCheck implements HealthCheck {
     public HealthCheckResponse call() {
         try {
             ztcClient.catalogusList(CATALOGUS_LIST_PARAMETERS);
-            return HealthCheckResponse.up(OpenZaakReadinessHealthCheck.class.getSimpleName());
+            return HealthCheckResponse.up(OpenZaakReadinessHealthCheck.class.getName());
         } catch (final Exception exception) {
-            return HealthCheckResponse.named(OpenZaakReadinessHealthCheck.class.getSimpleName())
+            return HealthCheckResponse.named(OpenZaakReadinessHealthCheck.class.getName())
                     .withData("time", LocalDateTime.now().toString())
                     .withData("error", exception.getMessage())
                     .down()

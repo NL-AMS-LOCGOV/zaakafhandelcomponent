@@ -17,6 +17,6 @@ public class LivenessHealthCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        return HealthCheckResponse.up(LivenessHealthCheck.class.getSimpleName());
+        return HealthCheckResponse.up(LivenessHealthCheck.class.getName());
     }
 }

@@ -50,15 +50,22 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
         final Medewerker medewerker = ingelogdeMedewerker.get();
         clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
-        final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
-        if (toelichting != null) {
-            clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
-        }
+        addXAuditToelichtingHeader(clientOutgoingHeaders, medewerker);
         return clientOutgoingHeaders;
     }
 
     public String generateJWTToken() {
         return generateJWTToken(ingelogdeMedewerker.get());
+    }
+
+    public void putMedewerkerToelichting(final String toelichting) {
+        if (toelichting != null) {
+            TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+        }
+    }
+
+    public void removeMedewerkerToelichting() {
+        TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
     }
 
     private String generateJWTToken(final Medewerker ingelogdeMedewerker) {
@@ -81,13 +88,12 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         return "Bearer " + jwtToken;
     }
 
-    public void putMedewerkerToelichting(final String toelichting) {
-        if (toelichting != null) {
-            TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final Medewerker medewerker) {
+        if (medewerker != null) {
+            final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
+            if (toelichting != null) {
+                clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
+            }
         }
-    }
-
-    public void removeMedewerkerToelichting() {
-        TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
     }
 }
