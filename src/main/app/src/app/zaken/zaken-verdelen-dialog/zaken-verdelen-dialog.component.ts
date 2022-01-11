@@ -47,6 +47,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
                                                                                            .optionLabel('naam')
                                                                                            .options(this.identityService.listGroepen())
                                                                                            .build());
+        // TODO #158
         //this.filterFormItem = this.mfbService.getFormItem(new CheckboxFormFieldBuilder().id('filter')
         //                                                                                .label('filter.groep')
         //                                                                                .build());
@@ -90,7 +91,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
             this.medewerkerFormItem.data.formControl.value,
             this.redenFormItem.data.formControl.value
         ).subscribe(() => {
-            this.dialogRef.close(this.medewerkerFormItem.data.formControl.value);
+            this.dialogRef.close(this.groepFormItem.data.formControl.value || this.medewerkerFormItem.data.formControl.value);
         });
     }
 }
