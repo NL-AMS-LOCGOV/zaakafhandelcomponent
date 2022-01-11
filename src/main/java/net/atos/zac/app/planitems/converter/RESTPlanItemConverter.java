@@ -20,7 +20,7 @@ import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
 
 /**
@@ -46,8 +46,8 @@ public class RESTPlanItemConverter {
     public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final PlanItemParameters parameters) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem);
         restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
-        if (parameters.getFormulierDefinitionID() != null) {
-            restPlanItem.formulierDefinitie = FormulierDefinition.valueOf(parameters.getFormulierDefinitionID());
+        if (parameters.getFormulierDefinitieID() != null) {
+            restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(parameters.getFormulierDefinitieID());
         }
         return restPlanItem;
     }

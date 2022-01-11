@@ -12,9 +12,12 @@ import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
 import org.flowable.idm.api.Group;
+import org.flowable.idm.api.User;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Medewerker;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -33,8 +36,6 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
 
     private static final Logger LOG = Logger.getLogger(CmmnEventObserver.class.getName());
-
-    private static final String ORGANISATORISCHE_EENHEID_ROL_TOELICHTING = "Groep verantwoordelijk voor afhandelen zaak";
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -59,22 +60,41 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
         if (zaakafhandelParameters != null) {
             final String caseDefinitionKey = zaakafhandelParameters.getCaseDefinitionID();
             LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
-            zetZaakBehandelaarOrganisatorischeEenheid(zaak, zaakafhandelParameters);
+            toekennenZaak(zaak, zaakafhandelParameters);
             flowableService.startCase(caseDefinitionKey, zaak, zaaktype);
         } else {
             LOG.warning(String.format("Zaaktype '%s': Geen zaakafhandelParameters gevonden", zaaktype.getIdentificatie()));
         }
     }
 
-    private void zetZaakBehandelaarOrganisatorischeEenheid(final Zaak zaak, final ZaakafhandelParameters zaakafhandelParameters) {
-        LOG.info(String.format("Zaak %s: toegekend aan groep '%s'", zaak.getUuid(), zaakafhandelParameters.getGroepID()));
-        final Group group = flowableService.readGroup(zaakafhandelParameters.getGroepID());
-        final OrganisatorischeEenheid organisatorischeEenheid = new OrganisatorischeEenheid();
-        organisatorischeEenheid.setIdentificatie(group.getId());
-        organisatorischeEenheid.setNaam(group.getName());
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
-        final RolOrganisatorischeEenheid rol = new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), ORGANISATORISCHE_EENHEID_ROL_TOELICHTING,
-                                                                              organisatorischeEenheid);
-        zrcClientService.createRol(rol);
+    private void toekennenZaak(final Zaak zaak, final ZaakafhandelParameters zaakafhandelParameters) {
+        if (zaakafhandelParameters.getGroepID() != null) {
+            LOG.info(String.format("Zaak %s: toegekend aan groep '%s'", zaak.getUuid(), zaakafhandelParameters.getGroepID()));
+            zrcClientService.createRol(creeerRolGroep(zaakafhandelParameters.getGroepID(), zaak));
+        }
+        if (zaakafhandelParameters.getGebruikersnaamMedewerker() != null) {
+            LOG.info(String.format("Zaak %s: toegekend aan behandelaar '%s'", zaak.getUuid(), zaakafhandelParameters.getGebruikersnaamMedewerker()));
+            zrcClientService.createRol(creeerRolMedewerker(zaakafhandelParameters.getGebruikersnaamMedewerker(), zaak));
+        }
     }
+
+    private RolOrganisatorischeEenheid creeerRolGroep(final String groepID, final Zaak zaak) {
+        final Group group = flowableService.readGroup(groepID);
+        final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
+        groep.setIdentificatie(group.getId());
+        groep.setNaam(group.getName());
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
+    }
+
+    private RolMedewerker creeerRolMedewerker(final String behandelaarGebruikersnaam, final Zaak zaak) {
+        final User user = flowableService.readUser(behandelaarGebruikersnaam);
+        final Medewerker medewerker = new Medewerker();
+        medewerker.setIdentificatie(user.getId());
+        medewerker.setVoorletters(user.getFirstName());
+        medewerker.setAchternaam(user.getLastName());
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
+    }
+
 }

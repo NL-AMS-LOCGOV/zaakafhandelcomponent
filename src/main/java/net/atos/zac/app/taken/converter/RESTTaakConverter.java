@@ -30,7 +30,7 @@ import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
  *
@@ -80,7 +80,7 @@ public class RESTTaakConverter {
         return restTaak;
     }
 
-    public RESTTaak convertTaskInfo(final TaskInfo task, final FormulierDefinition formulierDefinitie, final Map<String, String> taakdata) {
+    public RESTTaak convertTaskInfo(final TaskInfo task, final FormulierDefinitie formulierDefinitie, final Map<String, String> taakdata) {
         final RESTTaak restTaak = convertTaskInfo(task, taakdata);
         restTaak.formulierDefinitie = formulierDefinitie;
         return restTaak;
