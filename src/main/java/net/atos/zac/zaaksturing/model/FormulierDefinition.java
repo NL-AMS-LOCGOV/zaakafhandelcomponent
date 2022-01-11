@@ -7,6 +7,7 @@ package net.atos.zac.zaaksturing.model;
 
 public enum FormulierDefinition {
 
+    DEFAULT_TAAKFORMULIER("Standaard taakformulier"),
     AANVULLENDE_INFORMATIE("Aanvullende informatie"),
     ADVIES("Advies");
 

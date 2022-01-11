@@ -8,6 +8,7 @@ package net.atos.zac.zaaksturing;
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_UUID;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,10 +18,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.zac.util.ValidationUtil;
+import net.atos.zac.zaaksturing.model.PlanItemParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
@@ -56,4 +61,24 @@ public class ZaakafhandelParameterBeheerService {
         zaakafhandelParameters.getPlanItemParametersCollection().forEach(ValidationUtil::valideerObject);
         return entityManager.merge(zaakafhandelParameters);
     }
+
+    public PlanItemParameters readPlanItemParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<PlanItemParameters> query = builder.createQuery(PlanItemParameters.class);
+        final Root<PlanItemParameters> queryRoot = query.from(PlanItemParameters.class);
+        final Join<PlanItemParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
+        final List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
+        predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
+        query.where(predicates.toArray(new Predicate[0]));
+        final TypedQuery<PlanItemParameters> emQuery = entityManager.createQuery(query);
+        final List<PlanItemParameters> resultList = emQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+
 }

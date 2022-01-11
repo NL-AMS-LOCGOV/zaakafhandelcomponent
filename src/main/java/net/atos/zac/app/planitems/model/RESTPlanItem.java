@@ -8,6 +8,7 @@ package net.atos.zac.app.planitems.model;
 import java.util.Map;
 
 import net.atos.zac.app.identity.model.RESTGroep;
+import net.atos.zac.zaaksturing.model.FormulierDefinition;
 
 /**
  *
@@ -22,7 +23,7 @@ public class RESTPlanItem {
 
     public RESTGroep groep;
 
-    public String taakStartFormulier;
+    public FormulierDefinition formulierDefinitie;
 
     public Map<String, String> taakdata;
 }
