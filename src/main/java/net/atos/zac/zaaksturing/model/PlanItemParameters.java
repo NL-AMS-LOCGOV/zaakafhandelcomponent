@@ -41,7 +41,7 @@ public class PlanItemParameters {
 
     @NotBlank
     @Column(name = "id_formulier_definition", nullable = false)
-    private String formulierDefinitionID;
+    private String formulierDefinitieID;
 
     @Column(name = "id_groep", nullable = false)
     private String groepID;
@@ -74,12 +74,12 @@ public class PlanItemParameters {
         this.planItemDefinitionID = planItemDefinitionID;
     }
 
-    public String getFormulierDefinitionID() {
-        return formulierDefinitionID;
+    public String getFormulierDefinitieID() {
+        return formulierDefinitieID;
     }
 
-    public void setFormulierDefinitionID(final String formulierDefinitionID) {
-        this.formulierDefinitionID = formulierDefinitionID;
+    public void setFormulierDefinitieID(final String formulierDefinitieID) {
+        this.formulierDefinitieID = formulierDefinitieID;
     }
 
     public String getGroepID() {

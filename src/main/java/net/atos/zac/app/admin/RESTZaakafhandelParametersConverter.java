@@ -12,14 +12,14 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.app.admin.model.RESTFormulierDefinition;
+import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTPlanItemParameters;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -58,7 +58,7 @@ public class RESTZaakafhandelParametersConverter {
                         found = true;
                         restPlanParameters.id = pParam.getId();
                         restPlanParameters.defaultGroep = groepConverter.convertGroupId(pParam.getGroepID());
-                        restPlanParameters.formulierDefinitie = new RESTFormulierDefinition(FormulierDefinition.valueOf(pParam.getFormulierDefinitionID()));
+                        restPlanParameters.formulierDefinitie = new RESTFormulierDefinitie(FormulierDefinitie.valueOf(pParam.getFormulierDefinitieID()));
                         restPlanParameters.planItemDefinition = pDef;
                         restPlanParameters.doorlooptijd = pParam.getDoorlooptijd();
                         break;
@@ -90,7 +90,7 @@ public class RESTZaakafhandelParametersConverter {
             planItemParameters.setZaakafhandelParameters(parameters);
             planItemParameters.setDoorlooptijd(restPlanItemParameters.doorlooptijd);
             planItemParameters.setPlanItemDefinitionID(restPlanItemParameters.planItemDefinition.id);
-            planItemParameters.setFormulierDefinitionID(restPlanItemParameters.formulierDefinitie.id);
+            planItemParameters.setFormulierDefinitieID(restPlanItemParameters.formulierDefinitie.id);
             if (restPlanItemParameters.defaultGroep != null) {
                 planItemParameters.setGroepID(restPlanItemParameters.defaultGroep.id);
             }

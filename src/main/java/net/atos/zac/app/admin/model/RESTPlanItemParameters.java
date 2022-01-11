@@ -13,7 +13,7 @@ public class RESTPlanItemParameters {
 
     public RESTPlanItemDefinition planItemDefinition;
 
-    public RESTFormulierDefinition formulierDefinitie;
+    public RESTFormulierDefinitie formulierDefinitie;
 
     public Integer doorlooptijd;
 
