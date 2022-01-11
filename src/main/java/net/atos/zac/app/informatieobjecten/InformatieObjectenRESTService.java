@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,6 +51,7 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.util.UriUtil;
 
+@Singleton
 @Path("informatieobjecten")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -80,11 +83,11 @@ public class InformatieObjectenRESTService {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     @Inject
     @ActiveSession
-    private HttpSession httpSession;
+    private Instance<HttpSession> httpSession;
 
     @GET
     @Path("informatieobject/{uuid}")
@@ -98,7 +101,7 @@ public class InformatieObjectenRESTService {
     public UUID createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        final RESTFileUpload file = (RESTFileUpload) httpSession.getAttribute("FILE_" + zaakUuid);
+        final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
         final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
         final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
                                                                                                           restEnkelvoudigInformatieobject.beschrijving, "-");
@@ -117,7 +120,7 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/upload/{zaakUuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(@PathParam("zaakUuid") final String zaakUuid, @MultipartForm final RESTFileUpload data) {
-        httpSession.setAttribute("FILE_" + zaakUuid, data);
+        httpSession.get().setAttribute("FILE_" + zaakUuid, data);
         return Response.ok("\"Success\"").build();
     }
 
@@ -186,6 +189,6 @@ public class InformatieObjectenRESTService {
     }
 
     private String lockEigenaar() {
-        return ingelogdeMedewerker.getGebruikersnaam();
+        return ingelogdeMedewerker.get().getGebruikersnaam();
     }
 }

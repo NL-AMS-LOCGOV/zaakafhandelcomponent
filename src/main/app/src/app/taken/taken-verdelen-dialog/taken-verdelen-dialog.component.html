@@ -7,18 +7,13 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.taken' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mat-form-field appearance="fill" fxFlex="100">
-        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
-        <input type="text" matInput [formControl]="medewerkerControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNaam">
-            <mat-option *ngFor="let medewerker of filteredMedewerkers | async"
-                        [value]="medewerker">{{ medewerker.naam }}</mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
-
+    <mfb-form-field [field]="medewerkerFormItem"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
-    <button (click)="verdeel()" [disabled]="getMedewerker() == null || loading" color="primary" id="verdelen_button"
+    <button (click)="verdeel()"
+            [disabled]="medewerkerFormItem.data.formControl.pending ||
+                        medewerkerFormItem.data.formControl.invalid || loading" color="primary"
+            id="takenVerdelen_button"
             mat-button>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>

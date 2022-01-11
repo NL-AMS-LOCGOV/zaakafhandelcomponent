@@ -36,10 +36,10 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {Groep} from '../../identity/model/groep';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -55,7 +55,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
-    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
@@ -90,13 +90,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
-            this.zaakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
+            this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
                 (event) => this.updateZaak(event));
-            this.zaakRollenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
+            this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
                 (event) => this.updateZaak(event));
-            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+            this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.zaakDocumentenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
 
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
@@ -104,7 +104,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
-            this.loadAuditTrail();
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
@@ -117,8 +116,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
+        this.loadAuditTrail();
         this.setEditableFormFields();
-
         this.setupMenu();
     }
 
@@ -170,6 +169,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
 
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving).maxlength(80)
                                                                               .build());
@@ -220,30 +220,31 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    assignToMe(): void {
-        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
+    editGroep(event: any): void {
+        this.zaak.groep = event.groep;
+
+        this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
         });
     }
 
-    editBehandelaar(behandelaar: Medewerker): void {
-        if (behandelaar) {
-            this.zaak.behandelaar = behandelaar;
-            this.zakenService.toekennen(this.zaak).subscribe(zaak => {
+    editBehandelaar(event: any): void {
+        if (event.behandelaar) {
+            this.zaak.behandelaar = event.behandelaar;
+            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
                 this.init(zaak);
             });
         } else {
-            this.vrijgeven();
+            this.vrijgeven(event.reden);
         }
     }
 
-    editGroep(groep: Groep): void {
-        this.zaak.groep = groep;
-
-        this.zakenService.toekennenGroep(this.zaak).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
+    private vrijgeven(reden: string): void {
+        this.zaak.behandelaar = null;
+        this.zakenService.toekennen(this.zaak, reden).subscribe((zaak) => {
+            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
             this.init(zaak);
         });
     }
@@ -264,7 +265,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
         });
-        this.loadAuditTrail();
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
@@ -294,10 +294,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    vrijgeven(): void {
-        this.zaak.behandelaar = null;
-        this.zakenService.toekennen(this.zaak).subscribe((zaak) => {
-            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
+    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
+        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
+    }
+
+    assignToMe(event: any): void {
+        this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
             this.init(zaak);
         });
     }
@@ -308,10 +311,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             taak.behandelaar = taakResponse.behandelaar;
             taak.status = taakResponse.status;
         });
-    }
-
-    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
     }
 
     filterTakenOpStatus() {

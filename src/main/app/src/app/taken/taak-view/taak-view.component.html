@@ -24,14 +24,14 @@
                     </div>
 
                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                        <zac-edit-autocomplete [readonly]="isAfgerond()"
-                                               [formField]="editFormFields.get('groep')"
-                                               (onSave)="editGroep($event)"></zac-edit-autocomplete>
+                        <zac-edit-groep [readonly]="isAfgerond()"
+                                        [formField]="editFormFields.get('groep')"
+                                        (onSave)="editGroep($event)"></zac-edit-groep>
                         <zac-edit-behandelaar [readonly]="isAfgerond()"
                                               [formField]="editFormFields.get('behandelaar')"
                                               (onSave)="editBehandelaar($event)"
                                               [showAssignToMe]="showAssignToMe()"
-                                              (onAssignToMe)="assignToMe()">
+                                              (onAssignToMe)="assignToMe($event)">
                         </zac-edit-behandelaar>
                     </div>
 

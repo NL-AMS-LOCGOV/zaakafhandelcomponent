@@ -31,7 +31,6 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
-import {Groep} from '../../identity/model/groep';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 
@@ -71,7 +70,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         super.ngAfterViewInit();
         this.subscriptions$.push(
             this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
-        this.taakListener = this.websocketService.addListener(Opcode.ANY, ObjectType.TAAK, this.taak.id,
+        this.taakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
             (event) => this.ophalenTaak(event));
     }
 
@@ -144,15 +143,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    assignToMe(): void {
-        this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
-            this.init(taak);
-        });
-    }
-
-    editGroep(groep: Groep): void {
-        this.taak.groep = groep;
+    editGroep(event: any): void {
+        this.taak.groep = event.groep;
 
         this.takenService.assignGroup(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.groep.naam});
@@ -160,9 +152,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    editBehandelaar(behandelaar: Medewerker): void {
-        if (behandelaar) {
-            this.taak.behandelaar = behandelaar;
+    editBehandelaar(event: any): void {
+        if (event.behandelaar) {
+            this.taak.behandelaar = event.behandelaar;
             this.takenService.assign(this.taak).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
                 this.init(taak);
@@ -171,6 +163,14 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.vrijgeven();
         }
     }
+
+    private vrijgeven(): void {
+        this.taak.behandelaar = null;
+        this.takenService.assign(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.vrijgegeven');
+            this.init(taak);
+        });
+    };
 
     editTaak(value: string, field: string): void {
         this.taak[field] = value;
@@ -191,14 +191,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }));
     }
 
-    vrijgeven = (): void => {
-        this.taak.behandelaar = null;
-        this.takenService.assign(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.vrijgegeven');
-            this.init(taak);
-        });
-    };
-
     afronden = (): void => {
         this.takenService.complete(this.taak).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.afgerond');
@@ -214,6 +206,13 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     showAssignToMe(): boolean {
         return this.ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam;
+    }
+
+    assignToMe(event: any): void {
+        this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
+            this.init(taak);
+        });
     }
 
     isAfgerond() {

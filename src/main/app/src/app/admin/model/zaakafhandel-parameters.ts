@@ -5,14 +5,14 @@
 
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from './case-definition';
-import {PlanItemParameters} from './plan-item-parameters';
+import {PlanItemParameter} from './plan-item-parameter';
 import {Groep} from '../../identity/model/groep';
 import {Medewerker} from '../../identity/model/medewerker';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
     caseDefinition: CaseDefinition;
-    planItemParameters: PlanItemParameters[];
+    planItemParameters: PlanItemParameter[];
     defaultGroep: Groep;
     defaultBehandelaar: Medewerker;
 }

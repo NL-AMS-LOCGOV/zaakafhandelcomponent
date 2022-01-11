@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -126,28 +127,35 @@ public class ZRCClientService implements Caching {
      * @param zaakUrl de bij te werken zaak
      * @param rollen  de gewenste rollen
      */
-    private void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen) {
+    private void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen, final String toelichting) {
         final Collection<Rol<?>> current = listRollen(zaakUrl);
-        deleteDeletedRollen(current, rollen);
-        deleteUpdatedRollen(current, rollen);
-        createUpdatedRollen(current, rollen);
-        createCreatedRollen(current, rollen);
+        try {
+            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
+            deleteDeletedRollen(current, rollen);
+            deleteUpdatedRollen(current, rollen);
+            createUpdatedRollen(current, rollen);
+            createCreatedRollen(current, rollen);
+        } finally {
+            zgwClientHeadersFactory.removeMedewerkerToelichting();
+        }
     }
 
-    public void updateRol(final URI zaakUrl, final Rol<?> rol) {
+    public void updateRol(final URI zaakUrl, final Rol<?> rol, final String toelichting) {
         final List<Rol<?>> rollen = listRollen(zaakUrl);
         rollen.add(rol);
 
-        updateRollen(zaakUrl, rollen);
+        updateRollen(zaakUrl, rollen, toelichting);
     }
 
-    public void deleteRol(final URI zaakUrl, final BetrokkeneType betrokkeneType) {
+    public void deleteRol(final URI zaakUrl, final BetrokkeneType betrokkeneType, final String toelichting) {
         final List<Rol<?>> rollen = listRollen(zaakUrl);
 
-        rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType)
-                .forEach(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
+        final Optional<Rol<?>> rolMedewerker =
+                rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType).findFirst();
 
-        updateRollen(zaakUrl, rollen);
+        rolMedewerker.ifPresent(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
+
+        updateRollen(zaakUrl, rollen, toelichting);
     }
 
     /**

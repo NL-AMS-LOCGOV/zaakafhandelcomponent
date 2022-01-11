@@ -55,7 +55,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
             this.infoObject = data['informatieObject'];
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+            this.documentListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 (event) => this.loadInformatieObject(event));
 
             this.setupMenu();

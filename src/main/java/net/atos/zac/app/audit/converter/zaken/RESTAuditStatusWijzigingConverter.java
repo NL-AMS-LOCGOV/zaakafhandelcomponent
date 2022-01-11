@@ -11,7 +11,6 @@ import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.StatusWijziging;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.zac.app.audit.converter.AbstractRESTAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTWijziging;
 
@@ -26,19 +25,10 @@ public class RESTAuditStatusWijzigingConverter extends AbstractRESTAuditWijzigin
     }
 
     protected RESTWijziging doConvert(final StatusWijziging statusWijziging) {
-        final Status nieuw = statusWijziging.getNieuw();
-        final Status oud = statusWijziging.getOud();
-        if (oud == null) {
-            final Statustype statustype = ztcClientService.readStatustype(nieuw.getStatustype());
-            return new RESTWijziging("Status", "", statustype.getOmschrijving());
-        }
-        if (nieuw == null) {
-            final Statustype statustype = ztcClientService.readStatustype(oud.getStatustype());
-            return new RESTWijziging("Status", statustype.getOmschrijving(), "");
-        }
+        return new RESTWijziging("Status", statusType(statusWijziging.getOud()), statusType(statusWijziging.getNieuw()));
+    }
 
-        final Statustype statustypeOud = ztcClientService.readStatustype(oud.getStatustype());
-        final Statustype statustypeNieuw = ztcClientService.readStatustype(nieuw.getStatustype());
-        return new RESTWijziging("Status", statustypeOud.getOmschrijving(), statustypeNieuw.getOmschrijving());
+    private String statusType(final Status status) {
+        return status == null ? null : ztcClientService.readStatustype(status.getStatustype()).getOmschrijving();
     }
 }

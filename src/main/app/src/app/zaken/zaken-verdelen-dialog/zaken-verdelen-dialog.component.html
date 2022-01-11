@@ -3,21 +3,16 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<h1 *ngIf="data.length == 1" mat-dialog-title>{{'msg.verdelen.zaak' | translate}}</h1>
-<h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.zaken' | translate:{aantal: data.length} }}</h1>
+<h1 *ngIf="data.length == 1" mat-dialog-title>{{'title.zaak.verdelen' | translate }}</h1>
+<h1 *ngIf="data.length != 1" mat-dialog-title>{{'title.zaken.verdelen' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mat-form-field appearance="fill" fxFlex="100">
-        <mat-label>{{'actie.medewerker.selecteren' | translate}}</mat-label>
-        <input type="text" matInput [formControl]="medewerkerControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getNaam">
-            <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
-
+    <mfb-form-field [field]="medewerkerFormItem"></mfb-form-field>
+    <mfb-form-field [field]="redenFormItem"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="getMedewerker() == null || loading" mat-button color="primary" (click)="verdeel()">
+    <button [disabled]="medewerkerFormItem.data.formControl.pending || medewerkerFormItem.data.formControl.invalid || loading"
+            mat-button color="primary" (click)="verdeel()" id="zakenVerdelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>

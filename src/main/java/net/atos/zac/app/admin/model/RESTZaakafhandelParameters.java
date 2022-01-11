@@ -13,6 +13,9 @@ import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 
 public class RESTZaakafhandelParameters {
+
+    public Long id;
+
     public RESTZaaktype zaaktype;
 
     public RESTCaseDefinition caseDefinition;

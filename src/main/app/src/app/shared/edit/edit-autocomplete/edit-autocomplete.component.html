@@ -19,11 +19,11 @@
     <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
 
     <div class="form-buttons">
-        <button (click)="save()" color="primary" id="groepOpslaan_button" mat-mini-fab
+        <button (click)="save()" color="primary" id="opslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">
             <mat-icon>check</mat-icon>
         </button>
-        <button (click)="cancel()" id="groepAnnuleren_button" mat-mini-fab
+        <button (click)="cancel()" color="warn" id="annuleren_button" mat-mini-fab
                 title="{{'actie.annuleren' | translate}}">
             <mat-icon>close</mat-icon>
         </button>

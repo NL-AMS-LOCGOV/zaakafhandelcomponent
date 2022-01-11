@@ -11,5 +11,9 @@ import java.util.UUID;
 public class RESTZakenVerdeelGegevens {
     public List<UUID> uuids;
 
+    public String groepId;
+
     public String behandelaarGebruikersnaam;
+
+    public String reden;
 }

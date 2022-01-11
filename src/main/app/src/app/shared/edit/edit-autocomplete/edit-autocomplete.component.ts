@@ -30,4 +30,10 @@ export class EditAutocompleteComponent extends EditComponent {
         });
     }
 
+    edit(editing: boolean): void {
+        super.edit(editing);
+        this.formItem.data.formControl.setValue(null);
+        this.dirty = false;
+    }
+
 }

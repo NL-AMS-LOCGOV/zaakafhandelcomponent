@@ -4,37 +4,56 @@
  */
 
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {EditComponent} from '../edit.component';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
-import {AutocompleteFormField} from '../../material-form-builder/form-components/autocomplete/autocomplete-form-field';
 import {UtilService} from '../../../core/service/util.service';
+import {EditAutocompleteComponent} from '../edit-autocomplete/edit-autocomplete.component';
+import {FormItem} from '../../material-form-builder/model/form-item';
+import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
 
 @Component({
     selector: 'zac-edit-behandelaar',
     templateUrl: './edit-behandelaar.component.html',
     styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-behandelaar.component.less']
 })
-export class EditBehandelaarComponent extends EditComponent {
+export class EditBehandelaarComponent extends EditAutocompleteComponent {
 
-    @Input() formField: AutocompleteFormField;
+    @Input() reasonField: InputFormField;
     @Input() showAssignToMe: boolean = false;
     @Output() onAssignToMe: EventEmitter<any> = new EventEmitter<any>();
+
+    reasonItem: FormItem;
 
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
 
-    assignToMe(): void {
-        this.onAssignToMe.emit();
+    ngAfterViewInit(): void {
+        super.ngAfterViewInit();
+        if (this.reasonField) {
+            this.reasonItem = this.mfbService.getFormItem(this.reasonField);
+        }
+    }
+
+    release(): void {
+        this.formItem.data.formControl.setValue(null);
+        this.save();
+    }
+
+    onOutsideClick() {
+        if (!this.reasonField) {
+            super.onOutsideClick();
+        }
+    }
+
+    protected submitSave(): void {
+        if (this.formItem.data.formControl.valid) {
+            this.onSave.emit({behandelaar: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
+        }
         this.editing = false;
     }
 
-    init(formField: AutocompleteFormField): void {
-        this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
-
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
+    assignToMe(): void {
+        this.onAssignToMe.emit({reden: this.reasonItem?.data.formControl.value});
+        this.editing = false;
     }
-
 }
