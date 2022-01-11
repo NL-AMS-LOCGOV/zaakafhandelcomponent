@@ -8,7 +8,6 @@ package net.atos.zac.flowable;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
 import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
-import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -67,10 +65,6 @@ public class FlowableService {
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
-    private static final String ID_GROEP_ZAAK_OPEN = "*";
-
-    private static final String ID_GROEP_ZAAK_CLOSE = "*";
-
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
     @Inject
@@ -110,6 +104,14 @@ public class FlowableService {
 
     public String readZaaktypeIdentificatieForCase(final String caseInstanceId) {
         return (String) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
+    }
+
+    public UUID readZaaktypeUUIDForTask(final String taskId) {
+        return (UUID) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_UUUID);
+    }
+
+    public UUID readZaaktypeUUIDForCase(final String caseInstanceId) {
+        return (UUID) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
     }
 
     public List<TaskInfo> listAllTasksForZaak(final UUID zaakUUID) {
@@ -281,19 +283,6 @@ public class FlowableService {
         }
     }
 
-    public Group findGroupForCaseDefinition(final String caseDefinitionKey) {
-        final CaseDefinition caseDefinition = cmmnRepositoryService.createCaseDefinitionQuery()
-                .caseDefinitionKey(caseDefinitionKey)
-                .latestVersion()
-                .singleResult();
-        final String groupId = substringBetween(caseDefinition.getDescription(), ID_GROEP_ZAAK_OPEN, ID_GROEP_ZAAK_CLOSE);
-        return StringUtils.isNotEmpty(groupId) ? readGroup(groupId) : null;
-    }
-
-    public Group findGroupForPlanItem(final String planItemInstanceId) {
-        final String groupId = (String) cmmnRuntimeService.getLocalVariable(planItemInstanceId, VAR_TASK_CANDIDATE_GROUP_ID);
-        return groupId != null ? readGroup(groupId) : null;
-    }
 
     public List<Group> listGroups() {
         return idmIdentityService.createGroupQuery()

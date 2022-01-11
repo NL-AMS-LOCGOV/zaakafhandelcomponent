@@ -19,13 +19,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
-import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.flowable.FlowableService;
-import net.atos.zac.zaaksturing.ZaakSturingService;
-import net.atos.zac.zaaksturing.model.TaakFormulieren;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.PlanItemParameters;
 
 /**
  *
@@ -40,7 +39,7 @@ public class PlanItemsRESTService {
     private FlowableService flowableService;
 
     @Inject
-    private ZaakSturingService zaakSturingService;
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     private RESTPlanItemConverter planItemConverter;
@@ -56,10 +55,8 @@ public class PlanItemsRESTService {
     @Path("{id}")
     public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
-        final String zaaktypeIdentificatie = flowableService.readZaaktypeIdentificatieForCase(planItem.getCaseInstanceId());
-        final TaakFormulieren taakFormulieren = zaakSturingService.findTaakFormulieren(zaaktypeIdentificatie, planItem.getPlanItemDefinitionId());
-        final Group group = flowableService.findGroupForPlanItem(planItemId);
-        return planItemConverter.convertPlanItem(planItem, group, taakFormulieren.getStartFormulier());
+        PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
+        return planItemConverter.convertPlanItem(planItem, planItemParameters);
     }
 
     @PUT

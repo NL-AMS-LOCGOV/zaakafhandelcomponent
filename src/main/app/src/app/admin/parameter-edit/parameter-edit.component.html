@@ -29,6 +29,7 @@
                 <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                     <mat-label>{{'behandelaar' | translate}}</mat-label>
                     <mat-select placeholder="{{'behandelaar.-kies-' | translate}}" [formControl]="behandelaarControl" [compareWith]="compareObject">
+                        <mat-option [value]="">{{'behandelaar.-kies-' | translate}}</mat-option>
                         <mat-option *ngFor="let b of medewerkers | async" [value]="b">{{ b.naam }}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -77,6 +78,7 @@
                                 <mat-label>{{'groep' | translate}}</mat-label>
                                 <mat-select placeholder="{{'groep.-kies-' | translate}}"
                                             [formControl]="getControl(planItemParameter, 'defaultGroep')" [compareWith]="compareObject">
+                                    <mat-option [value]="">{{'groep.-kies-' | translate}}</mat-option>
                                     <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
