@@ -5,6 +5,10 @@
 
 package net.atos.zac.util;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
@@ -13,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
@@ -22,6 +25,8 @@ import org.eclipse.microprofile.health.Readiness;
 @Readiness
 @ApplicationScoped
 public class DatabaseReadinessHealthCheck implements HealthCheck {
+
+    private static final int DEFAULT_POSTGRES_PORT = 5432;
 
     @Inject
     @ConfigProperty(name = "DB_HOST")
@@ -33,8 +38,9 @@ public class DatabaseReadinessHealthCheck implements HealthCheck {
 
     @PostConstruct
     public void init() {
-        dbHostName = StringUtils.substringBefore(dbHost, ":");
-        dbHostPort = Integer.valueOf(StringUtils.substringAfter(dbHost, ":"));
+        dbHostName = substringBefore(dbHost, ":");
+        final String port = substringAfter(dbHost, ":");
+        dbHostPort = isNotEmpty(port) ? Integer.valueOf(port) : DEFAULT_POSTGRES_PORT;
     }
 
     @Override
