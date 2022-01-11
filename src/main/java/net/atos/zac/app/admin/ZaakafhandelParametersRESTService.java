@@ -26,13 +26,13 @@ import org.flowable.cmmn.api.repository.CaseDefinition;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
-import net.atos.zac.app.admin.model.RESTFormulierDefinition;
+import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @Singleton
@@ -147,8 +147,8 @@ public class ZaakafhandelParametersRESTService {
      */
     @GET
     @Path("formulierDefinities")
-    public List<RESTFormulierDefinition> listFormulierDefinities() {
-        return Arrays.stream(FormulierDefinition.values()).map(RESTFormulierDefinition::new).collect(Collectors.toList());
+    public List<RESTFormulierDefinitie> listFormulierDefinities() {
+        return Arrays.stream(FormulierDefinitie.values()).map(RESTFormulierDefinitie::new).collect(Collectors.toList());
     }
 
     private List<Zaaktype> listZaaktypes() {

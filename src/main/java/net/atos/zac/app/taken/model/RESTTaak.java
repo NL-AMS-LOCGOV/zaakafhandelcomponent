@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
  *
@@ -44,7 +44,7 @@ public class RESTTaak {
 
     public TaakStatus status;
 
-    public FormulierDefinition formulierDefinitie;
+    public FormulierDefinitie formulierDefinitie;
 
     public Map<String, String> taakdata;
 }

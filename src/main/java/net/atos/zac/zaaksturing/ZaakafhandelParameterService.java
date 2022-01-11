@@ -17,7 +17,7 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -51,14 +51,14 @@ public class ZaakafhandelParameterService {
         return parameters;
     }
 
-    public FormulierDefinition findFormulierDefinition(final TaskInfo taskInfo) {
+    public FormulierDefinitie findFormulierDefinitie(final TaskInfo taskInfo) {
         final UUID zaakTypeUUID = flowableService.readZaaktypeUUIDForTask(taskInfo.getId());
         PlanItemParameters planItemParameters = beheerService.readPlanItemParameters(zaakTypeUUID, taskInfo.getTaskDefinitionKey());
         if (planItemParameters == null) {
             throw new NotFoundException(String.format("PlanItemParameters not configured! zaakTypeUUID: %s, planItemDefinitionKey: %s",
                                                       zaakTypeUUID, taskInfo.getTaskDefinitionKey()));
         }
-        return FormulierDefinition.valueOf(planItemParameters.getFormulierDefinitionID());
+        return FormulierDefinitie.valueOf(planItemParameters.getFormulierDefinitieID());
     }
 
 }

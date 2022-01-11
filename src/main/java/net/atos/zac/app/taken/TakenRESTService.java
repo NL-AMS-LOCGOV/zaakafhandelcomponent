@@ -42,7 +42,7 @@ import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.model.FormulierDefinition;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
  *
@@ -106,9 +106,9 @@ public class TakenRESTService {
     @Path("{taskId}")
     public RESTTaak readTaak(@PathParam("taskId") final String taskId) {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
-        final FormulierDefinition formulierDefinition = zaakafhandelParameterService.findFormulierDefinition(task);
+        final FormulierDefinitie formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
-        return taakConverter.convertTaskInfo(task, formulierDefinition, taakdata);
+        return taakConverter.convertTaskInfo(task, formulierDefinitie, taakdata);
     }
 
     @PUT
