@@ -104,7 +104,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.formConfig = null;
         }
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.taakBehandelFormulier).behandelForm(taak).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak).build();
     }
 
     setEditableFormFields(): void {

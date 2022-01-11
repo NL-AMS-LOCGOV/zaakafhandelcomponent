@@ -38,7 +38,7 @@ export class PlanItemDoComponent implements OnInit {
         this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.taakStartFormulier)
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
                              .startForm(this.planItem, this.identityService.listGroepen()).build();
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formItems = this.formulier.form;

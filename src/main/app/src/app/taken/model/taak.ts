@@ -20,6 +20,6 @@ export class Taak {
     zaakIdentificatie: string;
     zaaktypeOmschrijving: string;
     status: TaakStatus;
-    taakBehandelFormulier: string;
+    formulierDefinitie: string;
     taakdata: {};
 }

@@ -22,8 +22,4 @@ public class RESTPlanItemParameters {
     public RESTPlanItemParameters() {
     }
 
-    public RESTPlanItemParameters(final RESTPlanItemDefinition planItemDefinition, final RESTFormulierDefinition formulierDefinitie) {
-        this.planItemDefinition = planItemDefinition;
-        this.formulierDefinitie = formulierDefinitie;
-    }
 }

@@ -7,7 +7,6 @@ package net.atos.client.or.object;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static net.atos.client.util.Constant.APPLICATION_PROBLEM_JSON;
 
 import java.net.URI;
 
@@ -61,7 +60,7 @@ public class ObjectsClientService {
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
-                .request(APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
+                .request(APPLICATION_JSON)
                 .header(AUTHORIZATION, ObjectsClientHeadersFactory.generateToken())
                 .header(ObjectsClient.ACCEPT_CRS, ObjectsClient.ACCEPT_CRS_VALUE)
                 .header(ObjectsClient.CONTENT_CRS, ObjectsClient.ACCEPT_CRS_VALUE);

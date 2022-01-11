@@ -6,7 +6,6 @@
 package net.atos.client.or.object;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static net.atos.client.util.Constant.APPLICATION_PROBLEM_JSON;
 
 import java.util.UUID;
 
@@ -38,7 +37,7 @@ import net.atos.client.or.shared.exception.ValidatieFoutExceptionMapper;
         @RegisterProvider(FoutExceptionMapper.class),
         @RegisterProvider(ValidatieFoutExceptionMapper.class),
         @RegisterProvider(RuntimeExceptionMapper.class)})
-@Produces({APPLICATION_JSON, APPLICATION_PROBLEM_JSON})
+@Produces(APPLICATION_JSON)
 @Path("api/v2")
 public interface ObjectsClient {
 
