@@ -5,22 +5,25 @@
 
 package net.atos.zac.app.admin.model;
 
-import java.time.LocalDate;
-
 import net.atos.zac.app.identity.model.RESTGroep;
 
 public class RESTPlanItemParameters {
 
-    public String planItemDefinitionId;
+    public Long id;
 
-    public String formulierDefinitieId;
+    public RESTPlanItemDefinition planItemDefinition;
 
-    public LocalDate streefdatum;
+    public RESTFormulierDefinition formulierDefinitie;
+
+    public Integer doorlooptijd;
 
     public RESTGroep defaultGroep;
 
-    public RESTPlanItemParameters(final String planItemDefinitionId, final String formulierDefinitieId) {
-        this.planItemDefinitionId = planItemDefinitionId;
-        this.formulierDefinitieId = formulierDefinitieId;
+    public RESTPlanItemParameters() {
+    }
+
+    public RESTPlanItemParameters(final RESTPlanItemDefinition planItemDefinition, final RESTFormulierDefinition formulierDefinitie) {
+        this.planItemDefinition = planItemDefinition;
+        this.formulierDefinitie = formulierDefinitie;
     }
 }

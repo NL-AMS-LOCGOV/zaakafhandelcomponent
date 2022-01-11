@@ -149,7 +149,7 @@ export class WebsocketService implements OnDestroy {
         return this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
                 snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + event.objectType),
-                snackbar2: this.translate.get('msg.gewijzigd.2'),
+                snackbar2: this.translate.get(event.objectType.indexOf('_') < 0 ? 'msg.gewijzigd.2' : 'msg.gewijzigd.2.details'),
                 snackbar3: this.translate.get('msg.gewijzigd.operatie.' + event.opcode),
                 snackbar4: this.translate.get('msg.gewijzigd.4'),
                 actie: this.translate.get('actie.verversen')

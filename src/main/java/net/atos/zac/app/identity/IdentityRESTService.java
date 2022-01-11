@@ -7,7 +7,9 @@ package net.atos.zac.app.identity;
 
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,6 +30,7 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
 
+@Singleton
 @Path("identity")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,7 +47,7 @@ public class IdentityRESTService {
 
     @Inject
     @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     @Inject
     private FlowableService flowableService;
@@ -73,6 +76,6 @@ public class IdentityRESTService {
     @GET
     @Path("ingelogdemedewerker")
     public RESTIngelogdeMedewerker readIngelogdeMedewerker() {
-        return ingelogdeMedewerkerConverter.convertIngelogdeMedewerker(ingelogdeMedewerker);
+        return ingelogdeMedewerkerConverter.convertIngelogdeMedewerker(ingelogdeMedewerker.get());
     }
 }

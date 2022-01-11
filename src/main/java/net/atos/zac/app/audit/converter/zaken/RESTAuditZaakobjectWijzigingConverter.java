@@ -23,11 +23,11 @@ public class RESTAuditZaakobjectWijzigingConverter extends AbstractRESTAuditWijz
         final Zaakobject nieuw = wijziging.getNieuw();
         final Zaakobject oud = wijziging.getOud();
         if (oud == null) {
-            return new RESTWijziging(String.format("Object '%s' is toegevoegd aan zaak", nieuw.getObjectType().toValue()));
+            return new RESTWijziging(String.format("%s toegevoegd", nieuw.getObjectType().toValue()));
         }
         if (nieuw == null) {
-            return new RESTWijziging(String.format("Object '%s' is verwijderd aan zaak", oud.getObjectType().toValue()));
+            return new RESTWijziging(String.format("%s verwijderd", oud.getObjectType().toValue()));
         }
-        return new RESTWijziging("Object is gewijzigd", nieuw.getObjectType().toValue(), oud.getObjectType().toValue());
+        return new RESTWijziging(String.format("%s gewijzigd", nieuw.getObjectType().toValue()));
     }
 }

@@ -9,9 +9,10 @@
                fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
 
         <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
-                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75">
+                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75"
+                         (ngModelChange)="switchTypeAndSearch()">
             <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
-                              [value]="selectie" (change)="switchTypeAndSearch()">
+                              [value]="selectie">
                 {{ selectie | translate}}
             </mat-radio-button>
         </mat-radio-group>
@@ -21,7 +22,7 @@
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
             <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'groep' | translate}}</mat-label>
-                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.groep" id="groep_filter">
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.groep" id="groep_filter">
                     <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
@@ -34,7 +35,7 @@
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
             <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'zaaktype' | translate}}</mat-label>
-                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.zaaktype"
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.zaaktype"
                             id="zaaktype_filter">
                     <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
@@ -113,7 +114,7 @@
                         mat-flat-button
                         title="{{ 'actie.mij.toekennen' | translate }}"
                         *ngIf="showAssignToMe(row)">
-                    <mat-icon>person_add_alt</mat-icon>
+                    <mat-icon>person_add_alt_1</mat-icon>
                 </button>
             </td>
         </ng-container>

@@ -17,6 +17,7 @@ import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
 import {Medewerker} from '../identity/model/medewerker';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
+import {Groep} from '../identity/model/groep';
 
 @Injectable({
     providedIn: 'root'
@@ -80,55 +81,66 @@ export class ZakenService {
         );
     }
 
-    toekennen(zaak: Zaak): Observable<Zaak> {
-        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.zaakUUID = zaak.uuid;
-        zaakBody.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
+    toekennen(zaak: Zaak, reden?: string): Observable<Zaak> {
+        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        toekennenGegevens.zaakUUID = zaak.uuid;
+        toekennenGegevens.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
+        toekennenGegevens.reden = reden;
 
-        return this.http.put<Zaak>(`${this.basepath}/toekennen`, zaakBody).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    toekennenGroep(zaak: Zaak): Observable<Zaak> {
-        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.zaakUUID = zaak.uuid;
-        zaakBody.groepId = zaak.groep?.id;
+    toekennenGroep(zaak: Zaak, reden?: string): Observable<Zaak> {
+        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        toekennenGegevens.zaakUUID = zaak.uuid;
+        toekennenGegevens.groepId = zaak.groep?.id;
+        toekennenGegevens.reden = reden;
 
-        return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, zaakBody).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, toekennenGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    verdelen(zaken: ZaakOverzicht[], medewerker: Medewerker): Observable<void> {
-        const zaakBody: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
-        zaakBody.uuids = zaken.map(zaak => zaak.uuid);
-        zaakBody.behandelaarGebruikersnaam = medewerker.gebruikersnaam;
-        return this.http.put<void>(`${this.basepath}/verdelen`, zaakBody).pipe(
+    verdelen(zaken: ZaakOverzicht[], groep?: Groep, medewerker?: Medewerker, reden?: string): Observable<void> {
+        const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
+        verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
+        verdeelGegevens.groepId = groep?.id;
+        verdeelGegevens.behandelaarGebruikersnaam = medewerker?.gebruikersnaam;
+        verdeelGegevens.reden = reden;
+
+        return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    vrijgeven(zaken: ZaakOverzicht[]): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/vrijgeven`, zaken.map(zaak => zaak.uuid)).pipe(
+    vrijgeven(zaken: ZaakOverzicht[], reden?: string): Observable<void> {
+        const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
+        verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
+        verdeelGegevens.reden = reden;
+
+        return this.http.put<void>(`${this.basepath}/vrijgeven`, verdeelGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    toekennenAanIngelogdeMedewerker(zaak: Zaak): Observable<Zaak> {
-        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.zaakUUID = zaak.uuid;
+    toekennenAanIngelogdeMedewerker(zaak: Zaak, reden?: string): Observable<Zaak> {
+        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        toekennenGegevens.zaakUUID = zaak.uuid;
+        toekennenGegevens.reden = reden;
 
-        return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, zaakBody).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, toekennenGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht): Observable<ZaakOverzicht> {
-        const zaakBody: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        zaakBody.zaakUUID = zaak.uuid;
+    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht, reden?: string): Observable<ZaakOverzicht> {
+        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        toekennenGegevens.zaakUUID = zaak.uuid;
+        toekennenGegevens.reden = reden;
 
-        return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, zaakBody).pipe(
+        return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, toekennenGegevens).pipe(
             catchError(this.handleError)
         );
     }

@@ -14,9 +14,12 @@ public class RESTPlanItemDefinition {
 
     public PlanItemType type;
 
-    public RESTPlanItemDefinition(final String naam, final String id, final PlanItemType type) {
+    public RESTPlanItemDefinition() {
+    }
+
+    public RESTPlanItemDefinition(final String naam, final String id) {
         this.naam = naam;
         this.id = id;
-        this.type = type;
+        this.type = PlanItemType.HUMAN_TASK;
     }
 }

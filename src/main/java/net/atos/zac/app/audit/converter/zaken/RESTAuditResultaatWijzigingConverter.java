@@ -11,7 +11,6 @@ import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.ResultaatWijziging;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.zac.app.audit.converter.AbstractRESTAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTWijziging;
 
@@ -26,18 +25,10 @@ public class RESTAuditResultaatWijzigingConverter extends AbstractRESTAuditWijzi
     }
 
     protected RESTWijziging doConvert(final ResultaatWijziging resultaatWijziging) {
-        final Resultaat nieuw = resultaatWijziging.getNieuw();
-        final Resultaat oud = resultaatWijziging.getOud();
-        if (oud == null) {
-            Resultaattype resultaattype = ztcClientService.readResultaattype(nieuw.getResultaattype());
-            return new RESTWijziging("Resultaat", "", resultaattype.getOmschrijving());
-        }
-        if (nieuw == null) {
-            Resultaattype resultaattype = ztcClientService.readResultaattype(oud.getResultaattype());
-            return new RESTWijziging("Resultaat", resultaattype.getOmschrijving(), "");
-        }
-        final Resultaattype resultaattypeOud = ztcClientService.readResultaattype(oud.getResultaattype());
-        final Resultaattype resultaattypeNieuw = ztcClientService.readResultaattype(nieuw.getResultaattype());
-        return new RESTWijziging("Reslutaat", resultaattypeOud.getOmschrijving(), resultaattypeNieuw.getOmschrijving());
+        return new RESTWijziging("Resultaat", resultaatType(resultaatWijziging.getOud()), resultaatType(resultaatWijziging.getNieuw()));
+    }
+
+    private String resultaatType(final Resultaat resultaat) {
+        return resultaat == null ? null : ztcClientService.readResultaattype(resultaat.getResultaattype()).getOmschrijving();
     }
 }

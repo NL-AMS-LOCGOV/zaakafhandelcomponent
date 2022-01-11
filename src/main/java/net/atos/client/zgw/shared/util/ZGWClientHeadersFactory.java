@@ -8,6 +8,7 @@ package net.atos.client.zgw.shared.util;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -43,10 +44,17 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     private static final String SECRET = config.getValue("zgw.api.secret", String.class);
 
+    private static final Map<String, String> TOELICHTINGEN = new ConcurrentHashMap<>();
+
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(ingelogdeMedewerker.get()));
+        final Medewerker medewerker = ingelogdeMedewerker.get();
+        final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(medewerker));
+        if (toelichting != null) {
+            clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
+        }
         AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
@@ -77,5 +85,15 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         }
         String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
         return "Bearer " + jwtToken;
+    }
+
+    public void putMedewerkerToelichting(final String toelichting) {
+        if (toelichting != null) {
+            TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+        }
+    }
+
+    public void removeMedewerkerToelichting() {
+        TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
     }
 }

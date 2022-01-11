@@ -5,6 +5,7 @@
 
 export class ZaakToekennenGegevens {
     zaakUUID: string;
-    behandelaarGebruikersnaam: string;
     groepId: string;
+    behandelaarGebruikersnaam: string;
+    reden: string;
 }

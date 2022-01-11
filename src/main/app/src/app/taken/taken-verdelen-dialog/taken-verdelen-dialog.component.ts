@@ -4,14 +4,14 @@
  */
 
 import {Component, Inject, OnInit} from '@angular/core';
-import {Medewerker} from '../../identity/model/medewerker';
-import {Observable} from 'rxjs';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {IdentityService} from '../../identity/identity.service';
 import {Taak} from '../model/taak';
 import {TakenService} from '../taken.service';
-import {FormControl} from '@angular/forms';
-import {map, startWith} from 'rxjs/operators';
+import {Validators} from '@angular/forms';
+import {FormItem} from '../../shared/material-form-builder/model/form-item';
+import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
+import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 
 @Component({
     selector: 'zac-taken-verdelen-dialog',
@@ -20,14 +20,13 @@ import {map, startWith} from 'rxjs/operators';
 })
 export class TakenVerdelenDialogComponent implements OnInit {
 
-    medewerkerControl = new FormControl();
-    medewerkers: Medewerker[];
-    filteredMedewerkers: Observable<Medewerker[]>;
-    loading: boolean;
+    medewerkerFormItem: FormItem;
+    loading: boolean = false;
 
     constructor(
         public dialogRef: MatDialogRef<TakenVerdelenDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: Taak[],
+        private mfbService: MaterialFormBuilderService,
         private takenService: TakenService,
         private identityService: IdentityService) {
     }
@@ -37,41 +36,18 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.identityService.listMedewerkers().subscribe(medewerker => {
-            this.medewerkers = medewerker;
-            this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
-                startWith(''),
-                map(value => (typeof value === 'string' ? value : value.naam)),
-                map(name => (name ? this._filterNaam(name) : this.medewerkers.slice()))
-            );
-        });
-    }
-
-    private _filterNaam(naam: string): Medewerker[] {
-        const filterValue = naam.toLowerCase();
-        return this.medewerkers.filter(medewerker => medewerker.naam.toLowerCase().includes(filterValue));
-    }
-
-    getNaam(m: Medewerker): string {
-        return m && m.naam ? m.naam : '';
-    }
-
-    getMedewerker(): Medewerker {
-        if (typeof this.medewerkerControl.value === 'object') {
-            return this.medewerkerControl.value;
-        } else if (typeof this.medewerkerControl.value === 'string') {
-            let naam = this.medewerkerControl.value.toLowerCase();
-            return this.medewerkers.find(medewerker => medewerker.naam.toLowerCase() == naam.toLowerCase());
-        } else {
-            return null;
-        }
+        let medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
+                                                                    .optionLabel('naam')
+                                                                    .options(this.identityService.listMedewerkers())
+                                                                    .validators(Validators.required).build();
+        this.medewerkerFormItem = this.mfbService.getFormItem(medewerkerFormField);
     }
 
     verdeel(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.takenService.verdelen(this.data, this.getMedewerker()).subscribe(() => {
-            this.dialogRef.close(this.medewerkerControl.value);
+        this.takenService.verdelen(this.data, this.medewerkerFormItem.data.formControl.value).subscribe(() => {
+            this.dialogRef.close(this.medewerkerFormItem.data.formControl.value);
         });
     }
 

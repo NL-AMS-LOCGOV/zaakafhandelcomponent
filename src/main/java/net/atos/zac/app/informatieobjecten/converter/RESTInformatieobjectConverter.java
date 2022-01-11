@@ -6,11 +6,11 @@
 package net.atos.zac.app.informatieobjecten.converter;
 
 import java.net.URI;
+import java.util.Base64;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.jboss.resteasy.util.Base64;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -88,7 +88,7 @@ public class RESTInformatieobjectConverter {
                 restEnkelvoudigInformatieobject.auteur,
                 restEnkelvoudigInformatieobject.taal,
                 URI.create(restEnkelvoudigInformatieobject.informatieobjectType),
-                Base64.encodeBytes(bestand.file)
+                Base64.getEncoder().encodeToString(bestand.file)
         );
         data.setFormaat(bestand.type);
         data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
