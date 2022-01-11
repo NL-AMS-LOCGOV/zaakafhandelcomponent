@@ -36,7 +36,6 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {Groep} from '../../identity/model/groep';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
@@ -221,10 +220,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    editGroep(groep: Groep): void {
-        this.zaak.groep = groep;
+    editGroep(event: any): void {
+        this.zaak.groep = event.groep;
 
-        this.zakenService.toekennenGroep(this.zaak, 'TODO #158').subscribe(zaak => {
+        this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
         });

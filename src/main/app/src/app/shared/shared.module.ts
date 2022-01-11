@@ -34,6 +34,7 @@ import {EditTekstComponent} from './edit/edit-tekst/edit-tekst.component';
 import {EditAutocompleteComponent} from './edit/edit-autocomplete/edit-autocomplete.component';
 import {EditDatumComponent} from './edit/edit-datum/edit-datum.component';
 import {PipesModule} from './pipes/pipes.module';
+import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
 
 @NgModule({
     declarations: [
@@ -49,6 +50,7 @@ import {PipesModule} from './pipes/pipes.module';
         StatusLabelComponent,
         OutsideClickDirective,
         EditBehandelaarComponent,
+        EditGroepComponent,
         EditDatumComponent,
         EditAutocompleteComponent,
         EditTekstComponent
@@ -84,6 +86,7 @@ import {PipesModule} from './pipes/pipes.module';
         MaterialFormBuilderModule,
         StatusLabelComponent,
         EditBehandelaarComponent,
+        EditGroepComponent,
         EditDatumComponent,
         EditAutocompleteComponent,
         EditTekstComponent

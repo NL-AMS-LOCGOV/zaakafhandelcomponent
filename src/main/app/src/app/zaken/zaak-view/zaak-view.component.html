@@ -40,8 +40,9 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-edit-autocomplete [formField]="editFormFields.get('groep')"
-                                                           (onSave)="editGroep($event)"></zac-edit-autocomplete>
+                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
+                                                    [reasonField]="editFormFields.get('reden')"
+                                                    (onSave)="editGroep($event)"></zac-edit-groep>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                                           [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editBehandelaar($event)"
