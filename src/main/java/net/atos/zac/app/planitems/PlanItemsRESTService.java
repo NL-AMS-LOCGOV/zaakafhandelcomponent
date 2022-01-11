@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.planitems;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,9 +19,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
+import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
@@ -62,8 +65,11 @@ public class PlanItemsRESTService {
     @PUT
     @Path("do/{id}")
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
-        if (restPlanItem.groep != null) {
-            flowableService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id, restPlanItem.taakdata);
+        if (restPlanItem.type == PlanItemType.HUMAN_TASK) {
+            final PlanItemInstance planItem = flowableService.readPlanItem(restPlanItem.id);
+            final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
+            final Date streefdatum = DateUtils.addDays(new Date(), planItemParameters.getDoorlooptijd());
+            flowableService.startHumanTaskPlanItem(restPlanItem.id, restPlanItem.groep.id, streefdatum, restPlanItem.taakdata);
         } else {
             flowableService.startPlanItem(restPlanItem.id);
         }
