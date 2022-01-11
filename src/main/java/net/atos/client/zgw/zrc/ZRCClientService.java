@@ -6,7 +6,6 @@
 package net.atos.client.zgw.zrc;
 
 import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
-import static net.atos.client.zgw.shared.util.Constants.APPLICATION_PROBLEM_JSON;
 import static net.atos.zac.util.OpenZaakPaginationUtil.PAGE_SIZE_OPEN_ZAAK;
 
 import java.net.URI;
@@ -338,8 +337,8 @@ public class ZRCClientService implements Caching {
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
-                .request(MediaType.APPLICATION_JSON, APPLICATION_PROBLEM_JSON)
-                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser())
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken())
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
                 .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
     }

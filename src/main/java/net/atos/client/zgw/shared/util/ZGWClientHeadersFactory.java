@@ -24,7 +24,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import net.atos.client.util.AcceptHeaderBugWorkaroundUtil;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 
@@ -50,24 +49,19 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
         final Medewerker medewerker = ingelogdeMedewerker.get();
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
         final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(medewerker));
         if (toelichting != null) {
             clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
         }
-        AcceptHeaderBugWorkaroundUtil.fix(clientOutgoingHeaders);
         return clientOutgoingHeaders;
     }
 
-    public static String generateJWTToken() {
-        return generateJWTTokenWithUser(null);
+    public String generateJWTToken() {
+        return generateJWTToken(ingelogdeMedewerker.get());
     }
 
-    public String generateJWTTokenWithUser() {
-        return generateJWTTokenWithUser(ingelogdeMedewerker.get());
-    }
-
-    private static String generateJWTTokenWithUser(final Medewerker ingelogdeMedewerker) {
+    private String generateJWTToken(final Medewerker ingelogdeMedewerker) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
