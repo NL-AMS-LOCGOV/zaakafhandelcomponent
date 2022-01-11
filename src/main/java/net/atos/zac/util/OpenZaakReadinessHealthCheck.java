@@ -7,14 +7,13 @@ package net.atos.zac.util;
 
 import static net.atos.zac.util.ConfigurationService.CATALOGUS_DOMEIN;
 
-import java.util.logging.Logger;
+import java.time.LocalDateTime;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 import org.eclipse.microprofile.health.Readiness;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -23,9 +22,7 @@ import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 
 @Readiness
 @ApplicationScoped
-public class ReadinessHealthCheck implements HealthCheck {
-
-    private static final Logger LOG = Logger.getLogger(ReadinessHealthCheck.class.getName());
+public class OpenZaakReadinessHealthCheck implements HealthCheck {
 
     private static final CatalogusListParameters CATALOGUS_LIST_PARAMETERS = new CatalogusListParameters();
 
@@ -39,23 +36,15 @@ public class ReadinessHealthCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        LOG.fine(">>> Readiness health check called.");
-        final HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("Readiness");
         try {
-            checkOpenZaak();
-            checkDatabase();
-            responseBuilder.up();
+            ztcClient.catalogusList(CATALOGUS_LIST_PARAMETERS);
+            return HealthCheckResponse.up(OpenZaakReadinessHealthCheck.class.getSimpleName());
         } catch (final Exception exception) {
-            responseBuilder.down().withData("error", exception.getMessage());
+            return HealthCheckResponse.named(OpenZaakReadinessHealthCheck.class.getSimpleName())
+                    .withData("time", LocalDateTime.now().toString())
+                    .withData("error", exception.getMessage())
+                    .down()
+                    .build();
         }
-        return responseBuilder.build();
-    }
-
-    private void checkOpenZaak() {
-        ztcClient.catalogusList(CATALOGUS_LIST_PARAMETERS);
-    }
-
-    private void checkDatabase() {
-        // ToDo: ESUITEDEV-25956
     }
 }
