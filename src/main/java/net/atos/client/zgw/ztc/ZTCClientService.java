@@ -319,6 +319,6 @@ public class ZTCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser());
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken());
     }
 }

@@ -338,7 +338,7 @@ public class ZRCClientService implements Caching {
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
                 .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTTokenWithUser())
+                .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken())
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
                 .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
     }

@@ -43,13 +43,13 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     private static final String SECRET = config.getValue("zgw.api.secret", String.class);
 
-    private final Map<String, String> TOELICHTINGEN = new ConcurrentHashMap<>();
+    private static final Map<String, String> TOELICHTINGEN = new ConcurrentHashMap<>();
 
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
         final Medewerker medewerker = ingelogdeMedewerker.get();
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTTokenWithUser(medewerker));
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
         final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
         if (toelichting != null) {
             clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
@@ -57,15 +57,11 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         return clientOutgoingHeaders;
     }
 
-    public static String generateJWTToken() {
-        return generateJWTTokenWithUser(null);
+    public String generateJWTToken() {
+        return generateJWTToken(ingelogdeMedewerker.get());
     }
 
-    public String generateJWTTokenWithUser() {
-        return generateJWTTokenWithUser(ingelogdeMedewerker.get());
-    }
-
-    private static String generateJWTTokenWithUser(final Medewerker ingelogdeMedewerker) {
+    private String generateJWTToken(final Medewerker ingelogdeMedewerker) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
