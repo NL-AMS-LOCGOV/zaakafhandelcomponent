@@ -11,7 +11,7 @@
     <groupId>net.atos.common-ground</groupId>
     <artifactId>zaakafhandelcomponent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>Zaakafhandelcomponent</name>
 
