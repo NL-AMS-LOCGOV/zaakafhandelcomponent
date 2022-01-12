@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -53,15 +53,120 @@
            cdkDropListOrientation="horizontal"
            (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container [matColumnDef]="column.model"
-                      *ngFor="let column of dataSource.columns | visibleColumn:true | noStickyColumn">
+        <ng-container matColumnDef="identificatie">
             <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="column.sort"
-                [disabled]="!column.sort">
-                {{column.label|translate}}
+                [mat-sort-header]="columnZaakIdentificatie.sort"
+                [disabled]="!columnZaakIdentificatie.sort">
+                {{ columnZaakIdentificatie.label | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{row[column.model] | empty}}
+                {{ row.identificatie | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnStatus.sort"
+                [disabled]="!columnStatus.sort">
+                {{ columnStatus.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.status | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="zaaktype">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnZaaktype.sort"
+                [disabled]="!columnZaaktype.sort">
+                {{ columnZaaktype.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.zaaktype | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="groep">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnGroep.sort"
+                [disabled]="!columnGroep.sort">
+                {{ columnGroep.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.groep.naam | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="startdatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnStartdatum.sort"
+                [disabled]="!columnStartdatum.sort">
+                {{ columnStartdatum.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.startdatum | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="einddatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnEinddatum.sort"
+                [disabled]="!columnEinddatum.sort">
+                {{ columnEinddatum.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.einddatum | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="einddatumGepland">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnEinddatumGepland.sort"
+                [disabled]="!columnEinddatumGepland.sort">
+                {{ columnEinddatumGepland.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.einddatumGepland | empty }}
+                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
+                          *ngIf="isAfterDate(row.einddatumGepland)">warning
+                </mat-icon>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="aanvrager">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnAanvrager.sort"
+                [disabled]="!columnAanvrager.sort">
+                {{ columnAanvrager.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.aanvrager | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="behandelaar">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnBehandelaar.sort"
+                [disabled]="!columnBehandelaar.sort">
+                {{ columnBehandelaar.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.behandelaar?.naam | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnUiterlijkeEinddatumAfdoening.sort"
+                [disabled]="!columnUiterlijkeEinddatumAfdoening.sort">
+                {{ columnUiterlijkeEinddatumAfdoening.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.uiterlijkeEinddatumAfdoening | translate | empty }}
+                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
+                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning
+                </mat-icon>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="toelichting">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="columnToelichting.sort"
+                [disabled]="!columnToelichting.sort">
+                {{ columnToelichting.label | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.toelichting | translate | empty }}
             </td>
         </ng-container>
 

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -17,13 +17,13 @@ import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TaakSortering} from '../model/taak-sortering';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -42,6 +42,15 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
 
+    columnSelect: TableColumn;
+    columnNaam: TableColumn;
+    columnZaakIdentificatie: TableColumn;
+    columnZaaktypeOmschrijving: TableColumn;
+    columnCreatieDatum: TableColumn;
+    columnStreefDatum: TableColumn;
+    columnGroep: TableColumn;
+    columnUrl: TableColumn;
+
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
 
@@ -59,23 +68,25 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
-            TaakSortering.CREATIEDATUM)
-        .pipe(DatumPipe);
-
-        const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM)
-        .pipe(DatumOverschredenPipe);
+        this.columnSelect = new TableColumn('select', 'select', true, null, true);
+        this.columnNaam = new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM);
+        this.columnZaakIdentificatie = new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true);
+        this.columnZaaktypeOmschrijving = new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true);
+        this.columnCreatieDatum = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
+            TaakSortering.CREATIEDATUM).pipe(DatumPipe);
+        this.columnStreefDatum = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
+        this.columnGroep = new TableColumn('groep', 'groep.naam', true);
+        this.columnUrl = new TableColumn('url', 'url', true, null, true);
 
         this.dataSource.columns = [
-            new TableColumn('select', 'select', true, null, true),
-            new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
-            new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true),
-            new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true),
-            creatieDatum,
-            streefDatum,
-            new TableColumn('groep', 'groep.naam', true),
-            new TableColumn('behandelaar', 'behandelaar.naam', true, TaakSortering.BEHANDELAAR),
-            new TableColumn('url', 'url', true, null, true)
+            this.columnSelect,
+            this.columnNaam,
+            this.columnZaakIdentificatie,
+            this.columnZaaktypeOmschrijving,
+            this.columnCreatieDatum,
+            this.columnStreefDatum,
+            this.columnGroep,
+            this.columnUrl
         ];
     }
 
@@ -169,6 +180,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 this.findTaken();
             }
         });
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
     }
 
     private findTaken() {
