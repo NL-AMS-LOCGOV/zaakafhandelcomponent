@@ -11,6 +11,7 @@ export enum FieldType {
     TEXTAREA = 'TEXTAREA',
     DATE = 'DATE',
     SELECT = 'SELECT',
+    CHECKBOX = 'CHECKBOX',
     GOOGLEMAPS = 'GOOGLEMAPS',
     READONLY = 'READONLY'
 }
