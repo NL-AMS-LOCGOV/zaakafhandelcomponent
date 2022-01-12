@@ -9,7 +9,6 @@ import {FormGroup, Validators} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
 import {Groep} from '../../identity/model/groep';
 import {Observable} from 'rxjs';
-import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 
 export abstract class AbstractFormulier {
@@ -23,9 +22,22 @@ export abstract class AbstractFormulier {
 
     constructor() {}
 
-    abstract initStartForm();
+    initStartForm() {
+        this._initStartForm();
+    }
 
-    abstract initBehandelForm(afgerond: boolean);
+    initBehandelForm(afgerond: boolean) {
+        this.afgerond = afgerond;
+        this._initBehandelForm();
+    }
+
+    abstract _initStartForm();
+
+    abstract _initBehandelForm();
+
+    abstract getStartTitel(): string;
+
+    abstract getBehandelTitel(): string;
 
     getPlanItem(formGroup: FormGroup): PlanItem {
         this.planItem.groep = formGroup.controls['groep']?.value;
@@ -59,12 +71,16 @@ export abstract class AbstractFormulier {
 
     addGroepAssignment(groepen: Observable<Groep[]>): void {
         const groupForm = [
-            [new HeadingFormFieldBuilder().id('taakToekenning').label('actie.toekennen').level('2').build()],
-            [new SelectFormFieldBuilder().id('groep').label('groep.-kies-').value(this.planItem.groep)
+
+            [new SelectFormFieldBuilder().id('groep').label('actie.taak.toekennen.groep').value(this.planItem.groep)
                                          .optionLabel('naam').options(groepen)
                                          .validators(Validators.required).build()]
         ];
 
         this.form = [...this.form, ...groupForm];
+    }
+
+    isAfgerond(): boolean {
+        return this.afgerond;
     }
 }

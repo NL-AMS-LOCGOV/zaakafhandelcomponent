@@ -306,10 +306,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     assignTaskToMe(taak: Taak) {
-        this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
-            taak.behandelaar = taakResponse.behandelaar;
-            taak.status = taakResponse.status;
+        this.takenService.assignToLoggedOnUser(taak).subscribe(() => {
+            taak.behandelaar = this.ingelogdeMedewerker;
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
         });
     }
 

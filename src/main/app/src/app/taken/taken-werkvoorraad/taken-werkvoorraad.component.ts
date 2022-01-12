@@ -91,9 +91,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     assignToMe(taak: Taak, event) {
         event.stopPropagation();
-        this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
-            taak['behandelaar.naam'] = taakResponse.behandelaar.naam;
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
+        this.takenService.assignToLoggedOnUser(taak).subscribe(() => {
+            taak['behandelaar'] = this.ingelogdeMedewerker;
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
         });
     }
 

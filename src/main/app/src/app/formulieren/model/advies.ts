@@ -13,35 +13,43 @@ import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 
 export class Advies extends AbstractFormulier {
+
     form: Array<AbstractFormField[]>;
 
     constructor() {
         super();
     }
 
-    initStartForm() {
+    _initStartForm() {
         this.form = [
-            [new HeadingFormFieldBuilder().id('doPlanItem').label('actie.taak.aanmaken').level('1').build()],
+            [new HeadingFormFieldBuilder().id('doPlanItem').label(this.getStartTitel()).level('2').build()],
             [new TextareaFormFieldBuilder().id(Fields.VRAAG).label(Fields.VRAAG).value(this.getDataElement(Fields.VRAAG))
                                            .validators(Validators.required).build()]
         ];
     }
 
-    initBehandelForm(afgerond: boolean) {
+    _initBehandelForm() {
         this.form = [
             [new ReadonlyFormFieldBuilder().id(Fields.VRAAG).label(Fields.VRAAG).value(this.getDataElement(Fields.VRAAG)).build()],
-            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).readonly(afgerond)
-                                           .build()],
-            [new FileFormFieldBuilder().id(Fields.BIJLAGE).label(Fields.BIJLAGE).config(this.fileUploadConfig()).readonly(afgerond).build()]
+            [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING))
+                                           .readonly(this.isAfgerond()).build()],
+            [new FileFormFieldBuilder().id(Fields.BIJLAGE).label(Fields.BIJLAGE).config(this.fileUploadConfig()).readonly(this.isAfgerond()).build()]
         ];
 
+    }
+
+    getStartTitel(): string {
+        return 'Advies vragen';
+    }
+
+    getBehandelTitel(): string {
+        return this.isAfgerond() ? 'Gegeven advies' : 'Advies geven';
     }
 
     fileUploadConfig(): FileFieldConfig {
         const uploadUrl = 'URL';
         return new FileFieldConfig(uploadUrl, [Validators.required], 1);
     }
-
 }
 
 enum Fields {

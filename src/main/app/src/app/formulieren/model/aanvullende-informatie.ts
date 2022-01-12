@@ -19,27 +19,35 @@ export class AanvullendeInformatie extends AbstractFormulier {
         super();
     }
 
-    initStartForm() {
+    _initStartForm() {
         this.form = [
-            [new HeadingFormFieldBuilder().id('doPlanItem').label('actie.taak.aanmaken').level('1').build()],
+            [new HeadingFormFieldBuilder().id('doPlanItem').label(this.getStartTitel()).level('1').build()],
             [new TextareaFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING)
                                            .value(this.getDataElement(Fields.TOELICHTING))
                                            .validators(Validators.required).build()]
         ];
     }
 
-    initBehandelForm(afgerond: boolean) {
+    _initBehandelForm() {
         this.form = [
             [new ReadonlyFormFieldBuilder().id(Fields.TOELICHTING).label(Fields.TOELICHTING).value(this.getDataElement(Fields.TOELICHTING)).build()],
             [new TextareaFormFieldBuilder().id(Fields.OPGEVRAAGDEINFO).label(Fields.OPGEVRAAGDEINFO).value(this.getDataElement(Fields.OPGEVRAAGDEINFO))
-                                           .validators(Validators.required).readonly(afgerond).build()],
-            [new DateFormFieldBuilder().id(Fields.DATUMGEVRAAGD).label(Fields.DATUMGEVRAAGD).value(this.getDataElement(Fields.DATUMGEVRAAGD)).readonly(afgerond)
+                                           .validators(Validators.required).readonly(this.isAfgerond()).build()],
+            [new DateFormFieldBuilder().id(Fields.DATUMGEVRAAGD).label(Fields.DATUMGEVRAAGD).value(this.getDataElement(Fields.DATUMGEVRAAGD))
+                                       .readonly(this.isAfgerond())
                                        .build(),
                 new DateFormFieldBuilder().id(Fields.DATUMGELEVERD).label(Fields.DATUMGELEVERD).value(this.getDataElement(Fields.DATUMGELEVERD))
-                                          .readonly(afgerond).build()]
+                                          .readonly(this.isAfgerond()).build()]
         ];
     }
 
+    getStartTitel(): string {
+        return 'Aanvullende informatie vragen';
+    }
+
+    getBehandelTitel(): string {
+        return this.isAfgerond() ? 'Gegeven aanvullende informatie' : 'Aanvullende informatie geven';
+    }
 }
 
 enum Fields {
