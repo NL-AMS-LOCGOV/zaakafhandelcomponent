@@ -19,8 +19,3 @@ data-source add \
 
 # Add system property to enable the usage of JsonB
 /system-property=resteasy.preferJacksonOverJsonB:add(value=false)
-
-# Lower the logging level of the OIDC subsystem
-/subsystem=logging/logger=org.wildfly.security.http.oidc:add
-/subsystem=logging/logger=org.wildfly.security.http.oidc:write-attribute(name="level", value="WARN")
-/subsystem=logging/logger=org.wildfly.security.http.oidc:write-attribute(name="use-parent-handlers", value="TRUE")

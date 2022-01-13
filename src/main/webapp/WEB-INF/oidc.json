@@ -1,5 +1,6 @@
 {
-  "provider-url": "${env.AUTH_SERVER}/auth/realms/${env.AUTH_REALM}",
+  "auth-server-url": "${env.AUTH_SERVER}/auth/",
+  "realm": "${env.AUTH_REALM}",
   "client-id": "${env.AUTH_RESOURCE}",
   "ssl-required": "external",
   "public-client": true,
