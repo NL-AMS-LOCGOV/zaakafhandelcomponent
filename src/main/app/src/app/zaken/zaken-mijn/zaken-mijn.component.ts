@@ -15,6 +15,8 @@ import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {TableColumnFilter} from '../../shared/dynamic-table/filter/table-column-filter';
+import {Zaaktype} from '../model/zaaktype';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -47,10 +49,12 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
-        this.zakenService.listZaaktypes().subscribe(() => {
+        this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
             this.columnStatus = new TableColumn('status', 'status', true);
             this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
+            this.columnZaaktype.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving',
+                'identificatie');
             this.columnGroep = new TableColumn('groep', 'groep', true);
             this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
             this.columnEinddatum = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
