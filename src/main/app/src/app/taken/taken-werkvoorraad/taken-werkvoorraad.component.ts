@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -175,5 +175,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.load();
         this.setColumns();
         this.selection.clear();
+        this.paginator.firstPage();
     }
 }

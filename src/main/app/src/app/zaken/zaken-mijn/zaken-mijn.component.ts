@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -73,6 +73,11 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+    }
+
+    zaaktypeChange(column) {
+        this.dataSource.filter(column.filter);
+        this.paginator.firstPage();
     }
 
 }
