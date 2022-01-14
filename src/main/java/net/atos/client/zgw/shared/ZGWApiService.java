@@ -200,8 +200,7 @@ public class ZGWApiService implements Caching {
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
-        // Wanneer de huidige datum en tijd gebruikt wordt geeft open zaak een validatie fout dat de datum in de toekomst ligt.
-        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now().minusSeconds(1));
+        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
         return zrcClient.statusCreate(status);
     }
