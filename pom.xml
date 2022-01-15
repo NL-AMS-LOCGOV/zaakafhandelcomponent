@@ -312,7 +312,11 @@
                                     <port>8787</port>
                                     <port>9990</port>
                                 </ports>
-                                <mainClass>org.wildfly.core.jar.boot.Main</mainClass>
+                                <entrypoint>
+                                    <arg>java</arg>
+                                    <arg>-jar</arg>
+                                    <arg>/app/classpath/zaakafhandelcomponent.jar</arg>
+                                </entrypoint>
                             </container>
                         </configuration>
                         <executions>
