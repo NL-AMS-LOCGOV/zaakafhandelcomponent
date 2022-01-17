@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -97,6 +97,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     zoekZaken() {
         this.dataSource.zoekZaken();
         this.setColumns();
+        this.paginator.firstPage();
     }
 
 }
