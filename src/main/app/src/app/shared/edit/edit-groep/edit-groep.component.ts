@@ -32,12 +32,6 @@ export class EditGroepComponent extends EditAutocompleteComponent {
         }
     }
 
-    onOutsideClick() {
-        if (!this.reasonField) {
-            super.onOutsideClick();
-        }
-    }
-
     protected submitSave(): void {
         if (this.formItem.data.formControl.valid) {
             this.onSave.emit({groep: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
