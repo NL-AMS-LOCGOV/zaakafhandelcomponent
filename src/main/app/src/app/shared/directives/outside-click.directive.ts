@@ -18,7 +18,7 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
     constructor(
         private element: ElementRef,
         @Optional() @Inject(DOCUMENT) private document: any,
-        @Inject(PLATFORM_ID) private platformId: Object,
+        @Inject(PLATFORM_ID) private platformId: object,
         private utilService: UtilService) { }
 
     ngOnInit() {
@@ -49,6 +49,6 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
 
     private static isOrContainsClickTarget(element: HTMLElement, clickTarget: HTMLElement) {
         let included: boolean = this.inclusions.some(value => clickTarget.classList.contains(value));
-        return element == clickTarget || element.contains(clickTarget) || included;
+        return element === clickTarget || element.contains(clickTarget) || included;
     }
 }
