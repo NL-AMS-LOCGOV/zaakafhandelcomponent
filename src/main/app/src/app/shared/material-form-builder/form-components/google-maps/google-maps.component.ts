@@ -48,39 +48,35 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IF
         this.subscription$ = this.googleMapsService.loaded.subscribe(loaded => {
             if (loaded) {
                 this.apiLoaded = true;
-                //Timeout omdat de kaart anders undefined is...
-                setTimeout(() => {
-                    this.options = {
-                        center: {lat: 52.13303, lng: 5.2905505},
-                        zoom: 7
-                    };
+                this.options = {
+                    center: {lat: 52.13303, lng: 5.2905505},
+                    zoom: 7
+                };
 
-                    const locationButton = document.createElement('button');
-                    locationButton.setAttribute('type', 'button');
-                    locationButton.textContent = 'Gebruik huidige locatie';
-                    locationButton.classList.add('locatie-button');
+                const locationButton = document.createElement('button');
+                locationButton.setAttribute('type', 'button');
+                locationButton.textContent = 'Gebruik huidige locatie';
+                locationButton.classList.add('locatie-button');
 
-                    this._map.googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+                this._map.googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
 
-                    locationButton.addEventListener('click', () => {
-                        this.googleMapsService.loadCurrentPosition()
-                            .then(latLng => this.addMarker(latLng))
-                            .catch(reason => {
-                                this.infoWindow.infoWindow.setContent(reason);
-                                this.infoWindow.open();
-                            });
-                    });
-                    const autocomplete = new google.maps.places.Autocomplete(this.mapAutoComplete.nativeElement);
+                locationButton.addEventListener('click', () => {
+                    this.googleMapsService.loadCurrentPosition()
+                        .then(latLng => this.addMarker(latLng))
+                        .catch(reason => {
+                            this.infoWindow.infoWindow.setContent(reason);
+                            this.infoWindow.open();
+                        });
+                });
+                const autocomplete = new google.maps.places.Autocomplete(this.mapAutoComplete.nativeElement);
 
-                    autocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
-                    autocomplete.bindTo('bounds', this._map.googleMap);
+                autocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
+                autocomplete.bindTo('bounds', this._map.googleMap);
 
-                    autocomplete.addListener('place_changed', () => {
-                        let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-                        this.addMarker(place.geometry.location);
-                    });
-
-                }, 500);
+                autocomplete.addListener('place_changed', () => {
+                    let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+                    this.addMarker(place.geometry.location);
+                });
             }
         });
     }

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -122,6 +122,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.zoekZaken();
         this.setColumns();
         this.selection.clear();
+        this.paginator.firstPage();
     }
 
     assignToMe(zaakOverzicht: ZaakOverzicht, $event) {
