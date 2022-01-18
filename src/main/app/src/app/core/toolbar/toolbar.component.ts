@@ -8,7 +8,9 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../service/util.service';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
+import {SignaleringenService} from '../../signaleringen.service';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     selector: 'zac-toolbar',
@@ -17,23 +19,32 @@ import {Subscription} from 'rxjs';
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
 
-    headerTitle: string;
-    ingelogdeMedewerker: Medewerker;
+    headerTitle$: Observable<string>;
+    numberOfSignaleringen: number;
+    ingelogdeMedewerker$: Observable<Medewerker>;
 
     subscription$: Subscription;
 
-    constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService) {
+    constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService,
+                private signaleringenService: SignaleringenService, private sessionStorage: SessionStorageService) {
     }
 
     ngOnInit(): void {
-        this.subscription$ = this.utilService.headerTitle$.subscribe(value => this.headerTitle = value);
-
-        this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
-            this.ingelogdeMedewerker = medewerker;
-        });
+        this.headerTitle$ = this.utilService.headerTitle$;
+        this.ingelogdeMedewerker$ = this.identityService.readIngelogdeMedewerker();
+        this.subscription$ = this.signaleringenService.numberOfSignaleringenMedewerker$.subscribe(
+            numberOfSignaleringen => {
+                const numberOfSignaleringenStorage: number = this.sessionStorage.getSessionStorage('numberOfSignaleringen', 0);
+                this.numberOfSignaleringen = numberOfSignaleringen - numberOfSignaleringenStorage;
+            });
     }
 
     ngOnDestroy(): void {
         this.subscription$.unsubscribe();
+    }
+
+    updateNumberOfSignaleringen(): void {
+        this.sessionStorage.setSessionStorage('numberOfSignaleringen', this.numberOfSignaleringen);
+        this.numberOfSignaleringen = 0;
     }
 }
