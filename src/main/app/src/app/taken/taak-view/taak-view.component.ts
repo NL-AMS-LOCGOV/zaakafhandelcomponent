@@ -105,16 +105,24 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     setEditableFormFields(): void {
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.taak.behandelaar).optionLabel('naam')
-                                                                                 .options(this.identityService.listMedewerkers()).build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.taak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroepen()).build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
-
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
-            'msg.datum.overschreden', 'warning');
+        this.editFormFields.set('behandelaar',
+            new AutocompleteFormFieldBuilder().id('behandelaar')
+                                              .label('behandelaar')
+                                              .value(this.taak.behandelaar).optionLabel('naam')
+                                              .options(this.identityService.listMedewerkers())
+                                              .build());
+        this.editFormFields.set('groep',
+            new AutocompleteFormFieldBuilder().id('groep')
+                                              .label('groep')
+                                              .value(this.taak.groep).optionLabel('naam')
+                                              .options(this.identityService.listGroepen())
+                                              .build());
+        this.editFormFields.set('toelichting',
+            new TextareaFormFieldBuilder().id('toelichting')
+                                          .label('toelichting')
+                                          .value(this.taak.toelichting)
+                                          .build());
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {
@@ -165,7 +173,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.utilService.openSnackbar('msg.taak.vrijgegeven');
             this.init(this.taak);
         });
-    };
+    }
 
     editTaak(value: string, field: string): void {
         this.taak[field] = value;
@@ -191,7 +199,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
-    };
+    }
 
     private getIngelogdeMedewerker() {
         this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
@@ -200,7 +208,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     showAssignToMe(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== this.taak.behandelaar?.gebruikersnaam;
     }
 
     assignToMe(event: any): void {
@@ -211,6 +219,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     isAfgerond() {
-        return this.taak.status == TaakStatus.Afgerond;
+        return this.taak.status === TaakStatus.Afgerond;
     }
 }

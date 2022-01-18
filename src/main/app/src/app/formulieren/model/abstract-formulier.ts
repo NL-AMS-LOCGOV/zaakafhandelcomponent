@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -10,6 +10,8 @@ import {Taak} from '../../taken/model/taak';
 import {Groep} from '../../identity/model/groep';
 import {Observable} from 'rxjs';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 export abstract class AbstractFormulier {
 
@@ -17,16 +19,18 @@ export abstract class AbstractFormulier {
     taak: Taak;
     dataElementen: {};
     afgerond: boolean;
+    form: Array<AbstractFormField[]>;
 
-    abstract form: Array<AbstractFormField[]>;
-
-    constructor() {}
+    protected constructor(protected translate: TranslateService) {}
 
     initStartForm() {
+        this.form = [];
+        this.form.push([new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level('2').build()]);
         this._initStartForm();
     }
 
     initBehandelForm(afgerond: boolean) {
+        this.form = [];
         this.afgerond = afgerond;
         this._initBehandelForm();
     }
@@ -35,9 +39,17 @@ export abstract class AbstractFormulier {
 
     abstract _initBehandelForm();
 
-    abstract getStartTitel(): string;
+    getStartTitel(): string {
+        return this.translate.instant(`title.taak.starten`, {taak: this.planItem.naam});
+    }
 
-    abstract getBehandelTitel(): string;
+    getBehandelTitel(): string {
+        if (this.isAfgerond()) {
+            return this.translate.instant(`title.taak.raadplegen`, {taak: this.planItem.naam});
+        } else {
+            return this.translate.instant(`title.taak.behandelen`, {taak: this.planItem.naam});
+        }
+    }
 
     getPlanItem(formGroup: FormGroup): PlanItem {
         this.planItem.groep = formGroup.controls['groep']?.value;
@@ -70,17 +82,16 @@ export abstract class AbstractFormulier {
     }
 
     addGroepAssignment(groepen: Observable<Groep[]>): void {
-        const groupForm = [
-
-            [new SelectFormFieldBuilder().id('groep').label('actie.taak.toekennen.groep').value(this.planItem.groep)
-                                         .optionLabel('naam').options(groepen)
-                                         .validators(Validators.required).build()]
-        ];
-
-        this.form = [...this.form, ...groupForm];
+        const groep = new SelectFormFieldBuilder().id('groep')
+                                                  .label('actie.taak.toekennen.groep')
+                                                  .value(this.planItem.groep)
+                                                  .optionLabel('naam').options(groepen)
+                                                  .validators(Validators.required).build();
+        this.form.push([groep]);
     }
 
     isAfgerond(): boolean {
         return this.afgerond;
     }
+
 }
