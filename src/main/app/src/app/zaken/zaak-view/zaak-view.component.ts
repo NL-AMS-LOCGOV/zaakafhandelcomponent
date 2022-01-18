@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -244,6 +244,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     editGroep(event: any): void {
         this.zaak.groep = event.groep;
+        this.doubleSuspendRollenListener();
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
@@ -253,6 +254,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     editBehandelaar(event: any): void {
         if (event.behandelaar) {
             this.zaak.behandelaar = event.behandelaar;
+            this.doubleSuspendRollenListener();
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
                 this.init(zaak);
@@ -264,6 +266,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
+        this.doubleSuspendRollenListener();
         this.zakenService.toekennen(this.zaak, reden).subscribe((zaak) => {
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
             this.init(zaak);
@@ -292,6 +295,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (event) {
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
+        this.websocketService.suspendListener(this.zaakDocumentenListener);
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
@@ -307,6 +311,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (event) {
             console.log('callback loadTaken: ' + event.key);
         }
+        this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
@@ -320,6 +325,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     assignToMe(event: any): void {
+        this.doubleSuspendRollenListener();
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
             this.init(zaak);
@@ -327,6 +333,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     assignTaskToMe(taak: Taak) {
+        this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.assignToLoggedOnUser(taak).subscribe(() => {
             taak.behandelaar = this.ingelogdeMedewerker;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
@@ -340,5 +347,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.takenDataSource.filter = this.takenFilter;
         this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+    }
+
+    private doubleSuspendRollenListener() {
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.websocketService.suspendListener(this.zaakRollenListener);
     }
 }
