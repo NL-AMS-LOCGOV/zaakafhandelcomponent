@@ -30,6 +30,7 @@ import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
@@ -49,6 +50,9 @@ public class RESTTaakConverter {
     @Inject
     @IngelogdeMedewerker
     private Medewerker ingelogdeMedewerker;
+
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     public List<RESTTaak> convertTaskInfoList(final List<? extends TaskInfo> tasks) {
         return tasks.stream()
@@ -70,7 +74,7 @@ public class RESTTaakConverter {
         restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
         restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
-
+        restTaak.formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
         return restTaak;
     }
 

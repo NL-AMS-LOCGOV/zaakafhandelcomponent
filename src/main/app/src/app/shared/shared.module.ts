@@ -35,6 +35,7 @@ import {EditAutocompleteComponent} from './edit/edit-autocomplete/edit-autocompl
 import {EditDatumComponent} from './edit/edit-datum/edit-datum.component';
 import {PipesModule} from './pipes/pipes.module';
 import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
     declarations: [
@@ -53,7 +54,8 @@ import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
         EditGroepComponent,
         EditDatumComponent,
         EditAutocompleteComponent,
-        EditTekstComponent
+        EditTekstComponent,
+        ConfirmDialogComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -62,7 +64,7 @@ import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
         StoreModule.forFeature('shared', {
-            'sideNav': sideNavReducer
+            sideNav: sideNavReducer
         }),
         TranslateModule
     ],
@@ -89,7 +91,8 @@ import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
         EditGroepComponent,
         EditDatumComponent,
         EditAutocompleteComponent,
-        EditTekstComponent
+        EditTekstComponent,
+        ConfirmDialogComponent
     ],
     providers: [
         Title,
