@@ -1,7 +1,7 @@
 ---
 name: User story
 about: The user story describes the type of user, what they want and why.
-title: 'USER STORY: '
+title: ''
 labels: user story
 assignees: ''
 
@@ -20,8 +20,8 @@ assignees: ''
 
 ***
 ### Prioriteit
-
-- [ ] Must haves
-- [ ] Should haves
-- [ ] Could haves
-- [ ] Won't haves
+*Verwijder wat niet van toepassing is:*
+- Must haves
+- Should haves
+- Could haves
+- Won't haves
