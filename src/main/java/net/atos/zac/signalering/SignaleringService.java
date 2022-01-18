@@ -87,4 +87,14 @@ public class SignaleringService {
         }
         return where.toArray(new Predicate[0]);
     }
+
+    public int countSignaleringen(final SignaleringZoekParameters parameters) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final Root<Signalering> root = query.from(Signalering.class);
+
+        query.select(builder.count(root)).where(getPredicates(parameters, builder, root));
+
+        return entityManager.createQuery(query).getSingleResult().intValue();
+    }
 }

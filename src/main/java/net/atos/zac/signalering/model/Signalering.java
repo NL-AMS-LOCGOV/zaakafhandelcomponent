@@ -32,6 +32,7 @@ import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.Medewerker;
 
@@ -107,7 +108,7 @@ public class Signalering {
 
     public void setSubject(final Zaak subject) {
         validSubjecttype(ZAAK);
-        this.subject = subject.getIdentificatie();
+        this.subject = subject.getUuid().toString();
     }
 
     public void setSubject(final TaskInfo subject) {
@@ -117,7 +118,7 @@ public class Signalering {
 
     public void setSubject(final EnkelvoudigInformatieobject subject) {
         validSubjecttype(INFORMATIEOBJECT);
-        this.subject = subject.getIdentificatie();
+        this.subject = URIUtil.parseUUIDFromResourceURI(subject.getUrl()).toString();
     }
 
     private void validSubjecttype(final SignaleringSubject subjecttype) {
