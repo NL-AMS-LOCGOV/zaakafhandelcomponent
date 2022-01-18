@@ -1,0 +1,15 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div mat-dialog-content [innerHTML]="data.message | translate:(data.messageParams)"></div>
+<div mat-dialog-actions>
+    <button [disabled]="loading" mat-button color="primary" (click)="confirm()" id="confirmButton">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.ja' | translate}}
+    </button>
+    <button [disabled]="loading" autofocus mat-button (click)="close()" id="closeButton">{{'actie.nee' | translate}}</button>
+</div>

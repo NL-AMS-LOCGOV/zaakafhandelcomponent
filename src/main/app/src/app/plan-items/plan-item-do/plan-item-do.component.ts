@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -35,21 +35,24 @@ export class PlanItemDoComponent implements OnInit {
 
     ngOnInit(): void {
         this.planItem = this.route.snapshot.data['planItem'];
-        this.utilService.setTitle('title.taak.aanmaken');
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
-
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
-                             .startForm(this.planItem, this.identityService.listGroepen()).build();
         if (this.planItem.type === PlanItemType.HumanTask) {
+            this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
+                                 .startForm(this.planItem, this.identityService.listGroepen()).build();
+            this.utilService.setTitle(this.formulier.getStartTitel());
             this.formItems = this.formulier.form;
         } else {
+            this.utilService.setTitle(this.planItem.naam);
             this.formItems = [[]];
         }
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            this.planItemsService.doPlanItem(this.formulier.getPlanItem(formGroup)).subscribe(() => {
+            if (this.planItem.type === PlanItemType.HumanTask) {
+                this.planItem = this.formulier.getPlanItem(formGroup);
+            }
+            this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
                 this.navigation.back();
             });
         } else {

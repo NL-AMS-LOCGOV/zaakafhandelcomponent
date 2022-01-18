@@ -40,6 +40,10 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {MatDialog} from '@angular/material/dialog';
+import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
+import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -50,7 +54,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     zaak: Zaak;
     menu: MenuItem[];
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
-    toonAfgerondeTaken: boolean = false;
+    toonAfgerondeTaken = false;
 
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
@@ -83,7 +87,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                private sessionStorageService: SessionStorageService) {
+                private sessionStorageService: SessionStorageService,
+                public dialog: MatDialog) {
         super(store, utilService);
     }
 
@@ -192,19 +197,15 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {
-        let icon: string;
         switch (planItem.type) {
             case PlanItemType.HumanTask:
-                icon = 'assignment';
-                break;
+                return new LinkMenuTitem(planItem.naam, `/plan-items/${planItem.id}/do`, 'assignment');
             case PlanItemType.UserEventListener:
-                icon = 'fact_check';
-                break;
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'fact_check');
             case PlanItemType.ProcessTask:
-                icon = 'launch';
-                break;
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'launch');
         }
-        return new LinkMenuTitem(planItem.naam, `/plan-items/${planItem.id}/do`, icon);
+        throw new Error(`Onbekend type: ${planItem.type}`);
     }
 
     private setupMenu(): void {
@@ -213,16 +214,36 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
-            if (planItems.length > 0) {
-                this.menu.push(new HeaderMenuItem('planItems'));
+            const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
+            const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
+            if (humanTaskItems.length > 0) {
+                this.menu.push(new HeaderMenuItem('actie.taak.starten'));
+                this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
             }
-            this.menu = this.menu.concat(planItems.map(planItem => this.createMenuItem(planItem)));
+            if (actieItems.length > 0) {
+                this.menu.push(new HeaderMenuItem('actie.zaak.acties'));
+                this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
+            }
+        });
+    }
+
+    openPlanItemStartenDialog(planItem: PlanItem): void {
+        const confirmDialogData = new ConfirmDialogData('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam},
+            this.planItemsService.doPlanItem(planItem));
+        this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: confirmDialogData,
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
+                this.updateZaak();
+            }
         });
     }
 
     editGroep(event: any): void {
         this.zaak.groep = event.groep;
-
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
@@ -295,7 +316,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != zaakOrTaak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== zaakOrTaak.behandelaar?.gebruikersnaam;
     }
 
     assignToMe(event: any): void {
@@ -306,10 +327,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     assignTaskToMe(taak: Taak) {
-        this.takenService.assignToLoggedOnUser(taak).subscribe(taakResponse => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taakResponse.behandelaar.naam});
-            taak.behandelaar = taakResponse.behandelaar;
-            taak.status = taakResponse.status;
+        this.takenService.assignToLoggedOnUser(taak).subscribe(() => {
+            taak.behandelaar = this.ingelogdeMedewerker;
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
         });
     }
 

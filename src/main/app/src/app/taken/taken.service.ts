@@ -58,24 +58,23 @@ export class TakenService {
         );
     }
 
-    assign(taak: Taak): Observable<Taak> {
-        return this.http.patch<Taak>(`${this.basepath}/assign`, taak).pipe(
+    assign(taak: Taak): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/assign`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    assignGroup(taak: Taak): Observable<Taak> {
-        return this.http.patch<Taak>(`${this.basepath}/assign/group`, taak).pipe(
+    assignGroup(taak: Taak): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/assign/group`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    assignToLoggedOnUser(taak: Taak): Observable<Taak> {
+    assignToLoggedOnUser(taak: Taak): Observable<void> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUUID;
-
-        return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
+        return this.http.patch<void>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

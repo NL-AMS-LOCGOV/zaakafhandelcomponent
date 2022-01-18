@@ -139,37 +139,29 @@ public class TakenRESTService {
 
     @PATCH
     @Path("assign")
-    public RESTTaak assignTaak(final RESTTaak restTaak) {
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
+    public void assignTaak(final RESTTaak restTaak) {
         final Task task = flowableService.assignTask(restTaak.id,
                                                      restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
-        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
     @Path("assignTologgedOnUser")
-    public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
+    public void assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam());
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
-        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
     @Path("assign/group")
-    public RESTTaak assignGroup(final RESTTaak restTaak) {
+    public void assignGroup(final RESTTaak restTaak) {
         final Task task = flowableService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
-        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
     @Path("")
     public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
-
-        //TODO ESUITEDEV-25820 rechtencheck met solrTaak
         Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertRESTTaak(restTaak, task);
         final Task updatedTask = flowableService.updateTask(task);

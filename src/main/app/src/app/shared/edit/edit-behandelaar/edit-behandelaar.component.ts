@@ -39,12 +39,6 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
         this.save();
     }
 
-    onOutsideClick() {
-        if (!this.reasonField) {
-            super.onOutsideClick();
-        }
-    }
-
     protected submitSave(): void {
         if (this.formItem.data.formControl.valid) {
             this.onSave.emit({behandelaar: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});

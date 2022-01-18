@@ -110,6 +110,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     zoekZaken() {
         this.dataSource.zoekZaken();
         this.setColumns();
+        this.paginator.firstPage();
     }
 
     isAfterDate(datum): boolean {

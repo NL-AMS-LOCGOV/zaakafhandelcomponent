@@ -137,6 +137,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.zoekZaken();
         this.setColumns();
         this.selection.clear();
+        this.paginator.firstPage();
     }
 
     assignToMe(zaakOverzicht: ZaakOverzicht, $event) {

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -22,7 +22,7 @@ export class PaginatorTranslator {
     }
 
     private translatedRangeLabel = (page: number, pageSize: number, length: number) => {
-        if (length == 0 || pageSize == 0) { return `0 ${this.translateService.instant('msg.pagina', length)}`; }
+        if (length == 0 || pageSize == 0) { return `0 ${this.translateService.instant('msg.pagina')} ${length}`; }
         length = Math.max(length, 0);
         const startIndex = page * pageSize;
         const endIndex = startIndex < length ?
