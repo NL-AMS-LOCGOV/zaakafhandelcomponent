@@ -88,12 +88,8 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     init(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
-
         this.setEditableFormFields();
-
         this.createTaakForm(taak);
-
-        this.utilService.setTitle('title.taak', {taak: taak.naam});
         this.setupMenu();
     }
 
@@ -105,19 +101,28 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak).build();
+        this.utilService.setTitle('title.taak', {taak: this.formulier.getBehandelTitel()});
     }
 
     setEditableFormFields(): void {
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.taak.behandelaar).optionLabel('naam')
-                                                                                 .options(this.identityService.listMedewerkers()).build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.taak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroepen()).build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting').value(this.taak.toelichting).build());
-
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
-            'msg.datum.overschreden', 'warning');
+        this.editFormFields.set('behandelaar',
+            new AutocompleteFormFieldBuilder().id('behandelaar')
+                                              .label('behandelaar')
+                                              .value(this.taak.behandelaar).optionLabel('naam')
+                                              .options(this.identityService.listMedewerkers())
+                                              .build());
+        this.editFormFields.set('groep',
+            new AutocompleteFormFieldBuilder().id('groep')
+                                              .label('groep')
+                                              .value(this.taak.groep).optionLabel('naam')
+                                              .options(this.identityService.listGroepen())
+                                              .build());
+        this.editFormFields.set('toelichting',
+            new TextareaFormFieldBuilder().id('toelichting')
+                                          .label('toelichting')
+                                          .value(this.taak.toelichting)
+                                          .build());
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {
@@ -135,7 +140,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.websocketService.suspendListener(this.taakListener);
-
             this.takenService.complete(this.formulier.getTaak(formGroup)).subscribe(taak => {
                 this.utilService.openSnackbar('msg.taak.afgerond');
                 this.init(taak);
@@ -145,19 +149,18 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     editGroep(event: any): void {
         this.taak.groep = event.groep;
-
-        this.takenService.assignGroup(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.groep.naam});
-            this.init(taak);
+        this.takenService.assignGroup(this.taak).subscribe(() => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.groep.naam});
+            this.init(this.taak);
         });
     }
 
     editBehandelaar(event: any): void {
         if (event.behandelaar) {
             this.taak.behandelaar = event.behandelaar;
-            this.takenService.assign(this.taak).subscribe(taak => {
-                this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
-                this.init(taak);
+            this.takenService.assign(this.taak).subscribe(() => {
+                this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
+                this.init(this.taak);
             });
         } else {
             this.vrijgeven();
@@ -166,11 +169,11 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private vrijgeven(): void {
         this.taak.behandelaar = null;
-        this.takenService.assign(this.taak).subscribe(taak => {
+        this.takenService.assign(this.taak).subscribe(() => {
             this.utilService.openSnackbar('msg.taak.vrijgegeven');
-            this.init(taak);
+            this.init(this.taak);
         });
-    };
+    }
 
     editTaak(value: string, field: string): void {
         this.taak[field] = value;
@@ -196,7 +199,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
-    };
+    }
 
     private getIngelogdeMedewerker() {
         this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
@@ -205,17 +208,17 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     showAssignToMe(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != this.taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== this.taak.behandelaar?.gebruikersnaam;
     }
 
     assignToMe(event: any): void {
-        this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
-            this.init(taak);
+        this.takenService.assignToLoggedOnUser(this.taak).subscribe(() => {
+            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
+            this.init(this.taak);
         });
     }
 
     isAfgerond() {
-        return this.taak.status == TaakStatus.Afgerond;
+        return this.taak.status === TaakStatus.Afgerond;
     }
 }

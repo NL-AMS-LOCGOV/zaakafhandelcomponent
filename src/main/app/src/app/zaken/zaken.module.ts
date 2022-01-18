@@ -38,7 +38,7 @@ import {NotitiesComponent} from '../notities/notities.component';
         SharedModule,
         ZakenRoutingModule,
         StoreModule.forFeature('zaken', {
-            'zaakVerkort': zaakVerkortReducer
+            zaakVerkort: zaakVerkortReducer
         })
     ]
 })

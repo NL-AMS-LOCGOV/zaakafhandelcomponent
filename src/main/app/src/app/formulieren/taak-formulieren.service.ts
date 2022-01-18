@@ -7,29 +7,26 @@ import {Injectable} from '@angular/core';
 import {AanvullendeInformatie} from './model/aanvullende-informatie';
 import {FormulierBuilder} from './formulier-builder';
 import {Advies} from './model/advies';
+import {DefaultTaakformulier} from './model/default-taakformulier';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TaakFormulierenService {
 
-    constructor() { }
+    constructor(private translate: TranslateService) { }
 
     public getFormulierBuilder(formulierNaam: string): FormulierBuilder {
-        let formBuilder: FormulierBuilder;
         switch (formulierNaam) {
             case 'AANVULLENDE_INFORMATIE':
-                formBuilder = new FormulierBuilder(new AanvullendeInformatie());
-                break;
+                return new FormulierBuilder(new AanvullendeInformatie(this.translate));
             case 'ADVIES':
-                formBuilder = new FormulierBuilder(new Advies());
-                break;
+                return new FormulierBuilder(new Advies(this.translate));
+            case 'DEFAULT_TAAKFORMULIER':
+                return new FormulierBuilder(new DefaultTaakformulier(this.translate));
             default:
-                formBuilder = new FormulierBuilder(new AanvullendeInformatie());
-            // throw `Onbekend formulier: ${formulierNaam}`;
+                throw new Error(`Onbekend formulier: ${formulierNaam}`);
         }
-
-        return formBuilder;
     }
-
 }
