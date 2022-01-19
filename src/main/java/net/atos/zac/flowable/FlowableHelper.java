@@ -5,12 +5,18 @@
 
 package net.atos.zac.flowable;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
+import org.flowable.idm.api.Group;
+import org.flowable.idm.api.User;
+
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
 
 /**
@@ -49,5 +55,14 @@ public class FlowableHelper {
 
     public EventingService getEventingService() {
         return eventingService;
+    }
+
+    public Medewerker createMedewerker(final String gebruikersnaam) {
+        final User user = flowableService.readUser(gebruikersnaam);
+        if (user == null) {
+            throw new RuntimeException(String.format("Gebruiker met gebruikersnaam '%s' is niet bekend.", gebruikersnaam));
+        }
+        final List<Group> groups = flowableService.listGroupsForUser(gebruikersnaam);
+        return new Medewerker(user, groups);
     }
 }

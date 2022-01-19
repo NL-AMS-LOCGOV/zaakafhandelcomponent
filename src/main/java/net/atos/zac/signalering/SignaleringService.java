@@ -44,6 +44,11 @@ public class SignaleringService {
         return instance;
     }
 
+    public boolean isSubcribedTo(final Signalering signalering) {
+        // TODO Here will be business logic to check if a valid subscription exists for a given signalering.
+        return true;
+    }
+
     public Signalering createSignalering(final Signalering signalering) {
         valideerObject(signalering);
         return entityManager.merge(signalering);
