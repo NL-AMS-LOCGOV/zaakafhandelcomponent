@@ -23,7 +23,6 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
-import {MatGridListModule} from '@angular/material/grid-list';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -54,7 +53,6 @@ import {MatStepperModule} from '@angular/material/stepper';
         MatSnackBarModule,
         MatCardModule,
         MatRadioModule,
-        MatGridListModule,
         MatSlideToggleModule,
         MatStepperModule,
         MatBadgeModule,

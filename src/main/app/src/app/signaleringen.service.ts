@@ -13,7 +13,7 @@ export class SignaleringenService {
 
     private basepath = '/rest/signaleringen';
 
-    numberOfSignaleringenMedewerker$: Observable<number> = this.http.get<number>(`${this.basepath}/medewerker/amount`);
+    hasNewSignaleringen$: Observable<boolean> = this.http.get<boolean>(`${this.basepath}/medewerker/newsignaleringen`);
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) { }
 

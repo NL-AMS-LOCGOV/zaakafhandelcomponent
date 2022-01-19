@@ -7,10 +7,9 @@
     <mat-toolbar-row>
         <div fxFlex>
             <button mat-mini-fab aria-label="Mijn dashboard"
-                    [matBadgeHidden]="numberOfSignaleringen < 1"
-                    [matBadge]="numberOfSignaleringen" matBadgeColor="warn"
-                    color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}"
-                    (click)="updateNumberOfSignaleringen()">
+                    [matBadgeHidden]="!(hasNewSignaleringen$ | async)"
+                    matBadge="&#8288;" matBadgeColor="warn" matBadgeSize="small"
+                    color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
                 <mat-icon mat-list-icon>home</mat-icon>
             </button>
             <button fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"

@@ -48,21 +48,17 @@ public class SignaleringenRestService {
     private Instance<Medewerker> ingelogdeMedewerker;
 
     @GET
-    @Path("/medewerker/amount")
-    public int numberOfSignaleringenMedewerker() {
+    @Path("/medewerker/newsignaleringen")
+    public boolean newSignaleringenMedewerker() {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
         parameters.target(ingelogdeMedewerker.get());
-        return signaleringService.countSignaleringen(parameters);
+        // TODO check if the user has seen the signaleringen
+        return signaleringService.countSignaleringen(parameters) > 0;
     }
 
     @GET
     @Path("/zaken/{type}")
     public List<RESTZaakOverzicht> listZakenSignalering(@PathParam("type") final String signaleringsType) {
-//        final Signalering signalering = signaleringService.signaleringInstance(SignaleringType.Type.ZAAK_OP_NAAM);
-//        signalering.setSubject(zaak);
-//        signalering.setTarget(ingelogdeMedewerker.get());
-//        signaleringService.createSignalering(signalering);
-
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
         parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
         parameters.target(ingelogdeMedewerker.get());
