@@ -5,84 +5,89 @@
 
 <mat-toolbar color="primary">
     <mat-toolbar-row>
-        <button mat-mini-fab aria-label="Mijn dashboard"
-                color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
-            <mat-icon mat-list-icon>home</mat-icon>
-        </button>
-        <button fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
-                mat-icon-button
-                title="{{ 'actie.terug' | translate }}" zacBackButton>
-            <mat-icon>arrow_back</mat-icon>
-        </button>
+        <div fxFlex>
+            <button mat-mini-fab aria-label="Mijn dashboard"
+                    [matBadgeHidden]="!(hasNewSignaleringen$ | async)"
+                    matBadge="&#8288;" matBadgeColor="warn" matBadgeSize="small"
+                    color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
+                <mat-icon mat-list-icon>home</mat-icon>
+            </button>
+            <button fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
+                    mat-icon-button
+                    title="{{ 'actie.terug' | translate }}" zacBackButton>
+                <mat-icon>arrow_back</mat-icon>
+            </button>
 
-        <button aria-label="Zaak toevoegen" id="zaakAanmaken_button" mat-mini-fab routerLink="/zaken/create"
-                title="{{ 'actie.zaak.aanmaken' | translate }}">
-            <mat-icon>create_new_folder</mat-icon>
-        </button>
+            <button aria-label="Zaak toevoegen" id="zaakAanmaken_button" mat-mini-fab routerLink="/zaken/create"
+                    title="{{ 'actie.zaak.aanmaken' | translate }}">
+                <mat-icon>create_new_folder</mat-icon>
+            </button>
 
-        <button [matMenuTriggerFor]="zakenMenu" aria-label="Menu voor zaken" id="zakenWerklijsten_button"
-                mat-flat-button
-                color="primary">
-            {{'zaken' |translate }}
-            <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #zakenMenu="matMenu">
-            <button [routerLink]="['/zaken/werkvoorraad']" id="zakenWerkvoorraad_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>source</mat-icon>
-                <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
+            <button [matMenuTriggerFor]="zakenMenu" aria-label="Menu voor zaken" id="zakenWerklijsten_button"
+                    mat-flat-button
+                    color="primary">
+                {{'zaken' |translate }}
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button [routerLink]="['/zaken/mijn']" id="zakenMijn_button" mat-menu-item routerLinkActive="active">
-                <mat-icon mat-list-icon>folder_shared</mat-icon>
-                <span>{{ 'title.zaken.mijn' | translate }}</span>
-            </button>
-            <button [routerLink]="['/zaken/afgehandeld']" id="zakenAfgehandeld_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>rule_folder</mat-icon>
-                <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
-            </button>
-        </mat-menu>
+            <mat-menu #zakenMenu="matMenu">
+                <button [routerLink]="['/zaken/werkvoorraad']" id="zakenWerkvoorraad_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>source</mat-icon>
+                    <span>{{ 'title.zaken.werkvoorraad' | translate }}</span>
+                </button>
+                <button [routerLink]="['/zaken/mijn']" id="zakenMijn_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon mat-list-icon>folder_shared</mat-icon>
+                    <span>{{ 'title.zaken.mijn' | translate }}</span>
+                </button>
+                <button [routerLink]="['/zaken/afgehandeld']" id="zakenAfgehandeld_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>rule_folder</mat-icon>
+                    <span>{{ 'title.zaken.afgehandeld' | translate }}</span>
+                </button>
+            </mat-menu>
 
-        <button [matMenuTriggerFor]="takenMenu" aria-label="Menu voor taken" id="takenWerklijsten_button"
-                mat-flat-button
-                color="primary">
-            {{'taken' |translate }}
-            <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #takenMenu="matMenu">
-            <button [routerLink]="['/taken/werkvoorraad']" id="takenWerkvoorraad_button" mat-menu-item
-                    routerLinkActive="active">
-                <mat-icon mat-list-icon>description</mat-icon>
-                <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
+            <button [matMenuTriggerFor]="takenMenu" aria-label="Menu voor taken" id="takenWerklijsten_button"
+                    mat-flat-button
+                    color="primary">
+                {{'taken' |translate }}
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button [routerLink]="['/taken/mijn']" id="takenMijn_button" mat-menu-item routerLinkActive="active">
-                <mat-icon mat-list-icon>contact_page</mat-icon>
-                <span>{{ 'title.taken.mijn' | translate }}</span>
-            </button>
-        </mat-menu>
-
-        <div class="title" fxHide.lt-md>{{headerTitle | translate}}</div>
-        <span class="spacer"></span>
-        <div class="user-name" fxHide.xs>
-            {{ ingelogdeMedewerker?.naam }}
+            <mat-menu #takenMenu="matMenu">
+                <button [routerLink]="['/taken/werkvoorraad']" id="takenWerkvoorraad_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>description</mat-icon>
+                    <span>{{ 'title.taken.werkvoorraad' | translate }}</span>
+                </button>
+                <button [routerLink]="['/taken/mijn']" id="takenMijn_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon mat-list-icon>contact_page</mat-icon>
+                    <span>{{ 'title.taken.mijn' | translate }}</span>
+                </button>
+            </mat-menu>
         </div>
-        <button mat-icon-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
-                id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
-            <mat-icon>account_circle</mat-icon>
-        </button>
-        <button id="admin_button" mat-icon-button routerLink="/admin"
-                title="{{ 'actie.admin' | translate }}">
-            <mat-icon>settings</mat-icon>
-        </button>
-        <mat-menu #accountMenu="matMenu">
-            <h4 class="user-name" fxHide.xs>{{ingelogdeMedewerker?.naam}}</h4>
-            <mat-divider fxHide.gt-xs></mat-divider>
-            <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
-                <mat-icon>logout</mat-icon>
-                <span>{{'actie.uitloggen' | translate}}</span>
+        <div class="title" fxHide.lt-md fxFlex fxLayoutAlign="center center">{{headerTitle$ | async | translate}}</div>
+
+        <div fxFlex fxLayoutAlign="flex-end center">
+            <div class="user-name" fxHide.xs>
+                {{(ingelogdeMedewerker$|async).naam }}
+            </div>
+            <button mat-icon-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
+                    id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
+                <mat-icon>account_circle</mat-icon>
             </button>
-        </mat-menu>
+            <button id="admin_button" mat-icon-button routerLink="/admin"
+                    title="{{ 'actie.admin' | translate }}">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <mat-menu #accountMenu="matMenu">
+                <h4 class="user-name" fxHide.xs>{{(ingelogdeMedewerker$|async).naam}}</h4>
+                <mat-divider fxHide.gt-xs></mat-divider>
+                <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
+                    <mat-icon>logout</mat-icon>
+                    <span>{{'actie.uitloggen' | translate}}</span>
+                </button>
+            </mat-menu>
+        </div>
     </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="mat-subheading-2 title" fxHide.gt-sm>{{headerTitle | translate}}</div>
+<div class="mat-subheading-2 title" fxHide.gt-sm>{{headerTitle$ | async | translate}}</div>

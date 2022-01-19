@@ -234,5 +234,7 @@
   "msg.vrijgegeven.taak": "The task has been released",
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
   "msg.zaak.vrijgegeven": "The case has been released",
-  "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved"
+  "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved",
+  " 8 ": ">>--> DASHBOARD <--<<",
+  "dashboard.mijn.nieuwe.zaken": "My new cases"
 }

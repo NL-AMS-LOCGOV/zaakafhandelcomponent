@@ -10,6 +10,7 @@ export class ZaakOverzicht {
     identificatie: string;
     uuid: string;
     toelichting: string;
+    omschrijving: string;
     startdatum: string;
     status: string;
     zaaktype: string;

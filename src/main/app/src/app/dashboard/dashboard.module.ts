@@ -6,24 +6,19 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DashboardComponent} from './dashboard.component';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatCardModule} from '@angular/material/card';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import {SharedModule} from '../shared/shared.module';
+import {ZakenCardComponent} from './zaken-card/zaken-card.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
-    declarations: [DashboardComponent],
+    declarations: [DashboardComponent, ZakenCardComponent],
     exports: [
         DashboardComponent
     ],
     imports: [
         CommonModule,
-        MatGridListModule,
-        MatCardModule,
-        MatIconModule,
-        MatMenuModule,
-        MatButtonModule
+        SharedModule,
+        RouterModule
     ]
 })
 export class DashboardModule {

@@ -52,6 +52,7 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.einddatumGepland = zaak.getEinddatumGepland();
         restZaakOverzicht.uiterlijkeEinddatumAfdoening = zaak.getUiterlijkeEinddatumAfdoening();
         restZaakOverzicht.toelichting = zaak.getToelichting();
+        restZaakOverzicht.omschrijving = zaak.getOmschrijving();
         restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         final RESTZaakStatus status = restZaakStatusConverter.convert(zaak.getStatus());
         if (status != null) {
