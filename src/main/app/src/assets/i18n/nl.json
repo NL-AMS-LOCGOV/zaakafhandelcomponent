@@ -234,5 +234,7 @@
   "msg.vrijgegeven.taak": "De taak is vrijgegeven",
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
-  "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen"
+  "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
+  " 8 ": ">>--> DASHBOARD <--<<",
+  "dashboard.mijn.nieuwe.zaken": "Mijn nieuwe zaken"
 }

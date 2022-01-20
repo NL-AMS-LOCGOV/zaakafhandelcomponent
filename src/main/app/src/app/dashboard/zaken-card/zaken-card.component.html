@@ -1,0 +1,41 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-wrapper">
+    <table mat-table [dataSource]="zakenDataSource" matSort>
+        <ng-container matColumnDef="identificatie">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'identificatie' | translate}} </th>
+            <td mat-cell *matCellDef="let zaak"> {{zaak.identificatie | empty}} </td>
+        </ng-container>
+        <ng-container matColumnDef="zaaktype">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'zaaktype' | translate}} </th>
+            <td mat-cell *matCellDef="let zaak">
+                {{zaak.zaaktype}}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="omschrijving">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'omschrijving' | translate}} </th>
+            <td mat-cell *matCellDef="let zaak"> {{zaak.omschrijving |empty}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let zaak">
+                <button mat-flat-button [routerLink]="['/zaken', zaak.uuid]"
+                        [id]="'zaakBekijken_' + zaak.uuid +'_button'"
+                        title="{{ 'actie.zaak.bekijken' | translate }}">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="zakenColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: zakenColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></td>
+        </tr>
+    </table>
+
+    <mat-paginator [pageSize]="5" [hidePageSize]="true"></mat-paginator>
+</div>
