@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -20,16 +21,21 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import net.atos.zac.event.EventingService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 @ApplicationScoped
 @Transactional
-public class SignaleringService {
+public class SignaleringenService {
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
+
+    @Inject
+    private EventingService eventingService;
 
     /**
      * Factory method for constructing Signalering instances.
@@ -51,6 +57,7 @@ public class SignaleringService {
 
     public Signalering createSignalering(final Signalering signalering) {
         valideerObject(signalering);
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
         return entityManager.merge(signalering);
     }
 
@@ -58,7 +65,13 @@ public class SignaleringService {
         return entityManager.find(Signalering.class, id);
     }
 
+    public void deleteSignalering(final SignaleringZoekParameters parameters) {
+        final List<Signalering> signaleringen = findSignaleringen(parameters);
+        signaleringen.forEach(this::deleteSignalering);
+    }
+
     public void deleteSignalering(final Signalering signalering) {
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
         entityManager.remove(signalering);
     }
 
@@ -73,7 +86,8 @@ public class SignaleringService {
                 .getResultList();
     }
 
-    private Predicate[] getPredicates(final SignaleringZoekParameters parameters, final CriteriaBuilder builder, final Root<Signalering> root) {
+    private Predicate[] getPredicates(final SignaleringZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<Signalering> root) {
         final List<Predicate> where = new ArrayList<>();
         if (parameters.getType() != null) {
             where.add(builder.equal(root.get("type").get("id"), parameters.getType().toString()));

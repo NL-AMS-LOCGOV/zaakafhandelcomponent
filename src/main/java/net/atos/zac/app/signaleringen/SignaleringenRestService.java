@@ -24,7 +24,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.signalering.SignaleringService;
+import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 
@@ -35,7 +35,7 @@ import net.atos.zac.signalering.model.SignaleringZoekParameters;
 public class SignaleringenRestService {
 
     @Inject
-    private SignaleringService signaleringService;
+    private SignaleringenService signaleringenService;
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -53,7 +53,7 @@ public class SignaleringenRestService {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
         parameters.target(ingelogdeMedewerker.get());
         // TODO check if the user has seen the signaleringen
-        return signaleringService.countSignaleringen(parameters) > 0;
+        return signaleringenService.countSignaleringen(parameters) > 0;
     }
 
     @GET
@@ -63,7 +63,7 @@ public class SignaleringenRestService {
         parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
         parameters.target(ingelogdeMedewerker.get());
 
-        final List<Zaak> zaken = signaleringService.findSignaleringen(parameters)
+        final List<Zaak> zaken = signaleringenService.findSignaleringen(parameters)
                 .stream()
                 .map(signalering ->
                              zrcClientService.readZaak(

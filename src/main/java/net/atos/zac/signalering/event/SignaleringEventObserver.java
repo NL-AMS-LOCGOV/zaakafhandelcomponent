@@ -22,7 +22,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
-import net.atos.zac.signalering.SignaleringService;
+import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 
 /**
@@ -46,13 +46,14 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     private FlowableHelper flowableHelper;
 
     @Inject
-    private SignaleringService signaleringService;
+    private SignaleringenService signaleringenService;
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
-        final Signalering signalering = buildSignalering(signaleringService.signaleringInstance(event.getObjectType()), event);
-        if (signalering != null && signaleringService.isSubcribedTo(signalering)) {
-            signaleringService.createSignalering(signalering);
+        final Signalering signalering = buildSignalering(
+                signaleringenService.signaleringInstance(event.getObjectType()), event);
+        if (signalering != null && signaleringenService.isSubcribedTo(signalering)) {
+            signaleringenService.createSignalering(signalering);
         }
     }
 
