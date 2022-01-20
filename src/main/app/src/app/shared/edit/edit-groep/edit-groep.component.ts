@@ -32,6 +32,11 @@ export class EditGroepComponent extends EditAutocompleteComponent {
         }
     }
 
+    edit(editing: boolean): void {
+        super.edit(editing);
+        this.reasonItem.data.formControl.setValue(null);
+    }
+
     protected submitSave(): void {
         if (this.formItem.data.formControl.valid) {
             this.onSave.emit({groep: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
