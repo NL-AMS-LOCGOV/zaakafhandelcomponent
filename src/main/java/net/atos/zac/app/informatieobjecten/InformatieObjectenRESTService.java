@@ -8,6 +8,7 @@ package net.atos.zac.app.informatieobjecten;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -94,6 +96,15 @@ public class InformatieObjectenRESTService {
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
         return restInformatieobjectConverter.convert(enkelvoudigInformatieObject);
+    }
+
+    @PUT
+    @Path("informatieobjecten")
+    public List<RESTEnkelvoudigInformatieobject> readEnkelvoudigInformatieobjecten(UUID[] uuids) {
+        final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
+        List<EnkelvoudigInformatieobject> informatieobjects = Arrays.stream(uuids).map(uuid -> drcClientService.readEnkelvoudigInformatieobject(uuid)).toList();
+        informatieobjects.forEach(informatieobject -> restList.add(restInformatieobjectConverter.convert(informatieobject)));
+        return restList;
     }
 
     @POST

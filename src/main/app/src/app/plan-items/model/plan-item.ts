@@ -12,5 +12,6 @@ export class PlanItem {
     type: PlanItemType;
     groep: Groep;
     formulierDefinitie: string;
+    zaakUuid: string;
     taakdata: {};
 }

@@ -1,0 +1,46 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field floatLabel="always" appearance="fill" class="full-width">
+    <mat-label>{{data.label | translate}}</mat-label>
+    <mat-chip-list #chipList aria-label="selection" [required]="data.required">
+        <mat-chip *ngFor="let informatieobject of selectedDocumenten" (removed)="remove(informatieobject)">
+            {{informatieobject.titel}}
+            <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip>
+        <input #searchInput placeholder=".." [formControl]="searchControl" [matAutocomplete]="auto" [matChipInputFor]="chipList" [id]="data.id" (blur)="blur()">
+    </mat-chip-list>
+    <mat-error>{{data.getErrorMessage()}}</mat-error>
+    <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
+</mat-form-field>
+<mat-autocomplete #auto="matAutocomplete" (closed)="resetInput()">
+    <mat-optgroup>
+        <div fxLayout="row">
+            <small fxFlex="30">{{'titel' | translate}}</small>
+            <small fxFlex="10">{{'type' | translate}}</small>
+            <small fxFlex="10">{{'status' | translate}}</small>
+            <small fxFlex="10">{{'versie' | translate}}</small>
+            <small fxFlex="10">{{'auteur' | translate}}</small>
+            <small fxFlex="10">{{'datum' | translate}}</small>
+            <small fxFlex="10">{{'grootte' | translate}} (MB)</small>
+        </div>
+    </mat-optgroup>
+    <mat-option *ngFor="let informatieobject of filteredDocumenten | async" [value]="informatieobject">
+        <div fxLayout="row" (click)="optionClicked($event, informatieobject)">
+            <span fxFlex="30">
+                <mat-checkbox [checked]="informatieobject['selected']" (change)="toggleSelection(informatieobject)"
+                              (click)="$event.stopPropagation()">{{informatieobject.titel}}</mat-checkbox>
+            </span>
+            <small fxFlex="10">{{informatieobject.documentType}}</small>
+            <small fxFlex="10">{{informatieobject.status}}</small>
+            <small fxFlex="10">{{informatieobject.versie}}</small>
+            <small fxFlex="10">{{informatieobject.auteur}}</small>
+            <small fxFlex="10">{{informatieobject.creatiedatum | datum}}</small>
+            <small fxFlex="10">{{informatieobject.bestandsomvang / 1048576 | number}}</small>
+        </div>
+    </mat-option>
+</mat-autocomplete>

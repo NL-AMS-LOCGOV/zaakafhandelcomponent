@@ -30,6 +30,12 @@ export class InformatieObjectenService {
         );
     }
 
+    readEnkelvoudigInformatieobjecten(uuids: string[]): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten`, uuids).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     listInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/${zaakTypeID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
