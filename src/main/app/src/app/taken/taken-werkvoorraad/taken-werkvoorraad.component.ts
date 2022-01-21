@@ -13,9 +13,6 @@ import {TakenWerkvoorraadDatasource} from './taken-werkvoorraad-datasource';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
-import {TaakSortering} from '../model/taak-sortering';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
@@ -42,14 +39,14 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
 
-    columnSelect: TableColumn;
-    columnNaam: TableColumn;
-    columnZaakIdentificatie: TableColumn;
-    columnZaaktypeOmschrijving: TableColumn;
-    columnCreatieDatum: TableColumn;
-    columnStreefDatum: TableColumn;
-    columnGroep: TableColumn;
-    columnUrl: TableColumn;
+    // columnSelect: TableColumn;
+    // columnNaam: TableColumn;
+    // columnZaakIdentificatie: TableColumn;
+    // columnZaaktypeOmschrijving: TableColumn;
+    // columnCreatieDatum: TableColumn;
+    // columnStreefDatum: TableColumn;
+    // columnGroep: TableColumn;
+    // columnUrl: TableColumn;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
@@ -68,25 +65,25 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        this.columnSelect = new TableColumn('select', 'select', true, null, true);
-        this.columnNaam = new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM);
-        this.columnZaakIdentificatie = new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true);
-        this.columnZaaktypeOmschrijving = new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true);
-        this.columnCreatieDatum = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
-            TaakSortering.CREATIEDATUM).pipe(DatumPipe);
-        this.columnStreefDatum = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
-        this.columnGroep = new TableColumn('groep', 'groep.naam', true);
-        this.columnUrl = new TableColumn('url', 'url', true, null, true);
+        // this.columnSelect = new TableColumn('select', 'select', true, null, true);
+        // this.columnNaam = new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM);
+        // this.columnZaakIdentificatie = new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true);
+        // this.columnZaaktypeOmschrijving = new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true);
+        // this.columnCreatieDatum = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
+        //     TaakSortering.CREATIEDATUM);//.pipe(DatumPipe);
+        // this.columnStreefDatum = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
+        // this.columnGroep = new TableColumn('groep', 'groep.naam', true);
+        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
 
         this.dataSource.columns = [
-            this.columnSelect,
-            this.columnNaam,
-            this.columnZaakIdentificatie,
-            this.columnZaaktypeOmschrijving,
-            this.columnCreatieDatum,
-            this.columnStreefDatum,
-            this.columnGroep,
-            this.columnUrl
+            // this.columnSelect,
+            // this.columnNaam,
+            // this.columnZaakIdentificatie,
+            // this.columnZaaktypeOmschrijving,
+            // this.columnCreatieDatum,
+            // this.columnStreefDatum,
+            // this.columnGroep,
+            // this.columnUrl
         ];
     }
 

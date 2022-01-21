@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -10,10 +10,7 @@ import {MatSort} from '@angular/material/sort';
 import {tap} from 'rxjs/operators';
 import {TableRequest} from './table-request';
 import {TableResponse} from './table-response';
-import {TableColumn} from '../column/table-column';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {TableColumnFilter} from '../filter/table-column-filter';
-import {DynamicPipe} from '../pipes/dynamic.pipe';
 
 export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
 
@@ -24,15 +21,17 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     sort: MatSort;
     filters: {} = {};
 
-    columns: Array<TableColumn>;
-    selectedColumns: Array<TableColumn>;
+    columns: Array<string>;
+    filterColumns: Array<string>;
+    selectedColumns: Array<string>;
+    detailExpandColumns: Array<string>;
 
     private subscription$: Subscription;
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
-        //reset pageindex on sort change
+        // reset pageindex on sort change
         this.subscription$ = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        //watch sortchange and page change
+        // watch sortchange and page change
         merge(this.sort.sortChange, this.paginator.page).pipe(
             tap(() => this.load())
         ).subscribe();
@@ -40,11 +39,11 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
         return this.tableSubject.asObservable();
     }
 
-    filter(filter: TableColumnFilter<any>) {
-        if (this.filters[filter.id] && !filter.value) {
-            delete this.filters[filter.id];
+    filter(field, value) {
+        if (this.filters[field] && !value) {
+            delete this.filters[field];
         } else {
-            this.filters[filter.id] = filter.value[filter.selectValue];
+            this.filters[field] = value;
         }
         this.load();
     }
@@ -102,26 +101,22 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     }
 
     updateColumns(): void {
-        //update array reference for angular change detection
-        this.columns.filter(value => !value.sticky).forEach(value => value.visible = this.selectedColumns.indexOf(value) != -1);
+        // update array reference for angular change detection
+        //this.columns.filter(value => !value.sticky).forEach(value => value.visible = this.selectedColumns.indexOf(value) !== -1);
+        this.setFilterColumns();
+    }
+
+    setFilterColumns(): void {
+        this.filterColumns = this.selectedColumns.map(c => c + '_filter');
     }
 
     protected setData(response: TableResponse<OBJECT>): void {
         this.totalItems = response.totalItems;
-        this.applyValuePipes(response.data);
         this.tableSubject.next(response.data);
     }
 
-    private applyValuePipes(data: OBJECT[]): void {
-        this.columns.forEach(column => {
-            data.forEach(row => {
-                row[column.model] = column.transform(this.getValue(column.model, row), pipeArg => this.getValue(pipeArg, row));
-            });
-        });
-    }
-
     private getValue(columnModel: string, row: OBJECT): OBJECT {
-        var model = columnModel.split('.');
+        const model = columnModel.split('.');
         let i = 0, value = row;
         while (i < model.length) {
             if (value) {

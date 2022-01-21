@@ -12,11 +12,9 @@ import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
@@ -45,19 +43,19 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     zaakTypes: Zaaktype[] = [];
     private ingelogdeMedewerker: Medewerker;
 
-    columnSelect: TableColumn;
-    columnZaakIdentificatie: TableColumn;
-    columnStatus: TableColumn;
-    columnZaaktype: TableColumn;
-    columnGroep: TableColumn;
-    columnStartdatum: TableColumn;
-    columnEinddatum: TableColumn;
-    columnEinddatumGepland: TableColumn;
-    columnAanvrager: TableColumn;
-    columnBehandelaar: TableColumn;
-    columnUiterlijkeEinddatumAfdoening: TableColumn;
-    columnToelichting: TableColumn;
-    columnUrl: TableColumn;
+    // columnSelect: TableColumn;
+    // columnZaakIdentificatie: TableColumn;
+    // columnStatus: TableColumn;
+    // columnZaaktype: TableColumn;
+    // columnGroep: TableColumn;
+    // columnStartdatum: TableColumn;
+    // columnEinddatum: TableColumn;
+    // columnEinddatumGepland: TableColumn;
+    // columnAanvrager: TableColumn;
+    // columnBehandelaar: TableColumn;
+    // columnUiterlijkeEinddatumAfdoening: TableColumn;
+    // columnToelichting: TableColumn;
+    // columnUrl: TableColumn;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
@@ -96,34 +94,35 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        this.columnSelect = new TableColumn('select', 'select', true, null, true);
-        this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
-        this.columnStatus = new TableColumn('status', 'status', true);
-        this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
-        this.columnGroep = new TableColumn('groep', 'groep', true);
-        this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
-        this.columnEinddatum = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
-        this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
-        this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
-        this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
-        this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
-            'uiterlijkeEinddatumAfdoening');
-        this.columnToelichting = new TableColumn('toelichting', 'toelichting');
-        this.columnUrl = new TableColumn('url', 'url', true, null, true);
+        // this.columnSelect = new TableColumn('select', 'select', true, null, true);
+        // this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
+        // this.columnStatus = new TableColumn('status', 'status', true);
+        // this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
+        // this.columnGroep = new TableColumn('groep', 'groep', true);
+        // this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum');//.pipe(DatumPipe);
+        // this.columnEinddatum = new TableColumn('einddatum', 'einddatum');//.pipe(DatumPipe);
+        // this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
+        // this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
+        // this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
+        // this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
+        //     'uiterlijkeEinddatumAfdoening');
+        // this.columnToelichting = new TableColumn('toelichting', 'toelichting');
+        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
 
         this.dataSource.columns = [
-            this.columnSelect,
-            this.columnZaakIdentificatie,
-            this.columnStatus,
-            this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
-            this.columnStartdatum,
-            this.columnEinddatum,
-            this.columnEinddatumGepland,
-            this.columnAanvrager,
-            this.columnBehandelaar,
-            this.columnUiterlijkeEinddatumAfdoening,
-            this.columnToelichting,
-            this.columnUrl
+            // this.columnSelect,
+            // this.columnZaakIdentificatie,
+            // this.columnStatus,
+            // this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
+            // this.columnStartdatum,
+            // this.columnEinddatum,
+            // this.columnEinddatumGepland,
+            // this.columnAanvrager,
+            // this.columnBehandelaar,
+            // this.columnUiterlijkeEinddatumAfdoening,
+            // this.columnToelichting,
+            // this.columnUrl
+            'select', 'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
     }
 

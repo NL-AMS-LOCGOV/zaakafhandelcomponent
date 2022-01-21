@@ -6,9 +6,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {Zaaktype} from '../model/zaaktype';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -36,18 +34,18 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
 
-    columnZaakIdentificatie: TableColumn;
-    columnStatus: TableColumn;
-    columnZaaktype: TableColumn;
-    columnGroep: TableColumn;
-    columnStartdatum: TableColumn;
-    columnEinddatum: TableColumn;
-    columnEinddatumGepland: TableColumn;
-    columnAanvrager: TableColumn;
-    columnBehandelaar: TableColumn;
-    columnUiterlijkeEinddatumAfdoening: TableColumn;
-    columnToelichting: TableColumn;
-    columnUrl: TableColumn;
+    // columnZaakIdentificatie: TableColumn;
+    // columnStatus: TableColumn;
+    // columnZaaktype: TableColumn;
+    // columnGroep: TableColumn;
+    // columnStartdatum: TableColumn;
+    // columnEinddatum: TableColumn;
+    // columnEinddatumGepland: TableColumn;
+    // columnAanvrager: TableColumn;
+    // columnBehandelaar: TableColumn;
+    // columnUiterlijkeEinddatumAfdoening: TableColumn;
+    // columnToelichting: TableColumn;
+    // columnUrl: TableColumn;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService) { }
 
@@ -66,32 +64,32 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     }
 
     private setColumns() {
-        this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
-        this.columnStatus = new TableColumn('status', 'status', true);
-        this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
-        this.columnGroep = new TableColumn('groep', 'groep', true);
-        this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum').pipe(DatumPipe);
-        this.columnEinddatum = new TableColumn('einddatum', 'einddatum').pipe(DatumPipe);
-        this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
-        this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
-        this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
-        this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
-            'uiterlijkeEinddatumAfdoening');
-        this.columnToelichting = new TableColumn('toelichting', 'toelichting');
-        this.columnUrl = new TableColumn('url', 'url', true, null, true);
+        // this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
+        // this.columnStatus = new TableColumn('status', 'status', true);
+        // this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
+        // this.columnGroep = new TableColumn('groep', 'groep', true);
+        // this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum');//.pipe(DatumPipe);
+        // this.columnEinddatum = new TableColumn('einddatum', 'einddatum');//.pipe(DatumPipe);
+        // this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
+        // this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
+        // this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
+        // this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
+        //     'uiterlijkeEinddatumAfdoening');
+        // this.columnToelichting = new TableColumn('toelichting', 'toelichting');
+        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
 
         this.dataSource.columns = [
-            this.columnZaakIdentificatie,
-            this.columnStatus,
-            this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
-            this.columnStartdatum,
-            this.columnEinddatum,
-            this.columnEinddatumGepland,
-            this.columnAanvrager,
-            this.columnBehandelaar,
-            this.columnUiterlijkeEinddatumAfdoening,
-            this.columnToelichting,
-            this.columnUrl
+            // this.columnZaakIdentificatie,
+            // this.columnStatus,
+            // this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
+            // this.columnStartdatum,
+            // this.columnEinddatum,
+            // this.columnEinddatumGepland,
+            // this.columnAanvrager,
+            // this.columnBehandelaar,
+            // this.columnUiterlijkeEinddatumAfdoening,
+            // this.columnToelichting,
+            // this.columnUrl
         ];
     }
 

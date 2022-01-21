@@ -3,20 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {MatTable} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
-import {TableColumnFilter} from '../../shared/dynamic-table/filter/table-column-filter';
 import {Zaaktype} from '../model/zaaktype';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -31,41 +28,31 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     dataSource: ZakenMijnDatasource;
     expandedRow: ZaakOverzicht | null;
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService) {
+    zaaktypes: Zaaktype[] = [];
+
+    zaaktypeValue: any;
+
+    constructor(private zakenService: ZakenService, public utilService: UtilService, private cdRef: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
+        console.log(this.dataSource);
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
-            const zaaktypeColumn: TableColumn = new TableColumn('zaaktype', 'zaaktype', true);
-            zaaktypeColumn.filter = new TableColumnFilter<Zaaktype>('zaaktype', zaaktypes, 'omschrijving', 'identificatie');
-
-            const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
-            .pipe(DatumPipe);
-
-            const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum')
-            .pipe(DatumPipe);
-
-            const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
-            .pipe(DatumOverschredenPipe,'einddatum');
-
-            const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening','uiterlijkeEinddatumAfdoening')
-            .pipe(DatumOverschredenPipe,'einddatum');
+            this.zaaktypes = zaaktypes;
 
             this.dataSource.columns = [
-                new TableColumn('zaak.identificatie', 'identificatie', true),
-                new TableColumn('status', 'status', true),
-                zaaktypeColumn,
-                new TableColumn('groep', 'groep.naam', false),
-                startdatum,
-                einddatum,
-                einddatumGepland,
-                new TableColumn('aanvrager', 'aanvrager', true),
-                uiterlijkeEinddatumAfdoening,
-                new TableColumn('toelichting', 'toelichting'),
-                new TableColumn('url', 'url', true, null, true)
+                'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
             ];
+            this.dataSource.selectedColumns = [
+                'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
+            ];
+            this.dataSource.detailExpandColumns = ['groep', 'einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
+            this.dataSource.setFilterColumns();
+
+            console.log(this.dataSource.selectedColumns);
+            console.log(this.dataSource.filterColumns);
         });
     }
 
@@ -75,9 +62,22 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.table.dataSource = this.dataSource;
     }
 
-    zaaktypeChange(column) {
-        this.dataSource.filter(column.filter);
+    updateColumns() {
+        console.log(this.dataSource.selectedColumns);
+        console.log(this.dataSource.filterColumns);
+        this.dataSource.updateColumns();
+        this.cdRef.detectChanges();
+        console.log(this.dataSource.selectedColumns);
+        console.log(this.dataSource.filterColumns);
+    }
+
+    zaaktypeChange(zaaktype: Zaaktype) {
+        this.dataSource.filter('zaaktype', zaaktype?.identificatie);
         this.paginator.firstPage();
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
     }
 
 }
