@@ -34,6 +34,11 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
         }
     }
 
+    edit(editing: boolean): void {
+        super.edit(editing);
+        this.reasonItem.data.formControl.setValue(null);
+    }
+
     release(): void {
         this.formItem.data.formControl.setValue(null);
         this.save();

@@ -53,12 +53,12 @@ export class UtilService {
      * Check whether or not there is an active edit overlay on the screen eg. autocomplete or datepicker
      */
     hasEditOverlay(): boolean {
-        let overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-datepicker-popup');
+        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-datepicker-popup');
         return overlayElements.length > 0;
     }
 
     private getOverlayElements(...classList): any[] {
-        let overlayElements: any[] = [];
+        const overlayElements: any[] = [];
         for (const styleClass of classList) {
             overlayElements.push(...this.document.getElementsByClassName(styleClass));
         }
@@ -70,7 +70,7 @@ export class UtilService {
         return 'zaakafhandelcomponent';
     }
 
-    setTitle(title: string, params?: Object): void {
+    setTitle(title: string, params?: object): void {
         forkJoin({
             prefix: this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()}),
             title: this.translate.get(title, params)
@@ -85,7 +85,7 @@ export class UtilService {
     }
 
     getEnumAsSelectList(prefix: string, enumValue: any): Observable<{ label: string, value: string }[]> {
-        let list: { label: string, value: string }[] = [];
+        const list: { label: string, value: string }[] = [];
         Object.keys(enumValue).forEach(value => {
             this.translate.get(`${prefix}.${value}`).subscribe(result => {
                 list.push({label: result, value: value});
@@ -95,7 +95,7 @@ export class UtilService {
         return of(list);
     }
 
-    openSnackbar(message: string, params?: Object) {
+    openSnackbar(message: string, params?: object) {
         forkJoin({
             message: this.translate.get(message, params),
             action: this.translate.get('actie.sluiten')

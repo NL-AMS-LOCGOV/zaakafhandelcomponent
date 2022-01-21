@@ -41,10 +41,10 @@
                                     <zac-static-text [label]="'aanvrager' | translate"
                                                      [value]="'-'"></zac-static-text>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
-                                                    [reasonField]="editFormFields.get('reden')"
+                                                    [reasonField]="editFormFields.get('redenGroep')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
-                                                          [reasonField]="editFormFields.get('reden')"
+                                                          [reasonField]="editFormFields.get('redenBehandelaar')"
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="showAssignToMe(zaak)"
                                                           (onAssignToMe)="assignToMe($event)"></zac-edit-behandelaar>
