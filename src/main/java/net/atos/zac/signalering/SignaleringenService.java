@@ -31,6 +31,7 @@ import net.atos.zac.websocket.event.ScreenEventType;
 @Transactional
 public class SignaleringenService {
 
+
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
@@ -57,6 +58,7 @@ public class SignaleringenService {
 
     public Signalering createSignalering(final Signalering signalering) {
         valideerObject(signalering);
+
         eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
         return entityManager.merge(signalering);
     }
@@ -107,13 +109,22 @@ public class SignaleringenService {
         return where.toArray(new Predicate[0]);
     }
 
-    public int countSignaleringen(final SignaleringZoekParameters parameters) {
+    public ZonedDateTime latestSignalering(final SignaleringZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final CriteriaQuery<ZonedDateTime> query = builder.createQuery(ZonedDateTime.class);
         final Root<Signalering> root = query.from(Signalering.class);
 
-        query.select(builder.count(root)).where(getPredicates(parameters, builder, root));
 
-        return entityManager.createQuery(query).getSingleResult().intValue();
+        query.select(root.get("tijdstip"))
+                .where(builder.and(getPredicates(parameters, builder, root)))
+                .orderBy(builder.desc(root.get("tijdstip")));
+
+        final List<ZonedDateTime> resultList = entityManager.createQuery(query).getResultList();
+
+        if (resultList != null && !resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
     }
 }

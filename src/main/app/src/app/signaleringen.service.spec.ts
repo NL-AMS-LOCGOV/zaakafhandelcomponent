@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
 import {TestBed} from '@angular/core/testing';
 
 import {SignaleringenService} from './signaleringen.service';

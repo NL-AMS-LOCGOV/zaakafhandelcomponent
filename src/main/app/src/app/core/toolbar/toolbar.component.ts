@@ -14,6 +14,8 @@ import {Opcode} from '../websocket/model/opcode';
 import {ObjectType} from '../websocket/model/object-type';
 import {WebsocketService} from '../websocket/websocket.service';
 import {WebsocketListener} from '../websocket/model/websocket-listener';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import * as moment from 'moment';
 
 @Component({
     selector: 'zac-toolbar',
@@ -30,7 +32,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     private signaleringListener: WebsocketListener;
 
     constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService,
-                private signaleringenService: SignaleringenService, private websocketService: WebsocketService) {
+                private signaleringenService: SignaleringenService, private websocketService: WebsocketService,
+                private sessionStorageService: SessionStorageService) {
     }
 
     ngOnInit(): void {
@@ -39,9 +42,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             this.ingelogdeMedewerker = medewerker;
             this.signaleringListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN,
                 medewerker.gebruikersnaam,
-                () => this.updateSignaleringen());
+                () => this.signaleringenService.updateSignaleringen());
         });
 
+        this.setSignaleringen();
     }
 
     ngOnDestroy(): void {
@@ -49,9 +53,23 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.websocketService.removeListener(this.signaleringListener);
     }
 
-    updateSignaleringen(): void {
-        this.subscription$ = this.signaleringenService.hasNewSignaleringen$.subscribe(
-            value => this.hasNewSignaleringen = value);
+    setSignaleringen(): void {
+        this.subscription$ = this.signaleringenService.latestSignalering$.subscribe(
+            value => {
+                // TODO instead of session storage use userpreferences in a db
+                const dashboardLastOpenendStorage: string = this.sessionStorageService.getSessionStorage(
+                    'dashboardOpened');
+                if (!dashboardLastOpenendStorage) {
+                    this.hasNewSignaleringen = !!value;
+                } else {
+                    const dashboardLastOpenendMoment: moment.Moment = moment(dashboardLastOpenendStorage,
+                        moment.ISO_8601);
+
+                    const newestSignalering: moment.Moment = moment(value, moment.ISO_8601);
+                    this.hasNewSignaleringen = newestSignalering.isAfter(dashboardLastOpenendMoment);
+                }
+            }
+        );
     }
 
 }

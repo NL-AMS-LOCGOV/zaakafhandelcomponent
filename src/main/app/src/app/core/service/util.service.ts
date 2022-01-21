@@ -70,7 +70,7 @@ export class UtilService {
         return 'zaakafhandelcomponent';
     }
 
-    setTitle(title: string, params?: object): void {
+    setTitle(title: string, params?: {}): void {
         forkJoin({
             prefix: this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()}),
             title: this.translate.get(title, params)
@@ -95,7 +95,7 @@ export class UtilService {
         return of(list);
     }
 
-    openSnackbar(message: string, params?: object) {
+    openSnackbar(message: string, params?: {}) {
         forkJoin({
             message: this.translate.get(message, params),
             action: this.translate.get('actie.sluiten')

@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.signaleringen;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,12 +49,11 @@ public class SignaleringenRestService {
     private Instance<Medewerker> ingelogdeMedewerker;
 
     @GET
-    @Path("/medewerker/newsignaleringen")
-    public boolean newSignaleringenMedewerker() {
+    @Path("/medewerker/latestsignalering")
+    public ZonedDateTime latestSignaleringenMedewerker() {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
         parameters.target(ingelogdeMedewerker.get());
-        // TODO check if the user has seen the signaleringen
-        return signaleringenService.countSignaleringen(parameters) > 0;
+        return signaleringenService.latestSignalering(parameters);
     }
 
     @GET
