@@ -36,9 +36,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {PipesModule} from '../pipes/pipes.module';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {DocumentenSelecterenComponent} from './form-components/documenten-selecteren/documenten-selecteren.component';
 import {MatChipsModule} from '@angular/material/chips';
-import {DocumentenTonenComponent} from './form-components/documenten-tonen/documenten-tonen.component';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
 
@@ -57,8 +56,7 @@ import {RouterModule} from '@angular/router';
         FormFieldDirective,
         ReadonlyComponent,
         AutocompleteComponent,
-        DocumentenSelecterenComponent,
-        DocumentenTonenComponent
+        DocumentenLijstComponent
     ],
     imports: [
         CommonModule,
@@ -95,8 +93,7 @@ import {RouterModule} from '@angular/router';
         TextareaComponent,
         GoogleMapsComponent,
         AutocompleteComponent,
-        DocumentenSelecterenComponent,
-        DocumentenTonenComponent
+        DocumentenLijstComponent
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}

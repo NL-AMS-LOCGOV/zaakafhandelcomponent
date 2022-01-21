@@ -44,6 +44,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -292,7 +293,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (event) {
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
-        this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
+        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekParameters.zaakUUID = this.zaak.uuid;
+        this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }

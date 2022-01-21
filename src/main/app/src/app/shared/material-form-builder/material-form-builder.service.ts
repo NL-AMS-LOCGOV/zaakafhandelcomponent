@@ -18,8 +18,7 @@ import {ReadonlyComponent} from './form-components/readonly/readonly.component';
 import {FileComponent} from './form-components/file/file.component';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
-import {DocumentenSelecterenComponent} from './form-components/documenten-selecteren/documenten-selecteren.component';
-import {DocumentenTonenComponent} from './form-components/documenten-tonen/documenten-tonen.component';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 
 @Injectable({
     providedIn: 'root'
@@ -73,10 +72,8 @@ export class MaterialFormBuilderService {
                 return CheckboxComponent;
             case FieldType.GOOGLEMAPS:
                 return GoogleMapsComponent;
-            case FieldType.DOCUMENTEN_SELECTEREN:
-                return DocumentenSelecterenComponent;
-            case FieldType.DOCUMENTEN_TONEN:
-                return DocumentenTonenComponent;
+            case FieldType.DOCUMENTEN_LIJST:
+                return DocumentenLijstComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }

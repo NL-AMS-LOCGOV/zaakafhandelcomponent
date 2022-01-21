@@ -45,9 +45,9 @@ export abstract class AbstractFormulier {
 
     getBehandelTitel(): string {
         if (this.isAfgerond()) {
-            return this.translate.instant(`title.taak.raadplegen`, {taak: this.planItem.naam});
+            return this.translate.instant(`title.taak.raadplegen`, {taak: this.taak.naam});
         } else {
-            return this.translate.instant(`title.taak.behandelen`, {taak: this.planItem.naam});
+            return this.translate.instant(`title.taak.behandelen`, {taak: this.taak.naam});
         }
     }
 
