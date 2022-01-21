@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -20,16 +21,22 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import net.atos.zac.event.EventingService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 @ApplicationScoped
 @Transactional
-public class SignaleringService {
+public class SignaleringenService {
+
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
+
+    @Inject
+    private EventingService eventingService;
 
     /**
      * Factory method for constructing Signalering instances.
@@ -51,6 +58,8 @@ public class SignaleringService {
 
     public Signalering createSignalering(final Signalering signalering) {
         valideerObject(signalering);
+
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
         return entityManager.merge(signalering);
     }
 
@@ -58,7 +67,13 @@ public class SignaleringService {
         return entityManager.find(Signalering.class, id);
     }
 
+    public void deleteSignalering(final SignaleringZoekParameters parameters) {
+        final List<Signalering> signaleringen = findSignaleringen(parameters);
+        signaleringen.forEach(this::deleteSignalering);
+    }
+
     public void deleteSignalering(final Signalering signalering) {
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
         entityManager.remove(signalering);
     }
 
@@ -73,7 +88,8 @@ public class SignaleringService {
                 .getResultList();
     }
 
-    private Predicate[] getPredicates(final SignaleringZoekParameters parameters, final CriteriaBuilder builder, final Root<Signalering> root) {
+    private Predicate[] getPredicates(final SignaleringZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<Signalering> root) {
         final List<Predicate> where = new ArrayList<>();
         if (parameters.getType() != null) {
             where.add(builder.equal(root.get("type").get("id"), parameters.getType().toString()));
@@ -93,13 +109,22 @@ public class SignaleringService {
         return where.toArray(new Predicate[0]);
     }
 
-    public int countSignaleringen(final SignaleringZoekParameters parameters) {
+    public ZonedDateTime latestSignalering(final SignaleringZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final CriteriaQuery<ZonedDateTime> query = builder.createQuery(ZonedDateTime.class);
         final Root<Signalering> root = query.from(Signalering.class);
 
-        query.select(builder.count(root)).where(getPredicates(parameters, builder, root));
 
-        return entityManager.createQuery(query).getSingleResult().intValue();
+        query.select(root.get("tijdstip"))
+                .where(builder.and(getPredicates(parameters, builder, root)))
+                .orderBy(builder.desc(root.get("tijdstip")));
+
+        final List<ZonedDateTime> resultList = entityManager.createQuery(query).getResultList();
+
+        if (resultList != null && !resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
     }
 }

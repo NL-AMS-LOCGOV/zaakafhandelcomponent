@@ -59,6 +59,9 @@ import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.signalering.SignaleringenService;
+import net.atos.zac.signalering.model.SignaleringType;
+import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.OpenZaakPaginationUtil;
 
@@ -102,10 +105,20 @@ public class ZakenRESTService {
     @Inject
     private ConfigurationService configurationService;
 
+    @Inject
+    private SignaleringenService signaleringenService;
+
     @GET
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
+        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
+        parameters.target(ingelogdeMedewerker.get());
+        parameters.subject(zaak);
+
+        signaleringenService.deleteSignalering(parameters);
+
         return zaakConverter.convert(zaak);
     }
 
@@ -143,9 +156,11 @@ public class ZakenRESTService {
     public TableResponse<RESTZaakOverzicht> listZakenMijn(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(ingelogdeMedewerker.get().getGebruikersnaam());
+        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(
+                ingelogdeMedewerker.get().getGebruikersnaam());
         final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults, tableState.getPagination());
+        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults,
+                                                                                                  tableState.getPagination());
         return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
     }
 
@@ -226,7 +241,8 @@ public class ZakenRESTService {
 
     @PUT
     @Path("toekennen/mij/lijst")
-    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
+    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(
+            final RESTZaakToekennenGegevens toekennenGegevens) {
         // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakOverzichtConverter.convert(zaak);

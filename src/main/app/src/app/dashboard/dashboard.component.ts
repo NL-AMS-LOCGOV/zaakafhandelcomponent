@@ -6,6 +6,9 @@
 import {Component, OnInit} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {UtilService} from '../core/service/util.service';
+import * as moment from 'moment';
+import {SessionStorageService} from '../shared/storage/session-storage.service';
+import {SignaleringenService} from '../signaleringen.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -20,10 +23,14 @@ export class DashboardComponent implements OnInit {
         [this.nieuweZakenCard]
     ];
 
-    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService) {
+    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService, private sessionStorageService: SessionStorageService,
+                private signaleringenService: SignaleringenService) {
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
+        // TODO instead of session storage use userpreferences in a db
+        this.sessionStorageService.getSessionStorage('dashboardOpened', moment());
+        this.signaleringenService.updateSignaleringen();
     }
 }

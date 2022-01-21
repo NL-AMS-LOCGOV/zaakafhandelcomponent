@@ -7,7 +7,7 @@
     <mat-toolbar-row>
         <div fxFlex>
             <button mat-mini-fab aria-label="Mijn dashboard"
-                    [matBadgeHidden]="!(hasNewSignaleringen$ | async)"
+                    [matBadgeHidden]="!hasNewSignaleringen"
                     matBadge="&#8288;" matBadgeColor="warn" matBadgeSize="small"
                     color="primary" id="dashboardMijn_button" routerLink="" title="{{ 'dashboard' | translate }}">
                 <mat-icon mat-list-icon>home</mat-icon>
@@ -68,7 +68,7 @@
 
         <div fxFlex fxLayoutAlign="flex-end center">
             <div class="user-name" fxHide.xs>
-                {{(ingelogdeMedewerker$|async).naam }}
+                {{ ingelogdeMedewerker?.naam }}
             </div>
             <button mat-icon-button aria-label="Gebruikers profiel" [matMenuTriggerFor]="accountMenu"
                     id="gebruikersProfiel_button" title="{{ 'toolbar.profiel' | translate }}">
@@ -79,7 +79,7 @@
                 <mat-icon>settings</mat-icon>
             </button>
             <mat-menu #accountMenu="matMenu">
-                <h4 class="user-name" fxHide.xs>{{(ingelogdeMedewerker$|async).naam}}</h4>
+                <h4 class="user-name" fxHide.xs>{{ ingelogdeMedewerker?.naam }}</h4>
                 <mat-divider fxHide.gt-xs></mat-divider>
                 <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
                     <mat-icon>logout</mat-icon>
