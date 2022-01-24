@@ -3,280 +3,260 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<!--<div class="zoek-wrapper" fxLayout="column" fxLayoutGap="5px">-->
-<!--    <div fxLayoutGap="16px">-->
-<!--        <label class="form-label" for="werkvoorraadVan_radio" fxFlex="15"-->
-<!--               fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>-->
+<div class="zoek-wrapper" fxLayout="column" fxLayoutGap="5px">
+    <div fxLayoutGap="16px">
+        <label class="form-label" for="werkvoorraadVan_radio" fxFlex="15"
+               fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
 
-<!--        <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"-->
-<!--                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75"-->
-<!--                         (ngModelChange)="switchTypeAndSearch()">-->
-<!--            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"-->
-<!--                              [value]="selectie">-->
-<!--                {{ selectie | translate}}-->
-<!--            </mat-radio-button>-->
-<!--        </mat-radio-group>-->
-<!--    </div>-->
-<!--    <div fxLayoutGap="16px">-->
-<!--        <label fxFlex="15" fxFlex.lt-md="25"></label>-->
-<!--        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">-->
-<!--            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">-->
-<!--                <mat-label>{{'groep' | translate}}</mat-label>-->
-<!--                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.groep" id="groep_filter">-->
-<!--                    <mat-option>{{'groep.-kies-' | translate}}</mat-option>-->
-<!--                    <mat-option *ngFor="let groep of groepen"-->
-<!--                                [value]="groep.id">-->
-<!--                        {{groep.naam | translate}}-->
-<!--                    </mat-option>-->
-<!--                </mat-select>-->
-<!--            </mat-form-field>-->
-<!--        </ng-container>-->
+        <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
+                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75"
+                         (ngModelChange)="switchTypeAndSearch()">
+            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
+                              [value]="selectie">
+                {{ selectie | translate}}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <div fxLayoutGap="16px">
+        <label fxFlex="15" fxFlex.lt-md="25"></label>
+        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
+                <mat-label>{{'groep' | translate}}</mat-label>
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.groep"
+                            id="groep_filter">
+                    <mat-option>{{'groep.-kies-' | translate}}</mat-option>
+                    <mat-option *ngFor="let groep of groepen"
+                                [value]="groep.id">
+                        {{groep.naam | translate}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
 
-<!--        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">-->
-<!--            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">-->
-<!--                <mat-label>{{'zaaktype' | translate}}</mat-label>-->
-<!--                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.zaaktype"-->
-<!--                            id="zaaktype_filter">-->
-<!--                    <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>-->
-<!--                    <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">-->
-<!--                        {{zaakType.omschrijving}}-->
-<!--                    </mat-option>-->
-<!--                </mat-select>-->
-<!--            </mat-form-field>-->
-<!--        </ng-container>-->
-<!--    </div>-->
-<!--</div>-->
+        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
+                <mat-label>{{'zaaktype' | translate}}</mat-label>
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.zaaktype"
+                            id="zaaktype_filter">
+                    <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
+                    <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
+                        {{zaakType.omschrijving}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
+    </div>
+</div>
 
-<!--<div class="table-wrapper" [class.loading]="utilService.loading$ | async">-->
-<!--    <table mat-table matSort multiTemplateDataRows-->
-<!--           cdkDropList-->
-<!--           cdkDropListLockAxis="x"-->
-<!--           cdkDropListOrientation="horizontal"-->
-<!--           (cdkDropListDropped)="dataSource.drop($event)">-->
+<div class="table-wrapper" [class.loading]="utilService.loading$ | async">
+    <table mat-table matSort multiTemplateDataRows
+           cdkDropList
+           cdkDropListLockAxis="x"
+           cdkDropListOrientation="horizontal"
+           (cdkDropListDropped)="dataSource.drop($event)">
 
-<!--        <ng-container matColumnDef="select">-->
-<!--            <th mat-header-cell *matHeaderCellDef>-->
-<!--                <mat-checkbox (change)="$event ? masterToggle() : null"-->
-<!--                              [checked]="selection.hasValue() && isAllSelected()"-->
-<!--                              [indeterminate]="selection.hasValue() && !isAllSelected()"-->
-<!--                              [aria-label]="checkboxLabel() | translate"-->
-<!--                              id="selectAll_checkbox">-->
-<!--                </mat-checkbox>-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                <mat-checkbox (click)="$event.stopPropagation()"-->
-<!--                              (change)="$event ? selection.toggle(row) : null"-->
-<!--                              [checked]="selection.isSelected(row)"-->
-<!--                              [aria-label]="checkboxLabel(row) | translate"-->
-<!--                              [id]="row.identificatie +'_checkbox'">-->
+        <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                              [checked]="selection.hasValue() && isAllSelected()"
+                              [indeterminate]="selection.hasValue() && !isAllSelected()"
+                              [aria-label]="checkboxLabel() | translate"
+                              id="selectAll_checkbox">
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? selection.toggle(row) : null"
+                              [checked]="selection.isSelected(row)"
+                              [aria-label]="checkboxLabel(row) | translate"
+                              [id]="row.identificatie +'_checkbox'">
 
-<!--                </mat-checkbox>-->
-<!--            </td>-->
-<!--        </ng-container>-->
+                </mat-checkbox>
+            </td>
+        </ng-container>
 
-<!--        <ng-container matColumnDef="identificatie">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnZaakIdentificatie.sort"-->
-<!--                [disabled]="!columnZaakIdentificatie.sort">-->
-<!--                {{ columnZaakIdentificatie.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.identificatie | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="status">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnStatus.sort"-->
-<!--                [disabled]="!columnStatus.sort">-->
-<!--                {{ columnStatus.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.status | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="zaaktype">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnZaaktype.sort"-->
-<!--                [disabled]="!columnZaaktype.sort">-->
-<!--                {{ columnZaaktype.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.zaaktype | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="groep">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnGroep.sort"-->
-<!--                [disabled]="!columnGroep.sort">-->
-<!--                {{ columnGroep.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.groep.naam | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="startdatum">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnStartdatum.sort"-->
-<!--                [disabled]="!columnStartdatum.sort">-->
-<!--                {{ columnStartdatum.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.startdatum | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="einddatum">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnEinddatum.sort"-->
-<!--                [disabled]="!columnEinddatum.sort">-->
-<!--                {{ columnEinddatum.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.einddatum | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="einddatumGepland">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnEinddatumGepland.sort"-->
-<!--                [disabled]="!columnEinddatumGepland.sort">-->
-<!--                {{ columnEinddatumGepland.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.einddatumGepland | empty }}-->
-<!--                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"-->
-<!--                          *ngIf="isAfterDate(row.einddatumGepland)">warning-->
-<!--                </mat-icon>-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="aanvrager">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnAanvrager.sort"-->
-<!--                [disabled]="!columnAanvrager.sort">-->
-<!--                {{ columnAanvrager.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.aanvrager | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="behandelaar">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnBehandelaar.sort"-->
-<!--                [disabled]="!columnBehandelaar.sort">-->
-<!--                {{ columnBehandelaar.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.behandelaar?.naam | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnUiterlijkeEinddatumAfdoening.sort"-->
-<!--                [disabled]="!columnUiterlijkeEinddatumAfdoening.sort">-->
-<!--                {{ columnUiterlijkeEinddatumAfdoening.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.uiterlijkeEinddatumAfdoening | translate | empty }}-->
-<!--                <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"-->
-<!--                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning-->
-<!--                </mat-icon>-->
-<!--            </td>-->
-<!--        </ng-container>-->
-<!--        <ng-container matColumnDef="toelichting">-->
-<!--            <th mat-header-cell cdkDrag *matHeaderCellDef-->
-<!--                [mat-sort-header]="columnToelichting.sort"-->
-<!--                [disabled]="!columnToelichting.sort">-->
-<!--                {{ columnToelichting.label | translate }}-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef="let row">-->
-<!--                {{ row.toelichting | translate | empty }}-->
-<!--            </td>-->
-<!--        </ng-container>-->
+        <ng-container matColumnDef="identificatie">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'zaak.identificatie' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.identificatie }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'status' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.status | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="zaaktype">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'zaaktype' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.zaaktype | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="groep">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'groep' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.groep | empty: 'naam' }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="startdatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="'startdatum'">
+                {{ 'startdatum' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.startdatum | datum | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="einddatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'einddatum' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.einddatum | datum | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="einddatumGepland">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'einddatumGepland' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.einddatumGepland | empty }}
+                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
+                          *ngIf="isAfterDate(row.einddatumGepland)">warning
+                </mat-icon>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="aanvrager">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'aanvrager' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.aanvrager | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="behandelaar">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'behandelaar' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.behandelaar | empty: 'naam' }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'uiterlijkeEinddatumAfdoening' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.uiterlijkeEinddatumAfdoening | translate | empty }}
+                <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
+                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning
+                </mat-icon>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="toelichting">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'toelichting' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.toelichting | translate | empty }}
+            </td>
+        </ng-container>
 
-<!--        <ng-container matColumnDef="url" stickyEnd>-->
-<!--            <th mat-header-cell *matHeaderCellDef>-->
-<!--                <button (menuClosed)="dataSource.updateColumns()" [matMenuTriggerFor]="menu" mat-flat-button-->
-<!--                        title="{{ 'filters' | translate }}">-->
-<!--                    <mat-icon>view_column</mat-icon>-->
-<!--                </button>-->
-<!--                <mat-menu #menu="matMenu">-->
-<!--                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">-->
-<!--                        <mat-list-option (click)="$event.stopPropagation()" [selected]="column.visible"-->
-<!--                                         checkboxPosition="before"-->
-<!--                                         [value]="column"-->
-<!--                                         *ngFor="let column of dataSource.columns | noStickyColumn">-->
-<!--                            {{column.label | translate}}-->
-<!--                        </mat-list-option>-->
-<!--                    </mat-selection-list>-->
-<!--                </mat-menu>-->
-<!--            </th>-->
-<!--            <td mat-cell *matCellDef=" let row">-->
-<!--                <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"-->
-<!--                        [id]="'zaakBekijken_' + row.identificatie +'_button'"-->
-<!--                        title="{{ 'actie.zaak.bekijken' | translate }}">-->
-<!--                    <mat-icon>visibility</mat-icon>-->
-<!--                </button>-->
-<!--                <button (click)="assignToMe(row, $event)"-->
-<!--                        [id]="'kenZaakAanMijToe_' + row.identificatie +'_button'"-->
-<!--                        mat-flat-button-->
-<!--                        title="{{ 'actie.mij.toekennen' | translate }}"-->
-<!--                        *ngIf="showAssignToMe(row)">-->
-<!--                    <mat-icon>person_add_alt_1</mat-icon>-->
-<!--                </button>-->
-<!--            </td>-->
-<!--        </ng-container>-->
+        <ng-container matColumnDef="url" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef>
+                <button (menuClosed)="dataSource.setFilterColumns()" [matMenuTriggerFor]="menu" mat-flat-button
+                        title="{{ 'filters' | translate }}">
+                    <mat-icon>view_column</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
+                        <mat-list-option (click)="$event.stopPropagation()"
+                                         checkboxPosition="before"
+                                         [value]="column"
+                                         *ngFor="let column of dataSource.columns">
+                            {{column | translate}}
+                        </mat-list-option>
+                    </mat-selection-list>
+                </mat-menu>
+            </th>
+            <td mat-cell *matCellDef=" let row">
+                <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
+                        [id]="'zaakBekijken_' + row.identificatie +'_button'"
+                        title="{{ 'actie.zaak.bekijken' | translate }}">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+                <button (click)="assignToMe(row, $event)"
+                        [id]="'kenZaakAanMijToe_' + row.identificatie +'_button'"
+                        mat-flat-button
+                        title="{{ 'actie.mij.toekennen' | translate }}"
+                        *ngIf="showAssignToMe(row)">
+                    <mat-icon>person_add_alt_1</mat-icon>
+                </button>
+            </td>
+        </ng-container>
 
-<!--        <ng-container matColumnDef="expandedDetail">-->
-<!--            <td mat-cell *matCellDef="let row" [attr.colspan]="(dataSource.columns | visibleColumn: true).length">-->
-<!--                <div class="row-detail"-->
-<!--                     [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">-->
-<!--                    <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>-->
-<!--                        <ng-container *ngFor="let column of dataSource.columns | visibleColumn:false">-->
-<!--                            <zac-static-text fxFlex="33" [label]="column.label | translate"-->
-<!--                                             [value]="row[column.model] | translate"></zac-static-text>-->
-<!--                        </ng-container>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </td>-->
-<!--        </ng-container>-->
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let row" [attr.colspan]="dataSource.selectedColumns.length">
+                <div class="row-detail"
+                     [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                    <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
+                        <ng-container *ngFor="let column of dataSource.detailExpandColumns">
+                            <zac-static-text fxFlex="33" [label]="column | translate"
+                                             [value]="row[column] | translate"></zac-static-text>
+                        </ng-container>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
 
-<!--        <tr mat-header-row-->
-<!--            *matHeaderRowDef="dataSource.columns | visibleColumn:true | columnToString; sticky:true"></tr>-->
-<!--        <tr mat-row *matRowDef="let row; columns: dataSource.columns | visibleColumn:true | columnToString;"-->
-<!--            class="row"-->
-<!--            [class.expanded-row]="expandedRow === row"-->
-<!--            (click)="expandedRow = expandedRow === row ? null : row"></tr>-->
-<!--        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"-->
-<!--            class="collapsed-row"></tr>-->
-<!--    </table>-->
+        <tr mat-header-row
+            *matHeaderRowDef="dataSource.selectedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: dataSource.selectedColumns"
+            class="row"
+            [class.expanded-row]="expandedRow === row"
+            (click)="expandedRow = expandedRow === row ? null : row"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"
+            class="collapsed-row"></tr>
+    </table>
 
-<!--    <ng-container *ngIf="dataSource.totalItems === 0">-->
-<!--        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>-->
-<!--    </ng-container>-->
+    <ng-container *ngIf="dataSource.totalItems === 0">
+        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    </ng-container>
 
-<!--    <mat-paginator #paginator-->
-<!--                   [length]="dataSource.totalItems"-->
-<!--                   [pageIndex]="0"-->
-<!--                   [pageSize]="25"-->
-<!--                   (page)="pageChange()"-->
-<!--                   [pageSizeOptions]="[10, 25, 50, 100]"-->
-<!--                   sticky>-->
-<!--    </mat-paginator>-->
-<!--</div>-->
+    <mat-paginator #paginator
+                   [length]="dataSource.totalItems"
+                   [pageIndex]="0"
+                   [pageSize]="25"
+                   (page)="pageChange()"
+                   [pageSizeOptions]="[10, 25, 50, 100]"
+                   sticky>
+    </mat-paginator>
+</div>
 
-<!--<div [hidden]="!isSelected()">-->
-<!--    <div class="buttons">-->
-<!--        <button (click)="openVerdelenScherm()" color="accent" id="verdelen_button" mat-raised-button-->
-<!--                title="{{ 'actie.verdelen' | translate }}">-->
-<!--            {{'actie.verdelen' | translate}}-->
-<!--            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"-->
-<!--                      matBadgeSize="small">assignment_ind-->
-<!--            </mat-icon>-->
-<!--        </button>-->
-<!--        <button (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button-->
-<!--                title="{{ 'actie.vrijgeven' | translate }}">-->
-<!--            {{'actie.vrijgeven' | translate}}-->
-<!--            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"-->
-<!--                      matBadgeSize="small">clear_all-->
-<!--            </mat-icon>-->
-<!--        </button>-->
-<!--    </div>-->
-<!--</div>-->
+<div [hidden]="!isSelected()">
+    <div class="buttons">
+        <button (click)="openVerdelenScherm()" color="accent" id="verdelen_button" mat-raised-button
+                title="{{ 'actie.verdelen' | translate }}">
+            {{'actie.verdelen' | translate}}
+            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"
+                      matBadgeSize="small">assignment_ind
+            </mat-icon>
+        </button>
+        <button (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button
+                title="{{ 'actie.vrijgeven' | translate }}">
+            {{'actie.vrijgeven' | translate}}
+            <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary"
+                      matBadgeSize="small">clear_all
+            </mat-icon>
+        </button>
+    </div>
+</div>

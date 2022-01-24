@@ -43,20 +43,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     zaakTypes: Zaaktype[] = [];
     private ingelogdeMedewerker: Medewerker;
 
-    // columnSelect: TableColumn;
-    // columnZaakIdentificatie: TableColumn;
-    // columnStatus: TableColumn;
-    // columnZaaktype: TableColumn;
-    // columnGroep: TableColumn;
-    // columnStartdatum: TableColumn;
-    // columnEinddatum: TableColumn;
-    // columnEinddatumGepland: TableColumn;
-    // columnAanvrager: TableColumn;
-    // columnBehandelaar: TableColumn;
-    // columnUiterlijkeEinddatumAfdoening: TableColumn;
-    // columnToelichting: TableColumn;
-    // columnUrl: TableColumn;
-
     constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
     }
 
@@ -94,36 +80,13 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        // this.columnSelect = new TableColumn('select', 'select', true, null, true);
-        // this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
-        // this.columnStatus = new TableColumn('status', 'status', true);
-        // this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
-        // this.columnGroep = new TableColumn('groep', 'groep', true);
-        // this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum');//.pipe(DatumPipe);
-        // this.columnEinddatum = new TableColumn('einddatum', 'einddatum');//.pipe(DatumPipe);
-        // this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
-        // this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
-        // this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
-        // this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
-        //     'uiterlijkeEinddatumAfdoening');
-        // this.columnToelichting = new TableColumn('toelichting', 'toelichting');
-        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
-
         this.dataSource.columns = [
-            // this.columnSelect,
-            // this.columnZaakIdentificatie,
-            // this.columnStatus,
-            // this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
-            // this.columnStartdatum,
-            // this.columnEinddatum,
-            // this.columnEinddatumGepland,
-            // this.columnAanvrager,
-            // this.columnBehandelaar,
-            // this.columnUiterlijkeEinddatumAfdoening,
-            // this.columnToelichting,
-            // this.columnUrl
             'select', 'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
+        this.dataSource.selectedColumns = [
+            'select', 'identificatie', 'status', 'groep', 'startdatum', 'aanvrager', 'behandelaar', 'url'
+        ];
+        this.dataSource.detailExpandColumns = ['einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
     switchTypeAndSearch() {
@@ -150,7 +113,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(row: ZaakOverzicht): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != row.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== row.behandelaar?.gebruikersnaam;
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
@@ -192,7 +155,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVerdelenScherm(): void {
-        let zaken = this.selection.selected;
+        const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
             width: '300px',
             data: zaken,
@@ -212,7 +175,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVrijgevenScherm(): void {
-        let zaken = this.selection.selected;
+        const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
             width: '350px',
             data: zaken,

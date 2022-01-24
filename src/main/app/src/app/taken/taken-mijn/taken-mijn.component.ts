@@ -34,15 +34,6 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
 
     displayedColumns: string[] = ['naam', 'creatiedatumTijd'];
 
-    // columnNaam: TableColumn;
-    // columnStatus: TableColumn;
-    // columnZaakIdentificatie: TableColumn;
-    // columnZaaktypeOmschrijving: TableColumn;
-    // columnCreatieDatum: TableColumn;
-    // columnStreefDatum: TableColumn;
-    // columnGroep: TableColumn;
-    // columnUrl: TableColumn;
-
     streefdatumIcon: TextIcon;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
@@ -52,26 +43,13 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        // this.columnNaam = new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM);
-        // this.columnStatus = new TableColumn('status', 'status', true);
-        // this.columnZaakIdentificatie = new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true);
-        // this.columnZaaktypeOmschrijving = new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true);
-        // this.columnCreatieDatum = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
-        //     TaakSortering.CREATIEDATUM);//.pipe(DatumPipe);
-        // this.columnStreefDatum = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
-        // this.columnGroep = new TableColumn('groep', 'groep.naam', true);
-        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
-
         this.dataSource.columns = [
-            // this.columnNaam,
-            // this.columnStatus,
-            // this.columnZaakIdentificatie,
-            // this.columnZaaktypeOmschrijving,
-            // this.columnCreatieDatum,
-            // this.columnStreefDatum,
-            // this.columnGroep,
-            // this.columnUrl
+            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.selectedColumns = [
+            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
+        ];
+        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     ngAfterViewInit(): void {
@@ -86,4 +64,5 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
     }
+
 }

@@ -38,7 +38,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
-        console.log(this.dataSource);
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
@@ -50,9 +49,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             ];
             this.dataSource.detailExpandColumns = ['groep', 'einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
             this.dataSource.setFilterColumns();
-
-            console.log(this.dataSource.selectedColumns);
-            console.log(this.dataSource.filterColumns);
         });
     }
 
@@ -63,12 +59,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     }
 
     updateColumns() {
-        console.log(this.dataSource.selectedColumns);
-        console.log(this.dataSource.filterColumns);
-        this.dataSource.updateColumns();
+        this.dataSource.setFilterColumns();
         this.cdRef.detectChanges();
-        console.log(this.dataSource.selectedColumns);
-        console.log(this.dataSource.filterColumns);
     }
 
     zaaktypeChange(zaaktype: Zaaktype) {

@@ -100,12 +100,6 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
         moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
     }
 
-    updateColumns(): void {
-        // update array reference for angular change detection
-        //this.columns.filter(value => !value.sticky).forEach(value => value.visible = this.selectedColumns.indexOf(value) !== -1);
-        this.setFilterColumns();
-    }
-
     setFilterColumns(): void {
         this.filterColumns = this.selectedColumns.map(c => c + '_filter');
     }

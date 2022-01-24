@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -34,20 +34,8 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
 
-    // columnZaakIdentificatie: TableColumn;
-    // columnStatus: TableColumn;
-    // columnZaaktype: TableColumn;
-    // columnGroep: TableColumn;
-    // columnStartdatum: TableColumn;
-    // columnEinddatum: TableColumn;
-    // columnEinddatumGepland: TableColumn;
-    // columnAanvrager: TableColumn;
-    // columnBehandelaar: TableColumn;
-    // columnUiterlijkeEinddatumAfdoening: TableColumn;
-    // columnToelichting: TableColumn;
-    // columnUrl: TableColumn;
-
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService) { }
+    constructor(private zakenService: ZakenService, public utilService: UtilService,
+                private identityService: IdentityService, private cdRef: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
@@ -64,33 +52,14 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     }
 
     private setColumns() {
-        // this.columnZaakIdentificatie = new TableColumn('zaak.identificatie', 'identificatie', true);
-        // this.columnStatus = new TableColumn('status', 'status', true);
-        // this.columnZaaktype = new TableColumn('zaaktype', 'zaaktype', true);
-        // this.columnGroep = new TableColumn('groep', 'groep', true);
-        // this.columnStartdatum = new TableColumn('startdatum', 'startdatum', true, 'startdatum');//.pipe(DatumPipe);
-        // this.columnEinddatum = new TableColumn('einddatum', 'einddatum');//.pipe(DatumPipe);
-        // this.columnEinddatumGepland = new TableColumn('einddatumGepland', 'einddatumGepland');
-        // this.columnAanvrager = new TableColumn('aanvrager', 'aanvrager', true);
-        // this.columnBehandelaar = new TableColumn('behandelaar', 'behandelaar', true);
-        // this.columnUiterlijkeEinddatumAfdoening = new TableColumn('uiterlijkeEinddatumAfdoening',
-        //     'uiterlijkeEinddatumAfdoening');
-        // this.columnToelichting = new TableColumn('toelichting', 'toelichting');
-        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
-
         this.dataSource.columns = [
-            // this.columnZaakIdentificatie,
-            // this.columnStatus,
-            // this.dataSource.zoekParameters.selectie === 'groep' ? this.columnGroep : this.columnZaaktype,
-            // this.columnStartdatum,
-            // this.columnEinddatum,
-            // this.columnEinddatumGepland,
-            // this.columnAanvrager,
-            // this.columnBehandelaar,
-            // this.columnUiterlijkeEinddatumAfdoening,
-            // this.columnToelichting,
-            // this.columnUrl
+            'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland',
+            'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
+        this.dataSource.selectedColumns = [
+            'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
+        ];
+        this.dataSource.detailExpandColumns = ['einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
     private zaaktypesOphalen() {
@@ -113,6 +82,11 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
+    }
+
+    updateColumns() {
+        this.dataSource.setFilterColumns();
+        this.cdRef.detectChanges();
     }
 
 }

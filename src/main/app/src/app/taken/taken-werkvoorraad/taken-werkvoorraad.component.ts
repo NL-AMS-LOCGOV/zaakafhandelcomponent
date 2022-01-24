@@ -39,16 +39,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
 
-    // columnSelect: TableColumn;
-    // columnNaam: TableColumn;
-    // columnZaakIdentificatie: TableColumn;
-    // columnZaaktypeOmschrijving: TableColumn;
-    // columnCreatieDatum: TableColumn;
-    // columnStreefDatum: TableColumn;
-    // columnGroep: TableColumn;
-    // columnUrl: TableColumn;
-
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+                private identityService: IdentityService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -65,26 +57,14 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        // this.columnSelect = new TableColumn('select', 'select', true, null, true);
-        // this.columnNaam = new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM);
-        // this.columnZaakIdentificatie = new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true);
-        // this.columnZaaktypeOmschrijving = new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true);
-        // this.columnCreatieDatum = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
-        //     TaakSortering.CREATIEDATUM);//.pipe(DatumPipe);
-        // this.columnStreefDatum = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM);
-        // this.columnGroep = new TableColumn('groep', 'groep.naam', true);
-        // this.columnUrl = new TableColumn('url', 'url', true, null, true);
 
         this.dataSource.columns = [
-            // this.columnSelect,
-            // this.columnNaam,
-            // this.columnZaakIdentificatie,
-            // this.columnZaaktypeOmschrijving,
-            // this.columnCreatieDatum,
-            // this.columnStreefDatum,
-            // this.columnGroep,
-            // this.columnUrl
+            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.selectedColumns = [
+            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
+        ];
+        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     private getIngelogdeMedewerker() {
@@ -94,7 +74,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(taak: Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== taak.behandelaar?.gebruikersnaam;
     }
 
     assignToMe(taak: Taak, event) {
@@ -140,7 +120,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVerdelenScherm() {
-        let taken = this.selection.selected;
+        const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
             width: '350px',
             data: taken,
@@ -160,7 +140,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVrijgevenScherm() {
-        let taken = this.selection.selected;
+        const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVrijgevenDialogComponent, {
             width: '350px',
             data: taken,
