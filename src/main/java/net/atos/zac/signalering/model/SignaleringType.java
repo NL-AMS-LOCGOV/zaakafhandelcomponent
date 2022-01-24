@@ -58,16 +58,16 @@ public class SignaleringType {
             return false;
         }
         SignaleringType signaleringType = (SignaleringType) other;
-        return type == signaleringType.type;
+        return getType() == signaleringType.getType();
     }
 
     @Override
     public int hashCode() {
-        return type.hashCode();
+        return getType().hashCode();
     }
 
     @Override
     public String toString() {
-        return type.toString();
+        return getType().toString();
     }
 }
