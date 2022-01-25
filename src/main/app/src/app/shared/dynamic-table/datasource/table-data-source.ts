@@ -102,6 +102,23 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
 
     setFilterColumns(): void {
         this.filterColumns = this.selectedColumns.map(c => c + '_filter');
+
+        this.restoreUrlColumn();
+        this.restoreSelectColumn();
+    }
+
+    private restoreUrlColumn() {
+        if (this.columns.includes('url') && !this.selectedColumns.includes('url')) {
+            this.selectedColumns.push('url');
+            this.filterColumns.push('url_filter');
+        }
+    }
+
+    private restoreSelectColumn() {
+        if (this.columns.includes('select') && !this.selectedColumns.includes('select')) {
+            this.selectedColumns.unshift('select');
+            this.filterColumns.unshift('select_filter');
+        }
     }
 
     protected setData(response: TableResponse<OBJECT>): void {

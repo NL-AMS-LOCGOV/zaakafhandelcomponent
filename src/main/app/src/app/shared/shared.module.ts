@@ -31,6 +31,7 @@ import {EditDatumComponent} from './edit/edit-datum/edit-datum.component';
 import {PipesModule} from './pipes/pipes.module';
 import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         EditDatumComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        NoStickyColumnPipe
     ],
     imports: [
         BrowserAnimationsModule,
@@ -77,7 +79,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         EditDatumComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        NoStickyColumnPipe
     ],
     providers: [
         Title,

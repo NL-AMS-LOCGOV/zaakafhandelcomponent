@@ -182,7 +182,7 @@
                         <mat-list-option (click)="$event.stopPropagation()"
                                          checkboxPosition="before"
                                          [value]="column"
-                                         *ngFor="let column of dataSource.columns">
+                                         *ngFor="let column of dataSource.columns | noStickyColumn: ['select', 'url']">
                             {{column | translate}}
                         </mat-list-option>
                     </mat-selection-list>
