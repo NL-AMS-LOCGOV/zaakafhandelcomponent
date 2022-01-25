@@ -170,11 +170,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
                                                                                  .value(this.zaak.behandelaar).optionLabel('naam')
                                                                                  .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('redenBehandelaar', new InputFormFieldBuilder().id('redenBehandelaar').label('reden').build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
-
-        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').build());
+        this.editFormFields.set('redenGroep', new InputFormFieldBuilder().id('redenGroep').label('reden').build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving).maxlength(80)
                                                                               .build());

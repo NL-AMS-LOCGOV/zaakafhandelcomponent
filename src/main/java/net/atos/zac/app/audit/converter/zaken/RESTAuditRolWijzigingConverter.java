@@ -38,6 +38,7 @@ public class RESTAuditRolWijzigingConverter extends AbstractRESTAuditWijzigingCo
             case VESTIGING:
                 return "Initiator";
             case ORGANISATORISCHE_EENHEID:
+                return "Groep";
             case MEDEWERKER:
                 return "Behandelaar";
             default:

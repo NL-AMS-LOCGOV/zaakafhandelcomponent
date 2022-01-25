@@ -16,7 +16,7 @@ export class SessionStorageService {
     getSessionStorage(key: string, defaultValue?: any): any {
         let item = JSON.parse(sessionStorage.getItem(key));
         if (defaultValue && !item) {
-            //Kopieren om referentie te breken
+            // Kopieren om referentie te breken
             item = JSON.parse(JSON.stringify(defaultValue));
             this.setSessionStorage(key, item);
         }

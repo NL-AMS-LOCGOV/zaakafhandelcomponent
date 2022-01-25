@@ -1,4 +1,14 @@
-import {Directive, ElementRef, EventEmitter, Inject, OnDestroy, OnInit, Optional, Output, PLATFORM_ID} from '@angular/core';
+import {
+    Directive,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    OnDestroy,
+    OnInit,
+    Optional,
+    Output,
+    PLATFORM_ID
+} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {filter} from 'rxjs/operators';
@@ -9,16 +19,16 @@ import {UtilService} from '../../core/service/util.service';
 })
 export class OutsideClickDirective implements OnInit, OnDestroy {
 
+    private static inclusions: string[] = ['mat-option-text'];
+
     @Output('zacOutsideClick') outsideClick = new EventEmitter<MouseEvent>();
 
     private subscription: Subscription;
 
-    private static inclusions: string[] = ['mat-option-text'];
-
     constructor(
         private element: ElementRef,
         @Optional() @Inject(DOCUMENT) private document: any,
-        @Inject(PLATFORM_ID) private platformId: object,
+        @Inject(PLATFORM_ID) private platformId: {},
         private utilService: UtilService) { }
 
     ngOnInit() {
@@ -48,7 +58,7 @@ export class OutsideClickDirective implements OnInit, OnDestroy {
     }
 
     private static isOrContainsClickTarget(element: HTMLElement, clickTarget: HTMLElement) {
-        let included: boolean = this.inclusions.some(value => clickTarget.classList.contains(value));
+        const included: boolean = this.inclusions.some(value => clickTarget.classList.contains(value));
         return element === clickTarget || element.contains(clickTarget) || included;
     }
 }

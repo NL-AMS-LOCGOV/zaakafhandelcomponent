@@ -3,15 +3,6 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-.title {
-  text-align: center;
-  width: 100%;
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
 .mat-subheading-2 {
   margin: 5px 0;
   text-align: center;
@@ -19,7 +10,7 @@
 
 .mat-toolbar {
   & button {
-    margin: 0 5px;
+    margin: 0 8px;
   }
 
   #gebruikersProfiel_button {
@@ -33,4 +24,20 @@
 
 h4 {
   margin-left: 10px;
+}
+
+:host ::ng-deep #dashboardMijn_button.mat-badge-small {
+  > .mat-badge-content {
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+  }
+
+  &.mat-badge-overlap.mat-badge-after .mat-badge-content {
+    right: -3px;
+  }
+
+  &.mat-badge-above .mat-badge-content {
+    top: -3px;
+  }
 }

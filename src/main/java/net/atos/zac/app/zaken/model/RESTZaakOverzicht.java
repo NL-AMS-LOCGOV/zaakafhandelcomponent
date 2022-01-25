@@ -9,11 +9,14 @@ import java.time.LocalDate;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
+
 public class RESTZaakOverzicht {
 
     public String identificatie;
 
     public String toelichting;
+
+    public String omschrijving;
 
     public String uuid;
 

@@ -23,6 +23,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.Opcode;
 import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
+import net.atos.zac.signalering.model.Signalering;
 
 /**
  * Enumeration of the events (objecttypes) that can be changed by a {@link ScreenEvent}.
@@ -32,8 +33,17 @@ public enum ScreenEventType {
 
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        protected ScreenEvent event(final Opcode opcode,
+                final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
             return instance(opcode, this, enkelvoudigInformatieobject);
+        }
+    },
+
+    SIGNALERINGEN {
+        @Override
+        protected ScreenEvent event(final Opcode opcode,
+                final Signalering signalering) {
+            return instance(opcode, this, signalering);
         }
     },
 
@@ -85,6 +95,11 @@ public enum ScreenEventType {
         return new ScreenEvent(opcode, type, id);
     }
 
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
+            final Signalering signalering) {
+        return instance(opcode, type, signalering.getTarget());
+    }
+
     // In these methods you determine what is used as an id, make sure that this is consistent with the other methods
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final UUID uuid) {
         return instance(opcode, type, uuid.toString());
@@ -126,6 +141,10 @@ public enum ScreenEventType {
     }
 
     protected ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
+    }
+
+    protected ScreenEvent event(final Opcode opcode, final Signalering signalalering) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
@@ -177,9 +196,19 @@ public enum ScreenEventType {
     }
 
     /**
+     * Factory method for ScreenEvent (with target of a signalering).
+     *
+     * @param signalering modified signalering
+     * @return instance of the event
+     */
+    public final ScreenEvent updated(final Signalering signalering) {
+        return event(UPDATED, signalering);
+    }
+
+    /**
      * Factory method for ScreenEvent (with identification of a task).
      *
-     * @param taskInfo modifierd task
+     * @param taskInfo modified task
      * @return instance of the event
      */
     public final ScreenEvent updated(final TaskInfo taskInfo) {
@@ -189,7 +218,7 @@ public enum ScreenEventType {
     /**
      * Pay attention! If you use this method, you are responsible for providing the correct UUID. Preferably use the other deletion methods.
      *
-     * @param uuid identificatioon of the deleted object.
+     * @param uuid identification of the deleted object.
      * @return instance of the event
      */
     public final ScreenEvent deleted(final UUID uuid) {
@@ -261,7 +290,8 @@ public enum ScreenEventType {
      * @param resource     the actually modified resource
      * @return the set of events that the parameters map to
      */
-    public static Set<ScreenEvent> getEvents(final Channel channel, final Notificatie.ResourceInfo mainResource, final Notificatie.ResourceInfo resource) {
+    public static Set<ScreenEvent> getEvents(final Channel channel, final Notificatie.ResourceInfo mainResource,
+            final Notificatie.ResourceInfo resource) {
         final Set<ScreenEvent> events = new HashSet<>();
         switch (channel) {
             case INFORMATIEOBJECTEN:

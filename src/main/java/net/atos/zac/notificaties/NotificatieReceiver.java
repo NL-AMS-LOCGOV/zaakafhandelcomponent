@@ -23,6 +23,7 @@ import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
@@ -53,6 +54,7 @@ public class NotificatieReceiver {
         handleCaches(notificatie);
         handleCmmn(notificatie);
         handleWebsockets(notificatie);
+        handleSignaleringen(notificatie);
         handleProductAanvraag(notificatie);
         return noContent().build();
     }
@@ -72,6 +74,13 @@ public class NotificatieReceiver {
     private void handleWebsockets(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
             ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+                    .forEach(eventingService::send);
+        }
+    }
+
+    private void handleSignaleringen(final Notificatie notificatie) {
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
                     .forEach(eventingService::send);
         }
     }
