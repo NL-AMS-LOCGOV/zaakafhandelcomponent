@@ -295,7 +295,6 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (event) {
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
-        this.websocketService.suspendListener(this.zaakDocumentenListener);
         this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
