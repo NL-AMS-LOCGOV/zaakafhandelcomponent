@@ -310,6 +310,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         if (event) {
             console.log('callback loadTaken: ' + event.key);
         }
+        // TODO #315
         this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
