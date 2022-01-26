@@ -22,9 +22,10 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     filters: {} = {};
 
     columns: Array<string>;
-    filterColumns: Array<string>;
     selectedColumns: Array<string>;
+    filterColumns: Array<string>;
     detailExpandColumns: Array<string>;
+    menuColumns: Array<string>;
 
     private subscription$: Subscription;
 
@@ -97,10 +98,12 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     }
 
     drop(event: CdkDragDrop<string[]>) {
-        moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+        const extraIndex = this.selectedColumns.includes('select') ? 1 : 0;
+        moveItemInArray(this.selectedColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
 
     setFilterColumns(): void {
+        this.selectedColumns = this.menuColumns;
         this.filterColumns = this.selectedColumns.map(c => c + '_filter');
 
         this.restoreUrlColumn();

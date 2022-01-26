@@ -86,6 +86,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.selectedColumns = [
             'select', 'identificatie', 'status', 'groep', 'startdatum', 'aanvrager', 'behandelaar', 'url'
         ];
+        this.dataSource.menuColumns = this.dataSource.selectedColumns;
         this.dataSource.detailExpandColumns = ['einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 

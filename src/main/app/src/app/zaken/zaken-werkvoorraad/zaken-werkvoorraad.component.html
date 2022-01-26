@@ -178,7 +178,7 @@
                     <mat-icon>view_column</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
+                    <mat-selection-list [(ngModel)]="dataSource.menuColumns">
                         <mat-list-option (click)="$event.stopPropagation()"
                                          checkboxPosition="before"
                                          [value]="column"

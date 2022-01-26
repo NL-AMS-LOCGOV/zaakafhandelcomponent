@@ -47,6 +47,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
             this.dataSource.selectedColumns = [
                 'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
             ];
+            this.dataSource.menuColumns = this.dataSource.selectedColumns;
             this.dataSource.detailExpandColumns = ['groep', 'einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
             this.dataSource.setFilterColumns();
         });

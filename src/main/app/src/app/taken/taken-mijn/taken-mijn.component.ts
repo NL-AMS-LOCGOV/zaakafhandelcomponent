@@ -49,6 +49,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.dataSource.selectedColumns = [
             'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.menuColumns = this.dataSource.selectedColumns;
         this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 

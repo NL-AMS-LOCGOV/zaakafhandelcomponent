@@ -64,6 +64,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.selectedColumns = [
             'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.menuColumns = this.dataSource.selectedColumns;
         this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
