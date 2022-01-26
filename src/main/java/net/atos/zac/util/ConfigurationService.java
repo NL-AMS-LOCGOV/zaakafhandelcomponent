@@ -10,6 +10,8 @@ import java.net.URI;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 
@@ -31,6 +33,10 @@ public class ConfigurationService {
     @Inject
     private ZTCClientService ztcClientService;
 
+    @Inject
+    @ConfigProperty(name = "AUTH_RESOURCE")
+    private String authResource;
+
     private URI catalogusURI;
 
     public URI readDefaultCatalogusURI() {
@@ -40,5 +46,9 @@ public class ConfigurationService {
             catalogusURI = ztcClientService.readCatalogus(catalogusListParameters).getUrl();
         }
         return catalogusURI;
+    }
+
+    public boolean isLocalDevelopment() {
+        return authResource.contains("localhost");
     }
 }
