@@ -23,6 +23,7 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -78,7 +79,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
         if (event) {
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
-        this.informatieObjectenService.listEnkelvoudigInformatieobjectenVoorZaak(this.zaak.uuid).subscribe(objecten => {
+        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekParameters.zaakUUID = this.zaak.uuid;
+        this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten = objecten;
         });
     }

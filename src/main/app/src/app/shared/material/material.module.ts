@@ -31,6 +31,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
     exports: [
@@ -60,7 +61,8 @@ import {MatStepperModule} from '@angular/material/stepper';
         MatProgressSpinnerModule,
         MatTooltipModule,
         MatAutocompleteModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatChipsModule
     ],
     providers: [{
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {

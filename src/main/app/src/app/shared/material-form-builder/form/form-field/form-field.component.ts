@@ -38,7 +38,7 @@ export class FormFieldComponent implements AfterViewInit {
     }
 
     loadComponent() {
-        if (this._field.data.readonly) {
+        if (this._field.data.readonly && !this._field.data.hasReadonlyView()) {
             this._field = new FormItem(ReadonlyComponent,
                 new ReadonlyFormFieldBuilder().id(this._field.data.id)
                                               .label(this._field.data.label)

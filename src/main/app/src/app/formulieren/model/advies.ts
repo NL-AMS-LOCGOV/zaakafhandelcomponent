@@ -10,6 +10,11 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {Observable, of} from 'rxjs';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 export class Advies extends AbstractFormulier {
 
@@ -17,18 +22,23 @@ export class Advies extends AbstractFormulier {
         TOELICHTING: 'toelichting',
         VRAAG: 'vraag',
         ADVIES: 'advies',
-        DOCUMENT: 'document'
+        DOCUMENT: 'document',
+        RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
-    constructor(translate: TranslateService) {
+    constructor(translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
         super(translate);
     }
 
     _initStartForm() {
+        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekparameters.zaakUUID = this.planItem.zaakUuid;
+        const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).validators(Validators.required)
-                                           .build()]
+            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
+            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
+                                              .documenten(documenten).build()]
         );
     }
 
@@ -36,6 +46,11 @@ export class Advies extends AbstractFormulier {
         const fields = this.fields;
         this.form.push(
             [new ReadonlyFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
+            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
+                                              .label(fields.RELEVANTE_DOCUMENTEN)
+                                              .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                              .readonly(true)
+                                              .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
                                            .readonly(this.isAfgerond()).build()],
             [new FileFormFieldBuilder().id(fields.DOCUMENT).label(fields.DOCUMENT).config(this.fileUploadConfig()).readonly(this.isAfgerond()).build()]
@@ -47,4 +62,14 @@ export class Advies extends AbstractFormulier {
         return new FileFieldConfig(uploadUrl, [Validators.required], 1);
     }
 
+    getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
+        const dataElement = this.getDataElement(field);
+        if (dataElement) {
+            const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+            zoekParameters.UUIDs = dataElement.split(';');
+            return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+        } else {
+            return of([]);
+        }
+    }
 }

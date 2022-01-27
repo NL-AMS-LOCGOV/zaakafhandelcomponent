@@ -51,15 +51,16 @@ public class PlanItemsRESTService {
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = flowableService.listPlanItemsForZaak(zaakUUID);
-        return planItemConverter.convertPlanItems(planItems);
+        return planItemConverter.convertPlanItems(planItems, zaakUUID);
     }
 
     @GET
     @Path("{id}")
     public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
-        PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
-        return planItemConverter.convertPlanItem(planItem, planItemParameters);
+        final UUID zaakUuidForCase = flowableService.readZaakUuidForCase(planItem.getCaseInstanceId());
+        final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
+        return planItemConverter.convertPlanItem(planItem, zaakUuidForCase, planItemParameters);
     }
 
     @PUT

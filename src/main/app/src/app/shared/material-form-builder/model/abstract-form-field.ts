@@ -62,4 +62,8 @@ export abstract class AbstractFormField {
             return '';
         }
     }
+
+    hasReadonlyView() {
+        return false;
+    }
 }

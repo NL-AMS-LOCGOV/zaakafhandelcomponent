@@ -7,6 +7,7 @@ package net.atos.zac.app.informatieobjecten;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -44,6 +46,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeCon
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
+import net.atos.zac.app.informatieobjecten.model.RESTInformatieObjectZoekParameters;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
@@ -96,6 +99,25 @@ public class InformatieObjectenRESTService {
         return restInformatieobjectConverter.convert(enkelvoudigInformatieObject);
     }
 
+    @PUT
+    @Path("informatieobjectenList")
+    public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
+        if (zoekParameters.zaakUUID != null) {
+            final Zaak zaak = zrcClientService.readZaak(zoekParameters.zaakUUID);
+            return listEnkelvoudigInformatieobjectenVoorZaak(zaak.getUrl());
+        } else if (zoekParameters.zaakURI != null) {
+            return listEnkelvoudigInformatieobjectenVoorZaak(zoekParameters.zaakURI);
+        } else if (zoekParameters.UUIDs != null) {
+            final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
+            for (UUID uuid : zoekParameters.UUIDs) {
+                final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+                restList.add(restInformatieobjectConverter.convert(informatieobject));
+            }
+            return restList;
+        }
+        throw new IllegalStateException("Zoekparameters hebben geen waarde");
+    }
+
     @POST
     @Path("informatieobject/{zaakUuid}")
     public UUID createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
@@ -128,12 +150,7 @@ public class InformatieObjectenRESTService {
     @Path("zaak/{uuid}")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setZaak(zaak.getUrl());
-        final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
-        zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieobjectConverter.convert(zaakInformatieObject)));
-        return restList;
+        return listEnkelvoudigInformatieobjectenVoorZaak(zaak.getUrl());
     }
 
     @GET
@@ -190,5 +207,14 @@ public class InformatieObjectenRESTService {
 
     private String lockEigenaar() {
         return ingelogdeMedewerker.get().getGebruikersnaam();
+    }
+
+    private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {
+        final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setZaak(zaakURI);
+        final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
+        zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieobjectConverter.convert(zaakInformatieObject)));
+        return restList;
     }
 }

@@ -12,14 +12,15 @@ import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject'
 import {ZaakInformatieobject} from './model/zaak-informatieobject';
 import {Informatieobjecttype} from './model/informatieobjecttype';
 import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
+import {EnkelvoudigInformatieObjectZoekParameters} from './model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Injectable({
     providedIn: 'root'
 })
 export class InformatieObjectenService {
 
-    private basepath: string = '/rest/informatieobjecten';
-    public uploadUrl: string = this.basepath + '/informatieobject/upload/{zaakUuid}';
+    private basepath = '/rest/informatieobjecten';
+    public uploadUrl = this.basepath + '/informatieobject/upload/{zaakUuid}';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
@@ -42,8 +43,8 @@ export class InformatieObjectenService {
         );
     }
 
-    listEnkelvoudigInformatieobjectenVoorZaak(uuid: string): Observable<EnkelvoudigInformatieobject[]> {
-        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/zaak/${uuid}`).pipe(
+    listEnkelvoudigInformatieobjecten(zoekParameters: EnkelvoudigInformatieObjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

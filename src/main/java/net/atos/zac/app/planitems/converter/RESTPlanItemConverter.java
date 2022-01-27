@@ -10,6 +10,7 @@ import static net.atos.zac.app.planitems.model.PlanItemType.PROCESS_TASK;
 import static net.atos.zac.app.planitems.model.PlanItemType.USER_EVENT_LISTENER;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -31,20 +32,21 @@ public class RESTPlanItemConverter {
     @Inject
     private RESTGroepConverter groepConverter;
 
-    public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems) {
-        return planItems.stream().map(this::convertPlanItem).collect(Collectors.toList());
+    public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final UUID zaakUuid) {
+        return planItems.stream().map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid)).collect(Collectors.toList());
     }
 
-    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem) {
+    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid) {
         final RESTPlanItem restPlanItem = new RESTPlanItem();
         restPlanItem.id = planItem.getId();
         restPlanItem.naam = planItem.getName();
+        restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
         return restPlanItem;
     }
 
-    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final PlanItemParameters parameters) {
-        final RESTPlanItem restPlanItem = convertPlanItem(planItem);
+    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid, final PlanItemParameters parameters) {
+        final RESTPlanItem restPlanItem = convertPlanItem(planItem, zaakUuid);
         restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
         if (parameters.getFormulierDefinitieID() != null) {
             restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(parameters.getFormulierDefinitieID());

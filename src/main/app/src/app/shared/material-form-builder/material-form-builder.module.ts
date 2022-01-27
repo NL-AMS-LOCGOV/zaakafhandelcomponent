@@ -36,6 +36,10 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {PipesModule} from '../pipes/pipes.module';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
+import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {MatTableModule} from '@angular/material/table';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
     declarations: [
@@ -51,7 +55,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
         GoogleMapsComponent,
         FormFieldDirective,
         ReadonlyComponent,
-        AutocompleteComponent
+        AutocompleteComponent,
+        DocumentenLijstComponent
     ],
     imports: [
         CommonModule,
@@ -70,8 +75,11 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
         MatMomentDateModule,
         MatDatepickerModule,
         MatAutocompleteModule,
+        MatChipsModule,
         TranslateModule,
-        PipesModule
+        PipesModule,
+        MatTableModule,
+        RouterModule
     ],
     exports: [
         FormComponent,
@@ -84,7 +92,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
         CheckboxComponent,
         TextareaComponent,
         GoogleMapsComponent,
-        AutocompleteComponent
+        AutocompleteComponent,
+        DocumentenLijstComponent
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}
