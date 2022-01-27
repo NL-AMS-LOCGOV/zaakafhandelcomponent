@@ -44,7 +44,7 @@ export class InformatieObjectenService {
     }
 
     listEnkelvoudigInformatieobjecten(zoekParameters: EnkelvoudigInformatieObjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
-        return this.http.post<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
+        return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
