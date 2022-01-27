@@ -23,6 +23,8 @@ import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
@@ -45,15 +47,21 @@ public class NotificatieReceiver {
     @Inject
     private ProductAanvraagService productAanvraagService;
 
+    @Inject
+    private ConfigurationService configurationService;
+
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
                 .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
-        handleCmmn(notificatie);
         handleWebsockets(notificatie);
-        handleProductAanvraag(notificatie);
+        if (!configurationService.isLocalDevelopment()) {
+            handleSignaleringen(notificatie);
+            handleCmmn(notificatie);
+            handleProductAanvraag(notificatie);
+        }
         return noContent().build();
     }
 
@@ -72,6 +80,13 @@ public class NotificatieReceiver {
     private void handleWebsockets(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
             ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
+                    .forEach(eventingService::send);
+        }
+    }
+
+    private void handleSignaleringen(final Notificatie notificatie) {
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
                     .forEach(eventingService::send);
         }
     }

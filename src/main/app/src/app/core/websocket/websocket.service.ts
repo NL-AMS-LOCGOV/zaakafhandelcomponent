@@ -58,10 +58,10 @@ export class WebsocketService implements OnDestroy {
 
     private open(url: string): Observable<any> {
         return of(url).pipe(
-            switchMap(url => {
+            switchMap(openUrl => {
                 if (!this.connection$) {
-                    this.connection$ = webSocket(url);
-                    console.log('Websocket geopend: ' + url);
+                    this.connection$ = webSocket(openUrl);
+                    console.log('Websocket geopend: ' + openUrl);
                 }
                 return this.connection$;
             })
@@ -81,13 +81,13 @@ export class WebsocketService implements OnDestroy {
 
     private mock() {
         console.warn('Websocket is een mock');
-        this.send = function (data: any) {
+        this.send = (data: any) => {
             // Simulates one (i.e. 1) incoming websocket message for the event, after a delay (in ms) which gets derived from the objectId.
-            const delay: number = Number(data.event.objectId);
+            const wsDelay: number = Number(data.event.objectId);
             const event: ScreenEvent = data.event;
             setTimeout(() => {
                 this.onMessage(new ScreenEvent(event.opcode, event.objectType, event.objectId, 0));
-            }, delay);
+            }, wsDelay);
         };
     }
 
@@ -114,7 +114,7 @@ export class WebsocketService implements OnDestroy {
         this.dispatch(event, event.keyAnyOpcode);
         this.dispatch(event, event.keyAnyObjectType);
         this.dispatch(event, event.keyAnyOpcodeAndObjectType);
-    };
+    }
 
     private dispatch(event: ScreenEvent, key: string) {
         const callbacks: EventCallback[] = this.getCallbacks(key);
@@ -126,7 +126,7 @@ export class WebsocketService implements OnDestroy {
                     }
                 } catch (error) {
                     console.warn('Websocket callback error: ');
-                    console.debug(error);
+                    console.error(error);
                 }
             }
         }
@@ -134,8 +134,8 @@ export class WebsocketService implements OnDestroy {
 
     private onError = (error: any) => {
         console.error('Websocket error:');
-        console.debug(error);
-    };
+        console.error(error);
+    }
 
     public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
         const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);

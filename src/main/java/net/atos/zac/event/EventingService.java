@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.cache.event.CacheEvent;
 import net.atos.zac.flowable.cmmn.event.CmmnEvent;
+import net.atos.zac.signalering.event.SignaleringEvent;
 import net.atos.zac.websocket.event.ScreenEvent;
 
 @ApplicationScoped
@@ -24,6 +25,9 @@ public class EventingService {
 
     @Inject
     private Event<CmmnEvent> cmmnUpdateEvent;
+
+    @Inject
+    private Event<SignaleringEvent<?>> signaleringEvent;
 
     /**
      * Send {@link package net.atos.zac.websocket.event.CacheEvent}s to Observer(s),
@@ -59,5 +63,17 @@ public class EventingService {
      */
     public void send(final ScreenEvent event) {
         screenUpdateEvent.fireAsync(event);
+    }
+
+    /**
+     * Send {@link package net.atos.zac.websocket.event.SignaleringEvent}s to Observer(s),
+     * These will be used to create signaleringen.
+     * <p>
+     * Prefer using the factory methods on {@link package net.atos.zac.websocket.event.SignaleringEventUtil} to create these event!
+     *
+     * @param event the event that will be sent.
+     */
+    public void send(final SignaleringEvent<?> event) {
+        signaleringEvent.fireAsync(event);
     }
 }

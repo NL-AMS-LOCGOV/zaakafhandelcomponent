@@ -4,9 +4,11 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {map} from 'rxjs/operators';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {BreakpointObserver} from '@angular/cdk/layout';
 import {UtilService} from '../core/service/util.service';
+import * as moment from 'moment';
+import {SessionStorageService} from '../shared/storage/session-storage.service';
+import {SignaleringenService} from '../signaleringen.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -14,31 +16,21 @@ import {UtilService} from '../core/service/util.service';
 })
 export class DashboardComponent implements OnInit {
 
+    nieuweZakenCard = {title: 'dashboard.mijn.nieuwe.zaken'};
+
     /** Based on the screen size, switch from standard to one column per row */
-    cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-        map(({matches}) => {
-            if (matches) {
-                return [
-                    {title: 'Card 1', cols: 1, rows: 1},
-                    {title: 'Card 2', cols: 1, rows: 1},
-                    {title: 'Card 3', cols: 1, rows: 1},
-                    {title: 'Card 4', cols: 1, rows: 1}
-                ];
-            }
+    cards = [
+        [this.nieuweZakenCard]
+    ];
 
-            return [
-                {title: 'Card 1', cols: 2, rows: 1},
-                {title: 'Card 2', cols: 1, rows: 1},
-                {title: 'Card 3', cols: 1, rows: 2},
-                {title: 'Card 4', cols: 1, rows: 1}
-            ];
-        })
-    );
-
-    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService) {
+    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService, private sessionStorageService: SessionStorageService,
+                private signaleringenService: SignaleringenService) {
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
+        // TODO instead of session storage use userpreferences in a db
+        this.sessionStorageService.setSessionStorage('dashboardOpened', moment());
+        this.signaleringenService.updateSignaleringen();
     }
 }
