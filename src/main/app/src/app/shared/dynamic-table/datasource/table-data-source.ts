@@ -22,10 +22,10 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     filters: {} = {};
 
     columns: Array<string>;
-    selectedColumns: Array<string>;
+    visibleColumns: Array<string>;
     filterColumns: Array<string>;
     detailExpandColumns: Array<string>;
-    menuColumns: Array<string>;
+    selectedColumns: Array<string>;
 
     private subscription$: Subscription;
 
@@ -98,28 +98,28 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     }
 
     drop(event: CdkDragDrop<string[]>) {
-        const extraIndex = this.selectedColumns.includes('select') ? 1 : 0;
-        moveItemInArray(this.selectedColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
+        const extraIndex = this.visibleColumns.includes('select') ? 1 : 0;
+        moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
 
     setFilterColumns(): void {
-        this.selectedColumns = this.menuColumns;
-        this.filterColumns = this.selectedColumns.map(c => c + '_filter');
+        this.visibleColumns = this.selectedColumns;
+        this.filterColumns = this.visibleColumns.map(c => c + '_filter');
 
         this.restoreUrlColumn();
         this.restoreSelectColumn();
     }
 
     private restoreUrlColumn() {
-        if (this.columns.includes('url') && !this.selectedColumns.includes('url')) {
-            this.selectedColumns.push('url');
+        if (this.columns.includes('url') && !this.visibleColumns.includes('url')) {
+            this.visibleColumns.push('url');
             this.filterColumns.push('url_filter');
         }
     }
 
     private restoreSelectColumn() {
-        if (this.columns.includes('select') && !this.selectedColumns.includes('select')) {
-            this.selectedColumns.unshift('select');
+        if (this.columns.includes('select') && !this.visibleColumns.includes('select')) {
+            this.visibleColumns.unshift('select');
             this.filterColumns.unshift('select_filter');
         }
     }

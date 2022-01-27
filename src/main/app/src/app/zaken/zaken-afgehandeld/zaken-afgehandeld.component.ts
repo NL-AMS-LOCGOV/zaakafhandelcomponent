@@ -56,10 +56,10 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
             'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland',
             'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
-        this.dataSource.selectedColumns = [
+        this.dataSource.visibleColumns = [
             'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
         ];
-        this.dataSource.menuColumns = this.dataSource.selectedColumns;
+        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
         this.dataSource.detailExpandColumns = ['einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
