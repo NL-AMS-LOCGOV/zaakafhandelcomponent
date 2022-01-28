@@ -58,7 +58,7 @@ public class RESTEnkelvoudigInformatieobject {
 
     public boolean indicatieGebruiksrecht;
 
-    public String ondertekening;
+    public LocalDate ondertekening;
 
     //public URI informatieobjecttype;
     public boolean locked;

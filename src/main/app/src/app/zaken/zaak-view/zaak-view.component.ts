@@ -30,7 +30,7 @@ import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
-import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
+import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {Medewerker} from '../../identity/model/medewerker';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
@@ -59,8 +59,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
-    auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
-    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
+    historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
+    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
 
     notitieType = NotitieType.ZAAK;
@@ -122,7 +122,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.loadAuditTrail();
+        this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
     }
@@ -146,17 +146,17 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             }
         };
 
-        this.auditTrail.sortingDataAccessor = (item, property) => {
+        this.historie.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'datum':
-                    return item.wijzigingsDatumTijd;
+                    return item.datumTijd;
                 case 'gebruiker' :
-                    return item.gebruikersWeergave;
+                    return item.door;
                 default:
                     return item[property];
             }
         };
-        this.auditTrail.sort = this.sort;
+        this.historie.sort = this.sort;
     }
 
     ngOnDestroy(): void {
@@ -303,9 +303,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    private loadAuditTrail(): void {
-        this.zakenService.listAuditTrailVoorZaak(this.zaak.uuid).subscribe(auditTrail => {
-            this.auditTrail.data = auditTrail;
+    private loadHistorie(): void {
+        this.zakenService.listHistorieVoorZaak(this.zaak.uuid).subscribe(historie => {
+            this.historie.data = historie;
         });
     }
 

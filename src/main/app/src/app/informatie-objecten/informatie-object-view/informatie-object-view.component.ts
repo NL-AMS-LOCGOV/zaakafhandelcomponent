@@ -22,7 +22,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {MatTableDataSource} from '@angular/material/table';
-import {AuditTrailRegel} from '../../shared/audit/model/audit-trail-regel';
+import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
@@ -35,8 +35,8 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     infoObject: EnkelvoudigInformatieobject;
     menu: MenuItem[];
     zaken: ZaakInformatieobject[];
-    auditTrail: MatTableDataSource<AuditTrailRegel> = new MatTableDataSource<AuditTrailRegel>();
-    auditTrailColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
+    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
     private documentListener: WebsocketListener;
@@ -60,23 +60,23 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
 
             this.setupMenu();
             this.loadZaken();
-            this.loadAuditTrail();
+            this.loadHistorie();
         }));
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.auditTrail.sortingDataAccessor = (item, property) => {
+        this.historie.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'datum':
-                    return item.wijzigingsDatumTijd;
+                    return item.datumTijd;
                 case 'gebruiker' :
-                    return item.gebruikersWeergave;
+                    return item.door;
                 default:
                     return item[property];
             }
         };
-        this.auditTrail.sort = this.sort;
+        this.historie.sort = this.sort;
     }
 
     ngOnDestroy() {
@@ -98,9 +98,9 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
         });
     }
 
-    private loadAuditTrail(): void {
-        this.informatieObjectenService.listAuditTrail(this.infoObject.uuid).subscribe(auditTrail => {
-            this.auditTrail.data = auditTrail;
+    private loadHistorie(): void {
+        this.informatieObjectenService.listHistorie(this.infoObject.uuid).subscribe(historie => {
+            this.historie.data = historie;
         });
     }
 

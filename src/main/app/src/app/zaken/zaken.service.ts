@@ -16,7 +16,7 @@ import {ZaakOverzicht} from './model/zaak-overzicht';
 import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
 import {Medewerker} from '../identity/model/medewerker';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
-import {AuditTrailRegel} from '../shared/audit/model/audit-trail-regel';
+import {HistorieRegel} from '../shared/historie/model/historie-regel';
 import {Groep} from '../identity/model/groep';
 
 @Injectable({
@@ -145,8 +145,8 @@ export class ZakenService {
         );
     }
 
-    listAuditTrailVoorZaak(uuid: string): Observable<AuditTrailRegel[]> {
-        return this.http.get<AuditTrailRegel[]>(`${this.basepath}/zaak/${uuid}/auditTrail`).pipe(
+    listHistorieVoorZaak(uuid: string): Observable<HistorieRegel[]> {
+        return this.http.get<HistorieRegel[]>(`${this.basepath}/zaak/${uuid}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

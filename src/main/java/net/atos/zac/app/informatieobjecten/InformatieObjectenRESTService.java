@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.informatieobjecten;
 
+import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -39,8 +41,8 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.audit.converter.RESTAuditTrailConverter;
-import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
+import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
+import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
@@ -82,7 +84,7 @@ public class InformatieObjectenRESTService {
     private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
 
     @Inject
-    private RESTAuditTrailConverter restAuditTrailConverter;
+    private RESTHistorieRegelConverter restHistorieRegelConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -126,7 +128,8 @@ public class InformatieObjectenRESTService {
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
         final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
         final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
-                                                                                                          restEnkelvoudigInformatieobject.beschrijving, "-");
+                                                                                                          restEnkelvoudigInformatieobject.beschrijving,
+                                                                                                          OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         return UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject());
     }
 
@@ -193,10 +196,10 @@ public class InformatieObjectenRESTService {
     }
 
     @GET
-    @Path("informatieobject/{uuid}/auditTrail")
-    public List<RESTAuditTrailRegel> listAuditTrail(@PathParam("uuid") final UUID uuid) {
+    @Path("informatieobject/{uuid}/historie")
+    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
         List<AuditTrailRegel> auditTrail = drcClientService.listAuditTrail(uuid);
-        return restAuditTrailConverter.convert(auditTrail);
+        return restHistorieRegelConverter.convert(auditTrail);
     }
 
     private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {

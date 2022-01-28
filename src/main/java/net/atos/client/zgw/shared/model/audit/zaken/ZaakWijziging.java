@@ -15,6 +15,4 @@ public class ZaakWijziging extends AuditWijziging<Zaak> {
     public ObjectType getObjectType() {
         return ObjectType.ZAAK;
     }
-
-
 }
