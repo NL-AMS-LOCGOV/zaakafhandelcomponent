@@ -1,9 +1,19 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import {AbstractFormField} from '../material-form-builder/model/abstract-form-field';
 import {MaterialFormBuilderService} from '../material-form-builder/material-form-builder.service';
 import {FormItem} from '../material-form-builder/model/form-item';
@@ -75,7 +85,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     save(): void {
         // Wait for an async validator is it is present.
         if (this.formItem.data.formControl.pending) {
-            let sub = this.formItem.data.formControl.statusChanges.subscribe((res) => {
+            const sub = this.formItem.data.formControl.statusChanges.subscribe(() => {
                 if (this.formItem.data.formControl.valid) {
                     this.submitSave();
                 }
@@ -94,6 +104,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     cancel(): void {
+        this.formItem.data.formControl.setValue(this.value);
         this.editing = false;
     }
 }
