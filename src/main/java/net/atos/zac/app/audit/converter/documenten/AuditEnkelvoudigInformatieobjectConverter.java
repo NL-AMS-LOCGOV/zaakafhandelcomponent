@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.Ondertekening;
@@ -37,43 +37,42 @@ public class AuditEnkelvoudigInformatieobjectConverter extends AbstractAuditWijz
         }
 
         final List<RESTHistorieRegel> historieRegels = new LinkedList<>();
-        checkWaarden("titel", oud.getTitel(), nieuw.getTitel(), historieRegels);
-        checkWaarden("identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
-        checkWaarden("vertrouwelijkheidaanduiding", enumToWaarde(oud.getVertrouwelijkheidaanduiding()), enumToWaarde(nieuw.getVertrouwelijkheidaanduiding()),
-                     historieRegels);
-        checkWaarden("bestandsnaam", oud.getBestandsnaam(), nieuw.getBestandsnaam(), historieRegels);
-        checkWaarden("taal", oud.getTaal(), nieuw.getTaal(), historieRegels);
-        checkWaarden("documentType", informatieobjecttypeToWaarde(oud.getInformatieobjecttype()),
-                     informatieobjecttypeToWaarde(nieuw.getInformatieobjecttype()), historieRegels);
-        checkWaarden("auteur", oud.getAuteur(), nieuw.getAuteur(), historieRegels);
-        checkWaarden("ontvangstdatum", oud.getOntvangstdatum(), nieuw.getOntvangstdatum(), historieRegels);
-        checkWaarden("registratiedatum", oud.getBeginRegistratie(), nieuw.getBeginRegistratie(), historieRegels);
-        checkWaarden("locked", booleanToWaarde(oud.getLocked()), booleanToWaarde(nieuw.getLocked()), historieRegels);
-        checkWaarden("versie", Integer.toString(oud.getVersie()), Integer.toString(nieuw.getVersie()), historieRegels);
-        checkWaarden("informatieobject.status", enumToWaarde(oud.getStatus()), enumToWaarde(nieuw.getStatus()), historieRegels);
-        checkWaarden("bronorganisatie", oud.getBronorganisatie(), nieuw.getBronorganisatie(), historieRegels);
-        checkWaarden("verzenddatum", oud.getVerzenddatum(), nieuw.getVerzenddatum(), historieRegels);
-        checkWaarden("formaat", oud.getFormaat(), nieuw.getFormaat(), historieRegels);
-        checkWaarden("ondertekening", toWaarde(oud.getOndertekening()), toWaarde(nieuw.getOndertekening()), historieRegels);
-        checkWaarden("creatiedatum", oud.getCreatiedatum(), nieuw.getCreatiedatum(), historieRegels);
-
-        if (!StringUtils.equals(nieuw.getBeschrijving(), oud.getBeschrijving())) {
-            historieRegels.add(new RESTHistorieRegel("Beschrijving", oud.getBeschrijving(), nieuw.getBeschrijving()));
-        }
+        checkAttribuut("titel", oud.getTitel(), nieuw.getTitel(), historieRegels);
+        checkAttribuut("identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
+        checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
+        checkAttribuut("bestandsnaam", oud.getBestandsnaam(), nieuw.getBestandsnaam(), historieRegels);
+        checkAttribuut("taal", oud.getTaal(), nieuw.getTaal(), historieRegels);
+        checkInformatieobjecttype(oud.getInformatieobjecttype(), nieuw.getInformatieobjecttype(), historieRegels);
+        checkAttribuut("auteur", oud.getAuteur(), nieuw.getAuteur(), historieRegels);
+        checkAttribuut("ontvangstdatum", oud.getOntvangstdatum(), nieuw.getOntvangstdatum(), historieRegels);
+        checkAttribuut("registratiedatum", oud.getBeginRegistratie(), nieuw.getBeginRegistratie(), historieRegels);
+        checkAttribuut("locked", oud.getLocked(), nieuw.getLocked(), historieRegels);
+        checkAttribuut("versie", Integer.toString(oud.getVersie()), Integer.toString(nieuw.getVersie()), historieRegels);
+        checkAttribuut("informatieobject.status", oud.getStatus(), nieuw.getStatus(), historieRegels);
+        checkAttribuut("bronorganisatie", oud.getBronorganisatie(), nieuw.getBronorganisatie(), historieRegels);
+        checkAttribuut("verzenddatum", oud.getVerzenddatum(), nieuw.getVerzenddatum(), historieRegels);
+        checkAttribuut("formaat", oud.getFormaat(), nieuw.getFormaat(), historieRegels);
+        checkAttribuut("ondertekening", toWaarde(oud.getOndertekening()), toWaarde(nieuw.getOndertekening()), historieRegels);
+        checkAttribuut("creatiedatum", oud.getCreatiedatum(), nieuw.getCreatiedatum(), historieRegels);
 
         return historieRegels.stream();
     }
 
-    private String toWaarde(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return enkelvoudigInformatieobject != null ? enkelvoudigInformatieobject.getIdentificatie() : null;
+    private void checkInformatieobjecttype(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel("documentType", informatieobjecttypeToWaarde(oud), informatieobjecttypeToWaarde(nieuw)));
+        }
     }
 
     private String informatieobjecttypeToWaarde(final URI informatieobjecttype) {
         return informatieobjecttype != null ? ztcClientService.readInformatieobjecttype(informatieobjecttype).getOmschrijving() : null;
     }
 
+    private String toWaarde(final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        return enkelvoudigInformatieobject != null ? enkelvoudigInformatieobject.getIdentificatie() : null;
+    }
+
     private String toWaarde(final Ondertekening ondertekening) {
         return ondertekening != null ? ondertekening.getDatum().toString() : null;
     }
-
 }

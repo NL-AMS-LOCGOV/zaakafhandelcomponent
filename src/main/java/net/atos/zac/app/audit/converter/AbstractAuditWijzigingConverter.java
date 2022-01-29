@@ -5,10 +5,13 @@
 
 package net.atos.zac.app.audit.converter;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.shared.model.AbstractEnum;
 import net.atos.client.zgw.shared.model.ObjectType;
@@ -25,17 +28,41 @@ public abstract class AbstractAuditWijzigingConverter<W extends AuditWijziging<?
 
     protected abstract Stream<RESTHistorieRegel> doConvert(final W wijziging);
 
-    protected void checkWaarden(final String attribuutLabel, final Object waardeOud, final Object waardeNieuw, final List<RESTHistorieRegel> historieRegels) {
-        if (ObjectUtils.notEqual(waardeOud, waardeNieuw)) {
-            historieRegels.add(new RESTHistorieRegel(attribuutLabel, waardeOud, waardeNieuw));
+    protected void checkAttribuut(final String label, final String oud, final String nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (!StringUtils.equals(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel(label, oud, nieuw));
         }
     }
 
-    protected String enumToWaarde(final AbstractEnum<?> abstractEnum) {
+    protected void checkAttribuut(final String label, final AbstractEnum<?> oud, final AbstractEnum<?> nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (oud != nieuw) {
+            historieRegels.add(new RESTHistorieRegel(label, toWaarde(oud), toWaarde(nieuw)));
+        }
+    }
+
+    protected void checkAttribuut(final String label, final Boolean oud, final Boolean nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel(label, toWaarde(oud), toWaarde(nieuw)));
+        }
+    }
+
+    protected void checkAttribuut(final String label, final LocalDate oud, final LocalDate nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel(label, oud.toString(), nieuw.toString()));
+        }
+    }
+
+    protected void checkAttribuut(final String label, final ZonedDateTime oud, final ZonedDateTime nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel(label, oud.toString(), nieuw.toString()));
+        }
+    }
+
+    private String toWaarde(final AbstractEnum<?> abstractEnum) {
         return abstractEnum != null ? abstractEnum.toValue() : null;
     }
 
-    protected String booleanToWaarde(final Boolean bool) {
+    private String toWaarde(final Boolean bool) {
         return bool != null ? (bool ? "Ja" : "Nee") : null;
     }
 }

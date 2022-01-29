@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -39,20 +41,31 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         }
 
         final List<RESTHistorieRegel> historieRegels = new LinkedList<>();
-        checkWaarden("zaak.identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
-        checkWaarden("zaaktype", zaaktypeToWaarde(oud.getZaaktype()), zaaktypeToWaarde(nieuw.getZaaktype()), historieRegels);
-        checkWaarden("kanaal", kanaalToWaarde(oud.getCommunicatiekanaal()), kanaalToWaarde(nieuw.getCommunicatiekanaal()), historieRegels);
-        checkWaarden("vertrouwelijkheidaanduiding", enumToWaarde(oud.getVertrouwelijkheidaanduiding()), enumToWaarde(nieuw.getVertrouwelijkheidaanduiding()),
-                     historieRegels);
-        checkWaarden("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
-        checkWaarden("startdatum", oud.getStartdatum(), nieuw.getStartdatum(), historieRegels);
-        checkWaarden("einddatumGepland", oud.getEinddatumGepland(), nieuw.getEinddatumGepland(), historieRegels);
-        checkWaarden("einddatum", oud.getEinddatum(), nieuw.getEinddatum(), historieRegels);
-        checkWaarden("uiterlijkeEinddatumAfdoening", oud.getUiterlijkeEinddatumAfdoening(), nieuw.getUiterlijkeEinddatumAfdoening(), historieRegels);
-        checkWaarden("omschrijving", oud.getOmschrijving(), nieuw.getOmschrijving(), historieRegels);
-        checkWaarden("toelichting", oud.getToelichting(), nieuw.getToelichting(), historieRegels);
+        checkAttribuut("zaak.identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
+        checkZaaktype(oud.getZaaktype(), nieuw.getZaaktype(), historieRegels);
+        checkKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
+        checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
+        checkAttribuut("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
+        checkAttribuut("startdatum", oud.getStartdatum(), nieuw.getStartdatum(), historieRegels);
+        checkAttribuut("einddatumGepland", oud.getEinddatumGepland(), nieuw.getEinddatumGepland(), historieRegels);
+        checkAttribuut("einddatum", oud.getEinddatum(), nieuw.getEinddatum(), historieRegels);
+        checkAttribuut("uiterlijkeEinddatumAfdoening", oud.getUiterlijkeEinddatumAfdoening(), nieuw.getUiterlijkeEinddatumAfdoening(), historieRegels);
+        checkAttribuut("omschrijving", oud.getOmschrijving(), nieuw.getOmschrijving(), historieRegels);
+        checkAttribuut("toelichting", oud.getToelichting(), nieuw.getToelichting(), historieRegels);
 
         return historieRegels.stream();
+    }
+
+    private void checkZaaktype(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel("zaaktype", zaaktypeToWaarde(oud), zaaktypeToWaarde(nieuw)));
+        }
+    }
+
+    private void checkKanaal(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel("kanaal", kanaalToWaarde(oud), kanaalToWaarde(nieuw)));
+        }
     }
 
     private String toWaarde(final Zaak zaak) {
