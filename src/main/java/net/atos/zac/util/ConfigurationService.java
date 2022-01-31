@@ -30,6 +30,8 @@ public class ConfigurationService {
 
     public static final String MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE = "melding-klein-evenement";
 
+    public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
+
     @Inject
     private ZTCClientService ztcClientService;
 

@@ -76,6 +76,9 @@ public class RESTInformatieobjectConverter {
         restObject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
         restObject.documentType = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
+        if (enkelvoudigInformatieObject.getOndertekening() != null) {
+            restObject.ondertekening = enkelvoudigInformatieObject.getOndertekening().getDatum();
+        }
 
         return restObject;
     }

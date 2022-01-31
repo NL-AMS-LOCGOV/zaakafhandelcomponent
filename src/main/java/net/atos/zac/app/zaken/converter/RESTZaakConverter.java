@@ -152,7 +152,6 @@ public class RESTZaakConverter {
         //TODO het daadwerkelijke kanaal moet worden opgezocht
         return id != null ? URI.create(id) : null;
     }
-
 }
 
 

@@ -44,8 +44,8 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.zac.app.audit.converter.RESTAuditTrailConverter;
-import net.atos.zac.app.audit.model.RESTAuditTrailRegel;
+import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
+import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -96,7 +96,7 @@ public class ZakenRESTService {
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
 
     @Inject
-    private RESTAuditTrailConverter auditTrailConverter;
+    private RESTHistorieRegelConverter auditTrailConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -330,8 +330,8 @@ public class ZakenRESTService {
     }
 
     @GET
-    @Path("zaak/{uuid}/auditTrail")
-    public List<RESTAuditTrailRegel> listAuditTrailVoorZaak(@PathParam("uuid") final UUID uuid) {
+    @Path("zaak/{uuid}/historie")
+    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
         final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
         return auditTrailConverter.convert(auditTrail);
     }
