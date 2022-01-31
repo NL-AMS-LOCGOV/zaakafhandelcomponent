@@ -55,15 +55,13 @@ import net.atos.zac.app.taken.model.TaakSortering;
 @Transactional
 public class FlowableService {
 
-    private static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
+    public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
-    private static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
+    public static final String VAR_CASE_ZAAK_IDENTIFICATIE = "zaakIdentificatie";
 
-    private static final String VAR_CASE_ZAAKTYPE_UUUID = "zaaktypeUUID";
+    public static final String VAR_CASE_ZAAKTYPE_UUUID = "zaaktypeUUID";
 
-    private static final String VAR_CASE_ZAAKTYPE_IDENTIFICATIE = "zaaktypeIdentificatie";
-
-    private static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+    public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
@@ -98,14 +96,6 @@ public class FlowableService {
 
     public String readZaaktypeOmschrijvingorTask(final String taskId) {
         return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
-    }
-
-    public String readZaaktypeIdentificatieForTask(final String taskId) {
-        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
-    }
-
-    public String readZaaktypeIdentificatieForCase(final String caseInstanceId) {
-        return (String) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_IDENTIFICATIE);
     }
 
     public UUID readZaaktypeUUIDForTask(final String taskId) {
@@ -179,7 +169,6 @@ public class FlowableService {
                     .variable(VAR_CASE_ZAAK_UUID, zaak.getUuid())
                     .variable(VAR_CASE_ZAAK_IDENTIFICATIE, zaak.getIdentificatie())
                     .variable(VAR_CASE_ZAAKTYPE_UUUID, uuidFromURI(zaaktype.getUrl()))
-                    .variable(VAR_CASE_ZAAKTYPE_IDENTIFICATIE, zaaktype.getIdentificatie())
                     .variable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
                     .start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {

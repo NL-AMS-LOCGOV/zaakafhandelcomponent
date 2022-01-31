@@ -15,7 +15,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -44,17 +43,8 @@ public class UtilRESTService {
     private ZGWApiService zgwApiService;
 
     @GET
-    @Path("fix")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response fixIt() {
-        LOG.info(">>> Nothing to fix!");
-        return Response.noContent().build();
-    }
-
-    @GET
     public String index() {
         return body(h(1, "Util") +
-                            links(Stream.of("fix")) +
                             links(Stream.of("cache",
                                             "cache/zgw",
                                             "cache/zrc",
