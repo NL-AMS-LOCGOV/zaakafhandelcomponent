@@ -45,6 +45,7 @@ import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -324,7 +325,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== zaakOrTaak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== zaakOrTaak.behandelaar?.gebruikersnaam && zaakOrTaak.status !== TaakStatus.Afgerond;
     }
 
     assignToMe(event: any): void {
