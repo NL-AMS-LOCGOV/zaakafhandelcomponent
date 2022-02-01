@@ -6,13 +6,14 @@
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
 import {FileFieldConfig} from '../../model/file-field-config';
+import {TranslateService} from '@ngx-translate/core';
 
 export class FileFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.FILE;
     uploadError: string;
 
-    constructor() {
-        super();
+    constructor(translate: TranslateService) {
+        super(translate);
     }
 
     getErrorMessage(): string {

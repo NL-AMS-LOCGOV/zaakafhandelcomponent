@@ -5,12 +5,13 @@
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
+import {TranslateService} from '@ngx-translate/core';
 
 export class DateFormField extends AbstractFormField {
 
     fieldType = FieldType.DATE;
 
-    constructor() {
-        super();
+    constructor(translate: TranslateService) {
+        super(translate);
     }
 }

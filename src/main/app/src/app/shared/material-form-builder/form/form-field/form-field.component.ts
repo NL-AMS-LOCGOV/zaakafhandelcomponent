@@ -8,6 +8,7 @@ import {FormItem} from '../../model/form-item';
 import {FormFieldDirective} from './form-field.directive';
 import {ReadonlyFormFieldBuilder} from '../../form-components/readonly/readonly-form-field-builder';
 import {ReadonlyComponent} from '../../form-components/readonly/readonly.component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'mfb-form-field',
@@ -26,6 +27,9 @@ export class FormFieldComponent implements AfterViewInit {
 
     @ViewChild(FormFieldDirective) formField: FormFieldDirective;
 
+    constructor(private translate: TranslateService) {
+    }
+
     ngAfterViewInit() {
         this.loadComponent();
     }
@@ -40,10 +44,10 @@ export class FormFieldComponent implements AfterViewInit {
     loadComponent() {
         if (this._field.data.readonly && !this._field.data.hasReadonlyView()) {
             this._field = new FormItem(ReadonlyComponent,
-                new ReadonlyFormFieldBuilder().id(this._field.data.id)
-                                              .label(this._field.data.label)
-                                              .value(this._field.data.formControl.value)
-                                              .build());
+                new ReadonlyFormFieldBuilder(this.translate).id(this._field.data.id)
+                                                            .label(this._field.data.label)
+                                                            .value(this._field.data.formControl.value)
+                                                            .build());
         }
         const componentRef = this.formField.viewContainerRef.createComponent(this._field.component);
 

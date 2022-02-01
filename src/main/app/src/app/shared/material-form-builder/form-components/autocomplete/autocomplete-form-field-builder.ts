@@ -7,14 +7,15 @@ import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form
 import {AutocompleteFormField} from './autocomplete-form-field';
 import {Observable} from 'rxjs';
 import {AutocompleteValidators} from './autocomplete-validators';
+import {TranslateService} from '@ngx-translate/core';
 
 export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
     protected readonly formField: AutocompleteFormField;
 
-    constructor() {
+    constructor(translate: TranslateService) {
         super();
-        this.formField = new AutocompleteFormField();
+        this.formField = new AutocompleteFormField(translate);
     }
 
     options(options: Observable<any[]>): this {
