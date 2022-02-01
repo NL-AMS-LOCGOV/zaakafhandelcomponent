@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -173,6 +173,11 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
+        if (restTaak.behandelaar == null || !restTaak.behandelaar.gebruikersnaam.equals(
+                ingelogdeMedewerker.get().getGebruikersnaam())) {
+            flowableService.assignTask(restTaak.id, ingelogdeMedewerker.get().getGebruikersnaam());
+        }
+
         final Map<String, String> taakdata = flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
 
