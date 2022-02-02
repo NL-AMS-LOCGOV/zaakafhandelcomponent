@@ -8,25 +8,30 @@ import {Validators} from '@angular/forms';
 import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {TakenService} from '../../taken/taken.service';
+import {AppGlobals} from '../../app.globals';
+import {TaakDocumentUploadFieldBuilder} from '../../shared/material-form-builder/form-components/taak-document-upload/taak-document-upload-field-builder';
 
 export class Advies extends AbstractFormulier {
 
     fields = {
-        TOELICHTING: 'toelichting',
+        TOELICHTING: 'toelichtingAdvies',
         VRAAG: 'vraag',
         ADVIES: 'advies',
-        DOCUMENT: 'document',
+        BIJLAGE: 'bijlage',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
-    constructor(translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
+    constructor(
+        translate: TranslateService,
+        public takenService: TakenService,
+        public informatieObjectenService: InformatieObjectenService) {
         super(translate);
     }
 
@@ -53,13 +58,19 @@ export class Advies extends AbstractFormulier {
                                               .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
                                            .readonly(this.isAfgerond()).build()],
-            [new FileFormFieldBuilder().id(fields.DOCUMENT).label(fields.DOCUMENT).config(this.fileUploadConfig()).readonly(this.isAfgerond()).build()]
+            [new TaakDocumentUploadFieldBuilder().id(fields.BIJLAGE)
+                                                 .label(fields.BIJLAGE)
+                                                 .config(this.fileUploadConfig(fields.BIJLAGE))
+                                                 .readonly(this.isAfgerond())
+                                                 .build()]
         );
     }
 
-    fileUploadConfig(): FileFieldConfig {
-        const uploadUrl = 'URL';
-        return new FileFieldConfig(uploadUrl, [Validators.required], 1);
+    fileUploadConfig(field): FileFieldConfig {
+        const uploadUrl = this.takenService.getUploadURL(this.taak.id, field);
+        const fileFieldConfig = new FileFieldConfig(uploadUrl, [], AppGlobals.FILE_MAX_SIZE);
+        fileFieldConfig.zaakUUID = this.taak.zaakUUID;
+        return fileFieldConfig;
     }
 
     getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {

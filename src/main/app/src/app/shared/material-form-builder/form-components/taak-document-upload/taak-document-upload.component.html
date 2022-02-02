@@ -1,0 +1,39 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<form [formGroup]="formGroup">
+    <mat-form-field appearance="fill" class="full-width" (click)="fileInput.click()">
+        <mat-label>{{data.label | translate}}</mat-label>
+        <input [formControl]="uploadControl" [id]="data.id + '_upload'" [readonly]="true" [required]="data.required" matInput>
+        <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
+            <mat-icon>upload</mat-icon>
+        </button>
+        <button *ngIf="status == 'BEZIG'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+            <mat-icon>cancel</mat-icon>
+        </button>
+        <button *ngIf="status == 'GEREED'" mat-mini-fab matSuffix (click)="reset($event)" type="button">
+            <mat-icon>delete</mat-icon>
+        </button>
+        <mat-hint *ngIf="data.config.hint" [align]="data.config.hint.align">{{data.config.hint.label | translate}}</mat-hint>
+        <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
+            {{data.getErrorMessage()}}
+        </mat-hint>
+        <input hidden="hidden" type="file" [accept]="data.config.fileTypes" #fileInput [id]="data.id + '_file'" (change)="uploadFile($event.target.files[0])"
+               name="uploadFile">
+    </mat-form-field>
+    <mat-form-field class="full-width" appearance="fill" *ngIf="uploadControl.value">
+        <mat-label>{{'documenttitel' | translate}}</mat-label>
+        <input [formControl]="titelControl" [id]="data.id + '_title'" (ngModelChange)="updateValue()" matInput>
+    </mat-form-field>
+    <mat-form-field class="full-width" appearance="fill" *ngIf="uploadControl.value">
+        <mat-label>{{'documentType' | translate}}</mat-label>
+        <mat-select [id]="data.id + '_type'"
+                    [compareWith]="compareInfoObjectType"
+                    (selectionChange)="updateValue()"
+                    [formControl]="typeControl">
+            <mat-option *ngFor="let type of types$ | async" [value]="type">{{ type.omschrijving | titlecase }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</form>

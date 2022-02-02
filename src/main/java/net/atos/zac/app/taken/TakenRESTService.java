@@ -16,25 +16,31 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
+import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.app.taken.model.TaakSortering;
+import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
@@ -68,6 +74,10 @@ public class TakenRESTService {
     @Inject
     @IngelogdeMedewerker
     private Instance<Medewerker> ingelogdeMedewerker;
+
+    @Inject
+    @ActiveSession
+    private Instance<HttpSession> httpSession;
 
     @GET
     @Path("werkvoorraad")
@@ -175,15 +185,32 @@ public class TakenRESTService {
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         final Map<String, String> taakdata = flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
-
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-
         return taakConverter.convertTaskInfo(task, taakdata);
     }
 
     private void taakBehandelaarGewijzigd(final TaskInfo taskInfo, final UUID zaakUuid) {
         eventingService.send(TAAK.updated(taskInfo));
         eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
+    }
+
+    @POST
+    @Path("upload/{uuid}/{field}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadFile(@PathParam("field") final String field, @PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
+        httpSession.get().setAttribute("_FILE__" + uuid + "__" + field, data);
+        return Response.ok("\"Success\"").build();
+    }
+
+    private void createDocument(final RESTTaak restTaak) {
+        HttpSession httpSession = this.httpSession.get();
+        for (String key : restTaak.taakdata.keySet()) {
+            String fileKey = String.format("_FILE__%s__%s", restTaak.id, key);
+            Object attribute = httpSession.getAttribute(fileKey);
+            if (attribute != null) {
+                RESTFileUpload fileUpload = (RESTFileUpload) attribute;
+            }
+        }
     }
 }

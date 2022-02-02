@@ -27,9 +27,6 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
-class SelectFormFieldBuiler {
-}
-
 @Component({
     templateUrl: './informatie-object-create.component.html',
     styleUrls: ['./informatie-object-create.component.less']
@@ -54,9 +51,9 @@ export class InformatieObjectCreateComponent implements OnInit {
         this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
-        let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
-        let talen = this.utilService.getEnumAsSelectList('taal', Taal);
-        let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
+        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
+        const talen = this.utilService.getEnumAsSelectList('taal', Taal);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
@@ -112,13 +109,13 @@ export class InformatieObjectCreateComponent implements OnInit {
         if (formGroup) {
             const infoObject = new EnkelvoudigInformatieobject();
             Object.keys(formGroup.controls).forEach((key) => {
-                let control = formGroup.controls[key];
-                let value = control.value;
+                const control = formGroup.controls[key];
+                const value = control.value;
                 if (value instanceof moment) {
-                    infoObject[key] = value; //conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
-                } else if (key == 'informatieobjectType') {
+                    infoObject[key] = value; // conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
+                } else if (key === 'informatieobjectType') {
                     infoObject[key] = this.informatieobjecttypes[value].url;
-                } else if (key == 'taal' || key == 'status' || key == 'vertrouwelijkheidaanduiding') {
+                } else if (key === 'taal' || key === 'status' || key === 'vertrouwelijkheidaanduiding') {
                     infoObject[key] = value.value;
                 } else {
                     infoObject[key] = value;
@@ -134,7 +131,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     getTypes(zaak): Observable<string[]> {
-        let types = [];
+        const types = [];
         this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
             this.informatieobjecttypes = [];
             response.forEach(type => {
@@ -146,7 +143,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     fileUploadConfig(): FileFieldConfig {
-        const uploadUrl = this.informatieObjectenService.uploadUrl.replace('{zaakUuid}', this.zaakUuid);
-        return new FileFieldConfig(uploadUrl, [Validators.required], 1);
+        const uploadUrl = this.informatieObjectenService.getUploadURL(this.zaakUuid);
+        return new FileFieldConfig(uploadUrl, [Validators.required]);
     }
 }

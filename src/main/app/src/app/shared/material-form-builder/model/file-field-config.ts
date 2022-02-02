@@ -5,36 +5,26 @@
 
 import {ValidatorFn} from '@angular/forms';
 import {FormFieldConfig, FormFieldHint} from './form-field-config';
+import {AppGlobals} from '../../../app.globals';
 
 export class FileFieldConfig extends FormFieldConfig {
 
-    private _fileTypes: string = '.pdf,.doc,.docx,.xls,.xlsx,.pptx,.pptx,.vsd,.png,.gif,.jpg,.jpeg,.jpeg,.txt,.bmp,.odt,.rtf';
-    private _fileSizeMB: number = 20;
-    private _restURL: string;
+    public fileTypes: string = '.pdf,.doc,.docx,.xls,.xlsx,.pptx,.pptx,.vsd,.png,.gif,.jpg,.jpeg,.jpeg,.txt,.bmp,.odt,.rtf';
+    public fileSizeMB: number = AppGlobals.FILE_MAX_SIZE;
+    public restURL: string;
+    public zaakUUID: string;
 
     constructor(restURL: string, validators?: ValidatorFn[], maxFileSizeMB?: number, fileTypes?: string, hint?: FormFieldHint) {
         super(validators, hint);
-        this._restURL = restURL;
+        this.restURL = restURL;
         if (fileTypes) {
-            this._fileTypes = fileTypes;
+            this.fileTypes = fileTypes;
         }
         if (maxFileSizeMB) {
-            this._fileSizeMB = maxFileSizeMB;
+            this.fileSizeMB = maxFileSizeMB;
         }
         if (!hint) {
-            super.hint = new FormFieldHint('Maximale bestandsgrootte: ' + this._fileSizeMB + 'MB | toegestane bestandstypen: ' + this._fileTypes, 'end');
+            super.hint = new FormFieldHint('Maximale bestandsgrootte: ' + this.fileSizeMB + 'MB | toegestane bestandstypen: ' + this.fileTypes, 'end');
         }
-    }
-
-    get fileTypes(): string {
-        return this._fileTypes;
-    }
-
-    get fileSizeMB(): number {
-        return this._fileSizeMB;
-    }
-
-    get restURL(): string {
-        return this._restURL;
     }
 }
