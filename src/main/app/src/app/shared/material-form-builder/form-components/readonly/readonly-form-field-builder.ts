@@ -5,14 +5,15 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {ReadonlyFormField} from './readonly-form-field';
+import {TranslateService} from '@ngx-translate/core';
 
 export class ReadonlyFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: ReadonlyFormField;
 
-    constructor() {
+    constructor(translate: TranslateService) {
         super();
-        this.formField = new ReadonlyFormField();
+        this.formField = new ReadonlyFormField(translate);
     }
 
 }

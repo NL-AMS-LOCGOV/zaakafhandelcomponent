@@ -46,6 +46,7 @@ import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog
 import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -90,7 +91,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
                 private sessionStorageService: SessionStorageService,
-                public dialog: MatDialog) {
+                public dialog: MatDialog,
+                private translate: TranslateService) {
         super(store, utilService);
     }
 
@@ -169,29 +171,31 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     private setEditableFormFields(): void {
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.zaak.behandelaar).optionLabel('naam')
-                                                                                 .options(this.identityService.listMedewerkers()).build());
-        this.editFormFields.set('redenBehandelaar', new InputFormFieldBuilder().id('redenBehandelaar').label('reden').build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.zaak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroepen()).build());
-        this.editFormFields.set('redenGroep', new InputFormFieldBuilder().id('redenGroep').label('reden').build());
-        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
-                                                                              .value(this.zaak.omschrijving).maxlength(80)
-                                                                              .build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
-                                                                             .value(this.zaak.toelichting).maxlength(1000).build());
-        this.editFormFields.set('startdatum', new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
+        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.translate).id('behandelaar').label('behandelaar')
+                                                                                               .value(this.zaak.behandelaar).optionLabel('naam')
+                                                                                               .options(this.identityService.listMedewerkers()).build());
+        this.editFormFields.set('redenBehandelaar', new InputFormFieldBuilder(this.translate).id('redenBehandelaar').label('reden').build());
+        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder(this.translate).id('groep').label('groep')
+                                                                                         .value(this.zaak.groep).optionLabel('naam')
+                                                                                         .options(this.identityService.listGroepen()).build());
+        this.editFormFields.set('redenGroep', new InputFormFieldBuilder(this.translate).id('redenGroep').label('reden').build());
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.translate).id('omschrijving').label('omschrijving')
+                                                                                            .value(this.zaak.omschrijving).maxlength(80)
+                                                                                            .build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder(this.translate).id('toelichting').label('toelichting')
+                                                                                           .value(this.zaak.toelichting).maxlength(1000).build());
+        this.editFormFields.set('startdatum',
+            new DateFormFieldBuilder(this.translate).id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
         this.editFormFields.set('einddatumGepland',
-            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland').value(this.zaak.einddatumGepland).build());
+            new DateFormFieldBuilder(this.translate).id('einddatumGepland').label('einddatumGepland').value(this.zaak.einddatumGepland).build());
         this.editFormFieldIcons.set('einddatumGepland', new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
             'msg.datum.overschreden', 'warning'));
 
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
-            new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening').value(this.zaak.uiterlijkeEinddatumAfdoening)
-                                      .build());
+            new DateFormFieldBuilder(this.translate).id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
+                                                    .value(this.zaak.uiterlijkeEinddatumAfdoening)
+                                                    .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));

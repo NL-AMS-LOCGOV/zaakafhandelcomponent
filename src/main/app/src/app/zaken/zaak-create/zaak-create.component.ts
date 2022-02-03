@@ -21,6 +21,7 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -31,7 +32,8 @@ export class ZaakCreateComponent implements OnInit {
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
 
-    constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
+    constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService,
+                private translate: TranslateService) {
     }
 
     ngOnInit(): void {
@@ -42,29 +44,29 @@ export class ZaakCreateComponent implements OnInit {
         const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
-        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level('1').build();
+        const titel = new HeadingFormFieldBuilder(this.translate).id('aanmakenZaak').label('actie.zaak.aanmaken').level('1').build();
 
-        const tussenTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig').level('2').build();
+        const tussenTitel = new HeadingFormFieldBuilder(this.translate).id('overigegegevens').label('gegevens.overig').level('2').build();
 
-        const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
-                                                     .validators(Validators.required)
-                                                     .optionLabel('omschrijving').options(this.zakenService.listZaaktypes())
-                                                     .build();
+        const zaaktype = new SelectFormFieldBuilder(this.translate).id('zaaktype').label('zaaktype')
+                                                                   .validators(Validators.required)
+                                                                   .optionLabel('omschrijving').options(this.zakenService.listZaaktypes())
+                                                                   .build();
 
-        const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                                     .value(moment()).validators(Validators.required).build();
+        const startdatum = new DateFormFieldBuilder(this.translate).id('startdatum').label('startdatum')
+                                                                   .value(moment()).validators(Validators.required).build();
 
-        const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
+        const registratiedatum = new DateFormFieldBuilder(this.translate).id('registratiedatum').label('registratiedatum').value(moment()).build();
 
-        const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                                               .optionLabel('doel').options(communicatiekanalen)
-                                                               .build();
+        const communicatiekanaal = new SelectFormFieldBuilder(this.translate).id('communicatiekanaal').label('communicatiekanaal')
+                                                                             .optionLabel('doel').options(communicatiekanalen)
+                                                                             .build();
 
-        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                                        .optionLabel('label').options(vertrouwelijkheidaanduidingen).build();
+        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder(this.translate).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                                                      .optionLabel('label').options(vertrouwelijkheidaanduidingen).build();
 
-        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').build();
-        const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').build();
+        const omschrijving = new InputFormFieldBuilder(this.translate).id('omschrijving').label('omschrijving').build();
+        const toelichting = new TextareaFormFieldBuilder(this.translate).id('toelichting').label('toelichting').build();
         this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
     }
@@ -73,7 +75,7 @@ export class ZaakCreateComponent implements OnInit {
         if (formGroup) {
             const zaak: Zaak = new Zaak();
             Object.keys(formGroup.controls).forEach((key) => {
-                if (key == 'vertrouwelijkheidaanduiding') {
+                if (key === 'vertrouwelijkheidaanduiding') {
                     zaak[key] = formGroup.controls[key].value?.value;
                 } else {
                     zaak[key] = formGroup.controls[key].value;

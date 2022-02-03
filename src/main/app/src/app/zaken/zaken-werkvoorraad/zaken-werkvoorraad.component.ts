@@ -12,18 +12,16 @@ import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -82,34 +80,14 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
-        .pipe(DatumPipe);
-
-        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum')
-        .pipe(DatumPipe);
-
-        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
-        .pipe(DatumOverschredenPipe, 'einddatum');
-
-        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
-        .pipe(DatumOverschredenPipe, 'einddatum');
-
         this.dataSource.columns = [
-            new TableColumn('select', 'select', true, null, true),
-            new TableColumn('zaak.identificatie', 'identificatie', true),
-            new TableColumn('status', 'status', true),
-            this.dataSource.zoekParameters.selectie === 'groep' ?
-                new TableColumn('zaaktype', 'zaaktype', true) :
-                new TableColumn('groep', 'groep.naam', true),
-            startdatum,
-            einddatum,
-            einddatumGepland,
-            new TableColumn('aanvrager', 'aanvrager', true),
-            new TableColumn('behandelaar', 'behandelaar.naam', true),
-            uiterlijkeEinddatumAfdoening,
-            new TableColumn('toelichting', 'toelichting'),
-            new TableColumn('url', 'url', true, null, true)
+            'select', 'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
+        this.dataSource.visibleColumns = [
+            'select', 'identificatie', 'status', 'groep', 'startdatum', 'aanvrager', 'behandelaar', 'url'
+        ];
+        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
+        this.dataSource.detailExpandColumns = ['einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
     switchTypeAndSearch() {
@@ -136,7 +114,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(row: ZaakOverzicht): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != row.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== row.behandelaar?.gebruikersnaam;
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
@@ -178,7 +156,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVerdelenScherm(): void {
-        let zaken = this.selection.selected;
+        const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
             width: '300px',
             data: zaken,
@@ -198,7 +176,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVrijgevenScherm(): void {
-        let zaken = this.selection.selected;
+        const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
             width: '350px',
             data: zaken,
@@ -215,6 +193,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 this.zoekZaken();
             }
         });
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
     }
 
 }

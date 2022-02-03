@@ -33,6 +33,7 @@ import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -55,7 +56,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
-                private navigation: NavigationService) {
+                private navigation: NavigationService, protected translate: TranslateService) {
         super(store, utilService);
     }
 
@@ -106,22 +107,22 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     setEditableFormFields(): void {
         this.editFormFields.set('behandelaar',
-            new AutocompleteFormFieldBuilder().id('behandelaar')
-                                              .label('behandelaar')
-                                              .value(this.taak.behandelaar).optionLabel('naam')
-                                              .options(this.identityService.listMedewerkers())
-                                              .build());
+            new AutocompleteFormFieldBuilder(this.translate).id('behandelaar')
+                                                            .label('behandelaar')
+                                                            .value(this.taak.behandelaar).optionLabel('naam')
+                                                            .options(this.identityService.listMedewerkers())
+                                                            .build());
         this.editFormFields.set('groep',
-            new AutocompleteFormFieldBuilder().id('groep')
-                                              .label('groep')
-                                              .value(this.taak.groep).optionLabel('naam')
-                                              .options(this.identityService.listGroepen())
-                                              .build());
+            new AutocompleteFormFieldBuilder(this.translate).id('groep')
+                                                            .label('groep')
+                                                            .value(this.taak.groep).optionLabel('naam')
+                                                            .options(this.identityService.listGroepen())
+                                                            .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder().id('toelichting')
-                                          .label('toelichting')
-                                          .value(this.taak.toelichting)
-                                          .build());
+            new TextareaFormFieldBuilder(this.translate).id('toelichting')
+                                                        .label('toelichting')
+                                                        .value(this.taak.toelichting)
+                                                        .build());
         this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
 

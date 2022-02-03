@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -12,12 +12,10 @@ import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {TakenMijnDatasource} from './taken-mijn-datasource';
-import {TaakSortering} from '../model/taak-sortering';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
+import {Conditionals} from '../../shared/edit/conditional-fn';
+import {TextIcon} from '../../shared/edit/text-icon';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -34,6 +32,10 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     dataSource: TakenMijnDatasource;
     expandedRow: Taak | null;
 
+    displayedColumns: string[] = ['naam', 'creatiedatumTijd'];
+
+    streefdatumIcon: TextIcon;
+
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
     }
 
@@ -41,27 +43,27 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true, TaakSortering.CREATIEDATUM)
-        .pipe(DatumPipe);
-
-        const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM)
-        .pipe(DatumOverschredenPipe);
-
         this.dataSource.columns = [
-            new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
-            new TableColumn('status', 'status', true),
-            new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true),
-            new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true),
-            creatieDatum,
-            streefDatum,
-            new TableColumn('groep', 'groep.naam', true),
-            new TableColumn('url', 'url', true, null, true)
+            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.visibleColumns = [
+            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
+        ];
+        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
+        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+            'msg.datum.overschreden', 'warning');
     }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
+    }
+
 }

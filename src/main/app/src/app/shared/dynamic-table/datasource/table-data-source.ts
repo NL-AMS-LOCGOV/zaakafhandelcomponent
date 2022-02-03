@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -10,10 +10,7 @@ import {MatSort} from '@angular/material/sort';
 import {tap} from 'rxjs/operators';
 import {TableRequest} from './table-request';
 import {TableResponse} from './table-response';
-import {TableColumn} from '../column/table-column';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {TableColumnFilter} from '../filter/table-column-filter';
-import {DynamicPipe} from '../pipes/dynamic.pipe';
 
 export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
 
@@ -24,15 +21,18 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     sort: MatSort;
     filters: {} = {};
 
-    columns: Array<TableColumn>;
-    selectedColumns: Array<TableColumn>;
+    columns: Array<string>;
+    visibleColumns: Array<string>;
+    filterColumns: Array<string>;
+    detailExpandColumns: Array<string>;
+    selectedColumns: Array<string>;
 
     private subscription$: Subscription;
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
-        //reset pageindex on sort change
+        // reset pageindex on sort change
         this.subscription$ = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        //watch sortchange and page change
+        // watch sortchange and page change
         merge(this.sort.sortChange, this.paginator.page).pipe(
             tap(() => this.load())
         ).subscribe();
@@ -40,11 +40,11 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
         return this.tableSubject.asObservable();
     }
 
-    filter(filter: TableColumnFilter<any>) {
-        if (this.filters[filter.id] && !filter.value) {
-            delete this.filters[filter.id];
+    filter(field, value) {
+        if (this.filters[field] && !value) {
+            delete this.filters[field];
         } else {
-            this.filters[filter.id] = filter.value[filter.selectValue];
+            this.filters[field] = value;
         }
         this.load();
     }
@@ -98,30 +98,39 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     }
 
     drop(event: CdkDragDrop<string[]>) {
-        moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+        const extraIndex = this.visibleColumns.includes('select') ? 1 : 0;
+        moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
 
-    updateColumns(): void {
-        //update array reference for angular change detection
-        this.columns.filter(value => !value.sticky).forEach(value => value.visible = this.selectedColumns.indexOf(value) != -1);
+    setFilterColumns(): void {
+        this.visibleColumns = this.selectedColumns;
+        this.filterColumns = this.visibleColumns.map(c => c + '_filter');
+
+        this.restoreUrlColumn();
+        this.restoreSelectColumn();
+    }
+
+    private restoreUrlColumn() {
+        if (this.columns.includes('url') && !this.visibleColumns.includes('url')) {
+            this.visibleColumns.push('url');
+            this.filterColumns.push('url_filter');
+        }
+    }
+
+    private restoreSelectColumn() {
+        if (this.columns.includes('select') && !this.visibleColumns.includes('select')) {
+            this.visibleColumns.unshift('select');
+            this.filterColumns.unshift('select_filter');
+        }
     }
 
     protected setData(response: TableResponse<OBJECT>): void {
         this.totalItems = response.totalItems;
-        this.applyValuePipes(response.data);
         this.tableSubject.next(response.data);
     }
 
-    private applyValuePipes(data: OBJECT[]): void {
-        this.columns.forEach(column => {
-            data.forEach(row => {
-                row[column.model] = column.transform(this.getValue(column.model, row), pipeArg => this.getValue(pipeArg, row));
-            });
-        });
-    }
-
     private getValue(columnModel: string, row: OBJECT): OBJECT {
-        var model = columnModel.split('.');
+        const model = columnModel.split('.');
         let i = 0, value = row;
         while (i < model.length) {
             if (value) {

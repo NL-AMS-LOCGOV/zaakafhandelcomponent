@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
 import {Zaaktype} from '../model/zaaktype';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -18,7 +16,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {detailExpand} from '../../shared/animations/animations';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -36,7 +34,8 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService) { }
+    constructor(private zakenService: ZakenService, public utilService: UtilService,
+                private identityService: IdentityService, private cdRef: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
@@ -53,33 +52,15 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     }
 
     private setColumns() {
-        const startdatum: TableColumn = new TableColumn('startdatum', 'startdatum', true, 'startdatum')
-        .pipe(DatumPipe);
-
-        const einddatum: TableColumn = new TableColumn('einddatum', 'einddatum', true)
-        .pipe(DatumPipe);
-
-        const einddatumGepland: TableColumn = new TableColumn('einddatumGepland', 'einddatumGepland')
-        .pipe(DatumOverschredenPipe,'einddatum');
-
-        const uiterlijkeEinddatumAfdoening: TableColumn = new TableColumn('uiterlijkeEinddatumAfdoening', 'uiterlijkeEinddatumAfdoening')
-        .pipe(DatumOverschredenPipe,'einddatum');
-
         this.dataSource.columns = [
-            new TableColumn('zaak.identificatie', 'identificatie', true),
-            this.dataSource.zoekParameters.selectie === 'groep' ?
-                new TableColumn('zaaktype', 'zaaktype', true) :
-                new TableColumn('groep', 'groep.naam', true),
-            startdatum,
-            einddatum,
-            einddatumGepland,
-            new TableColumn('aanvrager', 'aanvrager', true),
-            new TableColumn('behandelaar', 'behandelaar.naam', true),
-            uiterlijkeEinddatumAfdoening,
-            new TableColumn('resultaat', 'resultaat.naam', true),
-            new TableColumn('toelichting', 'toelichting'),
-            new TableColumn('url', 'url', true, null, true)
+            'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland',
+            'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
         ];
+        this.dataSource.visibleColumns = [
+            'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
+        ];
+        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
+        this.dataSource.detailExpandColumns = ['einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
     private zaaktypesOphalen() {
@@ -98,6 +79,15 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
         this.dataSource.zoekZaken();
         this.setColumns();
         this.paginator.firstPage();
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
+    }
+
+    updateColumns() {
+        this.dataSource.setFilterColumns();
+        this.cdRef.detectChanges();
     }
 
 }

@@ -23,7 +23,7 @@ export class ZakenCardComponent implements OnInit, AfterViewInit {
     @ViewChild(MatSort) sort: MatSort;
 
     zakenDataSource: MatTableDataSource<ZaakOverzicht> = new MatTableDataSource<ZaakOverzicht>();
-    zakenColumns: string[] = ['identificatie', 'zaaktype', 'omschrijving', 'url'];
+    zakenColumns: string[] = ['identificatie', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
 
     constructor(private signaleringenService: SignaleringenService) { }
 

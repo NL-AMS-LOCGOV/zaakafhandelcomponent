@@ -36,24 +36,25 @@ export class Advies extends AbstractFormulier {
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(documenten).build()]
+            [new TextareaFormFieldBuilder(this.translate).id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
+            [new DocumentenLijstFieldBuilder(this.translate).id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
+                                                            .documenten(documenten).build()]
         );
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
-                                              .label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                              .readonly(true)
-                                              .build()],
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
-                                           .readonly(this.isAfgerond()).build()],
-            [new FileFormFieldBuilder().id(fields.DOCUMENT).label(fields.DOCUMENT).config(this.fileUploadConfig()).readonly(this.isAfgerond()).build()]
+            [new ReadonlyFormFieldBuilder(this.translate).id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
+            [new DocumentenLijstFieldBuilder(this.translate).id(fields.RELEVANTE_DOCUMENTEN)
+                                                            .label(fields.RELEVANTE_DOCUMENTEN)
+                                                            .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                                            .readonly(true)
+                                                            .build()],
+            [new TextareaFormFieldBuilder(this.translate).id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
+                                                         .readonly(this.isAfgerond()).build()],
+            [new FileFormFieldBuilder(this.translate).id(fields.DOCUMENT).label(fields.DOCUMENT).config(this.fileUploadConfig()).readonly(this.isAfgerond())
+                                                     .build()]
         );
     }
 

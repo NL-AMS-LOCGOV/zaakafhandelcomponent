@@ -12,6 +12,7 @@ import {Validators} from '@angular/forms';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'zac-taken-verdelen-dialog',
@@ -28,7 +29,8 @@ export class TakenVerdelenDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: Taak[],
         private mfbService: MaterialFormBuilderService,
         private takenService: TakenService,
-        private identityService: IdentityService) {
+        private identityService: IdentityService,
+        private translate: TranslateService) {
     }
 
     close(): void {
@@ -36,10 +38,10 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
-                                                                    .optionLabel('naam')
-                                                                    .options(this.identityService.listMedewerkers())
-                                                                    .validators(Validators.required).build();
+        let medewerkerFormField = new AutocompleteFormFieldBuilder(this.translate).id('behandelaar').label('behandelaar.-kies-')
+                                                                                  .optionLabel('naam')
+                                                                                  .options(this.identityService.listMedewerkers())
+                                                                                  .validators(Validators.required).build();
         this.medewerkerFormItem = this.mfbService.getFormItem(medewerkerFormField);
     }
 
