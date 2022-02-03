@@ -15,7 +15,7 @@ import javax.json.bind.Jsonb;
 import org.junit.jupiter.api.Test;
 import org.wildfly.common.Assert;
 
-import net.atos.zac.util.JsonbContextResolver;
+import net.atos.zac.util.JsonbConfiguration;
 
 /**
  * Datums worden niet aangepast naar locale zone.
@@ -23,7 +23,7 @@ import net.atos.zac.util.JsonbContextResolver;
  */
 public class ZonedDateTimeTest {
 
-    private static final Jsonb contextResolver = new JsonbContextResolver().getContext(ZonedDateTimeTest.class);
+    private static final Jsonb contextResolver = new JsonbConfiguration().getContext(ZonedDateTimeTest.class);
 
     @Test
     public void testFromJsonDatumTijd_ISO_Z() {

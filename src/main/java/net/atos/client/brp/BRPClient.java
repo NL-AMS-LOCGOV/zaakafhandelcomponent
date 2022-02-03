@@ -12,11 +12,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
+import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import net.atos.client.brp.exception.PersoonNotFoundException;
+import net.atos.client.brp.exception.PersoonNotFoundExceptionMapping;
+import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.listPersonenParameters;
+import net.atos.client.brp.util.JsonbConfiguration;
 
 /**
  * Bevragen Ingeschreven Personen
@@ -29,6 +35,11 @@ import net.atos.client.brp.model.listPersonenParameters;
  */
 
 @RegisterRestClient(configKey = "BRP-API-Client")
+@RegisterProviders({
+        @RegisterProvider(PersoonNotFoundExceptionMapping.class),
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)
+})
 @Produces({"application/hal+json", "application/problem+json"})
 @Path("api/brp/ingeschrevenpersonen")
 public interface BRPClient {
@@ -76,5 +87,6 @@ public interface BRPClient {
      */
     @GET
     @Path("{burgerservicenummer}")
-    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer, @QueryParam("fields") final String fields);
+    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer,
+            @QueryParam("fields") final String fields) throws PersoonNotFoundException;
 }

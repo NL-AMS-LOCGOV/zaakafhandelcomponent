@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.or.shared.exception;
+package net.atos.client.brp.exception;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -23,6 +23,6 @@ public class RuntimeExceptionMapper implements ResponseExceptionMapper<RuntimeEx
 
     @Override
     public RuntimeException toThrowable(final Response response) {
-        return new RuntimeException(String.format("Server response from object registratie: %d (%s)", response.getStatus(), response.getStatusInfo()));
+        return new RuntimeException(String.format("Server response from BRP bevragen: %d (%s)", response.getStatus(), response.getStatusInfo()));
     }
 }

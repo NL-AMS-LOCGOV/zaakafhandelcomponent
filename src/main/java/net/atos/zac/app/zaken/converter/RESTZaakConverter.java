@@ -7,17 +7,25 @@ package net.atos.zac.app.zaken.converter;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import net.atos.client.brp.BRPClientService;
+import net.atos.client.brp.model.Geboorte;
+import net.atos.client.brp.model.IngeschrevenPersoonHal;
+import net.atos.client.brp.model.NaamPersoon;
+import net.atos.client.brp.model.Verblijfplaats;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.zaken.model.RESTPersoonOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
@@ -28,11 +36,16 @@ import net.atos.zac.util.PeriodUtil;
 
 public class RESTZaakConverter {
 
+    private static final String ONBEKEND = "<onbekend>";
+
     @Inject
     private ZTCClientService ztcClientService;
 
     @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private BRPClientService brpClientService;
 
     @Inject
     private RESTZaakStatusConverter zaakStatusConverter;
@@ -111,6 +124,8 @@ public class RESTZaakConverter {
                 .orElse(null);
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
+        restZaak.initiator = convertInitiator(zaak.getUrl());
+
         return restZaak;
     }
 
@@ -152,6 +167,52 @@ public class RESTZaakConverter {
         //TODO het daadwerkelijke kanaal moet worden opgezocht
         return id != null ? URI.create(id) : null;
     }
+
+    private RESTPersoonOverzicht convertInitiator(final URI zaak) {
+        final Optional<RolNatuurlijkPersoon> initiatorForZaak = zgwApiService.findInitiatorForZaak(zaak);
+        if (initiatorForZaak.isPresent()) {
+            final String bsn = initiatorForZaak.get().getBetrokkeneIdentificatie().getInpBsn();
+            final IngeschrevenPersoonHal ingeschrevenPersoon = brpClientService.findPersoon(bsn, null);
+            if (ingeschrevenPersoon != null) {
+                return convertIngeschrevenPersoon(ingeschrevenPersoon);
+            } else {
+                return new RESTPersoonOverzicht(bsn);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private RESTPersoonOverzicht convertIngeschrevenPersoon(final IngeschrevenPersoonHal ingeschrevenPersoon) {
+        final RESTPersoonOverzicht persoonOverzicht = new RESTPersoonOverzicht();
+        persoonOverzicht.bsn = ingeschrevenPersoon.getBurgerservicenummer();
+        persoonOverzicht.naam = convertTotNaam(ingeschrevenPersoon.getNaam());
+        persoonOverzicht.geboortedatum = convertToGeboortedatum(ingeschrevenPersoon.getGeboorte());
+        persoonOverzicht.inschrijfadres = convertToInschrijfadres(ingeschrevenPersoon.getVerblijfplaats());
+        return persoonOverzicht;
+    }
+
+    private String convertTotNaam(final NaamPersoon naam) {
+        if (naam != null) {
+            return String.format("%s %s", naam.getVoorletters(), naam.getGeslachtsnaam());
+        } else {
+            return ONBEKEND;
+        }
+    }
+
+    private String convertToGeboortedatum(final Geboorte geboorte) {
+        if (geboorte != null && geboorte.getDatum() != null && geboorte.getDatum().getDatum() != null) {
+            return geboorte.getDatum().getDatum().toString();
+        } else {
+            return ONBEKEND;
+        }
+    }
+
+    private String convertToInschrijfadres(final Verblijfplaats verblijfplaats) {
+        if (verblijfplaats != null) {
+            return verblijfplaats.getPostcode();
+        } else {
+            return ONBEKEND;
+        }
+    }
 }
-
-

@@ -13,6 +13,7 @@ import net.atos.zac.app.identity.model.RESTGroep;
 import net.atos.zac.app.identity.model.RESTMedewerker;
 
 public class RESTZaak {
+
     public UUID uuid;
 
     public String identificatie;
@@ -69,4 +70,5 @@ public class RESTZaak {
 
     public List<RESTZaakEigenschap> eigenschappen;
 
+    public RESTPersoonOverzicht initiator;
 }

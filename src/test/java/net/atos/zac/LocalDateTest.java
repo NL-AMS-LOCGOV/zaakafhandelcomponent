@@ -15,7 +15,7 @@ import javax.json.bind.Jsonb;
 
 import org.junit.jupiter.api.Test;
 
-import net.atos.zac.util.JsonbContextResolver;
+import net.atos.zac.util.JsonbConfiguration;
 
 /**
  * Datums worden NIET aangepast naar Locale tijdzone (Europe/Amsterdam), dus 23-06-2020 blijft 23-06-2020, ongeacht de tijdzone
@@ -23,7 +23,7 @@ import net.atos.zac.util.JsonbContextResolver;
  */
 public class LocalDateTest {
 
-    private static final Jsonb contextResolver = new JsonbContextResolver().getContext(LocalDateTest.class);
+    private static final Jsonb contextResolver = new JsonbConfiguration().getContext(LocalDateTest.class);
 
     @Test
     public void testFromJsonDatumTijd_ISO_Z() {

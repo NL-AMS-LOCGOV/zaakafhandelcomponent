@@ -7,7 +7,6 @@ package net.atos.client.or.shared.exception;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
@@ -16,7 +15,6 @@ import net.atos.client.or.shared.model.ValidatieFout;
 /**
  *
  */
-@Provider
 public class ValidatieFoutExceptionMapper implements ResponseExceptionMapper<ValidatieFoutException> {
 
     @Override

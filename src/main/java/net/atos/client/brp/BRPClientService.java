@@ -7,12 +7,10 @@ package net.atos.client.brp;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.brp.exception.PersoonNotFoundException;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.listPersonenParameters;
@@ -55,18 +53,22 @@ public class BRPClientService {
      * 6. Adres
      * - verblijfplaats__nummeraanduidingIdentificatie
      */
-    public IngeschrevenPersoonHalCollectie listPersonen(@BeanParam final listPersonenParameters parameters) {
+    public IngeschrevenPersoonHalCollectie listPersonen(final listPersonenParameters parameters) {
         return brpClient.listPersonen(parameters);
     }
 
     /**
-     * Raadpleeg een persoon
+     * Vindt een persoon
      * <p>
      * Raadpleeg een (overleden) persoon.
      * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
      * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature).
      */
-    public IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer, @QueryParam("fields") final String fields) {
-        return brpClient.readPersoon(burgerservicenummer, fields);
+    public IngeschrevenPersoonHal findPersoon(final String burgerservicenummer, final String fields) {
+        try {
+            return brpClient.readPersoon(burgerservicenummer, fields);
+        } catch (final PersoonNotFoundException e) {
+            return null;
+        }
     }
 }
