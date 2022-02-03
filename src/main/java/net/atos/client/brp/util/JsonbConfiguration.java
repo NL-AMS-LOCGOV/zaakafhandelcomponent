@@ -10,8 +10,6 @@ import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.ext.ContextResolver;
 
-import net.atos.client.zgw.zrc.util.RolJsonbDeserializer;
-
 public class JsonbConfiguration implements ContextResolver<Jsonb> {
 
     private Jsonb jsonb;
@@ -26,7 +24,7 @@ public class JsonbConfiguration implements ContextResolver<Jsonb> {
                 new OuderAanduidingEnumAdapter(),
                 new RedenOpschortingBijhoudingEnumAdapter(),
                 new SoortAdresEnumAdapter(),
-                new SoortVerbintenisEnumAdapter()).withDeserializers(new RolJsonbDeserializer());
+                new SoortVerbintenisEnumAdapter());
         jsonb = JsonbBuilder.create(jsonbConfig);
     }
 
