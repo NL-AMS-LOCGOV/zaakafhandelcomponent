@@ -59,14 +59,11 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         }
     }
 
-    /* TODO https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/267 */
     private Signalering buildSignalering(final Signalering signalering, final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
             case ZAAK_OP_NAAM:
-                final Zaak zaak = zrcClientService.readZaak((URI) event.getParentId());
-                final Rol<?> rol = zrcClientService.listRollen(zaak.getUrl()).stream()
-                        .filter(rolM -> rolM.getUrl().equals(event.getObjectId()))
-                        .findAny().orElseThrow(() -> new IllegalStateException("rol not found"));
+                final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
+                final Zaak zaak = zrcClientService.readZaak(rol.getZaak());
                 final URI roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR).getUrl();
 
                 if (URIUtil.equals(roltype, rol.getRoltype())) {
