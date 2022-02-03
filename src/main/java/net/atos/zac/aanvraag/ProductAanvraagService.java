@@ -20,10 +20,14 @@ import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Roltype;
 
 @ApplicationScoped
 public class ProductAanvraagService {
@@ -35,6 +39,8 @@ public class ProductAanvraagService {
     private static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
+
+    private static final String ROL_TOELICHTING = "Aanvrager product";
 
     @Inject
     private ObjectsClientService objectsClientService;
@@ -68,6 +74,15 @@ public class ProductAanvraagService {
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
         pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
+        addInitiator(productAanvraag.getBsn(), zaak.getUrl(), zaak.getZaaktype());
+    }
+
+    private void addInitiator(final String bsn, final URI zaak, final URI zaaktype) {
+        if (bsn != null) {
+            final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
+            RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
+            zrcClientService.createRol(rol);
+        }
     }
 
     private Zaak createMeldingKleinEvenement(final Map<String, Object> aanvraagData) {
