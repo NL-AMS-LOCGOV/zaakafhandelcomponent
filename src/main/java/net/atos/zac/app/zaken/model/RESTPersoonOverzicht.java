@@ -14,11 +14,4 @@ public class RESTPersoonOverzicht {
     public String geboortedatum;
 
     public String inschrijfadres;
-
-    public RESTPersoonOverzicht() {
-    }
-
-    public RESTPersoonOverzicht(final String bsn) {
-        this.bsn = bsn;
-    }
 }

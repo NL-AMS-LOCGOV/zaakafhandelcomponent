@@ -5,9 +5,13 @@
 
 package net.atos.client.brp;
 
+import java.util.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 
+import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.brp.exception.PersoonNotFoundException;
@@ -17,6 +21,8 @@ import net.atos.client.brp.model.listPersonenParameters;
 
 @ApplicationScoped
 public class BRPClientService {
+
+    private static final Logger LOG = Logger.getLogger(BRPClientService.class.getName());
 
     @Inject
     @RestClient
@@ -68,7 +74,10 @@ public class BRPClientService {
         try {
             return brpClient.readPersoon(burgerservicenummer, fields);
         } catch (final PersoonNotFoundException e) {
-            return null;
+            LOG.warning(() -> String.format("Persoon with burgerservicenummer '%s' not found in BRP bevragen provider", burgerservicenummer));
+        } catch (final TimeoutException | ProcessingException e) {
+            LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", e.getMessage()));
         }
+        return null;
     }
 }

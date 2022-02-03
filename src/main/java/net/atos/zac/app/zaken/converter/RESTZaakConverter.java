@@ -172,23 +172,25 @@ public class RESTZaakConverter {
         final Optional<RolNatuurlijkPersoon> initiatorForZaak = zgwApiService.findInitiatorForZaak(zaak);
         if (initiatorForZaak.isPresent()) {
             final String bsn = initiatorForZaak.get().getBetrokkeneIdentificatie().getInpBsn();
-            final IngeschrevenPersoonHal ingeschrevenPersoon = brpClientService.findPersoon(bsn, null);
-            if (ingeschrevenPersoon != null) {
-                return convertIngeschrevenPersoon(ingeschrevenPersoon);
-            } else {
-                return new RESTPersoonOverzicht(bsn);
-            }
+            return convertToIngeschrevenPersoon(bsn);
         } else {
             return null;
         }
     }
 
-    private RESTPersoonOverzicht convertIngeschrevenPersoon(final IngeschrevenPersoonHal ingeschrevenPersoon) {
+    private RESTPersoonOverzicht convertToIngeschrevenPersoon(final String bsn) {
         final RESTPersoonOverzicht persoonOverzicht = new RESTPersoonOverzicht();
-        persoonOverzicht.bsn = ingeschrevenPersoon.getBurgerservicenummer();
-        persoonOverzicht.naam = convertTotNaam(ingeschrevenPersoon.getNaam());
-        persoonOverzicht.geboortedatum = convertToGeboortedatum(ingeschrevenPersoon.getGeboorte());
-        persoonOverzicht.inschrijfadres = convertToInschrijfadres(ingeschrevenPersoon.getVerblijfplaats());
+        persoonOverzicht.bsn = bsn;
+        final IngeschrevenPersoonHal ingeschrevenPersoon = brpClientService.findPersoon(bsn, null);
+        if (ingeschrevenPersoon != null) {
+            persoonOverzicht.naam = convertTotNaam(ingeschrevenPersoon.getNaam());
+            persoonOverzicht.geboortedatum = convertToGeboortedatum(ingeschrevenPersoon.getGeboorte());
+            persoonOverzicht.inschrijfadres = convertToInschrijfadres(ingeschrevenPersoon.getVerblijfplaats());
+        } else {
+            persoonOverzicht.naam = ONBEKEND;
+            persoonOverzicht.geboortedatum = ONBEKEND;
+            persoonOverzicht.inschrijfadres = ONBEKEND;
+        }
         return persoonOverzicht;
     }
 

@@ -15,7 +15,6 @@ import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
  */
 public class RuntimeExceptionMapper implements ResponseExceptionMapper<RuntimeException> {
 
-
     @Override
     public boolean handles(final int status, final MultivaluedMap<String, Object> headers) {
         return status >= Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();

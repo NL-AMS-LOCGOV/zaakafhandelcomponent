@@ -25,7 +25,7 @@
         <node.version>v14.15.3</node.version>
         <mockito.version>3.12.4</mockito.version>
         <!-- Begin Dependecies on WildFly -->
-        <wildfly.version>26.0.0.Final</wildfly.version>
+        <wildfly.version>26.0.1.Final</wildfly.version>
         <infinispan.version>12.1.7.Final</infinispan.version>
         <resteasy-multipart-provider.version>4.7.4.Final</resteasy-multipart-provider.version>
         <!-- End Dependecies on WildFly -->
@@ -53,6 +53,12 @@
         <dependency>
             <groupId>org.eclipse.microprofile.health</groupId>
             <artifactId>microprofile-health-api</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+            <artifactId>microprofile-fault-tolerance-api</artifactId>
             <version>3.0</version>
             <scope>provided</scope>
         </dependency>
@@ -294,6 +300,7 @@
                     <layers>
                         <layer>jaxrs-server</layer>
                         <layer>microprofile-health</layer>
+                        <layer>microprofile-fault-tolerance</layer>
                         <layer>elytron-oidc-client</layer>
                         <layer>postgresql-driver</layer>
                     </layers>

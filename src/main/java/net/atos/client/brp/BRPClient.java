@@ -5,6 +5,8 @@
 
 package net.atos.client.brp;
 
+import java.time.temporal.ChronoUnit;
+
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,11 +14,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.client.brp.exception.PersoonNotFoundException;
 import net.atos.client.brp.exception.PersoonNotFoundExceptionMapping;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
@@ -42,6 +44,7 @@ import net.atos.client.brp.util.JsonbConfiguration;
 })
 @Produces({"application/hal+json", "application/problem+json"})
 @Path("api/brp/ingeschrevenpersonen")
+@Timeout(unit = ChronoUnit.SECONDS, value = 2)
 public interface BRPClient {
 
     /**
@@ -87,6 +90,5 @@ public interface BRPClient {
      */
     @GET
     @Path("{burgerservicenummer}")
-    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer,
-            @QueryParam("fields") final String fields) throws PersoonNotFoundException;
+    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer, @QueryParam("fields") final String fields);
 }

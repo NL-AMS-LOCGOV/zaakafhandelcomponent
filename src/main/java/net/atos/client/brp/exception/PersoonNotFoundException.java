@@ -5,5 +5,5 @@
 
 package net.atos.client.brp.exception;
 
-public class PersoonNotFoundException extends Exception {
+public class PersoonNotFoundException extends RuntimeException {
 }
