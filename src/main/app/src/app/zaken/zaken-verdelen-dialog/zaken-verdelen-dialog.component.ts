@@ -15,6 +15,7 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {Observable, Subscription} from 'rxjs';
 import {Medewerker} from '../../identity/model/medewerker';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'werkvoorraad-verdelen-dialog',
@@ -35,7 +36,8 @@ export class ZakenVerdelenDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
         private mfbService: MaterialFormBuilderService,
         private zakenService: ZakenService,
-        private identityService: IdentityService) {
+        private identityService: IdentityService,
+        private translate: TranslateService) {
     }
 
     close(): void {
@@ -43,18 +45,18 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.groepFormItem = this.mfbService.getFormItem(new AutocompleteFormFieldBuilder().id('groep')
-                                                                                           .label('groep')
-                                                                                           .optionLabel('naam')
-                                                                                           .options(this.identityService.listGroepen())
-                                                                                           .build());
-        this.filterFormItem = this.mfbService.getFormItem(new CheckboxFormFieldBuilder().id('filter')
-                                                                                        .label('filter.groep')
-                                                                                        .value(true)
-                                                                                        .build());
-        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder().id('reden')
-                                                                                       .label('reden')
-                                                                                       .build());
+        this.groepFormItem = this.mfbService.getFormItem(new AutocompleteFormFieldBuilder(this.translate).id('groep')
+                                                                                                         .label('groep')
+                                                                                                         .optionLabel('naam')
+                                                                                                         .options(this.identityService.listGroepen())
+                                                                                                         .build());
+        this.filterFormItem = this.mfbService.getFormItem(new CheckboxFormFieldBuilder(this.translate).id('filter')
+                                                                                                      .label('filter.groep')
+                                                                                                      .value(true)
+                                                                                                      .build());
+        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder(this.translate).id('reden')
+                                                                                                     .label('reden')
+                                                                                                     .build());
         this.subscriptions$.push(this.groepFormItem.data.formControl.valueChanges.subscribe(value => {
             this.laadMedewerkers();
         }));
@@ -72,12 +74,12 @@ export class ZakenVerdelenDialogComponent implements OnInit {
         } else {
             medewerkers = this.identityService.listMedewerkers();
         }
-        this.medewerkerFormItem = this.mfbService.getFormItem(new AutocompleteFormFieldBuilder().id('behandelaar')
-                                                                                                .label('behandelaar')
-                                                                                                .optionLabel('naam')
-                                                                                                .options(medewerkers)
-                                                                                                .value(behandelaar)
-                                                                                                .build());
+        this.medewerkerFormItem = this.mfbService.getFormItem(new AutocompleteFormFieldBuilder(this.translate).id('behandelaar')
+                                                                                                              .label('behandelaar')
+                                                                                                              .optionLabel('naam')
+                                                                                                              .options(medewerkers)
+                                                                                                              .value(behandelaar)
+                                                                                                              .build());
     }
 
     ngOnDestroy(): void {

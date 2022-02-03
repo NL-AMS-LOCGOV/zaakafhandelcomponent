@@ -6,6 +6,7 @@
 import {FormControl} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldConfig, FormFieldHint} from './form-field-config';
+import {TranslateService} from '@ngx-translate/core';
 
 export abstract class AbstractFormField {
     id: string;
@@ -19,8 +20,7 @@ export abstract class AbstractFormField {
 
     abstract fieldType: FieldType;
 
-    protected constructor() {
-
+    protected constructor(protected translate: TranslateService) {
     }
 
     get hint(): FormFieldHint {
@@ -45,22 +45,44 @@ export abstract class AbstractFormField {
 
     getErrorMessage(): string {
         if (this.formControl.hasError('required')) {
-            return 'verplicht';
+            return this.labeled('msg.error.required', {});
         } else if (this.formControl.hasError('min')) {
-            return `min, min: ${this.formControl.errors.min.min}, actual: ${this.formControl.errors.min.actual}`;
+            return this.labeled('msg.error.teklein', {
+                min: this.formControl.errors.min.min,
+                actual: this.formControl.errors.min.actual
+            });
         } else if (this.formControl.hasError('max')) {
-            return `max, max: ${this.formControl.errors.max.min}, actual: ${this.formControl.errors.max.actual}`;
+            return this.labeled('msg.error.tegroot', {
+                max: this.formControl.errors.max.max,
+                actual: this.formControl.errors.max.actual
+            });
         } else if (this.formControl.hasError('minlength')) {
-            return `minlength, requiredLength: ${this.formControl.errors.minlength.requiredLength}, actualLength: ${this.formControl.errors.minlength.actualLength}`;
+            return this.labeled('msg.error.tekort', {
+                requiredLength: this.formControl.errors.minlength.requiredLength,
+                actualLength: this.formControl.errors.minlength.actualLength
+            });
         } else if (this.formControl.hasError('maxlength')) {
-            return `maxlength, requiredLength: ${this.formControl.errors.maxlength.requiredLength}, actualLength: ${this.formControl.errors.maxlength.actualLength}`;
+            return this.labeled('msg.error.telang', {
+                requiredLength: this.formControl.errors.maxlength.requiredLength,
+                actualLength: this.formControl.errors.maxlength.actualLength
+            });
         } else if (this.formControl.hasError('email')) {
-            return 'email';
+            return this.labeled('msg.error.invalid.email', {});
         } else if (this.formControl.hasError('pattern')) {
-            return `pattern, requiredPattern: ${this.formControl.errors.pattern.requiredPattern}, actualValue: ${this.formControl.errors.pattern.actualValue}`;
+            return this.labeled('msg.error.invalid.formaat', {
+                requiredPattern: this.formControl.errors.pattern.requiredPattern,
+                actualValue: this.formControl.errors.pattern.actualValue
+            });
         } else {
             return '';
         }
+    }
+
+    private labeled(key: string, params: object): string {
+        if (this.label) {
+            params['label'] = this.translate.instant(this.label);
+        }
+        return this.translate.instant(key, params);
     }
 
     hasReadonlyView() {
