@@ -250,5 +250,13 @@
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
   "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
   " 8 ": ">>--> DASHBOARD <--<<",
-  "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken"
+  "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken",
+  "initiator.titel": "Persoonsgegevens aanvrager",
+  "initiator.naam": "Naam",
+  "initiator.bsn": "BSN",
+  "initiator.geboortedatum": "Geboortedatum",
+  "initiator.inschrijfadres": "Inschrijfadres",
+  "initiator.telefoonnummer": "Telefoonnummer",
+  "initiator.telefoonnummer2": "Telefoonnummer (2e)",
+  "initiator.emailadres": "E-mailadres"
 }
