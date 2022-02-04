@@ -7,14 +7,12 @@ package net.atos.client.zgw.shared.exception;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
 /**
  *
  */
-@Provider
 public class RuntimeExceptionMapper implements ResponseExceptionMapper<RuntimeException> {
 
 

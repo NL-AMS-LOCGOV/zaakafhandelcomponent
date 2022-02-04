@@ -5,6 +5,7 @@
 
 import {AbstractFormField} from './abstract-form-field';
 import {Observable} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Abstract class voor Form Fields die meerdere waardes tonen (checkbox, radiobutton, select)
@@ -15,8 +16,8 @@ export abstract class AbstractChoicesFormField extends AbstractFormField {
     public options: Observable<any[]>;
     public optionLabel: string | null;
 
-    protected constructor() {
-        super();
+    protected constructor(translate: TranslateService) {
+        super(translate);
     }
 
     compareWithFn = (object1: any, object2: any): boolean => {

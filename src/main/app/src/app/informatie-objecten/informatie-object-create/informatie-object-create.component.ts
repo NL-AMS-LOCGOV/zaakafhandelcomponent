@@ -24,6 +24,7 @@ import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -42,7 +43,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                 private route: ActivatedRoute,
                 private router: Router,
                 private navigation: NavigationService,
-                public utilService: UtilService) {
+                public utilService: UtilService,
+                private translate: TranslateService) {
     }
 
     ngOnInit(): void {
@@ -55,50 +57,50 @@ export class InformatieObjectCreateComponent implements OnInit {
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
-            const titel = new InputFormFieldBuilder().id('titel').label('titel')
+            const titel = new InputFormFieldBuilder(this.translate).id('titel').label('titel')
+                                                                   .validators(Validators.required)
+                                                                   .build();
+
+            const beschrijving = new InputFormFieldBuilder(this.translate).id('beschrijving').label('beschrijving')
+                                                                          .build();
+
+            const inhoud = new FileFormFieldBuilder(this.translate).id('bestandsnaam').label('bestandsnaam')
+                                                                   .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
                                                      .validators(Validators.required)
-                                                     .build();
+                                                                   .build();
 
-            const beschrijving = new InputFormFieldBuilder().id('beschrijving').label('beschrijving')
-                                                            .build();
+            const beginRegistratie = new DateFormFieldBuilder(this.translate).id('creatiedatum').label('creatiedatum')
+                                                                             .value(moment())
+                                                                             .validators(Validators.required)
+                                                                             .build();
 
-            const inhoud = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                     .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
-                                                     .validators(Validators.required)
-                                                     .build();
+            const taal = new SelectFormFieldBuilder(this.translate).id('taal').label('taal')
+                                                                   .value(talen[0])
+                                                                   .optionLabel('label').options(talen)
+                                                                   .validators(Validators.required)
+                                                                   .build();
 
-            const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum').label('creatiedatum')
-                                                               .value(moment())
-                                                               .validators(Validators.required)
-                                                               .build();
-
-            const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                     .value(talen[0])
-                                                     .optionLabel('label').options(talen)
-                                                     .validators(Validators.required)
-                                                     .build();
-
-            const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                       .value(informatieobjectStatussen[0])
-                                                       .validators(Validators.required)
+            const status = new SelectFormFieldBuilder(this.translate).id('status').label('status')
+                                                                     .value(informatieobjectStatussen[0])
+                                                                     .validators(Validators.required)
                                                        .optionLabel('label').options(informatieobjectStatussen)
-                                                       .build();
+                                                                     .build();
 
-            const documentType = new SelectFormFieldBuilder().id('informatieobjectType').label('informatieobjectType')
-                                                             .options(this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
+            const documentType = new SelectFormFieldBuilder(this.translate).id('informatieobjectType').label('informatieobjectType')
+                                                                           .options(this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
                                                              .optionLabel('omschrijving')
-                                                             .validators(Validators.required)
-                                                             .build();
+                                                                           .validators(Validators.required)
+                                                                           .build();
 
-            const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
-                                                      .validators(Validators.required)
-                                                      .build();
+            const auteur = new InputFormFieldBuilder(this.translate).id('auteur').label('auteur')
+                                                                    .validators(Validators.required)
+                                                                    .build();
 
-            const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                              .value(vertrouwelijkheidsAanduidingen[0])
-                                                              .optionLabel('label').options(vertrouwelijkheidsAanduidingen)
-                                                              .validators(Validators.required)
-                                                              .build();
+            const vertrouwelijk = new SelectFormFieldBuilder(this.translate).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                                            .value(vertrouwelijkheidsAanduidingen[0])
+                                                                            .optionLabel('label').options(vertrouwelijkheidsAanduidingen)
+                                                                            .validators(Validators.required)
+                                                                            .build();
 
             this.fields =
                 [[titel], [beschrijving], [inhoud], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal]];

@@ -34,6 +34,7 @@ import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -185,6 +186,16 @@ public class ZGWApiService implements Caching {
     @CacheResult(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
     public Optional<RolMedewerker> findBehandelaarForZaak(final URI zaakUrl) {
         return Optional.ofNullable((RolMedewerker) findRolForZaak(zaakUrl, BetrokkeneType.MEDEWERKER, AardVanRol.BEHANDELAAR));
+    }
+
+    /**
+     * Find {@link RolNatuurlijkPersoon} for {@link Zaak} with initiator {@link AardVanRol}.
+     *
+     * @param zaakUrl {@link URI}
+     * @return {@link RolMedewerker} or 'null'.
+     */
+    public Optional<RolNatuurlijkPersoon> findInitiatorForZaak(final URI zaakUrl) {
+        return Optional.ofNullable((RolNatuurlijkPersoon) findRolForZaak(zaakUrl, BetrokkeneType.NATUURLIJK_PERSOON, AardVanRol.INITIATOR));
     }
 
     private Rol<?> findRolForZaak(final URI zaakUrl, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {

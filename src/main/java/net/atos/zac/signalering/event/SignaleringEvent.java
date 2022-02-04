@@ -16,9 +16,6 @@ public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID
 
     private SignaleringType.Type objectType;
 
-    /* TODO https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/267 */
-    private ID parentId;
-
     /**
      * Constructor for the sake of JAXB
      */
@@ -41,13 +38,5 @@ public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID
     @Override
     public SignaleringType.Type getObjectType() {
         return objectType;
-    }
-
-    public void setParentId(final ID parentId) {
-        this.parentId = parentId;
-    }
-
-    public ID getParentId() {
-        return parentId;
     }
 }

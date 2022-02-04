@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -180,9 +180,10 @@ public class TakenRESTService {
 
     @PATCH
     @Path("assignTologgedOnUser")
-    public void assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+    public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam());
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
+        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
@@ -206,6 +207,11 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
+        if (restTaak.behandelaar == null || !restTaak.behandelaar.gebruikersnaam.equals(
+                ingelogdeMedewerker.get().getGebruikersnaam())) {
+            flowableService.assignTask(restTaak.id, ingelogdeMedewerker.get().getGebruikersnaam());
+        }
+
         createDocuments(restTaak);
         final Map<String, String> taakdata = flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);

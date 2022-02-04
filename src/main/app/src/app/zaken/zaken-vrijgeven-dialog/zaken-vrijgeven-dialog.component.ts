@@ -10,6 +10,7 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'werkvoorraad-vrijgeven-dialog',
@@ -25,13 +26,14 @@ export class ZakenVrijgevenDialogComponent {
         public dialogRef: MatDialogRef<ZakenVrijgevenDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
         private mfbService: MaterialFormBuilderService,
-        private zakenService: ZakenService) {
+        private zakenService: ZakenService,
+        private translate: TranslateService) {
     }
 
     ngOnInit(): void {
-        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder().id('reden')
-                                                                                       .label('reden')
-                                                                                       .build());
+        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder(this.translate).id('reden')
+                                                                                                     .label('reden')
+                                                                                                     .build());
     }
 
     close(): void {

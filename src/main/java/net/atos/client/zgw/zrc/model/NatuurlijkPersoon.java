@@ -70,6 +70,12 @@ public class NatuurlijkPersoon {
      */
     private SubVerblijfBuitenland subVerblijfBuitenland;
 
+    public NatuurlijkPersoon() {}
+
+    public NatuurlijkPersoon(final String inpBsn) {
+        this.inpBsn = inpBsn;
+    }
+
     public String getInpBsn() {
         return inpBsn;
     }

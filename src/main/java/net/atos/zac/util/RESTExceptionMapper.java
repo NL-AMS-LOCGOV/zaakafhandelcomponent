@@ -34,7 +34,10 @@ public class RESTExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(final Exception e) {
         LOG.log(Level.SEVERE, e.getMessage(), e);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON).entity(getJSONMessage(e, "Algemene Fout")).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .type(MediaType.APPLICATION_JSON)
+                .entity(getJSONMessage(e, "Algemene Fout"))
+                .build();
     }
 
     private static String getJSONMessage(final Exception e, final String melding) {

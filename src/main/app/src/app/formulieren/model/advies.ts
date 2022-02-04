@@ -39,32 +39,32 @@ export class Advies extends AbstractFormulier {
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
-                                              .documenten(documenten).build()]
+            [new TextareaFormFieldBuilder(this.translate).id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
+            [new DocumentenLijstFieldBuilder(this.translate).id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
+                                                            .documenten(documenten).build()]
         );
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
+            [new ReadonlyFormFieldBuilder(this.translate).id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
+            [new DocumentenLijstFieldBuilder(this.translate).id(fields.RELEVANTE_DOCUMENTEN)
                                               .label(fields.RELEVANTE_DOCUMENTEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
                                               .readonly(true)
                                               .build()],
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
+            [new TextareaFormFieldBuilder(this.translate).id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
                                            .readonly(this.isAfgerond()).build()]
         );
         if (this.isAfgerond()) {
-            this.form.push([new DocumentenLijstFieldBuilder().id(fields.BIJLAGE)
+            this.form.push([new DocumentenLijstFieldBuilder(this.translate).id(fields.BIJLAGE)
                                                              .label(fields.BIJLAGE)
                                                              .documenten(this.getDocumenten$(fields.BIJLAGE))
                                                              .readonly(true)
                                                              .build()]);
         } else {
-            this.form.push([new TaakDocumentUploadFieldBuilder().id(fields.BIJLAGE)
+            this.form.push([new TaakDocumentUploadFieldBuilder(this.translate).id(fields.BIJLAGE)
                                                                 .label(fields.BIJLAGE)
                                                                 .defaultTitel(this.translate.instant('advies'))
                                                                 .uploadURL(this.takenService.getUploadURL(this.taak.id, fields.BIJLAGE))

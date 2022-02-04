@@ -13,17 +13,14 @@ import {TakenWerkvoorraadDatasource} from './taken-werkvoorraad-datasource';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
-import {TableColumn} from '../../shared/dynamic-table/column/table-column';
-import {TaakSortering} from '../model/taak-sortering';
-import {DatumPipe} from '../../shared/pipes/datum.pipe';
 import {detailExpand} from '../../shared/animations/animations';
-import {DatumOverschredenPipe} from '../../shared/pipes/datumOverschreden.pipe';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Conditionals} from '../../shared/edit/conditional-fn';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -42,7 +39,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+                private identityService: IdentityService, public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -59,24 +57,15 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     private setColumns() {
-        const creatieDatum: TableColumn = new TableColumn('creatiedatumTijd', 'creatiedatumTijd', true,
-            TaakSortering.CREATIEDATUM)
-        .pipe(DatumPipe);
-
-        const streefDatum: TableColumn = new TableColumn('streefdatum', 'streefdatum', true, TaakSortering.STREEFDATUM)
-        .pipe(DatumOverschredenPipe);
 
         this.dataSource.columns = [
-            new TableColumn('select', 'select', true, null, true),
-            new TableColumn('naam', 'naam', true, TaakSortering.TAAKNAAM),
-            new TableColumn('zaakIdentificatie', 'zaakIdentificatie', true),
-            new TableColumn('zaaktypeOmschrijving', 'zaaktypeOmschrijving', true),
-            creatieDatum,
-            streefDatum,
-            new TableColumn('groep', 'groep.naam', true),
-            new TableColumn('behandelaar', 'behandelaar.naam', true, TaakSortering.BEHANDELAAR),
-            new TableColumn('url', 'url', true, null, true)
+            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
         ];
+        this.dataSource.visibleColumns = [
+            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
+        ];
+        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
+        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     private getIngelogdeMedewerker() {
@@ -86,13 +75,13 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(taak: Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam != taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.gebruikersnaam !== taak.behandelaar?.gebruikersnaam;
     }
 
     assignToMe(taak: Taak, event) {
         event.stopPropagation();
-        this.takenService.assignToLoggedOnUser(taak).subscribe(() => {
-            taak['behandelaar'] = this.ingelogdeMedewerker;
+        this.takenService.assignToLoggedOnUser(taak).subscribe(returnTaak => {
+            taak['behandelaar'] = returnTaak.behandelaar;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
         });
     }
@@ -132,7 +121,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVerdelenScherm() {
-        let taken = this.selection.selected;
+        const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
             width: '350px',
             data: taken,
@@ -152,7 +141,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     openVrijgevenScherm() {
-        let taken = this.selection.selected;
+        const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVrijgevenDialogComponent, {
             width: '350px',
             data: taken,
@@ -169,6 +158,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 this.findTaken();
             }
         });
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
     }
 
     private findTaken() {
