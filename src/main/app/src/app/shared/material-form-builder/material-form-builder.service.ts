@@ -19,6 +19,7 @@ import {FileComponent} from './form-components/file/file.component';
 import {AutocompleteComponent} from './form-components/autocomplete/autocomplete.component';
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
+import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +30,7 @@ export class MaterialFormBuilderService {
     }
 
     public createForm(formFields: Array<AbstractFormField[]>): Array<FormItem[]> {
-        let form: Array<FormItem[]> = [];
+        const form: Array<FormItem[]> = [];
 
         formFields.forEach(formFieldRow => {
             form.push(this.createFormRow(formFieldRow));
@@ -43,7 +44,7 @@ export class MaterialFormBuilderService {
     }
 
     private createFormRow(formFields: AbstractFormField[]): FormItem[] {
-        let formRow: FormItem[] = [];
+        const formRow: FormItem[] = [];
         formFields.forEach(formField => {
             formRow.push(this.getFormItem(formField));
         });
@@ -74,6 +75,8 @@ export class MaterialFormBuilderService {
                 return GoogleMapsComponent;
             case FieldType.DOCUMENTEN_LIJST:
                 return DocumentenLijstComponent;
+            case FieldType.TAAK_DOCUMENT_UPLOAD:
+                return TaakDocumentUploadComponent;
             default:
                 throw new Error(`Unknown type: '${type}'`);
         }

@@ -40,6 +40,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
+import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,8 @@ import {RouterModule} from '@angular/router';
         FormFieldDirective,
         ReadonlyComponent,
         AutocompleteComponent,
-        DocumentenLijstComponent
+        DocumentenLijstComponent,
+        TaakDocumentUploadComponent
     ],
     imports: [
         CommonModule,
@@ -93,7 +95,8 @@ import {RouterModule} from '@angular/router';
         TextareaComponent,
         GoogleMapsComponent,
         AutocompleteComponent,
-        DocumentenLijstComponent
+        DocumentenLijstComponent,
+        TaakDocumentUploadComponent
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}

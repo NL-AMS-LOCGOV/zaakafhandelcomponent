@@ -11,6 +11,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {DatumPipe} from '../../../pipes/datum.pipe';
+import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
 
 @Component({
     templateUrl: './documenten-lijst.component.html',
@@ -21,10 +22,10 @@ export class DocumentenLijstComponent implements OnInit, IFormComponent {
     data: DocumentenLijstFormField;
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
-    dataSource: MatTableDataSource<EnkelvoudigInformatieobject>;
+    dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
 
-    constructor() {
+    constructor(private informatieObjectenService: InformatieObjectenService) {
     }
 
     ngOnInit(): void {
@@ -35,7 +36,7 @@ export class DocumentenLijstComponent implements OnInit, IFormComponent {
             for (const document of documenten) {
                 document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
                 document['viewLink'] = `/informatie-objecten/${document.uuid}`;
-                document['downloadLink'] = `/rest/informatieobjecten/informatieobject/${document.uuid}/download`;
+                document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
             }
             this.data.formControl.setValue(documenten.map(v => v.uuid).join(';'));
             this.dataSource = new MatTableDataSource(documenten);

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -18,18 +18,13 @@ import {Taal} from '../model/taal.enum';
 import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.enum';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
-import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Observable, of} from 'rxjs';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {TranslateService} from '@ngx-translate/core';
-
-class SelectFormFieldBuiler {
-}
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -56,13 +51,12 @@ export class InformatieObjectCreateComponent implements OnInit {
         this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
-        let vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
-        let talen = this.utilService.getEnumAsSelectList('taal', Taal);
-        let informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
+        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
+        const talen = this.utilService.getEnumAsSelectList('taal', Taal);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
-            const types = this.getTypes(zaak);
             const titel = new InputFormFieldBuilder(this.translate).id('titel').label('titel')
                                                                    .validators(Validators.required)
                                                                    .build();
@@ -71,7 +65,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                                           .build();
 
             const inhoud = new FileFormFieldBuilder(this.translate).id('bestandsnaam').label('bestandsnaam')
-                                                                   .config(this.fileUploadConfig())
+                                                                   .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
+                                                                   .validators(Validators.required)
                                                                    .build();
 
             const beginRegistratie = new DateFormFieldBuilder(this.translate).id('creatiedatum').label('creatiedatum')
@@ -87,11 +82,14 @@ export class InformatieObjectCreateComponent implements OnInit {
 
             const status = new SelectFormFieldBuilder(this.translate).id('status').label('status')
                                                                      .value(informatieobjectStatussen[0])
+                                                                     .validators(Validators.required)
                                                                      .optionLabel('label').options(informatieobjectStatussen)
                                                                      .build();
 
             const documentType = new SelectFormFieldBuilder(this.translate).id('informatieobjectType').label('informatieobjectType')
-                                                                           .options(types)
+                                                                           .options(
+                                                                               this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
+                                                                           .optionLabel('omschrijving')
                                                                            .validators(Validators.required)
                                                                            .build();
 
@@ -114,13 +112,13 @@ export class InformatieObjectCreateComponent implements OnInit {
         if (formGroup) {
             const infoObject = new EnkelvoudigInformatieobject();
             Object.keys(formGroup.controls).forEach((key) => {
-                let control = formGroup.controls[key];
-                let value = control.value;
+                const control = formGroup.controls[key];
+                const value = control.value;
                 if (value instanceof moment) {
-                    infoObject[key] = value; //conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
-                } else if (key == 'informatieobjectType') {
-                    infoObject[key] = this.informatieobjecttypes[value].url;
-                } else if (key == 'taal' || key == 'status' || key == 'vertrouwelijkheidaanduiding') {
+                    infoObject[key] = value; // conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
+                } else if (key === 'informatieobjectType') {
+                    infoObject[key] = value.url;
+                } else if (key === 'taal' || key === 'status' || key === 'vertrouwelijkheidaanduiding') {
                     infoObject[key] = value.value;
                 } else {
                     infoObject[key] = value;
@@ -135,20 +133,4 @@ export class InformatieObjectCreateComponent implements OnInit {
         }
     }
 
-    getTypes(zaak): Observable<string[]> {
-        let types = [];
-        this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
-            this.informatieobjecttypes = [];
-            response.forEach(type => {
-                this.informatieobjecttypes[type.omschrijving] = type;
-                types.push(type.omschrijving);
-            });
-        });
-        return of(types);
-    }
-
-    fileUploadConfig(): FileFieldConfig {
-        const uploadUrl = this.informatieObjectenService.uploadUrl.replace('{zaakUuid}', this.zaakUuid);
-        return new FileFieldConfig(uploadUrl, [Validators.required], 1);
-    }
 }

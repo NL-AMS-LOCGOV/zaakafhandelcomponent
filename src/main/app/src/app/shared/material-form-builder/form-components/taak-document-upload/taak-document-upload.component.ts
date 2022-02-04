@@ -1,78 +1,104 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FileFormField} from './file-form-field';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {TaakDocumentUploadFormField} from './taak-document-upload-form-field';
 import {IFormComponent} from '../../model/iform-component';
 import {HttpClient, HttpEvent, HttpEventType, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
-import {UploadStatus} from './upload-status.enum';
 import {FoutAfhandelingService} from '../../../../fout-afhandeling/fout-afhandeling.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
+import {Informatieobjecttype} from '../../../../informatie-objecten/model/informatieobjecttype';
 
 @Component({
-    templateUrl: './file.component.html',
-    styleUrls: ['./file.component.less']
+    templateUrl: './taak-document-upload.component.html',
+    styleUrls: ['./taak-document-upload.component.less']
 })
-export class FileComponent implements OnInit, IFormComponent {
+export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
 
     @ViewChild('fileInput') fileInput: ElementRef;
-
-    data: FileFormField;
+    data: TaakDocumentUploadFormField;
     progress = 0;
     subscription: Subscription;
-    status: string = UploadStatus.SELECTEER_BESTAND;
+    formGroup: FormGroup;
+    uploadControl: FormControl;
+    titelControl: FormControl;
+    typeControl: FormControl;
+    types$: Observable<Informatieobjecttype[]>;
+    UploadStatus = {
+        SELECTEER_BESTAND: 'SELECTEER_BESTAND',
+        BEZIG: 'BEZIG',
+        GEREED: 'GEREED'
+    };
+    status = this.UploadStatus.SELECTEER_BESTAND;
 
-    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private changeDetector: ChangeDetectorRef) {
+    constructor(
+        private informatieObjectenService: InformatieObjectenService,
+        private http: HttpClient,
+        private foutAfhandelingService: FoutAfhandelingService,
+        private formBuilder: FormBuilder) {
     }
 
     ngOnInit(): void {
+        this.types$ = this.informatieObjectenService.listInformatieobjecttypesForZaak(this.data.zaakUUID);
+        this.uploadControl = new FormControl(null, this.data.formControl.validator);
+        this.titelControl = new FormControl(this.data.defaultTitel, [Validators.required]);
+        this.typeControl = new FormControl(null, [Validators.required]);
+        this.formGroup = this.formBuilder.group({
+            bestandsnaam: this.uploadControl,
+            documentTitel: this.titelControl,
+            documentType: this.typeControl
+        });
     }
 
     uploadFile(file: File) {
         this.data.uploadError = null;
         if (file) {
-
             if (!this.isBestandstypeToegestaan(file)) {
                 this.data.uploadError = `Het bestandtype is niet toegestaan (${this.getBestandsextensie(file)})`;
                 return;
             }
-
             if (file.size > this.getMaxSizeBytes()) {
                 this.data.uploadError = `Bestand is te groot (${this.formatFileSizeMB(file.size)})`;
                 return;
             }
-
+            this.uploadControl.setValue(file.name);
+            this.updateValue();
             this.subscription = this.createRequest(file).subscribe({
                 next: (event: HttpEvent<any>) => {
                     switch (event.type) {
                         case HttpEventType.Sent:
-                            this.status = UploadStatus.BEZIG;
+                            this.status = this.UploadStatus.BEZIG;
                             break;
                         case HttpEventType.ResponseHeader:
                             break;
                         case HttpEventType.UploadProgress:
                             this.progress = Math.round(event.loaded / event.total * 100);
-                            this.updateInput(`${file.name} | ${this.progress}%`);
+                            this.uploadControl.setValue(`${file.name} | ${this.progress}%`);
                             break;
                         case HttpEventType.Response:
                             this.fileInput.nativeElement.value = null;
-                            this.updateInput(file.name);
-                            this.status = UploadStatus.GEREED;
+                            this.uploadControl.setValue(file.name);
+                            this.status = this.UploadStatus.GEREED;
                             setTimeout(() => {
                                 this.progress = 0;
                             }, 1500);
                     }
                 },
                 error: (error) => {
-                    this.status = UploadStatus.SELECTEER_BESTAND;
+                    this.uploadControl.setValue(null);
+                    this.updateValue();
+                    this.status = this.UploadStatus.SELECTEER_BESTAND;
                     this.fileInput.nativeElement.value = null;
                     this.data.uploadError = this.foutAfhandelingService.getFout(error);
                 }
             });
         } else {
-            this.updateInput(null);
+            this.uploadControl.setValue(null);
+            this.updateValue();
         }
     }
 
@@ -102,13 +128,13 @@ export class FileComponent implements OnInit, IFormComponent {
         if (!this.subscription.closed) {
             this.subscription.unsubscribe();
         }
-        this.status = UploadStatus.SELECTEER_BESTAND;
+        this.status = this.UploadStatus.SELECTEER_BESTAND;
         this.fileInput.nativeElement.value = null;
-        this.updateInput(null);
+        this.uploadControl.setValue(null);
+        this.updateValue();
     }
 
     createRequest(file: File): Observable<any> {
-        this.updateInput(file.name);
         const formData: FormData = new FormData();
         formData.append('filename', file.name);
         formData.append('filesize', file.size.toString());
@@ -124,8 +150,25 @@ export class FileComponent implements OnInit, IFormComponent {
         });
     }
 
-    updateInput(inputValue: string) {
-        this.data.formControl.setValue(inputValue);
-        this.changeDetector.detectChanges();
+    updateValue() {
+        if (!this.data.required) {
+            if (this.uploadControl.value) {
+                this.data.formControl.setValidators(Validators.required);
+            } else {
+                this.data.formControl.setValidators([]);
+            }
+        }
+        if (this.uploadControl.value && this.formGroup.valid) {
+            this.data.formControl.setValue(JSON.stringify(this.formGroup.value));
+        } else {
+            this.data.formControl.setValue(null);
+        }
+    }
+
+    compareInfoObjectType(object1: Informatieobjecttype, object2: Informatieobjecttype): boolean {
+        if (object1 && object2) {
+            return object1.url === object2.url;
+        }
+        return false;
     }
 }

@@ -5,7 +5,7 @@
 
 import {FormControl} from '@angular/forms';
 import {FieldType} from './field-type.enum';
-import {FormFieldConfig, FormFieldHint} from './form-field-config';
+import {FormFieldHint} from './form-field-hint';
 import {TranslateService} from '@ngx-translate/core';
 
 export abstract class AbstractFormField {
@@ -13,34 +13,12 @@ export abstract class AbstractFormField {
     label: string;
     required: boolean;
     readonly: boolean;
-
-    private readonly _formControl: FormControl = new FormControl();
-    private _hint: FormFieldHint;
-    private _config: FormFieldConfig;
+    readonly formControl: FormControl = new FormControl();
+    hint: FormFieldHint;
 
     abstract fieldType: FieldType;
 
     protected constructor(protected translate: TranslateService) {
-    }
-
-    get hint(): FormFieldHint {
-        return this._hint;
-    }
-
-    set hint(value: FormFieldHint) {
-        this._hint = value;
-    }
-
-    get formControl(): FormControl {
-        return this._formControl;
-    }
-
-    get config(): FormFieldConfig {
-        return this._config;
-    }
-
-    set config(value: FormFieldConfig) {
-        this._config = value;
     }
 
     getErrorMessage(): string {

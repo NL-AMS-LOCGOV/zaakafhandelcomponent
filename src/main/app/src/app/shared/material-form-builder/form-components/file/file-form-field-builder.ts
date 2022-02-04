@@ -3,21 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {FileFormField} from './file-form-field';
-import {FileFieldConfig} from '../../model/file-field-config';
+import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 
-export class FileFormFieldBuilder extends AbstractFormFieldBuilder {
+export class FileFormFieldBuilder extends AbstractFileFormFieldBuilder {
     protected readonly formField: FileFormField;
 
     constructor(translate: TranslateService) {
         super();
         this.formField = new FileFormField(translate);
+        this.updateHint();
     }
 
-    config(config: FileFieldConfig): this {
-        this.formField.config = config;
-        return this;
-    }
 }

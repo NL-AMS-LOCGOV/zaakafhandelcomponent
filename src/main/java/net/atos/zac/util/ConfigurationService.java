@@ -32,6 +32,10 @@ public class ConfigurationService {
 
     public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
 
+    public static final String OMSCHRIJVING_TAAK_DOCUMENT = "taak-document";
+
+    public static final String DEFAULT_DOCUMENT_TAAL = "nld";
+
     @Inject
     private ZTCClientService ztcClientService;
 

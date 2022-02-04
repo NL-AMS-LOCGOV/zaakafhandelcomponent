@@ -62,14 +62,14 @@ export class ParameterEditComponent implements OnInit {
 
     readPlanItemParameters(event: MatSelectChange): void {
         this.planItemParameters = [];
-        let caseDefinition = event.value;
+        const caseDefinition = event.value;
         if (this.compareObject(caseDefinition, this.parameters.caseDefinition)) {
             this.planItemParameters = this.parameters.planItemParameters;
             this.updateForm();
         } else {
             this.adminService.readCaseDefinition(caseDefinition.key).subscribe(data => {
                 data.planItemDefinitions.forEach(planItemDefinition => {
-                    let planItemParameter: PlanItemParameter = new PlanItemParameter();
+                    const planItemParameter: PlanItemParameter = new PlanItemParameter();
                     planItemParameter.planItemDefinition = planItemDefinition;
                     planItemParameter.defaultGroep = this.parameters.defaultGroep;
                     this.planItemParameters.push(planItemParameter);
@@ -80,7 +80,7 @@ export class ParameterEditComponent implements OnInit {
     }
 
     getControl(planItemParameter: PlanItemParameter, field: string): FormControl {
-        return <FormControl>this.planItemFormGroup.get(`${planItemParameter.planItemDefinition.id}__${field}`);
+        return this.planItemFormGroup.get(`${planItemParameter.planItemDefinition.id}__${field}`) as FormControl;
     }
 
     createForm() {
@@ -131,7 +131,7 @@ export class ParameterEditComponent implements OnInit {
 
     compareObject(object1: any, object2: any): boolean {
         if (typeof object1 === 'string') {
-            return object1 == object2;
+            return object1 === object2;
         }
         if (object1 && object2) {
             if (object1.hasOwnProperty('key')) {
@@ -143,7 +143,7 @@ export class ParameterEditComponent implements OnInit {
             } else if (object1.hasOwnProperty('name')) {
                 return object1.name === object2.name;
             }
-            return object1 == object2;
+            return object1 === object2;
         }
         return false;
     }

@@ -5,28 +5,31 @@
 
 import {AbstractFormulier} from './abstract-formulier';
 import {Validators} from '@angular/forms';
-import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {TakenService} from '../../taken/taken.service';
+import {TaakDocumentUploadFieldBuilder} from '../../shared/material-form-builder/form-components/taak-document-upload/taak-document-upload-field-builder';
 
 export class Advies extends AbstractFormulier {
 
     fields = {
-        TOELICHTING: 'toelichting',
+        TOELICHTING: 'toelichtingAdvies',
         VRAAG: 'vraag',
         ADVIES: 'advies',
-        DOCUMENT: 'document',
+        BIJLAGE: 'bijlage',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
-    constructor(translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
+    constructor(
+        translate: TranslateService,
+        public takenService: TakenService,
+        public informatieObjectenService: InformatieObjectenService) {
         super(translate);
     }
 
@@ -47,20 +50,28 @@ export class Advies extends AbstractFormulier {
         this.form.push(
             [new ReadonlyFormFieldBuilder(this.translate).id(fields.VRAAG).label(fields.VRAAG).value(this.getDataElement(fields.VRAAG)).build()],
             [new DocumentenLijstFieldBuilder(this.translate).id(fields.RELEVANTE_DOCUMENTEN)
-                                                            .label(fields.RELEVANTE_DOCUMENTEN)
-                                                            .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                                            .readonly(true)
-                                                            .build()],
+                                              .label(fields.RELEVANTE_DOCUMENTEN)
+                                              .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                              .readonly(true)
+                                              .build()],
             [new TextareaFormFieldBuilder(this.translate).id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
-                                                         .readonly(this.isAfgerond()).build()],
-            [new FileFormFieldBuilder(this.translate).id(fields.DOCUMENT).label(fields.DOCUMENT).config(this.fileUploadConfig()).readonly(this.isAfgerond())
-                                                     .build()]
+                                           .readonly(this.isAfgerond()).build()]
         );
-    }
-
-    fileUploadConfig(): FileFieldConfig {
-        const uploadUrl = 'URL';
-        return new FileFieldConfig(uploadUrl, [Validators.required], 1);
+        if (this.isAfgerond()) {
+            this.form.push([new DocumentenLijstFieldBuilder(this.translate).id(fields.BIJLAGE)
+                                                             .label(fields.BIJLAGE)
+                                                             .documenten(this.getDocumenten$(fields.BIJLAGE))
+                                                             .readonly(true)
+                                                             .build()]);
+        } else {
+            this.form.push([new TaakDocumentUploadFieldBuilder(this.translate).id(fields.BIJLAGE)
+                                                                .label(fields.BIJLAGE)
+                                                                .defaultTitel(this.translate.instant('advies'))
+                                                                .uploadURL(this.takenService.getUploadURL(this.taak.id, fields.BIJLAGE))
+                                                                .zaakUUID(this.taak.zaakUUID)
+                                                                .readonly(this.isAfgerond())
+                                                                .build()]);
+        }
     }
 
     getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {

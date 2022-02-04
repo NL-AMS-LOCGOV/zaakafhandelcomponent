@@ -20,7 +20,6 @@ import {EnkelvoudigInformatieObjectZoekParameters} from './model/enkelvoudig-inf
 export class InformatieObjectenService {
 
     private basepath = '/rest/informatieobjecten';
-    public uploadUrl = this.basepath + '/informatieobject/upload/{zaakUuid}';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
@@ -33,6 +32,12 @@ export class InformatieObjectenService {
 
     listInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/${zaakTypeID}`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listInformatieobjecttypesForZaak(zaakUUID): Observable<Informatieobjecttype[]> {
+        return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/zaak/${zaakUUID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -59,5 +64,13 @@ export class InformatieObjectenService {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/informatieobject/${uuid}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
+    }
+
+    getDownloadURL(uuid: string): string {
+        return `${this.basepath}/informatieobject/${uuid}/download`;
+    }
+
+    getUploadURL(uuid: string): string {
+        return `${this.basepath}/informatieobject/upload/${uuid}`;
     }
 }

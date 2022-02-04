@@ -5,8 +5,7 @@
 
 <mat-form-field appearance="fill" class="full-width" (click)="fileInput.click()">
     <mat-label>{{data.label | translate}}</mat-label>
-    <input [formControl]="data.formControl" [id]="data.id + '_filefield'" [readonly]="true" [required]="data.required"
-           matInput/>
+    <input [formControl]="data.formControl" [id]="data.id + '_filefield'" [readonly]="true" [required]="data.required" matInput>
     <button *ngIf="status == 'SELECTEER_BESTAND'" mat-mini-fab matSuffix type="button">
         <mat-icon>upload</mat-icon>
     </button>
@@ -20,6 +19,6 @@
     <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
         {{data.getErrorMessage()}}
     </mat-hint>
-    <input hidden="hidden" type="file" [accept]="data.config.fileTypes" #fileInput id="uploadFile" (change)="uploadFile($event.target.files[0])"
-           name="uploadFile"/>
+    <input hidden="hidden" type="file" [accept]="data.fileTypes" #fileInput id="uploadFile" (change)="uploadFile($event.target.files[0])"
+           name="uploadFile">
 </mat-form-field>

@@ -140,12 +140,19 @@ public class InformatieObjectenRESTService {
         return restInformatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
     }
 
+    @GET
+    @Path("informatieobjecttypes/zaak/{zaakUuid}")
+    public List<RESTInformatieobjecttype> listInformatieobjecttypesForZaak(@PathParam("zaakUuid") final UUID zaakID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakID);
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+        return restInformatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
+    }
 
     @POST
-    @Path("informatieobject/upload/{zaakUuid}")
+    @Path("informatieobject/upload/{uuid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@PathParam("zaakUuid") final String zaakUuid, @MultipartForm final RESTFileUpload data) {
-        httpSession.get().setAttribute("FILE_" + zaakUuid, data);
+    public Response uploadFile(@PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
+        httpSession.get().setAttribute("FILE_" + uuid, data);
         return Response.ok("\"Success\"").build();
     }
 
