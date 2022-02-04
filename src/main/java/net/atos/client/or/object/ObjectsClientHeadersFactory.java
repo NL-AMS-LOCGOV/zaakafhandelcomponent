@@ -22,11 +22,7 @@ public class ObjectsClientHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(AUTHORIZATION, generateToken());
+        clientOutgoingHeaders.add(AUTHORIZATION, String.format("Token %s", TOKEN));
         return clientOutgoingHeaders;
-    }
-
-    public static String generateToken() {
-        return String.format("Token %s", TOKEN);
     }
 }

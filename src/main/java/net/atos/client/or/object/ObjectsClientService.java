@@ -5,19 +5,14 @@
 
 package net.atos.client.or.object;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-import java.net.URI;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.client.Invocation;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.or.object.model.ORObject;
-import net.atos.client.util.ClientFactory;
 
 @ApplicationScoped
 public class ObjectsClientService {
@@ -37,14 +32,14 @@ public class ObjectsClientService {
     }
 
     /**
-     * Read {@link ORObject} via its URI.
+     * Read {@link ORObject} via its UUID.
      * Throws a RuntimeException if the {@link ORObject} can not be read.
      *
-     * @param objectURI URI of {@link ORObject}.
+     * @param object UUID of {@link ORObject}.
      * @return {@link ORObject}. Never 'null'!
      */
-    public ORObject readObject(final URI objectURI) {
-        return createInvocationBuilder(objectURI).get(ORObject.class);
+    public ORObject readObject(final UUID object) {
+        return objectsClient.objectRead(object);
     }
 
     /**
@@ -56,13 +51,5 @@ public class ObjectsClientService {
      */
     public ORObject updateObject(final ORObject object) {
         return objectsClient.objectUpdate(object.getUuid(), object);
-    }
-
-    private Invocation.Builder createInvocationBuilder(final URI uri) {
-        return ClientFactory.create().target(uri)
-                .request(APPLICATION_JSON)
-                .header(AUTHORIZATION, ObjectsClientHeadersFactory.generateToken())
-                .header(ObjectsClient.ACCEPT_CRS, ObjectsClient.ACCEPT_CRS_VALUE)
-                .header(ObjectsClient.CONTENT_CRS, ObjectsClient.ACCEPT_CRS_VALUE);
     }
 }
