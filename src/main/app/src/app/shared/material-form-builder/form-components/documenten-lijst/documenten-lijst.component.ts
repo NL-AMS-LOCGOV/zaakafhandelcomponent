@@ -22,7 +22,7 @@ export class DocumentenLijstComponent implements OnInit, IFormComponent {
     data: DocumentenLijstFormField;
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
-    dataSource: MatTableDataSource<EnkelvoudigInformatieobject>;
+    dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
 
     constructor(private informatieObjectenService: InformatieObjectenService) {

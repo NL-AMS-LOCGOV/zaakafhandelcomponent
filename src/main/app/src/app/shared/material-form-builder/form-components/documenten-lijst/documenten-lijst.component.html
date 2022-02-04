@@ -7,7 +7,7 @@
     <label [for]="data.id" class="label">
         <div>{{data.label | translate}}</div>
     </label>
-    <div *ngIf="dataSource.data?.length == 0" [id]="data.id" class="value">-</div>
+    <div *ngIf="dataSource.data.length == 0" [id]="data.id" class="value">-</div>
     <div *ngIf="dataSource.data.length > 0" [id]="data.id" class="value">
         <mat-form-field *ngIf="!data.readonly" appearance="standard">
             <mat-label>{{'filter' | translate}}</mat-label>
