@@ -138,9 +138,7 @@ public class SignaleringEventUtil {
                     case ROL:
                         switch (resource.getAction()) {
                             case CREATE:
-                                final SignaleringEvent<URI> event = created(SignaleringType.Type.ZAAK_OP_NAAM, resource);
-                                event.setParentId(mainResource.getUrl());
-                                events.add(event);
+                                events.add(created(SignaleringType.Type.ZAAK_OP_NAAM, resource));
                                 break;
                         }
                         break;

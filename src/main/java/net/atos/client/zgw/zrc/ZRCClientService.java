@@ -159,6 +159,17 @@ public class ZRCClientService implements Caching {
     }
 
     /**
+     * Read {@link Rol} via its URI.
+     * Throws a RuntimeException if the {@link Rol} can not be read.
+     *
+     * @param rolURI URI of {@link Rol}.
+     * @return {@link Rol}. Never NULL!
+     */
+    public Rol<?> readRol(final URI rolURI) {
+        return createInvocationBuilder(rolURI).get(Rol.class);
+    }
+
+    /**
      * Read {@link Resultaat} via its URI.
      * Throws a RuntimeException if the {@link Resultaat} can not be read.
      *

@@ -44,6 +44,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
+import net.atos.client.zgw.zrc.util.JsonbConfiguration;
 
 /**
  *
@@ -53,7 +54,8 @@ import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 @RegisterProviders({
         @RegisterProvider(FoutExceptionMapper.class),
         @RegisterProvider(ValidatieFoutExceptionMapper.class),
-        @RegisterProvider(RuntimeExceptionMapper.class)})
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Path("zaken/api/v1")
 @Produces(APPLICATION_JSON)
 public interface ZRCClient {
