@@ -70,11 +70,11 @@ export class TakenService {
         );
     }
 
-    assignToLoggedOnUser(taak: Taak): Observable<void> {
+    assignToLoggedOnUser(taak: Taak): Observable<Taak> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUUID;
-        return this.http.patch<void>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
+        return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
