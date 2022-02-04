@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -159,6 +159,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     editBehandelaar(event: any): void {
         if (event.behandelaar) {
             this.taak.behandelaar = event.behandelaar;
+            this.websocketService.suspendListener(this.taakListener);
             this.takenService.assign(this.taak).subscribe(() => {
                 this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
                 this.init(this.taak);
@@ -170,6 +171,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private vrijgeven(): void {
         this.taak.behandelaar = null;
+        this.websocketService.suspendListener(this.taakListener);
         this.takenService.assign(this.taak).subscribe(() => {
             this.utilService.openSnackbar('msg.taak.vrijgegeven');
             this.init(this.taak);
@@ -212,8 +214,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         return this.ingelogdeMedewerker.gebruikersnaam !== this.taak.behandelaar?.gebruikersnaam;
     }
 
-    assignToMe(event: any): void {
+    assignToMe(): void {
+        this.websocketService.suspendListener(this.taakListener);
         this.takenService.assignToLoggedOnUser(this.taak).subscribe(() => {
+            this.taak.behandelaar = this.ingelogdeMedewerker;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
             this.init(this.taak);
         });
