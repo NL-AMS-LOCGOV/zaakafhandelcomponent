@@ -66,7 +66,7 @@ export class InformatieObjectCreateComponent implements OnInit {
 
             const inhoud = new FileFormFieldBuilder(this.translate).id('bestandsnaam').label('bestandsnaam')
                                                                    .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
-                                                     .validators(Validators.required)
+                                                                   .validators(Validators.required)
                                                                    .build();
 
             const beginRegistratie = new DateFormFieldBuilder(this.translate).id('creatiedatum').label('creatiedatum')
@@ -83,12 +83,13 @@ export class InformatieObjectCreateComponent implements OnInit {
             const status = new SelectFormFieldBuilder(this.translate).id('status').label('status')
                                                                      .value(informatieobjectStatussen[0])
                                                                      .validators(Validators.required)
-                                                       .optionLabel('label').options(informatieobjectStatussen)
+                                                                     .optionLabel('label').options(informatieobjectStatussen)
                                                                      .build();
 
             const documentType = new SelectFormFieldBuilder(this.translate).id('informatieobjectType').label('informatieobjectType')
-                                                                           .options(this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
-                                                             .optionLabel('omschrijving')
+                                                                           .options(
+                                                                               this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
+                                                                           .optionLabel('omschrijving')
                                                                            .validators(Validators.required)
                                                                            .build();
 

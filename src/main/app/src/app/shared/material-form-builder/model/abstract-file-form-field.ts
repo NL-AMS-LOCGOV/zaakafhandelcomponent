@@ -5,6 +5,7 @@
 
 import {AbstractFormField} from './abstract-form-field';
 import {AppGlobals} from '../../../app.globals';
+import {TranslateService} from '@ngx-translate/core';
 
 export abstract class AbstractFileFormField extends AbstractFormField {
 
@@ -13,8 +14,8 @@ export abstract class AbstractFileFormField extends AbstractFormField {
     uploadURL: string;
     uploadError: string;
 
-    protected constructor() {
-        super();
+    protected constructor(translate: TranslateService) {
+        super(translate);
     }
 
     getErrorMessage(): string {
