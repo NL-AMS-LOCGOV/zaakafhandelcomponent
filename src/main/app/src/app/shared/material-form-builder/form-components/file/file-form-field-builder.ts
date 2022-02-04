@@ -3,20 +3,16 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {FileFormField} from './file-form-field';
-import {FileFieldConfig} from '../../model/file-field-config';
+import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field-builder';
 
-export class FileFormFieldBuilder extends AbstractFormFieldBuilder {
+export class FileFormFieldBuilder extends AbstractFileFormFieldBuilder {
     protected readonly formField: FileFormField;
 
     constructor() {
         super();
         this.formField = new FileFormField();
+        this.updateHint();
     }
 
-    config(config: FileFieldConfig): this {
-        this.formField.config = config;
-        return this;
-    }
 }

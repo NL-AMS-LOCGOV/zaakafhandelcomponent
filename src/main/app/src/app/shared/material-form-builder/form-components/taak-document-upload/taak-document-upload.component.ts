@@ -43,15 +43,14 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
     }
 
     ngOnInit(): void {
-        console.log(this.data.config);
-        this.types$ = this.informatieObjectenService.listInformatieobjecttypesForZaak(this.data.config.zaakUUID);
+        this.types$ = this.informatieObjectenService.listInformatieobjecttypesForZaak(this.data.zaakUUID);
         this.uploadControl = new FormControl(null, this.data.formControl.validator);
-        this.titelControl = new FormControl('Advies', [Validators.required]);
+        this.titelControl = new FormControl(this.data.defaultTitel, [Validators.required]);
         this.typeControl = new FormControl(null, [Validators.required]);
         this.formGroup = this.formBuilder.group({
-            file: this.uploadControl,
-            titel: this.titelControl,
-            type: this.typeControl
+            bestandsnaam: this.uploadControl,
+            documentTitel: this.titelControl,
+            documentType: this.typeControl
         });
     }
 
@@ -104,7 +103,7 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
     }
 
     getMaxSizeBytes() {
-        return this.data.config.fileSizeMB * 1024 * 1024;
+        return this.data.fileSizeMB * 1024 * 1024;
     }
 
     formatFileSizeMB(bytes: number): string {
@@ -112,7 +111,7 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
     }
 
     isBestandstypeToegestaan(file: File): boolean {
-        const extensies = this.data.config.fileTypes;
+        const extensies = this.data.fileTypes;
         const extensiesArray = extensies.split(',').map(s => s.trim().toLowerCase());
         return extensiesArray.indexOf('.' + this.getBestandsextensie(file)) > -1;
     }
@@ -144,7 +143,7 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
         const httpHeaders = new HttpHeaders();
         httpHeaders.append('Content-Type', 'multipart/form-data');
         httpHeaders.append('Accept', 'application/json');
-        return this.http.post(this.data.config.restURL, formData, {
+        return this.http.post(this.data.uploadURL, formData, {
             reportProgress: true,
             observe: 'events',
             headers: httpHeaders
@@ -159,7 +158,7 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
                 this.data.formControl.setValidators([]);
             }
         }
-        if (this.formGroup.valid) {
+        if (this.uploadControl.value && this.formGroup.valid) {
             this.data.formControl.setValue(JSON.stringify(this.formGroup.value));
         } else {
             this.data.formControl.setValue(null);

@@ -3,31 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
-import {FileFieldConfig} from '../../model/file-field-config';
+import {AbstractFileFormField} from '../../model/abstract-file-form-field';
 
-export class FileFormField extends AbstractFormField {
+export class FileFormField extends AbstractFileFormField {
     fieldType: FieldType = FieldType.FILE;
-    uploadError: string;
 
     constructor() {
         super();
     }
-
-    getErrorMessage(): string {
-        if (this.uploadError) {
-            return this.uploadError;
-        }
-        return super.getErrorMessage();
-    }
-
-    get config(): FileFieldConfig {
-        return super.config as FileFieldConfig;
-    }
-
-    set config(value: FileFieldConfig) {
-        super.config = value;
-    }
-
 }

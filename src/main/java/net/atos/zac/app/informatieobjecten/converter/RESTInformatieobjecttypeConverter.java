@@ -26,7 +26,7 @@ public class RESTInformatieobjecttypeConverter {
         restType.url = type.getUrl();
         restType.concept = type.getConcept();
         restType.omschrijving = type.getOmschrijving();
-        restType.vertrouwelijkheidaanduiding = type.getVertrouwelijkheidaanduiding();
+        restType.vertrouwelijkheidaanduiding = type.getVertrouwelijkheidaanduiding().toValue();
         return restType;
     }
 

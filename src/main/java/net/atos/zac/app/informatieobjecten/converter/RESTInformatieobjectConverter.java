@@ -6,8 +6,10 @@
 package net.atos.zac.app.informatieobjecten.converter;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Base64;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,6 +23,9 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
+import net.atos.zac.app.taken.model.RESTTaakDocumentData;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 
@@ -31,6 +36,10 @@ public class RESTInformatieobjectConverter {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTEnkelvoudigInformatieobject restObject = convert(zaakInformatieObject.getInformatieobject());
@@ -99,6 +108,24 @@ public class RESTInformatieobjectConverter {
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
         data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
+        return data;
+    }
+
+    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTTaakDocumentData documentData, final RESTFileUpload bestand) {
+        final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
+                ConfigurationService.BRON_ORGANISATIE,
+                LocalDate.now(),
+                documentData.documentTitel,
+                ingelogdeMedewerker.get().getNaam(),
+                ConfigurationService.DEFAULT_DOCUMENT_TAAL,
+                documentData.documentType.url,
+                Base64.getEncoder().encodeToString(bestand.file)
+        );
+        data.setFormaat(bestand.type);
+        data.setBestandsnaam(bestand.filename);
+        data.setStatus(InformatieobjectStatus.DEFINITIEF);
+        data.setIndicatieGebruiksrecht(false);
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(documentData.documentType.vertrouwelijkheidaanduiding));
         return data;
     }
 

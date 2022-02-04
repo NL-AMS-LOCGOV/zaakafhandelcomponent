@@ -5,7 +5,7 @@
 
 import {AbstractFormField} from './abstract-form-field';
 import {ValidatorFn, Validators} from '@angular/forms';
-import {FormFieldHint} from './form-field-config';
+import {FormFieldHint} from './form-field-hint';
 
 export abstract class AbstractFormFieldBuilder {
 

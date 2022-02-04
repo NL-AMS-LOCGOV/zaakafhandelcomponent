@@ -77,7 +77,7 @@ export class FileComponent implements OnInit, IFormComponent {
     }
 
     getMaxSizeBytes() {
-        return this.data.config.fileSizeMB * 1024 * 1024;
+        return this.data.fileSizeMB * 1024 * 1024;
     }
 
     formatFileSizeMB(bytes: number): string {
@@ -85,7 +85,7 @@ export class FileComponent implements OnInit, IFormComponent {
     }
 
     isBestandstypeToegestaan(file: File): boolean {
-        const extensies = this.data.config.fileTypes;
+        const extensies = this.data.fileTypes;
         const extensiesArray = extensies.split(',').map(s => s.trim().toLowerCase());
         return extensiesArray.indexOf('.' + this.getBestandsextensie(file)) > -1;
     }
@@ -117,7 +117,7 @@ export class FileComponent implements OnInit, IFormComponent {
         const httpHeaders = new HttpHeaders();
         httpHeaders.append('Content-Type', 'multipart/form-data');
         httpHeaders.append('Accept', 'application/json');
-        return this.http.post(this.data.config.restURL, formData, {
+        return this.http.post(this.data.uploadURL, formData, {
             reportProgress: true,
             observe: 'events',
             headers: httpHeaders

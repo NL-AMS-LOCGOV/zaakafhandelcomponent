@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -18,9 +18,7 @@ import {Taal} from '../model/taal.enum';
 import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.enum';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
-import {FileFieldConfig} from '../../shared/material-form-builder/model/file-field-config';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {Observable, of} from 'rxjs';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -57,7 +55,6 @@ export class InformatieObjectCreateComponent implements OnInit {
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
-            const types = this.getTypes(zaak);
             const titel = new InputFormFieldBuilder().id('titel').label('titel')
                                                      .validators(Validators.required)
                                                      .build();
@@ -66,7 +63,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                             .build();
 
             const inhoud = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                     .config(this.fileUploadConfig())
+                                                     .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
+                                                     .validators(Validators.required)
                                                      .build();
 
             const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum').label('creatiedatum')
@@ -82,11 +80,13 @@ export class InformatieObjectCreateComponent implements OnInit {
 
             const status = new SelectFormFieldBuilder().id('status').label('status')
                                                        .value(informatieobjectStatussen[0])
+                                                       .validators(Validators.required)
                                                        .optionLabel('label').options(informatieobjectStatussen)
                                                        .build();
 
             const documentType = new SelectFormFieldBuilder().id('informatieobjectType').label('informatieobjectType')
-                                                             .options(types)
+                                                             .options(this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
+                                                             .optionLabel('omschrijving')
                                                              .validators(Validators.required)
                                                              .build();
 
@@ -114,7 +114,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                 if (value instanceof moment) {
                     infoObject[key] = value; // conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
                 } else if (key === 'informatieobjectType') {
-                    infoObject[key] = this.informatieobjecttypes[value].url;
+                    infoObject[key] = value.url;
                 } else if (key === 'taal' || key === 'status' || key === 'vertrouwelijkheidaanduiding') {
                     infoObject[key] = value.value;
                 } else {
@@ -130,20 +130,4 @@ export class InformatieObjectCreateComponent implements OnInit {
         }
     }
 
-    getTypes(zaak): Observable<string[]> {
-        const types = [];
-        this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid).subscribe(response => {
-            this.informatieobjecttypes = [];
-            response.forEach(type => {
-                this.informatieobjecttypes[type.omschrijving] = type;
-                types.push(type.omschrijving);
-            });
-        });
-        return of(types);
-    }
-
-    fileUploadConfig(): FileFieldConfig {
-        const uploadUrl = this.informatieObjectenService.getUploadURL(this.zaakUuid);
-        return new FileFieldConfig(uploadUrl, [Validators.required]);
-    }
 }
