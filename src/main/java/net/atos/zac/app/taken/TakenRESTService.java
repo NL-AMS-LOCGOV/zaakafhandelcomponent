@@ -147,9 +147,10 @@ public class TakenRESTService {
 
     @PATCH
     @Path("assignTologgedOnUser")
-    public void assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+    public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam());
         taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
+        return taakConverter.convertTaskInfo(task);
     }
 
     @PATCH
