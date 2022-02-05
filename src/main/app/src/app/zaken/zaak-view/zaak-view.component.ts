@@ -47,6 +47,8 @@ import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
+import {PersonenService} from '../../personen/personen.service';
+import {PersoonOverzicht} from '../../personen/model/persoon-overzicht';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -64,6 +66,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
+    initiatorPersoon: PersoonOverzicht = new PersoonOverzicht();
 
     notitieType = NotitieType.ZAAK;
 
@@ -87,6 +90,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private zakenService: ZakenService,
                 private identityService: IdentityService,
                 private planItemsService: PlanItemsService,
+                private personenService: PersonenService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
@@ -113,6 +117,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
+            if (this.zaak.initiatorBSN) {
+                this.loadInitiatorPersoon();
+            }
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
@@ -325,6 +332,12 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
+        });
+    }
+
+    private loadInitiatorPersoon(): void {
+        this.personenService.readPersoonOverzicht(this.zaak.initiatorBSN).subscribe(persoon => {
+            this.initiatorPersoon = persoon;
         });
     }
 
