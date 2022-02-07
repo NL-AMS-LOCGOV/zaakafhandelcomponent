@@ -20,6 +20,8 @@ import {AutocompleteComponent} from './form-components/autocomplete/autocomplete
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
+import {RadioComponent} from './form-components/radio/radio.component';
+import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
 
 @Injectable({
     providedIn: 'root'
@@ -53,6 +55,10 @@ export class MaterialFormBuilderService {
 
     private static getType(type: FieldType): Type<IFormComponent> {
         switch (type) {
+            case FieldType.PARAGRAPH:
+                return ParagraphComponent;
+            case FieldType.RADIO:
+                return RadioComponent;
             case FieldType.AUTOCOMPLETE:
                 return AutocompleteComponent;
             case FieldType.READONLY:

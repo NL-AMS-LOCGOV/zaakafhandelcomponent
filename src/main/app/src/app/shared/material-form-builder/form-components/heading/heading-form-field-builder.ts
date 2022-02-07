@@ -20,4 +20,13 @@ export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField.level = level;
         return this;
     }
+
+    validate(): void {
+        if (this.formField.label == null) {
+            throw new Error('label is required');
+        }
+        if (this.formField.level == null) {
+            throw new Error('level is required');
+        }
+    }
 }

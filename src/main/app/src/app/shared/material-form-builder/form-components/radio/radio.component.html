@@ -1,0 +1,16 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-label [class.required]="data.required">{{data.label | translate}}</mat-label>
+<mat-radio-group class="radio-group"
+                 [formControl]="data.formControl"
+                 [(ngModel)]="selectedValue"
+                 (change)="radioChanged()">
+    <mat-radio-button class="radio-button" *ngFor="let option of data.options | async" [value]="option">
+        {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
+    </mat-radio-button>
+</mat-radio-group>
+<mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
+<mat-error *ngIf="data.formControl.touched && data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>

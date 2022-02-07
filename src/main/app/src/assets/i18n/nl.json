@@ -155,6 +155,11 @@
   "vertrouwelijkheidaanduiding.CONFIDENTIEEL": "Confidentieel",
   "vertrouwelijkheidaanduiding.GEHEIM": "Geheim",
   "vertrouwelijkheidaanduiding.ZEER_GEHEIM": "Zeer geheim",
+  "advies.positief": "Positief",
+  "advies.positief.onder.voorwaarde": "Positief onder voorwaarde",
+  "advies.negatief": "Negatief",
+  "advies.negatief.tenzij": "Negatief tenzij",
+  "advies.niet.beoordeeld": "Niet beoordeeld",
   " 6 ": ">>--> KNOPPEN & MENU'S <--<<",
   "actie.aanmaken": "Aanmaken",
   "actie.afronden": "Afronden",
@@ -249,6 +254,7 @@
   "msg.zaak.toegekend": "De zaak is toegekend aan {{behandelaar}}",
   "msg.zaak.vrijgegeven": "De zaak is vrijgegeven",
   "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
+  "msg.advies.behandelen": "De behandelaar van de zaak vraagt om een advies.<br> Beoordeel de vraag en eventueel de documenten en geef je advies met daarbij een toelichting.",
   " 8 ": ">>--> DASHBOARD <--<<",
   "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken"
 }
