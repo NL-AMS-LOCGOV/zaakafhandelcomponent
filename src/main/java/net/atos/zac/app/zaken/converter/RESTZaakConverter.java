@@ -9,8 +9,11 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.brp.BRPClientService;
 import net.atos.client.brp.model.Geboorte;
@@ -196,7 +199,9 @@ public class RESTZaakConverter {
 
     private String convertTotNaam(final NaamPersoon naam) {
         if (naam != null) {
-            return String.format("%s %s", naam.getVoorletters(), naam.getGeslachtsnaam());
+            return Stream.of(naam.getVoornamen(), naam.getVoorvoegsel(), naam.getGeslachtsnaam())
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.joining(" "));
         } else {
             return ONBEKEND;
         }
@@ -212,7 +217,13 @@ public class RESTZaakConverter {
 
     private String convertToInschrijfadres(final Verblijfplaats verblijfplaats) {
         if (verblijfplaats != null) {
-            return verblijfplaats.getPostcode();
+            return Stream.of(verblijfplaats.getStraat(),
+                             Objects.toString(verblijfplaats.getHuisnummer(), null),
+                             verblijfplaats.getHuisnummertoevoeging(),
+                             verblijfplaats.getHuisletter(),
+                             verblijfplaats.getWoonplaats())
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.joining(" "));
         } else {
             return ONBEKEND;
         }

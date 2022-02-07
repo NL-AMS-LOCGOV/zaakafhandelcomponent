@@ -14,9 +14,9 @@ import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 
 /**
- * Enumeratie die de soorten events (objecttypen) bevat zoals die gebruikt worden door het {@link CmmnEvent}.
+ * Enumeration of the type of objects that can be referenced by a {@link CmmnEvent} event.
  * <p>
- * Dat is er op dit moment maar eentje dus zo eenvoudig mogelijk (maar wel met dezelfde syntax als de andere observers).
+ * Only one currently, so keeping it simple. But still supporting the same syntax for mapping and construction.
  */
 public enum CmmnEventType {
     ZAAK;

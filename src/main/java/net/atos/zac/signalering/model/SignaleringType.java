@@ -44,8 +44,8 @@ public class SignaleringType {
         return subjecttype;
     }
 
+    /** Maps to signalering-type.ts */
     public enum Type {
-
         ZAAK_OP_NAAM;
     }
 

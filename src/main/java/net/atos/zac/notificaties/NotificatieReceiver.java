@@ -71,12 +71,6 @@ public class NotificatieReceiver {
         }
     }
 
-    private void handleCmmn(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
-        }
-    }
-
     private void handleWebsockets(final Notificatie notificatie) {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
             ScreenEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
@@ -88,6 +82,12 @@ public class NotificatieReceiver {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
             SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
                     .forEach(eventingService::send);
+        }
+    }
+
+    private void handleCmmn(final Notificatie notificatie) {
+        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
+            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
         }
     }
 

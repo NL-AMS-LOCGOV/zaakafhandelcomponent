@@ -58,13 +58,14 @@ public class SignaleringenService {
 
     public Signalering createSignalering(final Signalering signalering) {
         valideerObject(signalering);
-
-        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
-        return entityManager.merge(signalering);
+        final Signalering created = entityManager.merge(signalering);
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(created));
+        return created;
     }
 
-    public Signalering readSignalering(final long id) {
-        return entityManager.find(Signalering.class, id);
+    public void deleteSignalering(final Signalering signalering) {
+        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
+        entityManager.remove(signalering);
     }
 
     public void deleteSignalering(final SignaleringZoekParameters parameters) {
@@ -72,9 +73,8 @@ public class SignaleringenService {
         signaleringen.forEach(this::deleteSignalering);
     }
 
-    public void deleteSignalering(final Signalering signalering) {
-        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
-        entityManager.remove(signalering);
+    public Signalering readSignalering(final long id) {
+        return entityManager.find(Signalering.class, id);
     }
 
     public List<Signalering> findSignaleringen(final SignaleringZoekParameters parameters) {
