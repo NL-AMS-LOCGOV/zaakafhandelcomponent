@@ -31,6 +31,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
@@ -47,6 +48,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
+import net.atos.zac.event.EventingService;
 
 /**
  * Careful!
@@ -68,6 +70,9 @@ public class ZRCClientService implements Caching {
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
+    @Inject
+    private EventingService eventingService;
+
     /**
      * Create {@link Rol}.
      *
@@ -75,7 +80,16 @@ public class ZRCClientService implements Caching {
      * @return Created {@link Rol}.
      */
     public Rol<?> createRol(final Rol<?> rol) {
-        return zrcClient.rolCreate(rol);
+        final Rol<?> created = zrcClient.rolCreate(rol);
+        // This event will also happen via open-notificaties
+        eventingService.send(CacheEventType.ZAAKROL.event(created));
+        return created;
+    }
+
+    private void deleteRol(final Rol<?> rol) {
+        zrcClient.rolDelete(rol.getUuid());
+        // This event will also happen via open-notificaties
+        eventingService.send(CacheEventType.ZAAKROL.event(rol));
     }
 
     /**
@@ -320,7 +334,7 @@ public class ZRCClientService implements Caching {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .noneMatch(oud::equalBetrokkeneRol))
-                .forEach(oud -> zrcClient.rolDelete(oud.getUuid()));
+                .forEach(this::deleteRol);
     }
 
     private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
@@ -328,7 +342,7 @@ public class ZRCClientService implements Caching {
                 .filter(oud -> rollen.stream()
                         .filter(oud::equalBetrokkeneRol)
                         .anyMatch(nieuw -> !nieuw.equals(oud)))
-                .forEach(oud -> zrcClient.rolDelete(oud.getUuid()));
+                .forEach(this::deleteRol);
     }
 
     private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
@@ -336,14 +350,14 @@ public class ZRCClientService implements Caching {
                 .filter(nieuw -> current.stream()
                         .filter(nieuw::equalBetrokkeneRol)
                         .anyMatch(oud -> !oud.equals(nieuw)))
-                .forEach(nieuw -> zrcClient.rolCreate(nieuw));
+                .forEach(this::createRol);
     }
 
     private void createCreatedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {
         rollen.stream()
                 .filter(nieuw -> currentRollen.stream()
                         .noneMatch(nieuw::equalBetrokkeneRol))
-                .forEach(nieuw -> zrcClient.rolCreate(nieuw));
+                .forEach(this::createRol);
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

@@ -22,6 +22,11 @@ import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 import net.atos.zac.signalering.model.SignaleringType;
 
+/**
+ * There is no SignaleringEvenType. SignaleringType is used directly for that instead.
+ * <p>
+ * This util provides the mapping- and factory-methods that would have been in SignaleringEvenType.
+ */
 public class SignaleringEventUtil {
 
     private static SignaleringEvent<URI> instance(final Opcode operation, final SignaleringType.Type signaleringType, final URI objectId) {

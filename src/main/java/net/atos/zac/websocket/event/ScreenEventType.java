@@ -26,14 +26,15 @@ import net.atos.zac.notificaties.Notificatie;
 import net.atos.zac.signalering.model.Signalering;
 
 /**
- * Enumeration of the events (objecttypes) that can be changed by a {@link ScreenEvent}.
+ * Enumeration of the type of objects that can be referenced by a {@link ScreenEvent} event.
+ * <p>
  * Maps to object-type.ts
  */
 public enum ScreenEventType {
 
     ENKELVOUDIG_INFORMATIEOBJECT {
         @Override
-        protected ScreenEvent event(final Opcode opcode,
+        public ScreenEvent event(final Opcode opcode,
                 final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
             return instance(opcode, this, enkelvoudigInformatieobject);
         }
@@ -41,7 +42,7 @@ public enum ScreenEventType {
 
     SIGNALERINGEN {
         @Override
-        protected ScreenEvent event(final Opcode opcode,
+        public ScreenEvent event(final Opcode opcode,
                 final Signalering signalering) {
             return instance(opcode, this, signalering);
         }
@@ -49,35 +50,35 @@ public enum ScreenEventType {
 
     TAAK {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
+        public ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
             return instance(opcode, this, taskInfo);
         }
     },
 
     ZAAK {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+        public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_INFORMATIEOBJECTEN {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+        public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_ROLLEN {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+        public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
 
     ZAAK_TAKEN {
         @Override
-        protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+        public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
             return instance(opcode, this, zaak);
         }
     },
@@ -93,11 +94,6 @@ public enum ScreenEventType {
     // This is the factory method.
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final String id) {
         return new ScreenEvent(opcode, type, id);
-    }
-
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
-            final Signalering signalering) {
-        return instance(opcode, type, signalering.getTarget());
     }
 
     // In these methods you determine what is used as an id, make sure that this is consistent with the other methods
@@ -123,6 +119,10 @@ public enum ScreenEventType {
         return instance(opcode, type, taak.getId());
     }
 
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Signalering signalering) {
+        return instance(opcode, type, signalering.getTarget());
+    }
+
     // These methods determine on which object types the different arguments are allowed
     private ScreenEvent event(final Opcode opcode, final UUID uuid) {
         return instance(opcode, this, uuid); // Allowed with all object types
@@ -136,19 +136,19 @@ public enum ScreenEventType {
         return instance(opcode, this, resource.getUrl()); // Allowed with all object types
     }
 
-    protected ScreenEvent event(final Opcode opcode, final Zaak zaak) {
+    public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+    public ScreenEvent event(final Opcode opcode, final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenEvent event(final Opcode opcode, final Signalering signalalering) {
+    public ScreenEvent event(final Opcode opcode, final Signalering signalalering) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    protected ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
+    public ScreenEvent event(final Opcode opcode, final TaskInfo taskInfo) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
@@ -196,9 +196,9 @@ public enum ScreenEventType {
     }
 
     /**
-     * Factory method for ScreenEvent (with target of a signalering).
+     * Factory method for ScreenEvent (with identification of a signalering target).
      *
-     * @param signalering modified signalering
+     * @param signalering a created or deleted signalering
      * @return instance of the event
      */
     public final ScreenEvent updated(final Signalering signalering) {
