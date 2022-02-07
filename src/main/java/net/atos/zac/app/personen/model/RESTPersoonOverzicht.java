@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.zaken.model;
+package net.atos.zac.app.personen.model;
 
 public class RESTPersoonOverzicht {
-
-    public String bsn;
 
     public String naam;
 
