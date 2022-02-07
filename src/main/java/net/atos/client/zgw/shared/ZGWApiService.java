@@ -27,6 +27,7 @@ import net.atos.client.zgw.drc.DRCClient;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
@@ -45,6 +46,7 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.event.EventingService;
 
 /**
  * Careful!
@@ -68,6 +70,9 @@ public class ZGWApiService implements Caching {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    EventingService eventingService;
 
     @Inject
     @RestClient
@@ -213,7 +218,10 @@ public class ZGWApiService implements Caching {
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
         final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
-        return zrcClient.statusCreate(status);
+        final Status created = zrcClient.statusCreate(status);
+        // This event will also happen via open-notificaties
+        eventingService.send(CacheEventType.ZAAKSTATUS.event(created));
+        return created;
     }
 
     private void calculateDoorlooptijden(final Zaak zaak) {
