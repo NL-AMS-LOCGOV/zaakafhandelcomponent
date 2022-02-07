@@ -28,7 +28,7 @@ public class RESTPersoonConverter {
     public RESTPersoonOverzicht convert(final IngeschrevenPersoonHal persoon) {
         final RESTPersoonOverzicht persoonOverzicht = new RESTPersoonOverzicht();
         if (persoon != null) {
-            persoonOverzicht.naam = convertTotNaam(persoon.getNaam());
+            persoonOverzicht.naam = convertToNaam(persoon.getNaam());
             persoonOverzicht.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
             persoonOverzicht.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
         } else {
@@ -39,7 +39,7 @@ public class RESTPersoonConverter {
         return persoonOverzicht;
     }
 
-    private String convertTotNaam(final NaamPersoon naam) {
+    private String convertToNaam(final NaamPersoon naam) {
         if (naam != null) {
             return Stream.of(naam.getVoornamen(), naam.getVoorvoegsel(), naam.getGeslachtsnaam())
                     .filter(StringUtils::isNotBlank)

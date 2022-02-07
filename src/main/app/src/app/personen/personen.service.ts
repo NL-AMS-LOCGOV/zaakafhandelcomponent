@@ -21,7 +21,7 @@ export class PersonenService {
     private basepath = '/rest/personen';
 
     readPersoonOverzicht(bsn: string): Observable<PersoonOverzicht> {
-        return this.http.get<PersoonOverzicht>(`${this.basepath}/peresoonoverzicht/${bsn}`).pipe(
+        return this.http.get<PersoonOverzicht>(`${this.basepath}/persoonoverzicht/${bsn}`).pipe(
             catchError(this.handleError)
         );
     }

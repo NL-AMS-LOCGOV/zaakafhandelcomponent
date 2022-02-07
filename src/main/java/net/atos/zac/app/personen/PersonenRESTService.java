@@ -34,7 +34,7 @@ public class PersonenRESTService {
     private RESTPersoonConverter persoonConverter;
 
     @GET
-    @Path("peresoonoverzicht/{bsn}")
+    @Path("persoonoverzicht/{bsn}")
     public RESTPersoonOverzicht readPersoonOverzicht(@PathParam("bsn") final String bsn) {
         final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON_OVERZICHT);
         return persoonConverter.convert(persoon);
