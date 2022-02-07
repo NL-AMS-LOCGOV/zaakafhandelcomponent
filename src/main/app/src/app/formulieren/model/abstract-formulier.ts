@@ -20,6 +20,7 @@ export abstract class AbstractFormulier {
     dataElementen: {};
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
+    disablePartialSave: boolean = false;
 
     protected constructor(protected translate: TranslateService) {}
 
@@ -92,6 +93,10 @@ export abstract class AbstractFormulier {
 
     isAfgerond(): boolean {
         return this.afgerond;
+    }
+
+    doDisablePartialSave(): void {
+        this.disablePartialSave = true;
     }
 
 }

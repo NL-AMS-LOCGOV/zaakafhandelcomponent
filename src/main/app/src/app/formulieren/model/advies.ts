@@ -48,6 +48,7 @@ export class Advies extends AbstractFormulier {
     }
 
     _initBehandelForm() {
+        this.doDisablePartialSave();
         const fields = this.fields;
         this.form.push(
             [new ParagraphFormFieldBuilder(this.translate).text('msg.advies.behandelen').build()],
