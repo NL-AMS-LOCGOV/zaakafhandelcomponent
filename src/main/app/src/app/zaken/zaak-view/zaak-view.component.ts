@@ -269,7 +269,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             this.zaak.behandelaar = event.behandelaar;
             this.doubleSuspendRollenListener();
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
-                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
                 this.init(zaak);
             });
         } else {
@@ -279,10 +279,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
-        this.doubleSuspendRollenListener();
-        this.zakenService.toekennen(this.zaak, reden).subscribe((zaak) => {
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.zakenService.vrijgeven([this.zaak], reden).subscribe(() => {
+            this.init(this.zaak);
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
-            this.init(zaak);
         });
     }
 
@@ -348,8 +348,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     assignToMe(event: any): void {
         this.doubleSuspendRollenListener();
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar.naam});
             this.init(zaak);
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
         });
     }
 

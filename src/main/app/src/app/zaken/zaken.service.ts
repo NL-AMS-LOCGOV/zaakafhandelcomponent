@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -115,7 +115,7 @@ export class ZakenService {
         );
     }
 
-    vrijgeven(zaken: ZaakOverzicht[], reden?: string): Observable<void> {
+    vrijgeven(zaken: ZaakOverzicht[] | Zaak[], reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
         verdeelGegevens.reden = reden;
