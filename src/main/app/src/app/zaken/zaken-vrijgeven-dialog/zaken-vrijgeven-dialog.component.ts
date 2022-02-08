@@ -3,21 +3,20 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
-import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'werkvoorraad-vrijgeven-dialog',
     templateUrl: 'zaken-vrijgeven-dialog.component.html',
     styleUrls: ['./zaken-vrijgeven-dialog.component.less']
 })
-export class ZakenVrijgevenDialogComponent {
+export class ZakenVrijgevenDialogComponent implements OnInit {
 
     redenFormItem: FormItem;
     loading: boolean;
@@ -26,14 +25,13 @@ export class ZakenVrijgevenDialogComponent {
         public dialogRef: MatDialogRef<ZakenVrijgevenDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
         private mfbService: MaterialFormBuilderService,
-        private zakenService: ZakenService,
-        private translate: TranslateService) {
+        private zakenService: ZakenService) {
     }
 
     ngOnInit(): void {
-        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder(this.translate).id('reden')
-                                                                                                     .label('reden')
-                                                                                                     .build());
+        this.redenFormItem = this.mfbService.getFormItem(new TextareaFormFieldBuilder().id('reden')
+                                                                                       .label('reden')
+                                                                                       .build());
     }
 
     close(): void {

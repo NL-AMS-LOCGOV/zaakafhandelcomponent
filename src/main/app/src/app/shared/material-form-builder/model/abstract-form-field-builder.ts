@@ -55,10 +55,10 @@ export abstract class AbstractFormFieldBuilder {
 
     validate() {
         if (!this.formField.id) {
-            throw new Error('Missing implementation of id');
+            throw new Error('id is required');
         }
         if (!this.formField.label) {
-            throw new Error('Missing implementation of label');
+            throw new Error('label is required');
         }
     }
 }

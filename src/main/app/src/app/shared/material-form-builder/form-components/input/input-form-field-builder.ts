@@ -5,15 +5,14 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {InputFormField} from './input-form-field';
-import {TranslateService} from '@ngx-translate/core';
 
 export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: InputFormField;
 
-    constructor(translate: TranslateService) {
+    constructor() {
         super();
-        this.formField = new InputFormField(translate);
+        this.formField = new InputFormField();
     }
 
 }

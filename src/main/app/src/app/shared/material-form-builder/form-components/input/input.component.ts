@@ -5,17 +5,19 @@
 
 import {Component, OnInit} from '@angular/core';
 import {InputFormField} from './input-form-field';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './input.component.html',
     styleUrls: ['./input.component.less']
 })
-export class InputComponent implements OnInit, IFormComponent {
+export class InputComponent extends FormComponent implements OnInit {
 
     data: InputFormField;
 
-    constructor() {
+    constructor(public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {

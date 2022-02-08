@@ -12,5 +12,5 @@
         </mat-option>
     </mat-select>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
-    <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
+    <mat-error *ngIf="data.formControl.invalid">{{getErrorMessage()}}</mat-error>
 </mat-form-field>

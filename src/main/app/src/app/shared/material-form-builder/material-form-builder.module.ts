@@ -8,7 +8,7 @@ import {FormComponent} from './form/form/form.component';
 import {FormFieldComponent} from './form/form-field/form-field.component';
 import {InputComponent} from './form-components/input/input.component';
 import {FormFieldDirective} from './form/form-field/form-field.directive';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {CommonModule} from '@angular/common';
@@ -41,6 +41,9 @@ import {DocumentenLijstComponent} from './form-components/documenten-lijst/docum
 import {MatTableModule} from '@angular/material/table';
 import {RouterModule} from '@angular/router';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
+import {RadioComponent} from './form-components/radio/radio.component';
+import {MatRadioModule} from '@angular/material/radio';
+import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
 
 @NgModule({
     declarations: [
@@ -58,7 +61,9 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
         ReadonlyComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
-        TaakDocumentUploadComponent
+        TaakDocumentUploadComponent,
+        RadioComponent,
+        ParagraphComponent
     ],
     imports: [
         CommonModule,
@@ -70,6 +75,7 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
         GoogleMapsModule,
         MatFormFieldModule,
         MatInputModule,
+        MatRadioModule,
         MatIconModule,
         MatButtonModule,
         MatSelectModule,
@@ -81,7 +87,8 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
         TranslateModule,
         PipesModule,
         MatTableModule,
-        RouterModule
+        RouterModule,
+        FormsModule
     ],
     exports: [
         FormComponent,
@@ -96,7 +103,9 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
         GoogleMapsComponent,
         AutocompleteComponent,
         DocumentenLijstComponent,
-        TaakDocumentUploadComponent
+        TaakDocumentUploadComponent,
+        RadioComponent,
+        ParagraphComponent
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}

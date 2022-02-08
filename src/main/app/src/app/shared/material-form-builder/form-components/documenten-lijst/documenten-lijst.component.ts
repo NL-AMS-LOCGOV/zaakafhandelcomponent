@@ -4,7 +4,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {DocumentenLijstFormField} from './documenten-lijst-form-field';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -12,12 +12,13 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {DatumPipe} from '../../../pipes/datum.pipe';
 import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './documenten-lijst.component.html',
     styleUrls: ['./documenten-lijst.component.less']
 })
-export class DocumentenLijstComponent implements OnInit, IFormComponent {
+export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     data: DocumentenLijstFormField;
     columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
@@ -25,7 +26,8 @@ export class DocumentenLijstComponent implements OnInit, IFormComponent {
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
 
-    constructor(private informatieObjectenService: InformatieObjectenService) {
+    constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
+        super();
     }
 
     ngOnInit(): void {

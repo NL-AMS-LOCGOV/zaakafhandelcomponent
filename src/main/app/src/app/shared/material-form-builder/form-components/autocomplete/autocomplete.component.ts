@@ -4,24 +4,27 @@
  */
 
 import {AfterViewInit, Component} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {AutocompleteFormField} from './autocomplete-form-field';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'zac-autocomplete',
     templateUrl: './autocomplete.component.html',
     styleUrls: ['./autocomplete.component.less']
 })
-export class AutocompleteComponent implements AfterViewInit, IFormComponent {
+export class AutocompleteComponent extends FormComponent implements AfterViewInit {
 
     data: AutocompleteFormField;
 
     options: any[];
     filteredOptions: Observable<any[]>;
 
-    constructor() { }
+    constructor(public translate: TranslateService) {
+        super();
+    }
 
     ngAfterViewInit() {
         this.data.options.subscribe(options => {
@@ -37,7 +40,7 @@ export class AutocompleteComponent implements AfterViewInit, IFormComponent {
 
     displayFn = (obj: any): string => {
         return obj && obj[this.data.optionLabel] ? obj[this.data.optionLabel] : obj;
-    };
+    }
 
     private _filter(filter: string): any[] {
         const filterValue = filter.toLowerCase();

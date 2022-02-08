@@ -20,12 +20,13 @@ export abstract class AbstractFormulier {
     dataElementen: {};
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
+    disablePartialSave: boolean = false;
 
     protected constructor(protected translate: TranslateService) {}
 
     initStartForm() {
         this.form = [];
-        this.form.push([new HeadingFormFieldBuilder(this.translate).id('taakStarten').label(this.getStartTitel()).level('2').build()]);
+        this.form.push([new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level('2').build()]);
         this._initStartForm();
     }
 
@@ -82,16 +83,20 @@ export abstract class AbstractFormulier {
     }
 
     addGroepAssignment(groepen: Observable<Groep[]>): void {
-        const groep = new SelectFormFieldBuilder(this.translate).id('groep')
-                                                                .label('actie.taak.toekennen.groep')
-                                                                .value(this.planItem.groep)
-                                                                .optionLabel('naam').options(groepen)
-                                                                .validators(Validators.required).build();
+        const groep = new SelectFormFieldBuilder().id('groep')
+                                                  .label('actie.taak.toekennen.groep')
+                                                  .value(this.planItem.groep)
+                                                  .optionLabel('naam').options(groepen)
+                                                  .validators(Validators.required).build();
         this.form.push([groep]);
     }
 
     isAfgerond(): boolean {
         return this.afgerond;
+    }
+
+    doDisablePartialSave(): void {
+        this.disablePartialSave = true;
     }
 
 }

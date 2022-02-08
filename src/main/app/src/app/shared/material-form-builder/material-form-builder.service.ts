@@ -8,7 +8,7 @@ import {FieldType} from './model/field-type.enum';
 import {FormItem} from './model/form-item';
 import {AbstractFormField} from './model/abstract-form-field';
 import {InputComponent} from './form-components/input/input.component';
-import {IFormComponent} from './model/iform-component';
+import {FormComponent} from './model/form-component';
 import {DateComponent} from './form-components/date/date.component';
 import {TextareaComponent} from './form-components/textarea/textarea.component';
 import {HeadingComponent} from './form-components/heading/heading.component';
@@ -20,6 +20,8 @@ import {AutocompleteComponent} from './form-components/autocomplete/autocomplete
 import {CheckboxComponent} from './form-components/checkbox/checkbox.component';
 import {DocumentenLijstComponent} from './form-components/documenten-lijst/documenten-lijst.component';
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
+import {RadioComponent} from './form-components/radio/radio.component';
+import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
 
 @Injectable({
     providedIn: 'root'
@@ -51,8 +53,12 @@ export class MaterialFormBuilderService {
         return formRow;
     }
 
-    private static getType(type: FieldType): Type<IFormComponent> {
+    private static getType(type: FieldType): Type<FormComponent> {
         switch (type) {
+            case FieldType.PARAGRAPH:
+                return ParagraphComponent;
+            case FieldType.RADIO:
+                return RadioComponent;
             case FieldType.AUTOCOMPLETE:
                 return AutocompleteComponent;
             case FieldType.READONLY:

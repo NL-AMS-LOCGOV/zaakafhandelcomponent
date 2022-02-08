@@ -1,20 +1,20 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
 import {Component, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
-import {HeadingFormField} from './heading-form-field';
+import {ParagraphFormField} from './paragraph-form-field';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
-    templateUrl: './heading.component.html',
-    styleUrls: ['./heading.component.less']
+    templateUrl: './paragraph.component.html',
+    styleUrls: ['./paragraph.component.less']
 })
-export class HeadingComponent extends FormComponent implements OnInit {
+export class ParagraphComponent extends FormComponent implements OnInit {
 
-    data: HeadingFormField;
+    data: ParagraphFormField;
 
     constructor(public translate: TranslateService) {
         super();
