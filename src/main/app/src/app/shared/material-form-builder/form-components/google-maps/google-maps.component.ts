@@ -4,18 +4,19 @@
  */
 
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {GoogleMapsFormField} from './google-maps-form-field';
 import {GoogleMap, MapInfoWindow} from '@angular/google-maps';
 import {GoogleMapsService} from '../../service/google-maps.service';
 import {Subscription} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 import LatLng = google.maps.LatLng;
 
 @Component({
     templateUrl: './google-maps.component.html',
     styleUrls: ['./google-maps.component.less']
 })
-export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IFormComponent {
+export class GoogleMapsComponent extends FormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data: GoogleMapsFormField;
     _map: GoogleMap;
@@ -35,8 +36,8 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IF
 
     private subscription$: Subscription;
 
-    constructor(private googleMapsService: GoogleMapsService) {
-
+    constructor(public translate: TranslateService, private googleMapsService: GoogleMapsService) {
+        super();
     }
 
     ngOnInit(): void {

@@ -5,15 +5,14 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {HeadingFormField} from './heading-form-field';
-import {TranslateService} from '@ngx-translate/core';
 
 export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: HeadingFormField;
 
-    constructor(translate: TranslateService) {
+    constructor() {
         super();
-        this.formField = new HeadingFormField(translate);
+        this.formField = new HeadingFormField();
     }
 
     level(level: string): this {

@@ -5,14 +5,13 @@
 
 import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form-field-builder';
 import {SelectFormField} from './select-form-field';
-import {TranslateService} from '@ngx-translate/core';
 
 export class SelectFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
     protected readonly formField: SelectFormField;
 
-    constructor(translate: TranslateService) {
+    constructor() {
         super();
-        this.formField = new SelectFormField(translate);
+        this.formField = new SelectFormField();
     }
 }

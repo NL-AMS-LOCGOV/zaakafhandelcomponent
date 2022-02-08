@@ -3,15 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {TranslateService} from '@ngx-translate/core';
 import {ParagraphFormField} from './paragraph-form-field';
 
 export class ParagraphFormFieldBuilder {
 
     protected readonly formField: ParagraphFormField;
 
-    constructor(translate: TranslateService) {
-        this.formField = new ParagraphFormField(translate);
+    constructor() {
+        this.formField = new ParagraphFormField();
     }
 
     validate(): void {

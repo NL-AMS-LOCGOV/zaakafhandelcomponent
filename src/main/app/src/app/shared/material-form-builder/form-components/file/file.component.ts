@@ -5,17 +5,18 @@
 
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FileFormField} from './file-form-field';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {HttpClient, HttpEvent, HttpEventType, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
 import {UploadStatus} from './upload-status.enum';
 import {FoutAfhandelingService} from '../../../../fout-afhandeling/fout-afhandeling.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './file.component.html',
     styleUrls: ['./file.component.less']
 })
-export class FileComponent implements OnInit, IFormComponent {
+export class FileComponent extends FormComponent implements OnInit {
 
     @ViewChild('fileInput') fileInput: ElementRef;
 
@@ -24,7 +25,11 @@ export class FileComponent implements OnInit, IFormComponent {
     subscription: Subscription;
     status: string = UploadStatus.SELECTEER_BESTAND;
 
-    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private changeDetector: ChangeDetectorRef) {
+    constructor(private http: HttpClient,
+                private foutAfhandelingService: FoutAfhandelingService,
+                private changeDetector: ChangeDetectorRef,
+                public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {
@@ -127,5 +132,12 @@ export class FileComponent implements OnInit, IFormComponent {
     updateInput(inputValue: string) {
         this.data.formControl.setValue(inputValue);
         this.changeDetector.detectChanges();
+    }
+
+    getErrorMessage(): string {
+        if (this.data.uploadError) {
+            return this.data.uploadError;
+        }
+        return super.getErrorMessage();
     }
 }

@@ -4,10 +4,10 @@
  */
 
 import {Type} from '@angular/core';
-import {IFormComponent} from './iform-component';
+import {FormComponent} from './form-component';
 import {AbstractFormField} from './abstract-form-field';
 
 export class FormItem {
-    constructor(public component: Type<IFormComponent>, public data: AbstractFormField) {
+    constructor(public component: Type<FormComponent>, public data: AbstractFormField) {
     }
 }

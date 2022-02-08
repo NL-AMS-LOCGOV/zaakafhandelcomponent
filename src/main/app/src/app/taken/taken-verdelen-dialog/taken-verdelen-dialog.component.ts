@@ -38,10 +38,10 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let medewerkerFormField = new AutocompleteFormFieldBuilder(this.translate).id('behandelaar').label('behandelaar.-kies-')
-                                                                                  .optionLabel('naam')
-                                                                                  .options(this.identityService.listMedewerkers())
-                                                                                  .validators(Validators.required).build();
+        const medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
+                                                                      .optionLabel('naam')
+                                                                      .options(this.identityService.listMedewerkers())
+                                                                      .validators(Validators.required).build();
         this.medewerkerFormItem = this.mfbService.getFormItem(medewerkerFormField);
     }
 

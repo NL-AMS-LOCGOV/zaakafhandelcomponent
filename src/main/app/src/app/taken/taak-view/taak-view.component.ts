@@ -110,22 +110,22 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     setEditableFormFields(): void {
         this.editFormFields.set('behandelaar',
-            new AutocompleteFormFieldBuilder(this.translate).id('behandelaar')
-                                                            .label('behandelaar')
-                                                            .value(this.taak.behandelaar).optionLabel('naam')
-                                                            .options(this.identityService.listMedewerkers())
-                                                            .build());
+            new AutocompleteFormFieldBuilder().id('behandelaar')
+                                              .label('behandelaar')
+                                              .value(this.taak.behandelaar).optionLabel('naam')
+                                              .options(this.identityService.listMedewerkers())
+                                              .build());
         this.editFormFields.set('groep',
-            new AutocompleteFormFieldBuilder(this.translate).id('groep')
-                                                            .label('groep')
-                                                            .value(this.taak.groep).optionLabel('naam')
-                                                            .options(this.identityService.listGroepen())
-                                                            .build());
+            new AutocompleteFormFieldBuilder().id('groep')
+                                              .label('groep')
+                                              .value(this.taak.groep).optionLabel('naam')
+                                              .options(this.identityService.listGroepen())
+                                              .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder(this.translate).id('toelichting')
-                                                        .label('toelichting')
-                                                        .value(this.taak.toelichting)
-                                                        .build());
+            new TextareaFormFieldBuilder().id('toelichting')
+                                          .label('toelichting')
+                                          .value(this.taak.toelichting)
+                                          .build());
         this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
 
@@ -203,7 +203,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
-    }
+    };
 
     private getIngelogdeMedewerker() {
         this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {

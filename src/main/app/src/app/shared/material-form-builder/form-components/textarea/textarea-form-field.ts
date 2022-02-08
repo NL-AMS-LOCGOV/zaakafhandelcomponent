@@ -5,13 +5,12 @@
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
-import {TranslateService} from '@ngx-translate/core';
 
 export class TextareaFormField extends AbstractFormField {
     fieldType = FieldType.TEXTAREA;
     maxlength: number;
 
-    constructor(translate: TranslateService) {
-        super(translate);
+    constructor() {
+        super();
     }
 }

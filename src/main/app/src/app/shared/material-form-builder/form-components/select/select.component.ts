@@ -4,18 +4,20 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {SelectFormField} from './select-form-field';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './select.component.html',
     styleUrls: ['./select.component.less']
 })
-export class SelectComponent implements OnInit, IFormComponent {
+export class SelectComponent extends FormComponent implements OnInit {
 
     data: SelectFormField;
 
-    constructor() {
+    constructor(public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {

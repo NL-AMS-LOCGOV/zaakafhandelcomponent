@@ -4,19 +4,21 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {RadioFormField} from './radio-form-field';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './radio.component.html',
     styleUrls: ['./radio.component.less']
 })
-export class RadioComponent implements OnInit, IFormComponent {
+export class RadioComponent extends FormComponent implements OnInit {
 
     data: RadioFormField;
     selectedValue: string;
 
-    constructor() {
+    constructor(public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {

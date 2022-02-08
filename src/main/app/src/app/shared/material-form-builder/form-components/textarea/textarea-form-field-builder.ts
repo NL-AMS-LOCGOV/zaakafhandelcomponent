@@ -5,15 +5,14 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {TextareaFormField} from './textarea-form-field';
-import {TranslateService} from '@ngx-translate/core';
 
 export class TextareaFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: TextareaFormField;
 
-    constructor(translate: TranslateService) {
+    constructor() {
         super();
-        this.formField = new TextareaFormField(translate);
+        this.formField = new TextareaFormField();
     }
 
     maxlength(maxlength: number): this {

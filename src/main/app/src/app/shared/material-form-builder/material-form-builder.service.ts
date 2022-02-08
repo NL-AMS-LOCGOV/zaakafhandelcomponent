@@ -8,7 +8,7 @@ import {FieldType} from './model/field-type.enum';
 import {FormItem} from './model/form-item';
 import {AbstractFormField} from './model/abstract-form-field';
 import {InputComponent} from './form-components/input/input.component';
-import {IFormComponent} from './model/iform-component';
+import {FormComponent} from './model/form-component';
 import {DateComponent} from './form-components/date/date.component';
 import {TextareaComponent} from './form-components/textarea/textarea.component';
 import {HeadingComponent} from './form-components/heading/heading.component';
@@ -53,7 +53,7 @@ export class MaterialFormBuilderService {
         return formRow;
     }
 
-    private static getType(type: FieldType): Type<IFormComponent> {
+    private static getType(type: FieldType): Type<FormComponent> {
         switch (type) {
             case FieldType.PARAGRAPH:
                 return ParagraphComponent;

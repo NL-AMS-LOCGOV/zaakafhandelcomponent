@@ -5,19 +5,20 @@
 
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {TaakDocumentUploadFormField} from './taak-document-upload-form-field';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {HttpClient, HttpEvent, HttpEventType, HttpHeaders} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
 import {FoutAfhandelingService} from '../../../../fout-afhandeling/fout-afhandeling.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {InformatieObjectenService} from '../../../../informatie-objecten/informatie-objecten.service';
 import {Informatieobjecttype} from '../../../../informatie-objecten/model/informatieobjecttype';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './taak-document-upload.component.html',
     styleUrls: ['./taak-document-upload.component.less']
 })
-export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
+export class TaakDocumentUploadComponent extends FormComponent implements OnInit {
 
     @ViewChild('fileInput') fileInput: ElementRef;
     data: TaakDocumentUploadFormField;
@@ -36,10 +37,12 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
     status = this.UploadStatus.SELECTEER_BESTAND;
 
     constructor(
+        public translate: TranslateService,
         private informatieObjectenService: InformatieObjectenService,
         private http: HttpClient,
         private foutAfhandelingService: FoutAfhandelingService,
         private formBuilder: FormBuilder) {
+        super();
     }
 
     ngOnInit(): void {
@@ -170,5 +173,12 @@ export class TaakDocumentUploadComponent implements OnInit, IFormComponent {
             return object1.url === object2.url;
         }
         return false;
+    }
+
+    getErrorMessage(): string {
+        if (this.data.uploadError) {
+            return this.data.uploadError;
+        }
+        return super.getErrorMessage();
     }
 }

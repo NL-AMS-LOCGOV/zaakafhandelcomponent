@@ -4,18 +4,20 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {CheckboxFormField} from './checkbox-form-field';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './checkbox.component.html',
     styleUrls: ['./checkbox.component.less']
 })
-export class CheckboxComponent implements OnInit, IFormComponent {
+export class CheckboxComponent extends FormComponent implements OnInit {
 
     data: CheckboxFormField;
 
-    constructor() {
+    constructor(public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {
