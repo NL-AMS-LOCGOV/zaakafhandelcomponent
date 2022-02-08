@@ -24,7 +24,11 @@ export class FormComponent {
 
     @Input() set config(config: FormConfig) {
         this._config = config;
-    };
+    }
+
+    get config(): FormConfig {
+        return this._config;
+    }
 
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
     @Output() formPartial: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
@@ -60,9 +64,5 @@ export class FormComponent {
 
     cancel(): void {
         this.formSubmit.emit(null);
-    }
-
-    get config(): FormConfig {
-        return this._config;
     }
 }

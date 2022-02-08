@@ -22,7 +22,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IF
 
     @ViewChild(GoogleMap, {static: false}) set map(map: GoogleMap) {
         this._map = map;
-    } ;
+    }
 
     @ViewChild(MapInfoWindow, {static: false}) infoWindow: MapInfoWindow;
     @ViewChild('mapAutoComplete', {static: false}) mapAutoComplete;
@@ -74,7 +74,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IF
                 autocomplete.bindTo('bounds', this._map.googleMap);
 
                 autocomplete.addListener('place_changed', () => {
-                    let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+                    const place: google.maps.places.PlaceResult = autocomplete.getPlace();
                     this.addMarker(place.geometry.location);
                 });
             }
@@ -82,12 +82,12 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit, OnDestroy, IF
     }
 
     ngOnDestroy(): void {
-        if(this.subscription$){
+        if (this.subscription$) {
             this.subscription$.unsubscribe();
         }
     }
 
-    onPlaceMarker(event: google.maps.MouseEvent) {
+    onPlaceMarker(event: google.maps.MapMouseEvent) {
         this.addMarker(event.latLng);
     }
 
