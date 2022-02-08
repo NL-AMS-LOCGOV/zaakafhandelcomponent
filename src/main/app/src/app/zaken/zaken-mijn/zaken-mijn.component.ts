@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -14,13 +14,14 @@ import {Zaaktype} from '../model/zaaktype';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
     styleUrls: ['./zaken-mijn.component.less'],
     animations: [detailExpand]
 })
-export class ZakenMijnComponent implements OnInit, AfterViewInit {
+export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -32,8 +33,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
 
     zaaktypeValue: any;
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private cdRef: ChangeDetectorRef) {
-    }
+    constructor(private zakenService: ZakenService, public utilService: UtilService, private cdRef: ChangeDetectorRef,
+                private sessionStorageService: SessionStorageService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
@@ -57,6 +58,28 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
     }
 
     updateColumns() {
