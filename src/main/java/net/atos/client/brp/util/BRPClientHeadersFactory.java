@@ -1,28 +1,26 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.or.object;
-
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+package net.atos.client.brp.util;
 
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 
-/**
- *
- */
-public class ObjectsClientHeadersFactory implements ClientHeadersFactory {
 
-    private static final String TOKEN = ConfigProvider.getConfig().getValue("objects.api.token", String.class);
+public class BRPClientHeadersFactory implements ClientHeadersFactory {
+
+    private static final String X_API_KEY = "X-API-KEY";
+
+    private static final String API_KEY = ConfigProvider.getConfig().getValue("brp.api.key", String.class);
 
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        clientOutgoingHeaders.add(AUTHORIZATION, String.format("Token %s", TOKEN));
+        clientOutgoingHeaders.add(X_API_KEY, API_KEY);
         return clientOutgoingHeaders;
     }
 }

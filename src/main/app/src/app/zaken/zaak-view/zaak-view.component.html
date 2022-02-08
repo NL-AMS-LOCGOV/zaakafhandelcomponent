@@ -9,6 +9,44 @@
         <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+        <div *ngIf="zaak.initiatorBSN" fxLayout>
+            <mat-card fxFlex="calc(100%-20px)">
+                <mat-card-header>
+                    <mat-card-title>{{'initiator.titel'| translate}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div id="initiatorGegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <zac-static-text [label]="'initiator.naam' | translate"
+                                             [value]="initiatorPersoon.naam"></zac-static-text>
+                            <zac-static-text [label]="'initiator.bsn' | translate"
+                                             [value]="zaak.initiatorBSN"></zac-static-text>
+                        </div>
+                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <zac-static-text [label]="'initiator.geboortedatum' | translate"
+                                             [value]="initiatorPersoon.geboortedatum"></zac-static-text>
+                            <zac-static-text [label]="'initiator.inschrijfadres' | translate"
+                                             [value]="initiatorPersoon.inschrijfadres"></zac-static-text>
+                        </div>
+                        <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
+                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer' | translate"
+                                             [value]="'-'"></zac-static-text>
+                            <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer2' | translate"
+                                             [value]="'-'"></zac-static-text>
+                            <zac-static-text fxFlex.sm="25" [label]="'initiator.emailadres' | translate"
+                                             [value]="'-'"></zac-static-text>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header>

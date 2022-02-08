@@ -10,13 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 
@@ -30,18 +28,15 @@ import net.atos.zac.authentication.Medewerker;
 /**
  *
  */
-@ApplicationScoped
 public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     @Inject
     @IngelogdeMedewerker
     private Instance<Medewerker> ingelogdeMedewerker;
 
-    private static final Config config = ConfigProvider.getConfig();
+    private static final String CLIENT_ID = ConfigProvider.getConfig().getValue("zgw.api.clientId", String.class);
 
-    private static final String CLIENT_ID = config.getValue("zgw.api.clientId", String.class);
-
-    private static final String SECRET = config.getValue("zgw.api.secret", String.class);
+    private static final String SECRET = ConfigProvider.getConfig().getValue("zgw.api.secret", String.class);
 
     private static final Map<String, String> TOELICHTINGEN = new ConcurrentHashMap<>();
 

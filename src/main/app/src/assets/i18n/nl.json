@@ -89,6 +89,7 @@
   "bijlage": "Bijlage",
   "redenStart": "Reden start",
   "afhandeling": "Afhandeling",
+  "toolbar.profiel": "Profiel",
   "toonAfgerondeTaken": "Toon afgeronde taken",
   "type": "Type",
   "versie": "Versie",
@@ -162,6 +163,7 @@
   "advies.niet.beoordeeld": "Niet beoordeeld",
   " 6 ": ">>--> KNOPPEN & MENU'S <--<<",
   "actie.aanmaken": "Aanmaken",
+  "actie.admin": "Admin acties",
   "actie.afronden": "Afronden",
   "actie.alles.deselecteren": "Alles deselecteren",
   "actie.alles.selecteren": "Alles selecteren",
@@ -256,5 +258,13 @@
   "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
   "msg.advies.behandelen": "De behandelaar van de zaak vraagt om een advies.<br> Beoordeel de vraag en eventueel de documenten en geef je advies met daarbij een toelichting.",
   " 8 ": ">>--> DASHBOARD <--<<",
-  "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken"
+  "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken",
+  "initiator.titel": "Persoonsgegevens aanvrager",
+  "initiator.naam": "Naam",
+  "initiator.bsn": "BSN",
+  "initiator.geboortedatum": "Geboortedatum",
+  "initiator.inschrijfadres": "Inschrijfadres",
+  "initiator.telefoonnummer": "Telefoonnummer",
+  "initiator.telefoonnummer2": "Telefoonnummer (2e)",
+  "initiator.emailadres": "E-mailadres"
 }

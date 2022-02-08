@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -24,6 +25,7 @@ import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.listPersonenParameters;
+import net.atos.client.brp.util.BRPClientHeadersFactory;
 import net.atos.client.brp.util.JsonbConfiguration;
 
 /**
@@ -37,6 +39,7 @@ import net.atos.client.brp.util.JsonbConfiguration;
  */
 
 @RegisterRestClient(configKey = "BRP-API-Client")
+@RegisterClientHeaders(BRPClientHeadersFactory.class)
 @RegisterProviders({
         @RegisterProvider(PersoonNotFoundExceptionMapping.class),
         @RegisterProvider(RuntimeExceptionMapper.class),
@@ -44,7 +47,7 @@ import net.atos.client.brp.util.JsonbConfiguration;
 })
 @Produces({"application/hal+json", "application/problem+json"})
 @Path("api/brp/ingeschrevenpersonen")
-@Timeout(unit = ChronoUnit.SECONDS, value = 2)
+@Timeout(unit = ChronoUnit.SECONDS, value = 5)
 public interface BRPClient {
 
     /**

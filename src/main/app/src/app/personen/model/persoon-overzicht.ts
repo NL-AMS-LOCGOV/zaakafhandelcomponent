@@ -4,7 +4,6 @@
  */
 
 export class PersoonOverzicht {
-    bsn: string;
     naam: string;
     geboortedatum: string;
     inschrijfadres: string;

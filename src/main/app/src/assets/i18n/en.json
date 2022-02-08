@@ -89,6 +89,7 @@
   "bijlage": "Attachment",
   "redenStart": "Reason start",
   "afhandeling": "Handling",
+  "toolbar.profiel": "Profile",
   "toonAfgerondeTaken": "Show finished tasks",
   "type": "Type",
   "versie": "Version",
@@ -162,6 +163,7 @@
   "advies.niet.beoordeeld": "Not rated",
   " 6 ": ">>--> KNOPPEN & MENU'S <--<<",
   "actie.aanmaken": "Create",
+  "actie.admin": "Admin actions",
   "actie.afronden": "Finish",
   "actie.alles.deselecteren": "Deselect all",
   "actie.alles.selecteren": "Select all",
@@ -256,5 +258,13 @@
   "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved",
   "msg.advies.behandelen": "The case handler asks for advice.<br>Assess the question and, if necessary, the documents and provide your advice with an explanation.",
   " 8 ": ">>--> DASHBOARD <--<<",
-  "dashboard.mijn.nieuwe.zaken": "Cases recently assigned to me"
+  "dashboard.mijn.nieuwe.zaken": "Cases recently assigned to me",
+  "initiator.titel": "Applicant details",
+  "initiator.naam": "Name",
+  "initiator.bsn": "BSN",
+  "initiator.geboortedatum": "Date of birth",
+  "initiator.inschrijfadres": "Registration address",
+  "initiator.telefoonnummer": "Phone number",
+  "initiator.telefoonnummer2": "Phone number (2nd)",
+  "initiator.emailadres": "E-mail address"
 }

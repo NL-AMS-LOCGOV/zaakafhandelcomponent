@@ -11,7 +11,6 @@ import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
 import {ZaakEigenschap} from './zaak-eigenschap';
 import {Medewerker} from '../../identity/model/medewerker';
-import {PersoonOverzicht} from './persoon-overzicht';
 
 export class Zaak {
     uuid: string;
@@ -43,5 +42,5 @@ export class Zaak {
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
     rechten: {};
-    initiator: PersoonOverzicht;
+    initiatorBSN: string;
 }

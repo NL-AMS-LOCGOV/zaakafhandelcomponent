@@ -30,10 +30,10 @@ public class BRPClientService {
 
     /**
      * Vindt personen
-     * <p>
+     *
      * Zoek personen met één van de onderstaande verplichte combinaties van parameters en vul ze evt. aan met parameters uit de andere combinaties.
      * Default krijg je personen terug die nog in leven zijn, tenzij je de inclusiefoverledenpersonen&#x3D;true opgeeft.
-     * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
+     * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien.
      * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature)
      * <p>
      * 1. Persoon

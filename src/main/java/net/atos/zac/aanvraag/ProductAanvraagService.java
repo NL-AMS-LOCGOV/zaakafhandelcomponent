@@ -5,6 +5,7 @@
 
 package net.atos.zac.aanvraag;
 
+import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.util.ConfigurationService.BRON_ORGANISATIE;
 import static net.atos.zac.util.ConfigurationService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
@@ -55,7 +56,7 @@ public class ProductAanvraagService {
     private ZTCClientService ztcClientService;
 
     public void createZaak(final URI productAanvraagUrl) {
-        final ORObject object = objectsClientService.readObject(productAanvraagUrl);
+        final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
 
         Zaak zaak;
