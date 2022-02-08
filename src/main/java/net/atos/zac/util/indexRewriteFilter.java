@@ -33,8 +33,8 @@ public class indexRewriteFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             final HttpServletRequest req = (HttpServletRequest) request;
-            if (req.getServletPath().equals("/startformulieren.html")) {
-                chain.doFilter(request, response);
+            if (req.getServletPath().equals("/start")) {
+                req.getRequestDispatcher("/startformulieren.html").forward(request, response);
             } else if (isResourcePath(req) || isResource(req)) {
                 chain.doFilter(request, response);
             } else {
