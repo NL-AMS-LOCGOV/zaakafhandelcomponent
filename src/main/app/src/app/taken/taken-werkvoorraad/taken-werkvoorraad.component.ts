@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -23,13 +23,14 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
     styleUrls: ['./taken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
+export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -44,7 +45,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog) {
+                private identityService: IdentityService, public dialog: MatDialog, private sessionStorageService: SessionStorageService) {
     }
 
     ngOnInit() {
@@ -67,6 +68,28 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('takenWerkvoorraadData', werklijstData);
     }
 
     private getIngelogdeMedewerker() {

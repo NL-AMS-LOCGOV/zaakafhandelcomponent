@@ -7,15 +7,14 @@ import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {TranslateService} from '@ngx-translate/core';
 
 export class DocumentenLijstFormField extends AbstractFormField {
 
     fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten$: Observable<EnkelvoudigInformatieobject[]>;
 
-    constructor(translate: TranslateService) {
-        super(translate);
+    constructor() {
+        super();
     }
 
     /**

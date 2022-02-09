@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -17,13 +17,14 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
     styleUrls: ['./taken-mijn.component.less'],
     animations: [detailExpand]
 })
-export class TakenMijnComponent implements AfterViewInit, OnInit {
+export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -36,8 +37,8 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
         'msg.datum.overschreden', 'warning');
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
-    }
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+                private sessionStorageService: SessionStorageService) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.mijn');
@@ -59,6 +60,28 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('mijnTakenWerkvoorraadData', werklijstData);
     }
 
     isAfterDate(datum): boolean {

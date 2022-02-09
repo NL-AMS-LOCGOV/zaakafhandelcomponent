@@ -4,18 +4,20 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {IFormComponent} from '../../model/iform-component';
+import {FormComponent} from '../../model/form-component';
 import {ReadonlyFormField} from './readonly-form-field';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './readonly.component.html',
     styleUrls: ['./readonly.component.less']
 })
-export class ReadonlyComponent implements OnInit, IFormComponent {
+export class ReadonlyComponent extends FormComponent implements OnInit {
 
     data: ReadonlyFormField;
 
-    constructor() {
+    constructor(public translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {

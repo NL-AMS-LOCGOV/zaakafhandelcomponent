@@ -5,12 +5,11 @@
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
-import {TranslateService} from '@ngx-translate/core';
 
 export class InputFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.INPUT;
 
-    constructor(translate: TranslateService) {
-        super(translate);
+    constructor() {
+        super();
     }
 }

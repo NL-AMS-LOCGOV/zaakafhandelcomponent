@@ -5,14 +5,13 @@
 
 import {TaakDocumentUploadFormField} from './taak-document-upload-form-field';
 import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field-builder';
-import {TranslateService} from '@ngx-translate/core';
 
 export class TaakDocumentUploadFieldBuilder extends AbstractFileFormFieldBuilder {
     protected readonly formField: TaakDocumentUploadFormField;
 
-    constructor(translate: TranslateService) {
+    constructor() {
         super();
-        this.formField = new TaakDocumentUploadFormField(translate);
+        this.formField = new TaakDocumentUploadFormField();
         this.updateHint();
     }
 

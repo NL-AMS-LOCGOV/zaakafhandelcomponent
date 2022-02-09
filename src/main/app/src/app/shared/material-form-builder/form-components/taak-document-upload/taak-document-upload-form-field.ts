@@ -5,7 +5,6 @@
 
 import {FieldType} from '../../model/field-type.enum';
 import {AbstractFileFormField} from '../../model/abstract-file-form-field';
-import {TranslateService} from '@ngx-translate/core';
 
 export class TaakDocumentUploadFormField extends AbstractFileFormField {
     fieldType: FieldType = FieldType.TAAK_DOCUMENT_UPLOAD;
@@ -13,8 +12,8 @@ export class TaakDocumentUploadFormField extends AbstractFileFormField {
     defaultTitel: string;
     zaakUUID: string;
 
-    constructor(translate: TranslateService) {
-        super(translate);
+    constructor() {
+        super();
     }
 
 }

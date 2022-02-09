@@ -39,6 +39,9 @@ export class PlanItemDoComponent implements OnInit {
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
                                  .startForm(this.planItem, this.identityService.listGroepen()).build();
+            if (this.formulier.disablePartialSave) {
+                this.formConfig.partialButtonText = null;
+            }
             this.utilService.setTitle(this.formulier.getStartTitel());
             this.formItems = this.formulier.form;
         } else {

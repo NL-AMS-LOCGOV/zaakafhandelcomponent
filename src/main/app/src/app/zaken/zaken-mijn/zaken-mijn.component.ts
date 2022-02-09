@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -16,13 +16,14 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
     styleUrls: ['./zaken-mijn.component.less'],
     animations: [detailExpand]
 })
-export class ZakenMijnComponent implements OnInit, AfterViewInit {
+export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -37,8 +38,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService) {
-    }
+    constructor(private zakenService: ZakenService, public utilService: UtilService,
+                private sessionStorageService: SessionStorageService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
@@ -66,6 +67,28 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
     }
 
     zaaktypeChange(zaaktype: Zaaktype) {

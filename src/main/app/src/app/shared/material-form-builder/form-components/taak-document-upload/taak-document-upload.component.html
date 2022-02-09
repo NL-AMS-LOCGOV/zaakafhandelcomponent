@@ -18,7 +18,7 @@
         </button>
         <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
         <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
-            {{data.getErrorMessage()}}
+            {{getErrorMessage()}}
         </mat-hint>
         <input hidden="hidden" type="file" [accept]="data.fileTypes" #fileInput [id]="data.id + '_file'" (change)="uploadFile($event.target.files[0])"
                name="uploadFile">

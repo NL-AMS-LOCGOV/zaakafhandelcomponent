@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -19,13 +19,14 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
     styleUrls: ['./zaken-afgehandeld.component.less'],
     animations: [detailExpand]
 })
-export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
+export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -37,7 +38,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     zaakTypes: Zaaktype[] = [];
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService) { }
+                private identityService: IdentityService, private sessionStorageService: SessionStorageService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
@@ -64,6 +65,29 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            searchParameters: this.dataSource.zoekParameters,
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
     }
 
     private zaaktypesOphalen() {

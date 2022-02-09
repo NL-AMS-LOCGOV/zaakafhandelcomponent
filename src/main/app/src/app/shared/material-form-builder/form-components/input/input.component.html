@@ -7,5 +7,5 @@
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_tekstfield'" [required]="data.required" matInput/>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
-    <mat-error *ngIf="data.formControl.invalid">{{data.getErrorMessage()}}</mat-error>
+    <mat-error *ngIf="data.formControl.invalid">{{getErrorMessage()}}</mat-error>
 </mat-form-field>
