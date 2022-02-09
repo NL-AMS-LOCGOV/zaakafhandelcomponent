@@ -14,7 +14,6 @@ import {MatTable} from '@angular/material/table';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {IdentityService} from '../../identity/identity.service';
 import {Groep} from '../../identity/model/groep';
-import {MatButtonToggle} from '@angular/material/button-toggle';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
@@ -31,7 +30,6 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
-    @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
     dataSource: ZakenAfgehandeldDatasource;
     expandedRow: ZaakOverzicht | null;
     groepen: Groep[] = [];
@@ -74,7 +72,6 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {

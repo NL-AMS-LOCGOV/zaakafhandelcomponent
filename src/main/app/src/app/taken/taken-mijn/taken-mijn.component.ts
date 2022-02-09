@@ -8,7 +8,6 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {Taak} from '../model/taak';
-import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
@@ -29,7 +28,6 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<Taak>;
-    @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
 
     dataSource: TakenMijnDatasource;
     expandedRow: Taak | null;
@@ -68,7 +66,6 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {

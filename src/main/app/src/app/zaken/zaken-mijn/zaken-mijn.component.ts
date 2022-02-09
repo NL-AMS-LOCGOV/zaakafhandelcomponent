@@ -75,7 +75,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {

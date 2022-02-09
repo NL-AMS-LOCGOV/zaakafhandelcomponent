@@ -9,7 +9,6 @@ import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
-import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -37,8 +36,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
     dataSource: ZakenWerkvoorraadDatasource;
     selection = new SelectionModel<ZaakOverzicht>(true, []);
-
-    @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
 
     expandedRow: ZaakOverzicht | null;
 
@@ -91,7 +88,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {
