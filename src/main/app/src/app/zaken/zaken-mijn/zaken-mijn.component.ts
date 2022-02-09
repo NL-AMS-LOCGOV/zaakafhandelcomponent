@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -14,6 +14,8 @@ import {Zaaktype} from '../model/zaaktype';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -30,9 +32,12 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
 
     zaaktypes: Zaaktype[] = [];
 
-    zaaktypeValue: any;
+    einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+    uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private cdRef: ChangeDetectorRef) {
+    constructor(private zakenService: ZakenService, public utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -41,15 +46,19 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
-            this.dataSource.columns = [
-                'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
-            ];
-            this.dataSource.visibleColumns = [
-                'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
-            ];
-            this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-            this.dataSource.detailExpandColumns = ['groep', 'einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
-            this.dataSource.setFilterColumns();
+            this.dataSource.initColumns({
+                identificatie: ColumnPickerValue.VISIBLE,
+                status: ColumnPickerValue.VISIBLE,
+                zaaktype: ColumnPickerValue.VISIBLE,
+                groep: ColumnPickerValue.VISIBLE,
+                startdatum: ColumnPickerValue.VISIBLE,
+                einddatum: ColumnPickerValue.HIDDEN,
+                einddatumGepland: ColumnPickerValue.HIDDEN,
+                aanvrager: ColumnPickerValue.VISIBLE,
+                uiterlijkeEinddatumAfdoening: ColumnPickerValue.HIDDEN,
+                toelichting: ColumnPickerValue.HIDDEN,
+                url: ColumnPickerValue.STICKY
+            });
         });
     }
 
@@ -57,11 +66,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
-    }
-
-    updateColumns() {
-        this.dataSource.setFilterColumns();
-        this.cdRef.detectChanges();
     }
 
     zaaktypeChange(zaaktype: Zaaktype) {

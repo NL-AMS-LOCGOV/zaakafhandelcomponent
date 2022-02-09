@@ -21,6 +21,8 @@ import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vri
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -38,6 +40,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     expandedRow: Taak | null;
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
+    streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog) {
@@ -47,25 +51,22 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
-        this.setColumns();
+        this.dataSource.initColumns({
+            select: ColumnPickerValue.STICKY,
+            naam: ColumnPickerValue.VISIBLE,
+            zaakIdentificatie: ColumnPickerValue.VISIBLE,
+            zaaktypeOmschrijving: ColumnPickerValue.VISIBLE,
+            creatiedatumTijd: ColumnPickerValue.VISIBLE,
+            streefdatum: ColumnPickerValue.VISIBLE,
+            groep: ColumnPickerValue.VISIBLE,
+            url: ColumnPickerValue.STICKY
+        });
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
-    }
-
-    private setColumns() {
-
-        this.dataSource.columns = [
-            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.visibleColumns = [
-            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     private getIngelogdeMedewerker() {
@@ -166,7 +167,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     private findTaken() {
         this.dataSource.load();
-        this.setColumns();
         this.selection.clear();
         this.paginator.firstPage();
     }

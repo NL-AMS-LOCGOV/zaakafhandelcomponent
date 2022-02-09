@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -17,6 +17,8 @@ import {Groep} from '../../identity/model/groep';
 import {MatButtonToggle} from '@angular/material/button-toggle';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -35,13 +37,26 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     zaakTypes: Zaaktype[] = [];
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService, private cdRef: ChangeDetectorRef) { }
+                private identityService: IdentityService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
         this.dataSource = new ZakenAfgehandeldDatasource(this.zakenService, this.utilService);
+        this.dataSource.initColumns({
+            identificatie: ColumnPickerValue.VISIBLE,
+            status: ColumnPickerValue.VISIBLE,
+            zaaktype: ColumnPickerValue.VISIBLE,
+            groep: ColumnPickerValue.VISIBLE,
+            startdatum: ColumnPickerValue.VISIBLE,
+            einddatum: ColumnPickerValue.HIDDEN,
+            einddatumGepland: ColumnPickerValue.HIDDEN,
+            aanvrager: ColumnPickerValue.VISIBLE,
+            behandelaar: ColumnPickerValue.HIDDEN,
+            uiterlijkeEinddatumAfdoening: ColumnPickerValue.HIDDEN,
+            toelichting: ColumnPickerValue.HIDDEN,
+            url: ColumnPickerValue.STICKY
+        });
 
-        this.setColumns();
         this.zaaktypesOphalen();
         this.groepenOphalen();
     }
@@ -49,18 +64,6 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-    }
-
-    private setColumns() {
-        this.dataSource.columns = [
-            'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland',
-            'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
-        ];
-        this.dataSource.visibleColumns = [
-            'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
-        ];
-        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-        this.dataSource.detailExpandColumns = ['einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
     }
 
     private zaaktypesOphalen() {
@@ -75,19 +78,31 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit {
         });
     }
 
+    switchTypeAndSearch() {
+        if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
+            this.zoekZaken();
+        }
+    }
+
     zoekZaken() {
         this.dataSource.zoekZaken();
-        this.setColumns();
         this.paginator.firstPage();
     }
 
-    isAfterDate(datum): boolean {
-        return Conditionals.isOverschreden(datum);
+    isAfterDate(datum, actual): boolean {
+        return Conditionals.isOverschreden(datum, actual);
     }
 
-    updateColumns() {
-        this.dataSource.setFilterColumns();
-        this.cdRef.detectChanges();
+    getIcon(row, icon: string): TextIcon {
+        switch (icon) {
+            case 'einddatumGepland':
+                return new TextIcon(Conditionals.isAfterDate(row.einddatum), 'report_problem',
+                    'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+            case 'uiterlijkeEinddatumAfdoening':
+                return new TextIcon(Conditionals.isAfterDate(row.einddatum), 'report_problem',
+                    'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
+            default:
+                throw new Error(`Unknown icon field: ${icon}`);
+        }
     }
-
 }

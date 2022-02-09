@@ -16,6 +16,7 @@ import {TakenMijnDatasource} from './taken-mijn-datasource';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TextIcon} from '../../shared/edit/text-icon';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -32,9 +33,8 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     dataSource: TakenMijnDatasource;
     expandedRow: Taak | null;
 
-    displayedColumns: string[] = ['naam', 'creatiedatumTijd'];
-
-    streefdatumIcon: TextIcon;
+    streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+        'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService) {
     }
@@ -43,23 +43,22 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.dataSource.columns = [
-            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.visibleColumns = [
-            'naam', 'status', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
+        this.dataSource.initColumns({
+            naam: ColumnPickerValue.VISIBLE,
+            status: ColumnPickerValue.VISIBLE,
+            zaakIdentificatie: ColumnPickerValue.VISIBLE,
+            zaaktypeOmschrijving: ColumnPickerValue.VISIBLE,
+            creatiedatumTijd: ColumnPickerValue.VISIBLE,
+            streefdatum: ColumnPickerValue.VISIBLE,
+            groep: ColumnPickerValue.VISIBLE,
+            url: ColumnPickerValue.STICKY
+        });
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.dataSource.load();
         this.table.dataSource = this.dataSource;
-
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
-            'msg.datum.overschreden', 'warning');
     }
 
     isAfterDate(datum): boolean {

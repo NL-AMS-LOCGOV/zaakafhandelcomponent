@@ -60,11 +60,11 @@
         <ng-container matColumnDef="streefdatum">
             <th mat-header-cell cdkDrag *matHeaderCellDef
                 [mat-sort-header]="'streefdatum'">
-                {{ 'streefdatum' | datum | empty }}
+                {{ 'streefdatum' | translate}}
             </th>
             <td mat-cell *matCellDef="let row">
                 <div>
-                    {{ row.streefdatum | empty }}
+                    {{ row.streefdatum | datum | empty }}
                     <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
                               *ngIf="isAfterDate(row.streefdatum)">warning
                     </mat-icon>
@@ -86,20 +86,8 @@
         </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button (menuClosed)="dataSource.setFilterColumns()" [matMenuTriggerFor]="menu" mat-flat-button
-                        title="{{ 'filters' | translate }}">
-                    <mat-icon>view_column</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
-                        <mat-list-option (click)="$event.stopPropagation()"
-                                         checkboxPosition="before"
-                                         [value]="column"
-                                         *ngFor="let column of dataSource.columns | noStickyColumn: ['url']">
-                            {{column | translate}}
-                        </mat-list-option>
-                    </mat-selection-list>
-                </mat-menu>
+                <zac-column-picker [columnSrc]="dataSource.columns"
+                                   (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef="let row">
                 <button mat-flat-button
@@ -116,10 +104,17 @@
                 <div class="row-detail"
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                        <ng-container *ngFor="let column of dataSource.detailExpandColumns">
-                            <zac-static-text [label]="column | translate"
-                                             [value]="row[column] | translate"
-                                             fxFlex="33"></zac-static-text>
+                        <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
+                            <zac-static-text *ngSwitchCase="'groep'" fxFlex="33" [label]="column | translate"
+                                             [value]="row.groep | empty: 'naam'"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'streefdatum'" fxFlex="33"
+                                             [label]="column | translate"
+                                             [value]="row.streefdatum"
+                                             [icon]="streefdatumIcon"></zac-static-text>
+
+                            <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
+                                             [value]="row[column] | translate"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>
