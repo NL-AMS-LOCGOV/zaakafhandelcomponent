@@ -47,19 +47,19 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
-            this.dataSource.initColumns({
-                identificatie: ColumnPickerValue.VISIBLE,
-                status: ColumnPickerValue.VISIBLE,
-                zaaktype: ColumnPickerValue.VISIBLE,
-                groep: ColumnPickerValue.VISIBLE,
-                startdatum: ColumnPickerValue.VISIBLE,
-                einddatum: ColumnPickerValue.HIDDEN,
-                einddatumGepland: ColumnPickerValue.HIDDEN,
-                aanvrager: ColumnPickerValue.VISIBLE,
-                uiterlijkeEinddatumAfdoening: ColumnPickerValue.HIDDEN,
-                toelichting: ColumnPickerValue.HIDDEN,
-                url: ColumnPickerValue.STICKY
-            });
+            this.dataSource.initColumns(new Map([
+                ['identificatie', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaaktype', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['startdatum', ColumnPickerValue.VISIBLE],
+                ['einddatum', ColumnPickerValue.HIDDEN],
+                ['einddatumGepland', ColumnPickerValue.HIDDEN],
+                ['aanvrager', ColumnPickerValue.VISIBLE],
+                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+                ['toelichting', ColumnPickerValue.HIDDEN],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
         });
     }
 

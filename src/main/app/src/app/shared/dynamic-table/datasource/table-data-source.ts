@@ -22,7 +22,7 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     sort: MatSort;
     filters: {} = {};
 
-    private _columns: { [key: string]: ColumnPickerValue };
+    private _columns: Map<string, ColumnPickerValue>;
     private _visibleColumns: Array<string>;
     private _filterColumns: Array<string>;
     private _detailExpandColumns: Array<string>;
@@ -117,7 +117,7 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
      *
      * @param columns available columns
      */
-    initColumns(columns: { [key: string]: ColumnPickerValue }): void {
+    initColumns(columns: Map<string, ColumnPickerValue>): void {
         this._columns = columns;
         this.updateColumns(columns);
     }
@@ -127,14 +127,14 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
      *
      * @param columns updated columns
      */
-    updateColumns(columns: { [key: string]: ColumnPickerValue }): void {
-        this._visibleColumns = Object.keys(columns).filter(key => columns[key] !== ColumnPickerValue.HIDDEN);
-        this._detailExpandColumns = Object.keys(columns).filter(key => columns[key] === ColumnPickerValue.HIDDEN);
+    updateColumns(columns: Map<string, ColumnPickerValue>): void {
+        this._visibleColumns = [...columns.keys()].filter(key => columns.get(key) !== ColumnPickerValue.HIDDEN);
+        this._detailExpandColumns = [...columns.keys()].filter(key => columns.get(key) === ColumnPickerValue.HIDDEN);
         this._filterColumns = this.visibleColumns.map(c => c + '_filter');
     }
 
     /* column getters, NO setters!*/
-    get columns(): { [p: string]: ColumnPickerValue } {
+    get columns(): Map<string, ColumnPickerValue> {
         return this._columns;
     }
 

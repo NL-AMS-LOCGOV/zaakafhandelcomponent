@@ -14,17 +14,16 @@ import {ColumnPickerValue} from './column-picker-value';
 })
 export class ColumnPickerComponent {
 
-    @Input() set columnSrc(columns: { [key: string]: ColumnPickerValue }) {
+    @Input() set columnSrc(columns: Map<string, ColumnPickerValue>) {
         this._columnSrc = columns;
-
-        this._columns = new Map(Object.keys(columns)
-                                      .filter(key => columns[key] !== ColumnPickerValue.STICKY)
-                                      .map(key => [key, columns[key] === ColumnPickerValue.VISIBLE]));
+        this._columns = new Map([...columns.keys()]
+        .filter(key => columns.get(key) !== ColumnPickerValue.STICKY)
+        .map(key => [key, columns.get(key) === ColumnPickerValue.VISIBLE]));
     }
 
-    @Output() columnsChanged = new EventEmitter<{ [key: string]: ColumnPickerValue }>();
+    @Output() columnsChanged = new EventEmitter<Map<string, ColumnPickerValue>>();
 
-    private _columnSrc: { [key: string]: ColumnPickerValue };
+    private _columnSrc: Map<string, ColumnPickerValue>;
     private _columns: Map<string, boolean>;
     private changed: boolean = false;
 
@@ -37,8 +36,8 @@ export class ColumnPickerComponent {
     selectionChanged($event: MatSelectionListChange): void {
         this.changed = true;
         $event.options.forEach(
-            option => this._columnSrc[option.value] =
-                this._columnSrc[option.value] === ColumnPickerValue.VISIBLE ? ColumnPickerValue.HIDDEN : ColumnPickerValue.VISIBLE);
+            option => this._columnSrc.set(option.value, this._columnSrc.get(
+                option.value) === ColumnPickerValue.VISIBLE ? ColumnPickerValue.HIDDEN : ColumnPickerValue.VISIBLE));
     }
 
     updateColumns(): void {

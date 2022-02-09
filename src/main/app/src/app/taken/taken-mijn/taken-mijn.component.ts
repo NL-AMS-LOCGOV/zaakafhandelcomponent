@@ -42,16 +42,16 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.dataSource.initColumns({
-            naam: ColumnPickerValue.VISIBLE,
-            status: ColumnPickerValue.VISIBLE,
-            zaakIdentificatie: ColumnPickerValue.VISIBLE,
-            zaaktypeOmschrijving: ColumnPickerValue.VISIBLE,
-            creatiedatumTijd: ColumnPickerValue.VISIBLE,
-            streefdatum: ColumnPickerValue.VISIBLE,
-            groep: ColumnPickerValue.VISIBLE,
-            url: ColumnPickerValue.STICKY
-        });
+        this.dataSource.initColumns(new Map([
+            ['naam', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
     }
 
     ngAfterViewInit(): void {

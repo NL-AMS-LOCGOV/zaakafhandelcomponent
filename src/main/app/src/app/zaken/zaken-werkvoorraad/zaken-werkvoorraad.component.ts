@@ -56,21 +56,21 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
-        this.dataSource.initColumns({
-            select: ColumnPickerValue.STICKY,
-            identificatie: ColumnPickerValue.VISIBLE,
-            status: ColumnPickerValue.VISIBLE,
-            zaaktype: ColumnPickerValue.VISIBLE,
-            groep: ColumnPickerValue.VISIBLE,
-            startdatum: ColumnPickerValue.VISIBLE,
-            einddatum: ColumnPickerValue.HIDDEN,
-            einddatumGepland: ColumnPickerValue.HIDDEN,
-            aanvrager: ColumnPickerValue.VISIBLE,
-            behandelaar: ColumnPickerValue.VISIBLE,
-            uiterlijkeEinddatumAfdoening: ColumnPickerValue.HIDDEN,
-            toelichting: ColumnPickerValue.HIDDEN,
-            url: ColumnPickerValue.STICKY
-        });
+        this.dataSource.initColumns(new Map([
+            ['select', ColumnPickerValue.STICKY],
+            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['startdatum', ColumnPickerValue.VISIBLE],
+            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatumGepland', ColumnPickerValue.HIDDEN],
+            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['behandelaar', ColumnPickerValue.VISIBLE],
+            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+            ['toelichting', ColumnPickerValue.HIDDEN],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
 
         this.zaaktypesOphalen();
         this.groepenOphalen();

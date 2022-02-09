@@ -50,16 +50,16 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
-        this.dataSource.initColumns({
-            select: ColumnPickerValue.STICKY,
-            naam: ColumnPickerValue.VISIBLE,
-            zaakIdentificatie: ColumnPickerValue.VISIBLE,
-            zaaktypeOmschrijving: ColumnPickerValue.VISIBLE,
-            creatiedatumTijd: ColumnPickerValue.VISIBLE,
-            streefdatum: ColumnPickerValue.VISIBLE,
-            groep: ColumnPickerValue.VISIBLE,
-            url: ColumnPickerValue.STICKY
-        });
+        this.dataSource.initColumns(new Map([
+            ['select', ColumnPickerValue.STICKY],
+            ['naam', ColumnPickerValue.VISIBLE],
+            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
     }
 
     ngAfterViewInit(): void {

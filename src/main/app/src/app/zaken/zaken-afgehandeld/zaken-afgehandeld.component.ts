@@ -41,20 +41,20 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
         this.dataSource = new ZakenAfgehandeldDatasource(this.zakenService, this.utilService);
-        this.dataSource.initColumns({
-            identificatie: ColumnPickerValue.VISIBLE,
-            status: ColumnPickerValue.VISIBLE,
-            zaaktype: ColumnPickerValue.VISIBLE,
-            groep: ColumnPickerValue.VISIBLE,
-            startdatum: ColumnPickerValue.VISIBLE,
-            einddatum: ColumnPickerValue.HIDDEN,
-            einddatumGepland: ColumnPickerValue.HIDDEN,
-            aanvrager: ColumnPickerValue.VISIBLE,
-            behandelaar: ColumnPickerValue.HIDDEN,
-            uiterlijkeEinddatumAfdoening: ColumnPickerValue.HIDDEN,
-            toelichting: ColumnPickerValue.HIDDEN,
-            url: ColumnPickerValue.STICKY
-        });
+        this.dataSource.initColumns(new Map([
+            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['startdatum', ColumnPickerValue.VISIBLE],
+            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatumGepland', ColumnPickerValue.HIDDEN],
+            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['behandelaar', ColumnPickerValue.HIDDEN],
+            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+            ['toelichting', ColumnPickerValue.HIDDEN],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
 
         this.zaaktypesOphalen();
         this.groepenOphalen();
