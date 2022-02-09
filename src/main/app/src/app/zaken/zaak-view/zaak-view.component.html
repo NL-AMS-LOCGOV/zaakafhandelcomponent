@@ -16,13 +16,13 @@
                 </mat-card-header>
                 <mat-card-content>
                     <div id="initiatorGegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                        <div [fxFlex]="100/4" fxFlex.lt-md="50">
                             <zac-static-text [label]="'initiator.naam' | translate"
                                              [value]="initiatorPersoon.naam"></zac-static-text>
                             <zac-static-text [label]="'initiator.bsn' | translate"
                                              [value]="zaak.initiatorBSN"></zac-static-text>
                         </div>
-                        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                        <div [fxFlex]="100/4" fxFlex.lt-md="50">
                             <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                 <mat-divider></mat-divider>
                             </div>
@@ -31,7 +31,7 @@
                             <zac-static-text [label]="'initiator.inschrijfadres' | translate"
                                              [value]="initiatorPersoon.inschrijfadres"></zac-static-text>
                         </div>
-                        <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
+                        <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
                             <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                 <mat-divider></mat-divider>
                             </div>
@@ -39,6 +39,11 @@
                                              [value]="'-'"></zac-static-text>
                             <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer2' | translate"
                                              [value]="'-'"></zac-static-text>
+                        </div>
+                        <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
+                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                <mat-divider></mat-divider>
+                            </div>
                             <zac-static-text fxFlex.sm="25" [label]="'initiator.emailadres' | translate"
                                              [value]="'-'"></zac-static-text>
                         </div>
@@ -76,8 +81,6 @@
                                     </div>
                                     <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
                                                      [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
-                                    <zac-static-text [label]="'aanvrager' | translate"
-                                                     [value]="'-'"></zac-static-text>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('redenGroep')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
