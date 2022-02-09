@@ -8,7 +8,6 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {Taak} from '../model/taak';
-import {MatButtonToggle} from '@angular/material/button-toggle';
 import {TakenWerkvoorraadDatasource} from './taken-werkvoorraad-datasource';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
@@ -21,6 +20,8 @@ import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vri
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
@@ -33,12 +34,13 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<Taak>;
-    @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
 
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
     selection = new SelectionModel<Taak>(true, []);
     private ingelogdeMedewerker: Medewerker;
+    streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog, private sessionStorageService: SessionStorageService) {
@@ -48,7 +50,16 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
-        this.setColumns();
+        this.dataSource.initColumns(new Map([
+            ['select', ColumnPickerValue.STICKY],
+            ['naam', ColumnPickerValue.VISIBLE],
+            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
     }
 
     ngAfterViewInit(): void {
@@ -63,7 +74,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {
@@ -77,18 +87,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         };
 
         this.sessionStorageService.setSessionStorage('takenWerkvoorraadData', werklijstData);
-    }
-
-    private setColumns() {
-
-        this.dataSource.columns = [
-            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.visibleColumns = [
-            'select', 'naam', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum', 'groep', 'url'
-        ];
-        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-        this.dataSource.detailExpandColumns = ['naam', 'zaaktypeOmschrijving', 'creatiedatumTijd', 'streefdatum'];
     }
 
     private getIngelogdeMedewerker() {
@@ -189,7 +187,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     private findTaken() {
         this.dataSource.load();
-        this.setColumns();
         this.selection.clear();
         this.paginator.firstPage();
     }

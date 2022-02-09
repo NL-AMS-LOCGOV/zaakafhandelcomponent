@@ -32,6 +32,7 @@ import {PipesModule} from './pipes/pipes.module';
 import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
+import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker.component';
 
 @NgModule({
     declarations: [
@@ -47,9 +48,11 @@ import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
         EditAutocompleteComponent,
         EditTekstComponent,
         ConfirmDialogComponent,
-        NoStickyColumnPipe
+        NoStickyColumnPipe,
+        ColumnPickerComponent
     ],
     imports: [
+        FormsModule,
         BrowserAnimationsModule,
         RouterModule,
         PipesModule,
@@ -80,7 +83,8 @@ import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
         EditAutocompleteComponent,
         EditTekstComponent,
         ConfirmDialogComponent,
-        NoStickyColumnPipe
+        NoStickyColumnPipe,
+        ColumnPickerComponent
     ],
     providers: [
         Title,

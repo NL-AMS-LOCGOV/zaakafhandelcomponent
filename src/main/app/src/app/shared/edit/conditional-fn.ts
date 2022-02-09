@@ -6,9 +6,7 @@
 import {FormControl} from '@angular/forms';
 import * as moment from 'moment';
 
-export declare interface ConditionalFn {
-    (control: FormControl): boolean;
-}
+export declare type ConditionalFn = (control: FormControl) => boolean;
 
 export class Conditionals {
 
@@ -21,7 +19,7 @@ export class Conditionals {
 
     static isOverschreden(value: Date | moment.Moment | string, actual?: Date | moment.Moment | string): boolean {
         if (value) {
-            var limit: moment.Moment = moment(value, moment.ISO_8601);
+            const limit: moment.Moment = moment(value, moment.ISO_8601);
             if (actual) {
                 return limit.isBefore(moment(actual, moment.ISO_8601));
             } else {
