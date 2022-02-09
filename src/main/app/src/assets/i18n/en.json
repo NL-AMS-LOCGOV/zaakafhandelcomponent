@@ -30,6 +30,7 @@
   "title.taak.behandelen": "Handle {{taak}}",
   "title.taak.raadplegen": "Consult {{taak}}",
   " 2 ": ">>--> DATUM EN TIJD VELDEN <--<<",
+  "beschrijving": "Description",
   "creatiedatum": "Date created",
   "creatiedatumTijd": "Time created",
   "datum": "Date",

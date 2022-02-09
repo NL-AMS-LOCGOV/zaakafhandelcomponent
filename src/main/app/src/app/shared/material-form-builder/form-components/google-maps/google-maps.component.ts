@@ -23,7 +23,7 @@ export class GoogleMapsComponent extends FormComponent implements OnInit, AfterV
 
     @ViewChild(GoogleMap, {static: false}) set map(map: GoogleMap) {
         this._map = map;
-    } ;
+    }
 
     @ViewChild(MapInfoWindow, {static: false}) infoWindow: MapInfoWindow;
     @ViewChild('mapAutoComplete', {static: false}) mapAutoComplete;
@@ -75,7 +75,7 @@ export class GoogleMapsComponent extends FormComponent implements OnInit, AfterV
                 autocomplete.bindTo('bounds', this._map.googleMap);
 
                 autocomplete.addListener('place_changed', () => {
-                    let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+                    const place: google.maps.places.PlaceResult = autocomplete.getPlace();
                     this.addMarker(place.geometry.location);
                 });
             }
@@ -83,12 +83,12 @@ export class GoogleMapsComponent extends FormComponent implements OnInit, AfterV
     }
 
     ngOnDestroy(): void {
-        if(this.subscription$){
+        if (this.subscription$) {
             this.subscription$.unsubscribe();
         }
     }
 
-    onPlaceMarker(event: google.maps.MouseEvent) {
+    onPlaceMarker(event: google.maps.MapMouseEvent) {
         this.addMarker(event.latLng);
     }
 

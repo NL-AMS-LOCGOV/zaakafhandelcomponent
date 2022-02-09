@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -22,13 +22,14 @@ import {MatDialog} from '@angular/material/dialog';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
     styleUrls: ['./zaken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
+export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
@@ -43,8 +44,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     zaakTypes: Zaaktype[] = [];
     private ingelogdeMedewerker: Medewerker;
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private identityService: IdentityService, public dialog: MatDialog) {
-    }
+    constructor(private zakenService: ZakenService, public utilService: UtilService,
+                private identityService: IdentityService, public dialog: MatDialog,
+                private sessionStorageService: SessionStorageService) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.zaken.werkvoorraad');
@@ -59,6 +61,29 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
+    }
+
+    ngOnDestroy() {
+        const werklijstData = {
+            searchParameters: this.dataSource.zoekParameters,
+            filters: this.dataSource.filters,
+            columns: {
+                allColumns: this.dataSource.columns,
+                visibleColumns: this.dataSource.visibleColumns,
+                selectedColumns: this.dataSource.selectedColumns,
+                detailExpandColumns: this.dataSource.detailExpandColumns
+            },
+            sorting: {
+                column: this.sort.active,
+                direction: this.sort.direction
+            },
+            paginator: {
+                page: this.paginator.pageIndex,
+                pageSize: this.paginator.pageSize
+            }
+        };
+
+        this.sessionStorageService.setSessionStorage('zakenWerkvoorraadData', werklijstData);
     }
 
     private zaaktypesOphalen() {
