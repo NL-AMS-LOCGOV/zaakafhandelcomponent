@@ -11,6 +11,7 @@ import {tap} from 'rxjs/operators';
 import {TableRequest} from './table-request';
 import {TableResponse} from './table-response';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {ColumnPickerValue} from '../column-picker/column-picker-value';
 
 export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
 
@@ -21,11 +22,10 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
     sort: MatSort;
     filters: {} = {};
 
-    columns: Array<string>;
-    visibleColumns: Array<string>;
-    filterColumns: Array<string>;
-    detailExpandColumns: Array<string>;
-    selectedColumns: Array<string>;
+    private _columns: Map<string, ColumnPickerValue>;
+    private _visibleColumns: Array<string>;
+    private _filterColumns: Array<string>;
+    private _detailExpandColumns: Array<string>;
 
     private subscription$: Subscription;
 
@@ -102,47 +102,51 @@ export abstract class TableDataSource<OBJECT> extends DataSource<OBJECT> {
         moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
 
-    setFilterColumns(): void {
-        this.visibleColumns = this.selectedColumns;
-        this.filterColumns = this.visibleColumns.map(c => c + '_filter');
-
-        this.restoreUrlColumn();
-        this.restoreSelectColumn();
-    }
-
-    private restoreUrlColumn() {
-        if (this.columns.includes('url') && !this.visibleColumns.includes('url')) {
-            this.visibleColumns.push('url');
-            this.filterColumns.push('url_filter');
-        }
-    }
-
-    private restoreSelectColumn() {
-        if (this.columns.includes('select') && !this.visibleColumns.includes('select')) {
-            this.visibleColumns.unshift('select');
-            this.filterColumns.unshift('select_filter');
-        }
-    }
-
     protected setData(response: TableResponse<OBJECT>): void {
         this.totalItems = response.totalItems;
         this.tableSubject.next(response.data);
     }
 
-    private getValue(columnModel: string, row: OBJECT): OBJECT {
-        const model = columnModel.split('.');
-        let i = 0, value = row;
-        while (i < model.length) {
-            if (value) {
-                value = value.hasOwnProperty(model[i]) ? value[model[i]] : null;
-            }
-            i++;
-        }
-        return value;
-    }
-
     public setViewChilds(paginator: MatPaginator, sort: MatSort): void {
         this.paginator = paginator;
         this.sort = sort;
+    }
+
+    /**
+     * Columns can only be instantiated with the initColumns method
+     *
+     * @param columns available columns
+     */
+    initColumns(columns: Map<string, ColumnPickerValue>): void {
+        this._columns = columns;
+        this.updateColumns(columns);
+    }
+
+    /**
+     * Update column visibility
+     *
+     * @param columns updated columns
+     */
+    updateColumns(columns: Map<string, ColumnPickerValue>): void {
+        this._visibleColumns = [...columns.keys()].filter(key => columns.get(key) !== ColumnPickerValue.HIDDEN);
+        this._detailExpandColumns = [...columns.keys()].filter(key => columns.get(key) === ColumnPickerValue.HIDDEN);
+        this._filterColumns = this.visibleColumns.map(c => c + '_filter');
+    }
+
+    /* column getters, NO setters!*/
+    get columns(): Map<string, ColumnPickerValue> {
+        return this._columns;
+    }
+
+    get visibleColumns(): Array<string> {
+        return this._visibleColumns;
+    }
+
+    get detailExpandColumns(): Array<string> {
+        return this._detailExpandColumns;
+    }
+
+    get filterColumns(): Array<string> {
+        return this._filterColumns;
     }
 }

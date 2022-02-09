@@ -5,11 +5,12 @@
 
 <div class="zoek-wrapper" fxLayout="column" fxLayoutGap="5px">
     <div fxLayoutGap="16px">
-        <label class="form-label" for="radio-groep-selectie" fxFlex="15"
-               fxFlex.lt-md="25">{{'filter' | translate}}</label>
+        <label class="form-label" for="werkvoorraadVan_radio" fxFlex="15"
+               fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
 
-        <mat-radio-group id="radio-groep-selectie" aria-labelledby="radio-groep-selectie"
-                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75">
+        <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
+                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75"
+                         (ngModelChange)="switchTypeAndSearch()">
             <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
                               [value]="selectie">
                 {{ selectie | translate}}
@@ -19,9 +20,10 @@
     <div fxLayoutGap="16px">
         <label fxFlex="15" fxFlex.lt-md="25"></label>
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
-            <mat-form-field appearance="standard" id="groep-selectie" fxFlex="35" fxFlex.lt-md="75">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'groep' | translate}}</mat-label>
-                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.groep" id="groep_filter">
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.groep"
+                            id="groep_filter">
                     <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
@@ -32,9 +34,9 @@
         </ng-container>
 
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
-            <mat-form-field appearance="standard" id="zaaktype-selectie" fxFlex="35" fxFlex.lt-md="75">
+            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
                 <mat-label>{{'zaaktype' | translate}}</mat-label>
-                <mat-select (valueChange)="zoekZaken()" [(value)]="dataSource.zoekParameters.zaaktype"
+                <mat-select (selectionChange)="zoekZaken()" [(ngModel)]="dataSource.zoekParameters.zaaktype"
                             id="zaaktype_filter">
                     <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
@@ -107,9 +109,9 @@
                 {{ 'einddatumGepland' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.einddatumGepland | empty }}
+                {{ row.einddatumGepland | datum | empty }}
                 <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
-                          *ngIf="isAfterDate(row.einddatumGepland)">warning
+                          *ngIf="isAfterDate(row.einddatumGepland , row.einddatum)">warning
                 </mat-icon>
             </td>
         </ng-container>
@@ -134,9 +136,9 @@
                 {{ 'uiterlijkeEinddatumAfdoening' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.uiterlijkeEinddatumAfdoening | translate | empty }}
+                {{ row.uiterlijkeEinddatumAfdoening | datum | empty }}
                 <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
-                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning
+                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening, row.einddatum)">warning
                 </mat-icon>
             </td>
         </ng-container>
@@ -151,20 +153,8 @@
 
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button mat-flat-button [matMenuTriggerFor]="menu" (menuClosed)="updateColumns()"
-                        title="{{ 'filters' | translate }}">
-                    <mat-icon>view_column</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
-                        <mat-list-option (click)="$event.stopPropagation()"
-                                         checkboxPosition="before"
-                                         [value]="column"
-                                         *ngFor="let column of dataSource.columns | noStickyColumn: ['url']">
-                            {{column | translate}}
-                        </mat-list-option>
-                    </mat-selection-list>
-                </mat-menu>
+                <zac-column-picker [columnSrc]="dataSource.columns"
+                                   (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
@@ -180,8 +170,24 @@
                 <div class="row-detail"
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                        <ng-container *ngFor="let column of dataSource.detailExpandColumns">
-                            <zac-static-text fxFlex="33" [label]="column | translate"
+                        <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
+                            <zac-static-text *ngSwitchCase="'groep'" fxFlex="33" [label]="column | translate"
+                                             [value]="row.groep | empty: 'naam'"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'behandelaar'" fxFlex="33" [label]="column | translate"
+                                             [value]="row.behandelaar | empty: 'naam'"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'einddatumGepland'" fxFlex="33"
+                                             [label]="column | translate"
+                                             [value]="row.einddatumGepland"
+                                             [icon]="getIcon(row, 'einddatumGepland')"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'uiterlijkeEinddatumAfdoening'" fxFlex="33"
+                                             [label]="column | translate"
+                                             [value]="row.uiterlijkeEinddatumAfdoening"
+                                             [icon]="getIcon(row, 'uiterlijkeEinddatumAfdoening')"></zac-static-text>
+
+                            <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
                                              [value]="row[column] | translate"></zac-static-text>
                         </ng-container>
                     </div>

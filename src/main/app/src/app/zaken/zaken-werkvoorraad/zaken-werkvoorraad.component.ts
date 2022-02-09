@@ -9,7 +9,6 @@ import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
-import {MatButtonToggle} from '@angular/material/button-toggle';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -22,6 +21,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
@@ -36,13 +37,16 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     dataSource: ZakenWerkvoorraadDatasource;
     selection = new SelectionModel<ZaakOverzicht>(true, []);
 
-    @ViewChild('toggleColumns') toggleColumns: MatButtonToggle;
-
     expandedRow: ZaakOverzicht | null;
 
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
     private ingelogdeMedewerker: Medewerker;
+
+    einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+    uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog,
@@ -52,7 +56,21 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
-        this.setColumns();
+        this.dataSource.initColumns(new Map([
+            ['select', ColumnPickerValue.STICKY],
+            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['startdatum', ColumnPickerValue.VISIBLE],
+            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatumGepland', ColumnPickerValue.HIDDEN],
+            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['behandelaar', ColumnPickerValue.VISIBLE],
+            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+            ['toelichting', ColumnPickerValue.HIDDEN],
+            ['url', ColumnPickerValue.STICKY]
+        ]));
 
         this.zaaktypesOphalen();
         this.groepenOphalen();
@@ -70,7 +88,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {
@@ -104,17 +121,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         });
     }
 
-    private setColumns() {
-        this.dataSource.columns = [
-            'select', 'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'behandelaar', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
-        ];
-        this.dataSource.visibleColumns = [
-            'select', 'identificatie', 'status', 'groep', 'startdatum', 'aanvrager', 'behandelaar', 'url'
-        ];
-        this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-        this.dataSource.detailExpandColumns = ['einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
-    }
-
     switchTypeAndSearch() {
         if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
             this.zoekZaken();
@@ -123,7 +129,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     zoekZaken() {
         this.dataSource.zoekZaken();
-        this.setColumns();
         this.selection.clear();
         this.paginator.firstPage();
     }
@@ -223,5 +228,4 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
     }
-
 }

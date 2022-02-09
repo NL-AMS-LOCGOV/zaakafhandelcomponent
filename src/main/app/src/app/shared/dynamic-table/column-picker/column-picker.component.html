@@ -1,0 +1,20 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<button (menuClosed)="updateColumns()" (menuOpened)="menuOpened()" [matMenuTriggerFor]="menu" mat-flat-button
+        title="{{ 'filters' | translate }}">
+    <mat-icon>view_column</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+    <mat-selection-list (selectionChange)="selectionChanged($event)">
+        <mat-list-option (click)="$event.stopPropagation()"
+                         [selected]="column.value"
+                         checkboxPosition="before"
+                         [value]="column.key"
+                         *ngFor="let column of columns | keyvalue">
+            {{column.key | translate}}
+        </mat-list-option>
+    </mat-selection-list>
+</mat-menu>

@@ -27,5 +27,4 @@ export class ZakenMijnDatasource extends TableDataSource<ZaakOverzicht> {
                 this.setData(zaakResponse);
             });
     }
-
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -14,6 +14,8 @@ import {Zaaktype} from '../model/zaaktype';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {TextIcon} from '../../shared/edit/text-icon';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
 
 @Component({
@@ -31,9 +33,12 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
     zaaktypes: Zaaktype[] = [];
 
-    zaaktypeValue: any;
+    einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+    uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService, private cdRef: ChangeDetectorRef,
+    constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private sessionStorageService: SessionStorageService) { }
 
     ngOnInit(): void {
@@ -42,15 +47,19 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
-            this.dataSource.columns = [
-                'identificatie', 'status', 'zaaktype', 'groep', 'startdatum', 'einddatum', 'einddatumGepland', 'aanvrager', 'uiterlijkeEinddatumAfdoening', 'toelichting', 'url'
-            ];
-            this.dataSource.visibleColumns = [
-                'identificatie', 'status', 'zaaktype', 'startdatum', 'aanvrager', 'url'
-            ];
-            this.dataSource.selectedColumns = this.dataSource.visibleColumns;
-            this.dataSource.detailExpandColumns = ['groep', 'einddatum', 'einddatumGepland', 'uiterlijkeEinddatumAfdoening', 'toelichting'];
-            this.dataSource.setFilterColumns();
+            this.dataSource.initColumns(new Map([
+                ['identificatie', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaaktype', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['startdatum', ColumnPickerValue.VISIBLE],
+                ['einddatum', ColumnPickerValue.HIDDEN],
+                ['einddatumGepland', ColumnPickerValue.HIDDEN],
+                ['aanvrager', ColumnPickerValue.VISIBLE],
+                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+                ['toelichting', ColumnPickerValue.HIDDEN],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
         });
     }
 
@@ -66,7 +75,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             columns: {
                 allColumns: this.dataSource.columns,
                 visibleColumns: this.dataSource.visibleColumns,
-                selectedColumns: this.dataSource.selectedColumns,
                 detailExpandColumns: this.dataSource.detailExpandColumns
             },
             sorting: {
@@ -80,11 +88,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         };
 
         this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
-    }
-
-    updateColumns() {
-        this.dataSource.setFilterColumns();
-        this.cdRef.detectChanges();
     }
 
     zaaktypeChange(zaaktype: Zaaktype) {

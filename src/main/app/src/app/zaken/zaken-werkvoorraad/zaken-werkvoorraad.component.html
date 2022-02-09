@@ -129,7 +129,7 @@
                 {{ 'einddatumGepland' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.einddatumGepland | empty }}
+                {{ row.einddatumGepland | datum | empty }}
                 <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
                           *ngIf="isAfterDate(row.einddatumGepland)">warning
                 </mat-icon>
@@ -156,7 +156,7 @@
                 {{ 'uiterlijkeEinddatumAfdoening' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.uiterlijkeEinddatumAfdoening | translate | empty }}
+                {{ row.uiterlijkeEinddatumAfdoening | datum | empty }}
                 <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
                           *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning
                 </mat-icon>
@@ -173,20 +173,8 @@
 
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button (menuClosed)="dataSource.setFilterColumns()" [matMenuTriggerFor]="menu" mat-flat-button
-                        title="{{ 'filters' | translate }}">
-                    <mat-icon>view_column</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                    <mat-selection-list [(ngModel)]="dataSource.selectedColumns">
-                        <mat-list-option (click)="$event.stopPropagation()"
-                                         checkboxPosition="before"
-                                         [value]="column"
-                                         *ngFor="let column of dataSource.columns | noStickyColumn: ['select', 'url']">
-                            {{column | translate}}
-                        </mat-list-option>
-                    </mat-selection-list>
-                </mat-menu>
+                <zac-column-picker [columnSrc]="dataSource.columns"
+                                   (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
@@ -209,8 +197,23 @@
                 <div class="row-detail"
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                        <ng-container *ngFor="let column of dataSource.detailExpandColumns">
-                            <zac-static-text fxFlex="33" [label]="column | translate"
+                        <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
+                            <zac-static-text *ngSwitchCase="'groep'" fxFlex="33" [label]="column | translate"
+                                             [value]="row.groep | empty: 'naam'"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'behandelaar'" fxFlex="33" [label]="column | translate"
+                                             [value]="row.behandelaar | empty: 'naam'"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'einddatumGepland'" fxFlex="33"
+                                             [label]="column | translate"
+                                             [value]="row.einddatumGepland"
+                                             [icon]="einddatumGeplandIcon"></zac-static-text>
+
+                            <zac-static-text *ngSwitchCase="'uiterlijkeEinddatumAfdoening'" fxFlex="33"
+                                             [label]="column | translate"
+                                             [value]="row.uiterlijkeEinddatumAfdoening"
+                                             [icon]="uiterlijkeEinddatumAfdoeningIcon"></zac-static-text>
+
+                            <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
                                              [value]="row[column] | translate"></zac-static-text>
                         </ng-container>
                     </div>
