@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -35,39 +35,47 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
         'msg.datum.overschreden', 'warning');
 
+    werklijstData: any;
+
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService) { }
+                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.dataSource.initColumns(new Map([
-            ['naam', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
-            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
-            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
-            ['streefdatum', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['url', ColumnPickerValue.STICKY]
-        ]));
+        if (this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData')) {
+            this.werklijstData = this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData');
+        }
+
+        this.setColumns();
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.dataSource.load();
         this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+        }
+
+        this.dataSource.load();
     }
 
     ngOnDestroy() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
         const werklijstData = {
             filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
+            columns: flatListColumns,
             sorting: {
                 column: this.sort.active,
                 direction: this.sort.direction
@@ -83,6 +91,24 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
+    }
+
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
+            this.dataSource.initColumns(new Map([
+                ['naam', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+                ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+                ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+                ['streefdatum', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
+        }
     }
 
 }

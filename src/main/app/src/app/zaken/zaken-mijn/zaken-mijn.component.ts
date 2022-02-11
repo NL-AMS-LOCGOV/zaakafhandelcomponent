@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -38,8 +38,10 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
+    werklijstData: any;
+
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService) { }
+                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
@@ -47,36 +49,39 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
-            this.dataSource.initColumns(new Map([
-                ['identificatie', ColumnPickerValue.VISIBLE],
-                ['status', ColumnPickerValue.VISIBLE],
-                ['zaaktype', ColumnPickerValue.VISIBLE],
-                ['groep', ColumnPickerValue.VISIBLE],
-                ['startdatum', ColumnPickerValue.VISIBLE],
-                ['einddatum', ColumnPickerValue.HIDDEN],
-                ['einddatumGepland', ColumnPickerValue.HIDDEN],
-                ['aanvrager', ColumnPickerValue.VISIBLE],
-                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-                ['toelichting', ColumnPickerValue.HIDDEN],
-                ['url', ColumnPickerValue.STICKY]
-            ]));
+            if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
+                this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData');
+            }
+
+            this.setColumns();
         });
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.dataSource.load();
         this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+        }
+
+        this.dataSource.load();
     }
 
     ngOnDestroy() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
         const werklijstData = {
             filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
+            columns: flatListColumns,
             sorting: {
                 column: this.sort.active,
                 direction: this.sort.direction
@@ -97,6 +102,27 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
+    }
+
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
+            this.dataSource.initColumns(new Map([
+                ['identificatie', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaaktype', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['startdatum', ColumnPickerValue.VISIBLE],
+                ['einddatum', ColumnPickerValue.HIDDEN],
+                ['einddatumGepland', ColumnPickerValue.HIDDEN],
+                ['aanvrager', ColumnPickerValue.VISIBLE],
+                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+                ['toelichting', ColumnPickerValue.HIDDEN],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
+        }
     }
 
 }

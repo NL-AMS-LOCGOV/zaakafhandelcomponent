@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -48,48 +48,54 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
+    werklijstData: any;
+
     constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog,
-                private sessionStorageService: SessionStorageService) { }
+                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zakenService, this.utilService);
-        this.dataSource.initColumns(new Map([
-            ['select', ColumnPickerValue.STICKY],
-            ['identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
-            ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['startdatum', ColumnPickerValue.VISIBLE],
-            ['einddatum', ColumnPickerValue.HIDDEN],
-            ['einddatumGepland', ColumnPickerValue.HIDDEN],
-            ['aanvrager', ColumnPickerValue.VISIBLE],
-            ['behandelaar', ColumnPickerValue.VISIBLE],
-            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-            ['toelichting', ColumnPickerValue.HIDDEN],
-            ['url', ColumnPickerValue.STICKY]
-        ]));
 
         this.zaaktypesOphalen();
         this.groepenOphalen();
+
+        if (this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData')) {
+            this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData');
+        }
+
+        this.setColumns();
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+
+            this.searchCases();
+        }
     }
 
     ngOnDestroy() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
         const werklijstData = {
             searchParameters: this.dataSource.zoekParameters,
             filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
+            columns: flatListColumns,
             sorting: {
                 column: this.sort.active,
                 direction: this.sort.direction
@@ -121,16 +127,43 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         });
     }
 
-    switchTypeAndSearch() {
-        if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
-            this.zoekZaken();
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
+            this.dataSource.initColumns(new Map([
+                ['select', ColumnPickerValue.STICKY],
+                ['identificatie', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaaktype', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['startdatum', ColumnPickerValue.VISIBLE],
+                ['einddatum', ColumnPickerValue.HIDDEN],
+                ['einddatumGepland', ColumnPickerValue.HIDDEN],
+                ['aanvrager', ColumnPickerValue.VISIBLE],
+                ['behandelaar', ColumnPickerValue.VISIBLE],
+                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+                ['toelichting', ColumnPickerValue.HIDDEN],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
         }
     }
 
-    zoekZaken() {
+    switchTypeAndSearch() {
+        if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
+            this.searchAndGoToFirstPage();
+        }
+    }
+
+    searchAndGoToFirstPage() {
+        this.searchCases();
+        this.paginator.firstPage();
+    }
+
+    searchCases() {
         this.dataSource.zoekZaken();
         this.selection.clear();
-        this.paginator.firstPage();
     }
 
     assignToMe(zaakOverzicht: ZaakOverzicht, $event) {
@@ -200,7 +233,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
                 } else {
                     this.utilService.openSnackbar('msg.verdeeld.zaken', {aantal: this.selection.selected.length});
                 }
-                this.zoekZaken();
+                this.searchAndGoToFirstPage();
             }
         });
     }
@@ -220,7 +253,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
                 } else {
                     this.utilService.openSnackbar('msg.vrijgegeven.zaken', {aantal: this.selection.selected.length});
                 }
-                this.zoekZaken();
+                this.searchAndGoToFirstPage();
             }
         });
     }

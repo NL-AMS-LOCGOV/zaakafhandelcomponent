@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
@@ -35,45 +35,52 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     groepen: Groep[] = [];
     zaakTypes: Zaaktype[] = [];
 
+    werklijstData: any;
+
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService, private sessionStorageService: SessionStorageService) { }
+                private identityService: IdentityService, private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
         this.dataSource = new ZakenAfgehandeldDatasource(this.zakenService, this.utilService);
-        this.dataSource.initColumns(new Map([
-            ['identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
-            ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['startdatum', ColumnPickerValue.VISIBLE],
-            ['einddatum', ColumnPickerValue.HIDDEN],
-            ['einddatumGepland', ColumnPickerValue.HIDDEN],
-            ['aanvrager', ColumnPickerValue.VISIBLE],
-            ['behandelaar', ColumnPickerValue.HIDDEN],
-            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-            ['toelichting', ColumnPickerValue.HIDDEN],
-            ['url', ColumnPickerValue.STICKY]
-        ]));
 
         this.zaaktypesOphalen();
         this.groepenOphalen();
+
+        if (this.sessionStorageService.getSessionStorage('afgehandeldeZakenWerkvoorraadData')) {
+            this.werklijstData = this.sessionStorageService.getSessionStorage('afgehandeldeZakenWerkvoorraadData');
+        }
+
+        this.setColumns();
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+
+            this.searchCases();
+        }
     }
 
     ngOnDestroy() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
         const werklijstData = {
             searchParameters: this.dataSource.zoekParameters,
             filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
+            columns: flatListColumns,
             sorting: {
                 column: this.sort.active,
                 direction: this.sort.direction
@@ -101,13 +108,17 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
 
     switchTypeAndSearch() {
         if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
-            this.zoekZaken();
+            this.searchAndGoToFirstPage();
         }
     }
 
-    zoekZaken() {
-        this.dataSource.zoekZaken();
+    searchAndGoToFirstPage() {
+        this.searchCases();
         this.paginator.firstPage();
+    }
+
+    searchCases() {
+        this.dataSource.zoekZaken();
     }
 
     isAfterDate(datum, actual): boolean {
@@ -124,6 +135,28 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
                     'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
             default:
                 throw new Error(`Unknown icon field: ${icon}`);
+        }
+    }
+
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
+            this.dataSource.initColumns(new Map([
+                ['identificatie', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaaktype', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['startdatum', ColumnPickerValue.VISIBLE],
+                ['einddatum', ColumnPickerValue.HIDDEN],
+                ['einddatumGepland', ColumnPickerValue.HIDDEN],
+                ['aanvrager', ColumnPickerValue.VISIBLE],
+                ['behandelaar', ColumnPickerValue.HIDDEN],
+                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+                ['toelichting', ColumnPickerValue.HIDDEN],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
         }
     }
 }
