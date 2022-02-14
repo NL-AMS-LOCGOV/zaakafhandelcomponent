@@ -48,13 +48,14 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource = new ZakenMijnDatasource(this.zakenService, this.utilService);
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
-
-            if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
-                this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData');
-            }
-
-            this.setColumns();
         });
+
+        if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
+            this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData');
+            this.dataSource.filters = this.werklijstData.filters;
+        }
+
+        this.setColumns();
     }
 
     ngAfterViewInit(): void {
@@ -62,8 +63,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.table.dataSource = this.dataSource;
 
         if (this.werklijstData) {
-            this.dataSource.filters = this.werklijstData.filters;
-
             this.paginator.pageIndex = this.werklijstData.paginator.page;
             this.paginator.pageSize = this.werklijstData.paginator.pageSize;
 
@@ -109,19 +108,34 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
             this.dataSource.initColumns(mapColumns);
         } else {
-            this.dataSource.initColumns(new Map([
-                ['identificatie', ColumnPickerValue.VISIBLE],
-                ['status', ColumnPickerValue.VISIBLE],
-                ['zaaktype', ColumnPickerValue.VISIBLE],
-                ['groep', ColumnPickerValue.VISIBLE],
-                ['startdatum', ColumnPickerValue.VISIBLE],
-                ['einddatum', ColumnPickerValue.HIDDEN],
-                ['einddatumGepland', ColumnPickerValue.HIDDEN],
-                ['aanvrager', ColumnPickerValue.VISIBLE],
-                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-                ['toelichting', ColumnPickerValue.HIDDEN],
-                ['url', ColumnPickerValue.STICKY]
-            ]));
+            this.dataSource.initColumns(this.initialColumns());
+        }
+    }
+
+    initialColumns(): Map<string, ColumnPickerValue> {
+        return new Map([
+            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['startdatum', ColumnPickerValue.VISIBLE],
+            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatumGepland', ColumnPickerValue.HIDDEN],
+            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+            ['toelichting', ColumnPickerValue.HIDDEN],
+            ['url', ColumnPickerValue.STICKY]
+        ]);
+    }
+
+    resetSearchCriteria() {
+        if (this.werklijstData) {
+            this.dataSource.filters = {};
+            this.dataSource.initColumns(this.initialColumns());
+            this.paginator.pageIndex = 0;
+            this.paginator.pageSize = 25;
+            this.sort.active = '';
+            this.sort.direction = '';
         }
     }
 

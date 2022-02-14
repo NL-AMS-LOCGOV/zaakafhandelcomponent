@@ -98,16 +98,31 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
             this.dataSource.initColumns(mapColumns);
         } else {
-            this.dataSource.initColumns(new Map([
-                ['naam', ColumnPickerValue.VISIBLE],
-                ['status', ColumnPickerValue.VISIBLE],
-                ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
-                ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-                ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
-                ['streefdatum', ColumnPickerValue.VISIBLE],
-                ['groep', ColumnPickerValue.VISIBLE],
-                ['url', ColumnPickerValue.STICKY]
-            ]));
+            this.dataSource.initColumns(this.initialColumns());
+        }
+    }
+
+    initialColumns(): Map<string, ColumnPickerValue> {
+        return new Map([
+            ['naam', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['url', ColumnPickerValue.STICKY]
+        ]);
+    }
+
+    resetSearchCriteria() {
+        if (this.werklijstData) {
+            this.dataSource.filters = {};
+            this.dataSource.initColumns(this.initialColumns());
+            this.paginator.pageIndex = 0;
+            this.paginator.pageSize = 25;
+            this.sort.active = '';
+            this.sort.direction = '';
         }
     }
 
