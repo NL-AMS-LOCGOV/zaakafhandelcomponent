@@ -24,6 +24,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -48,7 +49,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    werklijstData: any;
+    werklijstData: WerklijstData;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog,
@@ -63,7 +64,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.groepenOphalen();
 
         if (this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData');
+            this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
         }
 
         this.setColumns();
@@ -92,19 +93,14 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     ngOnDestroy() {
         const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = {
-            searchParameters: this.dataSource.zoekParameters,
-            filters: this.dataSource.filters,
-            columns: flatListColumns,
-            sorting: {
-                column: this.sort.active,
-                direction: this.sort.direction
-            },
-            paginator: {
-                page: this.paginator.pageIndex,
-                pageSize: this.paginator.pageSize
-            }
-        };
+        const werklijstData = new WerklijstData();
+        werklijstData.searchParameters = this.dataSource.zoekParameters;
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting.column = this.sort.active;
+        werklijstData.sorting.direction = this.sort.direction;
+        werklijstData.paginator.page = this.paginator.pageIndex;
+        werklijstData.paginator.pageSize = this.paginator.pageSize;
 
         this.sessionStorageService.setSessionStorage('zakenWerkvoorraadData', werklijstData);
     }
