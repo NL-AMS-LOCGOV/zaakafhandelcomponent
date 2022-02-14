@@ -11,10 +11,6 @@ export class WerklijstData {
         selectie: 'groep' | 'zaaktype',
         groep: string,
         zaaktype: string
-    } = {
-        selectie: 'groep',
-        groep: null,
-        zaaktype: null
     };
 
     filters: {};
@@ -24,17 +20,11 @@ export class WerklijstData {
     sorting: {
         column: string,
         direction: SortDirection
-    } = {
-        column: '',
-        direction: ''
     };
 
     paginator: {
         page: number,
         pageSize: number
-    } = {
-        page: 0,
-        pageSize: 25
     };
 
 }

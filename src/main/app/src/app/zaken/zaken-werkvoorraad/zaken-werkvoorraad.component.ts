@@ -97,10 +97,14 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         werklijstData.searchParameters = this.dataSource.zoekParameters;
         werklijstData.filters = this.dataSource.filters;
         werklijstData.columns = flatListColumns;
-        werklijstData.sorting.column = this.sort.active;
-        werklijstData.sorting.direction = this.sort.direction;
-        werklijstData.paginator.page = this.paginator.pageIndex;
-        werklijstData.paginator.pageSize = this.paginator.pageSize;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
 
         this.sessionStorageService.setSessionStorage('zakenWerkvoorraadData', werklijstData);
     }
