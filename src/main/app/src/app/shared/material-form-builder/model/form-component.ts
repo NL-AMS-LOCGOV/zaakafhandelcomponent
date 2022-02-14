@@ -50,7 +50,7 @@ export abstract class FormComponent {
         }
     }
 
-    private labeled(key: string, params: object): string {
+    labeled(key: string, params: object): string {
         if (this.data.label) {
             params['label'] = this.translate.instant(this.data.label);
         }
