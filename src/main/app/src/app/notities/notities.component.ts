@@ -80,6 +80,11 @@ export class NotitiesComponent implements OnInit {
         }
     }
 
+    annuleerUpdateNotitie() {
+        this.notitieTekst.nativeElement.value = '';
+        this.geselecteerdeNotitieId = null;
+    }
+
     verwijderNotitie(id: number) {
         this.notitieService.deleteNotitie(id).subscribe(() => {
             this.notities.splice(this.notities.findIndex(n => n.id === id), 1);
