@@ -48,10 +48,8 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        if (this.sessionStorageService.getSessionStorage('afgehandeldeZakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage(
-                'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage(
+            'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }

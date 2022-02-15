@@ -40,6 +40,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     werklijstData: WerklijstData;
+    zaaktypeFilter: {} = {};
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
@@ -51,14 +52,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             this.zaaktypes = zaaktypes;
         });
 
-            if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
-                this.werklijstData = this.sessionStorageService.getSessionStorage(
-                    'mijnZakenWerkvoorraadData') as WerklijstData;
-            }
-        if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData');
-            this.dataSource.filters = this.werklijstData.filters;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -68,6 +62,9 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.table.dataSource = this.dataSource;
 
         if (this.werklijstData) {
+            this.dataSource.filters = this.werklijstData.filters;
+            this.zaaktypeFilter = this.werklijstData.filters['zaaktype'];
+
             this.paginator.pageIndex = this.werklijstData.paginator.page;
             this.paginator.pageSize = this.werklijstData.paginator.pageSize;
 

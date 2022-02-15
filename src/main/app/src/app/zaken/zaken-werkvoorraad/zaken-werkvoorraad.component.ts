@@ -63,9 +63,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        if (this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }

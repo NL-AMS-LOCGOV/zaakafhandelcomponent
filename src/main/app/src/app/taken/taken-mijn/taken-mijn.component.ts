@@ -45,10 +45,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        if (this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage(
-                'mijnTakenWerkvoorraadData') as WerklijstData;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }

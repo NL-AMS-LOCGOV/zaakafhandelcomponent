@@ -55,9 +55,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
 
-        if (this.sessionStorageService.getSessionStorage('takenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('takenWerkvoorraadData') as WerklijstData;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage('takenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }

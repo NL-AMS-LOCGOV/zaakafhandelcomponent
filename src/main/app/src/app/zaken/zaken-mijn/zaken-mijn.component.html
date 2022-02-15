@@ -22,8 +22,8 @@
             <th mat-header-cell *matHeaderCellDef>
                 <mat-form-field appearance="standard" class="full-width">
                     <mat-label>{{'zaaktype.-kies-' | translate}}</mat-label>
-                    <mat-select id="zaaktype_filter" [(ngModel)]="dataSource.filters"
-                                (valueChange)="zaaktypeChange($event)">
+                    <mat-select id="zaaktype_filter" (valueChange)="zaaktypeChange($event)"
+                                [(ngModel)]="zaaktypeFilter">
                         <mat-option>{{ 'zaaktype.-kies-' | translate }}</mat-option>
                         <mat-option *ngFor="let value of zaaktypes" [value]="value">
                             {{ value.omschrijving }}
@@ -155,7 +155,7 @@
         </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button (click)="resetSearchCriteria()" title="{{ 'actie.wis.zoekopdracht' | translate }}"
+                <button (click)="resetSearchCriteria()" title="{{ 'actie.zoekopdracht.wissen' | translate }}"
                         mat-flat-button>
                     <mat-icon>clear</mat-icon>
                 </button>
