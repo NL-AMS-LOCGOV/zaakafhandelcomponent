@@ -195,13 +195,24 @@ public class TakenRESTService {
 
     @PATCH
     @Path("")
-    public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
+    public RESTTaak updateTaak(final RESTTaak restTaak) {
         Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertRESTTaak(restTaak, task);
         final Task updatedTask = flowableService.updateTask(task);
         eventingService.send(TAAK.updated(updatedTask));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTaskInfo(updatedTask);
+    }
+
+    @PATCH
+    @Path("partial")
+    public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
+        Task task = flowableService.readTask(restTaak.id);
+        taakConverter.convertRESTTaak(restTaak, task);
+        final Task updatedTask = flowableService.updateTask(task);
+        eventingService.send(TAAK.updated(updatedTask));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
+        return taakConverter.convertPartialTaskInfo(updatedTask);
     }
 
     @PATCH

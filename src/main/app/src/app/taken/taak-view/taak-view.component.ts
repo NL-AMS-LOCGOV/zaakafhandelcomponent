@@ -181,10 +181,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    editTaak(value: string, field: string): void {
+    partialEditTaak(value: string, field: string): void {
         this.taak[field] = value;
         this.websocketService.suspendListener(this.taakListener);
-        this.takenService.update(this.taak).subscribe((taak) => {
+        this.takenService.partialUpdateTaak(this.taak).subscribe((taak) => {
             this.init(taak);
         });
     }
@@ -205,7 +205,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
-    };
+    }
 
     private getIngelogdeMedewerker() {
         this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
