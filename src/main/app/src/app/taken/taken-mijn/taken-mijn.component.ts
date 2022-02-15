@@ -17,6 +17,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -35,7 +36,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
         'msg.datum.overschreden', 'warning');
 
-    werklijstData: any;
+    werklijstData: WerklijstData;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
@@ -45,7 +46,8 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
         if (this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData');
+            this.werklijstData = this.sessionStorageService.getSessionStorage(
+                'mijnTakenWerkvoorraadData') as WerklijstData;
         }
 
         this.setColumns();
@@ -73,17 +75,16 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     ngOnDestroy() {
         const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = {
-            filters: this.dataSource.filters,
-            columns: flatListColumns,
-            sorting: {
-                column: this.sort.active,
-                direction: this.sort.direction
-            },
-            paginator: {
-                page: this.paginator.pageIndex,
-                pageSize: this.paginator.pageSize
-            }
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
         };
 
         this.sessionStorageService.setSessionStorage('mijnTakenWerkvoorraadData', werklijstData);
