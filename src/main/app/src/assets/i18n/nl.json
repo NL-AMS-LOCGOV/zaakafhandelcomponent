@@ -222,6 +222,7 @@
   "msg.error.telang": "Het {{label}}-veld bevat een te lange waarde. Gebruik maximaal {{requiredLength}} tekens!",
   "msg.error.invalid.email": "Het {{label}}-veld bevat een ongeldig E-Mailadres. Gebruik het voorbeeld@example.com formaat!",
   "msg.error.invalid.formaat": "Het {{label}}-veld bevat een ongeldige waarde. Gebruik het {{requiredPattern}} formaat!",
+  "msg.error.date.formaat": "DD-MM-JJJJ",
   "msg.geen.gegevens.gevonden": "Geen gegevens gevonden",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "Dit document",
   "msg.gewijzigd.objecttype.TAAK": "Deze taak",
