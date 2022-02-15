@@ -65,6 +65,10 @@ public interface ZTCClient {
     Results<Informatieobjecttype> informatieobjecttypeList();
 
     @GET
+    @Path("resultaattypen/{uuid}")
+    Resultaattype resultaattypeRead(@PathParam("uuid") final UUID uuid);
+
+    @GET
     @Path("resultaattypen")
     Results<Resultaattype> resultaattypeList(@BeanParam final ResultaattypeListParameters parameters);
 

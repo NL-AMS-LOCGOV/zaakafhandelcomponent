@@ -68,7 +68,7 @@
                             <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                 <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
                                 <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
-                                            [formControl]="getControl(planItemParameter, 'formulierDefinitie')" [compareWith]="compareObject">
+                                            [formControl]="getPlanItemControl(planItemParameter, 'formulierDefinitie')" [compareWith]="compareObject">
                                     <mat-option *ngFor="let formDef of formulierDefinities | async" [value]="formDef">{{ formDef.naam }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -77,7 +77,7 @@
                             <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                 <mat-label>{{'groep' | translate}}</mat-label>
                                 <mat-select placeholder="{{'groep.-kies-' | translate}}"
-                                            [formControl]="getControl(planItemParameter, 'defaultGroep')" [compareWith]="compareObject">
+                                            [formControl]="getPlanItemControl(planItemParameter, 'defaultGroep')" [compareWith]="compareObject">
                                     <mat-option [value]="">{{'groep.-kies-' | translate}}</mat-option>
                                     <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                                 </mat-select>
@@ -86,7 +86,7 @@
                         <div fxLayout="row wrap">
                             <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                 <mat-label>{{'doorlooptijd.gewenst' | translate}}</mat-label>
-                                <input matInput type="number" [formControl]="getControl(planItemParameter, 'doorlooptijd')" min="0" max="2147483647">
+                                <input matInput type="number" [formControl]="getPlanItemControl(planItemParameter, 'doorlooptijd')" min="0" max="2147483647">
                                 <span matSuffix>{{'dagen' | translate}}</span>
                             </mat-form-field>
                         </div>
@@ -94,7 +94,52 @@
                 </mat-accordion>
                 <div class="button-group" fxLayout="row wrap">
                     <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
-                    <button mat-raised-button color="primary" (click)="opslaan()" [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
+                    <button mat-raised-button color="primary" [disabled]="zaakbeeindigParameters.length == 0"
+                            matStepperNext>{{"actie.volgende" | translate}}</button>
+                    <button mat-raised-button [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                </div>
+            </form>
+        </ng-template>
+    </mat-step>
+    <mat-step [stepControl]="zaakbeeindigFormGroup">
+        <ng-template matStepLabel>{{"gegevens.beeindiging" | translate}}</ng-template>
+        <ng-template matStepContent>
+            <form [formGroup]="zaakbeeindigFormGroup" fxLayout="column">
+                <div class="table-wrapper">
+                    <table mat-table [dataSource]="zaakbeeindigParameters">
+                        <ng-container matColumnDef="select">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                              (change)="changeSelection($event, parameter)"
+                                              [checked]="selection.isSelected(parameter)">
+                                </mat-checkbox>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="reden">
+                            <th mat-header-cell *matHeaderCellDef translate="reden"></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                {{ parameter.zaakbeeindigReden.naam }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="resultaat">
+                            <th mat-header-cell *matHeaderCellDef translate="resultaat"></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <mat-select placeholder="{{'resultaat.-kies-' | translate}}"
+                                            [formControl]="getZaakbeeindigControl(parameter,'beeindigResultaat')" [compareWith]="compareObject">
+                                    <mat-option [value]="">{{'resultaat.-kies-' | translate}}</mat-option>
+                                    <mat-option *ngFor="let resultaat of zaakResultaten | async" [value]="resultaat">{{ resultaat.naam }}</mat-option>
+                                </mat-select>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="['select', 'reden', 'resultaat']"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['select', 'reden', 'resultaat'];"></tr>
+                    </table>
+                    <p *ngIf="zaakbeeindigParameters.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                </div>
+                <div class="button-group" fxLayout="row wrap">
+                    <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                    <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                 </div>
             </form>
         </ng-template>

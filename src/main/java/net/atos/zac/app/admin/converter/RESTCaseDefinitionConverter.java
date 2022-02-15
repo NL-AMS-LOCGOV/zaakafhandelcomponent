@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.admin;
+package net.atos.zac.app.admin.converter;
 
 import java.util.ArrayList;
 import java.util.List;
