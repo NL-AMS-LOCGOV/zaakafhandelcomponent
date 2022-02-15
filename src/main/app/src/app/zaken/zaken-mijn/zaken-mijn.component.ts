@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
@@ -17,6 +17,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -38,8 +39,10 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
+    werklijstData: WerklijstData;
+
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService) { }
+                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
@@ -47,6 +50,66 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.zakenService.listZaaktypes().subscribe(zaaktypes => {
             this.zaaktypes = zaaktypes;
 
+            if (this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData')) {
+                this.werklijstData = this.sessionStorageService.getSessionStorage(
+                    'mijnZakenWerkvoorraadData') as WerklijstData;
+            }
+
+            this.setColumns();
+        });
+    }
+
+    ngAfterViewInit(): void {
+        this.dataSource.setViewChilds(this.paginator, this.sort);
+        this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+        }
+
+        this.dataSource.load();
+    }
+
+    ngOnDestroy() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
+
+        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
+    }
+
+    zaaktypeChange(zaaktype: Zaaktype) {
+        this.dataSource.filter('zaaktype', zaaktype?.identificatie);
+        this.paginator.firstPage();
+    }
+
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
+    }
+
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
             this.dataSource.initColumns(new Map([
                 ['identificatie', ColumnPickerValue.VISIBLE],
                 ['status', ColumnPickerValue.VISIBLE],
@@ -60,43 +123,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
                 ['toelichting', ColumnPickerValue.HIDDEN],
                 ['url', ColumnPickerValue.STICKY]
             ]));
-        });
-    }
-
-    ngAfterViewInit(): void {
-        this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.dataSource.load();
-        this.table.dataSource = this.dataSource;
-    }
-
-    ngOnDestroy() {
-        const werklijstData = {
-            filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
-            sorting: {
-                column: this.sort.active,
-                direction: this.sort.direction
-            },
-            paginator: {
-                page: this.paginator.pageIndex,
-                pageSize: this.paginator.pageSize
-            }
-        };
-
-        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
-    }
-
-    zaaktypeChange(zaaktype: Zaaktype) {
-        this.dataSource.filter('zaaktype', zaaktype?.identificatie);
-        this.paginator.firstPage();
-    }
-
-    isAfterDate(datum): boolean {
-        return Conditionals.isOverschreden(datum);
+        }
     }
 
 }

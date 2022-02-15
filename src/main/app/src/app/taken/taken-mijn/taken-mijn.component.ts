@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
@@ -17,6 +17,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {SessionStorageService} from '../../shared/storage/session-storage.service';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -35,47 +36,55 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
         'msg.datum.overschreden', 'warning');
 
+    werklijstData: WerklijstData;
+
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService) { }
+                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.dataSource.initColumns(new Map([
-            ['naam', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
-            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
-            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
-            ['streefdatum', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['url', ColumnPickerValue.STICKY]
-        ]));
+        if (this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData')) {
+            this.werklijstData = this.sessionStorageService.getSessionStorage(
+                'mijnTakenWerkvoorraadData') as WerklijstData;
+        }
+
+        this.setColumns();
     }
 
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.dataSource.load();
         this.table.dataSource = this.dataSource;
+
+        if (this.werklijstData) {
+            this.dataSource.filters = this.werklijstData.filters;
+
+            this.paginator.pageIndex = this.werklijstData.paginator.page;
+            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
+
+            this.sort.active = this.werklijstData.sorting.column;
+            this.sort.direction = this.werklijstData.sorting.direction;
+
+            // Manually trigger ChangeDetection because changes have been made to the sort
+            this.cd.detectChanges();
+        }
+
+        this.dataSource.load();
     }
 
     ngOnDestroy() {
-        const werklijstData = {
-            filters: this.dataSource.filters,
-            columns: {
-                allColumns: this.dataSource.columns,
-                visibleColumns: this.dataSource.visibleColumns,
-                detailExpandColumns: this.dataSource.detailExpandColumns
-            },
-            sorting: {
-                column: this.sort.active,
-                direction: this.sort.direction
-            },
-            paginator: {
-                page: this.paginator.pageIndex,
-                pageSize: this.paginator.pageSize
-            }
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
         };
 
         this.sessionStorageService.setSessionStorage('mijnTakenWerkvoorraadData', werklijstData);
@@ -83,6 +92,24 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
+    }
+
+    private setColumns() {
+        if (this.werklijstData) {
+            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
+            this.dataSource.initColumns(mapColumns);
+        } else {
+            this.dataSource.initColumns(new Map([
+                ['naam', ColumnPickerValue.VISIBLE],
+                ['status', ColumnPickerValue.VISIBLE],
+                ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+                ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
+                ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+                ['streefdatum', ColumnPickerValue.VISIBLE],
+                ['groep', ColumnPickerValue.VISIBLE],
+                ['url', ColumnPickerValue.STICKY]
+            ]));
+        }
     }
 
 }
