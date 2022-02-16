@@ -22,10 +22,10 @@
             <th mat-header-cell *matHeaderCellDef>
                 <mat-form-field appearance="standard" class="full-width">
                     <mat-label>{{'zaaktype.-kies-' | translate}}</mat-label>
-                    <mat-select id="zaaktype_filter" (valueChange)="zaaktypeChange($event)"
-                                [(ngModel)]="zaaktypeFilter">
+                    <mat-select id="zaaktype_filter" (selectionChange)="zaaktypeChange()"
+                                [(ngModel)]="dataSource.zoekParameters.zaaktype">
                         <mat-option>{{ 'zaaktype.-kies-' | translate }}</mat-option>
-                        <mat-option *ngFor="let value of zaaktypes" [value]="value">
+                        <mat-option *ngFor="let value of zaaktypes" [value]="value.identificatie">
                             {{ value.omschrijving }}
                         </mat-option>
                     </mat-select>
