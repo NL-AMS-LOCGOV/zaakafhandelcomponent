@@ -25,9 +25,15 @@ import org.flowable.cmmn.api.repository.CaseDefinition;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.admin.converter.RESTCaseDefinitionConverter;
+import net.atos.zac.app.admin.converter.RESTZaakResultaattypeConverter;
+import net.atos.zac.app.admin.converter.RESTZaakafhandelParametersConverter;
+import net.atos.zac.app.admin.converter.RESTZaakbeeindigRedenConverter;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
 import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
+import net.atos.zac.app.admin.model.RESTZaakResultaattype;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
+import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
@@ -58,6 +64,12 @@ public class ZaakafhandelParametersRESTService {
 
     @Inject
     private RESTCaseDefinitionConverter caseDefinitionConverter;
+
+    @Inject
+    private RESTZaakResultaattypeConverter zaakResultaattypeConverter;
+
+    @Inject
+    private RESTZaakbeeindigRedenConverter zaakbeeindigRedenConverter;
 
     /**
      * Retrieve all CASE_DEFINITIONs that can be linked to a ZAAKTYPE
@@ -138,6 +150,32 @@ public class ZaakafhandelParametersRESTService {
             zaakafhandelParameters = zaakafhandelParameterBeheerService.updateZaakafhandelParameters(parameters);
         }
         return zaakafhandelParametersConverter.convert(zaakafhandelParameters, true);
+    }
+
+    /**
+     * Retrieve all possible zaakbeeindig-redenen
+     *
+     * @return list of zaakbeeindig-redenen
+     */
+    @GET
+    @Path("redenen")
+    public List<RESTZaakbeeindigReden> listZaakbeeindigRedenen() {
+        return zaakbeeindigRedenConverter.convertToRest(
+                zaakafhandelParameterBeheerService.listZaakbeeindigRedenen());
+    }
+
+    /**
+     * Retrieve all resultaattypes for a zaaktype
+     *
+     * @param zaaktypeUUID the id of the zaaktype
+     * @return list of resultaattypes
+     */
+    @GET
+    @Path("resultaten/{zaaktypeUUID}")
+    public List<RESTZaakResultaattype> listZaakResultaten(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
+        return zaakResultaattypeConverter.convertToRest(
+                ztcClientService.readResultaattypen(
+                        ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
     /**

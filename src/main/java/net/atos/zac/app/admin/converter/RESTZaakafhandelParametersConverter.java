@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.admin;
+package net.atos.zac.app.admin.converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,9 @@ public class RESTZaakafhandelParametersConverter {
 
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
+
+    @Inject
+    private RESTZaakbeeindigParameterConverter zaakbeeindigParameterConverter;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -71,6 +74,7 @@ public class RESTZaakafhandelParametersConverter {
             }
             restParameters.planItemParameters = list;
         }
+        restParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertToRest(parameters.getZaakbeeindigParameters());
         return restParameters;
     }
 
@@ -97,6 +101,7 @@ public class RESTZaakafhandelParametersConverter {
             list.add(planItemParameters);
         });
         parameters.setPlanItemParametersCollection(list);
+        parameters.setZaakbeeindigParameters(zaakbeeindigParameterConverter.convertToDomain(restParameters.zaakbeeindigParameters));
         return parameters;
     }
 }

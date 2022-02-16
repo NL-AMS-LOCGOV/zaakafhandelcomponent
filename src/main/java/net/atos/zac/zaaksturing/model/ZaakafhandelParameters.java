@@ -7,8 +7,9 @@ package net.atos.zac.zaaksturing.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -54,8 +55,13 @@ public class ZaakafhandelParameters {
     @Column(name = "gebruikersnaam_behandelaar")
     private String gebruikersnaamMedewerker;
 
-    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Collection<PlanItemParameters> planItemParametersCollection;
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
+    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<PlanItemParameters> planItemParametersCollection;
+
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
+    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<ZaakbeeindigParameter> zaakbeeindigParameters;
 
     public Long getId() {
         return id;
@@ -99,7 +105,7 @@ public class ZaakafhandelParameters {
 
     public Collection<PlanItemParameters> getPlanItemParametersCollection() {
         if (planItemParametersCollection == null) {
-            planItemParametersCollection = new ArrayList<>();
+            planItemParametersCollection = new HashSet<>();
         }
         return planItemParametersCollection;
     }
@@ -113,4 +119,22 @@ public class ZaakafhandelParameters {
         getPlanItemParametersCollection().clear();
         collection.forEach(this::addPlanItemParameters);
     }
+
+    public Collection<ZaakbeeindigParameter> getZaakbeeindigParameters() {
+        if (zaakbeeindigParameters == null) {
+            zaakbeeindigParameters = new HashSet<>();
+        }
+        return zaakbeeindigParameters;
+    }
+
+    public void addZaakbeeindigParameter(ZaakbeeindigParameter zaakbeeindigParameter) {
+        zaakbeeindigParameter.setZaakafhandelParameters(this);
+        getZaakbeeindigParameters().add(zaakbeeindigParameter);
+    }
+
+    public void setZaakbeeindigParameters(final Collection<ZaakbeeindigParameter> collection) {
+        getZaakbeeindigParameters().clear();
+        collection.forEach(this::addZaakbeeindigParameter);
+    }
 }
+

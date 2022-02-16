@@ -198,6 +198,18 @@ public class ZTCClientService implements Caching {
     }
 
     /**
+     * Read {@link Resultaattype} via its UUID.
+     * Throws a RuntimeException if the {@link Resultaattype} can not be read.
+     *
+     * @param resultaattypeUUID UUID of {@link Resultaattype}.
+     * @return {@link Resultaattype}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_RESULTAATTYPE)
+    public Resultaattype readResultaattype(final UUID resultaattypeUUID) {
+        return ztcClient.resultaattypeRead(resultaattypeUUID);
+    }
+
+    /**
      * Read the {@link Resultaattype} of {@link Zaaktype}.
      *
      * @param zaaktypeURI URI of {@link Zaaktype}.

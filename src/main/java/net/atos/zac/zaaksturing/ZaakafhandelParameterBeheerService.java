@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
 
 @ApplicationScoped
 @Transactional
@@ -80,5 +81,12 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
-
+    public List<ZaakbeeindigReden> listZaakbeeindigRedenen() {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZaakbeeindigReden> query = builder.createQuery(ZaakbeeindigReden.class);
+        final Root<ZaakbeeindigReden> root = query.from(ZaakbeeindigReden.class);
+        query.orderBy(builder.asc(root.get("naam")));
+        final TypedQuery<ZaakbeeindigReden> emQuery = entityManager.createQuery(query);
+        return emQuery.getResultList();
+    }
 }
