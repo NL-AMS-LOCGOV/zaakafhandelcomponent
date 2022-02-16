@@ -97,6 +97,10 @@
         </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
+                <button (click)="resetSearchCriteria()" title="{{ 'actie.zoekopdracht.wissen' | translate }}"
+                        mat-flat-button>
+                    <mat-icon>clear</mat-icon>
+                </button>
                 <zac-column-picker [columnSrc]="dataSource.columns"
                                    (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>

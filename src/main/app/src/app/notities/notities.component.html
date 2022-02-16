@@ -39,11 +39,18 @@
                             <mat-label>{{ 'actie.notitie.wijzigen' | translate }}</mat-label>
                             <textarea matInput cdkTextareaAutosize [maxLength]="maxLengteTextArea" #notitieTekst>{{ notitie.tekst }}</textarea>
                         </mat-form-field>
-                        <button fxLayoutAlign="center center" mat-icon-button aria-label="Opslaan" color="primary"
-                                (click)="updateNotitie(notitie, notitieTekst.value)" id="notitieUpdate_button"
-                                title="{{ 'actie.opslaan' | translate }}">
-                            <mat-icon>done</mat-icon>
-                        </button>
+                        <div class="notitieContentFooter">
+                            <button mat-icon-button aria-label="Opslaan" color="primary"
+                                    (click)="updateNotitie(notitie, notitieTekst.value)" id="notitieUpdate_button"
+                                    title="{{ 'actie.opslaan' | translate }}">
+                                <mat-icon>done</mat-icon>
+                            </button>
+                            <button mat-icon-button aria-label="Annuleren" color="primary"
+                                    (click)="annuleerUpdateNotitie()" id="notitieBewerkenAnnuleren_button"
+                                    title="{{ 'actie.annuleren' | translate }}">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="notitieContentFooter">
