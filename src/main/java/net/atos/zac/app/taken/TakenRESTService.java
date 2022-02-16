@@ -193,6 +193,12 @@ public class TakenRESTService {
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
     }
 
+    /**
+     * Methode voor het updaten van de taakgegevens inclusief de formulierdefinitie.
+     *
+     * @param restTaak Rest representatie van een taak.
+     * @return Een up to date taak inclusief de formulierdefinitie.
+     */
     @PATCH
     @Path("")
     public RESTTaak updateTaak(final RESTTaak restTaak) {
@@ -204,6 +210,12 @@ public class TakenRESTService {
         return taakConverter.convertTaskInfo(updatedTask);
     }
 
+    /**
+     * Methode voor het updaten van de taak gegevens exclusief de formulierdefinitie.
+     *
+     * @param restTaak Rest representatie van een taak.
+     * @return Een up to date taak exclusief de formulierdefinitie.
+     */
     @PATCH
     @Path("partial")
     public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
