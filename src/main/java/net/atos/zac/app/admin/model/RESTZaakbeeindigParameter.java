@@ -12,7 +12,4 @@ public class RESTZaakbeeindigParameter {
     public RESTZaakbeeindigReden zaakbeeindigReden;
 
     public RESTZaakResultaattype zaakResultaat;
-
-    public RESTZaakbeeindigParameter() {
-    }
 }

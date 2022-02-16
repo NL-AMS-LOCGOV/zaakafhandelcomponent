@@ -5,12 +5,11 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.util.UUID;
+
 public class RESTZaakResultaattype {
 
-    public String id;
+    public UUID id;
 
     public String naam;
-
-    public RESTZaakResultaattype() {
-    }
 }

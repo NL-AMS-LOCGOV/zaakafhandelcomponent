@@ -4,7 +4,7 @@
  */
 
 import {ZaakbeeindigReden} from './zaakbeeindig-reden';
-import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
+import {ZaakResultaat} from './zaak-resultaat';
 
 export class ZaakbeeindigParameter {
     id: string;

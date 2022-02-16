@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ZaakbeeindigReden {
+export class ZaakResultaat {
     id: string;
     naam: string;
 }

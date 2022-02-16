@@ -72,7 +72,7 @@ public class ZaakbeeindigParameter {
         return resultaattype;
     }
 
-    public void setResultaattypeUUID(final UUID resultaattypeUUID) {
+    public void setResultaattype(final UUID resultaattypeUUID) {
         this.resultaattype = resultaattypeUUID;
     }
 }

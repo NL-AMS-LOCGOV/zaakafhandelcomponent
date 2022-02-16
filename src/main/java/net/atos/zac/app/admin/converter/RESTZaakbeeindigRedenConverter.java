@@ -7,7 +7,6 @@ package net.atos.zac.app.admin.converter;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
@@ -24,7 +23,7 @@ public class RESTZaakbeeindigRedenConverter {
     public List<RESTZaakbeeindigReden> convertToRest(Collection<ZaakbeeindigReden> zaakbeeindigRedenen) {
         return zaakbeeindigRedenen.stream()
                 .map(this::convertToRest)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public ZaakbeeindigReden convertToDomain(final RESTZaakbeeindigReden restZaakbeeindigReden) {

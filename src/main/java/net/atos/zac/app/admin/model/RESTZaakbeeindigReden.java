@@ -10,7 +10,4 @@ public class RESTZaakbeeindigReden {
     public Long id;
 
     public String naam;
-
-    public RESTZaakbeeindigReden() {
-    }
 }

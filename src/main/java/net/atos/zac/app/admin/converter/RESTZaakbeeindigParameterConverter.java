@@ -7,8 +7,6 @@ package net.atos.zac.app.admin.converter;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -32,27 +30,27 @@ public class RESTZaakbeeindigParameterConverter {
         restZaakbeeindigParameter.id = zaakbeeindigParameter.getId();
         restZaakbeeindigParameter.zaakbeeindigReden = restZaakbeeindigRedenConverter.convertToRest(zaakbeeindigParameter.getZaakbeeindigReden());
         restZaakbeeindigParameter.zaakResultaat = restZaakResultaattypeConverter.convertToRest(
-                ztcClientService.readResultaattype((zaakbeeindigParameter.getResultaattype())));
+                ztcClientService.readResultaattype(zaakbeeindigParameter.getResultaattype()));
         return restZaakbeeindigParameter;
     }
 
     public List<RESTZaakbeeindigParameter> convertToRest(Collection<ZaakbeeindigParameter> zaakbeeindigRedenen) {
         return zaakbeeindigRedenen.stream()
                 .map(this::convertToRest)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public ZaakbeeindigParameter convertToDomain(final RESTZaakbeeindigParameter restZaakbeeindigParameter) {
         final ZaakbeeindigParameter zaakbeeindigParameter = new ZaakbeeindigParameter();
         zaakbeeindigParameter.setId(restZaakbeeindigParameter.id);
         zaakbeeindigParameter.setZaakbeeindigReden(restZaakbeeindigRedenConverter.convertToDomain(restZaakbeeindigParameter.zaakbeeindigReden));
-        zaakbeeindigParameter.setResultaattypeUUID(UUID.fromString(restZaakbeeindigParameter.zaakResultaat.id));
+        zaakbeeindigParameter.setResultaattype(restZaakbeeindigParameter.zaakResultaat.id);
         return zaakbeeindigParameter;
     }
 
     public List<ZaakbeeindigParameter> convertToDomain(Collection<RESTZaakbeeindigParameter> restZaakbeeindigParameters) {
         return restZaakbeeindigParameters.stream()
                 .map(this::convertToDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

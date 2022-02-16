@@ -55,9 +55,11 @@ public class ZaakafhandelParameters {
     @Column(name = "gebruikersnaam_behandelaar")
     private String gebruikersnaamMedewerker;
 
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<PlanItemParameters> planItemParametersCollection;
 
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<ZaakbeeindigParameter> zaakbeeindigParameters;
 
