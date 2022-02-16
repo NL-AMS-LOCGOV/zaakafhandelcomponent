@@ -212,6 +212,7 @@
   "actie.planitem.uitgevoerd": "Actie {{planitem}} uitgevoerd",
   "actie.taak.starten": "Taak starten",
   "actie.zaak.acties": "Actie uitvoeren",
+  "actie.zoekopdracht.wissen": "Wis zoekopdracht",
   " 7 ": ">>--> MELDINGEN <--<<",
   "msg.datum.overschreden": "Deze datum is overschreden",
   "msg.error.required": "Het {{label}}-veld is niet ingevuld. Vul de vereiste gegevens in!",

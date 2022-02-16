@@ -212,6 +212,7 @@
   "actie.planitem.uitgevoerd": "Executed {{planitem}}",
   "actie.taak.starten": "Start task",
   "actie.zaak.acties": "Execute",
+  "actie.zoekopdracht.wissen": "Delete search query",
   " 7 ": ">>--> MELDINGEN <--<<",
   "msg.datum.overschreden": "This date has passed",
   "msg.error.required": "The {{label}} field is empty. Enter the required data!",

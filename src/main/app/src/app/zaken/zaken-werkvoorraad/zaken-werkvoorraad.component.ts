@@ -63,9 +63,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        if (this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData')) {
-            this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
-        }
+        this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -87,7 +85,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             // Manually trigger ChangeDetection because changes have been made to the sort
             this.cd.detectChanges();
 
-            this.searchCases();
+            if (this.dataSource.zoekParameters.groep !== null || this.dataSource.zoekParameters.zaaktype !== null) {
+                this.searchCases();
+            }
         }
     }
 
@@ -132,22 +132,26 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
             this.dataSource.initColumns(mapColumns);
         } else {
-            this.dataSource.initColumns(new Map([
-                ['select', ColumnPickerValue.STICKY],
-                ['identificatie', ColumnPickerValue.VISIBLE],
-                ['status', ColumnPickerValue.VISIBLE],
-                ['zaaktype', ColumnPickerValue.VISIBLE],
-                ['groep', ColumnPickerValue.VISIBLE],
-                ['startdatum', ColumnPickerValue.VISIBLE],
-                ['einddatum', ColumnPickerValue.HIDDEN],
-                ['einddatumGepland', ColumnPickerValue.HIDDEN],
-                ['aanvrager', ColumnPickerValue.VISIBLE],
-                ['behandelaar', ColumnPickerValue.VISIBLE],
-                ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-                ['toelichting', ColumnPickerValue.HIDDEN],
-                ['url', ColumnPickerValue.STICKY]
-            ]));
+            this.dataSource.initColumns(this.initialColumns());
         }
+    }
+
+    initialColumns(): Map<string, ColumnPickerValue> {
+        return new Map([
+            ['select', ColumnPickerValue.STICKY],
+            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.VISIBLE],
+            ['startdatum', ColumnPickerValue.VISIBLE],
+            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatumGepland', ColumnPickerValue.HIDDEN],
+            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['behandelaar', ColumnPickerValue.VISIBLE],
+            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
+            ['toelichting', ColumnPickerValue.HIDDEN],
+            ['url', ColumnPickerValue.STICKY]
+        ]);
     }
 
     switchTypeAndSearch() {
@@ -260,5 +264,21 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
+    }
+
+    resetSearchCriteria() {
+        if (this.werklijstData) {
+            this.dataSource.zoekParameters = {
+                selectie: 'groep',
+                groep: null,
+                zaaktype: null
+            };
+            this.dataSource.filters = {};
+            this.dataSource.initColumns(this.initialColumns());
+            this.paginator.pageIndex = 0;
+            this.paginator.pageSize = 25;
+            this.sort.active = '';
+            this.sort.direction = '';
+        }
     }
 }
