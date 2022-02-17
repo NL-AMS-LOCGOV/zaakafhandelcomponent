@@ -85,6 +85,12 @@ export class TakenService {
         );
     }
 
+    partialUpdateTaak(taak: Taak): Observable<Taak> {
+        return this.http.patch<Taak>(`${this.basepath}/partial`, taak).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     updateTaakdata(taak: Taak): Observable<Taak> {
         return this.http.put<Taak>(`${this.basepath}/taakdata`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))

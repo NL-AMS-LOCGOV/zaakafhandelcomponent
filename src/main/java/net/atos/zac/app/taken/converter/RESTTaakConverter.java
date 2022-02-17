@@ -61,6 +61,12 @@ public class RESTTaakConverter {
     }
 
     public RESTTaak convertTaskInfo(final TaskInfo task) {
+        final RESTTaak restTaak = convertPartialTaskInfo(task);
+        restTaak.formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
+        return restTaak;
+    }
+
+    public RESTTaak convertPartialTaskInfo(final TaskInfo task) {
         final RESTTaak restTaak = new RESTTaak();
         restTaak.id = task.getId();
         restTaak.naam = task.getName();
@@ -74,7 +80,7 @@ public class RESTTaakConverter {
         restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
         restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingorTask(task.getId());
-        restTaak.formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
+
         return restTaak;
     }
 
