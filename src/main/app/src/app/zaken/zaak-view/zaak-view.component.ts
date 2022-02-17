@@ -49,6 +49,8 @@ import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {PersonenService} from '../../personen/personen.service';
 import {PersoonOverzicht} from '../../personen/model/persoon-overzicht';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -191,6 +193,10 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                               .build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
                                                                              .value(this.zaak.toelichting).maxlength(1000).build());
+        this.editFormFields.set('vertrouwelijkheidaanduiding', new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                                                           .value(this.zaak.vertrouwelijkheidaanduiding).optionLabel('label')
+                                                                                           .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+                                                                                               Vertrouwelijkheidaanduiding)).build());
         this.editFormFields.set('startdatum',
             new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
