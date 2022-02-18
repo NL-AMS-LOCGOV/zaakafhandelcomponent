@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -9,7 +9,8 @@ public enum FormulierDefinitie {
 
     DEFAULT_TAAKFORMULIER("Standaard taakformulier"),
     AANVULLENDE_INFORMATIE("Aanvullende informatie"),
-    ADVIES("Advies");
+    ADVIES("Advies"),
+    GOEDKEUREN("Goedkeuren");
 
     private final String naam;
 
