@@ -13,7 +13,7 @@ import {FormItem} from '../../material-form-builder/model/form-item';
 @Component({
     selector: 'zac-edit-groep',
     templateUrl: './edit-groep.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-groep.component.less']
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
 export class EditGroepComponent extends EditAutocompleteComponent {
 

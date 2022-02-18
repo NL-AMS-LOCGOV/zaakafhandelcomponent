@@ -15,7 +15,7 @@ import {FormItem} from '../../material-form-builder/model/form-item';
 @Component({
     selector: 'zac-edit-tekst',
     templateUrl: './edit-tekst.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-tekst.component.less']
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
 export class EditTekstComponent extends EditComponent {
 

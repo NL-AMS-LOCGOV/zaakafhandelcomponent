@@ -14,7 +14,7 @@ import {FormItem} from '../../material-form-builder/model/form-item';
 @Component({
     selector: 'zac-edit-vertrouwelijkheidaanduiding',
     templateUrl: './edit-vertrouwelijkheidaanduiding.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-vertrouwelijkheidaanduiding.component.less']
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
 export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
 

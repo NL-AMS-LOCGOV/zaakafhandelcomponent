@@ -12,7 +12,7 @@ import {UtilService} from '../../../core/service/util.service';
 @Component({
     selector: 'zac-edit-autocomplete',
     templateUrl: './edit-autocomplete.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-autocomplete.component.less']
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
 export class EditAutocompleteComponent extends EditComponent {
 
