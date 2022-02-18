@@ -79,8 +79,10 @@
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                         <mat-divider></mat-divider>
                                     </div>
-                                    <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
-                                                     [value]="'vertrouwelijkheidaanduiding.'+zaak.vertrouwelijkheidaanduiding | translate"></zac-static-text>
+                                    <zac-edit-vertrouwelijkheidaanduiding [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
+                                                                          [reasonField]="editFormFields.get('redenVertrouwelijkheidaanduiding')"
+                                                                          (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
+                                    </zac-edit-vertrouwelijkheidaanduiding>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('redenGroep')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
@@ -103,7 +105,7 @@
                                     <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('einddatumGepland')"
                                                     (onSave)="editZaak($event, 'einddatumGepland')"
                                                     [icon]="editFormFieldIcons.get('einddatumGepland')"></zac-edit-datum>
-                                    <zac-static-text fxFlex.sm="25" [label]="'einddatum' | translate"
+                                    <zac-static-text *ngIf="zaak.einddatum" fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
                                     <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
                                                     (onSave)="editZaak($event, 'uiterlijkeEinddatumAfdoening')"
@@ -132,11 +134,13 @@
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
-                                                    (onSave)="editZaak($event, 'omschrijving')"></zac-edit-tekst>
+                                                    [reasonField]="editFormFields.get('redenOmschrijving')"
+                                                    (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
-                                                    (onSave)="editZaak($event, 'toelichting')"></zac-edit-tekst>
+                                                    [reasonField]="editFormFields.get('redenToelichting')"
+                                                    (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
                         </mat-tab>

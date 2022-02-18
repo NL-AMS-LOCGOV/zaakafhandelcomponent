@@ -49,6 +49,8 @@ import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {PersonenService} from '../../personen/personen.service';
 import {PersoonOverzicht} from '../../personen/model/persoon-overzicht';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -189,8 +191,15 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving).maxlength(80)
                                                                               .build());
+        this.editFormFields.set('redenOmschrijving', new InputFormFieldBuilder().id('redenOmschrijving').label('reden').build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
                                                                              .value(this.zaak.toelichting).maxlength(1000).build());
+        this.editFormFields.set('redenToelichting', new InputFormFieldBuilder().id('redenToelichting').label('reden').build());
+        this.editFormFields.set('vertrouwelijkheidaanduiding', new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                                                                           .value(this.zaak.vertrouwelijkheidaanduiding).optionLabel('label')
+                                                                                           .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+                                                                                               Vertrouwelijkheidaanduiding)).build());
+        this.editFormFields.set('redenVertrouwelijkheidaanduiding', new InputFormFieldBuilder().id('redenVertrouwelijkheidaanduiding').label('reden').build());
         this.editFormFields.set('startdatum',
             new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
@@ -286,11 +295,20 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
-    editZaak(value: string, field: string): void {
-        const patchData: Zaak = new Zaak();
-        patchData[field] = value;
+    editZaakMetReden(event: any, field: string): void {
+        const zaak: Zaak = new Zaak();
+        zaak[field] = event[field];
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, patchData).subscribe(updatedZaak => {
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
+    }
+
+    editZaak(value: string, field: string): void {
+        const zaak: Zaak = new Zaak();
+        zaak[field] = value;
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }

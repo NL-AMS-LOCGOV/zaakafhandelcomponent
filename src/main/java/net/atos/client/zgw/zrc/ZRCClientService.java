@@ -234,8 +234,13 @@ public class ZRCClientService implements Caching {
      * @param zaak     {@link Zaak} with parts that need to be updated.
      * @return Updated {@link Zaak}
      */
-    public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak) {
-        return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
+    public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
+        try {
+            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
+            return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
+        } finally {
+            zgwClientHeadersFactory.removeMedewerkerToelichting();
+        }
     }
 
     /**

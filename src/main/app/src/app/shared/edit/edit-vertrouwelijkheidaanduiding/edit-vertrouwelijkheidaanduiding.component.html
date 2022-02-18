@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <div class="static-text" (click)="edit(true)" [class.readonly]="readonly">
@@ -8,7 +8,7 @@
         <mat-icon>edit</mat-icon>
     </label>
     <div *ngIf="!editing" class="static-text-content">
-        {{value | empty}}
+        {{'vertrouwelijkheidaanduiding.' + value | translate}}
         <div class="edit-icon">
             <mat-icon>edit</mat-icon>
         </div>

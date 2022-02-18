@@ -24,5 +24,5 @@ export abstract class AbstractChoicesFormField extends AbstractFormField {
             return this.optionLabel ? object1[this.optionLabel] === object2[this.optionLabel] : object1 === object2;
         }
         return false;
-    };
+    }
 }

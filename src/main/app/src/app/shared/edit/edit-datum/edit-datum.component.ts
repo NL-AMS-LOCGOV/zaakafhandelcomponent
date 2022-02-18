@@ -12,7 +12,7 @@ import {UtilService} from '../../../core/service/util.service';
 @Component({
     selector: 'zac-edit-datum',
     templateUrl: './edit-datum.component.html',
-    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-datum.component.less']
+    styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
 export class EditDatumComponent extends EditComponent {
 
