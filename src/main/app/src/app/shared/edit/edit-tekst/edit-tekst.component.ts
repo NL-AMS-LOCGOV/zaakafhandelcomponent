@@ -9,6 +9,8 @@ import {SelectFormField} from '../../material-form-builder/form-components/selec
 import {TextareaFormField} from '../../material-form-builder/form-components/textarea/textarea-form-field';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {UtilService} from '../../../core/service/util.service';
+import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
+import {FormItem} from '../../material-form-builder/model/form-item';
 
 @Component({
     selector: 'zac-edit-tekst',
@@ -18,6 +20,9 @@ import {UtilService} from '../../../core/service/util.service';
 export class EditTekstComponent extends EditComponent {
 
     @Input() formField: TextareaFormField;
+    @Input() reasonField: InputFormField;
+
+    reasonItem: FormItem;
 
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
@@ -29,5 +34,27 @@ export class EditTekstComponent extends EditComponent {
         this.subscription = formField.formControl.valueChanges.subscribe(() => {
             this.dirty = true;
         });
+    }
+
+    ngAfterViewInit(): void {
+        super.ngAfterViewInit();
+        if (this.reasonField) {
+            this.reasonItem = this.mfbService.getFormItem(this.reasonField);
+        }
+    }
+
+    edit(editing: boolean): void {
+        super.edit(editing);
+        if (this.reasonItem) {
+            this.reasonItem.data.formControl.setValue(null);
+        }
+        this.dirty = false;
+    }
+
+    protected submitSave(): void {
+        if (this.formItem.data.formControl.valid) {
+            this.onSave.emit({[this.formField.id]: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
+        }
+        this.editing = false;
     }
 }

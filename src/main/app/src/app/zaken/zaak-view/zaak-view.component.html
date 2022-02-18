@@ -80,7 +80,8 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-edit-vertrouwelijkheidaanduiding [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
-                                                                          (onSave)="editZaak($event, 'vertrouwelijkheidaanduiding')">
+                                                                          [reasonField]="editFormFields.get('redenVertrouwelijkheidaanduiding')"
+                                                                          (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-vertrouwelijkheidaanduiding>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('redenGroep')"
@@ -133,11 +134,13 @@
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
-                                                    (onSave)="editZaak($event, 'omschrijving')"></zac-edit-tekst>
+                                                    [reasonField]="editFormFields.get('redenOmschrijving')"
+                                                    (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
-                                                    (onSave)="editZaak($event, 'toelichting')"></zac-edit-tekst>
+                                                    [reasonField]="editFormFields.get('redenToelichting')"
+                                                    (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
                         </mat-tab>

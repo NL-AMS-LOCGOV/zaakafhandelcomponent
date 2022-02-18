@@ -26,6 +26,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
+
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
@@ -132,8 +134,11 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("zaak/{uuid}")
-    public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaak));
+    public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID,
+                                                                      zaakConverter.convertToPatch(
+                                                                              restZaakEditMetRedenGegevens.zaak),
+                                                                      restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
     }
 

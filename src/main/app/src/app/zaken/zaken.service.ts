@@ -18,6 +18,7 @@ import {Medewerker} from '../identity/model/medewerker';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 import {HistorieRegel} from '../shared/historie/model/historie-regel';
 import {Groep} from '../identity/model/groep';
+import {ZaakEditMetRedenGegevens} from './model/zaak-edit-met-reden-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -45,8 +46,11 @@ export class ZakenService {
         );
     }
 
-    partialUpdateZaak(uuid: string, zaak: Zaak): Observable<Zaak> {
-        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaak).pipe(
+    partialUpdateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
+        const zaakEditMetRedenGegevens: ZaakEditMetRedenGegevens = new ZaakEditMetRedenGegevens();
+        zaakEditMetRedenGegevens.zaak = zaak;
+        zaakEditMetRedenGegevens.reden = reden;
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaakEditMetRedenGegevens).pipe(
             catchError(this.handleError)
         );
     }
