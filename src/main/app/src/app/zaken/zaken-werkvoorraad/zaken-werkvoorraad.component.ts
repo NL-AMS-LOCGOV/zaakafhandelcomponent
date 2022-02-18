@@ -267,18 +267,16 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     resetSearchCriteria() {
-        if (this.werklijstData) {
-            this.dataSource.zoekParameters = {
-                selectie: 'groep',
-                groep: null,
-                zaaktype: null
-            };
-            this.dataSource.filters = {};
-            this.dataSource.initColumns(this.initialColumns());
-            this.paginator.pageIndex = 0;
-            this.paginator.pageSize = 25;
-            this.sort.active = '';
-            this.sort.direction = '';
-        }
+        this.dataSource.zoekParameters = {
+            selectie: 'groep',
+            groep: null,
+            zaaktype: null
+        };
+        this.dataSource.filters = {};
+        this.dataSource.initColumns(this.initialColumns());
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = 25;
+        this.sort.active = '';
+        this.sort.direction = '';
     }
 }
