@@ -149,14 +149,14 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     initialColumns(): Map<string, ColumnPickerValue> {
         return new Map([
             ['identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.HIDDEN],
             ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.HIDDEN],
             ['startdatum', ColumnPickerValue.VISIBLE],
-            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatum', ColumnPickerValue.VISIBLE],
             ['einddatumGepland', ColumnPickerValue.HIDDEN],
             ['aanvrager', ColumnPickerValue.VISIBLE],
-            ['behandelaar', ColumnPickerValue.HIDDEN],
+            ['behandelaar', ColumnPickerValue.VISIBLE],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
