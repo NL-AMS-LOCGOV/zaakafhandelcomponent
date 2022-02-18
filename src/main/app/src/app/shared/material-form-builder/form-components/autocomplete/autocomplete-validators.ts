@@ -16,7 +16,7 @@ export class AutocompleteValidators {
 
             return options.pipe(
                 map(o => {
-                    let find: any = o.find(option => AutocompleteValidators.equals(option, control.value));
+                    const find: any = o.find(option => AutocompleteValidators.equals(option, control.value));
                     return find ? null : {match: true};
                 })
             );
@@ -28,14 +28,14 @@ export class AutocompleteValidators {
             if (!control.value) {
                 return null;
             }
-            let find: any = options.find(option => AutocompleteValidators.equals(option, control.value));
+            const find: any = options.find(option => AutocompleteValidators.equals(option, control.value));
             return find ? null : {match: true};
         };
     }
 
     static equals(object1: any, object2: any): boolean {
         if (typeof object1 === 'string') {
-            return object1 == object2;
+            return object1 === object2;
         }
         if (object1 && object2) {
             if (object1.hasOwnProperty('key')) {
@@ -47,7 +47,7 @@ export class AutocompleteValidators {
             } else if (object1.hasOwnProperty('name')) {
                 return object1.name === object2.name;
             }
-            return object1 == object2;
+            return object1 === object2;
         }
         return false;
     }

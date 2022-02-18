@@ -31,26 +31,8 @@ export class MaterialFormBuilderService {
     constructor() {
     }
 
-    public createForm(formFields: Array<AbstractFormField[]>): Array<FormItem[]> {
-        const form: Array<FormItem[]> = [];
-
-        formFields.forEach(formFieldRow => {
-            form.push(this.createFormRow(formFieldRow));
-        });
-
-        return form;
-    }
-
     public getFormItem(formField: AbstractFormField): FormItem {
         return new FormItem(MaterialFormBuilderService.getType(formField.fieldType), formField);
-    }
-
-    private createFormRow(formFields: AbstractFormField[]): FormItem[] {
-        const formRow: FormItem[] = [];
-        formFields.forEach(formField => {
-            formRow.push(this.getFormItem(formField));
-        });
-        return formRow;
     }
 
     private static getType(type: FieldType): Type<FormComponent> {

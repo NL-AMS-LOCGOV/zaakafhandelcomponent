@@ -4,12 +4,10 @@
  */
 
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormItem} from '../../model/form-item';
 import {FormGroup} from '@angular/forms';
 import {FieldType} from '../../model/field-type.enum';
 import {FormConfig} from '../../model/form-config';
 import {AbstractFormField} from '../../model/abstract-form-field';
-import {MaterialFormBuilderService} from '../../material-form-builder.service';
 
 @Component({
     selector: 'mfb-form',
@@ -33,22 +31,22 @@ export class FormComponent {
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
     @Output() formPartial: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
 
-    data: Array<FormItem[]>;
+    data: Array<AbstractFormField[]>;
     formGroup: FormGroup;
 
     private _config: FormConfig;
 
-    constructor(private mfbService: MaterialFormBuilderService) {
+    constructor() {
     }
 
     refreshFormfields(formFields: Array<AbstractFormField[]>): void {
-        this.data = this.mfbService.createForm(formFields);
+        this.data = formFields;
 
         this.formGroup = new FormGroup({});
         for (const value of this.data.values()) {
-            value.forEach((formItem) => {
-                if (formItem.data.fieldType !== FieldType.HEADING) {
-                    this.formGroup.addControl(formItem.data.id, formItem.data.formControl);
+            value.forEach((formField) => {
+                if (formField.fieldType !== FieldType.HEADING) {
+                    this.formGroup.addControl(formField.id, formField.formControl);
                 }
             });
         }

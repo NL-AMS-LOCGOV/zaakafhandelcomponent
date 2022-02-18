@@ -7,14 +7,14 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{'title.zaken.verdelen' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mfb-form-field [field]="groepFormItem"></mfb-form-field>
-    <mfb-form-field *ngIf="groepFormItem.data.formControl.value"
-                    [field]="filterFormItem"></mfb-form-field>
-    <mfb-form-field [field]="medewerkerFormItem"></mfb-form-field>
-    <mfb-form-field [field]="redenFormItem"></mfb-form-field>
+    <mfb-form-field [field]="groepFormField" (valueChanges)="laadMedewerkers()"></mfb-form-field>
+    <mfb-form-field *ngIf="groepFormField.formControl.value"
+                    [field]="filterFormField" (valueChanges)="laadMedewerkers()"></mfb-form-field>
+    <mfb-form-field [field]="medewerkerFormField"></mfb-form-field>
+    <mfb-form-field [field]="redenFormField"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="groepFormItem.data.formControl.pending || groepFormItem.data.formControl.invalid || medewerkerFormItem.data.formControl.pending || medewerkerFormItem.data.formControl.invalid || loading"
+    <button [disabled]="groepFormField.formControl.invalid || medewerkerFormField.formControl.invalid || loading"
             mat-button color="primary" (click)="verdeel()" id="zakenVerdelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
