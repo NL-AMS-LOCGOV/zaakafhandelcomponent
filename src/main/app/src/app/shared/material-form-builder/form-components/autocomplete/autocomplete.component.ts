@@ -50,6 +50,10 @@ export class AutocompleteComponent extends FormComponent implements AfterViewIni
         });
     }
 
+    isSearching(): boolean {
+        return typeof this.data.formControl.value === 'string';
+    }
+
     displayFn = (obj: any): string => {
         return obj && obj[this.data.optionLabel] ? obj[this.data.optionLabel] : obj;
     };
