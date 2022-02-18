@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormItem} from '../../model/form-item';
 import {FormFieldDirective} from './form-field.directive';
 import {ReadonlyFormFieldBuilder} from '../../form-components/readonly/readonly-form-field-builder';
 import {ReadonlyComponent} from '../../form-components/readonly/readonly.component';
+import {MaterialFormBuilderService} from '../../material-form-builder.service';
+import {AbstractFormField} from '../../model/abstract-form-field';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'mfb-form-field',
@@ -16,17 +19,20 @@ import {ReadonlyComponent} from '../../form-components/readonly/readonly.compone
 })
 export class FormFieldComponent implements AfterViewInit {
 
-    @Input() set field(item: FormItem) {
-        this._field = item;
+    @Input() set field(item: AbstractFormField) {
+        this._field = this.mfbService.getFormItem(item);
         this.refreshComponent();
     }
 
+    @Output() valueChanges = new EventEmitter<any>();
+
     private _field: FormItem;
     private loaded: boolean;
+    private valueChangesSubscription: Subscription;
 
     @ViewChild(FormFieldDirective) formField: FormFieldDirective;
 
-    constructor() {
+    constructor(public mfbService: MaterialFormBuilderService) {
     }
 
     ngAfterViewInit() {
@@ -35,6 +41,7 @@ export class FormFieldComponent implements AfterViewInit {
 
     refreshComponent() {
         if (this.loaded) {
+            this.valueChangesSubscription.unsubscribe();
             this.formField.viewContainerRef.clear();
             this.loadComponent();
         }
@@ -54,5 +61,8 @@ export class FormFieldComponent implements AfterViewInit {
         componentRef.instance.data = this._field.data;
         componentRef.changeDetectorRef.detectChanges();
         this.loaded = true;
+        this.valueChangesSubscription = this._field.data.formControl.valueChanges.subscribe(value => {
+            this.valueChanges.emit(value);
+        });
     }
 }

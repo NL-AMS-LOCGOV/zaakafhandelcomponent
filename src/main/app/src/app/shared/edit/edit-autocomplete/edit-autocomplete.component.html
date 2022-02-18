@@ -16,7 +16,7 @@
 </div>
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
-    <mfb-form-field [field]="formItem" (click)="$event.stopPropagation()"></mfb-form-field>
+    <mfb-form-field [field]="formField" (valueChanges)="valueChanges()" (click)="$event.stopPropagation()"></mfb-form-field>
 
     <div class="form-buttons">
         <button (click)="save()" color="primary" id="opslaan_button" mat-mini-fab

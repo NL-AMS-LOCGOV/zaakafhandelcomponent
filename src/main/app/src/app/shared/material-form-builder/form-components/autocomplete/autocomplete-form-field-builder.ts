@@ -5,8 +5,6 @@
 
 import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form-field-builder';
 import {AutocompleteFormField} from './autocomplete-form-field';
-import {Observable} from 'rxjs';
-import {AutocompleteValidators} from './autocomplete-validators';
 
 export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
@@ -15,10 +13,5 @@ export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilde
     constructor() {
         super();
         this.formField = new AutocompleteFormField();
-    }
-
-    options(options: Observable<any[]>): this {
-        this.formField.formControl.addAsyncValidators(AutocompleteValidators.asyncOptionInList(options));
-        return super.options(options);
     }
 }

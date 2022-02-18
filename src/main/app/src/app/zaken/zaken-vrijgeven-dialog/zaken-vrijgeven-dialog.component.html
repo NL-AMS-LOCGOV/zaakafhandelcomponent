@@ -7,7 +7,7 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{'title.zaken.vrijgeven' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mfb-form-field [field]="redenFormItem"></mfb-form-field>
+    <mfb-form-field [field]="redenFormField"></mfb-form-field>
     <p>{{ (data.length == 1 ? 'msg.vrijgeven.zaak' : 'msg.vrijgeven.zaken') | translate }}</p>
 </div>
 <div mat-dialog-actions>

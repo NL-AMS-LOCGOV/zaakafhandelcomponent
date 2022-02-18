@@ -9,7 +9,6 @@ import {UtilService} from '../../../core/service/util.service';
 import {SelectFormField} from '../../material-form-builder/form-components/select/select-form-field';
 import {EditComponent} from '../edit.component';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
-import {FormItem} from '../../material-form-builder/model/form-item';
 
 @Component({
     selector: 'zac-edit-vertrouwelijkheidaanduiding',
@@ -21,36 +20,27 @@ export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
     @Input() formField: SelectFormField;
     @Input() reasonField: InputFormField;
 
-    reasonItem: FormItem;
-
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
 
     init(formField: SelectFormField): void {
         this.value = formField.formControl.value;
-
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
     }
 
-    ngAfterViewInit(): void {
-        super.ngAfterViewInit();
-        if (this.reasonField) {
-            this.reasonItem = this.mfbService.getFormItem(this.reasonField);
-        }
+    valueChanges(): void {
+        this.dirty = true;
     }
 
     edit(editing: boolean): void {
         super.edit(editing);
-        this.reasonItem.data.formControl.setValue(null);
+        this.reasonField.formControl.setValue(null);
         this.dirty = false;
     }
 
     protected submitSave(): void {
-        if (this.formItem.data.formControl.valid) {
-            this.onSave.emit({vertrouwelijkheidaanduiding: this.formItem.data.formControl.value.value, reden: this.reasonItem?.data.formControl.value});
+        if (this.formField.formControl.valid) {
+            this.onSave.emit({vertrouwelijkheidaanduiding: this.formField.formControl.value.value, reden: this.reasonField?.formControl.value});
         }
         this.editing = false;
     }

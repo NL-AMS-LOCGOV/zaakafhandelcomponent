@@ -4,7 +4,7 @@
  */
 
 import {AbstractFormField} from './abstract-form-field';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 /**
  * Abstract class voor Form Fields die meerdere waardes tonen (checkbox, radiobutton, select)
@@ -12,7 +12,8 @@ import {Observable} from 'rxjs';
  */
 export abstract class AbstractChoicesFormField extends AbstractFormField {
 
-    public options: Observable<any[]>;
+    private optionsChanged$ = new Subject<void>();
+    private options$: Observable<any[]>;
     public optionLabel: string | null;
 
     protected constructor() {
@@ -24,5 +25,18 @@ export abstract class AbstractChoicesFormField extends AbstractFormField {
             return this.optionLabel ? object1[this.optionLabel] === object2[this.optionLabel] : object1 === object2;
         }
         return false;
+    };
+
+    get options(): Observable<any[]> {
+        return this.options$;
+    }
+
+    set options(options: Observable<any[]>) {
+        this.options$ = options;
+        this.optionsChanged$.next();
+    }
+
+    get optionsChanged(): Observable<void> {
+        return this.optionsChanged$.asObservable();
     }
 }
