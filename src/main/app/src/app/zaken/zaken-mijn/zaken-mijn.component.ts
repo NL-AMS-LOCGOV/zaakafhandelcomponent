@@ -129,14 +129,12 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     resetSearchCriteria() {
-        if (this.werklijstData) {
-            this.dataSource.filters = {};
-            this.dataSource.initColumns(this.initialColumns());
-            this.paginator.pageIndex = 0;
-            this.paginator.pageSize = 25;
-            this.sort.active = '';
-            this.sort.direction = '';
-        }
+        this.dataSource.filters = {};
+        this.dataSource.initColumns(this.initialColumns());
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = 25;
+        this.sort.active = '';
+        this.sort.direction = '';
     }
 
 }
