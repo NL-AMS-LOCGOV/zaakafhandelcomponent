@@ -28,8 +28,6 @@ export class EditAutocompleteComponent extends EditComponent {
 
     edit(editing: boolean): void {
         super.edit(editing);
-        this.formField.formControl.setValue(null);
-        this.dirty = false;
     }
 
     valueChanges(): void {
