@@ -28,10 +28,14 @@ export class EditAutocompleteComponent extends EditComponent {
 
     edit(editing: boolean): void {
         super.edit(editing);
+        this.dirty = false;
+    }
+
+    isSearching(): boolean {
+        return typeof this.formField.formControl.value === 'string';
     }
 
     valueChanges(): void {
         this.dirty = true;
     }
-
 }
