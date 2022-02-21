@@ -3,3 +3,4 @@
 target
 wildfly-*
 src/generated
+/.openapi-generator/openapi.yaml-brp-client.sha256

@@ -17,7 +17,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import net.atos.client.brp.exception.PersoonNotFoundException;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.listPersonenParameters;
+import net.atos.client.brp.model.ListPersonenParameters;
 
 @ApplicationScoped
 public class BRPClientService {
@@ -59,7 +59,7 @@ public class BRPClientService {
      * 6. Adres
      * - verblijfplaats__nummeraanduidingIdentificatie
      */
-    public IngeschrevenPersoonHalCollectie listPersonen(final listPersonenParameters parameters) {
+    public IngeschrevenPersoonHalCollectie listPersonen(final ListPersonenParameters parameters) {
         return brpClient.listPersonen(parameters);
     }
 

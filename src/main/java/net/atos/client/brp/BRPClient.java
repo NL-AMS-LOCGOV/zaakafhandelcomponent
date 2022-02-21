@@ -24,7 +24,7 @@ import net.atos.client.brp.exception.PersoonNotFoundExceptionMapping;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.listPersonenParameters;
+import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.util.BRPClientHeadersFactory;
 import net.atos.client.brp.util.JsonbConfiguration;
 
@@ -82,7 +82,7 @@ public interface BRPClient {
      * - verblijfplaats__nummeraanduidingIdentificatie
      */
     @GET
-    IngeschrevenPersoonHalCollectie listPersonen(@BeanParam final listPersonenParameters parameters);
+    IngeschrevenPersoonHalCollectie listPersonen(@BeanParam final ListPersonenParameters parameters);
 
     /**
      * Raadpleeg een persoon
