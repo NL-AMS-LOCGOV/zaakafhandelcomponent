@@ -9,10 +9,9 @@ import {IdentityService} from '../../identity/identity.service';
 import {Taak} from '../model/taak';
 import {TakenService} from '../taken.service';
 import {Validators} from '@angular/forms';
-import {FormItem} from '../../shared/material-form-builder/model/form-item';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
-import {TranslateService} from '@ngx-translate/core';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 
 @Component({
     selector: 'zac-taken-verdelen-dialog',
@@ -21,7 +20,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class TakenVerdelenDialogComponent implements OnInit {
 
-    medewerkerFormItem: FormItem;
+    medewerkerFormField: AbstractFormField;
     loading: boolean = false;
 
     constructor(
@@ -29,8 +28,7 @@ export class TakenVerdelenDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: Taak[],
         private mfbService: MaterialFormBuilderService,
         private takenService: TakenService,
-        private identityService: IdentityService,
-        private translate: TranslateService) {
+        private identityService: IdentityService) {
     }
 
     close(): void {
@@ -38,18 +36,19 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
-                                                                      .optionLabel('naam')
-                                                                      .options(this.identityService.listMedewerkers())
-                                                                      .validators(Validators.required).build();
-        this.medewerkerFormItem = this.mfbService.getFormItem(medewerkerFormField);
+        this.medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
+                                                                     .optionLabel('naam')
+                                                                     .options(this.identityService.listMedewerkers())
+                                                                     .validators(Validators.required).build();
+
     }
 
     verdeel(): void {
+        const medewerker = this.medewerkerFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.takenService.verdelen(this.data, this.medewerkerFormItem.data.formControl.value).subscribe(() => {
-            this.dialogRef.close(this.medewerkerFormItem.data.formControl.value);
+        this.takenService.verdelen(this.data, medewerker).subscribe(() => {
+            this.dialogRef.close(medewerker);
         });
     }
 

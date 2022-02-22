@@ -9,6 +9,8 @@ import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.servi
 import {PersoonOverzicht} from './model/persoon-overzicht';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
+import {ListPersonenParameters} from './model/list-personen-parameters';
+import {Persoon} from './model/persoon';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +24,12 @@ export class PersonenService {
 
     readPersoonOverzicht(bsn: string): Observable<PersoonOverzicht> {
         return this.http.get<PersoonOverzicht>(`${this.basepath}/persoonoverzicht/${bsn}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    listPersonen(listPersonenParameters: ListPersonenParameters): Observable<Persoon[]> {
+        return this.http.put<Persoon[]>(`${this.basepath}/personen`, listPersonenParameters).pipe(
             catchError(this.handleError)
         );
     }

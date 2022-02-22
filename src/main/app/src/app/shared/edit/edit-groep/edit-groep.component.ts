@@ -8,7 +8,6 @@ import {MaterialFormBuilderService} from '../../material-form-builder/material-f
 import {UtilService} from '../../../core/service/util.service';
 import {EditAutocompleteComponent} from '../edit-autocomplete/edit-autocomplete.component';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
-import {FormItem} from '../../material-form-builder/model/form-item';
 
 @Component({
     selector: 'zac-edit-groep',
@@ -19,27 +18,18 @@ export class EditGroepComponent extends EditAutocompleteComponent {
 
     @Input() reasonField: InputFormField;
 
-    reasonItem: FormItem;
-
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
 
-    ngAfterViewInit(): void {
-        super.ngAfterViewInit();
-        if (this.reasonField) {
-            this.reasonItem = this.mfbService.getFormItem(this.reasonField);
-        }
-    }
-
     edit(editing: boolean): void {
         super.edit(editing);
-        this.reasonItem.data.formControl.setValue(null);
+        this.reasonField.formControl.setValue(null);
     }
 
     protected submitSave(): void {
-        if (this.formItem.data.formControl.valid) {
-            this.onSave.emit({groep: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
+        if (this.formField.formControl.valid) {
+            this.onSave.emit({groep: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
         }
         this.editing = false;
     }

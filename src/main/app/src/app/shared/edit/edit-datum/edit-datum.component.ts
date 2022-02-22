@@ -24,9 +24,9 @@ export class EditDatumComponent extends EditComponent {
 
     init(formField: DateFormField): void {
         this.value = formField.formControl.value;
+    }
 
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
+    valueChanges(): void {
+        this.dirty = true;
     }
 }

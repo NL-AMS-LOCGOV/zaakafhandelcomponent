@@ -30,17 +30,10 @@ export class EditTekstComponent extends EditComponent {
 
     init(formField: SelectFormField): void {
         this.value = formField.formControl.value;
-
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
     }
 
-    ngAfterViewInit(): void {
-        super.ngAfterViewInit();
-        if (this.reasonField) {
-            this.reasonItem = this.mfbService.getFormItem(this.reasonField);
-        }
+    valueChanges(): void {
+        this.dirty = true;
     }
 
     edit(editing: boolean): void {
@@ -52,8 +45,8 @@ export class EditTekstComponent extends EditComponent {
     }
 
     protected submitSave(): void {
-        if (this.formItem.data.formControl.valid) {
-            this.onSave.emit({[this.formField.id]: this.formItem.data.formControl.value, reden: this.reasonItem?.data.formControl.value});
+        if (this.formField.formControl.valid) {
+            this.onSave.emit({[this.formField.id]: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
         }
         this.editing = false;
     }

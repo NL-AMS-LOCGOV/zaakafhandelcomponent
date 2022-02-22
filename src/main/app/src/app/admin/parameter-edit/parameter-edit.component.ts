@@ -1,9 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../core/service/util.service';
 import {ActivatedRoute} from '@angular/router';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
@@ -17,6 +17,13 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {PlanItemParameter} from '../model/plan-item-parameter';
 import {FormulierDefinitieVerwijzing} from '../model/formulier-definitie-verwijzing';
 import {MatSelectChange} from '@angular/material/select';
+import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
+import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
+import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
+import {AbstractView} from '../../shared/abstract-view/abstract-view';
+import {Store} from '@ngrx/store';
+import {State} from '../../state/app.state';
+import {MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakbeeindigParameter} from '../model/zaakbeeindig-parameter';
 import {ZaakbeeindigReden} from '../model/zaakbeeindig-reden';
 import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
@@ -27,7 +34,10 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
     templateUrl: './parameter-edit.component.html',
     styleUrls: ['./parameter-edit.component.less']
 })
-export class ParameterEditComponent implements OnInit {
+export class ParameterEditComponent extends AbstractView implements OnInit {
+
+    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    menu: MenuItem[] = [];
 
     parameters: ZaakafhandelParameters;
     planItemParameters: PlanItemParameter[] = [];
@@ -48,8 +58,10 @@ export class ParameterEditComponent implements OnInit {
     medewerkers: Observable<Medewerker[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
 
-    constructor(private utilService: UtilService, private adminService: ZaakafhandelParametersService, private identityService: IdentityService,
+    constructor(store: Store<State>, public utilService: UtilService, private adminService: ZaakafhandelParametersService,
+                private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
+        super(store, utilService);
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
             this.planItemParameters = this.parameters.planItemParameters;
@@ -69,7 +81,14 @@ export class ParameterEditComponent implements OnInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.parameters.wijzigen');
+        this.setupMenu();
         this.createForm();
+    }
+
+    setupMenu() {
+        this.menu = [];
+        this.menu.push(new HeaderMenuItem('title.parameters'));
+        this.menu.push(new LinkMenuTitem('parameters', '/admin/parameters', 'tune'));
     }
 
     readPlanItemParameters(event: MatSelectChange): void {

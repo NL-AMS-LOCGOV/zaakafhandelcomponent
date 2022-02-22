@@ -40,7 +40,6 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     werklijstData: WerklijstData;
-    zaaktypeFilter: {} = {};
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
                 private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
@@ -63,7 +62,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (this.werklijstData) {
             this.dataSource.filters = this.werklijstData.filters;
-            this.zaaktypeFilter = this.werklijstData.filters['zaaktype'];
+            this.dataSource.zoekParameters.zaaktype = this.werklijstData.filters['zaaktype'];
 
             this.paginator.pageIndex = this.werklijstData.paginator.page;
             this.paginator.pageSize = this.werklijstData.paginator.pageSize;
@@ -95,8 +94,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
     }
 
-    zaaktypeChange(zaaktype: Zaaktype) {
-        this.dataSource.filter('zaaktype', zaaktype?.identificatie);
+    zaaktypeChange() {
+        this.dataSource.searchCases();
         this.paginator.firstPage();
     }
 
@@ -130,14 +129,12 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     resetSearchCriteria() {
-        if (this.werklijstData) {
-            this.dataSource.filters = {};
-            this.dataSource.initColumns(this.initialColumns());
-            this.paginator.pageIndex = 0;
-            this.paginator.pageSize = 25;
-            this.sort.active = '';
-            this.sort.direction = '';
-        }
+        this.dataSource.filters = {};
+        this.dataSource.initColumns(this.initialColumns());
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = 25;
+        this.sort.active = '';
+        this.sort.direction = '';
     }
 
 }

@@ -71,7 +71,9 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             // Manually trigger ChangeDetection because changes have been made to the sort
             this.cd.detectChanges();
 
-            this.searchCases();
+            if (this.dataSource.zoekParameters.groep !== null || this.dataSource.zoekParameters.zaaktype !== null) {
+                this.searchCases();
+            }
         }
     }
 
@@ -149,14 +151,14 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     initialColumns(): Map<string, ColumnPickerValue> {
         return new Map([
             ['identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
+            ['status', ColumnPickerValue.HIDDEN],
             ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
+            ['groep', ColumnPickerValue.HIDDEN],
             ['startdatum', ColumnPickerValue.VISIBLE],
-            ['einddatum', ColumnPickerValue.HIDDEN],
+            ['einddatum', ColumnPickerValue.VISIBLE],
             ['einddatumGepland', ColumnPickerValue.HIDDEN],
             ['aanvrager', ColumnPickerValue.VISIBLE],
-            ['behandelaar', ColumnPickerValue.HIDDEN],
+            ['behandelaar', ColumnPickerValue.VISIBLE],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
@@ -164,18 +166,16 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     resetSearchCriteria() {
-        if (this.werklijstData) {
-            this.dataSource.zoekParameters = {
-                selectie: 'groep',
-                groep: null,
-                zaaktype: null
-            };
-            this.dataSource.filters = {};
-            this.dataSource.initColumns(this.initialColumns());
-            this.paginator.pageIndex = 0;
-            this.paginator.pageSize = 25;
-            this.sort.active = '';
-            this.sort.direction = '';
-        }
+        this.dataSource.zoekParameters = {
+            selectie: 'groep',
+            groep: null,
+            zaaktype: null
+        };
+        this.dataSource.filters = {};
+        this.dataSource.initColumns(this.initialColumns());
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = 25;
+        this.sort.active = '';
+        this.sort.direction = '';
     }
 }

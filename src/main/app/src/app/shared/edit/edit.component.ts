@@ -3,20 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {AbstractFormField} from '../material-form-builder/model/abstract-form-field';
 import {MaterialFormBuilderService} from '../material-form-builder/material-form-builder.service';
-import {FormItem} from '../material-form-builder/model/form-item';
 import {StaticTextComponent} from '../static-text/static-text.component';
 import {Subscription} from 'rxjs';
 import {UtilService} from '../../core/service/util.service';
@@ -25,11 +14,10 @@ import {UtilService} from '../../core/service/util.service';
     template: '',
     styleUrls: ['../static-text/static-text.component.less', './edit.component.less']
 })
-export abstract class EditComponent extends StaticTextComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export abstract class EditComponent extends StaticTextComponent implements OnInit, OnChanges, OnDestroy {
 
     editing: boolean;
     dirty: boolean = false;
-    formItem: FormItem;
 
     @Input() readonly: boolean = false;
     @Input() abstract formField: AbstractFormField;
@@ -42,10 +30,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     abstract init(formField: AbstractFormField): void;
-
-    ngAfterViewInit(): void {
-        this.formItem = this.mfbService.getFormItem(this.formField);
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         for (const propName in changes) {
@@ -78,15 +62,15 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     edit(editing: boolean): void {
         if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = editing;
-            this.formItem.data.formControl.markAsUntouched();
+            this.formField.formControl.markAsUntouched();
         }
     }
 
     save(): void {
         // Wait for an async validator is it is present.
-        if (this.formItem.data.formControl.pending) {
-            const sub = this.formItem.data.formControl.statusChanges.subscribe(() => {
-                if (this.formItem.data.formControl.valid) {
+        if (this.formField.formControl.pending) {
+            const sub = this.formField.formControl.statusChanges.subscribe(() => {
+                if (this.formField.formControl.valid) {
                     this.submitSave();
                 }
                 sub.unsubscribe();
@@ -97,14 +81,14 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     protected submitSave(): void {
-        if (this.formItem.data.formControl.valid) {
-            this.onSave.emit(this.formItem.data.formControl.value);
+        if (this.formField.formControl.valid) {
+            this.onSave.emit(this.formField.formControl.value);
         }
         this.editing = false;
     }
 
     cancel(): void {
-        this.formItem.data.formControl.setValue(this.value);
+        this.formField.formControl.setValue(this.value);
         this.editing = false;
     }
 }

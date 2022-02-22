@@ -25,4 +25,9 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         return this;
     }
 
+    build() {
+        super.validate();
+        return this.formField;
+    }
+
 }

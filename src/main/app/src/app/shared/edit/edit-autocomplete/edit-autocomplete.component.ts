@@ -24,16 +24,18 @@ export class EditAutocompleteComponent extends EditComponent {
 
     init(formField: AutocompleteFormField): void {
         this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
-
-        this.subscription = formField.formControl.valueChanges.subscribe(() => {
-            this.dirty = true;
-        });
     }
 
     edit(editing: boolean): void {
         super.edit(editing);
-        this.formItem.data.formControl.setValue(null);
         this.dirty = false;
     }
 
+    isSearching(): boolean {
+        return typeof this.formField.formControl.value === 'string';
+    }
+
+    valueChanges(): void {
+        this.dirty = true;
+    }
 }

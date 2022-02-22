@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -14,6 +14,7 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
+import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
 
 @Component({
     templateUrl: './parameters.component.html',
@@ -32,7 +33,8 @@ export class ParametersComponent extends AbstractView implements OnInit {
 
     ngOnInit(): void {
         this.menu = [];
-        this.menu.push(new HeaderMenuItem('parameters'));
+        this.menu.push(new HeaderMenuItem('actie.admin'));
+        this.menu.push(new LinkMenuTitem('parameters', 'parameters', 'tune'));
         this.utilService.setTitle('title.parameters');
         this.getZaakafhandelParameters();
     }

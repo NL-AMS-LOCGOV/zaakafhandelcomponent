@@ -193,15 +193,38 @@ public class TakenRESTService {
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
     }
 
+    /**
+     * Methode voor het updaten van de taakgegevens inclusief de formulierdefinitie.
+     *
+     * @param restTaak Rest representatie van een taak.
+     * @return Een up to date taak inclusief de formulierdefinitie.
+     */
     @PATCH
     @Path("")
-    public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
+    public RESTTaak updateTaak(final RESTTaak restTaak) {
         Task task = flowableService.readTask(restTaak.id);
         taakConverter.convertRESTTaak(restTaak, task);
         final Task updatedTask = flowableService.updateTask(task);
         eventingService.send(TAAK.updated(updatedTask));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTaskInfo(updatedTask);
+    }
+
+    /**
+     * Methode voor het updaten van de taak gegevens exclusief de formulierdefinitie.
+     *
+     * @param restTaak Rest representatie van een taak.
+     * @return Een up to date taak exclusief de formulierdefinitie.
+     */
+    @PATCH
+    @Path("partial")
+    public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
+        Task task = flowableService.readTask(restTaak.id);
+        taakConverter.convertRESTTaak(restTaak, task);
+        final Task updatedTask = flowableService.updateTask(task);
+        eventingService.send(TAAK.updated(updatedTask));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
+        return taakConverter.convertPartialTaskInfo(updatedTask);
     }
 
     @PATCH
