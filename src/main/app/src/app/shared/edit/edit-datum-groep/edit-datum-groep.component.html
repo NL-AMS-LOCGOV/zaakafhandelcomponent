@@ -52,18 +52,23 @@
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
     <div>
-        <mfb-form-field [fxFlex]="100/3" [field]="startDatumItem" (click)="$event.stopPropagation()"></mfb-form-field>
-        <mfb-form-field [fxFlex]="100/3" [field]="streefDatumItem" (click)="$event.stopPropagation()"></mfb-form-field>
-        <mfb-form-field [fxFlex]="100/3" [field]="fataleDatumItem" (click)="$event.stopPropagation()"></mfb-form-field>
-    </div>
-    <div *ngFor="let err of errors" class="static-text">
-        <mat-error>{{err | translate}}</mat-error>
+        <div class="datum-field" [fxFlex]="100/3">
+            <mfb-form-field [field]="startDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
+        </div>
+        <div class="datum-field" [fxFlex]="100/3">
+            <mfb-form-field [field]="streefDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
+            <mat-error class="error-text" *ngIf="showStreefError">{{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
+        </div>
+        <div [fxFlex]="100/3">
+            <mfb-form-field [field]="fataleDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
+            <mat-error class="error-text" *ngIf="showFataleError">{{ 'msg.error.date.invalid.fatale' | translate}}</mat-error>
+        </div>
     </div>
     <div>
-        <mfb-form-field [field]="reasonItem" (click)="$event.stopPropagation()"></mfb-form-field>
+        <mfb-form-field [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
     </div>
     <div class="form-buttons">
-        <button (click)="save()" color="primary" id="datumOpslaan_button" mat-mini-fab
+        <button (click)="save()" [disabled]="hasError()" color="primary" id="datumOpslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">
             <mat-icon>check</mat-icon>
         </button>
