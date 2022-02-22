@@ -8,4 +8,6 @@ export class ListPersonenParameters {
     geslachtsnaam: string;
     geboortedatum: string;
     gemeenteVanInschrijving: string;
+    postcode: string;
+    huisnummer: number;
 }

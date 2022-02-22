@@ -69,9 +69,12 @@ public class RESTPersoonConverter {
         } else if (restListPersonenParameters.geboortedatum != null) {
             listPersonenParameters.setGeboorteDatum(restListPersonenParameters.geboortedatum);
             listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
-        } else {
+        } else if (restListPersonenParameters.gemeenteVanInschrijving != null) {
             listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
             listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
+        } else {
+            listPersonenParameters.setVerblijfplaatsPostcode(restListPersonenParameters.postcode);
+            listPersonenParameters.setVerblijfplaatsHuisnummer(restListPersonenParameters.huisnummer);
         }
         return listPersonenParameters;
     }
