@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.ws.rs.QueryParam;
 
-public class listPersonenParameters {
+public class ListPersonenParameters {
 
     @QueryParam("fields")
     private String fields;

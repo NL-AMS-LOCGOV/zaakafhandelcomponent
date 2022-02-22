@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.personen.converter;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,19 +14,40 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.brp.model.Geboorte;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
+import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.model.NaamPersoon;
 import net.atos.client.brp.model.Verblijfplaats;
+import net.atos.zac.app.personen.model.RESTListPersonenParameters;
+import net.atos.zac.app.personen.model.RESTPersoon;
 import net.atos.zac.app.personen.model.RESTPersoonOverzicht;
 
 public class RESTPersoonConverter {
 
-    public static final String FIELDS_PERSOON_OVERZICHT = "naam.voornamen,naam.voorvoegsel,naam.geslachtsnaam,geboorte.datum.datum," +
-            "verblijfplaats.straat,verblijfplaats.huisnummer,verblijfplaats.huisnummertoevoeging,verblijfplaats.huisletter,verblijfplaats.woonplaats";
+    public static final String FIELDS_PERSOON_OVERZICHT = "naam.voornamen," +
+            "naam.voorvoegsel," +
+            "naam.geslachtsnaam," +
+            "geboorte.datum.datum," +
+            "verblijfplaats.straat," +
+            "verblijfplaats.huisnummer," +
+            "verblijfplaats.huisnummertoevoeging," +
+            "verblijfplaats.huisletter," +
+            "verblijfplaats.woonplaats";
 
+    private static final String FIELDS_PERSOON = "burgerservicenummer," +
+            "geslachtsaanduiding," +
+            "naam.voornamen," +
+            "naam.voorvoegsel," +
+            "naam.geslachtsnaam," +
+            "geboorte.datum.datum," +
+            "verblijfplaats.straat," +
+            "verblijfplaats.huisnummer," +
+            "verblijfplaats.huisnummertoevoeging," +
+            "verblijfplaats.huisletter," +
+            "verblijfplaats.woonplaats";
 
     private static final String ONBEKEND = "<onbekend>";
 
-    public RESTPersoonOverzicht convert(final IngeschrevenPersoonHal persoon) {
+    public RESTPersoonOverzicht convertToPersoonOverzicht(final IngeschrevenPersoonHal persoon) {
         final RESTPersoonOverzicht persoonOverzicht = new RESTPersoonOverzicht();
         if (persoon != null) {
             persoonOverzicht.naam = convertToNaam(persoon.getNaam());
@@ -37,6 +59,38 @@ public class RESTPersoonConverter {
             persoonOverzicht.inschrijfadres = ONBEKEND;
         }
         return persoonOverzicht;
+    }
+
+    public ListPersonenParameters convert(final RESTListPersonenParameters restListPersonenParameters) {
+        final ListPersonenParameters listPersonenParameters = new ListPersonenParameters();
+        listPersonenParameters.setFields(FIELDS_PERSOON);
+        if (restListPersonenParameters.bsn != null) {
+            listPersonenParameters.setBurgerservicenummers(List.of(restListPersonenParameters.bsn));
+        } else if (restListPersonenParameters.geboortedatum != null) {
+            listPersonenParameters.setGeboorteDatum(restListPersonenParameters.geboortedatum);
+            listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
+        } else if (restListPersonenParameters.gemeenteVanInschrijving != null) {
+            listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
+            listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
+        } else {
+            listPersonenParameters.setVerblijfplaatsPostcode(restListPersonenParameters.postcode);
+            listPersonenParameters.setVerblijfplaatsHuisnummer(restListPersonenParameters.huisnummer);
+        }
+        return listPersonenParameters;
+    }
+
+    public List<RESTPersoon> convert(final List<IngeschrevenPersoonHal> ingeschrevenPersonen) {
+        return ingeschrevenPersonen.stream().map(this::convertToPersoon).toList();
+    }
+
+    public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal ingeschrevenPersoon) {
+        final RESTPersoon persoon = new RESTPersoon();
+        persoon.bsn = ingeschrevenPersoon.getBurgerservicenummer();
+        persoon.geslacht = ingeschrevenPersoon.getGeslachtsaanduiding().toString();
+        persoon.naam = convertToNaam(ingeschrevenPersoon.getNaam());
+        persoon.geboortedatum = convertToGeboortedatum(ingeschrevenPersoon.getGeboorte());
+        persoon.inschrijfadres = convertToInschrijfadres(ingeschrevenPersoon.getVerblijfplaats());
+        return persoon;
     }
 
     private String convertToNaam(final NaamPersoon naam) {
