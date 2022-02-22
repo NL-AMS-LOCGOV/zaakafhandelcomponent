@@ -225,6 +225,8 @@
   "msg.error.invalid.email": "The {{label}} field contains an invalid E-Mail address. Use the voorbeeld@example.com format!",
   "msg.error.invalid.formaat": "The {{label}} field contains an invalid value. Use the {{requiredPattern}} format!",
   "msg.error.date.formaat": "DD-MM-YYYY",
+  "msg.error.date.invalid.streef": "Start Date must be before Target Date",
+  "msg.error.date.invalid.fatale": "Target Date must be before Fatal Date",
   "msg.geen.gegevens.gevonden": "No data found",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "This document",
   "msg.gewijzigd.objecttype.TAAK": "This task",

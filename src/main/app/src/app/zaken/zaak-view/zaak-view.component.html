@@ -70,10 +70,6 @@
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
                                     <zac-static-text [label]="'kanaal' | translate"
                                                      [value]="'-'"></zac-static-text>
-                                    <zac-static-text [label]="'status' | translate"
-                                                     [value]="zaak.status | empty:'naam'"></zac-static-text>
-                                    <zac-static-text [label]="'resultaat' | translate"
-                                                     [value]="zaak.resultaat | empty:'naam'"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -98,20 +94,25 @@
                                     </div>
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
                                                      [value]="zaak.registratiedatum"></zac-static-text>
-
-                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('startdatum')"
-                                                    (onSave)="editZaak($event, 'startdatum')"></zac-edit-datum>
-
-                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('einddatumGepland')"
-                                                    (onSave)="editZaak($event, 'einddatumGepland')"
-                                                    [icon]="editFormFieldIcons.get('einddatumGepland')"></zac-edit-datum>
                                     <zac-static-text *ngIf="zaak.einddatum" fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
-                                    <zac-edit-datum fxFlex.sm="25" [formField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
-                                                    (onSave)="editZaak($event, 'uiterlijkeEinddatumAfdoening')"
-                                                    [icon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"></zac-edit-datum>
+                                    <zac-static-text [label]="'status' | translate"
+                                                     [value]="zaak.status | empty:'naam'"></zac-static-text>
+                                    <zac-static-text [label]="'resultaat' | translate"
+                                                     [value]="zaak.resultaat | empty:'naam'"></zac-static-text>
                                 </div>
-
+                                <div fxFlex="100" class="mat-divider-wrapper">
+                                    <mat-divider></mat-divider>
+                                </div>
+                                <div fxFlex="100" fxLayout.sm="row">
+                                    <zac-edit-datum-groep [startDatumField]="editFormFields.get('startdatum')"
+                                                          [streefDatumField]="editFormFields.get('einddatumGepland')"
+                                                          [fataleDatumField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
+                                                          [streefDatumIcon]="editFormFieldIcons.get('einddatumGepland')"
+                                                          [fataleDatumIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
+                                                          [reasonField]="editFormFields.get('redenDatumGroep')"
+                                                          (onSave)="editDatumGroep($event)"></zac-edit-datum-groep>
+                                </div>
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>

@@ -37,7 +37,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     subscription: Subscription;
 
-    protected constructor(protected mfbService: MaterialFormBuilderService, private utilService: UtilService) {
+    protected constructor(protected mfbService: MaterialFormBuilderService, protected utilService: UtilService) {
         super();
     }
 
