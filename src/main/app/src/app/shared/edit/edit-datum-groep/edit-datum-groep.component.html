@@ -4,8 +4,8 @@
   -->
 
 <div class="static-text" (click)="edit(true)" [class.readonly]="readonly">
-    <div *ngIf="!editing" class="static-text-content">
-        <div [fxFlex]="100/3">
+    <div *ngIf="!editing" class="datum-groep-wrapper" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+        <div [fxFlex]="100/3" fxFlex.lt-md="50">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
@@ -14,34 +14,38 @@
                 {{startDatum | datum | empty}}
             </div>
         </div>
-        <div [fxFlex]="100/3">
+        <div [fxFlex]="100/3" fxFlex.lt-md="50">
             <label class="static-text-label">
                 {{streefDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
-                {{streefDatum | datum | empty}}
-                <mat-icon class="label-icon"
-                          [ngClass]="streefDatumIcon.styleClass"
-                          *ngIf="showStreefDatumIcon"
-                          title="{{ streefDatumIcon.title | translate}}">
-                    {{streefDatumIcon.icon}}
-                </mat-icon>
+                <div>
+                    {{streefDatum | datum | empty}}
+                    <mat-icon class="label-icon"
+                              [ngClass]="streefDatumIcon.styleClass"
+                              *ngIf="showStreefDatumIcon"
+                              title="{{ streefDatumIcon.title | translate}}">
+                        {{streefDatumIcon.icon}}
+                    </mat-icon>
+                </div>
             </div>
         </div>
-        <div [fxFlex]="100/3 - 2.5">
+        <div [fxFlex]="100/3 - 2.5" fxFlex.lt-md="100" fxLayout.sm="row">
             <label class="static-text-label">
                 {{fataleDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
-                {{fataleDatum | datum | empty}}
-                <mat-icon class="label-icon"
-                          [ngClass]="fataleDatumIcon.styleClass"
-                          *ngIf="showFataleDatumIcon"
-                          title="{{ fataleDatumIcon.title | translate}}">
-                    {{fataleDatumIcon.icon}}
-                </mat-icon>
+                <div>
+                    {{fataleDatum | datum | empty}}
+                    <mat-icon class="label-icon"
+                              [ngClass]="fataleDatumIcon.styleClass"
+                              *ngIf="showFataleDatumIcon"
+                              title="{{ fataleDatumIcon.title | translate}}">
+                        {{fataleDatumIcon.icon}}
+                    </mat-icon>
+                </div>
                 <div class="edit-icon">
                     <mat-icon>edit</mat-icon>
                 </div>
@@ -51,15 +55,15 @@
 </div>
 
 <div *ngIf="editing" (zacOutsideClick)="onOutsideClick()">
-    <div>
-        <div class="datum-field" [fxFlex]="100/3">
+    <div fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+        <div class="datum-field" [fxFlex]="100/3" fxFlex.lt-md="50">
             <mfb-form-field [field]="startDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
         </div>
-        <div class="datum-field" [fxFlex]="100/3">
+        <div class="datum-field" [fxFlex]="100/3" fxFlex.lt-md="50">
             <mfb-form-field [field]="streefDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showStreefError">{{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
         </div>
-        <div [fxFlex]="100/3">
+        <div [fxFlex]="100/3" fxFlex.lt-md="100">
             <mfb-form-field [field]="fataleDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showFataleError">{{ 'msg.error.date.invalid.fatale' | translate}}</mat-error>
         </div>
