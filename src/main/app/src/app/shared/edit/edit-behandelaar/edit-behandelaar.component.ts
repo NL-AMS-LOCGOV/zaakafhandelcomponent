@@ -20,7 +20,6 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
     @Input() showAssignToMe: boolean = false;
     @Output() onAssignToMe: EventEmitter<any> = new EventEmitter<any>();
 
-
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
@@ -31,6 +30,7 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
     }
 
     release(): void {
+        this.formField.formControl.setValue(null);
         this.reasonField.formControl.setValue(null);
         this.save();
     }
