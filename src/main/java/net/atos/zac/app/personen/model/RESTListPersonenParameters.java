@@ -9,6 +9,8 @@ import java.time.LocalDate;
 
 public class RESTListPersonenParameters {
 
+    public String bsn;
+
     public String geslachtsnaam;
 
     public LocalDate geboortedatum;

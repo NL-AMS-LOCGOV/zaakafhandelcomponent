@@ -4,6 +4,7 @@
  */
 
 export class ListPersonenParameters {
+    bsn: string;
     geslachtsnaam: string;
     geboortedatum: string;
     gemeenteVanInschrijving: string;

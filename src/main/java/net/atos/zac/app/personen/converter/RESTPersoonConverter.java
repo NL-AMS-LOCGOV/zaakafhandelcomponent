@@ -23,9 +23,27 @@ import net.atos.zac.app.personen.model.RESTPersoonOverzicht;
 
 public class RESTPersoonConverter {
 
-    public static final String FIELDS_PERSOON_OVERZICHT = "naam.voornamen,naam.voorvoegsel,naam.geslachtsnaam,geboorte.datum.datum," +
-            "verblijfplaats.straat,verblijfplaats.huisnummer,verblijfplaats.huisnummertoevoeging,verblijfplaats.huisletter,verblijfplaats.woonplaats";
+    public static final String FIELDS_PERSOON_OVERZICHT = "naam.voornamen," +
+            "naam.voorvoegsel," +
+            "naam.geslachtsnaam," +
+            "geboorte.datum.datum," +
+            "verblijfplaats.straat," +
+            "verblijfplaats.huisnummer," +
+            "verblijfplaats.huisnummertoevoeging," +
+            "verblijfplaats.huisletter," +
+            "verblijfplaats.woonplaats";
 
+    private static final String FIELDS_PERSOON = "burgerservicenummer," +
+            "geslachtsaanduiding," +
+            "naam.voornamen," +
+            "naam.voorvoegsel," +
+            "naam.geslachtsnaam," +
+            "geboorte.datum.datum," +
+            "verblijfplaats.straat," +
+            "verblijfplaats.huisnummer," +
+            "verblijfplaats.huisnummertoevoeging," +
+            "verblijfplaats.huisletter," +
+            "verblijfplaats.woonplaats";
 
     private static final String ONBEKEND = "<onbekend>";
 
@@ -43,14 +61,18 @@ public class RESTPersoonConverter {
         return persoonOverzicht;
     }
 
-    public ListPersonenParameters convert(final RESTListPersonenParameters persoonZoekParameters) {
+    public ListPersonenParameters convert(final RESTListPersonenParameters restListPersonenParameters) {
         final ListPersonenParameters listPersonenParameters = new ListPersonenParameters();
-        if (persoonZoekParameters.geboortedatum != null) {
-            listPersonenParameters.setGeboorteDatum(persoonZoekParameters.geboortedatum);
+        listPersonenParameters.setFields(FIELDS_PERSOON);
+        if (restListPersonenParameters.bsn != null) {
+            listPersonenParameters.setBurgerservicenummers(List.of(restListPersonenParameters.bsn));
+        } else if (restListPersonenParameters.geboortedatum != null) {
+            listPersonenParameters.setGeboorteDatum(restListPersonenParameters.geboortedatum);
+            listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
         } else {
-            listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(persoonZoekParameters.gemeenteVanInschrijving);
+            listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
+            listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
         }
-        listPersonenParameters.setNaamGeslachtsnaam(persoonZoekParameters.geslachtsnaam);
         return listPersonenParameters;
     }
 
