@@ -215,6 +215,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
+        this.editFormFields.set('redenDatumGroep', new InputFormFieldBuilder().id('redenDatumGroep').label('reden').build());
 
     }
 
@@ -261,6 +262,19 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
                 this.updateZaak();
             }
+        });
+    }
+
+    editDatumGroep(event: any): void {
+        const zaak: Zaak = new Zaak();
+
+        zaak.startdatum = event.startdatum;
+        zaak.einddatumGepland = event.einddatumGepland;
+        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+            this.init(updatedZaak);
         });
     }
 

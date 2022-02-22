@@ -227,6 +227,8 @@
   "msg.error.invalid.email": "Het {{label}}-veld bevat een ongeldig E-Mailadres. Gebruik het voorbeeld@example.com formaat!",
   "msg.error.invalid.formaat": "Het {{label}}-veld bevat een ongeldige waarde. Gebruik het {{requiredPattern}} formaat!",
   "msg.error.date.formaat": "DD-MM-JJJJ",
+  "msg.error.date.invalid.streef": "Streefdatum mag niet voor startdatum liggen",
+  "msg.error.date.invalid.fatale": "Fatale datum mag niet voor streefdatum liggen",
   "msg.geen.gegevens.gevonden": "Geen gegevens gevonden",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "Dit document",
   "msg.gewijzigd.objecttype.TAAK": "Deze taak",

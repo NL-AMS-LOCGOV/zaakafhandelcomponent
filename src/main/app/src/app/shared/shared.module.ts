@@ -34,6 +34,7 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker.component';
 import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
+import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelij
         EditBehandelaarComponent,
         EditGroepComponent,
         EditDatumComponent,
+        EditDatumGroepComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
         EditVertrouwelijkheidaanduidingComponent,
@@ -56,6 +58,7 @@ import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelij
     imports: [
         FormsModule,
         BrowserAnimationsModule,
+        FlexLayoutModule,
         RouterModule,
         PipesModule,
         MaterialModule,
@@ -82,6 +85,7 @@ import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelij
         EditBehandelaarComponent,
         EditGroepComponent,
         EditDatumComponent,
+        EditDatumGroepComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
         EditVertrouwelijkheidaanduidingComponent,
