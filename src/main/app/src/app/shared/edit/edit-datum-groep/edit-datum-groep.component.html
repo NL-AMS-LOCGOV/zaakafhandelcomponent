@@ -10,7 +10,7 @@
                 {{startDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
-            <div>
+            <div class="static-text-content">
                 {{startDatum | datum | empty}}
             </div>
         </div>
@@ -19,7 +19,7 @@
                 {{streefDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
-            <div>
+            <div class="static-text-content">
                 {{streefDatum | datum | empty}}
                 <mat-icon class="label-icon"
                           [ngClass]="streefDatumIcon.styleClass"
@@ -34,7 +34,7 @@
                 {{fataleDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
-            <div>
+            <div class="static-text-content">
                 {{fataleDatum | datum | empty}}
                 <mat-icon class="label-icon"
                           [ngClass]="fataleDatumIcon.styleClass"
@@ -42,10 +42,10 @@
                           title="{{ fataleDatumIcon.title | translate}}">
                     {{fataleDatumIcon.icon}}
                 </mat-icon>
+                <div class="edit-icon">
+                    <mat-icon>edit</mat-icon>
+                </div>
             </div>
-        </div>
-        <div class="edit-icon">
-            <mat-icon>edit</mat-icon>
         </div>
     </div>
 </div>
