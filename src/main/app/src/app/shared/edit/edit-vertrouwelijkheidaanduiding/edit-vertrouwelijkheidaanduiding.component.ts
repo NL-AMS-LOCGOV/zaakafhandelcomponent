@@ -20,12 +20,15 @@ export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
     @Input() formField: SelectFormField;
     @Input() reasonField: InputFormField;
 
+    option: {};
+
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
 
     init(formField: SelectFormField): void {
-        this.value = formField.formControl.value;
+        this.option = formField.formControl.value;
+        this.value = formField.formControl.value.value;
     }
 
     valueChanges(): void {
@@ -42,6 +45,11 @@ export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
         if (this.formField.formControl.valid) {
             this.onSave.emit({vertrouwelijkheidaanduiding: this.formField.formControl.value.value, reden: this.reasonField?.formControl.value});
         }
+        this.editing = false;
+    }
+
+    cancel(): void {
+        this.formField.formControl.setValue(this.option);
         this.editing = false;
     }
 }
