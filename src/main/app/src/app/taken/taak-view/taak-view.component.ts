@@ -86,12 +86,16 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
     }
 
-    init(taak: Taak): void {
+    initTaakGegevens(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
         this.setEditableFormFields();
-        this.createTaakForm(taak);
         this.setupMenu();
+    }
+
+    init(taak: Taak): void {
+        this.initTaakGegevens(taak);
+        this.createTaakForm(taak);
     }
 
     createTaakForm(taak: Taak): void {
@@ -182,10 +186,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     partialEditTaak(value: string, field: string): void {
-        this.taak[field] = value;
+        this.taak[field] = value[field];
         this.websocketService.suspendListener(this.taakListener);
         this.takenService.partialUpdateTaak(this.taak).subscribe((taak) => {
-            this.init(taak);
+            this.initTaakGegevens(taak);
         });
     }
 

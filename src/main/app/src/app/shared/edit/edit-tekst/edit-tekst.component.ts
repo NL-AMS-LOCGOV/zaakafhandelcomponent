@@ -22,8 +22,6 @@ export class EditTekstComponent extends EditComponent {
     @Input() formField: TextareaFormField;
     @Input() reasonField: InputFormField;
 
-    reasonItem: FormItem;
-
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
@@ -38,9 +36,6 @@ export class EditTekstComponent extends EditComponent {
 
     edit(editing: boolean): void {
         super.edit(editing);
-        if (this.reasonItem) {
-            this.reasonItem.data.formControl.setValue(null);
-        }
         this.dirty = false;
     }
 
