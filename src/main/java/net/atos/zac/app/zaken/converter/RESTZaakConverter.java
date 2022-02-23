@@ -69,7 +69,7 @@ public class RESTZaakConverter {
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
         restZaak.zaaktype = getZaaktype(zaak.getZaaktype());
-        restZaak.status = zaakStatusConverter.convert(zaak.getStatus());
+        restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
         if (zaak.getOpschorting() != null) {
             restZaak.indicatieOpschorting = zaak.getOpschorting().getIndicatie();
