@@ -31,7 +31,7 @@ public class RESTZaakInformatieobjectConverter {
 
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
 
-        restZaakInformatieobject.status = restZaakStatusConverter.convert(zaak.getStatus());
+        restZaakInformatieobject.status = restZaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaakInformatieobject.zaakUuid = zaak.getUuid().toString();
         restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
         restZaakInformatieobject.zaakStartDatum = zaak.getStartdatum();
