@@ -65,6 +65,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
         this.werklijstData = this.sessionStorageService.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
 
+        if (this.werklijstData) {
+            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
+        }
+
         this.setColumns();
     }
 
@@ -73,7 +77,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.table.dataSource = this.dataSource;
 
         if (this.werklijstData) {
-            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
             this.dataSource.filters = this.werklijstData.filters;
 
             this.paginator.pageIndex = this.werklijstData.paginator.page;
@@ -130,9 +133,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     private setColumns() {
         if (this.werklijstData) {
             const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
-            this.dataSource.initColumns(mapColumns);
+            this.toggleGroepOrZaaktype(mapColumns);
         } else {
-            this.dataSource.initColumns(this.initialColumns());
+            this.toggleGroepOrZaaktype(this.initialColumns());
         }
     }
 
@@ -141,7 +144,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             ['select', ColumnPickerValue.STICKY],
             ['identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.VISIBLE],
-            ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['zaaktype', ColumnPickerValue.HIDDEN],
             ['groep', ColumnPickerValue.VISIBLE],
             ['startdatum', ColumnPickerValue.VISIBLE],
             ['einddatum', ColumnPickerValue.HIDDEN],
@@ -154,7 +157,22 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         ]);
     }
 
+    toggleGroepOrZaaktype(columns: Map<string, ColumnPickerValue>): Map<string, ColumnPickerValue> {
+        if (this.dataSource.zoekParameters.selectie === 'groep') {
+            columns.set('groep', ColumnPickerValue.HIDDEN);
+            columns.set('zaaktype', ColumnPickerValue.VISIBLE);
+        } else {
+            columns.set('groep', ColumnPickerValue.VISIBLE);
+            columns.set('zaaktype', ColumnPickerValue.HIDDEN);
+        }
+
+        this.dataSource.initColumns(columns);
+
+        return columns;
+    }
+
     switchTypeAndSearch() {
+        this.setColumns();
         if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
             this.searchAndGoToFirstPage();
         }

@@ -51,6 +51,10 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.werklijstData = this.sessionStorageService.getSessionStorage(
             'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
 
+        if (this.werklijstData) {
+            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
+        }
+
         this.setColumns();
     }
 
@@ -59,7 +63,6 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.table.dataSource = this.dataSource;
 
         if (this.werklijstData) {
-            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
             this.dataSource.filters = this.werklijstData.filters;
 
             this.paginator.pageIndex = this.werklijstData.paginator.page;
@@ -108,6 +111,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     switchTypeAndSearch() {
+        this.setColumns();
         if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
             this.searchAndGoToFirstPage();
         }
@@ -142,9 +146,9 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     private setColumns() {
         if (this.werklijstData) {
             const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
-            this.dataSource.initColumns(mapColumns);
+            this.toggleGroepOrZaaktype(mapColumns);
         } else {
-            this.dataSource.initColumns(this.initialColumns());
+            this.toggleGroepOrZaaktype(this.initialColumns());
         }
     }
 
@@ -161,8 +165,23 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             ['behandelaar', ColumnPickerValue.VISIBLE],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['toelichting', ColumnPickerValue.HIDDEN],
+            ['resultaat', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
+    }
+
+    toggleGroepOrZaaktype(columns: Map<string, ColumnPickerValue>): Map<string, ColumnPickerValue> {
+        if (this.dataSource.zoekParameters.selectie === 'groep') {
+            columns.set('groep', ColumnPickerValue.HIDDEN);
+            columns.set('zaaktype', ColumnPickerValue.VISIBLE);
+        } else {
+            columns.set('groep', ColumnPickerValue.VISIBLE);
+            columns.set('zaaktype', ColumnPickerValue.HIDDEN);
+        }
+
+        this.dataSource.initColumns(columns);
+
+        return columns;
     }
 
     resetSearchCriteria() {
