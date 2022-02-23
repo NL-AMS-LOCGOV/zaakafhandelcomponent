@@ -71,20 +71,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = new WerklijstData();
-        werklijstData.filters = this.dataSource.filters;
-        werklijstData.columns = flatListColumns;
-        werklijstData.sorting = {
-            column: this.sort.active,
-            direction: this.sort.direction
-        };
-        werklijstData.paginator = {
-            page: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize
-        };
-
-        this.sessionStorageService.setSessionStorage('mijnTakenWerkvoorraadData', werklijstData);
+        this.saveSearchQuery();
     }
 
     isAfterDate(datum): boolean {
@@ -113,6 +100,23 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         ]);
     }
 
+    saveSearchQuery() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
+
+        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+    }
+
     resetSearchCriteria() {
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
@@ -120,6 +124,8 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         this.paginator.pageSize = 25;
         this.sort.active = '';
         this.sort.direction = '';
+
+        this.saveSearchQuery();
     }
 
 }

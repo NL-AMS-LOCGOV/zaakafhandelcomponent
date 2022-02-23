@@ -78,20 +78,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = new WerklijstData();
-        werklijstData.filters = this.dataSource.filters;
-        werklijstData.columns = flatListColumns;
-        werklijstData.sorting = {
-            column: this.sort.active,
-            direction: this.sort.direction
-        };
-        werklijstData.paginator = {
-            page: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize
-        };
-
-        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
+        this.saveSearchQuery();
     }
 
     zaaktypeChange() {
@@ -128,6 +115,23 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         ]);
     }
 
+    saveSearchQuery() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
+
+        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
+    }
+
     resetSearchCriteria() {
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
@@ -135,6 +139,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginator.pageSize = 25;
         this.sort.active = '';
         this.sort.direction = '';
+
+        this.saveSearchQuery();
     }
 
 }
