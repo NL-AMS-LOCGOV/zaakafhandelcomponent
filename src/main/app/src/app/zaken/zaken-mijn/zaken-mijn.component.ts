@@ -129,6 +129,9 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     resetSearchCriteria() {
+        this.dataSource.zoekParameters = {
+            zaaktype: ''
+        };
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
         this.paginator.pageIndex = 0;
