@@ -16,14 +16,17 @@
     <div fxLayout="row" fxLayoutAlign="start" *ngIf="config">
         <button mat-flat-button color="accent"
                 *ngIf="config.partialButtonText || config.partialButtonIcon"
-                [disabled]="formGroup.invalid"
-                (click)="partial()" id="partial_button"
-                type="button">
+                [class.busy]="submittingPartial"
+                [disabled]="formGroup.invalid||submitting"
+                id="partial_button"
+                type="button"
+                (click)="partial()">
             <mat-icon *ngIf="config.partialButtonIcon">{{config.partialButtonIcon}}</mat-icon>
             {{config.partialButtonText | translate}}
         </button>
         <button mat-flat-button color="primary"
-                [disabled]="formGroup.invalid"
+                [class.busy]="submittingForm"
+                [disabled]="formGroup.invalid||submitting"
                 id="opslaan_button"
                 type="submit">
             <mat-icon *ngIf="config.saveButtonIcon">{{config.saveButtonIcon}}</mat-icon>
@@ -31,8 +34,10 @@
         </button>
         <button mat-flat-button
                 *ngIf="config.cancelButtonText || config.cancelButtonIcon"
-                (click)="cancel()" id="annuleren_button"
-                type="button">
+                [disabled]="submitting"
+                id="annuleren_button"
+                type="button"
+                (click)="cancel()">
             <mat-icon *ngIf="config.cancelButtonIcon">{{config.cancelButtonIcon}}</mat-icon>
             {{config.cancelButtonText | translate}}
         </button>
