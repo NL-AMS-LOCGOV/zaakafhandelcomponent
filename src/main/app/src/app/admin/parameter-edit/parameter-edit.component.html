@@ -121,6 +121,8 @@
                         </mat-accordion>
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="zaakbeeindigParameters.length == 0"
+                                    matStepperNext>{{"actie.volgende" | translate}}</button>
                             <button mat-raised-button color="primary" (click)="opslaan()"
                                     [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
                         </div>
