@@ -127,6 +127,52 @@
                     </form>
                 </ng-template>
             </mat-step>
+            <mat-step [stepControl]="zaakbeeindigFormGroup">
+                <ng-template matStepLabel>{{"gegevens.beeindiging" | translate}}</ng-template>
+                <ng-template matStepContent>
+                    <form [formGroup]="zaakbeeindigFormGroup" fxLayout="column">
+                        <div class="table-wrapper">
+                            <table mat-table [dataSource]="zaakbeeindigParameters">
+                                <ng-container matColumnDef="select">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let parameter">
+                                        <mat-checkbox (click)="$event.stopPropagation()"
+                                                      (change)="changeSelection($event, parameter)"
+                                                      [checked]="selection.isSelected(parameter)">
+                                        </mat-checkbox>
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="reden">
+                                    <th mat-header-cell *matHeaderCellDef translate="reden"></th>
+                                    <td mat-cell *matCellDef="let parameter">
+                                        {{ parameter.zaakbeeindigReden.naam }}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="resultaat">
+                                    <th mat-header-cell *matHeaderCellDef translate="resultaat"></th>
+                                    <td mat-cell *matCellDef="let parameter">
+                                        <mat-select placeholder="{{'resultaat.-kies-' | translate}}"
+                                                    [formControl]="getZaakbeeindigControl(parameter,'beeindigResultaat')"
+                                                    [compareWith]="compareObject">
+                                            <mat-option [value]="">{{'resultaat.-kies-' | translate}}</mat-option>
+                                            <mat-option *ngFor="let resultaat of zaakResultaten | async"
+                                                        [value]="resultaat">{{ resultaat.naam }}</mat-option>
+                                        </mat-select>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="['select', 'reden', 'resultaat']"></tr>
+                                <tr mat-row *matRowDef="let row; columns: ['select', 'reden', 'resultaat'];"></tr>
+                            </table>
+                            <p *ngIf="zaakbeeindigParameters.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                        </div>
+                        <div class="button-group" fxLayout="row wrap">
+                            <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid()"
+                                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                        </div>
+                    </form>
+                </ng-template>
+            </mat-step>
         </mat-stepper>
     </mat-sidenav-content>
 </mat-sidenav-container>
