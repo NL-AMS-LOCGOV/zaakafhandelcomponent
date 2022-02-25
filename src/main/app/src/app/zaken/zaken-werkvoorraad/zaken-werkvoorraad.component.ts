@@ -284,5 +284,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.sort.direction = '';
 
         this.saveSearchQuery();
+
+        this.dataSource.clear();
     }
+
 }
