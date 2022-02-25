@@ -24,8 +24,7 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
         ADVISEUR: 'adviseur',
         BRON: 'bron',
         EXTERNADVIES: 'externAdvies',
-        BIJLAGE: 'bijlage',
-        RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
+        BIJLAGE: 'bijlage'
     };
 
     constructor(
