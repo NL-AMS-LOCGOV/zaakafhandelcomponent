@@ -45,6 +45,10 @@ export abstract class FormComponent {
                 requiredPattern: formControl.errors.pattern.requiredPattern,
                 actualValue: formControl.errors.pattern.actualValue
             });
+        } else if (formControl.hasError('bsn')) {
+            return this.labeled('msg.error.invalid.bsn', {});
+        } else if (formControl.hasError('postcode')) {
+            return this.labeled('msg.error.invalid.postcode', {});
         } else {
             return '';
         }

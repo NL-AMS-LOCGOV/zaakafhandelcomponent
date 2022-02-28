@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -25,8 +26,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
@@ -38,8 +37,10 @@ import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -52,6 +53,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
@@ -114,13 +116,23 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
-        parameters.target(ingelogdeMedewerker.get());
-        parameters.subject(zaak);
+        deleteSignalering(zaak);
+        return zaakConverter.convert(zaak);
+    }
 
-        signaleringenService.deleteSignalering(parameters);
-
+    @GET
+    @Path("zaak/id/{identificatie}")
+    public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
+        final ZaakListParameters zaakListParameters = new ZaakListParameters();
+        zaakListParameters.setIdentificatie(identificatie);
+        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
+        if (zaakResults.getCount() == 0) {
+            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
+        } else if (zaakResults.getCount() > 1) {
+            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
+        }
+        final Zaak zaak = zaakResults.getResults().get(0);
+        deleteSignalering(zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -129,6 +141,9 @@ public class ZakenRESTService {
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
+        if (StringUtils.isNotEmpty(restZaak.initiatorBSN)) {
+            addInitiator(restZaak.initiatorBSN, nieuweZaak);
+        }
         return zaakConverter.convert(nieuweZaak);
     }
 
@@ -264,6 +279,13 @@ public class ZakenRESTService {
         return zaakConverter.convert(zaak);
     }
 
+    @GET
+    @Path("zaak/{uuid}/historie")
+    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
+        final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
+        return auditTrailConverter.convert(auditTrail);
+    }
+
     private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
             final boolean getOpenZaken) {
         final TableRequest tableState = TableRequest.getTableState(request);
@@ -334,10 +356,17 @@ public class ZakenRESTService {
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 
-    @GET
-    @Path("zaak/{uuid}/historie")
-    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
-        final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
-        return auditTrailConverter.convert(auditTrail);
+    private void deleteSignalering(final Zaak zaak) {
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
+        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
+        parameters.target(ingelogdeMedewerker.get());
+        parameters.subject(zaak);
+        signaleringenService.deleteSignalering(parameters);
+    }
+
+    private void addInitiator(final String bsn, final Zaak zaak) {
+        final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
+        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), "Aanvrager", new NatuurlijkPersoon(bsn));
+        zrcClientService.createRol(rol);
     }
 }

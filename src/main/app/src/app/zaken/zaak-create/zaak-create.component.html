@@ -2,7 +2,14 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
+<mat-sidenav-container autosize>
+    <mat-sidenav #actionsSideNav mode="over" position="end">
+        <zac-persoon-zoek *ngIf="action === actions.ZOEK_PERSOON" (persoon)="persoonGeselecteerd($event)"></zac-persoon-zoek>
+    </mat-sidenav>
+    <div class="content">
+        <div class="form">
+            <mfb-form *ngIf="createZaakFields" (formSubmit)="onFormSubmit($event)" [formFields]="createZaakFields" [config]="formConfig"></mfb-form>
+        </div>
+    </div>
+</mat-sidenav-container>
 
-<div class="form">
-    <mfb-form *ngIf="createZaakFields" (formSubmit)="onFormSubmit($event)" [formFields]="createZaakFields" [config]="formConfig"></mfb-form>
-</div>

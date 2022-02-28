@@ -18,6 +18,7 @@ import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.c
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {NotitiesComponent} from '../notities/notities.component';
+import {PersonenModule} from '../personen/personen.module';
 
 @NgModule({
     declarations: [
@@ -39,7 +40,8 @@ import {NotitiesComponent} from '../notities/notities.component';
         ZakenRoutingModule,
         StoreModule.forFeature('zaken', {
             zaakVerkort: zaakVerkortReducer
-        })
+        }),
+        PersonenModule
     ]
 })
 export class ZakenModule {
