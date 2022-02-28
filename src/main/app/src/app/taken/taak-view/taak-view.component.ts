@@ -106,7 +106,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         }
 
         this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak).build();
-        if (this.formulier.disablePartialSave) {
+        if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
         this.utilService.setTitle('title.taak', {taak: this.formulier.getBehandelTitel()});
