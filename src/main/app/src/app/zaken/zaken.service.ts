@@ -40,6 +40,12 @@ export class ZakenService {
         );
     }
 
+    readZaakByID(id: string): Observable<Zaak> {
+        return this.http.get<Zaak>(`${this.basepath}/zaak/id/${id}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     createZaak(zaak: Zaak): Observable<Zaak> {
         return this.http.post<Zaak>(`${this.basepath}/zaak`, zaak).pipe(
             catchError(this.handleError)

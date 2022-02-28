@@ -5,8 +5,7 @@
 
 <form [formGroup]="formGroup" (ngSubmit)="submit()">
     <ng-container *ngFor="let row of data">
-        <div fxLayout="row" fxLayout.lt-md="column"
-             fxLayoutGap="10px" fxFlexFill>
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
             <div [fxFlex]="100/row.length" *ngFor="let tile of row">
                 <mfb-form-field [field]="tile"></mfb-form-field>
             </div>

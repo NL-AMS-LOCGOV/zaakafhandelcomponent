@@ -13,7 +13,7 @@
         </ng-container>
         <ng-container *ngIf="!collapsed">
             <div fxLayout="row" fxLayoutAlign="start center">
-                <button mat-raised-button [routerLink]="['/zaken', zaak.uuid]">
+                <button mat-raised-button [routerLink]="['/zaken', zaak.identificatie]">
                     {{zaak.identificatie}}
                 </button>
             </div>
@@ -27,7 +27,7 @@
         </ng-container>
     </mat-toolbar>
     <div class="content" fxLayout="column wrap" *ngIf="collapsed">
-        <button [routerLink]="['/zaken', zaak.uuid]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+        <button [routerLink]="['/zaken', zaak.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
                 mat-icon-button>
             <mat-icon>visibility</mat-icon>
         </button>

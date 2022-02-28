@@ -15,4 +15,14 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField = new InputFormField();
     }
 
+    icon(icon: string): this {
+        this.formField.icon = icon;
+        return this;
+    }
+
+    build() {
+        super.validate();
+        return this.formField;
+    }
+
 }

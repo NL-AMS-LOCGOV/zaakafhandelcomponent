@@ -23,4 +23,7 @@ export class InputComponent extends FormComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    iconClick($event: MouseEvent): void {
+        this.data.iconClicked$.next();
+    }
 }

@@ -123,7 +123,7 @@
                         </mat-panel-title>
                         <mat-panel-description>
                             {{zaak.zaaktype}}
-                            <button mat-flat-button [routerLink]="['/zaken', zaak.zaakUuid]" (click)="$event.stopPropagation()">
+                            <button mat-flat-button [routerLink]="['/zaken', zaak.zaakIdentificatie]" (click)="$event.stopPropagation()">
                                 <mat-icon>visibility</mat-icon>
                             </button>
                         </mat-panel-description>
