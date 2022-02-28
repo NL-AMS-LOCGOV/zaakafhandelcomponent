@@ -183,5 +183,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.sort.direction = '';
 
         this.saveSearchQuery();
+
+        this.dataSource.clear();
     }
 }

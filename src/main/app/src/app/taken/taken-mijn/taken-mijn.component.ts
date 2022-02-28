@@ -67,7 +67,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             this.cd.detectChanges();
         }
 
-        this.dataSource.load();
+        this.findTaken();
     }
 
     ngOnDestroy() {
@@ -120,12 +120,17 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
     resetSearchCriteria() {
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
-        this.paginator.pageIndex = 0;
         this.paginator.pageSize = 25;
         this.sort.active = '';
         this.sort.direction = '';
 
         this.saveSearchQuery();
+        this.findTaken();
+    }
+
+    private findTaken() {
+        this.dataSource.load();
+        this.paginator.firstPage();
     }
 
 }

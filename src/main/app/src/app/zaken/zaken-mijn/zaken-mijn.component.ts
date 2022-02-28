@@ -133,6 +133,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     resetSearchCriteria() {
+        delete this.dataSource.zoekParameters.zaaktype;
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
         this.paginator.pageIndex = 0;
@@ -141,6 +142,8 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sort.direction = '';
 
         this.saveSearchQuery();
+
+        this.zaaktypeChange();
     }
 
 }
