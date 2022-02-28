@@ -30,7 +30,7 @@
             <mfb-form-field [field]="gemeenteCodeFormField"></mfb-form-field>
         </div>
     </div>
-    <button mat-flat-button color="primary" [disabled]="!isValid()" (click)="zoekPersonen()">Zoek
+    <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekPersonen()">Zoek
         <mat-icon class="spinner" *ngIf="loading">
             <mat-progress-spinner color="warn" diameter="20" mode="indeterminate"></mat-progress-spinner>
         </mat-icon>
