@@ -151,6 +151,14 @@
                 {{ row.toelichting | translate | empty }}
             </td>
         </ng-container>
+        <ng-container matColumnDef="resultaat">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'resultaat' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.resultaat | translate | empty: 'naam' }}
+            </td>
+        </ng-container>
 
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
