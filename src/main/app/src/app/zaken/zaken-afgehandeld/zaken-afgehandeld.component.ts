@@ -81,21 +81,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     ngOnDestroy() {
-        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = new WerklijstData();
-        werklijstData.searchParameters = this.dataSource.zoekParameters;
-        werklijstData.filters = this.dataSource.filters;
-        werklijstData.columns = flatListColumns;
-        werklijstData.sorting = {
-            column: this.sort.active,
-            direction: this.sort.direction
-        };
-        werklijstData.paginator = {
-            page: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize
-        };
-
-        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        this.saveSearchQuery();
     }
 
     private zaaktypesOphalen() {
@@ -184,6 +170,24 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         return columns;
     }
 
+    saveSearchQuery() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.searchParameters = this.dataSource.zoekParameters;
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
+
+        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+    }
+
     resetSearchCriteria() {
         this.dataSource.zoekParameters = {
             selectie: 'groep',
@@ -196,5 +200,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.paginator.pageSize = 25;
         this.sort.active = '';
         this.sort.direction = '';
+
+        this.saveSearchQuery();
     }
 }

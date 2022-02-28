@@ -196,7 +196,9 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                              .value(this.zaak.toelichting).maxlength(1000).build());
         this.editFormFields.set('redenToelichting', new InputFormFieldBuilder().id('redenToelichting').label('reden').build());
         this.editFormFields.set('vertrouwelijkheidaanduiding', new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                                                           .value(this.zaak.vertrouwelijkheidaanduiding).optionLabel('label')
+                                                                                           .value({label: this.translate.instant('vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                                                                                               value: this.zaak.vertrouwelijkheidaanduiding})
+                                                                                           .optionLabel('label')
                                                                                            .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                                                                                                Vertrouwelijkheidaanduiding)).build());
         this.editFormFields.set('redenVertrouwelijkheidaanduiding', new InputFormFieldBuilder().id('redenVertrouwelijkheidaanduiding').label('reden').build());

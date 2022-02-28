@@ -33,6 +33,9 @@ export class FormComponent {
 
     data: Array<AbstractFormField[]>;
     formGroup: FormGroup;
+    submitting: boolean;
+    submittingPartial: boolean;
+    submittingForm: boolean;
 
     private _config: FormConfig;
 
@@ -53,14 +56,17 @@ export class FormComponent {
     }
 
     partial() {
+        this.submitting = this.submittingPartial = true;
         this.formPartial.emit(this.formGroup);
     }
 
     submit(): void {
+        this.submitting = this.submittingForm = true;
         this.formSubmit.emit(this.formGroup);
     }
 
     cancel(): void {
+        this.submitting = true;
         this.formSubmit.emit(null);
     }
 }
