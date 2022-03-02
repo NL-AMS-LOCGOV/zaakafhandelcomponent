@@ -21,6 +21,7 @@ import {ToolbarComponent} from './core/toolbar/toolbar.component';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {AdminModule} from './admin/admin.module';
+import {MailModule} from './mail/mail.module';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -37,6 +38,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
         FoutAfhandelingModule,
         ZakenModule,
         InformatieObjectenModule,
+        MailModule,
         PlanItemsModule,
         TakenModule,
         AdminModule,
