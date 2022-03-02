@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -16,6 +16,8 @@ import org.flowable.cmmn.model.HumanTask;
 public class ExtraheerGroepLifecycleListener implements PlanItemInstanceLifecycleListener {
 
     public static final String VAR_TASK_CANDIDATE_GROUP_ID = "candidateGroupId";
+
+    public static final String VAR_TASK_CANDIDATE_USER_ID = "candidateUserId"; // is dit wel de juiste waarde?
 
     private final String sourceState;
 
@@ -45,7 +47,9 @@ public class ExtraheerGroepLifecycleListener implements PlanItemInstanceLifecycl
                                                          planItemInstance.getName()));
             }
             final String groupId = humanTask.getCandidateGroups().get(0);
+            final String username = humanTask.getCandidateUsers().get(0); // moet dit?
             planItemInstance.setVariableLocal(VAR_TASK_CANDIDATE_GROUP_ID, groupId);
+            planItemInstance.setVariableLocal(VAR_TASK_CANDIDATE_USER_ID, username); // moet dit?
         }
     }
 }
