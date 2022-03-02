@@ -76,14 +76,14 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-edit-vertrouwelijkheidaanduiding [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
-                                                                          [reasonField]="editFormFields.get('redenVertrouwelijkheidaanduiding')"
+                                                                          [reasonField]="editFormFields.get('reden')"
                                                                           (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-vertrouwelijkheidaanduiding>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
-                                                    [reasonField]="editFormFields.get('redenGroep')"
+                                                    [reasonField]="editFormFields.get('reden')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
-                                                          [reasonField]="editFormFields.get('redenBehandelaar')"
+                                                          [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="showAssignToMe(zaak)"
                                                           (onAssignToMe)="assignToMe($event)"></zac-edit-behandelaar>
@@ -110,7 +110,7 @@
                                                           [fataleDatumField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
                                                           [streefDatumIcon]="editFormFieldIcons.get('einddatumGepland')"
                                                           [fataleDatumIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
-                                                          [reasonField]="editFormFields.get('redenDatumGroep')"
+                                                          [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editDatumGroep($event)"></zac-edit-datum-groep>
                                 </div>
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
@@ -135,12 +135,12 @@
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
-                                                    [reasonField]="editFormFields.get('redenOmschrijving')"
+                                                    [reasonField]="editFormFields.get('reden')"
                                                     (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
-                                                    [reasonField]="editFormFields.get('redenToelichting')"
+                                                    [reasonField]="editFormFields.get('reden')"
                                                     (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
