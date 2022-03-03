@@ -60,16 +60,9 @@ export class MailCreateComponent implements OnInit {
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.mail.versturen', {zaak: zaak.identificatie});
-            const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
-                                                     .validators(Validators.required).build();
-
-            const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp')
-                                                         .validators(Validators.required).build();
-
-
-            const body = new TextareaFormFieldBuilder().id('body').label('body')
-                                                      .validators(Validators.required).build();
-
+            const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger').validators(Validators.required).build();
+            const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();
+            const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required).build();
             this.fields = [[ontvanger], [onderwerp], [body]];
         });
     }
