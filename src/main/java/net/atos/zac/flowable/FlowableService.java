@@ -5,10 +5,10 @@
 
 package net.atos.zac.flowable;
 
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ASSIGNEE;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_CANDIDATE_GROUP;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_DUE_DATE;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
-import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
-import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_USER_ID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
@@ -178,13 +178,12 @@ public class FlowableService {
         }
     }
 
-    public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId,
-            final String assigneeUsername,
-            final Date dueDate, final Map<String, String> taakdata) {
-        final UUID zaakUUID = readZaakUuidForCase(readPlanItem(planItemInstanceId).getCaseInstanceId());
-        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
-                .transientVariable(VAR_TASK_CANDIDATE_GROUP_ID, groupId)
-                .transientVariable(VAR_TASK_CANDIDATE_USER_ID, assigneeUsername) // wat is de juiste waarde?
+    public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
+            final Map<String, String> taakdata) {
+        final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());
+        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
+                .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
+                .transientVariable(VAR_TASK_ASSIGNEE, assignee)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
                 .transientVariable(VAR_TASK_DUE_DATE, dueDate)
                 .transientVariable(VAR_TASK_TAAKDATA, taakdata)
