@@ -285,12 +285,13 @@
   "msg.extern.advies.vastleggen.behandelen": "Er is een extern advies aangevraagd. Hieronder kan het antwoord vastgelegd worden.",
   " 8 ": ">>--> DASHBOARD <--<<",
   "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken",
-  "initiator.titel": "Persoonsgegevens aanvrager",
+  "initiator.titel": "Initiator",
   "initiator.naam": "Naam",
   "initiator.bsn": "BSN",
   "initiator.geboortedatum": "Geboortedatum",
   "initiator.inschrijfadres": "Inschrijfadres",
   "initiator.telefoonnummer": "Telefoonnummer",
   "initiator.telefoonnummer2": "Telefoonnummer (2e)",
-  "initiator.emailadres": "E-mailadres"
+  "initiator.emailadres": "E-mailadres",
+  "initiator.toevoegen": "Initiator toevoegen"
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TextIcon} from '../edit/text-icon';
 import {FormControl} from '@angular/forms';
 
@@ -17,6 +17,7 @@ export class StaticTextComponent implements OnInit {
     @Input() label: string;
     @Input() value: any;
     @Input() icon: TextIcon;
+    @Output() iconClicked = new EventEmitter<void>();
 
     showIcon: boolean;
 

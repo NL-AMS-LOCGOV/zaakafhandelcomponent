@@ -9,11 +9,7 @@ import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ActivatedRoute} from '@angular/router';
 import {TakenService} from '../taken.service';
 import {UtilService} from '../../core/service/util.service';
-import {AbstractView} from '../../shared/abstract-view/abstract-view';
-import {Store} from '@ngrx/store';
-import {State} from '../../state/app.state';
-import {MatSidenavContainer} from '@angular/material/sidenav';
-import {isZaakVerkortCollapsed} from '../../zaken/state/zaak-verkort.reducer';
+import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
@@ -28,20 +24,21 @@ import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/f
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {Medewerker} from '../../identity/model/medewerker';
-import {NavigationService} from '../../shared/navigation/navigation.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
+import {ViewComponent} from '../../shared/abstract-view/view.component';
 
 @Component({
     templateUrl: './taak-view.component.html',
     styleUrls: ['./taak-view.component.less']
 })
-export class TaakViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
+export class TaakViewComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    @ViewChild('menuSidenav') menuSidenav: MatSidenav;
+    @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
 
     taak: Taak;
     menu: MenuItem[] = [];
@@ -54,10 +51,10 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     private taakListener: WebsocketListener;
     private ingelogdeMedewerker: Medewerker;
 
-    constructor(store: Store<State>, private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
-                private navigation: NavigationService, protected translate: TranslateService) {
-        super(store, utilService);
+                protected translate: TranslateService) {
+        super();
     }
 
     ngOnInit(): void {
@@ -69,8 +66,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     ngAfterViewInit(): void {
         super.ngAfterViewInit();
-        this.subscriptions$.push(
-            this.store.select(isZaakVerkortCollapsed).subscribe(() => setTimeout(() => this.updateMargins())));
         this.taakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
             (event) => this.ophalenTaak(event));
     }
@@ -78,12 +73,6 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
     ngOnDestroy() {
         super.ngOnDestroy();
         this.websocketService.removeListener(this.taakListener);
-    }
-
-    onZaakLoaded($event): void {
-        if ($event) {
-            this.updateMargins();
-        }
     }
 
     initTaakGegevens(taak: Taak): void {
@@ -232,5 +221,9 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     isAfgerond() {
         return this.taak.status === TaakStatus.Afgerond;
+    }
+
+    updateMargins(): void {
+        setTimeout(() => this.sideNavContainer.updateContentMargins(), 250);
     }
 }

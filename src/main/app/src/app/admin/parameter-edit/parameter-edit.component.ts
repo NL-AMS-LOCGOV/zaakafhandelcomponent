@@ -20,23 +20,22 @@ import {MatSelectChange} from '@angular/material/select';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
-import {AbstractView} from '../../shared/abstract-view/abstract-view';
-import {Store} from '@ngrx/store';
-import {State} from '../../state/app.state';
-import {MatSidenavContainer} from '@angular/material/sidenav';
+import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakbeeindigParameter} from '../model/zaakbeeindig-parameter';
 import {ZaakbeeindigReden} from '../model/zaakbeeindig-reden';
 import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
+import {ViewComponent} from '../../shared/abstract-view/view.component';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
     styleUrls: ['./parameter-edit.component.less']
 })
-export class ParameterEditComponent extends AbstractView implements OnInit {
+export class ParameterEditComponent extends ViewComponent implements OnInit {
 
-    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
+    @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     menu: MenuItem[] = [];
 
     parameters: ZaakafhandelParameters;
@@ -58,10 +57,10 @@ export class ParameterEditComponent extends AbstractView implements OnInit {
     medewerkers: Observable<Medewerker[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
 
-    constructor(store: Store<State>, public utilService: UtilService, private adminService: ZaakafhandelParametersService,
+    constructor(public utilService: UtilService, private adminService: ZaakafhandelParametersService,
                 private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
-        super(store, utilService);
+        super();
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
             this.planItemParameters = this.parameters.planItemParameters;
@@ -237,5 +236,4 @@ export class ParameterEditComponent extends AbstractView implements OnInit {
         }
         return false;
     }
-
 }

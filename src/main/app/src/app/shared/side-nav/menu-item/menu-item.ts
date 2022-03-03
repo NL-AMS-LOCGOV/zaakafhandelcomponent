@@ -14,6 +14,6 @@ export abstract class MenuItem {
 export enum MenuItemType {
     HEADER = 'HEADER',
     LINK = 'LINK',
-    DOWNLOAD = 'DOWNLOAD',
+    HREF = 'HREF',
     BUTTON = 'BUTTON'
 }

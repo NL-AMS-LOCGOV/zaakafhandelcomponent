@@ -3,13 +3,12 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar">
-    <mat-sidenav #taakMenuSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)"
-                 (mouseenter)="collapseSideNav(false)" (mouseleave)="collapseSideNav(true)">
-        <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
+<mat-sidenav-container #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav #verkorteZaakSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)" position="end">
-        <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakLoadedEmitter)="onZaakLoaded($event)"></zac-zaak-verkort>
+        <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakToggle)="updateMargins()"></zac-zaak-verkort>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <mat-card>
@@ -66,17 +65,9 @@
     </mat-sidenav-content>
 </mat-sidenav-container>
 <mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
-
-    <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button (click)="taakMenuSideNav.toggle(); verkorteZaakSideNav.close()">
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
-
     <div fxLayout="row" fxFlex fxLayoutAlign="end center">
-        <button mat-icon-button (click)="verkorteZaakSideNav.toggle(); taakMenuSideNav.close()">
+        <button mat-icon-button (click)="verkorteZaakSideNav.toggle()">
             <mat-icon>folder_open</mat-icon>
         </button>
     </div>
-
 </mat-toolbar>

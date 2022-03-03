@@ -3,32 +3,38 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-nav-list [@sideNavToggle]="!collapsed ? 'open' : 'close'">
+<mat-nav-list [@sideNavToggle]="menuState" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
     <ng-container *ngFor="let menuItem of menu" [ngSwitch]="menuItem.type">
         <h3 mat-subheader *ngSwitchCase="'HEADER'">
-            <mat-icon *ngIf="collapsed">{{menuItem.icon ? menuItem.icon : 'more_horiz'}}</mat-icon>
-            <span *ngIf="!collapsed"> {{menuItem.title | translate}}</span>
+            <mat-icon *ngIf="menuState===MenuState.CLOSED">{{menuItem.icon ? menuItem.icon : 'more_horiz'}}</mat-icon>
+            <span *ngIf="menuState===MenuState.OPEN"> {{menuItem.title | translate}}</span>
         </h3>
         <mat-divider *ngSwitchCase="'HEADER'"></mat-divider>
 
         <a mat-list-item *ngSwitchCase="'LINK'" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
-            <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
+            <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
+                      mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>
         </a>
         <a mat-list-item *ngSwitchCase="'BUTTON'" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
-            <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
+            <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
+                      mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>
         </a>
-        <a mat-list-item *ngSwitchCase="'DOWNLOAD'" (click)="download(asDownloadMenuItem(menuItem))" [disabled]="menuItem.disabled">
-            <mat-icon mat-list-icon>{{menuItem.icon}}</mat-icon>
+        <a mat-list-item *ngSwitchCase="'HREF'" [href]="asHrefMenuItem(menuItem).url">
+            <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
+                      mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>
         </a>
     </ng-container>
 </mat-nav-list>
-<mat-toolbar class="toolbar-footer" *ngIf="!(utilService.isTablet$|async)">
-    <button (click)="toggleMenu()" mat-mini-fab color="default" aria-label="menu inklappen"
-            [id]="(buttonState == 'rotated' ? 'menuUitklappen_button'  : 'menuInklappen_button')"
-            [title]="(buttonState == 'rotated' ? 'actie.menu.openen'  : 'actie.menu.sluiten') | translate">
-        <mat-icon [@rotated180]="buttonState">menu_open</mat-icon>
+<mat-toolbar class="toolbar-footer">
+    <button (click)="toggleMenu()" mat-mini-fab color="" aria-label="menu inklappen"
+            id="toggleMenuButon"
+            title="'actie.menu.aanpassen' | translate">
+        <mat-icon [@rotated180]="menuMode">{{menuMode === MenuMode.AUTO ? 'menu' : 'menu_open'}}</mat-icon>
     </button>
 </mat-toolbar>
+
+
+
