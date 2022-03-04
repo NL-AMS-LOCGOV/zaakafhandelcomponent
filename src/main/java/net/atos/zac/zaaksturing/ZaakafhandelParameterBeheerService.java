@@ -52,9 +52,10 @@ public class ZaakafhandelParameterBeheerService {
         final List<ZaakafhandelParameters> resultList = emQuery.getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
-        } else {
-            return null;
         }
+        final ZaakafhandelParameters zaakafhandelParameters = new ZaakafhandelParameters();
+        zaakafhandelParameters.setZaakTypeUUID(zaakTypeUUID);
+        return zaakafhandelParameters;
     }
 
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {

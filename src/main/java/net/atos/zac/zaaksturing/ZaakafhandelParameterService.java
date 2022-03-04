@@ -41,12 +41,8 @@ public class ZaakafhandelParameterService {
             return beheerService.readPlanItemParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         }
         final PlanItemParameters parameters = new PlanItemParameters();
-        parameters.setPlanItemDefinitionID(parameters.getPlanItemDefinitionID());
+        parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
         ZaakafhandelParameters zaakafhandelParameters = beheerService.readZaakafhandelParameters(zaaktypeUUID);
-        if (zaakafhandelParameters == null) {
-            zaakafhandelParameters = new ZaakafhandelParameters();
-            zaakafhandelParameters.setZaakTypeUUID(zaaktypeUUID);
-        }
         parameters.setZaakafhandelParameters(zaakafhandelParameters);
         return parameters;
     }
