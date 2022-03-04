@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
 package net.atos.zac.mail;
 
 import com.mailjet.client.ClientOptions;
@@ -7,11 +12,42 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.shared.ZGWApiService;
+import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
+import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.mail.model.EMail;
+
+import net.atos.zac.mail.model.EMails;
+import net.atos.zac.mail.model.Verstuurder;
+
+import net.atos.zac.mail.model.Ontvanger;
+
+import net.atos.zac.util.ConfigurationService;
+
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
+import javax.ws.rs.core.Response;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+
+import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 
 @ApplicationScoped
 public class MailService {
@@ -19,23 +55,68 @@ public class MailService {
     private static final String MAILJET_API_KEY = ConfigProvider.getConfig().getValue("mailjet.api.key", String.class);
     private static final String MAILJET_API_SECRET_KEY = ConfigProvider.getConfig().getValue("mailjet.api.secret.key",
                                                                                        String.class);
-    private static final String MAIL_DOMEIN = ConfigProvider.getConfig().getValue("mail.domein", String.class);
 
-    private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY)
-            .apiSecretKey(MAILJET_API_SECRET_KEY).build();
+    @Inject
+    private ZGWApiService zgwApiService;
+
+    @Inject
+    private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
+    private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
+
+    private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public MailjetResponse sendMail(final String ontvanger, final String onderwerp, final String body) throws MailjetException {
-        final MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .property(Emailv31.MESSAGES,
-                          new JSONArray().put(new JSONObject().put(Emailv31.Message.FROM, new JSONObject()
-                                          .put("Email", "zaakafhandelcomponent@" + MAIL_DOMEIN)
-                                          .put("Name", "Zaakafhandelcomponent"))
-                                                      .put(Emailv31.Message.TO,
-                                                           new JSONArray().put(new JSONObject().put("Email", ontvanger)))
-                                                      .put(Emailv31.Message.SUBJECT, onderwerp)
-                                                      .put(Emailv31.Message.HTMLPART, "<pre>" + body + "</pre>")));
+    public int sendMail(final String ontvanger, final String onderwerp, final String body, final UUID zaakUuid) throws MailjetException {
+        final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
 
-        return mailjetClient.post(request);
+        final MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                .setBody(JsonbBuilder.create().toJson(new EMails(List.of(eMail))));
+
+        final MailjetResponse response = mailjetClient.post(request);
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
+        }
+
+        return response.getStatus();
+    }
+
+    private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        final EnkelvoudigInformatieobjectWithInhoud data = createDocumentInformatieObject(zaak, onderwerp, body);
+        zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp, OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+    }
+
+    private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
+            final String onderwerp, final String body) {
+        final RESTInformatieobjecttype eMailObjectType =
+                listEnkelvoudigInformatieobjectenVoorZaak(zaak).stream()
+                        .filter(objectType -> objectType.omschrijving.equals("e-mail")).findFirst().orElseThrow();
+
+        final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
+                ConfigurationService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, ingelogdeMedewerker.get().getNaam(),
+                "NLD", eMailObjectType.url, Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
+        data.setFormaat("text/plain");
+        data.setBestandsnaam(String.format("%s.txt", onderwerp));
+        data.setStatus(InformatieobjectStatus.DEFINITIEF);
+        data.setIndicatieGebruiksrecht(false);
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
+
+        return data;
+    }
+
+    private List<RESTInformatieobjecttype> listEnkelvoudigInformatieobjectenVoorZaak(final Zaak zaak) {
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+        return restInformatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
     }
 }

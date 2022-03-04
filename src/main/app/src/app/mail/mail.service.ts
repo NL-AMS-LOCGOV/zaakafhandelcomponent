@@ -15,8 +15,8 @@ export class MailService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    sendMail(mailObject: MailObject): Observable<number> {
-        return this.http.post<number>(`${this.basepath}/send`, mailObject).pipe(
+    sendMail(zaakUuid: string, mailObject: MailObject): Observable<number> {
+        return this.http.post<number>(`${this.basepath}/send/${zaakUuid}`, mailObject).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

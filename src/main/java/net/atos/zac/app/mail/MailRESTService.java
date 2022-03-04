@@ -10,8 +10,11 @@ import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import java.util.UUID;
 
 @Singleton
 @Path("mail")
@@ -23,9 +26,10 @@ public class MailRESTService {
     private MailService mailService;
 
     @POST
-    @Path("send")
-    public int sendMail(final RESTMailObject restMailObject) throws MailjetException {
-        return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body).getStatus();
+    @Path("send/{zaakUuid}")
+    public int sendMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
+        return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
+                                    restMailObject.body, zaakUuid);
     }
 
 }
