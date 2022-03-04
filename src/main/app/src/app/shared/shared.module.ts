@@ -35,6 +35,7 @@ import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker.component';
 import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
+import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 
 @NgModule({
     declarations: [
@@ -66,7 +67,8 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
         StoreModule.forFeature('shared', {
             sideNav: sideNavReducer
         }),
-        TranslateModule
+        TranslateModule,
+        NgxSkeletonLoaderModule
     ],
     exports: [
         BrowserAnimationsModule,
@@ -91,7 +93,8 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
         EditVertrouwelijkheidaanduidingComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,
-        ColumnPickerComponent
+        ColumnPickerComponent,
+        NgxSkeletonLoaderModule
     ],
     providers: [
         Title,

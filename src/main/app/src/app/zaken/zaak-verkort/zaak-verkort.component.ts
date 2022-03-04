@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -91,10 +91,17 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
             console.log('callback loadZaak: ' + event.key);
         }
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
+            // temporary fixed timeout to be able to view the skeleton loader
+            setTimeout(() => {
+                this.zaak = zaak;
+                this.zaakLoadedEmitter.emit(true);
+            }, 7000);
+            // this.zaak = zaak;
+            this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem',
+                'warningZaakVerkortVerlopen_icon',
                 'msg.datum.overschreden', 'warning');
-            this.zaakLoadedEmitter.emit(true);
+
+            // this.zaakLoadedEmitter.emit(true);
             this.loadInformatieObjecten();
         });
     }

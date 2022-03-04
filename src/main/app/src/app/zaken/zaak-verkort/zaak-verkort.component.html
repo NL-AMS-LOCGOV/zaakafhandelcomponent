@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -49,6 +49,29 @@
                          [value]="zaak.toelichting"></zac-static-text>
     </div>
 </div>
+
+<div *ngIf="!zaak">
+    <div class="content" fxLayout="column wrap">
+        <ngx-skeleton-loader count="1" appearance="line"
+                             [theme]="{ height: '36px', width: '210px' }"></ngx-skeleton-loader>
+    </div>
+    <div class="content" fxLayout="row wrap">
+        <ngx-skeleton-loader count="1" appearance="line"
+                             [theme]="{ width: '70px', 'display': 'inline-block' }"></ngx-skeleton-loader>
+        <span fxFlexFill></span>
+        <ngx-skeleton-loader count="1" appearance="line"
+                             [theme]="{ width: '120px', 'white-space': 'pre-line' }"></ngx-skeleton-loader>
+        <span fxFlexFill></span>
+        <ngx-skeleton-loader count="1" appearance="line" [theme]="{ width: '80px' }"></ngx-skeleton-loader>
+        <span fxFlexFill></span>
+        <ngx-skeleton-loader count="1" appearance="line" [theme]="{ width: '100px' }"></ngx-skeleton-loader>
+        <span fxFlexFill></span>
+        <ngx-skeleton-loader count="1" appearance="line" fxFlex="80"></ngx-skeleton-loader>
+        <span fxFlexFill></span>
+        <ngx-skeleton-loader count="1" appearance="line" fxFlex="40"></ngx-skeleton-loader>
+    </div>
+</div>
+
 <div class="table-wrapper" *ngIf="!collapsed">
     <h2>{{'enkelvoudigInformatieObjecten'|translate}}</h2>
     <table mat-table [dataSource]="(enkelvoudigInformatieObjecten | slice: lowValue : highValue)">

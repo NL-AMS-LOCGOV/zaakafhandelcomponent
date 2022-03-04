@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -314,7 +314,14 @@
                             <tr mat-header-row *matHeaderRowDef="takenColumnsToDisplay"></tr>
                             <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"></tr>
                         </table>
-                        <p *ngIf="takenDataSource.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                        <!--                        *ngIf="utilService.loading$ | async"-->
+                        <ngx-skeleton-loader count="5" appearance="line" animation="false"
+                                             *ngIf="utilService.loading$ | async" [theme]="{
+            height: '38px',
+            'margin-top': '10px',
+            'margin-bottom': '-5px'
+          }"></ngx-skeleton-loader>
+                        <p *ngIf="takenDataSource.data.length == 0 || !(utilService.loading$ | async)">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                     </div>
                 </mat-card-content>
             </mat-card>
