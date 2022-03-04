@@ -51,6 +51,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
 
     formulier: AbstractFormulier;
     formConfig: FormConfig;
+    posts: number = 0;
     private taakListener: WebsocketListener;
     private ingelogdeMedewerker: Medewerker;
 
@@ -142,6 +143,7 @@ export class TaakViewComponent extends AbstractView implements OnInit, AfterView
         this.takenService.updateTaakdata(this.formulier.getTaak(formGroup)).subscribe(taak => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
             this.init(taak);
+            this.posts++;
         });
     }
 
