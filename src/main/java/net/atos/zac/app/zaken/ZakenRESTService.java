@@ -53,6 +53,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
@@ -137,12 +138,19 @@ public class ZakenRESTService {
     }
 
     @POST
+    @Path("initiator")
+    public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
+        addInitiator(gegevens.betrokkeneIdentificatie, zaak, gegevens.reden);
+    }
+
+    @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorBSN)) {
-            addInitiator(restZaak.initiatorBSN, nieuweZaak);
+            addInitiator(restZaak.initiatorBSN, nieuweZaak, "Initiator");
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -364,9 +372,9 @@ public class ZakenRESTService {
         signaleringenService.deleteSignalering(parameters);
     }
 
-    private void addInitiator(final String bsn, final Zaak zaak) {
+    private void addInitiator(final String bsn, final Zaak zaak, String toelichting) {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
-        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), "Aanvrager", new NatuurlijkPersoon(bsn));
+        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
         zrcClientService.createRol(rol);
     }
 }

@@ -237,10 +237,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.menu = [new HeaderMenuItem('zaak')];
 
         this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
-        this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
-            this.actionsSidenav.open();
-            this.action = this.actions.ZOEK_PERSOON;
-        }, 'emoji_people'));
+        if (!this.zaak.initiatorBSN) {
+            this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
+                this.actionsSidenav.open();
+                this.action = this.actions.ZOEK_PERSOON;
+            }, 'emoji_people'));
+        }
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
             const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
             const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
@@ -391,8 +393,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     persoonGeselecteerd(persoon: Persoon): void {
-        console.log('persoon :)', persoon);
+        this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
+        this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.zaak.initiatorBSN = persoon.bsn;
+            this.initiatorPersoon = persoon;
+            this.init(this.zaak);
+        });
     }
 
     assignTaskToMe(taak: Taak) {

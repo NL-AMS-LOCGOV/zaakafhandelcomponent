@@ -19,6 +19,7 @@ import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 import {HistorieRegel} from '../shared/historie/model/historie-regel';
 import {Groep} from '../identity/model/groep';
 import {ZaakEditMetRedenGegevens} from './model/zaak-edit-met-reden-gegevens';
+import {ZaakBetrokkeneGegevens} from './model/zaak-betrokkene-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -141,6 +142,17 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, toekennenGegevens).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string, reden: string): Observable<void> {
+        const gegevens = new ZaakBetrokkeneGegevens();
+        gegevens.zaakUUID = zaak.uuid;
+        gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
+        gegevens.betrokkeneType = 'natuurlijk_persoon';
+        gegevens.reden = reden;
+        return this.http.post<void>(`${this.basepath}/initiator`, gegevens).pipe(
             catchError(this.handleError)
         );
     }
