@@ -157,6 +157,16 @@ export class ZakenService {
         );
     }
 
+    deleteInitiator(zaak: Zaak, reden: string): Observable<void> {
+        const gegevens = new ZaakBetrokkeneGegevens();
+        gegevens.zaakUUID = zaak.uuid;
+        gegevens.betrokkeneType = 'NATUURLIJK_PERSOON';
+        gegevens.reden = reden;
+        return this.http.delete<void>(`${this.basepath}/initiator`, {params: {gegevens: JSON.stringify(gegevens)}}).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;

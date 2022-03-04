@@ -11,6 +11,9 @@ import net.atos.client.zgw.zrc.model.BetrokkeneType;
 
 public class RESTZaakBetrokkeneGegevens {
 
+    public RESTZaakBetrokkeneGegevens() {
+    }
+
     public UUID zaakUUID;
 
     public BetrokkeneType betrokkeneType;

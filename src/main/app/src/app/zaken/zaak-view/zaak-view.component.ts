@@ -73,9 +73,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
     initiatorPersoon: PersoonOverzicht = new PersoonOverzicht();
+    initiatorExpanded: boolean = sessionStorage.getItem('initiatorExpanded') === 'true';
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
+    viewInitialized = false;
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -98,13 +100,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                private sessionStorageService: SessionStorageService,
+                public sessionStorageService: SessionStorageService,
                 public dialog: MatDialog,
                 private translate: TranslateService) {
         super();
     }
 
     ngOnInit(): void {
+        this.initiatorExpanded = this.sessionStorageService.getSessionStorage('initiatorExpanded', true);
+        console.log(this.initiatorExpanded);
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
             this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
@@ -148,6 +152,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     ngAfterViewInit() {
+        this.viewInitialized = true;
         super.ngAfterViewInit();
         this.takenDataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
@@ -402,6 +407,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    deleteInitiator($event: MouseEvent): void {
+        $event.stopPropagation();
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.zaak.initiatorBSN = null;
+            this.initiatorPersoon = null;
+            this.init(this.zaak);
+        });
+    }
+
     assignTaskToMe(taak: Taak) {
         this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.assignToLoggedOnUser(taak).subscribe(returnTaak => {
@@ -423,5 +438,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private doubleSuspendRollenListener() {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.websocketService.suspendListener(this.zaakRollenListener);
+    }
+
+    initiatorExpandedChanged($event: boolean): void {
+        if (this.viewInitialized) {
+            this.sessionStorageService.setSessionStorage('initiatorExpanded', $event ? 'true' : 'false');
+        }
     }
 }

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PATCH;
@@ -24,6 +25,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -31,6 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
@@ -142,6 +147,19 @@ public class ZakenRESTService {
     public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         addInitiator(gegevens.betrokkeneIdentificatie, zaak, gegevens.reden);
+    }
+
+    @DELETE
+    @Path("initiator")
+    public void deleteInitiator(@QueryParam("gegevens") final String jsonGegevens) {
+        final RESTZaakBetrokkeneGegevens gegevens;
+        try {
+            gegevens = new ObjectMapper().readValue(jsonGegevens, RESTZaakBetrokkeneGegevens.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e); //invalid data
+        }
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
+        zrcClientService.deleteRol(zaak.getUrl(), gegevens.betrokkeneType, gegevens.reden);
     }
 
     @POST
