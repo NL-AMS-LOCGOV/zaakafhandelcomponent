@@ -9,7 +9,7 @@ steps:
     name: 'gcr.io/cloud-builders/kubectl'
     env:
       - CLOUDSDK_COMPUTE_ZONE=europe-west4-a
-      - CLOUDSDK_CONTAINER_CLUSTER=haven
+      - CLOUDSDK_CONTAINER_CLUSTER=develop
     args: [ 'rollout', 'restart', 'deployment', '${_DEPLOYMENT}' ]
 substitutions:
   _REPOSITORY: common-ground
