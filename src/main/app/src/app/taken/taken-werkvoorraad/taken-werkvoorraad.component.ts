@@ -81,20 +81,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     ngOnDestroy() {
-        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = new WerklijstData();
-        werklijstData.filters = this.dataSource.filters;
-        werklijstData.columns = flatListColumns;
-        werklijstData.sorting = {
-            column: this.sort.active,
-            direction: this.sort.direction
-        };
-        werklijstData.paginator = {
-            page: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize
-        };
-
-        this.sessionStorageService.setSessionStorage('takenWerkvoorraadData', werklijstData);
+        this.saveSearchQuery();
     }
 
     private getIngelogdeMedewerker() {
@@ -215,13 +202,32 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         ]);
     }
 
+    saveSearchQuery() {
+        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
+        const werklijstData = new WerklijstData();
+        werklijstData.filters = this.dataSource.filters;
+        werklijstData.columns = flatListColumns;
+        werklijstData.sorting = {
+            column: this.sort.active,
+            direction: this.sort.direction
+        };
+        werklijstData.paginator = {
+            page: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize
+        };
+
+        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+    }
+
     resetSearchCriteria() {
         this.dataSource.filters = {};
         this.dataSource.initColumns(this.initialColumns());
-        this.paginator.pageIndex = 0;
         this.paginator.pageSize = 25;
         this.sort.active = '';
         this.sort.direction = '';
+
+        this.saveSearchQuery();
+        this.findTaken();
     }
 
     private findTaken() {

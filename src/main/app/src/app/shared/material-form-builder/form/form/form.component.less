@@ -2,6 +2,8 @@
  * SPDX-FileCopyrightText: 2021 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
+@import "src/variables";
+
 :host ::ng-deep mat-form-field .mat-form-field {
   &-underline {
     position: static;
@@ -10,4 +12,26 @@
   &-subscript-wrapper {
     position: static;
   }
+}
+
+@keyframes busy {
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+.busy:before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 10px solid;
+  border-color: @primary-background-color @primary-text-color;
+  animation: busy .35s linear infinite;
 }

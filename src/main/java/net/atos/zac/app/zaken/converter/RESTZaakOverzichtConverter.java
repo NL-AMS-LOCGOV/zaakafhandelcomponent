@@ -18,7 +18,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
-import net.atos.zac.app.zaken.model.RESTZaakStatus;
 import net.atos.zac.datatable.Pagination;
 import net.atos.zac.util.OpenZaakPaginationUtil;
 
@@ -54,9 +53,8 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.toelichting = zaak.getToelichting();
         restZaakOverzicht.omschrijving = zaak.getOmschrijving();
         restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
-        final RESTZaakStatus status = restZaakStatusConverter.convert(zaak.getStatus());
-        if (status != null) {
-            restZaakOverzicht.status = status.naam;
+        if (zaak.getStatus() != null) {
+            restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }
 //      restZaakOverzichtView.aanvrager
 

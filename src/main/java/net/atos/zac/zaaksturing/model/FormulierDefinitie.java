@@ -10,6 +10,7 @@ public enum FormulierDefinitie {
     DEFAULT_TAAKFORMULIER("Standaard taakformulier"),
     AANVULLENDE_INFORMATIE("Aanvullende informatie"),
     ADVIES("Advies"),
+    EXTERN_ADVIES_VASTLEGGEN("Extern advies vastleggen"),
     GOEDKEUREN("Goedkeuren");
 
     private final String naam;

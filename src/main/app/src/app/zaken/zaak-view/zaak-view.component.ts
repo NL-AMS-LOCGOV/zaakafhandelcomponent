@@ -183,23 +183,20 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
                                                                                  .value(this.zaak.behandelaar).optionLabel('naam')
                                                                                  .options(this.identityService.listMedewerkers()).build());
-        this.editFormFields.set('redenBehandelaar', new InputFormFieldBuilder().id('redenBehandelaar').label('reden').build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroepen()).build());
-        this.editFormFields.set('redenGroep', new InputFormFieldBuilder().id('redenGroep').label('reden').build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving).maxlength(80)
                                                                               .build());
-        this.editFormFields.set('redenOmschrijving', new InputFormFieldBuilder().id('redenOmschrijving').label('reden').build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
                                                                              .value(this.zaak.toelichting).maxlength(1000).build());
-        this.editFormFields.set('redenToelichting', new InputFormFieldBuilder().id('redenToelichting').label('reden').build());
         this.editFormFields.set('vertrouwelijkheidaanduiding', new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                                                           .value(this.zaak.vertrouwelijkheidaanduiding).optionLabel('label')
+                                                                                           .value({label: this.translate.instant('vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                                                                                               value: this.zaak.vertrouwelijkheidaanduiding})
+                                                                                           .optionLabel('label')
                                                                                            .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                                                                                                Vertrouwelijkheidaanduiding)).build());
-        this.editFormFields.set('redenVertrouwelijkheidaanduiding', new InputFormFieldBuilder().id('redenVertrouwelijkheidaanduiding').label('reden').build());
         this.editFormFields.set('startdatum',
             new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
@@ -216,6 +213,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').build());
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {
@@ -261,6 +259,19 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
                 this.updateZaak();
             }
+        });
+    }
+
+    editDatumGroep(event: any): void {
+        const zaak: Zaak = new Zaak();
+
+        zaak.startdatum = event.startdatum;
+        zaak.einddatumGepland = event.einddatumGepland;
+        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+            this.init(updatedZaak);
         });
     }
 

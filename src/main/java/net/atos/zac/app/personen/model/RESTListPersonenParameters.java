@@ -7,6 +7,8 @@ package net.atos.zac.app.personen.model;
 
 import java.time.LocalDate;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class RESTListPersonenParameters {
 
     public String bsn;
@@ -20,4 +22,11 @@ public class RESTListPersonenParameters {
     public String postcode;
 
     public Integer huisnummer;
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(bsn) ||
+                geboortedatum != null && StringUtils.isNotBlank(geslachtsnaam) ||
+                StringUtils.isNotBlank(geslachtsnaam) && StringUtils.isNotBlank(gemeenteVanInschrijving) ||
+                StringUtils.isNotBlank(postcode) && huisnummer != null && huisnummer > 0;
+    }
 }

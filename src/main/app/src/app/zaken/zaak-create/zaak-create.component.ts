@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
@@ -22,6 +22,10 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {TranslateService} from '@ngx-translate/core';
+import {Persoon} from '../../personen/model/persoon';
+import {MatSidenav} from '@angular/material/sidenav';
+import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
+import {CustomValidators} from '../../shared/validators/customValidators';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -31,6 +35,13 @@ export class ZaakCreateComponent implements OnInit {
 
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
+    @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
+    actions = {
+        GEEN: 'GEEN',
+        ZOEK_PERSOON: 'ZOEK_PERSOON'
+    };
+    action: string;
+    private initiatorField: InputFormField;
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService,
                 private translate: TranslateService) {
@@ -58,6 +69,13 @@ export class ZaakCreateComponent implements OnInit {
 
         const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
 
+        this.initiatorField = new InputFormFieldBuilder().id('initiatorBSN').icon('search').label('initiatorBSN')
+                                                         .validators(CustomValidators.bsnPrefixed).build();
+        this.initiatorField.iconClicked.subscribe(() => {
+            this.action = this.actions.ZOEK_PERSOON;
+            this.actionsSidenav.open();
+        });
+
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                .optionLabel('doel').options(communicatiekanalen)
                                                                .build();
@@ -67,8 +85,9 @@ export class ZaakCreateComponent implements OnInit {
 
         const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').build();
         const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').build();
-        this.createZaakFields = [[titel], [zaaktype], [startdatum, registratiedatum], [tussenTitel],
+        this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
+
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -80,13 +99,23 @@ export class ZaakCreateComponent implements OnInit {
                 } else {
                     zaak[key] = formGroup.controls[key].value;
                 }
+                if (key === 'initiatorBSN' && formGroup.controls[key].value) {
+                    const val = formGroup.controls[key].value;
+                    const prefix = val.indexOf('|');
+                    zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
+                }
             });
             this.zakenService.createZaak(zaak).subscribe(newZaak => {
-                this.router.navigate(['/zaken/', newZaak.uuid]);
+                this.router.navigate(['/zaken/', newZaak.identificatie]);
             });
         } else {
             this.navigation.back();
         }
+    }
+
+    persoonGeselecteerd(persoon: Persoon): void {
+        this.initiatorField.formControl.setValue(persoon.bsn + ' | ' + persoon.naam);
+        this.actionsSidenav.close();
     }
 }
 

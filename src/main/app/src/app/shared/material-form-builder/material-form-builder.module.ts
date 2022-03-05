@@ -19,11 +19,9 @@ import {SelectComponent} from './form-components/select/select.component';
 import {TextareaComponent} from './form-components/textarea/textarea.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
-import {DateAdapter, MAT_DATE_LOCALE} from '@angular/material/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
-import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {GoogleMapsComponent} from './form-components/google-maps/google-maps.component';
 import {GoogleMapsModule} from '@angular/google-maps';
 import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
@@ -44,6 +42,8 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
 import {RadioComponent} from './form-components/radio/radio.component';
 import {MatRadioModule} from '@angular/material/radio';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 
 @NgModule({
     declarations: [
@@ -80,7 +80,6 @@ import {ParagraphComponent} from './form-components/paragraph/paragraph.componen
         MatButtonModule,
         MatSelectModule,
         MatCheckboxModule,
-        MatMomentDateModule,
         MatDatepickerModule,
         MatAutocompleteModule,
         MatChipsModule,
@@ -108,7 +107,30 @@ import {ParagraphComponent} from './form-components/paragraph/paragraph.componen
         ParagraphComponent
     ],
     providers: [
-        {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]}
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+        }, {
+            provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+            useValue: {
+                strict: false
+            }
+        },
+        {
+            provide: MAT_DATE_FORMATS,
+            useValue: {
+                parse: {
+                    dateInput: 'DD-MM-YYYY'
+                },
+                display: {
+                    dateInput: 'DD-MM-YYYY',
+                    monthYearLabel: 'MMMM YYYY',
+                    dateA11yLabel: 'LL',
+                    monthYearA11yLabel: 'MMMM YYYY'
+                }
+            }
+        }
     ]
 })
 export class MaterialFormBuilderModule {

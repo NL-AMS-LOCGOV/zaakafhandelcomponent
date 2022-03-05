@@ -151,6 +151,14 @@
                 {{ row.toelichting | translate | empty }}
             </td>
         </ng-container>
+        <ng-container matColumnDef="resultaat">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'resultaat' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.resultaat | translate | empty: 'naam' }}
+            </td>
+        </ng-container>
 
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
@@ -162,7 +170,7 @@
                                    (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
-                <button mat-flat-button [routerLink]="['/zaken', row.uuid]" (click)="$event.stopPropagation()"
+                <button mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
                         [id]="'zaakBekijken_' + row.identificatie +'_button'"
                         title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>

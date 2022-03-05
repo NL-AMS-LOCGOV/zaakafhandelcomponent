@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.personen.converter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -62,24 +63,37 @@ public class RESTPersoonConverter {
     }
 
     public ListPersonenParameters convert(final RESTListPersonenParameters restListPersonenParameters) {
+
+        if (!restListPersonenParameters.isValid()) {
+            throw new IllegalStateException("Ongeldige zoekparameters");
+        }
         final ListPersonenParameters listPersonenParameters = new ListPersonenParameters();
         listPersonenParameters.setFields(FIELDS_PERSOON);
-        if (restListPersonenParameters.bsn != null) {
+        if (StringUtils.isNotBlank(restListPersonenParameters.bsn)) {
             listPersonenParameters.setBurgerservicenummers(List.of(restListPersonenParameters.bsn));
-        } else if (restListPersonenParameters.geboortedatum != null) {
+        }
+        if (restListPersonenParameters.geboortedatum != null) {
             listPersonenParameters.setGeboorteDatum(restListPersonenParameters.geboortedatum);
+        }
+        if (StringUtils.isNotBlank(restListPersonenParameters.geslachtsnaam)) {
             listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
-        } else if (restListPersonenParameters.gemeenteVanInschrijving != null) {
+        }
+        if (StringUtils.isNotBlank(restListPersonenParameters.gemeenteVanInschrijving)) {
             listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
-            listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
-        } else {
+        }
+        if (StringUtils.isNotBlank(restListPersonenParameters.postcode)) {
             listPersonenParameters.setVerblijfplaatsPostcode(restListPersonenParameters.postcode);
+        }
+        if (restListPersonenParameters.huisnummer != null) {
             listPersonenParameters.setVerblijfplaatsHuisnummer(restListPersonenParameters.huisnummer);
         }
         return listPersonenParameters;
     }
 
     public List<RESTPersoon> convert(final List<IngeschrevenPersoonHal> ingeschrevenPersonen) {
+        if (ingeschrevenPersonen == null) {
+            return Collections.emptyList();
+        }
         return ingeschrevenPersonen.stream().map(this::convertToPersoon).toList();
     }
 

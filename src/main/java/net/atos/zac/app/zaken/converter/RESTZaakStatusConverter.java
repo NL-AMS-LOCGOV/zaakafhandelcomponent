@@ -23,7 +23,7 @@ public class RESTZaakStatusConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public RESTZaakStatus convert(final URI statusURI) {
+    public RESTZaakStatus convertToRESTZaakStatus(final URI statusURI) {
         if (statusURI != null) {
             final Status status = zrcClientService.readStatus(statusURI);
             final RESTZaakStatus restZaakStatus = new RESTZaakStatus();
@@ -37,7 +37,14 @@ public class RESTZaakStatusConverter {
             restZaakStatus.naam = statustype.getOmschrijving();
             restZaakStatus.naamGeneriek = statustype.getOmschrijvingGeneriek();
             return restZaakStatus;
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    public String convertToStatusOmschrijving(final URI statusURI) {
+        final Status status = zrcClientService.readStatus(statusURI);
+        final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
+        return statustype.getOmschrijving();
     }
 }

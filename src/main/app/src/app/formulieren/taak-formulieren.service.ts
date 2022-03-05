@@ -12,6 +12,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectenService} from '../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../taken/taken.service';
 import {Goedkeuren} from './model/goedkeuren';
+import {ExternAdviesVastleggen} from './model/extern-advies-vastleggen';
 
 @Injectable({
     providedIn: 'root'
@@ -29,6 +30,9 @@ export class TaakFormulierenService {
             case 'ADVIES':
                 return new FormulierBuilder(
                     new Advies(this.translate, this.takenService, this.informatieObjectenService));
+            case 'EXTERN_ADVIES_VASTLEGGEN':
+                return new FormulierBuilder(
+                    new ExternAdviesVastleggen(this.translate, this.takenService, this.informatieObjectenService));
             case 'GOEDKEUREN':
                 return new FormulierBuilder(
                     new Goedkeuren(this.translate, this.takenService, this.informatieObjectenService));
