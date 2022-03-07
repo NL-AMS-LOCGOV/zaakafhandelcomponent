@@ -12,8 +12,6 @@ import {SharedModule} from '../shared/shared.module';
 import {ZaakCreateComponent} from './zaak-create/zaak-create.component';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
-import {StoreModule} from '@ngrx/store';
-import {zaakVerkortReducer} from './state/zaak-verkort.reducer';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
@@ -38,9 +36,6 @@ import {PersonenModule} from '../personen/personen.module';
     imports: [
         SharedModule,
         ZakenRoutingModule,
-        StoreModule.forFeature('zaken', {
-            zaakVerkort: zaakVerkortReducer
-        }),
         PersonenModule
     ]
 })

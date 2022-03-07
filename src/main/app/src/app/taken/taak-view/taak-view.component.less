@@ -1,25 +1,20 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-//telefoon
-@media (max-width: 599px) {
+.mat-drawer {
+  max-width: 30%;
+}
+
+@media (max-width: 960px) {
+  .mat-drawer.mat-drawer-end {
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 500px) {
   .mat-drawer.mat-drawer-end {
     max-width: 75%;
-  }
-}
-
-//tablet portrait
-@media (max-width: 839px) {
-  .mat-drawer.mat-drawer-end {
-    max-width: 60%;
-  }
-}
-
-//tablet landscape
-@media (max-width: 1279px) {
-  .mat-drawer.mat-drawer-end {
-    max-width: 30%;
   }
 }

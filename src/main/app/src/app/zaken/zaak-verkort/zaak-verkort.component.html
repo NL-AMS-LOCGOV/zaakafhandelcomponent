@@ -3,28 +3,12 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div *ngIf="zaak" [@sideNavToggle]="{value:!collapsed ? 'open' : 'close', params: {width: '72px'}}">
-    <mat-toolbar class="toolbar-footer" fxLayout="row">
-        <ng-container *ngIf="collapsed">
-            <button (click)="toggleMenu()" color="default" id="zaakVerkortUitklappen_button" mat-icon-button
-                    title="{{ 'actie.paneel.openen' | translate }}">
-                <mat-icon>menu_open</mat-icon>
-            </button>
-        </ng-container>
-        <ng-container *ngIf="!collapsed">
-            <div fxLayout="row" fxLayoutAlign="start center">
-                <button mat-raised-button [routerLink]="['/zaken', zaak.identificatie]">
-                    {{zaak.identificatie}}
-                </button>
-            </div>
-
-            <div fxLayout="row" fxFlex fxLayoutAlign="end center" fxHide.lt-md>
-                <button (click)="toggleMenu()" id="zaakVerkortInklappen_button" mat-icon-button
-                        title="{{ 'actie.paneel.sluiten' | translate }}">
-                    <mat-icon>cancel</mat-icon>
-                </button>
-            </div>
-        </ng-container>
+<div *ngIf="zaak" [@sideNavToggle]="{value:!collapsed ? 'open' : 'closed'}">
+    <mat-toolbar class="toolbar-footer" fxLayout="row" *ngIf="collapsed">
+        <button (click)="toggleMenu()" color="" id="zaakVerkortUitklappen_button" mat-icon-button
+                title="{{ 'actie.paneel.openen' | translate }}">
+            <mat-icon>menu_open</mat-icon>
+        </button>
     </mat-toolbar>
     <div class="content" fxLayout="column wrap" *ngIf="collapsed">
         <button [routerLink]="['/zaken', zaak.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
@@ -33,6 +17,20 @@
         </button>
     </div>
     <div class="content" fxLayout="row wrap" *ngIf="!collapsed">
+        <div fxLayout="row" fxFlex="95" fxLayoutAlign="start center" fxHide.lt-md>
+            <zac-static-text [label]="'zaak' | translate"
+                             [value]="zaak.identificatie"
+                             (iconClicked)="openZaak()"
+                             [icon]="visibilityIcon"></zac-static-text>
+        </div>
+        <div fxLayout="row" fxFlex="5" fxLayoutAlign="end center" fxHide.lt-md>
+            <button (click)="toggleMenu()" id="zaakVerkortInklappen_button" mat-icon-button
+                    title="{{ 'actie.paneel.sluiten' | translate }}">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </div>
+
+
         <zac-static-text fxFlex="100" [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktype.omschrijving"></zac-static-text>
         <zac-static-text fxFlex="100" [label]="'status' | translate"

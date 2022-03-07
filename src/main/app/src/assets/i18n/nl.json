@@ -197,6 +197,7 @@
   "actie.mail.versturen": "Mail versturen",
   "actie.menu.openen": "Menu openen",
   "actie.menu.sluiten": "Menu sluiten",
+  "actie.menu.aanpassen": "Menu aanpassen",
   "actie.mij.toekennen": "Ken aan mij toe",
   "actie.minimaliseren": "Minimaliseren",
   "actie.notitie.aanmaken": "Voeg een notitie toe",
@@ -291,12 +292,13 @@
   "msg.extern.advies.vastleggen.behandelen": "Er is een extern advies aangevraagd. Hieronder kan het antwoord vastgelegd worden.",
   " 8 ": ">>--> DASHBOARD <--<<",
   "dashboard.mijn.nieuwe.zaken": "Recent aan mij toegewezen zaken",
-  "initiator.titel": "Persoonsgegevens aanvrager",
+  "initiator.titel": "Initiator",
   "initiator.naam": "Naam",
   "initiator.bsn": "BSN",
   "initiator.geboortedatum": "Geboortedatum",
   "initiator.inschrijfadres": "Inschrijfadres",
   "initiator.telefoonnummer": "Telefoonnummer",
   "initiator.telefoonnummer2": "Telefoonnummer (2e)",
-  "initiator.emailadres": "E-mailadres"
+  "initiator.emailadres": "E-mailadres",
+  "initiator.toevoegen": "Initiator toevoegen"
 }

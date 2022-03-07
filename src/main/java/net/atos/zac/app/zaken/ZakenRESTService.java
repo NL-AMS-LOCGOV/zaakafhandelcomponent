@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PATCH;
@@ -24,6 +25,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -31,6 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
@@ -53,6 +58,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
@@ -137,12 +143,32 @@ public class ZakenRESTService {
     }
 
     @POST
+    @Path("initiator")
+    public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
+        addInitiator(gegevens.betrokkeneIdentificatie, zaak, gegevens.reden);
+    }
+
+    @DELETE
+    @Path("initiator")
+    public void deleteInitiator(@QueryParam("gegevens") final String jsonGegevens) {
+        final RESTZaakBetrokkeneGegevens gegevens;
+        try {
+            gegevens = new ObjectMapper().readValue(jsonGegevens, RESTZaakBetrokkeneGegevens.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e); //invalid data
+        }
+        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
+        zrcClientService.deleteRol(zaak.getUrl(), gegevens.betrokkeneType, gegevens.reden);
+    }
+
+    @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorBSN)) {
-            addInitiator(restZaak.initiatorBSN, nieuweZaak);
+            addInitiator(restZaak.initiatorBSN, nieuweZaak, "Initiator");
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -364,9 +390,9 @@ public class ZakenRESTService {
         signaleringenService.deleteSignalering(parameters);
     }
 
-    private void addInitiator(final String bsn, final Zaak zaak) {
+    private void addInitiator(final String bsn, final Zaak zaak, String toelichting) {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
-        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), "Aanvrager", new NatuurlijkPersoon(bsn));
+        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
         zrcClientService.createRol(rol);
     }
 }

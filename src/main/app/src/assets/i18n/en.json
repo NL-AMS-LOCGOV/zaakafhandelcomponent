@@ -197,6 +197,7 @@
   "actie.mail.versturen": "Send mail",
   "actie.menu.openen": "Show menu",
   "actie.menu.sluiten": "Hide menu",
+  "actie.menu.aanpassen": "Change menu style",
   "actie.mij.toekennen": "Assign to me",
   "actie.minimaliseren": "Minimize",
   "actie.notitie.aanmaken": "Add a note",
@@ -291,12 +292,13 @@
   "msg.extern.advies.vastleggen.behandelen": "An external advice has been requested. The answer can be recorded below.",
   " 8 ": ">>--> DASHBOARD <--<<",
   "dashboard.mijn.nieuwe.zaken": "Cases recently assigned to me",
-  "initiator.titel": "Applicant details",
+  "initiator.titel": "Initiator details",
   "initiator.naam": "Name",
   "initiator.bsn": "BSN",
   "initiator.geboortedatum": "Date of birth",
   "initiator.inschrijfadres": "Registration address",
   "initiator.telefoonnummer": "Phone number",
   "initiator.telefoonnummer2": "Phone number (2nd)",
-  "initiator.emailadres": "E-mail address"
+  "initiator.emailadres": "E-mail address",
+  "aanvraager.toevoegen": "Add initiator"
 }
