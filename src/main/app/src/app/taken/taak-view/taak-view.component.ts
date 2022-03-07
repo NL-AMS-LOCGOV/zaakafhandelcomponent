@@ -29,7 +29,7 @@ import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
-import {ViewComponent} from '../../shared/abstract-view/view.component';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './taak-view.component.html',

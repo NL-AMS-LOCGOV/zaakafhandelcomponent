@@ -5,7 +5,7 @@
 
 import {AfterViewInit, Component} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
-import {ViewComponent} from './view.component';
+import {ViewComponent} from './view-component';
 
 @Component({template: ''})
 export abstract class ActionsViewComponent extends ViewComponent implements AfterViewInit {

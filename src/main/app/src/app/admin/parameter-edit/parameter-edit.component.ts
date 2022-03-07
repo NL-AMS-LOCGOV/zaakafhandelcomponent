@@ -26,7 +26,7 @@ import {ZaakbeeindigReden} from '../model/zaakbeeindig-reden';
 import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
-import {ViewComponent} from '../../shared/abstract-view/view.component';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './parameter-edit.component.html',

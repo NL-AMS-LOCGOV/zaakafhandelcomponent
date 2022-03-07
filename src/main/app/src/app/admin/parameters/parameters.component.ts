@@ -12,7 +12,7 @@ import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service'
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
-import {ViewComponent} from '../../shared/abstract-view/view.component';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './parameters.component.html',

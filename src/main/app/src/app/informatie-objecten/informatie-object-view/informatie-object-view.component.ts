@@ -22,7 +22,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {ViewComponent} from '../../shared/abstract-view/view.component';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
