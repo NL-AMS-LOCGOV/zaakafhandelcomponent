@@ -233,6 +233,8 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
+        this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
+
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
             const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
             const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
