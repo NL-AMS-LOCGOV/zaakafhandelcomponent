@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -22,7 +22,7 @@ export class FormulierBuilder {
         this._formulier.planItem = planItem;
         this._formulier.dataElementen = planItem.taakdata;
         this._formulier.initStartForm();
-        this._formulier.addGroepAssignment(groepen);
+        this._formulier.addAssignment(groepen);
         return this;
     }
 

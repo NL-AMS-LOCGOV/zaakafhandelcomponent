@@ -6,7 +6,6 @@
 package net.atos.zac.flowable.cmmn;
 
 import static net.atos.zac.flowable.FlowableService.VAR_TASK_TAAKDATA;
-import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
 
 import java.util.Date;
 import java.util.List;
@@ -26,12 +25,19 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
     public static final String VAR_TASK_DUE_DATE = "dueDate";
 
+    public static final String VAR_TASK_CANDIDATE_GROUP = "candidateGroupId";
+
+    public static final String VAR_TASK_ASSIGNEE = "assignee";
 
     @Override
     public void beforeCreateHumanTask(final CreateHumanTaskBeforeContext context) {
-        final String candidateGroupId = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_CANDIDATE_GROUP_ID);
+        final String candidateGroupId = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_CANDIDATE_GROUP);
         if (candidateGroupId != null) {
             context.setCandidateGroups(List.of(candidateGroupId));
+        }
+        final String assignee = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_ASSIGNEE);
+        if (assignee != null) {
+            context.setAssignee(assignee);
         }
     }
 

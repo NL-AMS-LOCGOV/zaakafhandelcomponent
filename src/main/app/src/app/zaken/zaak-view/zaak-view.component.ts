@@ -242,6 +242,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.menu = [new HeaderMenuItem('zaak')];
 
         this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+
+        this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
+
         if (!this.zaak.initiatorBSN) {
             this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
                 this.actionsSidenav.open();

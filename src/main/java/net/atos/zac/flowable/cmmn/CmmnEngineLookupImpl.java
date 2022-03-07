@@ -7,13 +7,11 @@ package net.atos.zac.flowable.cmmn;
 
 import static net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl.DATABASE_SCHEMA;
 import static net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl.DATA_SOURCE_JNDI_NAME;
-import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.HUMAN_TASK;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.MILESTONE;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.STAGE;
 import static org.flowable.cmmn.api.runtime.PlanItemInstanceState.ACTIVE;
 import static org.flowable.cmmn.api.runtime.PlanItemInstanceState.AVAILABLE;
 import static org.flowable.cmmn.api.runtime.PlanItemInstanceState.COMPLETED;
-import static org.flowable.cmmn.api.runtime.PlanItemInstanceState.ENABLED;
 import static org.flowable.cmmn.engine.impl.cfg.DelegateExpressionFieldInjectionMode.DISABLED;
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DATABASE_TYPE_POSTGRES;
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_FALSE;
@@ -44,7 +42,6 @@ public class CmmnEngineLookupImpl implements CmmnEngineLookup {
         cmmnEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);
         cmmnEngineConfiguration.addPlanItemInstanceLifeCycleListener(STAGE, new UpdateZaakLifecycleListener(AVAILABLE, ACTIVE));
         cmmnEngineConfiguration.addPlanItemInstanceLifeCycleListener(MILESTONE, new UpdateZaakLifecycleListener(ACTIVE, COMPLETED));
-        cmmnEngineConfiguration.addPlanItemInstanceLifeCycleListener(HUMAN_TASK, new ExtraheerGroepLifecycleListener(null, ENABLED));
         CaseInstanceState.END_STATES.forEach(
                 endState -> cmmnEngineConfiguration.addCaseInstanceLifeCycleListener(new EndCaseLifecycleListener(CaseInstanceState.ACTIVE, endState)));
         cmmnEngineConfiguration.setCreateHumanTaskInterceptor(new CreateHumanTaskInterceptor());

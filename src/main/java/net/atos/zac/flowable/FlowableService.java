@@ -1,13 +1,14 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
 package net.atos.zac.flowable;
 
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ASSIGNEE;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_CANDIDATE_GROUP;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_DUE_DATE;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
-import static net.atos.zac.flowable.cmmn.ExtraheerGroepLifecycleListener.VAR_TASK_CANDIDATE_GROUP_ID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
@@ -172,14 +173,17 @@ public class FlowableService {
                     .variable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
                     .start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {
-            LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.", caseDefinitionKey, zaak.getUuid()));
+            LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.",
+                                      caseDefinitionKey, zaak.getUuid()));
         }
     }
 
-    public void startHumanTaskPlanItem(final String planItemInstanceId, final String groupId, final Date dueDate, final Map<String, String> taakdata) {
-        final UUID zaakUUID = readZaakUuidForCase(readPlanItem(planItemInstanceId).getCaseInstanceId());
-        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstanceId)
-                .transientVariable(VAR_TASK_CANDIDATE_GROUP_ID, groupId)
+    public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
+            final Map<String, String> taakdata) {
+        final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());
+        cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
+                .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
+                .transientVariable(VAR_TASK_ASSIGNEE, assignee)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
                 .transientVariable(VAR_TASK_DUE_DATE, dueDate)
                 .transientVariable(VAR_TASK_TAAKDATA, taakdata)

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
@@ -17,12 +17,14 @@ import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {Observable} from 'rxjs';
+import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     templateUrl: './plan-item-do.component.html',
     styleUrls: ['./plan-item-do.component.less']
 })
-export class PlanItemDoComponent implements OnInit {
+export class PlanItemDoComponent implements OnInit, AfterViewInit {
 
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
@@ -30,7 +32,8 @@ export class PlanItemDoComponent implements OnInit {
     private formulier: AbstractFormulier;
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
-                private router: Router, private navigation: NavigationService, private utilService: UtilService, private identityService: IdentityService) {
+                private router: Router, private navigation: NavigationService, private utilService: UtilService,
+                private identityService: IdentityService, private cd: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
@@ -50,6 +53,11 @@ export class PlanItemDoComponent implements OnInit {
         }
     }
 
+    ngAfterViewInit() {
+        this.loadMedewerkers();
+        this.reloadMedewerkersOnChange();
+    }
+
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             if (this.planItem.type === PlanItemType.HumanTask) {
@@ -61,5 +69,29 @@ export class PlanItemDoComponent implements OnInit {
         } else {
             this.navigation.back();
         }
+    }
+
+    reloadMedewerkersOnChange() {
+        this.formulier.groepFormField.formControl.valueChanges.subscribe(() => {
+            this.loadMedewerkers();
+        });
+        this.formulier.filterFormField.formControl.valueChanges.subscribe(() => {
+            this.loadMedewerkers();
+        });
+    }
+
+    loadMedewerkers(): void {
+        let medewerkers: Observable<Medewerker[]>;
+
+        if (this.formulier.groepFormField.formControl.value && this.formulier.filterFormField.formControl.value) {
+            medewerkers = this.identityService.listMedewerkersInGroep(
+                this.formulier.groepFormField.formControl.value.id);
+        } else {
+            medewerkers = this.identityService.listMedewerkers();
+        }
+
+        this.formulier.medewerkerFormField.options = medewerkers;
+
+        this.cd.detectChanges();
     }
 }
