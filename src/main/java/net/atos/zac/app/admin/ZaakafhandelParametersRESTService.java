@@ -108,10 +108,6 @@ public class ZaakafhandelParametersRESTService {
         for (Zaaktype zaaktype : zaaktypes) {
             final UUID zaakTypeUUID = UriUtil.uuidFromURI(zaaktype.getUrl());
             ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID);
-            if (zaakafhandelParameters == null) {
-                zaakafhandelParameters = new ZaakafhandelParameters();
-                zaakafhandelParameters.setZaakTypeUUID(zaakTypeUUID);
-            }
             parametersList.add(zaakafhandelParametersConverter.convert(zaakafhandelParameters, false));
         }
         return parametersList;
@@ -127,10 +123,6 @@ public class ZaakafhandelParametersRESTService {
     @Path("parameters/{zaaktypeUuid}")
     public RESTZaakafhandelParameters readZaakafhandelParameters(@PathParam("zaaktypeUuid") final UUID zaakTypeUUID) {
         ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID);
-        if (zaakafhandelParameters == null) {
-            zaakafhandelParameters = new ZaakafhandelParameters();
-            zaakafhandelParameters.setZaakTypeUUID(zaakTypeUUID);
-        }
         return zaakafhandelParametersConverter.convert(zaakafhandelParameters, true);
     }
 

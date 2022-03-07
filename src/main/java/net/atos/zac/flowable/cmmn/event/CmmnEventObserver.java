@@ -57,7 +57,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     private void startZaakAfhandeling(final Zaak zaak) {
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.getZaakafhandelParameters(zaak);
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        if (zaakafhandelParameters != null) {
+        if (zaakafhandelParameters.getCaseDefinitionID() != null) {
             final String caseDefinitionKey = zaakafhandelParameters.getCaseDefinitionID();
             LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
             toekennenZaak(zaak, zaakafhandelParameters);
