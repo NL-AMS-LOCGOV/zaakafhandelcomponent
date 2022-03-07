@@ -19,9 +19,8 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
-import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.mail.model.EMail;
@@ -66,9 +65,6 @@ public class MailService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private RESTInformatieobjecttypeConverter restInformatieobjecttypeConverter;
-
-    @Inject
     @IngelogdeMedewerker
     private Instance<Medewerker> ingelogdeMedewerker;
 
@@ -98,13 +94,10 @@ public class MailService {
 
     private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
             final String onderwerp, final String body) {
-        final RESTInformatieobjecttype eMailObjectType =
-                listEnkelvoudigInformatieobjectenVoorZaak(zaak).stream()
-                        .filter(objectType -> objectType.omschrijving.equals("e-mail")).findFirst().orElseThrow();
-
+        final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfigurationService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, ingelogdeMedewerker.get().getNaam(),
-                "NLD", eMailObjectType.url, Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
+                "NLD", eMailObjectType.getUrl(), Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         data.setFormaat("text/plain");
         data.setBestandsnaam(String.format("%s.txt", onderwerp));
@@ -115,8 +108,10 @@ public class MailService {
         return data;
     }
 
-    private List<RESTInformatieobjecttype> listEnkelvoudigInformatieobjectenVoorZaak(final Zaak zaak) {
+    private Informatieobjecttype getEmailInformatieObjectType(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        return restInformatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
+        return zaaktype.getInformatieobjecttypen().stream()
+                .map(ztcClientService::readInformatieobjecttype)
+                .filter(infoObject -> infoObject.getOmschrijving().equals("e-mail")).findFirst().orElseThrow();
     }
 }
