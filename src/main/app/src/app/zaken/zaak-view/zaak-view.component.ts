@@ -250,13 +250,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     openPlanItemStartenDialog(planItem: PlanItem): void {
         const confirmDialogData = new ConfirmDialogData('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam},
             this.planItemsService.doPlanItem(planItem));
+        this.doubleSuspendZaakListener();
         this.dialog.open(ConfirmDialogComponent, {
             width: '400px',
             data: confirmDialogData,
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
+                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
                 this.updateZaak();
             }
         });
@@ -398,6 +399,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.takenDataSource.filter = this.takenFilter;
         this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+    }
+
+    private doubleSuspendZaakListener() {
+        this.websocketService.suspendListener(this.zaakListener);
+        this.websocketService.suspendListener(this.zaakListener);
     }
 
     private doubleSuspendRollenListener() {
