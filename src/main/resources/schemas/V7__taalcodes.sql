@@ -21,11 +21,11 @@ CREATE INDEX ix_taal_native ON ${schema}.taal USING btree (native);
 
 INSERT INTO ${schema}.taal(id_taal, code, naam, name, native)
 VALUES (1, 'dut', 'Nederlands', 'Dutch', 'Nederlands');
-INSERT INTO ${schema}.taal(id_taal, code, naam, native)
+INSERT INTO ${schema}.taal(id_taal, code, naam, name, native)
 VALUES (2, 'fre', 'Frans', 'French', 'français');
-INSERT INTO ${schema}.taal(id_taal, code, naam, native)
+INSERT INTO ${schema}.taal(id_taal, code, naam, name, native)
 VALUES (3, 'eng', 'Engels', 'English', 'English');
-INSERT INTO ${schema}.taal(id_taal, code, naam, native)
+INSERT INTO ${schema}.taal(id_taal, code, naam, name, native)
 VALUES (4, 'ger', 'Duits', 'German', 'Deutsch');
-INSERT INTO ${schema}.taal(id_taal, code, naam, native)
+INSERT INTO ${schema}.taal(id_taal, code, naam, name, native)
 VALUES (5, 'fry', 'Fries', 'Frisian', 'Frysk');
