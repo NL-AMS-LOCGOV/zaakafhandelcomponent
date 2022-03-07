@@ -29,9 +29,7 @@
     </ng-container>
 </mat-nav-list>
 <mat-toolbar class="toolbar-footer">
-    <button (click)="toggleMenu()" mat-mini-fab color="" aria-label="menu inklappen"
-            id="toggleMenuButon"
-            title="'actie.menu.aanpassen' | translate">
+    <button (click)="toggleMenu()" mat-mini-fab color="" id="toggleMenuButon" title="{{'actie.menu.aanpassen' | translate}}">
         <mat-icon [@rotated180]="menuMode">{{menuMode === MenuMode.AUTO ? 'menu' : 'menu_open'}}</mat-icon>
     </button>
 </mat-toolbar>
