@@ -21,10 +21,10 @@ import javax.ws.rs.core.Response;
 
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
-import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
@@ -48,7 +48,7 @@ public class NotificatieReceiver {
     private ProductAanvraagService productAanvraagService;
 
     @Inject
-    private ConfigurationService configurationService;
+    private ConfiguratieService configuratieService;
 
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
@@ -57,7 +57,7 @@ public class NotificatieReceiver {
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
-        if (!configurationService.isLocalDevelopment()) {
+        if (!configuratieService.isLocalDevelopment()) {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
             handleProductAanvraag(notificatie);
