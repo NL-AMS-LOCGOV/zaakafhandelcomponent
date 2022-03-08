@@ -28,6 +28,13 @@ export class FormComponent {
         return this._config;
     }
 
+    // Raise the number of posts when the form is ready for another post
+    @Input() set submitted(posts: number) {
+        if (0 < posts) {
+            this.reset();
+        }
+    }
+
     @Output() formSubmit: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
     @Output() formPartial: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
 
@@ -53,6 +60,10 @@ export class FormComponent {
                 }
             });
         }
+    }
+
+    reset() {
+        this.submitting = this.submittingPartial = this.submittingForm = false;
     }
 
     partial() {

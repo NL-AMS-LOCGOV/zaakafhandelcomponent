@@ -44,6 +44,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
     declarations: [
@@ -87,7 +88,8 @@ import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/mater
         PipesModule,
         MatTableModule,
         RouterModule,
-        FormsModule
+        FormsModule,
+        MatProgressSpinnerModule
     ],
     exports: [
         FormComponent,
