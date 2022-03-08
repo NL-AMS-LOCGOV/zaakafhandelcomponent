@@ -32,7 +32,7 @@
 
         <ng-container matColumnDef="naam">
             <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="'naam'">
+                [mat-sort-header]="'taaknaam'">
                 {{ 'taak' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
@@ -60,7 +60,7 @@
 
         <ng-container matColumnDef="creatiedatumTijd">
             <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="'startdatum'">
+                [mat-sort-header]="'creatiedatum'">
                 {{ 'startdatum' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
