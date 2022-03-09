@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.ontkoppeldedocumenten.model;
+package net.atos.zac.app.shared;
 
 import javax.ws.rs.QueryParam;
 

@@ -54,6 +54,18 @@ public class OntkoppeldeDocumentenService {
         return emQuery.getResultList();
     }
 
+    public int count() {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
+        query.select(builder.count(root));
+        final Long result = entityManager.createQuery(query).getSingleResult();
+        if (result == null) {
+            return 0;
+        }
+        return result.intValue();
+    }
+
     public OntkoppeldDocument update(final OntkoppeldDocument ontkoppeldDocument) {
         valideerObject(ontkoppeldDocument);
         return entityManager.merge(ontkoppeldDocument);

@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.ontkoppeldedocumenten;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BeanParam;
@@ -18,8 +16,9 @@ import javax.ws.rs.core.MediaType;
 
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTListParametersConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentConverter;
-import net.atos.zac.app.ontkoppeldedocumenten.model.RESTListParameters;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocument;
+import net.atos.zac.app.shared.RESTListParameters;
+import net.atos.zac.app.shared.RESTResult;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 
 @Singleton
@@ -36,8 +35,7 @@ public class OntkoppeldeDocumentenRESTService {
 
     @GET
     @Path("")
-    public List<RESTOntkoppeldDocument> list(@BeanParam final RESTListParameters listParameters) {
-        return converter.convert(service.list(RESTListParametersConverter.convert(listParameters)));
+    public RESTResult<RESTOntkoppeldDocument> list(@BeanParam final RESTListParameters listParameters) {
+        return new RESTResult<>(converter.convert(service.list(RESTListParametersConverter.convert(listParameters))), service.count());
     }
-
 }

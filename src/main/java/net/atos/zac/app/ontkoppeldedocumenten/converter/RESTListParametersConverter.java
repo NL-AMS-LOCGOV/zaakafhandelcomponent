@@ -7,7 +7,7 @@ package net.atos.zac.app.ontkoppeldedocumenten.converter;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.atos.zac.app.ontkoppeldedocumenten.model.RESTListParameters;
+import net.atos.zac.app.shared.RESTListParameters;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.Paging;
 import net.atos.zac.shared.model.SortDirection;

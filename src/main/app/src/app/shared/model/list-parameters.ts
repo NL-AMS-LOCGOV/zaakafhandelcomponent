@@ -11,7 +11,9 @@ export class ListParameters {
     page: number;
     maxResults: number;
 
-    constructor() {
+    constructor(sort: string, order: SortDirection) {
+        this.sort = sort;
+        this.order = order;
         this.page = 0;
         this.maxResults = 25;
     }
