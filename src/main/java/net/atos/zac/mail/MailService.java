@@ -5,6 +5,22 @@
 
 package net.atos.zac.mail;
 
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
+import javax.ws.rs.core.Response;
+
+import org.eclipse.microprofile.config.ConfigProvider;
+
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
@@ -23,30 +39,11 @@ import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.mail.model.EMail;
-
 import net.atos.zac.mail.model.EMails;
-import net.atos.zac.mail.model.Verstuurder;
-
 import net.atos.zac.mail.model.Ontvanger;
-
-import net.atos.zac.util.ConfigurationService;
-
-import org.eclipse.microprofile.config.ConfigProvider;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.json.bind.JsonbBuilder;
-import javax.ws.rs.core.Response;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-
-import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import net.atos.zac.mail.model.Verstuurder;
 
 @ApplicationScoped
 public class MailService {
@@ -96,8 +93,8 @@ public class MailService {
             final String onderwerp, final String body) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
-                ConfigurationService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, ingelogdeMedewerker.get().getNaam(),
-                "NLD", eMailObjectType.getUrl(), Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
+                ConfiguratieService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, ingelogdeMedewerker.get().getNaam(),
+                ConfiguratieService.TAAL_NEDERLANDS, eMailObjectType.getUrl(), Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         data.setFormaat("text/plain");
         data.setBestandsnaam(String.format("%s.txt", onderwerp));

@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.taken;
 
-import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_TAAK_DOCUMENT;
-import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 

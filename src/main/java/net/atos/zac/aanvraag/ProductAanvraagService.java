@@ -7,8 +7,8 @@ package net.atos.zac.aanvraag;
 
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.util.ConfigurationService.BRON_ORGANISATIE;
-import static net.atos.zac.util.ConfigurationService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
+import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
+import static net.atos.zac.configuratie.ConfiguratieService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
 
 import java.net.URI;
 import java.util.Map;
