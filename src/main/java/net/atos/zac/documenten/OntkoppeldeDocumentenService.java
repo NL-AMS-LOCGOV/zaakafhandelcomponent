@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
 package net.atos.zac.documenten;
 
 import static net.atos.zac.util.ValidationUtil.valideerObject;
@@ -38,7 +43,7 @@ public class OntkoppeldeDocumentenService {
             if (listParameters.getSorting().getDirection() == SortDirection.ASCENDING) {
                 query.orderBy(builder.asc(root.get(listParameters.getSorting().getField())));
             } else {
-                query.orderBy(builder.asc(root.get(listParameters.getSorting().getField())));
+                query.orderBy(builder.desc(root.get(listParameters.getSorting().getField())));
             }
         }
         final TypedQuery<OntkoppeldDocument> emQuery = entityManager.createQuery(query);
