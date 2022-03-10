@@ -268,13 +268,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     openPlanItemStartenDialog(planItem: PlanItem): void {
         const confirmDialogData = new ConfirmDialogData('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam},
             this.planItemsService.doPlanItem(planItem));
+        this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(ConfirmDialogComponent, {
             width: '400px',
             data: confirmDialogData,
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
+                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
                 this.updateZaak();
             }
         });
@@ -295,7 +296,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editGroep(event: any): void {
         this.zaak.groep = event.groep;
-        this.doubleSuspendRollenListener();
+        this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
             this.init(zaak);
@@ -305,7 +306,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editBehandelaar(event: any): void {
         if (event.behandelaar) {
             this.zaak.behandelaar = event.behandelaar;
-            this.doubleSuspendRollenListener();
+            this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
                 this.init(zaak);
@@ -393,7 +394,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     assignToMe(event: any): void {
-        this.doubleSuspendRollenListener();
+        this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.init(zaak);
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
@@ -436,11 +437,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.takenDataSource.filter = this.takenFilter;
         this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
-    }
-
-    private doubleSuspendRollenListener() {
-        this.websocketService.suspendListener(this.zaakRollenListener);
-        this.websocketService.suspendListener(this.zaakRollenListener);
     }
 
     initiatorExpandedChanged($event: boolean): void {
