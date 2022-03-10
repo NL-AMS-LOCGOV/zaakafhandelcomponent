@@ -6,29 +6,29 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {UtilService} from '../../core/service/util.service';
-import {AbstractView} from '../../shared/abstract-view/abstract-view';
-import {Store} from '@ngrx/store';
-import {State} from '../../state/app.state';
-import {MatSidenavContainer} from '@angular/material/sidenav';
+import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './parameters.component.html',
     styleUrls: ['./parameters.component.less']
 })
-export class ParametersComponent extends AbstractView implements OnInit {
+export class ParametersComponent extends ViewComponent implements OnInit {
 
-    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
+    @ViewChild('menuSidenav') menuSidenav: MatSidenav;
+
     menu: MenuItem[] = [];
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
     loading: boolean;
 
-    constructor(store: Store<State>, private adminService: ZaakafhandelParametersService, public utilService: UtilService) {
-        super(store, utilService);
+    constructor(private adminService: ZaakafhandelParametersService, public utilService: UtilService) {
+        super();
     }
 
     ngOnInit(): void {

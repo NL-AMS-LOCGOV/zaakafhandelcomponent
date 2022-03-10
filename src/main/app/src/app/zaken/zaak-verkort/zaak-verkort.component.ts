@@ -7,10 +7,6 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {sideNavToggle} from '../../shared/animations/animations';
-import {State} from '../state/zaken.state';
-import {Store} from '@ngrx/store';
-import {isZaakVerkortCollapsed} from '../state/zaak-verkort.reducer';
-import {toggleCollapseZaakVerkort} from '../state/zaak-verkort.actions';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {PageEvent} from '@angular/material/paginator';
@@ -24,6 +20,7 @@ import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -33,10 +30,11 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 })
 export class ZaakVerkortComponent implements OnInit, OnDestroy {
     @Input() zaakUuid: string;
-    @Output() zaakLoadedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() zaakToggle: EventEmitter<void> = new EventEmitter<void>();
 
     zaak: Zaak;
     einddatumGeplandIcon: TextIcon;
+    visibilityIcon = new TextIcon(Conditionals.always, 'visibility', 'visibility_icon', '', 'pointer');
     collapsed: boolean = false;
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     objectenColumnsToDisplay: string[] = ['titel', 'status', 'url'];
@@ -47,16 +45,12 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     private zaakRollenListener: WebsocketListener;
     private zaakDocumentenListener: WebsocketListener;
 
-    constructor(private store: Store<State>, private zakenService: ZakenService, private informatieObjectenService: InformatieObjectenService, public utilService: UtilService, private websocketService: WebsocketService) {
+    constructor(private zakenService: ZakenService, private router: Router, private informatieObjectenService: InformatieObjectenService,
+                public utilService: UtilService, private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
-        this.subscriptions$.push(this.store.select(isZaakVerkortCollapsed).subscribe(isCollapsed => {
-            this.collapsed = isCollapsed;
-        }));
-
         this.loadZaak();
-
         this.subscriptions$.push(this.utilService.isTablet$.subscribe(isTablet => {
             if (isTablet && this.collapsed) {
                 this.toggleMenu();
@@ -72,7 +66,8 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
     }
 
     toggleMenu(): void {
-        this.store.dispatch(toggleCollapseZaakVerkort());
+        this.collapsed = !this.collapsed;
+        this.zaakToggle.emit();
     }
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
@@ -94,7 +89,7 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
             this.zaak = zaak;
             this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
                 'msg.datum.overschreden', 'warning');
-            this.zaakLoadedEmitter.emit(true);
+            this.zaakToggle.emit();
             this.loadInformatieObjecten();
         });
     }
@@ -110,5 +105,9 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakDocumentenListener);
         this.subscriptions$.forEach(subscription$ => subscription$.unsubscribe());
+    }
+
+    openZaak(): void {
+        this.router.navigate(['/zaken/', this.zaak.identificatie]);
     }
 }

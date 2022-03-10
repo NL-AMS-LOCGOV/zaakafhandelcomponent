@@ -11,12 +11,9 @@ import {InformatieObjectenService} from '../informatie-objecten.service';
 import {ActivatedRoute} from '@angular/router';
 import {UtilService} from '../../core/service/util.service';
 import {ZaakInformatieobject} from '../model/zaak-informatieobject';
-import {DownloadMenuItem} from '../../shared/side-nav/menu-item/download-menu-item';
+import {HrefMenuItem} from '../../shared/side-nav/menu-item/href-menu-item';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {AbstractView} from '../../shared/abstract-view/abstract-view';
-import {Store} from '@ngrx/store';
-import {State} from '../../state/app.state';
-import {MatSidenavContainer} from '@angular/material/sidenav';
+import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
@@ -25,29 +22,30 @@ import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
+import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
-export class InformatieObjectViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
+export class InformatieObjectViewComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
     menu: MenuItem[];
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
-    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
+    @ViewChild('menuSidenav') menuSidenav: MatSidenav;
+    @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
     private documentListener: WebsocketListener;
 
-    constructor(store: Store<State>,
-                private zakenService: ZakenService,
+    constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 private websocketService: WebsocketService) {
-        super(store, utilService);
+        super();
     }
 
     ngOnInit(): void {
@@ -86,9 +84,7 @@ export class InformatieObjectViewComponent extends AbstractView implements OnIni
     private setupMenu(): void {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
-            new DownloadMenuItem('actie.downloaden', `/rest/informatieobjecten/informatieobject/${this.infoObject.uuid}/download`,
-                this.infoObject.bestandsnaam,
-                'save_alt')
+            new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid), 'save_alt')
         ];
     }
 

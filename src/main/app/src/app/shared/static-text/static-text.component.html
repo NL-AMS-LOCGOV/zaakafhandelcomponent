@@ -10,6 +10,7 @@
         <mat-icon class="label-icon"
                   [ngClass]="icon.styleClass"
                   *ngIf="hasIcon"
+                  (click)="iconClicked.emit()"
                   title="{{ icon.title | translate}}">
             {{icon.icon}}
         </mat-icon>

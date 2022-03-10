@@ -6,16 +6,16 @@
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 export const rotate180 = trigger('rotated180', [
-    state('default', style({transform: 'rotate(0)'})),
-    state('rotated', style({transform: 'rotate(-180deg)'})),
-    transition('rotated => default', animate('300ms ease-out')),
-    transition('default => rotated', animate('300ms ease-out'))
+    state('closed', style({transform: 'rotate(0deg)'})),
+    state('open', style({transform: 'rotate(180deg)'})),
+    transition('auto => open', animate('300ms ease-out')),
+    transition('open => closed', animate('300ms ease-out'))
 ]);
 
 export const sideNavToggle = trigger('sideNavToggle', [
-    state('close', style({'width': '{{width}}'}), {params: {width: '65px'}}),
+    state('closed', style({width: '65px'})),
     state('open', style({'min-width': '200px'})),
-    transition('close <=> open', animate('200ms ease-in'))
+    transition('closed <=> open', animate('200ms ease-in'))
 ]);
 
 export const detailExpand = trigger('detailExpand', [

@@ -3,53 +3,67 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar">
-    <mat-sidenav #zaakMenuSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)"
-                 (mouseenter)="collapseSideNav(false)" (mouseleave)="collapseSideNav(true)">
-        <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav #actionsSidenav mode="over" position="end">
+        <zac-persoon-zoek (persoon)="persoonGeselecteerd($event)"></zac-persoon-zoek>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <div *ngIf="zaak.initiatorBSN" fxLayout>
-            <mat-card fxFlex="calc(100%-20px)">
-                <mat-card-header>
-                    <mat-card-title>{{'initiator.titel'| translate}}</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div id="initiatorGegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                        <div [fxFlex]="100/4" fxFlex.lt-md="50">
-                            <zac-static-text [label]="'initiator.naam' | translate"
-                                             [value]="initiatorPersoon.naam"></zac-static-text>
-                            <zac-static-text [label]="'initiator.bsn' | translate"
-                                             [value]="zaak.initiatorBSN"></zac-static-text>
-                        </div>
-                        <div [fxFlex]="100/4" fxFlex.lt-md="50">
-                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                <mat-divider></mat-divider>
-                            </div>
-                            <zac-static-text [label]="'initiator.geboortedatum' | translate"
-                                             [value]="initiatorPersoon.geboortedatum"></zac-static-text>
-                            <zac-static-text [label]="'initiator.inschrijfadres' | translate"
-                                             [value]="initiatorPersoon.inschrijfadres"></zac-static-text>
-                        </div>
-                        <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
-                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                <mat-divider></mat-divider>
-                            </div>
-                            <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer' | translate"
-                                             [value]="'-'"></zac-static-text>
-                            <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer2' | translate"
-                                             [value]="'-'"></zac-static-text>
-                        </div>
-                        <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
-                            <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                <mat-divider></mat-divider>
-                            </div>
-                            <zac-static-text fxFlex.sm="25" [label]="'initiator.emailadres' | translate"
-                                             [value]="'-'"></zac-static-text>
-                        </div>
+        <div *ngIf="zaak?.initiatorBSN" fxLayout>
+            <mat-expansion-panel fxFlex="calc(100%-20px)"
+                                 [expanded]="initiatorExpanded"
+                                 (expandedChange)="initiatorExpandedChanged($event)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{'initiator.titel'| translate}}
+                    </mat-panel-title>
+                    <mat-panel-description *ngIf="initiatorPersoon.naam">
+                        {{initiatorPersoon.naam}}
+                        <button [title]="'actie.verwijderen' | translate" mat-icon-button (click)="deleteInitiator($event)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-panel-description>
+                    <mat-panel-description *ngIf="!initiatorPersoon.naam">
+                        {{'msg.loading' | translate}}
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div id="initiatorGegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                    <div [fxFlex]="100/4" fxFlex.lt-md="50">
+                        <zac-static-text [label]="'initiator.naam' | translate"
+                                         [value]="initiatorPersoon.naam"></zac-static-text>
+                        <zac-static-text [label]="'initiator.bsn' | translate"
+                                         [value]="zaak.initiatorBSN"></zac-static-text>
                     </div>
-                </mat-card-content>
-            </mat-card>
+                    <div [fxFlex]="100/4" fxFlex.lt-md="50">
+                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <zac-static-text [label]="'initiator.geboortedatum' | translate"
+                                         [value]="initiatorPersoon.geboortedatum"></zac-static-text>
+                        <zac-static-text [label]="'initiator.inschrijfadres' | translate"
+                                         [value]="initiatorPersoon.inschrijfadres"></zac-static-text>
+                    </div>
+                    <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
+                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer' | translate"
+                                         [value]="'-'"></zac-static-text>
+                        <zac-static-text fxFlex.sm="25" [label]="'initiator.telefoonnummer2' | translate"
+                                         [value]="'-'"></zac-static-text>
+                    </div>
+                    <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
+                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <zac-static-text fxFlex.sm="25" [label]="'initiator.emailadres' | translate"
+                                         [value]="'-'"></zac-static-text>
+                    </div>
+                </div>
+
+            </mat-expansion-panel>
         </div>
 
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
@@ -363,12 +377,3 @@
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-sidenav-content>
 </mat-sidenav-container>
-<mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
-
-    <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button (click)="zaakMenuSideNav.toggle()">
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
-
-</mat-toolbar>

@@ -13,8 +13,6 @@ import {RouterModule} from '@angular/router';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
 import {BackButtonDirective} from './navigation/back-button.directive';
-import {StoreModule} from '@ngrx/store';
-import {sideNavReducer} from './state/side-nav.reducer';
 import {StaticTextComponent} from './static-text/static-text.component';
 import {MaterialModule} from './material/material.module';
 import {MaterialFormBuilderModule} from './material-form-builder/material-form-builder.module';
@@ -63,9 +61,6 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
         PipesModule,
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
-        StoreModule.forFeature('shared', {
-            sideNav: sideNavReducer
-        }),
         TranslateModule
     ],
     exports: [

@@ -19,10 +19,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
-import {MatSidenavContainer} from '@angular/material/sidenav';
-import {Store} from '@ngrx/store';
-import {State} from '../../state/app.state';
-import {AbstractView} from '../../shared/abstract-view/abstract-view';
+import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZakenService} from '../zaken.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
@@ -51,29 +48,36 @@ import {PersonenService} from '../../personen/personen.service';
 import {PersoonOverzicht} from '../../personen/model/persoon-overzicht';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
+import {Persoon} from '../../personen/model/persoon';
+import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
     styleUrls: ['./zaak-view.component.less']
 })
-export class ZaakViewComponent extends AbstractView implements OnInit, AfterViewInit, OnDestroy {
+export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     zaak: Zaak;
     menu: MenuItem[];
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
     toonAfgerondeTaken = false;
-
+    actions = {
+        GEEN: 'GEEN',
+        ZOEK_PERSOON: 'ZOEK_PERSOON'
+    };
+    action: string;
+    takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
     initiatorPersoon: PersoonOverzicht = new PersoonOverzicht();
-
+    initiatorExpanded: boolean = sessionStorage.getItem('initiatorExpanded') === 'true';
     notitieType = NotitieType.ZAAK;
-
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
+    viewInitialized = false;
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -81,13 +85,13 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private zaakDocumentenListener: WebsocketListener;
     private ingelogdeMedewerker: Medewerker;
 
-    takenFilter: any = {};
+    @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
+    @ViewChild('menuSidenav') menuSidenav: MatSidenav;
+    @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
 
-    @ViewChild(MatSidenavContainer) sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
 
-    constructor(store: Store<State>,
-                private informatieObjectenService: InformatieObjectenService,
+    constructor(private informatieObjectenService: InformatieObjectenService,
                 private takenService: TakenService,
                 private zakenService: ZakenService,
                 private identityService: IdentityService,
@@ -96,13 +100,15 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                private sessionStorageService: SessionStorageService,
+                public sessionStorageService: SessionStorageService,
                 public dialog: MatDialog,
                 private translate: TranslateService) {
-        super(store, utilService);
+        super();
     }
 
     ngOnInit(): void {
+        this.initiatorExpanded = this.sessionStorageService.getSessionStorage('initiatorExpanded', true);
+        console.log(this.initiatorExpanded);
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
             this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
@@ -146,6 +152,7 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     }
 
     ngAfterViewInit() {
+        this.viewInitialized = true;
         super.ngAfterViewInit();
         this.takenDataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
@@ -191,12 +198,15 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
                                                                               .build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
                                                                              .value(this.zaak.toelichting).maxlength(1000).build());
-        this.editFormFields.set('vertrouwelijkheidaanduiding', new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                                                           .value({label: this.translate.instant('vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
-                                                                                               value: this.zaak.vertrouwelijkheidaanduiding})
-                                                                                           .optionLabel('label')
-                                                                                           .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
-                                                                                               Vertrouwelijkheidaanduiding)).build());
+        this.editFormFields.set('vertrouwelijkheidaanduiding',
+            new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                        .value({
+                                            label: this.translate.instant('vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                                            value: this.zaak.vertrouwelijkheidaanduiding
+                                        })
+                                        .optionLabel('label')
+                                        .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+                                            Vertrouwelijkheidaanduiding)).build());
         this.editFormFields.set('startdatum',
             new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
@@ -233,6 +243,14 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
 
         this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
 
+        this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
+
+        if (!this.zaak.initiatorBSN) {
+            this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
+                this.actionsSidenav.open();
+                this.action = this.actions.ZOEK_PERSOON;
+            }, 'emoji_people'));
+        }
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
             const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
             const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
@@ -383,6 +401,26 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
         });
     }
 
+    persoonGeselecteerd(persoon: Persoon): void {
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.actionsSidenav.close();
+        this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.zaak.initiatorBSN = persoon.bsn;
+            this.initiatorPersoon = persoon;
+            this.init(this.zaak);
+        });
+    }
+
+    deleteInitiator($event: MouseEvent): void {
+        $event.stopPropagation();
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.zaak.initiatorBSN = null;
+            this.initiatorPersoon = null;
+            this.init(this.zaak);
+        });
+    }
+
     assignTaskToMe(taak: Taak) {
         this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.assignToLoggedOnUser(taak).subscribe(returnTaak => {
@@ -409,5 +447,11 @@ export class ZaakViewComponent extends AbstractView implements OnInit, AfterView
     private doubleSuspendRollenListener() {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.websocketService.suspendListener(this.zaakRollenListener);
+    }
+
+    initiatorExpandedChanged($event: boolean): void {
+        if (this.viewInitialized) {
+            this.sessionStorageService.setSessionStorage('initiatorExpanded', $event ? 'true' : 'false');
+        }
     }
 }

@@ -216,7 +216,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             pageSize: this.paginator.pageSize
         };
 
-        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        this.sessionStorageService.setSessionStorage('takenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

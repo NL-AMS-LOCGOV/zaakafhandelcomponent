@@ -11,6 +11,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DOCUMENT} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
@@ -46,6 +47,7 @@ export class UtilService {
                 private breakpointObserver: BreakpointObserver,
                 private translate: TranslateService,
                 private titleService: Title,
+                private router: Router,
                 private snackbar: MatSnackBar) {
     }
 
@@ -71,12 +73,12 @@ export class UtilService {
     }
 
     setTitle(title: string, params?: {}): void {
-        forkJoin({
-            prefix: this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()}),
-            title: this.translate.get(title, params)
-        }).subscribe(result => {
-            this.titleService.setTitle(result.prefix + result.title);
-            this.headerTitle.next(result.title);
+        const sources = [];
+        sources['prefix'] = this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()});
+        sources['title'] = this.translate.get(title, params);
+        forkJoin(sources).subscribe(result => {
+            this.titleService.setTitle(result['prefix'] + result['title']);
+            this.headerTitle.next(result['title']);
         });
     }
 
@@ -96,11 +98,18 @@ export class UtilService {
     }
 
     openSnackbar(message: string, params?: {}) {
-        forkJoin({
-            message: this.translate.get(message, params),
-            action: this.translate.get('actie.sluiten')
-        }).subscribe(result => {
-            this.snackbar.open(result.message, result.action, {duration: 3000});
+        const sources = [];
+        sources['message'] = this.translate.get(message, params);
+        sources['action'] = this.translate.get('actie.sluiten');
+        forkJoin(sources).subscribe(result => {
+            this.snackbar.open(result['message'], result['action'], {duration: 3000});
+        });
+    }
+
+    reloadRoute(): void {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+            this.router.navigate([currentUrl]);
         });
     }
 }

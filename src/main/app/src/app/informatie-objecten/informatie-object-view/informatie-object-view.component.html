@@ -3,10 +3,9 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar">
-    <mat-sidenav #informatieObjectMenuSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)"
-                 (mouseenter)="collapseSideNav(false)" (mouseleave)="collapseSideNav(true)">
-        <zac-side-nav [menu]="menu" [collapsed]="collapsed"></zac-side-nav>
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
@@ -31,7 +30,7 @@
                                     <zac-static-text [label]="'indicatieGebruiksrecht' | translate"
                                                      [value]="infoObject.indicatieGebruiksrecht ? 'Ja' : 'Nee'"></zac-static-text>
                                     <zac-static-text [label]="'taal' | translate"
-                                                     [value]="infoObject.taal | translate"></zac-static-text>
+                                                     [value]="infoObject.taal"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -139,10 +138,3 @@
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
-<mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
-    <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button (click)="informatieObjectMenuSideNav.toggle()">
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
-</mat-toolbar>

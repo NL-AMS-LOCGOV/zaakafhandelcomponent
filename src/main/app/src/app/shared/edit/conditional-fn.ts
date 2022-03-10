@@ -28,4 +28,8 @@ export class Conditionals {
         }
         return false;
     }
+
+    static always(): boolean {
+        return true;
+    }
 }
