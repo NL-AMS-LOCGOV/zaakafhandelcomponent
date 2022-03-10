@@ -1,0 +1,65 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-container">
+    <div class="table-loading-shade" *ngIf="isLoadingResults"></div>
+    <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" matSort [matSortActive]="defaults.sort" matSortDisableClear [matSortDirection]="defaults.order">
+
+            <ng-container matColumnDef="documentID">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'identificatie' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.documentID}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="titel">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'titel' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.titel}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="creatiedatum">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'creatiedatum' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.creatiedatum}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef>
+                    <button (click)="reset()" title="{{ 'actie.zoekopdracht.wissen' | translate }}"
+                            mat-flat-button id="wisZoekopdracht_button">
+                        <mat-icon>replay</mat-icon>
+                    </button>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-flat-button [routerLink]="['/informatie-objecten', row.documentUUID]"
+                            title="{{ 'actie.document.bekijken' | translate}}">
+                        <mat-icon>visibility</mat-icon>
+                    </button>
+                    <a mat-icon-button
+                       [href]="getDownloadURL(row)"
+                       title="{{ 'actie.document.downloaden' | translate}}">
+                        <mat-icon>download</mat-icon>
+                    </a>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <ng-container *ngIf="paginator.length === 0 && !isLoadingResults">
+            <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+        </ng-container>
+
+        <ng-container *ngIf="paginator.length === 0 && isLoadingResults">
+            <p>{{'msg.loading' | translate}}</p>
+        </ng-container>
+
+    </div>
+    <mat-paginator #paginator
+                   [pageIndex]="0"
+                   [pageSize]="defaults.maxResults"
+                   [pageSizeOptions]="[10, 25, 50, 100]"
+                   sticky>
+    </mat-paginator>
+</div>
