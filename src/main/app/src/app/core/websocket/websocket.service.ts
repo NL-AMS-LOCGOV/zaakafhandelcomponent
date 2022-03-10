@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -170,6 +170,11 @@ export class WebsocketService implements OnDestroy {
             }
             console.log('listener suspended: ' + listener.key);
         }
+    }
+
+    public doubleSuspendListener(listener: WebsocketListener) {
+        this.suspendListener(listener);
+        this.suspendListener(listener);
     }
 
     public removeListener(listener: WebsocketListener): void {
