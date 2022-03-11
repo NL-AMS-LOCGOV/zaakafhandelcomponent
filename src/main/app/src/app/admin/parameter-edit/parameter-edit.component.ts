@@ -68,7 +68,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             this.groepControl.setValue(this.parameters.defaultGroep);
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
             this.zaakResultaten = adminService.listZaakResultaten(this.parameters.zaaktype.uuid);
-            adminService.listZaakbeeindigRedenen().subscribe(redenen => {
+            adminService.listAllZaakbeeindigRedenen().subscribe(redenen => {
                 this.readZaakbeeindigRedenen(redenen);
             });
         });

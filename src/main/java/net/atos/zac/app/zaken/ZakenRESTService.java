@@ -58,6 +58,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
+import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -233,7 +234,6 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
-        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
 
         if (!StringUtils.isEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
@@ -278,9 +278,14 @@ public class ZakenRESTService {
     }
 
     @PUT
+    @Path("afbreken")
+    public void afbreken(final RESTZaakAfbrekenGegevens afbrekenGegevens) {
+        // ToDo Afbreken zaak
+    }
+
+    @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens toekennenGegevens) {
-        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakConverter.convert(zaak);
     }
@@ -289,7 +294,6 @@ public class ZakenRESTService {
     @Path("toekennen/mij/lijst")
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(
             final RESTZaakToekennenGegevens toekennenGegevens) {
-        // ToDo: ESUITEDEV-25820 rechtencheck met solrZaak
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakOverzichtConverter.convert(zaak);
     }

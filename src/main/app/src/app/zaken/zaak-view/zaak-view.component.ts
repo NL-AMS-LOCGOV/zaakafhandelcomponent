@@ -50,6 +50,10 @@ import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-co
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {Persoon} from '../../personen/model/persoon';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
+import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {Validators} from '@angular/forms';
+import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
+import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -97,6 +101,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private identityService: IdentityService,
                 private planItemsService: PlanItemsService,
                 private personenService: PersonenService,
+                private zaakafhandelParametersService: ZaakafhandelParametersService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
@@ -245,6 +250,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
+        this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+
         if (!this.zaak.initiatorBSN) {
             this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
                 this.actionsSidenav.open();
@@ -266,8 +273,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     openPlanItemStartenDialog(planItem: PlanItem): void {
-        const confirmDialogData = new ConfirmDialogData('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam},
-            this.planItemsService.doPlanItem(planItem));
+        const confirmDialogData = new ConfirmDialogData('actie.ja', 'actie.nee',
+            new ParagraphFormFieldBuilder().text(this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam})).build(),
+            () => this.planItemsService.doPlanItem(planItem));
         this.dialog.open(ConfirmDialogComponent, {
             width: '400px',
             data: confirmDialogData,
@@ -275,6 +283,27 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem});
+                this.updateZaak();
+            }
+        });
+    }
+
+    openZaakAfbrekenDialog(): void {
+        const confirmDialogData = new ConfirmDialogData('actie.zaak.afbreken', 'actie.annuleren',
+            new SelectFormFieldBuilder().id('reden')
+                                        .label('actie.zaak.afbreken.reden')
+                                        .optionLabel('naam')
+                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenen(this.zaak.zaaktype.uuid))
+                                        .validators(Validators.required)
+                                        .build(),
+            (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
+        this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: confirmDialogData,
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.zaak.afgebroken');
                 this.updateZaak();
             }
         });

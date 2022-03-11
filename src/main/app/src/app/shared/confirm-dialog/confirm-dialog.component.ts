@@ -10,6 +10,7 @@ import {ConfirmDialogData} from './confirm-dialog-data';
 @Component({
     templateUrl: 'confirm-dialog.component.html',
     styleUrls: ['./confirm-dialog.component.less']
+
 })
 export class ConfirmDialogComponent implements OnInit {
 
@@ -20,22 +21,22 @@ export class ConfirmDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {
     }
 
-    close(): void {
-        this.dialogRef.close();
-    }
-
     ngOnInit(): void {
     }
 
     confirm(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        if (this.data.observable) {
-            this.data.observable.subscribe(() => {
+        if (this.data.fn) {
+            this.data.fn(this.data.formField.formControl.value).subscribe(() => {
                 this.dialogRef.close(true);
             });
         } else {
             this.dialogRef.close(true);
         }
+    }
+
+    cancel(): void {
+        this.dialogRef.close();
     }
 }

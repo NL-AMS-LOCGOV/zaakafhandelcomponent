@@ -150,10 +150,20 @@ public class ZaakafhandelParametersRESTService {
      * @return list of zaakbeeindig-redenen
      */
     @GET
-    @Path("redenen")
+    @Path("zaakbeeindigRedenen")
     public List<RESTZaakbeeindigReden> listZaakbeeindigRedenen() {
-        return zaakbeeindigRedenConverter.convertToRest(
-                zaakafhandelParameterBeheerService.listZaakbeeindigRedenen());
+        return zaakbeeindigRedenConverter.convertToRest(zaakafhandelParameterBeheerService.listZaakbeeindigRedenen());
+    }
+
+    /**
+     * Retrieve zaakbeeindig-redenen for a zaaktype
+     *
+     * @return list of zaakbeeindig-redenen
+     */
+    @GET
+    @Path("zaakbeeindigRedenen/{zaaktypeUuid}")
+    public List<RESTZaakbeeindigReden> listZaakbeeindigRedenen(@PathParam("zaaktypeUuid") final UUID zaaktypeUUID) {
+        return zaakbeeindigRedenConverter.convertToRest(zaakafhandelParameterBeheerService.listZaakbeeindigRedenen(zaaktypeUUID));
     }
 
     /**

@@ -20,6 +20,8 @@ import {HistorieRegel} from '../shared/historie/model/historie-regel';
 import {Groep} from '../identity/model/groep';
 import {ZaakEditMetRedenGegevens} from './model/zaak-edit-met-reden-gegevens';
 import {ZaakBetrokkeneGegevens} from './model/zaak-betrokkene-gegevens';
+import {ZaakbeeindigReden} from '../admin/model/zaakbeeindig-reden';
+import {ZaakAfbrekenGegevens} from './model/zaak-afbreken-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -180,6 +182,16 @@ export class ZakenService {
     listHistorieVoorZaak(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/zaak/${uuid}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    afbreken(uuid: string, zaakbeeindigReden: ZaakbeeindigReden): Observable<void> {
+        const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
+        zaakAfbrekenGegevens.zaakUUID = uuid;
+        zaakAfbrekenGegevens.zaakBeeindigRedenId = zaakbeeindigReden.id;
+
+        return this.http.put<void>(`${this.basepath}/afbreken`, zaakAfbrekenGegevens).pipe(
+            catchError(this.handleError)
         );
     }
 

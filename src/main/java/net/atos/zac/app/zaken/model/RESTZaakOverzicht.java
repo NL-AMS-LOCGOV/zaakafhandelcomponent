@@ -39,5 +39,4 @@ public class RESTZaakOverzicht {
     public RESTGroep groep;
 
     public RESTZaakResultaat resultaat;
-
 }

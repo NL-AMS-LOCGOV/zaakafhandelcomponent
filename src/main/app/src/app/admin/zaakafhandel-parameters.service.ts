@@ -36,8 +36,14 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    listZaakbeeindigRedenen(): Observable<ZaakbeeindigReden[]> {
-        return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/redenen`).pipe(
+    listAllZaakbeeindigRedenen(): Observable<ZaakbeeindigReden[]> {
+        return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listZaakbeeindigRedenen(zaaktypeUuid: string): Observable<ZaakbeeindigReden[]> {
+        return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
