@@ -70,7 +70,9 @@ public class PlanItemsRESTService {
             final PlanItemInstance planItem = flowableService.readPlanItem(restPlanItem.id);
             final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
             final Date streefdatum = DateUtils.addDays(new Date(), planItemParameters.getDoorlooptijd());
-            flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id, restPlanItem.medewerker.gebruikersnaam, streefdatum, restPlanItem.taakdata);
+            flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
+                                                   restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
+                                                   restPlanItem.taakdata);
         } else {
             flowableService.startPlanItem(restPlanItem.id);
         }

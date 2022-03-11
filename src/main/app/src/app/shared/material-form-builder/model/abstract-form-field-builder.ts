@@ -6,6 +6,7 @@
 import {AbstractFormField} from './abstract-form-field';
 import {ValidatorFn, Validators} from '@angular/forms';
 import {FormFieldHint} from './form-field-hint';
+import {first, Observable} from 'rxjs';
 
 export abstract class AbstractFormFieldBuilder {
 
@@ -31,6 +32,13 @@ export abstract class AbstractFormFieldBuilder {
 
     value(value: any): this {
         this.formField.formControl.setValue(value);
+        return this;
+    }
+
+    value$(value: Observable<any>): this {
+        value.pipe(first()).subscribe(firstValue => {
+            this.formField.formControl.setValue(firstValue);
+        });
         return this;
     }
 

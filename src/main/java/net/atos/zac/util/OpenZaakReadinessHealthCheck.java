@@ -5,7 +5,7 @@
 
 package net.atos.zac.util;
 
-import static net.atos.zac.util.ConfigurationService.CATALOGUS_DOMEIN;
+import static net.atos.zac.configuratie.ConfiguratieService.CATALOGUS_DOMEIN;
 
 import java.time.LocalDateTime;
 

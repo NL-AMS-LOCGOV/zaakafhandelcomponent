@@ -67,13 +67,13 @@ import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
-import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.OpenZaakPaginationUtil;
 
 /**
@@ -114,7 +114,7 @@ public class ZakenRESTService {
     private Instance<Medewerker> ingelogdeMedewerker;
 
     @Inject
-    private ConfigurationService configurationService;
+    private ConfiguratieService configuratieService;
 
     @Inject
     private SignaleringenService signaleringenService;
@@ -226,7 +226,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
-        return ztcClientService.listZaaktypen(configurationService.readDefaultCatalogusURI()).stream()
+        return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
                 .map(zaaktypeConverter::convert)
                 .collect(Collectors.toList());
     }

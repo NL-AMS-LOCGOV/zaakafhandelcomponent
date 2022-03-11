@@ -34,8 +34,8 @@ import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTZaakResultaattype;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.FlowableService;
-import net.atos.zac.util.ConfigurationService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
@@ -51,7 +51,7 @@ public class ZaakafhandelParametersRESTService {
     private ZTCClientService ztcClientService;
 
     @Inject
-    private ConfigurationService configurationService;
+    private ConfiguratieService configuratieService;
 
     @Inject
     private FlowableService flowableService;
@@ -192,6 +192,6 @@ public class ZaakafhandelParametersRESTService {
     }
 
     private List<Zaaktype> listZaaktypes() {
-        return ztcClientService.listZaaktypen(configurationService.readDefaultCatalogusURI());
+        return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI());
     }
 }
