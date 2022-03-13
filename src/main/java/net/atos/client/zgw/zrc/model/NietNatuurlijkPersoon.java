@@ -39,6 +39,13 @@ public class NietNatuurlijkPersoon {
 
     private SubVerblijfBuitenland subVerblijfBuitenland;
 
+    public NietNatuurlijkPersoon() {
+    }
+
+    public NietNatuurlijkPersoon(final String innNnpId) {
+        this.innNnpId = innNnpId;
+    }
+
     public String getInnNnpId() {
         return innNnpId;
     }
