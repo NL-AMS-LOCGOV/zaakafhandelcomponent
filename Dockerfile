@@ -12,6 +12,9 @@ FROM eclipse-temurin:17-jre-focal as runtime
 # Copy zaakafhandelcomponent bootable jar
 COPY --from=build /target/zaakafhandelcomponent.jar /
 
+# Copy truststore
+COPY cacerts /
+
 # Start zaakafhandelcomponent
 ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent.jar"]
 EXPOSE 8080 8787 9990

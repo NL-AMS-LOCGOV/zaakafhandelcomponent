@@ -14,7 +14,6 @@ import {FormGroup, Validators} from '@angular/forms';
 import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import * as moment from 'moment/moment';
 import {Informatieobjecttype} from '../model/informatieobjecttype';
-import {Taal} from '../model/taal.enum';
 import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.enum';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {NavigationService} from '../../shared/navigation/navigation.service';
@@ -24,7 +23,7 @@ import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {TranslateService} from '@ngx-translate/core';
+import {ConfiguratieService} from '../../configuratie/configuratie.service';
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -44,7 +43,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                 private router: Router,
                 private navigation: NavigationService,
                 public utilService: UtilService,
-                private translate: TranslateService) {
+                private configuratieService: ConfiguratieService) {
     }
 
     ngOnInit(): void {
@@ -52,7 +51,6 @@ export class InformatieObjectCreateComponent implements OnInit {
         this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
-        const talen = this.utilService.getEnumAsSelectList('taal', Taal);
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
@@ -75,13 +73,12 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                                .build();
 
             const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                     .value(talen[0])
-                                                     .optionLabel('label').options(talen)
+                                                     .value$(this.configuratieService.defaultTaal())
+                                                     .optionLabel('naam').options(this.configuratieService.listTalen())
                                                      .validators(Validators.required)
                                                      .build();
 
             const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                       .value(informatieobjectStatussen[0])
                                                        .validators(Validators.required)
                                                        .optionLabel('label').options(informatieobjectStatussen)
                                                        .build();
@@ -98,7 +95,6 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                       .build();
 
             const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                              .value(vertrouwelijkheidsAanduidingen[0])
                                                               .optionLabel('label').options(vertrouwelijkheidsAanduidingen)
                                                               .validators(Validators.required)
                                                               .build();
@@ -118,7 +114,9 @@ export class InformatieObjectCreateComponent implements OnInit {
                     infoObject[key] = value; // conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
                 } else if (key === 'informatieobjectType') {
                     infoObject[key] = value.url;
-                } else if (key === 'taal' || key === 'status' || key === 'vertrouwelijkheidaanduiding') {
+                } else if (key === 'taal') {
+                    infoObject[key] = value.code;
+                } else if (key === 'status' || key === 'vertrouwelijkheidaanduiding') {
                     infoObject[key] = value.value;
                 } else {
                     infoObject[key] = value;

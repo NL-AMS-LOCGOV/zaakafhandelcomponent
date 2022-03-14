@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -18,7 +18,7 @@ public enum TaakSortering {
             return null;
         }
         return Arrays.stream(values())
-                .filter(taakSortering -> taakSortering.name().equals(value))
+                .filter(taakSortering -> taakSortering.name().equalsIgnoreCase(value))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Onbekende TaakSortering met waarde: '%s'", value)));
     }

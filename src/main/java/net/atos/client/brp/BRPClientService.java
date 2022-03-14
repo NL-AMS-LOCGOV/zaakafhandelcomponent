@@ -26,11 +26,11 @@ public class BRPClientService {
 
     @Inject
     @RestClient
-    private BRPClient brpClient;
+    private IngeschrevenpersonenClient ingeschrevenpersonenClient;
 
     /**
      * Vindt personen
-     *
+     * <p>
      * Zoek personen met één van de onderstaande verplichte combinaties van parameters en vul ze evt. aan met parameters uit de andere combinaties.
      * Default krijg je personen terug die nog in leven zijn, tenzij je de inclusiefoverledenpersonen&#x3D;true opgeeft.
      * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien.
@@ -60,7 +60,7 @@ public class BRPClientService {
      * - verblijfplaats__nummeraanduidingIdentificatie
      */
     public IngeschrevenPersoonHalCollectie listPersonen(final ListPersonenParameters parameters) {
-        return brpClient.listPersonen(parameters);
+        return ingeschrevenpersonenClient.listPersonen(parameters);
     }
 
     /**
@@ -72,9 +72,8 @@ public class BRPClientService {
      */
     public IngeschrevenPersoonHal findPersoon(final String burgerservicenummer, final String fields) {
         try {
-            return brpClient.readPersoon(burgerservicenummer, fields);
+            return ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields);
         } catch (final PersoonNotFoundException e) {
-            LOG.warning(() -> String.format("Persoon with burgerservicenummer '%s' not found in BRP bevragen provider", burgerservicenummer));
         } catch (final TimeoutException | ProcessingException e) {
             LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", e.getMessage()));
         }

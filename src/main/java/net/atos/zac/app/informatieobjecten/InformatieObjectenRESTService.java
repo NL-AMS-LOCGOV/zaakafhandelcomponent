@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.informatieobjecten;
 
-import static net.atos.zac.util.ConfigurationService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

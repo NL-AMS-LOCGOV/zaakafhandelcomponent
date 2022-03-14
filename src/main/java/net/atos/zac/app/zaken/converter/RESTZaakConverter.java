@@ -21,7 +21,7 @@ import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
-import net.atos.zac.util.ConfigurationService;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.PeriodUtil;
 
 public class RESTZaakConverter {
@@ -115,7 +115,7 @@ public class RESTZaakConverter {
     public Zaak convert(final RESTZaak restZaak) {
 
         final Zaak zaak = new Zaak(ztcClientService.readZaaktypeUrl(restZaak.zaaktype.identificatie), restZaak.startdatum,
-                                   ConfigurationService.BRON_ORGANISATIE, ConfigurationService.VERANTWOORDELIJKE_ORGANISATIE);
+                                   ConfiguratieService.BRON_ORGANISATIE, ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);

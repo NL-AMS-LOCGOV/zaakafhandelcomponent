@@ -32,8 +32,6 @@ public abstract class AbstractEnkelvoudigInformatieobject {
 
     public static final int BESCHRIJVING_MAX_LENGTH = 1000;
 
-    public static final String TAAL_NLD = "nld";
-
     /**
      * URL-referentie naar dit object. Dit is de unieke identificatie en locatie van dit object.
      */

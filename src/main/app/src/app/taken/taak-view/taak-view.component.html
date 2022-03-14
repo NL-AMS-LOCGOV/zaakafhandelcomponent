@@ -57,8 +57,11 @@
         <mat-card fxFlex="100" *ngIf="formulier">
             <mat-card-content>
                 <div class="form">
-                    <mfb-form (formPartial)="onFormPartial($event)" (formSubmit)="onFormSubmit($event)" [formFields]="formulier.form"
-                              [config]="formConfig"></mfb-form>
+                    <mfb-form (formPartial)="onFormPartial($event)"
+                              (formSubmit)="onFormSubmit($event)"
+                              [formFields]="formulier.form"
+                              [config]="formConfig"
+                              [submitted]="posts"></mfb-form>
                 </div>
             </mat-card-content>
         </mat-card>

@@ -21,12 +21,14 @@ import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.zac.app.configuratie.converter.RESTTaalConverter;
+import net.atos.zac.app.configuratie.model.RESTTaal;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.util.ConfigurationService;
+import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieobjectConverter {
@@ -36,6 +38,9 @@ public class RESTInformatieobjectConverter {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    private RESTTaalConverter restTaalConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -70,7 +75,10 @@ public class RESTInformatieobjectConverter {
             restObject.status = enkelvoudigInformatieObject.getStatus().toString();
         }
         restObject.formaat = enkelvoudigInformatieObject.getFormaat();
-        restObject.taal = enkelvoudigInformatieObject.getTaal();
+        final RESTTaal taal = restTaalConverter.convert(enkelvoudigInformatieObject.getTaal());
+        if (taal != null) {
+            restObject.taal = taal.naam;
+        }
         restObject.versie = enkelvoudigInformatieObject.getVersie();
         restObject.registratiedatumTijd = enkelvoudigInformatieObject.getBeginRegistratie();
         restObject.bestandsnaam = enkelvoudigInformatieObject.getBestandsnaam();
@@ -94,7 +102,7 @@ public class RESTInformatieobjectConverter {
 
     public EnkelvoudigInformatieobjectWithInhoud convert(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
-                ConfigurationService.BRON_ORGANISATIE,
+                ConfiguratieService.BRON_ORGANISATIE,
                 restEnkelvoudigInformatieobject.creatiedatum,
                 restEnkelvoudigInformatieobject.titel,
                 restEnkelvoudigInformatieobject.auteur,
@@ -113,11 +121,11 @@ public class RESTInformatieobjectConverter {
 
     public EnkelvoudigInformatieobjectWithInhoud convert(final RESTTaakDocumentData documentData, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
-                ConfigurationService.BRON_ORGANISATIE,
+                ConfiguratieService.BRON_ORGANISATIE,
                 LocalDate.now(),
                 documentData.documentTitel,
                 ingelogdeMedewerker.get().getNaam(),
-                ConfigurationService.DEFAULT_DOCUMENT_TAAL,
+                ConfiguratieService.TAAL_NEDERLANDS,
                 documentData.documentType.url,
                 Base64.getEncoder().encodeToString(bestand.file)
         );
