@@ -37,6 +37,8 @@ import org.joda.time.IllegalInstantException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
@@ -48,6 +50,8 @@ import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
@@ -68,6 +72,7 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
+import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -117,6 +122,12 @@ public class ZakenRESTService {
 
     @Inject
     private SignaleringenService signaleringenService;
+
+    @Inject
+    private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
+
+    @Inject
+    private DRCClientService drcClientService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -181,6 +192,33 @@ public class ZakenRESTService {
                                                                               restZaakEditMetRedenGegevens.zaak),
                                                                       restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
+    }
+
+    @DELETE
+    @Path("zaakinformatieobjecten/{informatieObjectUuid}/{zaakUuid}")
+    public void ontkoppelInformatieObject(@PathParam("informatieObjectUuid") final UUID uuid, @PathParam("zaakUuid") final UUID zaakUuid) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        parameters.setInformatieobject(informatieobject.getUrl());
+        parameters.setZaak(zrcClientService.readZaak(zaakUuid).getUrl());
+        List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(parameters);
+        if (zaakInformatieobjecten.isEmpty()) {
+            throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", zaakUuid, uuid));
+        }
+        zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid());
+        if (findZakenInformatieobject(uuid).isEmpty()) {
+            ontkoppeldeDocumentenService.create(informatieobject);
+        }
+    }
+
+    @GET
+    @Path("zaken/informatieobject/{informatieObjectUuid}")
+    public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID uuid) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
+        List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
+        return zaakInformatieobjects.stream()
+                .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).collect(Collectors.toList());
     }
 
     @GET
@@ -350,18 +388,12 @@ public class ZakenRESTService {
 
         for (final Map.Entry<String, String> entry : tableState.getSearch().getPredicateObject().entrySet()) {
             switch (entry.getKey()) {
-                case "zaaktype":
-                    zaakListParameters.setZaaktype(ztcClientService.readZaaktypeUrl(entry.getValue()));
-                    break;
-                case "groep":
-                    zaakListParameters
-                            .setRolBetrokkeneIdentificatieOrganisatorischeEenheidIdentificatie(entry.getValue());
-                    break;
-                default:
-                    throw new IllegalInstantException(String.format("Unknown search criteria: '%s'", entry.getKey()));
+                case "zaaktype" -> zaakListParameters.setZaaktype(ztcClientService.readZaaktypeUrl(entry.getValue()));
+                case "groep" -> zaakListParameters
+                        .setRolBetrokkeneIdentificatieOrganisatorischeEenheidIdentificatie(entry.getValue());
+                default -> throw new IllegalInstantException(String.format("Unknown search criteria: '%s'", entry.getKey()));
             }
         }
-
         return zaakListParameters;
     }
 

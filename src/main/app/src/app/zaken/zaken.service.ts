@@ -167,6 +167,18 @@ export class ZakenService {
         );
     }
 
+    ontkoppelInformatieObject(zaakUUID: string, documentUUID: string): Observable<void> {
+        return this.http.delete<void>(`${this.basepath}/zaakinformatieobjecten/${documentUUID}/${zaakUUID}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    findZakenForInformatieobject(documentUUID: string): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/zaken/informatieobject/${documentUUID}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
