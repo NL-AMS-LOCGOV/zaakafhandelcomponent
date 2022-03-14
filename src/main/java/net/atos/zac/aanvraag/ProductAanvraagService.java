@@ -44,7 +44,7 @@ public class ProductAanvraagService {
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
-    private static final String ROL_TOELICHTING = "Aanvrager product";
+    private static final String ROL_TOELICHTING = "Initiator";
 
     @Inject
     private ObjectsClientService objectsClientService;

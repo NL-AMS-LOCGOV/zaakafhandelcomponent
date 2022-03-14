@@ -56,7 +56,6 @@ public class RESTZaakOverzichtConverter {
         if (zaak.getStatus() != null) {
             restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }
-//      restZaakOverzichtView.aanvrager
 
         final String groepId = zgwApiService.findGroepForZaak(zaak.getUrl())
                 .filter(Objects::nonNull)
