@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
@@ -24,6 +24,11 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {ConfiguratieService} from '../../configuratie/configuratie.service';
+import {TranslateService} from '@ngx-translate/core';
+import {Medewerker} from '../../identity/model/medewerker';
+import {IdentityService} from '../../identity/identity.service';
+import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 
 @Component({
     templateUrl: './informatie-object-create.component.html',
@@ -31,11 +36,14 @@ import {ConfiguratieService} from '../../configuratie/configuratie.service';
 })
 export class InformatieObjectCreateComponent implements OnInit {
 
+    @ViewChild(FormComponent) child: FormComponent;
+
     zaakUuid: string;
     zaak: Zaak;
     fields: Array<AbstractFormField[]>;
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
+    ingelogdeMedewerker: Medewerker;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -43,7 +51,9 @@ export class InformatieObjectCreateComponent implements OnInit {
                 private router: Router,
                 private navigation: NavigationService,
                 public utilService: UtilService,
-                private configuratieService: ConfiguratieService) {
+                private configuratieService: ConfiguratieService,
+                private translateService: TranslateService,
+                private identityService: IdentityService) {
     }
 
     ngOnInit(): void {
@@ -52,22 +62,28 @@ export class InformatieObjectCreateComponent implements OnInit {
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
+
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
+            this.getIngelogdeMedewerker();
+
             const titel = new InputFormFieldBuilder().id('titel').label('titel')
                                                      .validators(Validators.required)
                                                      .build();
 
-            const beschrijving = new InputFormFieldBuilder().id('beschrijving').label('beschrijving')
+            const beschrijving = new InputFormFieldBuilder().id('beschrijving')
+                                                            .label('beschrijving')
                                                             .build();
 
             const inhoud = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                     .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
+                                                     .uploadURL(
+                                                         this.informatieObjectenService.getUploadURL(this.zaakUuid))
                                                      .validators(Validators.required)
                                                      .build();
 
-            const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum').label('creatiedatum')
+            const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum')
+                                                               .label('creatiedatum')
                                                                .value(moment())
                                                                .validators(Validators.required)
                                                                .build();
@@ -83,24 +99,54 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                        .optionLabel('label').options(informatieobjectStatussen)
                                                        .build();
 
-            const documentType = new SelectFormFieldBuilder().id('informatieobjectType').label('informatieobjectType')
+            const documentType = new SelectFormFieldBuilder().id('informatieobjectType')
+                                                             .label('informatieobjectType')
                                                              .options(
-                                                                 this.informatieObjectenService.listInformatieobjecttypes(zaak.zaaktype.uuid))
+                                                                 this.informatieObjectenService.listInformatieobjecttypes(
+                                                                     zaak.zaaktype.uuid))
                                                              .optionLabel('omschrijving')
                                                              .validators(Validators.required)
                                                              .build();
 
             const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
                                                       .validators(Validators.required)
+                                                      .value(this.ingelogdeMedewerker.naam)
                                                       .build();
 
-            const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                              .optionLabel('label').options(vertrouwelijkheidsAanduidingen)
+            const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
+                                                              .label('vertrouwelijkheidaanduiding')
+                                                              .optionLabel('label')
+                                                              .options(vertrouwelijkheidsAanduidingen)
                                                               .validators(Validators.required)
                                                               .build();
 
+            const addAnotherDoc = new CheckboxFormFieldBuilder().id('addNewDocument_checkbox')
+                                                                .label(this.translateService.instant(
+                                                                    'actie.document.aanmaken.nogmaals'))
+                                                                .build();
+
             this.fields =
-                [[titel], [beschrijving], [inhoud], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal]];
+                [[inhoud], [titel], [beschrijving], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal], [addAnotherDoc]];
+
+            inhoud.formControl.valueChanges.subscribe(value => {
+                if (!titel.formControl.value) {
+                    const formattedTitle = value.split('.');
+                    titel.formControl.setValue(formattedTitle[0]);
+                }
+            });
+
+            documentType.formControl.valueChanges.subscribe(value => {
+                // Make the first letter uppercase and the rest lowercase, this is to ensure it matches the values in the
+                // vertrouwelijkheidaanduiding dropdown. Otherwise the value would not be set properly.
+                let vertAand = value.vertrouwelijkheidaanduiding;
+                vertAand = vertAand.charAt(0).toUpperCase() + vertAand.substr(1).toLowerCase();
+                value.vertrouwelijkheidaanduiding = vertAand;
+                const vertrouwelijkValue = {
+                    label: value.vertrouwelijkheidaanduiding,
+                    value: Vertrouwelijkheidaanduiding[value.vertrouwelijkheidaanduiding.toUpperCase()]
+                };
+                vertrouwelijk.formControl.setValue(vertrouwelijkValue);
+            });
         });
     }
 
@@ -123,12 +169,33 @@ export class InformatieObjectCreateComponent implements OnInit {
                 }
             });
 
-            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak.uuid, infoObject).subscribe(newObject => {
-                this.router.navigate(['/informatie-objecten', newObject]);
-            });
+            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak.uuid, infoObject)
+                .subscribe(() => {
+                    if (formGroup.get('addNewDocument_checkbox').value) {
+                        formGroup.get('bestandsnaam').reset();
+                        formGroup.get('bestandsnaam').markAsPristine();
+                        formGroup.get('bestandsnaam').setErrors(null);
+
+                        formGroup.get('titel').reset();
+                        formGroup.get('titel').markAsPristine();
+                        formGroup.get('titel').setErrors(null);
+
+                        formGroup.get('beschrijving').reset();
+
+                        this.child.reset();
+                    } else {
+                        this.router.navigate(['/zaken/', this.zaak.identificatie]);
+                    }
+                });
         } else {
             this.navigation.back();
         }
+    }
+
+    private getIngelogdeMedewerker() {
+        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+            this.ingelogdeMedewerker = ingelogdeMedewerker;
+        });
     }
 
 }
