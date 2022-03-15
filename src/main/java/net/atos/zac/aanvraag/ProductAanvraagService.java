@@ -17,12 +17,15 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import net.atos.client.kvk.KVKClientService;
+import net.atos.client.kvk.basisprofiel.model.Vestiging;
 import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaakobject;
@@ -41,7 +44,7 @@ public class ProductAanvraagService {
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
-    private static final String ROL_TOELICHTING = "Aanvrager product";
+    private static final String ROL_TOELICHTING = "Initiator";
 
     @Inject
     private ObjectsClientService objectsClientService;
@@ -54,6 +57,9 @@ public class ProductAanvraagService {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private KVKClientService kvkClientService;
 
     public void createZaak(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
@@ -75,14 +81,26 @@ public class ProductAanvraagService {
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
         pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
-        addInitiator(productAanvraag.getBsn(), zaak.getUrl(), zaak.getZaaktype());
+        if (productAanvraag.getBsn() != null || productAanvraag.getKvk() != null) {
+            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), zaak.getUrl(), zaak.getZaaktype());
+        }
     }
 
-    private void addInitiator(final String bsn, final URI zaak, final URI zaaktype) {
+    private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
         if (bsn != null) {
             final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
-            RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
-            zrcClientService.createRol(rol);
+            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
+            zrcClientService.createRol(rolNatuurlijkPersoon);
+        } else {
+            final Vestiging hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
+            if (hoofdvestiging != null) {
+                final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
+                final RolVestiging rolVestiging = new RolVestiging(zaak, initiator.getUrl(), ROL_TOELICHTING,
+                                                                   new net.atos.client.zgw.zrc.model.Vestiging(hoofdvestiging.getVestigingsnummer()));
+                zrcClientService.createRol(rolVestiging);
+            } else {
+                LOG.warning(() -> String.format("Geen hoofdvestiging gevonden voor bedrijf met kvk nummer '%s'", kvkNummer));
+            }
         }
     }
 

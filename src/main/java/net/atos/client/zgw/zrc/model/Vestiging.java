@@ -25,6 +25,13 @@ public class Vestiging {
 
     private SubVerblijfBuitenland subVerblijfBuitenland;
 
+    public Vestiging() {
+    }
+
+    public Vestiging(final String vestigingsNummer) {
+        this.vestigingsNummer = vestigingsNummer;
+    }
+
     public String getVestigingsNummer() {
         return vestigingsNummer;
     }

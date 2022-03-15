@@ -27,7 +27,7 @@ public class AuditRolWijzigingConverter extends AbstractAuditWijzigingConverter<
 
     private String toAttribuutLabel(final AuditWijziging<Rol> wijziging) {
         return switch (wijziging.getOud() != null ? wijziging.getOud().getBetrokkeneType() : wijziging.getNieuw().getBetrokkeneType()) {
-            case NATUURLIJK_PERSOON, NIET_NATUURLIJK_PERSOON, VESTIGING -> "aanvrager";
+            case NATUURLIJK_PERSOON, NIET_NATUURLIJK_PERSOON, VESTIGING -> "initiator";
             case ORGANISATORISCHE_EENHEID -> "groep";
             case MEDEWERKER -> "behandelaar";
         };
