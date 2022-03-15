@@ -90,4 +90,14 @@ public class ZaakafhandelParameterBeheerService {
         final TypedQuery<ZaakbeeindigReden> emQuery = entityManager.createQuery(query);
         return emQuery.getResultList();
     }
+
+    // ToDo: filtern op zaakbeeindigredenen per zaaktype
+    public List<ZaakbeeindigReden> listZaakbeeindigRedenen(final UUID zaaktypeUUID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZaakbeeindigReden> query = builder.createQuery(ZaakbeeindigReden.class);
+        final Root<ZaakbeeindigReden> root = query.from(ZaakbeeindigReden.class);
+        query.orderBy(builder.asc(root.get("naam")));
+        final TypedQuery<ZaakbeeindigReden> emQuery = entityManager.createQuery(query);
+        return emQuery.getResultList();
+    }
 }

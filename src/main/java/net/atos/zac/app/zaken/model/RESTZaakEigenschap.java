@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 public class RESTZaakEigenschap {
+
     public String type;
 
     public String naam;
