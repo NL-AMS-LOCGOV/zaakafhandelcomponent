@@ -135,7 +135,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             ['startdatum', ColumnPickerValue.VISIBLE],
             ['einddatum', ColumnPickerValue.HIDDEN],
             ['einddatumGepland', ColumnPickerValue.HIDDEN],
-            ['aanvrager', ColumnPickerValue.VISIBLE],
+            ['initiator', ColumnPickerValue.VISIBLE],
             ['behandelaar', ColumnPickerValue.VISIBLE],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['toelichting', ColumnPickerValue.HIDDEN],
