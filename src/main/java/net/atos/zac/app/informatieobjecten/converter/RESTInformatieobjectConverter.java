@@ -115,7 +115,7 @@ public class RESTInformatieobjectConverter {
         data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
         data.setIndicatieGebruiksrecht(false);
-        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
         return data;
     }
 
