@@ -39,8 +39,8 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {MatDialog} from '@angular/material/dialog';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
-import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
-import {ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog-data';
+import {DialogComponent} from '../../shared/dialog/dialog.component';
+import {DialogData} from '../../shared/dialog/dialog-data';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
@@ -50,11 +50,11 @@ import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-co
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {Persoon} from '../../personen/model/persoon';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
-import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
 import {map} from 'rxjs/operators';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -274,13 +274,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     openPlanItemStartenDialog(planItem: PlanItem): void {
-        const confirmDialogData = new ConfirmDialogData('actie.ja', 'actie.nee',
-            new ParagraphFormFieldBuilder().text(this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam})).build(),
-            () => this.planItemsService.doPlanItem(planItem));
         this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam}),
+                this.planItemsService.doPlanItem(planItem)
+            ),
             width: '400px',
-            data: confirmDialogData,
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -291,7 +291,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     openZaakAfbrekenDialog(): void {
-        const confirmDialogData = new ConfirmDialogData('actie.zaak.afbreken', 'actie.annuleren',
+        const dialogData = new DialogData('actie.zaak.afbreken', 'actie.annuleren',
             new SelectFormFieldBuilder().id('reden')
                                         .label('actie.zaak.afbreken.reden')
                                         .optionLabel('naam')
@@ -300,9 +300,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                         .build(),
             (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
         this.websocketService.doubleSuspendListener(this.zaakListener);
-        this.dialog.open(ConfirmDialogComponent, {
+        this.dialog.open(DialogComponent, {
             width: '400px',
-            data: confirmDialogData,
+            data: dialogData,
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -486,17 +486,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 return zaakIDs.filter(zaakID => zaakID !== this.zaak.identificatie).join(', ');
             })
         ).subscribe(zaakIDs => {
-            let confirmDialogData;
+            let melding: string;
             if (zaakIDs) {
-                confirmDialogData = new ConfirmDialogData('actie.document.ontkoppelen.meerdere.zaken.bevestigen',
-                    {zaken: zaakIDs, document: informatieobject.titel},
-                    this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid));
+                melding = this.translate.instant('actie.document.ontkoppelen.meerdere.zaken.bevestigen', {zaken: zaakIDs, document: informatieobject.titel});
             } else {
-                confirmDialogData = new ConfirmDialogData('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel},
-                    this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid));
+                melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
             }
             this.dialog.open(ConfirmDialogComponent, {
-                data: confirmDialogData,
+                data: new ConfirmDialogData(melding, this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid)),
                 autoFocus: 'dialog'
             }).afterClosed().subscribe(result => {
                 if (result) {
