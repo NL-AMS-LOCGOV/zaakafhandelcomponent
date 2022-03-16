@@ -4,12 +4,12 @@
  */
 
 export enum Vertrouwelijkheidaanduiding {
-    'OPENBAAR' = 'OPENBAAR',
-    'BEPERKT_OPENBAAR' = 'BEPERKT_OPENBAAR',
-    'INTERN' = 'INTERN',
-    'ZAAKVERTROUWELIJK' = 'ZAAKVERTROUWELIJK',
-    'VERTROUWELIJK' = 'VERTROUWELIJK',
-    'CONFIDENTIEEL' = 'CONFIDENTIEEL',
-    'GEHEIM' = 'GEHEIM',
-    'ZEER_GEHEIM' = 'ZEER_GEHEIM'
+    'openbaar' = 'OPENBAAR',
+    'beperkt_openbaar' = 'BEPERKT_OPENBAAR',
+    'intern' = 'INTERN',
+    'zaakvertrouwelijk' = 'ZAAKVERTROUWELIJK',
+    'vertrouwelijk' = 'VERTROUWELIJK',
+    'confidentieel' = 'CONFIDENTIEEL',
+    'geheim' = 'GEHEIM',
+    'zeer_geheim' = 'ZEER_GEHEIM'
 }

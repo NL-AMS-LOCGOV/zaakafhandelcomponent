@@ -105,11 +105,20 @@ public class ZRCClientService implements Caching {
     /**
      * Create {@link ZaakInformatieobject}
      *
-     * @param zaakInformatieobject
-     * @return
+     * @param zaakInformatieobject describes relation between ZAAK en INFORMATIEOBJECT
+     * @return ZaakInformatieobject
      */
     public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject) {
         return zrcClient.zaakinformatieobjectCreate(zaakInformatieobject);
+    }
+
+    /**
+     * delete {@link ZaakInformatieobject}
+     *
+     * @param zaakInformatieobjectUuid uuid
+     */
+    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid) {
+        zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
     /**
@@ -278,7 +287,6 @@ public class ZRCClientService implements Caching {
         final List<Zaak> openZaken = allZaken.stream()
                 .filter(zaak -> zaak.getArchiefnominatie() == null)
                 .collect(Collectors.toList());
-
         final List<Zaak> zakenOnPage = openZaken.stream()
                 .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
                 .limit(PAGE_SIZE_OPEN_ZAAK)

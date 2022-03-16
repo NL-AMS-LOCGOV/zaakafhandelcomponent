@@ -362,6 +362,10 @@
                                             title="{{ 'actie.document.bekijken' | translate}}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
+                                    <button mat-flat-button [disabled]=row.loading (click)="ontkoppelDocument(row)"
+                                            title="{{ 'actie.document.ontkoppelen' | translate}}">
+                                        <mat-icon>link_off</mat-icon>
+                                    </button>
                                 </td>
                             </ng-container>
                             <tr mat-header-row

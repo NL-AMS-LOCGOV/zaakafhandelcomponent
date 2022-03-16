@@ -33,6 +33,9 @@ export class FileComponent extends FormComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.data.reset$.subscribe(() => {
+            this.reset();
+        });
     }
 
     uploadFile(file: File) {
@@ -64,6 +67,7 @@ export class FileComponent extends FormComponent implements OnInit {
                         case HttpEventType.Response:
                             this.fileInput.nativeElement.value = null;
                             this.updateInput(file.name);
+                            this.data.fileUploaded$.next(file.name);
                             this.status = UploadStatus.GEREED;
                             setTimeout(() => {
                                 this.progress = 0;
@@ -102,8 +106,10 @@ export class FileComponent extends FormComponent implements OnInit {
         return file.name.split('.').pop().toLowerCase();
     }
 
-    reset($event: MouseEvent) {
-        $event.stopPropagation();
+    reset($event?: MouseEvent) {
+        if ($event) {
+            $event.stopPropagation();
+        }
         if (!this.subscription.closed) {
             this.subscription.unsubscribe();
         }

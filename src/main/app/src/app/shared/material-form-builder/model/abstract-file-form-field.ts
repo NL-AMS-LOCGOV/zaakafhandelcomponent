@@ -5,6 +5,7 @@
 
 import {AbstractFormField} from './abstract-form-field';
 import {AppGlobals} from '../../../app.globals';
+import {Observable, Subject} from 'rxjs';
 
 export abstract class AbstractFileFormField extends AbstractFormField {
 
@@ -12,9 +13,18 @@ export abstract class AbstractFileFormField extends AbstractFormField {
     fileSizeMB: number = AppGlobals.FILE_MAX_SIZE;
     uploadURL: string;
     uploadError: string;
+    fileUploaded$ = new Subject<string>();
+    reset$ = new Subject<void>();
 
     protected constructor() {
         super();
     }
 
+    get fileUploaded(): Observable<string> {
+        return this.fileUploaded$.asObservable();
+    }
+
+    reset() {
+        this.reset$.next();
+    }
 }
