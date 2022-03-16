@@ -28,11 +28,12 @@ import {EditAutocompleteComponent} from './edit/edit-autocomplete/edit-autocompl
 import {EditDatumComponent} from './edit/edit-datum/edit-datum.component';
 import {PipesModule} from './pipes/pipes.module';
 import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
-import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {DialogComponent} from './dialog/dialog.component';
 import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker.component';
 import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
     declarations: [
@@ -50,6 +51,7 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
         EditTekstComponent,
         EditVertrouwelijkheidaanduidingComponent,
         ConfirmDialogComponent,
+        DialogComponent,
         NoStickyColumnPipe,
         ColumnPickerComponent
     ],
@@ -84,6 +86,7 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
         EditAutocompleteComponent,
         EditTekstComponent,
         EditVertrouwelijkheidaanduidingComponent,
+        DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,
         ColumnPickerComponent

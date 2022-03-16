@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {ConfirmDialogData} from './confirm-dialog-data';
+import {Observable} from 'rxjs';
 
 @Component({
-    templateUrl: 'confirm-dialog.component.html',
-    styleUrls: ['./confirm-dialog.component.less']
-
+    selector: 'zac-confirm-dialog',
+    templateUrl: 'confirm-dialog.component.html'
 })
-export class ConfirmDialogComponent implements OnInit {
 
+export class ConfirmDialogComponent {
     loading = false;
 
     constructor(
@@ -21,14 +20,11 @@ export class ConfirmDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {
     }
 
-    ngOnInit(): void {
-    }
-
     confirm(): void {
-        this.dialogRef.disableClose = true;
-        this.loading = true;
-        if (this.data.fn) {
-            this.data.fn(this.data.formField.formControl.value).subscribe(() => {
+        if (this.data.observable) {
+            this.loading = true;
+            this.dialogRef.disableClose = true;
+            this.data.observable.subscribe(() => {
                 this.dialogRef.close(true);
             });
         } else {
@@ -37,6 +33,11 @@ export class ConfirmDialogComponent implements OnInit {
     }
 
     cancel(): void {
-        this.dialogRef.close();
+        this.dialogRef.close(false);
+    }
+}
+
+export class ConfirmDialogData {
+    constructor(public melding: string, public observable?: Observable<any>) {
     }
 }
