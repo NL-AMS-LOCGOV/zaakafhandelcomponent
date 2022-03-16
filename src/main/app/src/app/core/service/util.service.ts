@@ -83,15 +83,14 @@ export class UtilService {
         this.loading.next(loading);
     }
 
-    getEnumAsSelectList(prefix: string, enumValue: any): Observable<{ label: string, value: string }[]> {
+    getEnumAsSelectList(prefix: string, enumValue: any): { label: string, value: string }[] {
         const list: { label: string, value: string }[] = [];
         Object.keys(enumValue).forEach(value => {
-            this.translate.get(`${prefix}.${value}`).subscribe(result => {
+            this.translate.get(`${prefix}.${enumValue[value]}`).subscribe(result => {
                 list.push({label: result, value: value});
             });
         });
-
-        return of(list);
+        return list;
     }
 
     openSnackbar(message: string, params?: {}) {

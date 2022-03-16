@@ -5,7 +5,7 @@
 
 import {AbstractFormFieldBuilder} from './abstract-form-field-builder';
 import {AbstractChoicesFormField} from './abstract-choices-form-field';
-import {Observable} from 'rxjs';
+import {isObservable, Observable, of as observableOf} from 'rxjs';
 
 export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldBuilder {
 
@@ -20,8 +20,12 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
         return this;
     }
 
-    options(options: Observable<any[]>): this {
-        this.formField.options = options;
+    options(options: Observable<any[]> | any[]): this {
+        if (isObservable(options)) {
+            this.formField.options = options;
+        } else {
+            this.formField.options = observableOf(options);
+        }
         return this;
     }
 

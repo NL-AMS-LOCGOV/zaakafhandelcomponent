@@ -125,7 +125,7 @@ public class RESTZaakConverter {
 
         zaak.setCommunicatiekanaal(getCommunicatieKanaal(restZaak.communicatiekanaal));
         if (restZaak.vertrouwelijkheidaanduiding != null) {
-            zaak.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(restZaak.vertrouwelijkheidaanduiding));
+            zaak.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
 
         return zaak;
@@ -140,7 +140,7 @@ public class RESTZaakConverter {
         zaak.setUiterlijkeEinddatumAfdoening(restZaak.uiterlijkeEinddatumAfdoening);
         if (restZaak.vertrouwelijkheidaanduiding != null) {
             zaak.setVertrouwelijkheidaanduiding(
-                    Vertrouwelijkheidaanduiding.valueOf(restZaak.vertrouwelijkheidaanduiding));
+                    Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
         return zaak;
     }
