@@ -272,6 +272,8 @@
   "msg.gewijzigd.4": " by somebody.",
   "msg.pagina": "of",
   "msg.pagina.items": "Items per page",
+  "msg.initiator.toegevoegd": "The initiator {{naam}} has been added",
+  "msg.initiator.verwijderd": "The initiator has been removed",
   "msg.taak.afgerond": "The task has been finished",
   "msg.taak.opgeslagen": "The task has been saved",
   "msg.taak.toegekend": "The task has been assigned to {{behandelaar}}",

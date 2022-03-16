@@ -436,6 +436,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
         this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: persoon.naam});
             this.zaak.initiatorBSN = persoon.bsn;
             this.initiatorPersoon = persoon;
             this.init(this.zaak);
@@ -446,6 +447,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         $event.stopPropagation();
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.utilService.openSnackbar('msg.initiator.verwijderd');
             this.zaak.initiatorBSN = null;
             this.initiatorPersoon = null;
             this.init(this.zaak);

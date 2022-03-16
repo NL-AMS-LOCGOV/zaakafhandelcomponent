@@ -272,6 +272,8 @@
   "msg.gewijzigd.4": ".",
   "msg.pagina": "van",
   "msg.pagina.items": "Items per pagina",
+  "msg.initiator.toegevoegd": "De initiator {{naam}} is toegevoegd",
+  "msg.initiator.verwijderd": "De initiator is verwijderd",
   "msg.taak.afgerond": "De taak is afgerond",
   "msg.taak.opgeslagen": "De taak is opgeslagen",
   "msg.taak.toegekend": "De taak is toegekend aan {{behandelaar}}",
