@@ -22,27 +22,27 @@ export class ZaakafhandelParametersService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    private basepath = '/rest/parameters';
+    private basepath = '/rest/zaakafhandelParameters';
 
     listZaakafhandelParameters(): Observable<ZaakafhandelParameters[]> {
-        return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}/parameters`).pipe(
+        return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}`).pipe(
             catchError(this.handleError)
         );
     }
 
     readZaakafhandelparameters(zaaktypeUuid: string): Observable<ZaakafhandelParameters> {
-        return this.http.get<ZaakafhandelParameters>(`${this.basepath}/parameters/${zaaktypeUuid}`).pipe(
+        return this.http.get<ZaakafhandelParameters>(`${this.basepath}/${zaaktypeUuid}`).pipe(
             catchError(this.handleError)
         );
     }
 
-    listAllZaakbeeindigRedenen(): Observable<ZaakbeeindigReden[]> {
+    listZaakbeeindigRedenen(): Observable<ZaakbeeindigReden[]> {
         return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    listZaakbeeindigRedenen(zaaktypeUuid: string): Observable<ZaakbeeindigReden[]> {
+    listZaakbeeindigRedenenForZaaktype(zaaktypeUuid: string): Observable<ZaakbeeindigReden[]> {
         return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
@@ -73,7 +73,7 @@ export class ZaakafhandelParametersService {
     }
 
     updateZaakafhandelparameters(zaakafhandelparameters): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/parameters`, zaakafhandelparameters).pipe(
+        return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
             catchError(this.handleError)
         );
     }

@@ -5,6 +5,6 @@
 
 export class ZaakAfbrekenGegevens {
     zaakUUID: string;
-    zaakBeeindigRedenId: string;
+    zaakbeeindigRedenId: string;
 }
 

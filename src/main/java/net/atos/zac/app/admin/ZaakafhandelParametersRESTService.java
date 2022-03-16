@@ -7,6 +7,7 @@ package net.atos.zac.app.admin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,9 +41,10 @@ import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
 
 @Singleton
-@Path("parameters")
+@Path("zaakafhandelParameters")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ZaakafhandelParametersRESTService {
@@ -101,7 +103,6 @@ public class ZaakafhandelParametersRESTService {
      * @return LIST of ZAAKAFHANDELPARAMETERS
      */
     @GET
-    @Path("parameters")
     public List<RESTZaakafhandelParameters> listZaakafhandelParameters() {
         final List<RESTZaakafhandelParameters> parametersList = new ArrayList<>();
         final List<Zaaktype> zaaktypes = listZaaktypes();
@@ -120,8 +121,8 @@ public class ZaakafhandelParametersRESTService {
      * @return ZAAKAFHANDELPARAMETERS for a ZAAKTYPE by uuid of the ZAAKTYPE
      */
     @GET
-    @Path("parameters/{zaaktypeUuid}")
-    public RESTZaakafhandelParameters readZaakafhandelParameters(@PathParam("zaaktypeUuid") final UUID zaakTypeUUID) {
+    @Path("{zaaktypeUUID}")
+    public RESTZaakafhandelParameters readZaakafhandelParameters(@PathParam("zaaktypeUUID") final UUID zaakTypeUUID) {
         ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID);
         return zaakafhandelParametersConverter.convert(zaakafhandelParameters, true);
     }
@@ -132,7 +133,6 @@ public class ZaakafhandelParametersRESTService {
      * @param restZaakafhandelParameters ZAAKAFHANDELPARAMETERS
      */
     @PUT
-    @Path("parameters")
     public RESTZaakafhandelParameters updateZaakafhandelparameters(final RESTZaakafhandelParameters restZaakafhandelParameters) {
         ZaakafhandelParameters parameters = zaakafhandelParametersConverter.convert(restZaakafhandelParameters);
         final ZaakafhandelParameters zaakafhandelParameters;
@@ -156,14 +156,18 @@ public class ZaakafhandelParametersRESTService {
     }
 
     /**
-     * Retrieve zaakbeeindig-redenen for a zaaktype
+     * Retrieve zaakbeeindig redenen for a zaaktype
      *
      * @return list of zaakbeeindig-redenen
      */
     @GET
-    @Path("zaakbeeindigRedenen/{zaaktypeUuid}")
-    public List<RESTZaakbeeindigReden> listZaakbeeindigRedenen(@PathParam("zaaktypeUuid") final UUID zaaktypeUUID) {
-        return zaakbeeindigRedenConverter.convertToRest(zaakafhandelParameterBeheerService.listZaakbeeindigRedenen(zaaktypeUUID));
+    @Path("zaakbeeindigRedenen/{zaaktypeUUID}")
+    public List<RESTZaakbeeindigReden> listZaakbeeindigRedenenForZaaktype(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
+        final Collection<ZaakbeeindigReden> zaakbeeindigRedenen = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktypeUUID)
+                .getZaakbeeindigParameters().stream()
+                .map(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden())
+                .toList();
+        return zaakbeeindigRedenConverter.convertToRest(zaakbeeindigRedenen);
     }
 
     /**
@@ -175,9 +179,7 @@ public class ZaakafhandelParametersRESTService {
     @GET
     @Path("resultaten/{zaaktypeUUID}")
     public List<RESTZaakResultaattype> listZaakResultaten(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        return zaakResultaattypeConverter.convertToRest(
-                ztcClientService.readResultaattypen(
-                        ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
+        return zaakResultaattypeConverter.convertToRest(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
     /**

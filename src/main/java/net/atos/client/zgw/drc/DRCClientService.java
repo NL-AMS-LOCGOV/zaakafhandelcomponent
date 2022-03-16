@@ -23,6 +23,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
@@ -121,6 +123,14 @@ public class DRCClientService {
      */
     public List<AuditTrailRegel> listAuditTrail(final UUID enkelvoudigInformatieobjectUUID) {
         return drcClient.listAuditTrail(enkelvoudigInformatieobjectUUID);
+    }
+
+    public EnkelvoudigInformatieobjectWithInhoud createEnkelvoudigInformatieobject(final EnkelvoudigInformatieobjectWithInhoud informatieobject) {
+        return drcClient.enkelvoudigInformatieobjectCreate(informatieobject);
+    }
+
+    public Gebruiksrechten createGebruiksrechten(final Gebruiksrechten gebruiksrechten) {
+        return drcClient.gebruiksrechtenCreate(gebruiksrechten);
     }
 
     private String generateLockId(final UUID enkelvoudigInformatieobjectUUID, final String lockOwner) {

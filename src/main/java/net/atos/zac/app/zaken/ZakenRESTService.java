@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.zaken;
 
+import static net.atos.zac.util.UriUtil.uuidFromURI;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +82,8 @@ import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.OpenZaakPaginationUtil;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 
 /**
  *
@@ -129,6 +133,9 @@ public class ZakenRESTService {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -188,9 +195,7 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}")
     public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID,
-                                                                      zaakConverter.convertToPatch(
-                                                                              restZaakEditMetRedenGegevens.zaak),
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakEditMetRedenGegevens.zaak),
                                                                       restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
     }
@@ -289,12 +294,9 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId)
-                ? flowableService.readGroup(verdeelGegevens.groepId)
-                : null;
-        final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam)
-                ? flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam)
-                : null;
+        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? flowableService.readGroup(verdeelGegevens.groepId) : null;
+        final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
+                flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             if (group != null) {
@@ -317,8 +319,14 @@ public class ZakenRESTService {
 
     @PUT
     @Path("afbreken")
-    public void afbreken(final RESTZaakAfbrekenGegevens afbrekenGegevens) {
-        // ToDo Afbreken zaak
+    public void afbreken(final RESTZaakAfbrekenGegevens zaakAfbrekenGegevens) {
+        Zaak zaak = zrcClientService.readZaak(zaakAfbrekenGegevens.zaakUUID);
+        final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameterBeheerService.readZaakbeeindigParameter(
+                uuidFromURI(zaak.getZaaktype()), zaakAfbrekenGegevens.zaakbeeindigRedenId);
+        zgwApiService.createResultaatForZaak(zaak, zaakbeeindigParameter.getResultaattype(), zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
+        zgwApiService.endZaak(zaak, zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
+        // Terminate case after the zaak is ended in order to prevent the EndCaseLifecycleListener from ending the zaak.
+        flowableService.terminateCase(zaakAfbrekenGegevens.zaakUUID);
     }
 
     @PUT
@@ -365,8 +373,7 @@ public class ZakenRESTService {
             } else {
                 zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
             }
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                    .convertZaakResults(zaakResults, tableState.getPagination());
+            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults, tableState.getPagination());
             return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
         } else {
             return new TableResponse<>(Collections.emptyList(), 0);
@@ -377,7 +384,6 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         final User user = flowableService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
-
         return zaak;
     }
 
@@ -387,8 +393,7 @@ public class ZakenRESTService {
         zaakListParameters.setPage(OpenZaakPaginationUtil.calculateOpenZaakPageNumber(tableState.getPagination()));
 
         final boolean desc = "desc".equals(tableState.getSort().getDirection());
-        zaakListParameters
-                .setOrdering(desc ? "-" + tableState.getSort().getPredicate() : tableState.getSort().getPredicate());
+        zaakListParameters.setOrdering(desc ? "-" + tableState.getSort().getPredicate() : tableState.getSort().getPredicate());
 
         for (final Map.Entry<String, String> entry : tableState.getSearch().getPredicateObject().entrySet()) {
             switch (entry.getKey()) {

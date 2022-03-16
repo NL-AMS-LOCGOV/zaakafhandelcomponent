@@ -11,5 +11,5 @@ public class RESTZaakAfbrekenGegevens {
 
     public UUID zaakUUID;
 
-    public String zaakBeeindigRedenId;
+    public Long zaakbeeindigRedenId;
 }

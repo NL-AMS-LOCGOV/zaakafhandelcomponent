@@ -108,10 +108,10 @@ public class FlowableService {
     }
 
     public List<TaskInfo> listAllTasksForZaak(final UUID zaakUUID) {
-        final String caseInstanceId = findCaseInstanceIdForZaak(zaakUUID);
-        if (caseInstanceId != null) {
-            final List<TaskInfo> taken = new ArrayList<>(listOpenTasksForCase(caseInstanceId));
-            taken.addAll(listCompletedTasksForCase(caseInstanceId));
+        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+        if (caseInstance != null) {
+            final List<TaskInfo> taken = new ArrayList<>(listOpenTasksForCase(caseInstance.getId()));
+            taken.addAll(listCompletedTasksForCase(caseInstance.getId()));
             return taken;
         } else {
             return Collections.emptyList();
@@ -361,6 +361,20 @@ public class FlowableService {
         return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
     }
 
+    /**
+     * Terminate the case for a zaak.
+     * This also terminates all open tasks related to the case,
+     * This will also call {@Link EndCaseLifecycleListener}
+     *
+     * @param zaakUUID UUID of the zaak for which the caxse should be terminated.
+     */
+    public void terminateCase(final UUID zaakUUID) {
+        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+        if (caseInstance != null) {
+            cmmnRuntimeService.terminateCaseInstance(caseInstance.getId());
+        }
+    }
+
     private Object readVariableForCase(final String caseInstanceId, final String variableName) {
         final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
         if (variableValue != null) {
@@ -428,34 +442,21 @@ public class FlowableService {
                 .list();
     }
 
-    private String findCaseInstanceIdForZaak(final UUID zaakUUID) {
-        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
+    private CaseInstance findCaseInstanceForZaak(final UUID zaakUUID) {
+        return cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .singleResult();
-        return caseInstance != null ? caseInstance.getId() : null;
     }
 
     private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final String direction) {
         final TaskQuery taskQuery = cmmnTaskService.createTaskQuery().includeIdentityLinks();
         if (sortering != null) {
-            final TaskQuery sortedTaskQuery;
-            switch (sortering) {
-                case TAAKNAAM:
-                    sortedTaskQuery = taskQuery.orderByTaskName();
-                    break;
-                case CREATIEDATUM:
-                    sortedTaskQuery = taskQuery.orderByTaskCreateTime();
-                    break;
-                case STREEFDATUM:
-                    sortedTaskQuery = taskQuery.orderByTaskDueDate();
-                    break;
-                case BEHANDELAAR:
-                    sortedTaskQuery = taskQuery.orderByTaskAssignee();
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format("Unknown predicate with name: %s", sortering));
-            }
-
+            final TaskQuery sortedTaskQuery = switch (sortering) {
+                case TAAKNAAM -> taskQuery.orderByTaskName();
+                case CREATIEDATUM -> taskQuery.orderByTaskCreateTime();
+                case STREEFDATUM -> taskQuery.orderByTaskDueDate();
+                case BEHANDELAAR -> taskQuery.orderByTaskAssignee();
+            };
             return "asc".equals(direction) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
         }
 

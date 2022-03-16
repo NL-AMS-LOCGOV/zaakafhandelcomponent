@@ -60,8 +60,7 @@ import net.atos.zac.event.EventingService;
 @ApplicationScoped
 public class ZRCClientService implements Caching {
 
-    private static final List<String> CACHES = List.of(
-            ZRC_STATUS_MANAGED);
+    private static final List<String> CACHES = List.of(ZRC_STATUS_MANAGED);
 
     @Inject
     @RestClient
@@ -285,7 +284,7 @@ public class ZRCClientService implements Caching {
         }
 
         final List<Zaak> openZaken = allZaken.stream()
-                .filter(zaak -> zaak.getArchiefnominatie() == null)
+                .filter(zaak -> zaak.isOpen())
                 .collect(Collectors.toList());
         final List<Zaak> zakenOnPage = openZaken.stream()
                 .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
@@ -343,6 +342,58 @@ public class ZRCClientService implements Caching {
         return zrcClient.rolList(rolListParameters).getResults();
     }
 
+    @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
+    public String clearZaakstatusManagedCache() {
+        return cleared(ZRC_STATUS_MANAGED);
+    }
+
+    @CacheRemove(cacheName = ZRC_STATUS_MANAGED)
+    public void updateZaakstatusCache(final URI key) {
+        removed(ZRC_STATUS_MANAGED, key);
+    }
+
+    @Override
+    public List<String> cacheNames() {
+        return CACHES;
+    }
+
+    /**
+     * List all instances of {@link AuditTrailRegel} for a specific {@link Zaak}.
+     *
+     * @param zaakUUID UUID of {@link Zaak}.
+     * @return List of {@link AuditTrailRegel} instances.
+     */
+    public List<AuditTrailRegel> listAuditTrail(final UUID zaakUUID) {
+        return zrcClient.listAuditTrail(zaakUUID);
+    }
+
+    public Resultaat createResultaat(final Resultaat resultaat) {
+        try {
+            zgwClientHeadersFactory.putMedewerkerToelichting(resultaat.getToelichting());
+            return zrcClient.resultaatCreate(resultaat);
+        } finally {
+            zgwClientHeadersFactory.removeMedewerkerToelichting();
+        }
+    }
+
+    public Zaak createZaak(final Zaak zaak) {
+        try {
+            zgwClientHeadersFactory.putMedewerkerToelichting(zaak.getToelichting());
+            return zrcClient.zaakCreate(zaak);
+        } finally {
+            zgwClientHeadersFactory.removeMedewerkerToelichting();
+        }
+    }
+
+    public Status createStatus(final Status status) {
+        try {
+            zgwClientHeadersFactory.putMedewerkerToelichting(status.getStatustoelichting());
+            return zrcClient.statusCreate(status);
+        } finally {
+            zgwClientHeadersFactory.removeMedewerkerToelichting();
+        }
+    }
+
     private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
         current.stream()
                 .filter(oud -> rollen.stream()
@@ -379,30 +430,5 @@ public class ZRCClientService implements Caching {
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken())
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
                 .header(ZRCClient.CONTENT_CRS, ZRCClient.ACCEPT_CRS_VALUE);
-    }
-
-    @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
-    public String clearZaakstatusManagedCache() {
-        return cleared(ZRC_STATUS_MANAGED);
-    }
-
-    @CacheRemove(cacheName = ZRC_STATUS_MANAGED)
-    public void updateZaakstatusCache(final URI key) {
-        removed(ZRC_STATUS_MANAGED, key);
-    }
-
-    @Override
-    public List<String> cacheNames() {
-        return CACHES;
-    }
-
-    /**
-     * List all instances of {@link AuditTrailRegel} for a specific {@link Zaak}.
-     *
-     * @param zaakUUID UUID of {@link Zaak}.
-     * @return List of {@link AuditTrailRegel} instances.
-     */
-    public List<AuditTrailRegel> listAuditTrail(final UUID zaakUUID) {
-        return zrcClient.listAuditTrail(zaakUUID);
     }
 }
