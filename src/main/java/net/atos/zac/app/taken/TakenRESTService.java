@@ -60,8 +60,10 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
+import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
@@ -104,6 +106,9 @@ public class TakenRESTService {
     @Inject
     private ZRCClientService zrcClientService;
 
+    @Inject
+    private SignaleringenService signaleringenService;
+
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
@@ -143,6 +148,9 @@ public class TakenRESTService {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
         final FormulierDefinitie formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
+
+        deleteSignalering(task, SignaleringType.Type.TAAK_OP_NAAM);
+
         return taakConverter.convertTaskInfo(task, formulierDefinitie, taakdata);
     }
 
@@ -288,4 +296,12 @@ public class TakenRESTService {
             }
         }
     }
+
+    private void deleteSignalering(final TaskInfo taskInfo, final SignaleringType.Type type) {
+        final SignaleringZoekParameters parameters =
+                new SignaleringZoekParameters().type(type).target(ingelogdeMedewerker.get()).subject(taskInfo);
+
+        signaleringenService.deleteSignalering(parameters);
+    }
+
 }
