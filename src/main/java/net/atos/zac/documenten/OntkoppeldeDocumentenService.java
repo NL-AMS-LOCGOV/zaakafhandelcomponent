@@ -7,6 +7,7 @@ package net.atos.zac.documenten;
 
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,9 +19,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.SortDirection;
+import net.atos.zac.util.UriUtil;
 
 @ApplicationScoped
 @Transactional
@@ -33,6 +36,16 @@ public class OntkoppeldeDocumentenService {
         valideerObject(document);
         entityManager.persist(document);
         return document;
+    }
+
+    public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject) {
+        final OntkoppeldDocument ontkoppeldDocument = new OntkoppeldDocument();
+        ontkoppeldDocument.setDocumentID(informatieobject.getIdentificatie());
+        ontkoppeldDocument.setDocumentUUID(UriUtil.uuidFromURI(informatieobject.getUrl()));
+        ontkoppeldDocument.setCreatiedatum(informatieobject.getCreatiedatum().atStartOfDay(ZoneId.systemDefault()));
+        ontkoppeldDocument.setTitel(informatieobject.getTitel());
+        ontkoppeldDocument.setBestandsnaam(informatieobject.getBestandsnaam());
+        return create(ontkoppeldDocument);
     }
 
     public List<OntkoppeldDocument> list(final ListParameters listParameters) {

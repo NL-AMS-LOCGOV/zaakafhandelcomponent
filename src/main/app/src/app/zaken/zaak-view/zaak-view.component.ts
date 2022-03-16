@@ -54,6 +54,7 @@ import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
+import {map} from 'rxjs/operators';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -473,5 +474,37 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (this.viewInitialized) {
             this.sessionStorageService.setSessionStorage('initiatorExpanded', $event ? 'true' : 'false');
         }
+    }
+
+    ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
+        informatieobject['loading'] = true;
+        this.utilService.setLoading(true);
+        this.zakenService.findZakenForInformatieobject(informatieobject.uuid).pipe(
+            map(zaakIDs => {
+                delete informatieobject['loading'];
+                this.utilService.setLoading(false);
+                return zaakIDs.filter(zaakID => zaakID !== this.zaak.identificatie).join(', ');
+            })
+        ).subscribe(zaakIDs => {
+            let confirmDialogData;
+            if (zaakIDs) {
+                confirmDialogData = new ConfirmDialogData('actie.document.ontkoppelen.meerdere.zaken.bevestigen',
+                    {zaken: zaakIDs, document: informatieobject.titel},
+                    this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid));
+            } else {
+                confirmDialogData = new ConfirmDialogData('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel},
+                    this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid));
+            }
+            this.dialog.open(ConfirmDialogComponent, {
+                data: confirmDialogData,
+                autoFocus: 'dialog'
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    this.utilService.openSnackbar('actie.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
+                    this.websocketService.suspendListener(this.zaakDocumentenListener);
+                    this.loadInformatieObjecten();
+                }
+            });
+        });
     }
 }

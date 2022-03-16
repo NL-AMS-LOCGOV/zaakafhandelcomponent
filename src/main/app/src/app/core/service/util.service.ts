@@ -4,7 +4,7 @@
  */
 
 import {Inject, Injectable, Optional} from '@angular/core';
-import {BehaviorSubject, forkJoin, iif, Observable, of} from 'rxjs';
+import {BehaviorSubject, iif, Observable, of} from 'rxjs';
 import {delay, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
@@ -73,13 +73,10 @@ export class UtilService {
     }
 
     setTitle(title: string, params?: {}): void {
-        const sources = [];
-        sources['prefix'] = this.translate.get('title.prefix', {gemeente: this.readGemeenteNaam()});
-        sources['title'] = this.translate.get(title, params);
-        forkJoin(sources).subscribe(result => {
-            this.titleService.setTitle(result['prefix'] + result['title']);
-            this.headerTitle.next(result['title']);
-        });
+        const _prefix = this.translate.instant('title.prefix', {gemeente: this.readGemeenteNaam()});
+        const _title = this.translate.instant(title, params);
+        this.titleService.setTitle(_prefix + _title);
+        this.headerTitle.next(_title);
     }
 
     setLoading(loading: boolean): void {
@@ -98,12 +95,7 @@ export class UtilService {
     }
 
     openSnackbar(message: string, params?: {}) {
-        const sources = [];
-        sources['message'] = this.translate.get(message, params);
-        sources['action'] = this.translate.get('actie.sluiten');
-        forkJoin(sources).subscribe(result => {
-            this.snackbar.open(result['message'], result['action'], {duration: 3000});
-        });
+        this.snackbar.open(this.translate.instant(message, params), this.translate.instant('actie.sluiten'), {duration: 3000});
     }
 
     reloadRoute(): void {
