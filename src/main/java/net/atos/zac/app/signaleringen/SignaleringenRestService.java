@@ -19,12 +19,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.flowable.task.api.Task;
+
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.zac.app.taken.converter.RESTTaakConverter;
+import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -42,7 +47,13 @@ public class SignaleringenRestService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private RESTZaakOverzichtConverter zaakOverzichtConverter;
+    private FlowableService flowableService;
+
+    @Inject
+    private RESTZaakOverzichtConverter restZaakOverzichtConverter;
+
+    @Inject
+    private RESTTaakConverter restTaakConverter;
 
     @Inject
     @IngelogdeMedewerker
@@ -69,7 +80,20 @@ public class SignaleringenRestService {
                              zrcClientService.readZaak(
                                      UUID.fromString(signalering.getSubject())))
                 .toList();
-        return zaken.stream().map(zaak -> zaakOverzichtConverter.convert(zaak)).toList();
+        return zaken.stream().map(zaak -> restZaakOverzichtConverter.convert(zaak)).toList();
     }
 
+    @GET
+    @Path("/taken/{type}")
+    public List<RESTTaak> listTakenSignalering(@PathParam("type") final String signaleringsType) {
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
+        parameters.type(SignaleringType.Type.TAAK_OP_NAAM);
+        parameters.target(ingelogdeMedewerker.get());
+
+        final List<Task> taken = signaleringenService.findSignaleringen(parameters)
+                .stream()
+                .map(signalering -> flowableService.readTask(signalering.getSubject()))
+                .toList();
+        return taken.stream().map(taak -> restTaakConverter.convertTaskInfo(taak)).toList();
+    }
 }

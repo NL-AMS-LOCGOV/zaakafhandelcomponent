@@ -46,7 +46,8 @@ public class SignaleringType {
 
     /** Maps to signalering-type.ts */
     public enum Type {
-        ZAAK_OP_NAAM;
+        ZAAK_OP_NAAM,
+        TAAK_OP_NAAM;
     }
 
     @Override

@@ -9,6 +9,8 @@ import {UtilService} from '../core/service/util.service';
 import * as moment from 'moment';
 import {SessionStorageService} from '../shared/storage/session-storage.service';
 import {SignaleringenService} from '../signaleringen.service';
+import {DashboardCardData} from './model/dashboard-card-data';
+import {SignaleringType} from '../shared/signaleringen/signalering-type';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -16,11 +18,14 @@ import {SignaleringenService} from '../signaleringen.service';
 })
 export class DashboardComponent implements OnInit {
 
-    nieuweZakenCard = {title: 'dashboard.mijn.nieuwe.zaken'};
+    zakenNieuwOpNaamCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.zaken',
+        SignaleringType.ZAAK_OP_NAAM, 'ZAAK');
+    takenNieuwOpNaamCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.taken',
+        SignaleringType.TAAK_OP_NAAM, 'TAAK');
 
     /** Based on the screen size, switch from standard to one column per row */
-    cards = [
-        [this.nieuweZakenCard]
+    cards: Array<DashboardCardData[]> = [
+        [this.zakenNieuwOpNaamCard, this.takenNieuwOpNaamCard]
     ];
 
     constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService, private sessionStorageService: SessionStorageService,

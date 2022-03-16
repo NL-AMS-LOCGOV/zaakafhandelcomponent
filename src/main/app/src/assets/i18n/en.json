@@ -294,6 +294,7 @@
   "msg.extern.advies.vastleggen.behandelen": "An external advice has been requested. The answer can be recorded below.",
   " 8 ": ">>--> DASHBOARD <--<<",
   "dashboard.mijn.nieuwe.zaken": "Cases recently assigned to me",
+  "dashboard.mijn.nieuwe.taken": "Tasks recently assigned to me",
   "initiator.titel": "Initiator details",
   "initiator.naam": "Name",
   "initiator.bsn": "BSN",

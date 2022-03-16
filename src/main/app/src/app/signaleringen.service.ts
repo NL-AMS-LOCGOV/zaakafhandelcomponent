@@ -10,6 +10,7 @@ import {ZaakOverzicht} from './zaken/model/zaak-overzicht';
 import {catchError, switchMap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from './fout-afhandeling/fout-afhandeling.service';
+import {Taak} from './taken/model/taak';
 
 @Injectable({
     providedIn: 'root'
@@ -31,6 +32,12 @@ export class SignaleringenService {
 
     listZakenSignalering(signaleringType: SignaleringType): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/zaken/${signaleringType}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    listTakenSignalering(signaleringType: SignaleringType): Observable<Taak[]> {
+        return this.http.get<Taak[]>(`${this.basepath}/taken/${signaleringType}`).pipe(
             catchError(this.handleError)
         );
     }
