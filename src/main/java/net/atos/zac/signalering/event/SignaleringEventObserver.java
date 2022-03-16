@@ -12,6 +12,8 @@ import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
+import org.flowable.task.api.TaskInfo;
+
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -69,6 +71,15 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 if (URIUtil.equals(roltype, rol.getRoltype())) {
                     signalering.setSubject(zaak);
                     return addTarget(signalering, rol);
+                }
+                break;
+            case TAAK_OP_NAAM:
+                final TaskInfo taskInfo = flowableService.readTask((String) event.getObjectId());
+                if (taskInfo.getAssignee() != null) {
+                    signalering.setSubject(taskInfo);
+                    signalering.setTarget(
+                            flowableHelper.createMedewerker(taskInfo.getAssignee()));
+                    return signalering;
                 }
                 break;
             default:

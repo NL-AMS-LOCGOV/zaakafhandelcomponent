@@ -44,7 +44,10 @@ public class SignaleringType {
         return subjecttype;
     }
 
-    /** Maps to signalering-type.ts */
+    /**
+     * Maps to signalering-type.ts
+     * !! Remember to add the enum value to signaleringtype table !!
+     */
     public enum Type {
         ZAAK_OP_NAAM,
         TAAK_OP_NAAM;

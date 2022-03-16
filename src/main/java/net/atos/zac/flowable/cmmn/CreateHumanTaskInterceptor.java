@@ -16,6 +16,9 @@ import org.flowable.cmmn.engine.interceptor.CreateHumanTaskAfterContext;
 import org.flowable.cmmn.engine.interceptor.CreateHumanTaskBeforeContext;
 
 import net.atos.zac.flowable.FlowableHelper;
+import net.atos.zac.signalering.event.SignaleringEvent;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.websocket.event.ScreenEvent;
 import net.atos.zac.websocket.event.ScreenEventType;
 
@@ -51,5 +54,10 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
         // Wait some time before sending the event to the screen to make sure that the task is created.
         screenEvent.setDelay(true);
         FlowableHelper.getInstance().getEventingService().send(screenEvent);
+
+        if (context.getTaskEntity().getAssignee() != null) {
+            final SignaleringEvent<String> signaleringEvent = SignaleringEventUtil.created(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity());
+            FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
+        }
     }
 }
