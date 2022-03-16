@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class RESTZakenVerdeelGegevens {
+
     public List<UUID> uuids;
 
     public String groepId;

@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 public class RESTZaakResultaat {
+
     public String naam;
 
     public String naamGeneriek;

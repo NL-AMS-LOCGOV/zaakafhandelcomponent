@@ -4,15 +4,19 @@
  */
 
 import {Observable} from 'rxjs';
+import {AbstractFormField} from '../material-form-builder/model/abstract-form-field';
 
 export class ConfirmDialogData {
-    message: string;
-    messageParams: {};
-    observable: Observable<any>;
 
-    constructor(message: string, messageParams?: {}, observable?: Observable<any>) {
-        this.message = message;
-        this.messageParams = messageParams;
-        this.observable = observable;
+    confirmButtonActionKey: string;
+    cancelButtonActionKey: string;
+    formField: AbstractFormField;
+    fn: (result: any) => Observable<any>;
+
+    constructor(confirmButtonActionKey: string, cancelButtonActionKey: string, formField: AbstractFormField, fn?: (result: any) => Observable<any>) {
+        this.confirmButtonActionKey = confirmButtonActionKey;
+        this.cancelButtonActionKey = cancelButtonActionKey;
+        this.formField = formField;
+        this.fn = fn;
     }
 }

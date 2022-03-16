@@ -28,7 +28,7 @@ public class RESTZaakOverzicht {
 
     public String status;
 
-    public String aanvrager;
+    public String initiator;
 
     public RESTMedewerker behandelaar;
 
@@ -39,5 +39,4 @@ public class RESTZaakOverzicht {
     public RESTGroep groep;
 
     public RESTZaakResultaat resultaat;
-
 }
