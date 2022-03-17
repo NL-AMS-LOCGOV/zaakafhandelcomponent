@@ -24,7 +24,7 @@ export class EditGroepComponent extends EditAutocompleteComponent {
 
     edit(editing: boolean): void {
         super.edit(editing);
-        this.reasonField.formControl.setValue(null);
+        this.reasonField?.formControl.setValue(null);
     }
 
     protected submitSave(): void {

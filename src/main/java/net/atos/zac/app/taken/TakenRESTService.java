@@ -60,6 +60,10 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.signalering.SignaleringenService;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.signalering.model.SignaleringType;
+import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
@@ -102,6 +106,9 @@ public class TakenRESTService {
     @Inject
     private ZRCClientService zrcClientService;
 
+    @Inject
+    private SignaleringenService signaleringenService;
+
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
@@ -141,6 +148,9 @@ public class TakenRESTService {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
         final FormulierDefinitie formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
+
+        deleteSignalering(task, SignaleringType.Type.TAAK_OP_NAAM);
+
         return taakConverter.convertTaskInfo(task, formulierDefinitie, taakdata);
     }
 
@@ -155,9 +165,7 @@ public class TakenRESTService {
     @Path("verdelen")
     public void allocateTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
-            final TaskInfo taskInfo = flowableService.assignTask(task.taakId,
-                                                                 restTaakVerdelenGegevens.behandelaarGebruikersnaam);
-            taakBehandelaarGewijzigd(taskInfo, task.zaakUuid);
+            assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
         });
     }
 
@@ -165,25 +173,29 @@ public class TakenRESTService {
     @Path("vrijgeven")
     public void releaseTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
-            final TaskInfo taskInfo = flowableService.assignTask(task.taakId, null);
-            taakBehandelaarGewijzigd(taskInfo, task.zaakUuid);
+            assignTaak(task.taakId, null, task.zaakUuid);
         });
     }
 
     @PATCH
     @Path("assign")
     public void assignTaak(final RESTTaak restTaak) {
-        final Task task = flowableService.assignTask(restTaak.id,
-                                                     restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null);
-        taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
+        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null, restTaak.zaakUUID);
     }
 
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        final Task task = flowableService.assignTask(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam());
-        taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
-        return taakConverter.convertTaskInfo(task);
+        final TaskInfo taskInfo = assignTaak(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam(),
+                                             restTaakToekennenGegevens.zaakUuid);
+        return taakConverter.convertTaskInfo(taskInfo);
+    }
+
+    private TaskInfo assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
+        final TaskInfo taskInfo = flowableService.assignTask(taakId, assignee);
+        eventingService.send(SignaleringEventUtil.created(SignaleringType.Type.TAAK_OP_NAAM, taskInfo));
+        taakBehandelaarGewijzigd(taskInfo, zaakUuid);
+        return taskInfo;
     }
 
     @PATCH
@@ -284,4 +296,12 @@ public class TakenRESTService {
             }
         }
     }
+
+    private void deleteSignalering(final TaskInfo taskInfo, final SignaleringType.Type type) {
+        final SignaleringZoekParameters parameters =
+                new SignaleringZoekParameters().type(type).target(ingelogdeMedewerker.get()).subject(taskInfo);
+
+        signaleringenService.deleteSignalering(parameters);
+    }
+
 }

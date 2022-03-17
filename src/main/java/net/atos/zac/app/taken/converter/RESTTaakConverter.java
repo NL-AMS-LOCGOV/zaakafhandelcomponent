@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.flowable.identitylink.api.IdentityLinkInfo;
-import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
@@ -30,6 +28,7 @@ import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.util.TaskUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
@@ -75,7 +74,7 @@ public class RESTTaakConverter {
         restTaak.toekenningsdatumTijd = convertToZonedDateTime(task.getClaimTime());
         restTaak.streefdatum = convertToLocalDate(task.getDueDate());
         restTaak.behandelaar = medewerkerConverter.convertGebruikersnaam(task.getAssignee());
-        restTaak.groep = groepConverter.convertGroupId(extractGroupId(task.getIdentityLinks()));
+        restTaak.groep = groepConverter.convertGroupId(TaskUtil.extractGroupId(task.getIdentityLinks()));
         restTaak.status = convertToStatus(task);
         restTaak.zaakUUID = flowableService.readZaakUuidForTask(task.getId());
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieForTask(task.getId());
@@ -99,14 +98,6 @@ public class RESTTaakConverter {
     public void convertRESTTaak(final RESTTaak restTaak, final Task task) {
         task.setDescription(restTaak.toelichting);
         task.setDueDate(convertToDate(restTaak.streefdatum));
-    }
-
-    private static String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
-        return identityLinks.stream()
-                .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
-                .findAny()
-                .map(IdentityLinkInfo::getGroupId)
-                .orElse(null);
     }
 
     private static TaakStatus convertToStatus(final TaskInfo taskInfo) {

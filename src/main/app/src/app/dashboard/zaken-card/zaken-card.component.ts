@@ -3,39 +3,28 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {MatTableDataSource} from '@angular/material/table';
-import {SignaleringType} from '../../shared/signaleringen/signalering-type';
+import {Component, OnInit} from '@angular/core';
 import {ZaakOverzicht} from '../../zaken/model/zaak-overzicht';
 import {SignaleringenService} from '../../signaleringen.service';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 
 @Component({
     selector: 'zac-zaken-card',
     templateUrl: './zaken-card.component.html',
-    styleUrls: ['./zaken-card.component.less']
+    styleUrls: ['../dashboard-card/dashboard-card.component.less', './zaken-card.component.less']
 })
-export class ZakenCardComponent implements OnInit, AfterViewInit {
+export class ZakenCardComponent extends DashboardCardComponent<ZaakOverzicht> implements OnInit {
 
-    @Input() data: any;
-    @ViewChild(MatPaginator) zakenPaginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    columns: string[] = ['identificatie', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
 
-    zakenDataSource: MatTableDataSource<ZaakOverzicht> = new MatTableDataSource<ZaakOverzicht>();
-    zakenColumns: string[] = ['identificatie', 'startdatum', 'zaaktype', 'omschrijving', 'url'];
-
-    constructor(private signaleringenService: SignaleringenService) { }
-
-    ngOnInit(): void {
-        this.signaleringenService.listZakenSignalering(SignaleringType.ZAAK_OP_NAAM).subscribe(zaken => {
-            this.zakenDataSource.data = zaken;
-        });
+    constructor(private signaleringenService: SignaleringenService) {
+        super();
     }
 
-    ngAfterViewInit(): void {
-        this.zakenDataSource.paginator = this.zakenPaginator;
-        this.zakenDataSource.sort = this.sort;
+    ngOnInit(): void {
+        this.signaleringenService.listZakenSignalering(this.data.signaleringType).subscribe(zaken => {
+            this.dataSource.data = zaken;
+        });
     }
 
 }
