@@ -69,9 +69,9 @@ public class SignaleringenRestService {
 
     @GET
     @Path("/zaken/{type}")
-    public List<RESTZaakOverzicht> listZakenSignalering(@PathParam("type") final String signaleringsType) {
+    public List<RESTZaakOverzicht> listZakenSignalering(@PathParam("type") final SignaleringType.Type signaleringsType) {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
+        parameters.type(signaleringsType);
         parameters.target(ingelogdeMedewerker.get());
 
         final List<Zaak> zaken = signaleringenService.findSignaleringen(parameters)
@@ -80,20 +80,20 @@ public class SignaleringenRestService {
                              zrcClientService.readZaak(
                                      UUID.fromString(signalering.getSubject())))
                 .toList();
-        return zaken.stream().map(zaak -> restZaakOverzichtConverter.convert(zaak)).toList();
+        return zaken.stream().map(restZaakOverzichtConverter::convert).toList();
     }
 
     @GET
     @Path("/taken/{type}")
-    public List<RESTTaak> listTakenSignalering(@PathParam("type") final String signaleringsType) {
+    public List<RESTTaak> listTakenSignalering(@PathParam("type") final SignaleringType.Type signaleringsType) {
         final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(SignaleringType.Type.TAAK_OP_NAAM);
+        parameters.type(signaleringsType);
         parameters.target(ingelogdeMedewerker.get());
 
         final List<Task> taken = signaleringenService.findSignaleringen(parameters)
                 .stream()
                 .map(signalering -> flowableService.readTask(signalering.getSubject()))
                 .toList();
-        return taken.stream().map(taak -> restTaakConverter.convertTaskInfo(taak)).toList();
+        return taken.stream().map(restTaakConverter::convertTaskInfo).toList();
     }
 }

@@ -63,17 +63,16 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     private Signalering buildSignalering(final Signalering signalering, final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
-            case ZAAK_OP_NAAM:
+            case ZAAK_OP_NAAM -> {
                 final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
                 final Zaak zaak = zrcClientService.readZaak(rol.getZaak());
                 final URI roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR).getUrl();
-
                 if (URIUtil.equals(roltype, rol.getRoltype())) {
                     signalering.setSubject(zaak);
                     return addTarget(signalering, rol);
                 }
-                break;
-            case TAAK_OP_NAAM:
+            }
+            case TAAK_OP_NAAM -> {
                 final TaskInfo taskInfo = flowableService.readTask((String) event.getObjectId());
                 if (taskInfo.getAssignee() != null) {
                     signalering.setSubject(taskInfo);
@@ -81,10 +80,8 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                             flowableHelper.createMedewerker(taskInfo.getAssignee()));
                     return signalering;
                 }
-                break;
-            default:
-                LOG.warning(String.format("unknown SignaleringType %s", event.getObjectType()));
-                break;
+            }
+            default -> LOG.warning(String.format("unknown SignaleringType %s", event.getObjectType()));
         }
         return null;
     }
