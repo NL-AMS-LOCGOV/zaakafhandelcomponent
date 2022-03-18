@@ -257,6 +257,7 @@
   "msg.error.date.formaat": "DD-MM-YYYY",
   "msg.error.date.invalid.streef": "Target date should not be before start date",
   "msg.error.date.invalid.fatale": "Fatal date should not be before target date",
+  "msg.email.verstuurd": "Email has been sent",
   "msg.geen.gegevens.gevonden": "No data found",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "This document",
   "msg.gewijzigd.objecttype.TAAK": "This task",
