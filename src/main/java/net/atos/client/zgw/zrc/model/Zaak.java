@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
@@ -492,5 +493,10 @@ public class Zaak {
 
     public URI getResultaat() {
         return resultaat;
+    }
+
+    @JsonbTransient
+    public boolean isOpen() {
+        return archiefnominatie == null;
     }
 }

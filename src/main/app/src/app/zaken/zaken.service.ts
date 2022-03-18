@@ -200,7 +200,7 @@ export class ZakenService {
     afbreken(uuid: string, zaakbeeindigReden: ZaakbeeindigReden): Observable<void> {
         const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
         zaakAfbrekenGegevens.zaakUUID = uuid;
-        zaakAfbrekenGegevens.zaakBeeindigRedenId = zaakbeeindigReden.id;
+        zaakAfbrekenGegevens.zaakbeeindigRedenId = zaakbeeindigReden.id;
 
         return this.http.put<void>(`${this.basepath}/afbreken`, zaakAfbrekenGegevens).pipe(
             catchError(this.handleError)

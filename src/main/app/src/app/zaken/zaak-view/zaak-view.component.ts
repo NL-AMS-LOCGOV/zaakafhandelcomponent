@@ -295,7 +295,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new SelectFormFieldBuilder().id('reden')
                                         .label('actie.zaak.afbreken.reden')
                                         .optionLabel('naam')
-                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenen(this.zaak.zaaktype.uuid))
+                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                         .validators(Validators.required)
                                         .build(),
             (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
@@ -306,8 +306,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.zaak.afgebroken');
                 this.updateZaak();
+                this.loadTaken();
+                this.utilService.openSnackbar('actie.zaak.afgebroken');
             }
         });
     }

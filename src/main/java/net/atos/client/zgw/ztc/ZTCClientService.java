@@ -20,7 +20,6 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
@@ -218,23 +217,6 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
     public List<Resultaattype> readResultaattypen(final URI zaaktypeURI) {
         return ztcClient.resultaattypeList(new ResultaattypeListParameters(zaaktypeURI)).getSinglePageResults();
-    }
-
-    /**
-     * Read {@link Resultaattype} of {@link Zaaktype} and Omschrijving of {@link Resultaattype}.
-     * Throws a RuntimeException if the {@link Resultaattype} can not be read.
-     *
-     * @param zaaktypeURI  URI of {@link Zaaktype}.
-     * @param omschrijving Omschrijving of {@link Resultaattype}/
-     * @return {@link Resultaattype}. Never 'null'!
-     */
-    public Resultaattype readResultaattype(List<Resultaattype> resultaattypes, final String omschrijving, final URI zaaktypeURI) {
-        return resultaattypes.stream()
-                .filter(resultaattype -> StringUtils.equals(resultaattype.getOmschrijving(), omschrijving))
-                .findAny()
-                .orElseThrow(
-                        () -> new RuntimeException(
-                                String.format("Zaaktype '%s': Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
     }
 
     /**
