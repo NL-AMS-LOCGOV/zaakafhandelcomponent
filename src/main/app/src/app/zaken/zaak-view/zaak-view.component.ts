@@ -44,11 +44,11 @@ import {DialogData} from '../../shared/dialog/dialog-data';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
-import {PersonenService} from '../../personen/personen.service';
-import {PersoonOverzicht} from '../../personen/model/persoon-overzicht';
+import {KlantenService} from '../../klanten/klanten.service';
+import {PersoonOverzicht} from '../../klanten/model/personen/persoon-overzicht';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
-import {Persoon} from '../../personen/model/persoon';
+import {Persoon} from '../../klanten/model/personen/persoon';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
@@ -101,7 +101,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private zakenService: ZakenService,
                 private identityService: IdentityService,
                 private planItemsService: PlanItemsService,
-                private personenService: PersonenService,
+                private klantenService: KlantenService,
                 private zaakafhandelParametersService: ZaakafhandelParametersService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
@@ -131,7 +131,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
-            if (this.zaak.initiatorBSN) {
+            if (this.zaak.initiator) {
                 this.loadInitiatorPersoon();
             }
         }));
@@ -253,7 +253,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
 
-        if (!this.zaak.initiatorBSN) {
+        if (!this.zaak.initiator) {
             this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = this.actions.ZOEK_PERSOON;
@@ -415,7 +415,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadInitiatorPersoon(): void {
-        this.personenService.readPersoonOverzicht(this.zaak.initiatorBSN).subscribe(persoon => {
+        this.klantenService.readPersoonOverzicht(this.zaak.initiator).subscribe(persoon => {
             this.initiatorPersoon = persoon;
         });
     }
@@ -436,7 +436,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
         this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
-            this.zaak.initiatorBSN = persoon.bsn;
+            this.zaak.initiator = persoon.bsn;
             this.initiatorPersoon = persoon;
             this.init(this.zaak);
         });
@@ -446,7 +446,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         $event.stopPropagation();
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
-            this.zaak.initiatorBSN = null;
+            this.zaak.initiator = null;
             this.initiatorPersoon = null;
             this.init(this.zaak);
         });

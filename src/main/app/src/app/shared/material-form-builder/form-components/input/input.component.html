@@ -4,9 +4,11 @@
   -->
 
 <mat-form-field appearance="fill" class="full-width">
-    <button mat-icon-button type="button" matSuffix (click)="iconClick($event)">
-        <mat-icon>{{data.icon}}</mat-icon>
+
+    <button *ngFor="let icon of data.icons" mat-icon-button type="button" matSuffix (click)="icon.iconClicked.next()">
+        <mat-icon>{{icon.icon}}</mat-icon>
     </button>
+
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_tekstfield'" [required]="data.required" matInput>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>

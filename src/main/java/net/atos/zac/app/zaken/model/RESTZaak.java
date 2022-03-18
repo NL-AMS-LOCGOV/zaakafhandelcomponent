@@ -70,5 +70,5 @@ public class RESTZaak {
 
     public List<RESTZaakEigenschap> eigenschappen;
 
-    public String initiatorBSN;
+    public String initiator;
 }

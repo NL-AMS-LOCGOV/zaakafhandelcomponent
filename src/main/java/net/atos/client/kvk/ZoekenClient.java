@@ -14,7 +14,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
 package net.atos.client.kvk;
 
 import java.time.temporal.ChronoUnit;
@@ -29,6 +28,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import net.atos.client.kvk.exception.KvKClientNoResultExceptionMapper;
 import net.atos.client.kvk.exception.RuntimeExceptionMapper;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;
@@ -36,7 +36,8 @@ import net.atos.client.kvk.zoeken.model.Resultaat;
 
 @RegisterRestClient(configKey = "KVK-API-Client")
 @RegisterProviders({
-        @RegisterProvider(RuntimeExceptionMapper.class)
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(KvKClientNoResultExceptionMapper.class)
 })
 @Produces({"application/hal+json"})
 @Path("api/v1/zoeken")

@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
-public class VestigingNotFoundExceptionMapping implements ResponseExceptionMapper<VestigingNotFoundException> {
+public class KvKClientNoResultExceptionMapper implements ResponseExceptionMapper<KvKClientNoResultException> {
 
     @Override
     public boolean handles(final int status, final MultivaluedMap<String, Object> headers) {
@@ -18,7 +18,7 @@ public class VestigingNotFoundExceptionMapping implements ResponseExceptionMappe
     }
 
     @Override
-    public VestigingNotFoundException toThrowable(final Response response) {
-        return new VestigingNotFoundException();
+    public KvKClientNoResultException toThrowable(final Response response) {
+        return new KvKClientNoResultException();
     }
 }
