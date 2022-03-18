@@ -178,7 +178,7 @@ export class InformatieObjectCreateComponent implements OnInit {
 
     resetForm(formGroup: FormGroup) {
         this.inhoudField.reset();
-        this.inhoudField.formControl.setErrors([]);
+        this.inhoudField.formControl.setErrors(null);
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('beschrijving').reset();
