@@ -48,6 +48,7 @@ public class FlywayIntegrator {
                 .locations(SCHEMA_FILES_LOCATION)
                 .schemas(SCHEMA)
                 .placeholders(Map.of(SCHEMA_PLACEHOLDER, SCHEMA))
+                .outOfOrder(true)
                 .load();
 
         final MigrationInfo migrationInfo = flyway.info().current();
