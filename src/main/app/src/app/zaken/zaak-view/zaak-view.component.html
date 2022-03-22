@@ -11,7 +11,7 @@
         <zac-persoon-zoek (persoon)="persoonGeselecteerd($event)"></zac-persoon-zoek>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <div *ngIf="zaak?.initiatorBSN" fxLayout>
+        <div *ngIf="zaak?.initiator" fxLayout>
             <mat-expansion-panel fxFlex="calc(100%-20px)"
                                  [expanded]="initiatorExpanded"
                                  (expandedChange)="initiatorExpandedChanged($event)">
@@ -34,7 +34,7 @@
                         <zac-static-text [label]="'initiator.naam' | translate"
                                          [value]="initiatorPersoon.naam"></zac-static-text>
                         <zac-static-text [label]="'initiator.bsn' | translate"
-                                         [value]="zaak.initiatorBSN"></zac-static-text>
+                                         [value]="zaak.initiator"></zac-static-text>
                     </div>
                     <div [fxFlex]="100/4" fxFlex.lt-md="50">
                         <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

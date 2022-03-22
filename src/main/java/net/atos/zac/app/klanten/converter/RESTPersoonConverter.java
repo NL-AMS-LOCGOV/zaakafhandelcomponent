@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.personen.converter;
+package net.atos.zac.app.klanten.converter;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +18,9 @@ import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.model.NaamPersoon;
 import net.atos.client.brp.model.Verblijfplaats;
-import net.atos.zac.app.personen.model.RESTListPersonenParameters;
-import net.atos.zac.app.personen.model.RESTPersoon;
-import net.atos.zac.app.personen.model.RESTPersoonOverzicht;
+import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
+import net.atos.zac.app.klanten.model.personen.RESTPersoon;
+import net.atos.zac.app.klanten.model.personen.RESTPersoonOverzicht;
 
 public class RESTPersoonConverter {
 

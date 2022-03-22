@@ -1,18 +1,18 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021-2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
-import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {ListPersonenParameters} from '../model/list-personen-parameters';
-import {PersonenService} from '../personen.service';
-import {Persoon} from '../model/persoon';
+import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
+import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
+import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {ListPersonenParameters} from '../../model/personen/list-personen-parameters';
+import {KlantenService} from '../../klanten.service';
+import {Persoon} from '../../model/personen/persoon';
 import {MatTableDataSource} from '@angular/material/table';
-import {CustomValidators} from '../../shared/validators/customValidators';
+import {CustomValidators} from '../../../shared/validators/customValidators';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -32,7 +32,7 @@ export class PersoonZoekComponent implements OnInit {
     persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];
     loading = false;
 
-    constructor(private personenService: PersonenService, private formBuilder: FormBuilder) {
+    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder) {
     }
 
     ngOnInit(): void {
@@ -75,7 +75,7 @@ export class PersoonZoekComponent implements OnInit {
     zoekPersonen() {
         this.loading = true;
         this.personen.data = [];
-        this.personenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {
+        this.klantenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {
             this.personen.data = personen;
             this.loading = false;
         });

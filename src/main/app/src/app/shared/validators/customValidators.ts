@@ -9,34 +9,52 @@ export class CustomValidators {
 
     static postcode = CustomValidators.postcodeVFn();
     static bsn = CustomValidators.bsnVFn(false);
+    static kvk = CustomValidators.kvkVFn();
+    static vestigingsnummer = CustomValidators.vestigingsnummerVFn();
     static bsnPrefixed = CustomValidators.bsnVFn(true);
+    static bsnOrVesPrefixed = CustomValidators.bsnOfVestigingVFn(true);
 
     private static postcodeRegex = /^[1-9][0-9]{3}(?!sa|sd|ss)[a-z]{2}$/i;
 
-    static bsnVFn(allowPrefix = false): ValidatorFn {
+    private static bsnVFn(allowPrefix = false): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
-            if (!control.value) {
+            const bsn = this.getValue(control, allowPrefix);
+            if (bsn === null) {
                 return null;
             }
-            const val = control.value;
-            let bsn;
-            if (allowPrefix) {
-                const prefix = val.indexOf('|');
-                bsn = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
-            } else {
-                bsn = control.value;
-            }
-            if (isNaN(bsn) || bsn.length !== 9) {
+            if (!this.isValidBSN(bsn)) {
                 return {bsn: true};
             }
-            let checksum = 0;
-            for (let i = 0; i < 8; i++) {
-                checksum += (bsn.charAt(i) * (9 - i));
+        };
+    }
+
+    private static bsnOfVestigingVFn(allowPrefix = false): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            const value = this.getValue(control, allowPrefix);
+            if (value === null) {
+                return null;
             }
-            checksum -= bsn.charAt(8);
-            if (checksum % 11 !== 0) {
-                return {bsn: true};
+            if (!(this.isValidBSN(value) || this.isValidVestigingsnummer(value))) { return {bsnOrVestiging: true}; }
+        };
+    }
+
+    private static kvkVFn(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            const kvk = this.getValue(control, false);
+            if (kvk === null) {
+                return null;
             }
+            return isNaN(Number(kvk)) || kvk.length !== 8 ? {kvk: true} : null;
+        };
+    }
+
+    static vestigingsnummerVFn(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            const nummer = this.getValue(control, false);
+            if (nummer === null) {
+                return null;
+            }
+            return isNaN(Number(nummer)) || nummer.length !== 12 ? {vestigingsnummer: true} : null;
         };
     }
 
@@ -50,6 +68,35 @@ export class CustomValidators {
                 return {postcode: true};
             }
         };
+    }
+
+    private static isValidBSN(bsn: string): boolean {
+        if (isNaN(Number(bsn)) || bsn.length !== 9) {
+            return false;
+        }
+        let checksum: number = 0;
+        for (let i = 0; i < 8; i++) {
+            checksum += (Number(bsn.charAt(i)) * (9 - i));
+        }
+        checksum -= Number(bsn.charAt(8));
+        return checksum % 11 === 0;
+    }
+
+    private static isValidVestigingsnummer(nummer: string): boolean {
+        return !(isNaN(Number(nummer)) || nummer.length !== 12);
+    }
+
+    private static getValue(control: AbstractControl, allowPrefix = false) {
+        if (!control.value) {
+            return null;
+        }
+        const val = control.value;
+        if (allowPrefix) {
+            const prefix = val.indexOf('|');
+            return val.substring(0, prefix !== -1 ? prefix : val.length).trim();
+        } else {
+            return control.value;
+        }
     }
 
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.personen.model;
+package net.atos.zac.app.klanten.model.personen;
 
 public class RESTPersoonOverzicht {
 

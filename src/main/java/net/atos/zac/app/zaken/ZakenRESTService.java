@@ -51,6 +51,8 @@ import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolVestiging;
+import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
@@ -60,6 +62,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
+import net.atos.zac.app.klanten.model.KlantType;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -186,8 +189,8 @@ public class ZakenRESTService {
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        if (StringUtils.isNotEmpty(restZaak.initiatorBSN)) {
-            addInitiator(restZaak.initiatorBSN, nieuweZaak, "Initiator");
+        if (StringUtils.isNotEmpty(restZaak.initiator)) {
+            addInitiator(restZaak.initiator, nieuweZaak, "Initiator");
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -431,9 +434,22 @@ public class ZakenRESTService {
         signaleringenService.deleteSignalering(parameters);
     }
 
-    private void addInitiator(final String bsn, final Zaak zaak, String toelichting) {
+    private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
+        switch (KlantType.getType(identificatienummer)) {
+            case BURGER -> addInitiatorBurger(identificatienummer, zaak, toelichting);
+            case BEDRIJF -> addInitiatorBedrijf(identificatienummer, zaak, toelichting);
+        }
+    }
+
+    private void addInitiatorBurger(final String bsn, final Zaak zaak, String toelichting) {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
         RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
+        zrcClientService.createRol(rol);
+    }
+
+    private void addInitiatorBedrijf(final String vestigingsnummer, final Zaak zaak, String toelichting) {
+        final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
+        RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
     }
 }

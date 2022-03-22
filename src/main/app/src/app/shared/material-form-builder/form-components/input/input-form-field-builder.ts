@@ -5,6 +5,7 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {InputFormField} from './input-form-field';
+import {ActionIcon} from '../../../edit/action-icon';
 
 export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
 
@@ -15,8 +16,13 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField = new InputFormField();
     }
 
-    icon(icon: string): this {
-        this.formField.icon = icon;
+    icon(icon: ActionIcon): this {
+        this.formField.icons = [icon];
+        return this;
+    }
+
+    icons(icons: ActionIcon[]): this {
+        this.formField.icons = icons;
         return this;
     }
 

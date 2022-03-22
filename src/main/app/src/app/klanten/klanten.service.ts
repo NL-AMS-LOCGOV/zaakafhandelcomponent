@@ -6,21 +6,23 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {PersoonOverzicht} from './model/persoon-overzicht';
+import {PersoonOverzicht} from './model/personen/persoon-overzicht';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {ListPersonenParameters} from './model/list-personen-parameters';
-import {Persoon} from './model/persoon';
+import {ListPersonenParameters} from './model/personen/list-personen-parameters';
+import {Persoon} from './model/personen/persoon';
+import {ListBedrijvenParameters} from './model/bedrijven/list-bedrijven-parameters';
+import {Bedrijf} from './model/bedrijven/bedrijf';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PersonenService {
+export class KlantenService {
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    private basepath = '/rest/personen';
+    private basepath = '/rest/klanten';
 
     readPersoonOverzicht(bsn: string): Observable<PersoonOverzicht> {
         return this.http.get<PersoonOverzicht>(`${this.basepath}/persoonoverzicht/${bsn}`).pipe(
@@ -30,6 +32,12 @@ export class PersonenService {
 
     listPersonen(listPersonenParameters: ListPersonenParameters): Observable<Persoon[]> {
         return this.http.put<Persoon[]>(`${this.basepath}/personen`, listPersonenParameters).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    listBedrijven(listBedrijvenParameters: ListBedrijvenParameters): Observable<Bedrijf[]> {
+        return this.http.put<Bedrijf[]>(`${this.basepath}/bedrijven`, listBedrijvenParameters).pipe(
             catchError(this.handleError)
         );
     }

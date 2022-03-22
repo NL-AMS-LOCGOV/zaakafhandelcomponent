@@ -4,7 +4,8 @@
   -->
 <mat-sidenav-container autosize>
     <mat-sidenav #actionsSideNav mode="over" position="end">
-        <zac-persoon-zoek *ngIf="action === actions.ZOEK_PERSOON" (persoon)="persoonGeselecteerd($event)"></zac-persoon-zoek>
+        <zac-persoon-zoek *ngIf="action === actions.ZOEK_PERSOON" (persoon)="initiatorGeselecteerd($event)"></zac-persoon-zoek>
+        <zac-bedrijf-zoek *ngIf="action === actions.ZOEK_BEDRIJF" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
     </mat-sidenav>
     <div class="content">
         <div class="form">

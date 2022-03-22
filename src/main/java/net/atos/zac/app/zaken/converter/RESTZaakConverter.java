@@ -106,7 +106,7 @@ public class RESTZaakConverter {
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
 
         zgwApiService.findInitiatorForZaak(zaak.getUrl()).ifPresent(
-                rolNatuurlijkPersoon -> restZaak.initiatorBSN = rolNatuurlijkPersoon.getBetrokkeneIdentificatie().getInpBsn()
+                rolNatuurlijkPersoon -> restZaak.initiator = rolNatuurlijkPersoon.getBetrokkeneIdentificatie().getInpBsn()
         );
 
         return restZaak;

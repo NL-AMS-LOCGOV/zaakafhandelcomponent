@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
 import {InputFormField} from './input-form-field';
 import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
+import {ActionIcon} from '../../../edit/action-icon';
 
 @Component({
     templateUrl: './input.component.html',
@@ -23,7 +24,7 @@ export class InputComponent extends FormComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    iconClick($event: MouseEvent): void {
-        this.data.iconClicked$.next();
+    iconClick($event: MouseEvent, icon: ActionIcon): void {
+        icon.iconClicked.next();
     }
 }

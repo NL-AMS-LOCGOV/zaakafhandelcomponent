@@ -18,7 +18,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import net.atos.client.kvk.KVKClientService;
-import net.atos.client.kvk.basisprofiel.model.Vestiging;
+import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -92,7 +92,7 @@ public class ProductAanvraagService {
             final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
             zrcClientService.createRol(rolNatuurlijkPersoon);
         } else {
-            final Vestiging hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
+            final ResultaatItem hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
             if (hoofdvestiging != null) {
                 final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
                 final RolVestiging rolVestiging = new RolVestiging(zaak, initiator.getUrl(), ROL_TOELICHTING,
