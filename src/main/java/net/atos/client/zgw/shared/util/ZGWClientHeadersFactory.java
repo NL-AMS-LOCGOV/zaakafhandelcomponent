@@ -63,7 +63,10 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     }
 
     public void removeMedewerkerToelichting() {
-        TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
+        final Medewerker medewerker = ingelogdeMedewerker.get();
+        if (medewerker != null) {
+            TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
+        }
     }
 
     private String generateJWTToken(final Medewerker ingelogdeMedewerker) {
