@@ -26,17 +26,17 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
 
     edit(editing: boolean): void {
         super.edit(editing);
-        this.reasonField.formControl.setValue(null);
+        this.reasonField?.formControl.setValue(null);
     }
 
     release(): void {
         this.formField.formControl.setValue(null);
-        this.reasonField.formControl.setValue(null);
+        this.reasonField?.formControl.setValue(null);
         this.save();
     }
 
     protected submitSave(): void {
-        if (this.reasonField.formControl.valid) {
+        if (!this.reasonField || this.reasonField.formControl.valid) {
             this.onSave.emit({behandelaar: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
         }
         this.editing = false;

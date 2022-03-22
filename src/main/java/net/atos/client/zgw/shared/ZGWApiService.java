@@ -21,14 +21,13 @@ import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.apache.commons.lang3.StringUtils;
 
-import net.atos.client.zgw.drc.DRCClient;
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
-import net.atos.client.zgw.zrc.ZRCClient;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
@@ -72,15 +71,10 @@ public class ZGWApiService implements Caching {
     private ZRCClientService zrcClientService;
 
     @Inject
-    EventingService eventingService;
+    private DRCClientService drcClientService;
 
     @Inject
-    @RestClient
-    private ZRCClient zrcClient;
-
-    @Inject
-    @RestClient
-    private DRCClient drcClient;
+    private EventingService eventingService;
 
     /**
      * Create {@link Zaak} and calculate Doorlooptijden.
@@ -90,7 +84,7 @@ public class ZGWApiService implements Caching {
      */
     public Zaak createZaak(final Zaak zaak) {
         calculateDoorlooptijden(zaak);
-        return zrcClient.zaakCreate(zaak);
+        return zrcClientService.createZaak(zaak);
     }
 
     /**
@@ -116,11 +110,22 @@ public class ZGWApiService implements Caching {
      * @return Created {@link Resultaat}.
      */
     public Resultaat createResultaatForZaak(final Zaak zaak, final String resultaattypeOmschrijving, final String resultaatToelichting) {
-        final Resultaattype resultaattype = ztcClientService.readResultaattype(
-                ztcClientService.readResultaattypen(zaak.getZaaktype()), resultaattypeOmschrijving, zaak.getZaaktype());
-        final Resultaat resultaat = new Resultaat(zaak.getUrl(), resultaattype.getUrl());
-        resultaat.setToelichting(resultaatToelichting);
-        return zrcClient.resultaatCreate(resultaat);
+        final List<Resultaattype> resultaattypen = ztcClientService.readResultaattypen(zaak.getZaaktype());
+        final Resultaattype resultaattype = filterResultaattype(resultaattypen, resultaattypeOmschrijving, zaak.getZaaktype());
+        return createResultaat(zaak.getUrl(), resultaattype.getUrl(), resultaatToelichting);
+    }
+
+    /**
+     * Create {@link Resultaat} for a given {@link Zaak} based on {@link Resultaattype}.UUID and with {@link Resultaat}.toelichting.
+     *
+     * @param zaak                 {@link Zaak}
+     * @param resultaattypeUUID    UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param resultaatToelichting Toelichting for thew {@link Resultaat}.
+     * @return Created {@link Resultaat}.
+     */
+    public Resultaat createResultaatForZaak(final Zaak zaak, final UUID resultaattypeUUID, final String resultaatToelichting) {
+        final Resultaattype resultaattype = ztcClientService.readResultaattype(resultaattypeUUID);
+        return createResultaat(zaak.getUrl(), resultaattype.getUrl(), resultaatToelichting);
     }
 
     /**
@@ -159,16 +164,16 @@ public class ZGWApiService implements Caching {
      */
     public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
             final String titel, final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
-        final EnkelvoudigInformatieobjectWithInhoud newInformatieobject = drcClient.enkelvoudigInformatieobjectCreate(informatieobject);
-        drcClient.gebruiksrechtenCreate(new Gebruiksrechten(newInformatieobject.getUrl(), convertToDateTime(newInformatieobject.getCreatiedatum()),
-                                                            omschrijvingVoorwaardenGebruiksrechten));
+        final EnkelvoudigInformatieobjectWithInhoud newInformatieobject = drcClientService.createEnkelvoudigInformatieobject(informatieobject);
+        drcClientService.createGebruiksrechten(new Gebruiksrechten(newInformatieobject.getUrl(), convertToDateTime(newInformatieobject.getCreatiedatum()),
+                                                                   omschrijvingVoorwaardenGebruiksrechten));
 
         final ZaakInformatieobject zaakInformatieObject = new ZaakInformatieobject();
         zaakInformatieObject.setZaak(zaak.getUrl());
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
-        return zrcClient.zaakinformatieobjectCreate(zaakInformatieObject);
+        return zrcClientService.createZaakInformatieobject(zaakInformatieObject);
     }
 
     /**
@@ -216,9 +221,10 @@ public class ZGWApiService implements Caching {
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
-        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
+        // Subtract one second from now() in order to prevent 'date in future' exception.
+        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now().minusSeconds(1));
         status.setStatustoelichting(toelichting);
-        final Status created = zrcClient.statusCreate(status);
+        final Status created = zrcClientService.createStatus(status);
         // This event will also happen via open-notificaties
         eventingService.send(CacheEventType.ZAAKSTATUS.event(created));
         return created;
@@ -263,4 +269,20 @@ public class ZGWApiService implements Caching {
     public List<String> cacheNames() {
         return CACHES;
     }
+
+    private Resultaat createResultaat(final URI zaakURI, final URI resultaattypeURI, final String resultaatToelichting) {
+        final Resultaat resultaat = new Resultaat(zaakURI, resultaattypeURI);
+        resultaat.setToelichting(resultaatToelichting);
+        return zrcClientService.createResultaat(resultaat);
+    }
+
+    private Resultaattype filterResultaattype(List<Resultaattype> resultaattypes, final String omschrijving, final URI zaaktypeURI) {
+        return resultaattypes.stream()
+                .filter(resultaattype -> StringUtils.equals(resultaattype.getOmschrijving(), omschrijving))
+                .findAny()
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                String.format("Zaaktype '%s': Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
+    }
+
 }

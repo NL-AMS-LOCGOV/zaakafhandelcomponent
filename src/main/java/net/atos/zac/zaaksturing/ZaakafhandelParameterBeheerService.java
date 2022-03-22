@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
 
 @ApplicationScoped
@@ -48,8 +49,7 @@ public class ZaakafhandelParameterBeheerService {
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
         query.select(root).where(builder.equal(root.get(ZAAKTYPE_UUID), zaakTypeUUID));
-        TypedQuery<ZaakafhandelParameters> emQuery = entityManager.createQuery(query);
-        final List<ZaakafhandelParameters> resultList = emQuery.getResultList();
+        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         }
@@ -68,13 +68,13 @@ public class ZaakafhandelParameterBeheerService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<PlanItemParameters> query = builder.createQuery(PlanItemParameters.class);
         final Root<PlanItemParameters> queryRoot = query.from(PlanItemParameters.class);
+
         final Join<PlanItemParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
         final List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
         predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
         query.where(predicates.toArray(new Predicate[0]));
-        final TypedQuery<PlanItemParameters> emQuery = entityManager.createQuery(query);
-        final List<PlanItemParameters> resultList = emQuery.getResultList();
+        final List<PlanItemParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
@@ -91,13 +91,9 @@ public class ZaakafhandelParameterBeheerService {
         return emQuery.getResultList();
     }
 
-    // ToDo: filtern op zaakbeeindigredenen per zaaktype
-    public List<ZaakbeeindigReden> listZaakbeeindigRedenen(final UUID zaaktypeUUID) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<ZaakbeeindigReden> query = builder.createQuery(ZaakbeeindigReden.class);
-        final Root<ZaakbeeindigReden> root = query.from(ZaakbeeindigReden.class);
-        query.orderBy(builder.asc(root.get("naam")));
-        final TypedQuery<ZaakbeeindigReden> emQuery = entityManager.createQuery(query);
-        return emQuery.getResultList();
+    public ZaakbeeindigParameter readZaakbeeindigParameter(final UUID zaaktypeUUID, final Long zaakbeeindigRedenId) {
+        return readZaakafhandelParameters(zaaktypeUUID).getZaakbeeindigParameters().stream()
+                .filter(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden().getId().equals(zaakbeeindigRedenId))
+                .findAny().orElseThrow();
     }
 }

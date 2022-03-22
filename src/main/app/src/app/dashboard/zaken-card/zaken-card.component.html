@@ -4,21 +4,22 @@
   -->
 
 <div class="table-wrapper">
-    <table mat-table [dataSource]="zakenDataSource" matSort>
+    <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="identificatie">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'zaak.identificatie' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="identificatie"> {{'zaak.identificatie' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.identificatie | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="startdatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'startdatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="startdatum"> {{'startdatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.startdatum | datum | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="zaaktype">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'zaaktype' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="zaaktype"> {{'zaaktype' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.zaaktype}} </td>
         </ng-container>
         <ng-container matColumnDef="omschrijving">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'omschrijving' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="omschrijving"> {{'omschrijving' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.omschrijving | empty}} </td>
         </ng-container>
 
@@ -32,8 +33,8 @@
                 </button>
             </td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="zakenColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: zakenColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
         <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" colspan="4"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></td>
         </tr>

@@ -295,7 +295,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new SelectFormFieldBuilder().id('reden')
                                         .label('actie.zaak.afbreken.reden')
                                         .optionLabel('naam')
-                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenen(this.zaak.zaaktype.uuid))
+                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                         .validators(Validators.required)
                                         .build(),
             (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
@@ -306,8 +306,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.zaak.afgebroken');
                 this.updateZaak();
+                this.loadTaken();
+                this.utilService.openSnackbar('actie.zaak.afgebroken');
             }
         });
     }
@@ -436,6 +437,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
         this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: persoon.naam});
             this.zaak.initiator = persoon.bsn;
             this.initiatorPersoon = persoon;
             this.init(this.zaak);
@@ -446,6 +448,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         $event.stopPropagation();
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
+            this.utilService.openSnackbar('msg.initiator.verwijderd');
             this.zaak.initiator = null;
             this.initiatorPersoon = null;
             this.init(this.zaak);

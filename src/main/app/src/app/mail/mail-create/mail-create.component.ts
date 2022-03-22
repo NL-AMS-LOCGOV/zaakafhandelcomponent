@@ -70,7 +70,8 @@ export class MailCreateComponent implements OnInit {
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
 
-            this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(status => {
+            this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(() => {
+                this.utilService.openSnackbar('msg.email.verstuurd');
                 this.router.navigate(['/zaken/', this.zaak.identificatie]);
             });
         } else {
