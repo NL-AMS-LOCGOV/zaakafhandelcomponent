@@ -35,6 +35,11 @@ public class RolOrganisatorischeEenheid extends Rol<OrganisatorischeEenheid> {
     }
 
     @Override
+    public String getIdentificatienummer() {
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getIdentificatie();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getIdentificatie());
     }

@@ -6,7 +6,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {PersoonOverzicht} from './model/personen/persoon-overzicht';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ListPersonenParameters} from './model/personen/list-personen-parameters';
@@ -24,8 +23,14 @@ export class KlantenService {
 
     private basepath = '/rest/klanten';
 
-    readPersoonOverzicht(bsn: string): Observable<PersoonOverzicht> {
-        return this.http.get<PersoonOverzicht>(`${this.basepath}/persoonoverzicht/${bsn}`).pipe(
+    readPersoon(bsn: string): Observable<Persoon> {
+        return this.http.get<Persoon>(`${this.basepath}/persoon/${bsn}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    readBedrijf(vestigingsnummer: string): Observable<Bedrijf> {
+        return this.http.get<Bedrijf>(`${this.basepath}/bedrijf/${vestigingsnummer}`).pipe(
             catchError(this.handleError)
         );
     }
