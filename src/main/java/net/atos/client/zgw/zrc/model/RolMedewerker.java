@@ -48,6 +48,11 @@ public class RolMedewerker extends Rol<Medewerker> {
     }
 
     @Override
+    public String getIdentificatienummer() {
+        return getBetrokkeneIdentificatie().getIdentificatie();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getRoltype(), getBetrokkeneType(), getBetrokkeneIdentificatie().getIdentificatie());
     }

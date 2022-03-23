@@ -148,23 +148,17 @@ export class ZakenService {
         );
     }
 
-    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string, reden: string): Observable<void> {
+    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string): Observable<void> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
-        gegevens.betrokkeneType = 'natuurlijk_persoon';
-        gegevens.reden = reden;
         return this.http.post<void>(`${this.basepath}/initiator`, gegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    deleteInitiator(zaak: Zaak, reden: string): Observable<void> {
-        const gegevens = new ZaakBetrokkeneGegevens();
-        gegevens.zaakUUID = zaak.uuid;
-        gegevens.betrokkeneType = 'NATUURLIJK_PERSOON';
-        gegevens.reden = reden;
-        return this.http.delete<void>(`${this.basepath}/initiator`, {params: {gegevens: JSON.stringify(gegevens)}}).pipe(
+    deleteInitiator(zaak: Zaak): Observable<void> {
+        return this.http.delete<void>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
             catchError(this.handleError)
         );
     }

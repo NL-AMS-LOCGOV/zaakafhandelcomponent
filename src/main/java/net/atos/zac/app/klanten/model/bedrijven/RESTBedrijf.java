@@ -5,7 +5,10 @@
 
 package net.atos.zac.app.klanten.model.bedrijven;
 
-public class RESTBedrijf {
+import net.atos.zac.app.klanten.model.KlantType;
+import net.atos.zac.app.klanten.model.RESTKlant;
+
+public class RESTBedrijf extends RESTKlant {
 
     public String vestigingsnummer;
 
@@ -20,4 +23,19 @@ public class RESTBedrijf {
     public String postcode;
 
     public String type;
+
+    @Override
+    public String getIdentificatie() {
+        return vestigingsnummer;
+    }
+
+    @Override
+    public KlantType getKlantType() {
+        return KlantType.BEDRIJF;
+    }
+
+    @Override
+    public String getNaam() {
+        return handelsnaam;
+    }
 }

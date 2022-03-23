@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.klanten;
 
-import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON_OVERZICHT;
+import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
 import java.util.List;
 
@@ -32,7 +32,6 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
-import net.atos.zac.app.klanten.model.personen.RESTPersoonOverzicht;
 
 @Path("klanten")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -52,11 +51,18 @@ public class KlantenRESTService {
     @Inject
     private RESTBedrijfConverter bedrijfConverter;
 
+
     @GET
-    @Path("persoonoverzicht/{bsn}")
-    public RESTPersoonOverzicht readPersoonOverzicht(@PathParam("bsn") final String bsn) {
-        final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON_OVERZICHT);
-        return persoonConverter.convertToPersoonOverzicht(persoon);
+    @Path("persoon/{bsn}")
+    public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) {
+        final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON);
+        return persoonConverter.convertToPersoon(persoon);
+    }
+
+    @GET
+    @Path("bedrijf/{vestigingsnummer}")
+    public RESTBedrijf readBedrijf(@PathParam("vestigingsnummer") final String vestigingsnummer) {
+        return bedrijfConverter.convert(kvkClientService.findVestiging(vestigingsnummer));
     }
 
     @PUT

@@ -34,7 +34,6 @@ import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -199,13 +198,22 @@ public class ZGWApiService implements Caching {
     }
 
     /**
-     * Find {@link RolNatuurlijkPersoon} for {@link Zaak} with initiator {@link AardVanRol}.
+     * Find BSN or Vestigingsnummer for {@link Zaak} with initiator {@link AardVanRol}.
      *
      * @param zaakUrl {@link URI}
-     * @return {@link RolMedewerker} or 'null'.
+     * @return bsn, vestigingsnummer or null
      */
-    public Optional<RolNatuurlijkPersoon> findInitiatorForZaak(final URI zaakUrl) {
-        return Optional.ofNullable((RolNatuurlijkPersoon) findRolForZaak(zaakUrl, BetrokkeneType.NATUURLIJK_PERSOON, AardVanRol.INITIATOR));
+    public String findInitiatorForZaak(final URI zaakUrl) {
+        final URI zaakType = zrcClientService.readZaak(zaakUrl).getZaaktype();
+        final Roltype roltype = ztcClientService.readRoltype(zaakType, AardVanRol.INITIATOR);
+        final RolListParameters rolListParameters = new RolListParameters();
+        rolListParameters.setZaak(zaakUrl);
+        rolListParameters.setRoltype(roltype.getUrl());
+        Rol<?> rol = zrcClientService.listRollen(rolListParameters).getSingleResult().orElse(null);
+        if (rol != null) {
+            return rol.getIdentificatienummer();
+        }
+        return null;
     }
 
     private Rol<?> findRolForZaak(final URI zaakUrl, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {

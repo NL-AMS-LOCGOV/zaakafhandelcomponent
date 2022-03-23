@@ -31,8 +31,12 @@ public class RolVestiging extends Rol<Vestiging> {
 
     @Override
     public String getNaam() {
-        final Vestiging ves = getBetrokkeneIdentificatie();
-        return ves == null ? null : ves.getVestigingsNummer();
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getVestigingsNummer();
+    }
+
+    @Override
+    public String getIdentificatienummer() {
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getVestigingsNummer();
     }
 
     @Override

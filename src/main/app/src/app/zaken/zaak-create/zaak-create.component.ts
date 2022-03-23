@@ -21,12 +21,11 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {Persoon} from '../../klanten/model/personen/persoon';
 import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
-import {Bedrijf} from '../../klanten/model/bedrijven/bedrijf';
+import {Klant} from '../../klanten/model/klant';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -83,7 +82,8 @@ export class ZaakCreateComponent implements OnInit {
 
         const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
 
-        this.initiatorField = new InputFormFieldBuilder().id('initiator').icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon]).label('initiator')
+        this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie').icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])
+                                                         .label('initiator')
                                                          .validators(CustomValidators.bsnOrVesPrefixed).build();
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
@@ -109,7 +109,7 @@ export class ZaakCreateComponent implements OnInit {
                 } else {
                     zaak[key] = formGroup.controls[key].value;
                 }
-                if (key === 'initiator' && formGroup.controls[key].value) {
+                if (key === 'initiatorIdentificatie' && formGroup.controls[key].value) {
                     const val = formGroup.controls[key].value;
                     const prefix = val.indexOf('|');
                     zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
@@ -123,12 +123,8 @@ export class ZaakCreateComponent implements OnInit {
         }
     }
 
-    initiatorGeselecteerd(initiator: Persoon | Bedrijf): void {
-        if (initiator instanceof Persoon) {
-            this.initiatorField.formControl.setValue(initiator.bsn + ' | ' + initiator.naam);
-        } else {
-            this.initiatorField.formControl.setValue(initiator.vestigingsnummer + ' | ' + initiator.handelsnaam);
-        }
+    initiatorGeselecteerd(initiator: Klant): void {
+        this.initiatorField.formControl.setValue(initiator.identificatie + ' | ' + initiator.naam);
         this.actionsSidenav.close();
     }
 }
