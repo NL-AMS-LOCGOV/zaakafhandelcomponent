@@ -18,7 +18,7 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
     @Output() delete = new EventEmitter<Persoon>();
 
     persoon: Persoon;
-    klantExpanded: boolean = sessionStorage.getItem('klantExpanded') === 'true';
+    klantExpanded: boolean;
     viewInitialized = false;
     loading = true;
 

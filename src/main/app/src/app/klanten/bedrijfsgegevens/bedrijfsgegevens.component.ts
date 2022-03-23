@@ -18,7 +18,7 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Output() delete = new EventEmitter<Bedrijf>();
 
     bedrijf: Bedrijf;
-    klantExpanded: boolean = sessionStorage.getItem('klantExpanded') === 'true';
+    klantExpanded: boolean;
     viewInitialized = false;
     loading = true;
 
