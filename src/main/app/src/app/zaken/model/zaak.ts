@@ -42,5 +42,5 @@ export class Zaak {
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
     rechten: {};
-    initiatorBSN: string;
+    initiatorIdentificatie: string; // BSN or Vestigingsnummer
 }

@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class Persoon {
+import {Klant} from '../klant';
+
+export class Persoon implements Klant {
     bsn: string;
     geslacht: string;
     naam: string;
     geboortedatum: string;
     inschrijfadres: string;
+    identificatie: string;
+    klantType: string;
 }
 
 

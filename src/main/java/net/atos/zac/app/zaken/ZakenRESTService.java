@@ -27,7 +27,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -35,9 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -51,6 +47,8 @@ import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolVestiging;
+import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
@@ -60,6 +58,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
+import net.atos.zac.app.klanten.model.KlantType;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -93,6 +92,10 @@ import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class ZakenRESTService {
+
+    public static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
+
+    public static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -165,20 +168,19 @@ public class ZakenRESTService {
     @Path("initiator")
     public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
-        addInitiator(gegevens.betrokkeneIdentificatie, zaak, gegevens.reden);
+        addInitiator(gegevens.betrokkeneIdentificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
     }
 
     @DELETE
-    @Path("initiator")
-    public void deleteInitiator(@QueryParam("gegevens") final String jsonGegevens) {
-        final RESTZaakBetrokkeneGegevens gegevens;
-        try {
-            gegevens = new ObjectMapper().readValue(jsonGegevens, RESTZaakBetrokkeneGegevens.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e); //invalid data
+    @Path("{uuid}/initiator")
+    public void deleteInitiator(@PathParam("uuid") final String zaakUUID) {
+
+        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
+        String initiatorID = zgwApiService.findInitiatorForZaak(zaak.getUrl());
+        switch (KlantType.getType(initiatorID)) {
+            case PERSOON -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.NATUURLIJK_PERSOON, INITIATOR_VERWIJDER_REDEN);
+            case BEDRIJF -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.VESTIGING, INITIATOR_VERWIJDER_REDEN);
         }
-        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
-        zrcClientService.deleteRol(zaak.getUrl(), gegevens.betrokkeneType, gegevens.reden);
     }
 
     @POST
@@ -186,8 +188,8 @@ public class ZakenRESTService {
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        if (StringUtils.isNotEmpty(restZaak.initiatorBSN)) {
-            addInitiator(restZaak.initiatorBSN, nieuweZaak, "Initiator");
+        if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
+            addInitiator(restZaak.initiatorIdentificatie, nieuweZaak, INITIATOR_TOEVOEGEN_REDEN);
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -431,9 +433,24 @@ public class ZakenRESTService {
         signaleringenService.deleteSignalering(parameters);
     }
 
-    private void addInitiator(final String bsn, final Zaak zaak, String toelichting) {
+    private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
+        switch (KlantType.getType(identificatienummer)) {
+            case PERSOON -> addInitiatorBurger(identificatienummer, zaak, toelichting);
+            case BEDRIJF -> addInitiatorBedrijf(identificatienummer, zaak, toelichting);
+        }
+    }
+
+    private void addInitiatorBurger(final String bsn, final Zaak zaak, String toelichting) {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
         RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), initiator.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
         zrcClientService.createRol(rol);
     }
+
+    private void addInitiatorBedrijf(final String vestigingsnummer, final Zaak zaak, String toelichting) {
+        final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
+        RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
+        zrcClientService.createRol(rol);
+    }
+
+
 }

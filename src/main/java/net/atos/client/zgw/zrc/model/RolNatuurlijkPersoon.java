@@ -41,8 +41,12 @@ public class RolNatuurlijkPersoon extends Rol<NatuurlijkPersoon> {
 
     @Override
     public String getNaam() {
-        final NatuurlijkPersoon persoon = getBetrokkeneIdentificatie();
-        return persoon == null ? null : persoon.getInpBsn();
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getInpBsn();
+    }
+
+    @Override
+    public String getIdentificatienummer() {
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getInpBsn();
     }
 
     @Override

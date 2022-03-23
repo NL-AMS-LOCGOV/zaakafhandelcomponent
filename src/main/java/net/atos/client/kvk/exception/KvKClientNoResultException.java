@@ -5,5 +5,5 @@
 
 package net.atos.client.kvk.exception;
 
-public class VestigingNotFoundException extends RuntimeException {
+public class KvKClientNoResultException extends RuntimeException {
 }

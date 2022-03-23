@@ -16,7 +16,7 @@ import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.c
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {NotitiesComponent} from '../notities/notities.component';
-import {PersonenModule} from '../personen/personen.module';
+import {KlantenModule} from '../klanten/klanten.module';
 
 @NgModule({
     declarations: [
@@ -36,7 +36,7 @@ import {PersonenModule} from '../personen/personen.module';
     imports: [
         SharedModule,
         ZakenRoutingModule,
-        PersonenModule
+        KlantenModule
     ]
 })
 export class ZakenModule {

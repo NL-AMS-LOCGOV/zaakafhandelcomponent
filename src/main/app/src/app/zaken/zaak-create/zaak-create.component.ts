@@ -14,18 +14,18 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {TranslateService} from '@ngx-translate/core';
-import {Persoon} from '../../personen/model/persoon';
 import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
+import {ActionIcon} from '../../shared/edit/action-icon';
+import {Klant} from '../../klanten/model/klant';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -38,16 +38,29 @@ export class ZaakCreateComponent implements OnInit {
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     actions = {
         GEEN: 'GEEN',
-        ZOEK_PERSOON: 'ZOEK_PERSOON'
+        ZOEK_PERSOON: 'ZOEK_PERSOON',
+        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF'
     };
     action: string;
     private initiatorField: InputFormField;
 
-    constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService,
-                private translate: TranslateService) {
+    persoonToevoegenIcon = new ActionIcon('emoji_people', new Subject<void>());
+    bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
+
+    constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
+
+        this.persoonToevoegenIcon.iconClicked.subscribe(() => {
+            this.action = this.actions.ZOEK_PERSOON;
+            this.actionsSidenav.open();
+        });
+        this.bedrijfToevoegenIcon.iconClicked.subscribe(() => {
+            this.action = this.actions.ZOEK_BEDRIJF;
+            this.actionsSidenav.open();
+        });
+
         this.utilService.setTitle('title.zaak.aanmaken');
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
@@ -69,12 +82,9 @@ export class ZaakCreateComponent implements OnInit {
 
         const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
 
-        this.initiatorField = new InputFormFieldBuilder().id('initiatorBSN').icon('search').label('initiatorBSN')
-                                                         .validators(CustomValidators.bsnPrefixed).build();
-        this.initiatorField.iconClicked.subscribe(() => {
-            this.action = this.actions.ZOEK_PERSOON;
-            this.actionsSidenav.open();
-        });
+        this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie').icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])
+                                                         .label('initiator')
+                                                         .validators(CustomValidators.bsnOrVesPrefixed).build();
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                .optionLabel('doel').options(communicatiekanalen)
@@ -99,7 +109,7 @@ export class ZaakCreateComponent implements OnInit {
                 } else {
                     zaak[key] = formGroup.controls[key].value;
                 }
-                if (key === 'initiatorBSN' && formGroup.controls[key].value) {
+                if (key === 'initiatorIdentificatie' && formGroup.controls[key].value) {
                     const val = formGroup.controls[key].value;
                     const prefix = val.indexOf('|');
                     zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
@@ -113,8 +123,8 @@ export class ZaakCreateComponent implements OnInit {
         }
     }
 
-    persoonGeselecteerd(persoon: Persoon): void {
-        this.initiatorField.formControl.setValue(persoon.bsn + ' | ' + persoon.naam);
+    initiatorGeselecteerd(initiator: Klant): void {
+        this.initiatorField.formControl.setValue(initiator.identificatie + ' | ' + initiator.naam);
         this.actionsSidenav.close();
     }
 }

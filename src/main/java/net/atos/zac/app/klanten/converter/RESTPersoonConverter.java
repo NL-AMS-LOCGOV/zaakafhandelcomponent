@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.personen.converter;
+package net.atos.zac.app.klanten.converter;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,55 +18,44 @@ import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.brp.model.NaamPersoon;
 import net.atos.client.brp.model.Verblijfplaats;
-import net.atos.zac.app.personen.model.RESTListPersonenParameters;
-import net.atos.zac.app.personen.model.RESTPersoon;
-import net.atos.zac.app.personen.model.RESTPersoonOverzicht;
+import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
+import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 
 public class RESTPersoonConverter {
 
-    public static final String FIELDS_PERSOON_OVERZICHT = "naam.voornamen," +
-            "naam.voorvoegsel," +
-            "naam.geslachtsnaam," +
-            "geboorte.datum.datum," +
-            "verblijfplaats.straat," +
-            "verblijfplaats.huisnummer," +
-            "verblijfplaats.huisnummertoevoeging," +
-            "verblijfplaats.huisletter," +
-            "verblijfplaats.woonplaats";
-
-    private static final String FIELDS_PERSOON = "burgerservicenummer," +
-            "geslachtsaanduiding," +
-            "naam.voornamen," +
-            "naam.voorvoegsel," +
-            "naam.geslachtsnaam," +
-            "geboorte.datum.datum," +
-            "verblijfplaats.straat," +
-            "verblijfplaats.huisnummer," +
-            "verblijfplaats.huisnummertoevoeging," +
-            "verblijfplaats.huisletter," +
-            "verblijfplaats.woonplaats";
+    public static final String FIELDS_PERSOON =
+            "burgerservicenummer," +
+                    "geslachtsaanduiding," +
+                    "naam.voornamen," +
+                    "naam.voorvoegsel," +
+                    "naam.geslachtsnaam," +
+                    "geboorte.datum.datum," +
+                    "verblijfplaats.straat," +
+                    "verblijfplaats.huisnummer," +
+                    "verblijfplaats.huisnummertoevoeging," +
+                    "verblijfplaats.huisletter," +
+                    "verblijfplaats.woonplaats";
 
     private static final String ONBEKEND = "<onbekend>";
 
-    public RESTPersoonOverzicht convertToPersoonOverzicht(final IngeschrevenPersoonHal persoon) {
-        final RESTPersoonOverzicht persoonOverzicht = new RESTPersoonOverzicht();
+    public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal persoon) {
+        final RESTPersoon restPersoon = new RESTPersoon();
         if (persoon != null) {
-            persoonOverzicht.naam = convertToNaam(persoon.getNaam());
-            persoonOverzicht.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
-            persoonOverzicht.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
+            restPersoon.bsn = persoon.getBurgerservicenummer();
+            restPersoon.geslacht = persoon.getGeslachtsaanduiding().toString();
+            restPersoon.naam = convertToNaam(persoon.getNaam());
+            restPersoon.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
+            restPersoon.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
         } else {
-            persoonOverzicht.naam = ONBEKEND;
-            persoonOverzicht.geboortedatum = ONBEKEND;
-            persoonOverzicht.inschrijfadres = ONBEKEND;
+            restPersoon.naam = ONBEKEND;
+            restPersoon.geboortedatum = ONBEKEND;
+            restPersoon.inschrijfadres = ONBEKEND;
         }
-        return persoonOverzicht;
+        return restPersoon;
     }
 
     public ListPersonenParameters convert(final RESTListPersonenParameters restListPersonenParameters) {
 
-        if (!restListPersonenParameters.isValid()) {
-            throw new IllegalStateException("Ongeldige zoekparameters");
-        }
         final ListPersonenParameters listPersonenParameters = new ListPersonenParameters();
         listPersonenParameters.setFields(FIELDS_PERSOON);
         if (StringUtils.isNotBlank(restListPersonenParameters.bsn)) {
@@ -95,16 +84,6 @@ public class RESTPersoonConverter {
             return Collections.emptyList();
         }
         return ingeschrevenPersonen.stream().map(this::convertToPersoon).toList();
-    }
-
-    public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal ingeschrevenPersoon) {
-        final RESTPersoon persoon = new RESTPersoon();
-        persoon.bsn = ingeschrevenPersoon.getBurgerservicenummer();
-        persoon.geslacht = ingeschrevenPersoon.getGeslachtsaanduiding().toString();
-        persoon.naam = convertToNaam(ingeschrevenPersoon.getNaam());
-        persoon.geboortedatum = convertToGeboortedatum(ingeschrevenPersoon.getGeboorte());
-        persoon.inschrijfadres = convertToInschrijfadres(ingeschrevenPersoon.getVerblijfplaats());
-        return persoon;
     }
 
     private String convertToNaam(final NaamPersoon naam) {

@@ -22,6 +22,7 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {IdentityService} from '../../identity/identity.service';
 import {MailService} from '../mail.service';
 import {MailObject} from '../model/mailobject';
+import {CustomValidators} from '../../shared/validators/customValidators';
 
 @Component({
     templateUrl: './mail-create.component.html'
@@ -56,7 +57,8 @@ export class MailCreateComponent implements OnInit {
         this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
             this.zaak = zaak;
             this.utilService.setTitle('title.mail.versturen', {zaak: zaak.identificatie});
-            const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger').validators(Validators.required).build();
+            const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
+                                                         .validators(Validators.required, CustomValidators.emails).build();
             const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();
             const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required).build();
             this.fields = [[ontvanger], [onderwerp], [body]];
@@ -70,7 +72,8 @@ export class MailCreateComponent implements OnInit {
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
 
-            this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(status => {
+            this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(() => {
+                this.utilService.openSnackbar('msg.email.verstuurd');
                 this.router.navigate(['/zaken/', this.zaak.identificatie]);
             });
         } else {

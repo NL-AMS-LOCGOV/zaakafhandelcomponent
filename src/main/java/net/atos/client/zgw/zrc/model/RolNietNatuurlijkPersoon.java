@@ -39,7 +39,12 @@ public class RolNietNatuurlijkPersoon extends Rol<NietNatuurlijkPersoon> {
     @Override
     public String getNaam() {
         final NietNatuurlijkPersoon nnp = getBetrokkeneIdentificatie();
-        return nnp == null ? null : nnp.getStatutaireNaam();
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getStatutaireNaam();
+    }
+
+    @Override
+    public String getIdentificatienummer() {
+        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getAnnIdentificatie();
     }
 
     @Override
