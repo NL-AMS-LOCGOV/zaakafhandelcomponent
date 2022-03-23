@@ -26,7 +26,7 @@ export class BedrijfZoekComponent implements OnInit {
     bedrijfColumns: string[] = ['naam', 'kvk', 'vestigingsnummer', 'type', 'adres', 'acties'];
     loading = false;
 
-    types = [null, 'HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
+    types = [null, 'HOOFDVESTIGING', 'NEVENVESTIGING'];
 
     kvkFormField: AbstractFormField;
     vestigingsnummerFormField: AbstractFormField;

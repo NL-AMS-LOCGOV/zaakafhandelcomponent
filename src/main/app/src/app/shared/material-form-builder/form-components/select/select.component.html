@@ -8,7 +8,7 @@
     <mat-select [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'"
                 [required]="data.required">
         <mat-option *ngFor="let option of data.options | async" [value]="option">
-            {{(data.optionLabel ? option[data.optionLabel] : option) | translate}}
+            {{(data.optionLabel ? option[data.optionLabel] : option) | empty | translate}}
         </mat-option>
     </mat-select>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
