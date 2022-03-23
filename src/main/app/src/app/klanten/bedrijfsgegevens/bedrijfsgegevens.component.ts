@@ -5,8 +5,8 @@
 
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {KlantenService} from '../klanten.service';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {Bedrijf} from '../model/bedrijven/bedrijf';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     selector: 'zac-bedrijfsgegevens',
@@ -22,11 +22,11 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     viewInitialized = false;
     loading = true;
 
-    constructor(private klantenService: KlantenService, public sessionStorageService: SessionStorageService) {
+    constructor(private klantenService: KlantenService) {
     }
 
     ngOnInit(): void {
-        this.klantExpanded = this.sessionStorageService.getSessionStorage('klantExpanded', true);
+        this.klantExpanded = SessionStorageUtil.getSessionStorage('klantExpanded', true);
         this.klantenService.readBedrijf(this.vestigingsnummer).subscribe(bedrijf => {
             this.bedrijf = bedrijf;
             this.loading = false;
@@ -35,7 +35,7 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     klantExpandedChanged($event: boolean): void {
         if (this.viewInitialized) {
-            this.sessionStorageService.setSessionStorage('klantExpanded', $event ? 'true' : 'false');
+            SessionStorageUtil.setSessionStorage('klantExpanded', $event ? 'true' : 'false');
         }
     }
 

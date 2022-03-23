@@ -25,7 +25,6 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
@@ -54,6 +53,7 @@ import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
 import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -105,7 +105,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                public sessionStorageService: SessionStorageService,
                 public dialog: MatDialog,
                 private translate: TranslateService) {
         super();
@@ -135,7 +134,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = this.sessionStorageService.getSessionStorage('toonAfgerondeTaken');
+        this.toonAfgerondeTaken = SessionStorageUtil.getSessionStorage('toonAfgerondeTaken');
 
     }
 
@@ -462,7 +461,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+        SessionStorageUtil.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {

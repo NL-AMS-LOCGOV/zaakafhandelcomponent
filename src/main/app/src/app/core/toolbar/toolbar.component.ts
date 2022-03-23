@@ -14,8 +14,8 @@ import {Opcode} from '../websocket/model/opcode';
 import {ObjectType} from '../websocket/model/object-type';
 import {WebsocketService} from '../websocket/websocket.service';
 import {WebsocketListener} from '../websocket/model/websocket-listener';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import * as moment from 'moment';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     selector: 'zac-toolbar',
@@ -32,8 +32,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     private signaleringListener: WebsocketListener;
 
     constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService,
-                private signaleringenService: SignaleringenService, private websocketService: WebsocketService,
-                private sessionStorageService: SessionStorageService) {
+                private signaleringenService: SignaleringenService, private websocketService: WebsocketService) {
     }
 
     ngOnInit(): void {
@@ -57,7 +56,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.subscription$ = this.signaleringenService.latestSignalering$.subscribe(
             value => {
                 // TODO instead of session storage use userpreferences in a db
-                const dashboardLastOpenendStorage: string = this.sessionStorageService.getSessionStorage(
+                const dashboardLastOpenendStorage: string = SessionStorageUtil.getSessionStorage(
                     'dashboardOpened');
                 if (!dashboardLastOpenendStorage) {
                     this.hasNewSignaleringen = !!value;
