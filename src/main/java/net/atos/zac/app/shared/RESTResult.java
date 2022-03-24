@@ -6,6 +6,9 @@
 package net.atos.zac.app.shared;
 
 import java.util.Collection;
+import java.util.Collections;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class RESTResult<TYPE> {
 
@@ -13,9 +16,24 @@ public class RESTResult<TYPE> {
 
     int count;
 
+    String foutmelding;
+
     public RESTResult(final Collection<TYPE> results, final int count) {
         this.results = results;
         this.count = count;
+        this.foutmelding = StringUtils.EMPTY;
+    }
+
+    public RESTResult(final Collection<TYPE> results) {
+        this.results = results;
+        this.count = results.size();
+        this.foutmelding = StringUtils.EMPTY;
+    }
+
+    public RESTResult(final String melding) {
+        this.foutmelding = melding;
+        this.results = Collections.emptyList();
+        this.count = 0;
     }
 
     public Collection<TYPE> getResults() {
@@ -24,5 +42,9 @@ public class RESTResult<TYPE> {
 
     public int getCount() {
         return count;
+    }
+
+    public String getFoutmelding() {
+        return foutmelding;
     }
 }

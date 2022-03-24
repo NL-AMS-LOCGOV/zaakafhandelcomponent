@@ -7,7 +7,7 @@ package net.atos.zac.app.klanten;
 
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
-import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,12 +32,15 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
+import net.atos.zac.app.shared.RESTResult;
 
 @Path("klanten")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class KlantenRESTService {
+
+    private static final Logger LOG = Logger.getLogger(KlantenRESTService.class.getName());
 
     @Inject
     private BRPClientService brpClientService;
@@ -67,17 +70,27 @@ public class KlantenRESTService {
 
     @PUT
     @Path("personen")
-    public List<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
-        final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
-        final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
-        return persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen());
+    public RESTResult<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
+        try {
+            final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
+            final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
+            return new RESTResult<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
+        } catch (RuntimeException e) {
+            LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
+            return new RESTResult<>(e.getMessage());
+        }
     }
 
     @PUT
     @Path("bedrijven")
-    public List<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
-        KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
-        Resultaat resultaat = kvkClientService.zoeken(zoekenParameters);
-        return bedrijfConverter.convert(resultaat);
+    public RESTResult<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
+        try {
+            KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
+            Resultaat resultaat = kvkClientService.zoeken(zoekenParameters);
+            return new RESTResult<>(bedrijfConverter.convert(resultaat));
+        } catch (RuntimeException e) {
+            LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
+            return new RESTResult<>(e.getMessage());
+        }
     }
 }
