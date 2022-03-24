@@ -21,6 +21,7 @@ import {CustomValidators} from '../../../shared/validators/customValidators';
 })
 export class PersoonZoekComponent implements OnInit {
     @Output() persoon = new EventEmitter<Persoon>();
+    foutmelding: string;
     bsnFormField: AbstractFormField;
     geslachtsnaamFormField: AbstractFormField;
     geboortedatumFormField: AbstractFormField;
@@ -76,7 +77,8 @@ export class PersoonZoekComponent implements OnInit {
         this.loading = true;
         this.personen.data = [];
         this.klantenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {
-            this.personen.data = personen;
+            this.personen.data = personen.results;
+            this.foutmelding = personen.foutmelding;
             this.loading = false;
         });
     }

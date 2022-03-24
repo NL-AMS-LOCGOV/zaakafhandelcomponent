@@ -6,4 +6,5 @@
 export interface Results<TYPE> {
     results: TYPE[];
     count: number;
+    foutmelding: string;
 }

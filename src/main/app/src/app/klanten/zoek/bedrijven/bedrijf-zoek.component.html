@@ -71,6 +71,6 @@
         <tr mat-header-row *matHeaderRowDef="bedrijfColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: bedrijfColumns;"></tr>
     </table>
-    <p *ngIf="bedrijven.data.length == 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    <p *ngIf="bedrijven.data.length == 0 && !loading">{{foutmelding ? foutmelding : 'msg.geen.gegevens.gevonden' | translate}}</p>
     <p *ngIf="loading ">{{'msg.loading' | translate}}</p>
 </div>

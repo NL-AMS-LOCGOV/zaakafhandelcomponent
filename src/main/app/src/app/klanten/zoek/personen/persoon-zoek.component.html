@@ -66,6 +66,6 @@
         <tr mat-header-row *matHeaderRowDef="persoonColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: persoonColumns;"></tr>
     </table>
-    <p *ngIf="personen.data.length == 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    <p *ngIf="personen.data.length == 0 && !loading">{{foutmelding ? foutmelding : 'msg.geen.gegevens.gevonden' | translate}}</p>
     <p *ngIf="loading ">{{'msg.loading' | translate}}</p>
 </div>
