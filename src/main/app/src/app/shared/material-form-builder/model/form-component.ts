@@ -47,6 +47,10 @@ export abstract class FormComponent {
             });
         } else if (formControl.hasError('bsn')) {
             return this.labeled('msg.error.invalid.bsn', {});
+        } else if (formControl.hasError('kvk')) {
+            return this.labeled('msg.error.invalid.kvk', {});
+        } else if (formControl.hasError('vestigingsnummer')) {
+            return this.labeled('msg.error.invalid.vestigingsnummer', {});
         } else if (formControl.hasError('bsnOrVestiging')) {
             return this.labeled('msg.error.invalid.bsnOrVes', {});
         } else if (formControl.hasError('postcode')) {
