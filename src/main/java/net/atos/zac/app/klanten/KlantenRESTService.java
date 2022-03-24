@@ -7,6 +7,8 @@ package net.atos.zac.app.klanten;
 
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -37,6 +39,8 @@ import net.atos.zac.app.shared.RESTResult;
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class KlantenRESTService {
+
+    private static final Logger LOG = Logger.getLogger(KlantenRESTService.class.getName());
 
     @Inject
     private BRPClientService brpClientService;
@@ -72,6 +76,7 @@ public class KlantenRESTService {
             final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
             return new RESTResult<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
         } catch (RuntimeException e) {
+            LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
             return new RESTResult<>(e.getMessage());
         }
     }
@@ -84,6 +89,7 @@ public class KlantenRESTService {
             Resultaat resultaat = kvkClientService.zoeken(zoekenParameters);
             return new RESTResult<>(bedrijfConverter.convert(resultaat));
         } catch (RuntimeException e) {
+            LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
             return new RESTResult<>(e.getMessage());
         }
     }
