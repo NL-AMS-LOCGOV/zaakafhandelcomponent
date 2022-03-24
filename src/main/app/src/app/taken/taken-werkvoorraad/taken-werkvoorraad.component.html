@@ -132,11 +132,11 @@
 
                             <zac-static-text *ngSwitchCase="'streefdatum'" fxFlex="33"
                                              [label]="column | translate"
-                                             [value]="row.streefdatum"
+                                             [value]="row.streefdatum | datum"
                                              [icon]="streefdatumIcon"></zac-static-text>
 
                             <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
-                                             [value]="row[column] | translate"></zac-static-text>
+                                             [value]="row[column] | datum | translate"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>
