@@ -10,13 +10,12 @@ import {of} from 'rxjs';
 import {Medewerker} from './model/medewerker';
 import {TestBed} from '@angular/core/testing';
 import {HttpClient, HttpHandler} from '@angular/common/http';
-import {SessionStorageService} from '../shared/storage/session-storage.service';
+import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 
 describe('IdentityService', () => {
     let service: IdentityService;
     let mockHttpClient;
     let mockFoutAfhandelingService;
-    let mockSessionStorageService;
     let mockRouter;
     let mockSnackbar;
     let mockTranslate;
@@ -31,13 +30,12 @@ describe('IdentityService', () => {
 
         TestBed.configureTestingModule({
             providers: [
-                HttpClient, HttpHandler, SessionStorageService,
+                HttpClient, HttpHandler,
                 {provide: FoutAfhandelingService, useValue: mockFoutAfhandelingService}
             ]
         }).compileComponents();
         service = TestBed.inject(IdentityService);
         mockHttpClient = TestBed.inject(HttpClient);
-        mockSessionStorageService = TestBed.inject(SessionStorageService);
     });
 
     it('should be created', () => {
@@ -68,23 +66,23 @@ describe('IdentityService', () => {
     });
 
     it('should return user jaap@mail.com', () => {
-        spyOn(mockSessionStorageService, 'getSessionStorage').and.returnValue(jaap);
+        spyOn(SessionStorageUtil, 'getSessionStorage').and.returnValue(jaap);
 
         service.readIngelogdeMedewerker().subscribe(response => {
             expect(response).toEqual(jaap);
         });
-        expect(mockSessionStorageService.getSessionStorage).toHaveBeenCalled();
+        expect(SessionStorageUtil.getSessionStorage).toHaveBeenCalled();
     });
 
     it('should return user jaap@mail.com', () => {
-        spyOn(mockSessionStorageService, 'getSessionStorage').and.returnValue(null);
+        spyOn(SessionStorageUtil, 'getSessionStorage').and.returnValue(null);
         spyOn(mockHttpClient, 'get').and.returnValue(of(jaap));
-        spyOn(mockSessionStorageService, 'setSessionStorage');
+        spyOn(SessionStorageUtil, 'setSessionStorage');
 
         service.readIngelogdeMedewerker().subscribe(response => {
             expect(response).toEqual(jaap);
         });
         expect(mockHttpClient.get).toHaveBeenCalled();
-        expect(mockSessionStorageService.setSessionStorage).toHaveBeenCalled();
+        expect(SessionStorageUtil.setSessionStorage).toHaveBeenCalled();
     });
 });

@@ -3,52 +3,31 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {TestBed} from '@angular/core/testing';
-
-import {SessionStorageService} from './session-storage.service';
+import {SessionStorageUtil} from './session-storage.util';
 
 describe('SessionStorageService', () => {
-    let service: SessionStorageService;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            providers: [
-                SessionStorageService
-            ]
-        });
-        service = TestBed.inject(SessionStorageService);
-    });
-
-    // afterEach(() => {
-    //     service.clearSessionStorage();
-    // });
-
-    it('should be created', () => {
-        expect(service).toBeTruthy();
+    afterEach(() => {
+        SessionStorageUtil.clearSessionStorage();
     });
 
     it('should return a gebruikersnaam with naam Jaap', () => {
-        service.setSessionStorage('gebruikersnaam', 'Jaap');
 
         const gebruiker = {gebruikersnaam: 'Jaap'};
         const gebruikerJSON = JSON.stringify(gebruiker);
 
         spyOn(sessionStorage, 'getItem').and.returnValue(gebruikerJSON);
 
-        expect(service.getSessionStorage('gebruikersnaam')).toEqual(JSON.parse(gebruikerJSON));
+        expect(SessionStorageUtil.getSessionStorage('gebruikersnaam')).toEqual(JSON.parse(gebruikerJSON));
         expect(sessionStorage.getItem).toHaveBeenCalled();
     });
 
     it('key value v should be equal to v', () => {
-        expect(service.getSessionStorage('k', 'v')).toEqual('v');
+        expect(SessionStorageUtil.getSessionStorage('k', 'v')).toEqual('v');
     });
 
     it('should return Jaap', () => {
-        spyOn(sessionStorage, 'setItem');
-
-        const naam = service.setSessionStorage('gebruikersnaam', 'Jaap');
-
-        expect(sessionStorage.setItem).toHaveBeenCalled();
+        const naam = SessionStorageUtil.setSessionStorage('gebruikersnaam', 'Jaap');
         expect(naam).toBe('Jaap');
     });
 
@@ -57,7 +36,7 @@ describe('SessionStorageService', () => {
         spyOn(JSON, 'stringify');
         spyOn(sessionStorage, 'setItem');
 
-        const gebruiker = service.getSessionStorage('', 'Jaap');
+        const gebruiker = SessionStorageUtil.getSessionStorage('', 'Jaap');
 
         expect(JSON.parse).toHaveBeenCalled();
         expect(JSON.stringify).toHaveBeenCalled();
@@ -73,13 +52,9 @@ describe('SessionStorageService', () => {
     // session storage word momenteel niet leeggegooid. Echter, in de afterAll() gebeurt dit wel
     xit('should call clear', () => {
         spyOn(sessionStorage, 'clear');
-
-        service.setSessionStorage('testWaarde', 'waarde');
-
-        service.clearSessionStorage();
-
+        SessionStorageUtil.setSessionStorage('testWaarde', 'waarde');
+        SessionStorageUtil.clearSessionStorage();
         expect(sessionStorage.clear).toHaveBeenCalled();
-
-        expect(service.getSessionStorage('testWaarde')).toBe(undefined);
+        expect(SessionStorageUtil.getSessionStorage('testWaarde')).toBe(undefined);
     });
 });

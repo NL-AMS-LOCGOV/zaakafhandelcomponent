@@ -7,10 +7,10 @@ import {Component, OnInit} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {UtilService} from '../core/service/util.service';
 import * as moment from 'moment';
-import {SessionStorageService} from '../shared/storage/session-storage.service';
 import {SignaleringenService} from '../signaleringen.service';
 import {DashboardCardData} from './model/dashboard-card-data';
 import {SignaleringType} from '../shared/signaleringen/signalering-type';
+import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -28,14 +28,14 @@ export class DashboardComponent implements OnInit {
         [this.zakenNieuwOpNaamCard, this.takenNieuwOpNaamCard]
     ];
 
-    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService, private sessionStorageService: SessionStorageService,
+    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService,
                 private signaleringenService: SignaleringenService) {
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
         // TODO instead of session storage use userpreferences in a db
-        this.sessionStorageService.setSessionStorage('dashboardOpened', moment());
+        SessionStorageUtil.setSessionStorage('dashboardOpened', moment());
         this.signaleringenService.updateSignaleringen();
     }
 }

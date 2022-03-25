@@ -22,8 +22,8 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -47,7 +47,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog,
-                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) {
+                private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -55,7 +55,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
 
-        this.werklijstData = this.sessionStorageService.getSessionStorage('takenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getSessionStorage('takenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -216,7 +216,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             pageSize: this.paginator.pageSize
         };
 
-        this.sessionStorageService.setSessionStorage('takenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setSessionStorage('takenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {
