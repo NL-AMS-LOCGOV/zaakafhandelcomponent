@@ -46,7 +46,6 @@ export class InformatieObjectCreateComponent implements OnInit {
     formConfig: FormConfig;
     ingelogdeMedewerker: Medewerker;
     inhoudField: AbstractFileFormField;
-    nogmaalsField: AbstractFormField;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -123,13 +122,13 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                               .validators(Validators.required)
                                                               .build();
 
-            this.nogmaalsField = new CheckboxFormFieldBuilder().id('nogmaals')
-                                                               .label(this.translateService.instant(
-                                                                   'actie.document.aanmaken.nogmaals'))
-                                                               .build();
+            const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
+                                                           .label(this.translateService.instant(
+                                                               'actie.document.aanmaken.nogmaals'))
+                                                           .build();
 
             this.fields =
-                [[this.inhoudField], [titel], [beschrijving], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal], [this.nogmaalsField]];
+                [[this.inhoudField], [titel], [beschrijving], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal], [nogmaals]];
 
             let vorigeBestandsnaam = null;
             this.inhoudField.fileUploaded.subscribe(bestandsnaam => {
@@ -185,7 +184,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('beschrijving').reset();
-        this.nogmaalsField.formControl.setValue(false);
+        formGroup.get('nogmaals').setValue('false');
         this.form.reset();
         formGroup.setErrors({invalid: true});
     }
