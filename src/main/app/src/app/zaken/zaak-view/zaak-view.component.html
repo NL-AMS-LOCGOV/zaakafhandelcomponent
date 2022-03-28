@@ -115,6 +115,13 @@
                                     <zac-static-text [label]="'resultaat' | translate"
                                                      [value]="zaak.resultaat | empty:'naam'"></zac-static-text>
                                 </div>
+                                <div fxFlex="100" fxLayout.sm="row">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'locatie' | translate"
+                                                     [value]="zaak.zaakgeometrie"></zac-static-text>
+                                </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>

@@ -17,6 +17,7 @@ import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdel
 import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {NotitiesComponent} from '../notities/notities.component';
 import {KlantenModule} from '../klanten/klanten.module';
+import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import {KlantenModule} from '../klanten/klanten.module';
         ZakenAfgehandeldComponent,
         ZakenVerdelenDialogComponent,
         ZakenVrijgevenDialogComponent,
-        NotitiesComponent
+        NotitiesComponent,
+        LocatieZoekComponent
     ],
     exports: [
         ZaakVerkortComponent

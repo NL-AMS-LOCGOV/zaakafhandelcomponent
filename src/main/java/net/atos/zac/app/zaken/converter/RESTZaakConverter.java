@@ -53,6 +53,9 @@ public class RESTZaakConverter {
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
 
+    @Inject
+    private RESTGeometryConverter restGeometryConverter;
+
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
 
@@ -83,9 +86,8 @@ public class RESTZaakConverter {
         }
         restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
         restZaak.gerelateerdeZaken = gerelateerdeZaakConverter.getGerelateerdeZaken(zaak);
-        if (zaak.getZaakgeometrie() != null) {
-            restZaak.zaakgeometrie = zaak.getZaakgeometrie().getType();
-        }
+        restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
+
         if (zaak.getKenmerken() != null) {
             restZaak.kenmerken = zaak.getKenmerken().stream().map(zaakKenmerk -> new RESTZaakKenmerk(zaakKenmerk.getKenmerk(), zaakKenmerk.getBron()))
                     .collect(Collectors.toList());
@@ -127,6 +129,8 @@ public class RESTZaakConverter {
         if (restZaak.vertrouwelijkheidaanduiding != null) {
             zaak.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
+
+        zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
 
         return zaak;
     }

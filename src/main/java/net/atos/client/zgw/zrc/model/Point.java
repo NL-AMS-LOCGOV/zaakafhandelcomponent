@@ -10,14 +10,22 @@ package net.atos.client.zgw.zrc.model;
  */
 public class Point extends Geometry {
 
-    private final Point2D coordinates;
+    private Point2D coordinates;
+
+    public Point() {
+        super(GeometryType.POINT);
+    }
 
     public Point(final Point2D coordinates) {
-        super("Point");
+        super(GeometryType.POINT);
         this.coordinates = coordinates;
     }
 
     public Point2D getCoordinates() {
         return coordinates;
+    }
+
+    public void setCoordinates(final Point2D coordinates) {
+        this.coordinates = coordinates;
     }
 }

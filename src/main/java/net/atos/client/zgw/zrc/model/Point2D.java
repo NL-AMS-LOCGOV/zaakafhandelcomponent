@@ -12,8 +12,6 @@ import java.util.List;
 import javax.json.bind.adapter.JsonbAdapter;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 /**
  *
  */
@@ -49,7 +47,7 @@ public class Point2D {
 
         @Override
         public Point2D adaptFromJson(final List<BigDecimal> coordinates) {
-            throw new NotImplementedException(String.format("Deserializing '%s' object is not supported", Point2D.class.getSimpleName()));
+            return new Point2D(coordinates.get(0), coordinates.get(1));
         }
     }
 }

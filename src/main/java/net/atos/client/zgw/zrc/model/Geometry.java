@@ -5,14 +5,20 @@
 
 package net.atos.client.zgw.zrc.model;
 
+import javax.json.bind.annotation.JsonbTypeDeserializer;
+
+import net.atos.client.zgw.zrc.util.GeometryJsonbDeserializer;
+
 /**
  *
  */
+@JsonbTypeDeserializer(GeometryJsonbDeserializer.class)
 public class Geometry {
+    public static final String GEOMETRY_TYPE_NAAM = "type";
 
-    private final String type;
+    private final GeometryType type;
 
-    public Geometry(final String type) {
+    public Geometry(final GeometryType type) {
         this.type = type;
     }
 
@@ -20,7 +26,7 @@ public class Geometry {
         type = null;
     }
 
-    public String getType() {
+    public GeometryType getType() {
         return type;
     }
 }

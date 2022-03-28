@@ -22,7 +22,7 @@ import net.atos.client.zgw.zrc.util.RolJsonbDeserializer;
 @JsonbTypeDeserializer(RolJsonbDeserializer.class)
 public abstract class Rol<BETROKKENE_IDENTIFICATIE> {
 
-    public static final String BETROKKENE_TYPE_NAM = "betrokkeneType";
+    public static final String BETROKKENE_TYPE_NAAM = "betrokkeneType";
 
     /**
      * URL-referentie naar dit object.

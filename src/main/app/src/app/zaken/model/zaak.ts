@@ -11,6 +11,7 @@ import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
 import {ZaakEigenschap} from './zaak-eigenschap';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Geometry} from './geometry';
 
 export class Zaak {
     uuid: string;
@@ -30,7 +31,7 @@ export class Zaak {
     publicatiedatum: string;
     communicatiekanaal: string;
     vertrouwelijkheidaanduiding: string;
-    zaakgeometrie: string;
+    zaakgeometrie: Geometry;
     indicatieOpschorting: boolean;
     redenOpschorting: string;
     indicatieVerlenging: boolean;

@@ -27,6 +27,8 @@ import {InputFormField} from '../../shared/material-form-builder/form-components
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Bedrijf} from '../../klanten/model/bedrijven/bedrijf';
+import {Coordinate} from 'ol/coordinate.js';
+import {Coordinates, Geometry} from '../model/geometry';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -40,27 +42,24 @@ export class ZaakCreateComponent implements OnInit {
     actions = {
         GEEN: 'GEEN',
         ZOEK_PERSOON: 'ZOEK_PERSOON',
-        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF'
+        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF',
+        ZOEK_LOCATIE: 'ZOEK_LOCATIE'
     };
     action: string;
     private initiatorField: InputFormField;
+    private locatieField: InputFormField;
 
-    persoonToevoegenIcon = new ActionIcon('emoji_people', new Subject<void>());
-    bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
+    private persoonToevoegenIcon = new ActionIcon('emoji_people', new Subject<void>());
+    private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
+    private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
-
-        this.persoonToevoegenIcon.iconClicked.subscribe(() => {
-            this.action = this.actions.ZOEK_PERSOON;
-            this.actionsSidenav.open();
-        });
-        this.bedrijfToevoegenIcon.iconClicked.subscribe(() => {
-            this.action = this.actions.ZOEK_BEDRIJF;
-            this.actionsSidenav.open();
-        });
+        this.persoonToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_PERSOON));
+        this.bedrijfToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_BEDRIJF));
+        this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_LOCATIE));
 
         this.utilService.setTitle('title.zaak.aanmaken');
 
@@ -95,8 +94,11 @@ export class ZaakCreateComponent implements OnInit {
 
         const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').build();
         const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').build();
+
+        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie').icon(this.locatieToevoegenIcon).label('locatie').build();
+
         this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum], [tussenTitel],
-            [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
+            [communicatiekanaal, vertrouwelijkheidaanduiding], [this.locatieField], [omschrijving], [toelichting]];
 
     }
 
@@ -113,6 +115,13 @@ export class ZaakCreateComponent implements OnInit {
                     const val = formGroup.controls[key].value;
                     const prefix = val.indexOf('|');
                     zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
+                }
+
+                if (key === 'zaakgeometrie') {
+                    const val = formGroup.controls[key].value;
+                    const zaakgeometrie = new Geometry('Point');
+                    zaakgeometrie.point = new Coordinates(val[0], val[1]);
+                    zaak[key] = zaakgeometrie;
                 }
             });
             this.zakenService.createZaak(zaak).subscribe(newZaak => {
@@ -131,5 +140,18 @@ export class ZaakCreateComponent implements OnInit {
         }
         this.actionsSidenav.close();
     }
+
+    locatieGeselecteerd(locatie: Coordinate): void {
+        this.locatieField.formControl.setValue(locatie);
+        this.actionsSidenav.close();
+    }
+
+    private iconNext(action) {
+        return () => {
+            this.action = action;
+            this.actionsSidenav.open();
+        };
+    }
+
 }
 
