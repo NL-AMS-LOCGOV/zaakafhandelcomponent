@@ -5,6 +5,7 @@
 
 import {MatDrawerMode} from '@angular/material/sidenav';
 import {MenuMode} from './side-nav.component';
+import {SessionStorageUtil} from '../storage/session-storage.util';
 
 export class SideNavUtil {
 
@@ -13,12 +14,11 @@ export class SideNavUtil {
         return menuMode === MenuMode.CLOSED || menuMode === MenuMode.OPEN ? 'side' : 'over';
     }
 
-    static store(menuMode): void {
-        sessionStorage.setItem('menuMode', menuMode);
+    static store(menuMode: MenuMode): void {
+        SessionStorageUtil.setSessionStorage('menuMode', menuMode);
     }
 
     static load(): MenuMode {
-        const menuMode = sessionStorage.getItem('menuMode');
-        return menuMode ? menuMode.replace(/"/g, '') as MenuMode : MenuMode.OPEN;
+        return SessionStorageUtil.getSessionStorage('menuMode', MenuMode.OPEN) as MenuMode;
     }
 }

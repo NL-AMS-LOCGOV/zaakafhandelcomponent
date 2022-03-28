@@ -6,9 +6,9 @@
 import {BackButtonDirective} from './back-button.directive';
 import {NavigationService} from './navigation.service';
 import {TestBed} from '@angular/core/testing';
-import {SessionStorageService} from '../storage/session-storage.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Router} from '@angular/router';
+import {SessionStorageUtil} from '../storage/session-storage.util';
 
 describe('BackButtonDirective', () => {
     let directive;
@@ -21,7 +21,7 @@ describe('BackButtonDirective', () => {
 
         TestBed.configureTestingModule({
             providers: [
-                BackButtonDirective, SessionStorageService,
+                BackButtonDirective,
                 {provide: NavigationService, useValue: mockNavigationService}
 
             ],
@@ -30,7 +30,6 @@ describe('BackButtonDirective', () => {
             ]
         }).compileComponents();
         directive = TestBed.inject(BackButtonDirective);
-        mockSessionStorage = TestBed.inject(SessionStorageService);
         mockRouter = TestBed.inject(Router);
     });
 
@@ -47,7 +46,7 @@ describe('BackButtonDirective', () => {
     // TODO: ESUITEDEV-25310
     // navigationHistory word niet aangemaakt bij tests
     xit('should build navigation history, then tear it down', () => {
-        let history = mockSessionStorage.getSessionStorage('navigationHistory');
+        const history = SessionStorageUtil.getSessionStorage('navigationHistory');
 
         expect(history.length).toBe(1);
 

@@ -18,8 +18,8 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -39,7 +39,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     werklijstData: WerklijstData;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService, private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
+                private identityService: IdentityService, private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
@@ -48,7 +48,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        this.werklijstData = this.sessionStorageService.getSessionStorage(
+        this.werklijstData = SessionStorageUtil.getSessionStorage(
             'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
 
         if (this.werklijstData) {
@@ -185,7 +185,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             pageSize: this.paginator.pageSize
         };
 
-        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

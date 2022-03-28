@@ -16,8 +16,8 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -42,7 +42,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
     werklijstData: WerklijstData;
 
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
+                private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.mijn');
@@ -51,7 +51,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             this.zaaktypes = zaaktypes;
         });
 
-        this.werklijstData = this.sessionStorageService.getSessionStorage('mijnZakenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getSessionStorage('mijnZakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -129,7 +129,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             pageSize: this.paginator.pageSize
         };
 
-        this.sessionStorageService.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

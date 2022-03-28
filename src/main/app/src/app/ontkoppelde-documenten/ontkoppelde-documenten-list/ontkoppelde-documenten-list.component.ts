@@ -4,7 +4,6 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {OntkoppeldDocument} from '../model/ontkoppeld-document';
 import {OntkoppeldeDocumentenService} from '../ontkoppelde-documenten.service';
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
@@ -15,6 +14,7 @@ import {map, startWith, switchMap} from 'rxjs/operators';
 import {ListParameters} from '../../shared/model/list-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -31,12 +31,11 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     constructor(private service: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
-                private utilService: UtilService,
-                private sessionStorageService: SessionStorageService) { }
+                private utilService: UtilService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.defaults = this.sessionStorageService.getSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc')) as ListParameters;
+        this.defaults = SessionStorageUtil.getSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc')) as ListParameters;
     }
 
     ngAfterViewInit(): void {
@@ -51,7 +50,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                this.sessionStorageService.setSessionStorage('ontkoppeldeDocumenten', this.getListParameters());
+                SessionStorageUtil.setSessionStorage('ontkoppeldeDocumenten', this.getListParameters());
                 return data;
             })
         ).subscribe(data => {
@@ -72,7 +71,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     reset(): void {
-        this.sessionStorageService.setSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
+        SessionStorageUtil.setSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
         this.utilService.reloadRoute();
     }
 }

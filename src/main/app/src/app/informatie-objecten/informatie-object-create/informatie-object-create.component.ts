@@ -173,16 +173,20 @@ export class InformatieObjectCreateComponent implements OnInit {
                         this.router.navigate(['/zaken/', this.zaak.identificatie]);
                     }
                 });
+        } else {
+            this.navigation.back();
         }
     }
 
     resetForm(formGroup: FormGroup) {
         this.inhoudField.reset();
-        this.inhoudField.formControl.setErrors([]);
+        this.inhoudField.formControl.setErrors(null);
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('beschrijving').reset();
+        formGroup.get('nogmaals').setValue('false');
         this.form.reset();
+        formGroup.setErrors({invalid: true});
     }
 
     private getIngelogdeMedewerker() {

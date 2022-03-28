@@ -188,4 +188,6 @@ public abstract class Rol<BETROKKENE_IDENTIFICATIE> {
     protected abstract boolean equalBetrokkeneIdentificatie(final BETROKKENE_IDENTIFICATIE identificatie);
 
     public abstract String getNaam();
+
+    public abstract String getIdentificatienummer();
 }

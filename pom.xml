@@ -372,7 +372,6 @@
                         <type>kubernetes</type>
                     </cloud>
                     <jvmArguments>
-                        <argument>-Djavax.net.ssl.trustStore=/cacerts</argument>
                         <!-- <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</argument> -->
                     </jvmArguments>
                     <outputFileName>${project.artifactId}.jar</outputFileName>

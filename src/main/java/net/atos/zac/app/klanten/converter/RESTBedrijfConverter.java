@@ -23,10 +23,9 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 public class RESTBedrijfConverter {
 
 
+    private static boolean isNotRechtspersoon(ResultaatItem resultaatItem) {return !resultaatItem.getType().equals("rechtspersoon");}
+
     public KVKZoekenParameters convert(final RESTListBedrijvenParameters restListParameters) {
-        if (!restListParameters.isValid()) {
-            throw new IllegalStateException("Ongeldige zoekparameters");
-        }
         final KVKZoekenParameters zoekenParameters = new KVKZoekenParameters();
         if (StringUtils.isNotBlank(restListParameters.kvkNummer)) {
             zoekenParameters.setKvkNummer(restListParameters.kvkNummer);
@@ -53,10 +52,13 @@ public class RESTBedrijfConverter {
         if (resultaat == null || CollectionUtils.isEmpty(resultaat.getResultaten())) {
             return Collections.emptyList();
         }
-        return resultaat.getResultaten().stream().map(this::convert).collect(Collectors.toList());
+        return resultaat.getResultaten().stream().filter(RESTBedrijfConverter::isNotRechtspersoon).map(this::convert).collect(Collectors.toList());
     }
 
     public RESTBedrijf convert(final ResultaatItem bedrijf) {
+        if (bedrijf == null) {
+            return new RESTBedrijf();
+        }
         RESTBedrijf restBedrijf = new RESTBedrijf();
         restBedrijf.kvkNummer = bedrijf.getKvkNummer();
         restBedrijf.vestigingsnummer = bedrijf.getVestigingsnummer();

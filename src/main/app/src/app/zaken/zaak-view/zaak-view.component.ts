@@ -25,7 +25,6 @@ import {WebsocketService} from '../../core/websocket/websocket.service';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {NotitieType} from '../../notities/model/notitietype.enum';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
@@ -45,16 +44,16 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
-import {PersoonOverzicht} from '../../klanten/model/personen/persoon-overzicht';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
-import {Persoon} from '../../klanten/model/personen/persoon';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
 import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
+import {Klant} from '../../klanten/model/klant';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -68,7 +67,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     toonAfgerondeTaken = false;
     actions = {
         GEEN: 'GEEN',
-        ZOEK_PERSOON: 'ZOEK_PERSOON'
+        ZOEK_PERSOON: 'ZOEK_PERSOON',
+        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF'
+
     };
     action: string;
     takenFilter: any = {};
@@ -77,8 +78,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
-    initiatorPersoon: PersoonOverzicht = new PersoonOverzicht();
-    initiatorExpanded: boolean = sessionStorage.getItem('initiatorExpanded') === 'true';
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
@@ -106,15 +105,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
-                public sessionStorageService: SessionStorageService,
                 public dialog: MatDialog,
                 private translate: TranslateService) {
         super();
     }
 
     ngOnInit(): void {
-        this.initiatorExpanded = this.sessionStorageService.getSessionStorage('initiatorExpanded', true);
-        console.log(this.initiatorExpanded);
+
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.init(data['zaak']);
             this.zaakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ZAAK, this.zaak.uuid,
@@ -131,16 +128,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.getIngelogdeMedewerker();
             this.loadTaken();
             this.loadInformatieObjecten();
-            if (this.zaak.initiator) {
-                this.loadInitiatorPersoon();
-            }
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = this.sessionStorageService.getSessionStorage('toonAfgerondeTaken');
+        this.toonAfgerondeTaken = SessionStorageUtil.getSessionStorage('toonAfgerondeTaken');
 
     }
 
@@ -247,17 +241,29 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`,
+            'upload_file'));
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
+        // TODO #650 onderstaande url aanpassen naar juiste component
+        // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
+        this.menu.push(
+            new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
+                'mark_email_read'));
+
         this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
 
-        if (!this.zaak.initiator) {
-            this.menu.push(new ButtonMenuItem('initiator.toevoegen', () => {
+        this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
+        if (!this.zaak.initiatorIdentificatie) {
+            this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                 this.actionsSidenav.open();
                 this.action = this.actions.ZOEK_PERSOON;
             }, 'emoji_people'));
+            this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
+                this.actionsSidenav.open();
+                this.action = this.actions.ZOEK_BEDRIJF;
+            }, 'business'));
         }
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
             const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
@@ -415,12 +421,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    private loadInitiatorPersoon(): void {
-        this.klantenService.readPersoonOverzicht(this.zaak.initiator).subscribe(persoon => {
-            this.initiatorPersoon = persoon;
-        });
-    }
-
     showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
         return this.ingelogdeMedewerker.gebruikersnaam !== zaakOrTaak.behandelaar?.gebruikersnaam && zaakOrTaak.status !== TaakStatus.Afgerond;
     }
@@ -433,26 +433,34 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    persoonGeselecteerd(persoon: Persoon): void {
+    initiatorGeselecteerd(initiator: Klant): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createInitiator(this.zaak, persoon.bsn, 'Initiator toegekend door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
-            this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: persoon.naam});
-            this.zaak.initiator = persoon.bsn;
-            this.initiatorPersoon = persoon;
-            this.init(this.zaak);
-        });
+        this.zakenService.createInitiator(this.zaak, initiator.identificatie)
+            .subscribe(() => {
+                this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: initiator.naam});
+                this.zaak.initiatorIdentificatie = initiator.identificatie;
+                this.setupMenu();
+            });
     }
 
-    deleteInitiator($event: MouseEvent): void {
-        $event.stopPropagation();
+    deleteInitiator(): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.deleteInitiator(this.zaak, 'Initiator verwijderd door de medewerker tijdens het behandelen van de zaak').subscribe(() => {
-            this.utilService.openSnackbar('msg.initiator.verwijderd');
-            this.zaak.initiator = null;
-            this.initiatorPersoon = null;
-            this.init(this.zaak);
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
+                this.zakenService.deleteInitiator(this.zaak)
+            ),
+            width: '400px',
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.initiator.ontkoppelen.uitgevoerd');
+                this.zaak.initiatorIdentificatie = null;
+                this.init(this.zaak);
+            }
         });
+
     }
 
     assignTaskToMe(taak: Taak) {
@@ -470,13 +478,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        this.sessionStorageService.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
-    }
-
-    initiatorExpandedChanged($event: boolean): void {
-        if (this.viewInitialized) {
-            this.sessionStorageService.setSessionStorage('initiatorExpanded', $event ? 'true' : 'false');
-        }
+        SessionStorageUtil.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
@@ -507,4 +509,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             });
         });
     }
+
+    get initiatorType() {
+        if (this.zaak.initiatorIdentificatie) {
+            if (this.zaak.initiatorIdentificatie.length === 9) {
+                return 'PERSOON';
+            }
+            return 'BEDRIJF';
+        }
+        return null;
+    }
+
 }

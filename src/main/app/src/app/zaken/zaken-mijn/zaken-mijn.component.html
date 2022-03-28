@@ -183,16 +183,16 @@
 
                             <zac-static-text *ngSwitchCase="'einddatumGepland'" fxFlex="33"
                                              [label]="column | translate"
-                                             [value]="row.einddatumGepland"
+                                             [value]="row.einddatumGepland | datum"
                                              [icon]="einddatumGeplandIcon"></zac-static-text>
 
                             <zac-static-text *ngSwitchCase="'uiterlijkeEinddatumAfdoening'" fxFlex="33"
                                              [label]="column | translate"
-                                             [value]="row.uiterlijkeEinddatumAfdoening"
+                                             [value]="row.uiterlijkeEinddatumAfdoening | datum"
                                              [icon]="uiterlijkeEinddatumAfdoeningIcon"></zac-static-text>
 
                             <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
-                                             [value]="row[column] | translate"></zac-static-text>
+                                             [value]="row[column] | datum | translate"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>

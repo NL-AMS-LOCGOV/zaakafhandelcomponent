@@ -27,7 +27,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -35,9 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -96,6 +92,10 @@ import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class ZakenRESTService {
+
+    public static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
+
+    public static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -168,20 +168,19 @@ public class ZakenRESTService {
     @Path("initiator")
     public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
-        addInitiator(gegevens.betrokkeneIdentificatie, zaak, gegevens.reden);
+        addInitiator(gegevens.betrokkeneIdentificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
     }
 
     @DELETE
-    @Path("initiator")
-    public void deleteInitiator(@QueryParam("gegevens") final String jsonGegevens) {
-        final RESTZaakBetrokkeneGegevens gegevens;
-        try {
-            gegevens = new ObjectMapper().readValue(jsonGegevens, RESTZaakBetrokkeneGegevens.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e); //invalid data
+    @Path("{uuid}/initiator")
+    public void deleteInitiator(@PathParam("uuid") final String zaakUUID) {
+
+        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
+        String initiatorID = zgwApiService.findInitiatorForZaak(zaak.getUrl());
+        switch (KlantType.getType(initiatorID)) {
+            case PERSOON -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.NATUURLIJK_PERSOON, INITIATOR_VERWIJDER_REDEN);
+            case BEDRIJF -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.VESTIGING, INITIATOR_VERWIJDER_REDEN);
         }
-        final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
-        zrcClientService.deleteRol(zaak.getUrl(), gegevens.betrokkeneType, gegevens.reden);
     }
 
     @POST
@@ -189,8 +188,8 @@ public class ZakenRESTService {
     public RESTZaak createZaak(final RESTZaak restZaak) {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
-        if (StringUtils.isNotEmpty(restZaak.initiator)) {
-            addInitiator(restZaak.initiator, nieuweZaak, "Initiator");
+        if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
+            addInitiator(restZaak.initiatorIdentificatie, nieuweZaak, INITIATOR_TOEVOEGEN_REDEN);
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -436,7 +435,7 @@ public class ZakenRESTService {
 
     private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
         switch (KlantType.getType(identificatienummer)) {
-            case BURGER -> addInitiatorBurger(identificatienummer, zaak, toelichting);
+            case PERSOON -> addInitiatorBurger(identificatienummer, zaak, toelichting);
             case BEDRIJF -> addInitiatorBedrijf(identificatienummer, zaak, toelichting);
         }
     }
@@ -452,4 +451,6 @@ public class ZakenRESTService {
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
     }
+
+
 }

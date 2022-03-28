@@ -10,7 +10,7 @@ import {Groep} from './model/groep';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Medewerker} from './model/medewerker';
-import {SessionStorageService} from '../shared/storage/session-storage.service';
+import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +19,7 @@ export class IdentityService {
 
     private basepath: string = '/rest/identity';
 
-    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private sessionStorageService: SessionStorageService) {
+    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
     listGroepen(): Observable<Groep[]> {
@@ -41,13 +41,13 @@ export class IdentityService {
     }
 
     readIngelogdeMedewerker(): Observable<Medewerker> {
-        const ingelogdeMedewerker = this.sessionStorageService.getSessionStorage('ingelogdeMedewerker');
+        const ingelogdeMedewerker = SessionStorageUtil.getSessionStorage('ingelogdeMedewerker');
         if (ingelogdeMedewerker) {
             return of(ingelogdeMedewerker);
         }
         return this.http.get<Medewerker>(`${this.basepath}/ingelogdemedewerker`).pipe(
             tap(medewerker => {
-                this.sessionStorageService.setSessionStorage('ingelogdeMedewerker', medewerker);
+                SessionStorageUtil.setSessionStorage('ingelogdeMedewerker', medewerker);
             }),
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

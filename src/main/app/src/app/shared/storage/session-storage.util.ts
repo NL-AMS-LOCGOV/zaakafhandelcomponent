@@ -3,17 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Injectable} from '@angular/core';
 
-@Injectable({
-    providedIn: 'root'
-})
-export class SessionStorageService {
+export class SessionStorageUtil {
 
-    constructor() {
-    }
-
-    getSessionStorage(key: string, defaultValue?: any): any {
+    static getSessionStorage(key: string, defaultValue?: any): any {
         let item = JSON.parse(sessionStorage.getItem(key));
         if (defaultValue && !item) {
             // Kopieren om referentie te breken
@@ -24,12 +17,12 @@ export class SessionStorageService {
         return item;
     }
 
-    setSessionStorage(key: string, value: any): any {
+    static setSessionStorage(key: string, value: any): any {
         sessionStorage.setItem(key, JSON.stringify(value));
         return value;
     }
 
-    clearSessionStorage(): void {
+    static clearSessionStorage(): void {
         sessionStorage.clear();
     }
 }

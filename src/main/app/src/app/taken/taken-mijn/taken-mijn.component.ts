@@ -16,8 +16,8 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
-import {SessionStorageService} from '../../shared/storage/session-storage.service';
 import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -38,14 +38,13 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     werklijstData: WerklijstData;
 
-    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private sessionStorageService: SessionStorageService, private cd: ChangeDetectorRef) { }
+    constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService, private cd: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.werklijstData = this.sessionStorageService.getSessionStorage('mijnTakenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getSessionStorage('mijnTakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -114,7 +113,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             pageSize: this.paginator.pageSize
         };
 
-        this.sessionStorageService.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

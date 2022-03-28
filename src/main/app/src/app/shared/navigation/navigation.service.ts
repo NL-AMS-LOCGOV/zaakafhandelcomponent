@@ -6,10 +6,10 @@
 import {Injectable} from '@angular/core';
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent} from '@angular/router';
 import {Location} from '@angular/common';
-import {SessionStorageService} from '../storage/session-storage.service';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {UtilService} from '../../core/service/util.service';
 import {filter} from 'rxjs/operators';
+import {SessionStorageUtil} from '../storage/session-storage.util';
 
 @Injectable({
     providedIn: 'root'
@@ -21,7 +21,7 @@ export class NavigationService {
 
     private static NAVIGATION_HISTORY: string = 'navigationHistory';
 
-    constructor(private router: Router, private location: Location, private storage: SessionStorageService, private utilService: UtilService) {
+    constructor(private router: Router, private location: Location, private utilService: UtilService) {
         router.events.pipe(
             filter(
                 (e: RouterEvent): e is RouterEvent => e instanceof NavigationStart || e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError)
@@ -33,11 +33,11 @@ export class NavigationService {
             this.utilService.setLoading(true);
         } else {
             if (e instanceof NavigationEnd) {
-                let history = this.storage.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
-                if (history.length == 0 || history[history.length - 1] !== e.urlAfterRedirects) {
+                const history = SessionStorageUtil.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
+                if (history.length === 0 || history[history.length - 1] !== e.urlAfterRedirects) {
                     history.push(e.urlAfterRedirects);
                 }
-                this.storage.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
+                SessionStorageUtil.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
                 this.backDisabled.next(history.length <= 1);
             }
 
@@ -46,14 +46,14 @@ export class NavigationService {
     }
 
     back(): void {
-        let history = this.storage.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
+        const history = SessionStorageUtil.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
         history.pop();
         if (history.length > 0) {
             this.location.back();
         } else {
             this.router.navigate(['..']);
         }
-        this.storage.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
+        SessionStorageUtil.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
         this.backDisabled.next(history.length <= 1);
     }
 }

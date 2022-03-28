@@ -22,11 +22,12 @@ import {KlantenService} from '../../klanten.service';
 export class BedrijfZoekComponent implements OnInit {
     @Output() bedrijf = new EventEmitter<Bedrijf>();
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
+    foutmelding: string;
     formGroup: FormGroup;
     bedrijfColumns: string[] = ['naam', 'kvk', 'vestigingsnummer', 'type', 'adres', 'acties'];
     loading = false;
 
-    types = [null, 'HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
+    types = [null, 'HOOFDVESTIGING', 'NEVENVESTIGING'];
 
     kvkFormField: AbstractFormField;
     vestigingsnummerFormField: AbstractFormField;
@@ -84,7 +85,8 @@ export class BedrijfZoekComponent implements OnInit {
         this.loading = true;
         this.bedrijven.data = [];
         this.klantenService.listBedrijven(this.createListParameters()).subscribe(bedrijven => {
-            this.bedrijven.data = bedrijven;
+            this.bedrijven.data = bedrijven.results;
+            this.foutmelding = bedrijven.foutmelding;
             this.loading = false;
         });
     }

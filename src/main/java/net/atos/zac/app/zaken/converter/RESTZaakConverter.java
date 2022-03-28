@@ -106,11 +106,7 @@ public class RESTZaakConverter {
                 .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
-
-        zgwApiService.findInitiatorForZaak(zaak.getUrl()).ifPresent(
-                rolNatuurlijkPersoon -> restZaak.initiator = rolNatuurlijkPersoon.getBetrokkeneIdentificatie().getInpBsn()
-        );
-
+        restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
         return restZaak;
     }
 

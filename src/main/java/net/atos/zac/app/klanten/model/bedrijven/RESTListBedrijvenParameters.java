@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.klanten.model.bedrijven;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class RESTListBedrijvenParameters {
 
     public String kvkNummer;
@@ -21,10 +19,4 @@ public class RESTListBedrijvenParameters {
 
     public BedrijfType type;
 
-    public boolean isValid() {
-        return StringUtils.isNotBlank(kvkNummer) ||
-                StringUtils.isNotBlank(vestigingsnummer) ||
-                StringUtils.isNotBlank(handelsnaam) ||
-                StringUtils.isNotBlank(postcode) && huisnummer != null && huisnummer > 0;
-    }
 }
