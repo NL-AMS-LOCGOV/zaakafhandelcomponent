@@ -439,11 +439,21 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     deleteInitiator(): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.deleteInitiator(this.zaak).subscribe(() => {
-            this.utilService.openSnackbar('msg.initiator.verwijderd');
-            this.zaak.initiatorIdentificatie = null;
-            this.init(this.zaak);
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
+                this.zakenService.deleteInitiator(this.zaak)
+            ),
+            width: '400px',
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.initiator.ontkoppelen.uitgevoerd');
+                this.zaak.initiatorIdentificatie = null;
+                this.init(this.zaak);
+            }
         });
+
     }
 
     assignTaskToMe(taak: Taak) {
