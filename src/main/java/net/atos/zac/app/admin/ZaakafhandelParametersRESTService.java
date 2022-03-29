@@ -41,6 +41,7 @@ import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
 
 @Singleton
@@ -165,7 +166,7 @@ public class ZaakafhandelParametersRESTService {
     public List<RESTZaakbeeindigReden> listZaakbeeindigRedenenForZaaktype(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
         final Collection<ZaakbeeindigReden> zaakbeeindigRedenen = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktypeUUID)
                 .getZaakbeeindigParameters().stream()
-                .map(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden())
+                .map(ZaakbeeindigParameter::getZaakbeeindigReden)
                 .toList();
         return zaakbeeindigRedenConverter.convertToRest(zaakbeeindigRedenen);
     }

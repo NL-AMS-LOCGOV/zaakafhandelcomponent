@@ -20,7 +20,6 @@ import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
-import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.PeriodUtil;
 
@@ -53,8 +52,12 @@ public class RESTZaakConverter {
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
 
+    @Inject
+    private RESTZaakRechtenConverter zaakRechtenConverter;
+
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
 
         restZaak.identificatie = zaak.getIdentificatie();
         restZaak.uuid = zaak.getUuid();
@@ -68,7 +71,7 @@ public class RESTZaakConverter {
         restZaak.registratiedatum = zaak.getRegistratiedatum();
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
-        restZaak.zaaktype = getZaaktype(zaak.getZaaktype());
+        restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);
         restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
         if (zaak.getOpschorting() != null) {
@@ -105,6 +108,8 @@ public class RESTZaakConverter {
                 .orElse(null);
         restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
         restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
+
+        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);
         return restZaak;
     }
 
@@ -139,11 +144,6 @@ public class RESTZaakConverter {
                     Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
         return zaak;
-    }
-
-    private RESTZaaktype getZaaktype(final URI zaaktypeURI) {
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeURI);
-        return zaaktypeConverter.convert(zaaktype);
     }
 
     private URI getCommunicatieKanaal(final String id) {

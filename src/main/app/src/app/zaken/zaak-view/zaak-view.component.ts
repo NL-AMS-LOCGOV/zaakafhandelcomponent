@@ -252,7 +252,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
                 'mark_email_read'));
 
-        this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        }
 
         this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
         if (!this.zaak.initiatorIdentificatie) {
