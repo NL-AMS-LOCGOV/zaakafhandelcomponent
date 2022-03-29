@@ -29,7 +29,7 @@ public class MailRESTService {
     @Path("send/{zaakUuid}")
     public int sendMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
         return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
-                                    restMailObject.body, zaakUuid);
+                                    restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
     }
 
 }
