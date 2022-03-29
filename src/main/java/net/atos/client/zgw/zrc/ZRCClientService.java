@@ -79,13 +79,19 @@ public class ZRCClientService implements Caching {
      * @return Created {@link Rol}.
      */
     public Rol<?> createRol(final Rol<?> rol) {
+        return createRol(rol, null);
+    }
+
+    private Rol<?> createRol(final Rol<?> rol, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         final Rol<?> created = zrcClient.rolCreate(rol);
         // This event will also happen via open-notificaties
         eventingService.send(CacheEventType.ZAAKROL.event(created));
         return created;
     }
 
-    private void deleteRol(final Rol<?> rol) {
+    private void deleteRol(final Rol<?> rol, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         zrcClient.rolDelete(rol.getUuid());
         // This event will also happen via open-notificaties
         eventingService.send(CacheEventType.ZAAKROL.event(rol));
@@ -151,15 +157,10 @@ public class ZRCClientService implements Caching {
      */
     private void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen, final String toelichting) {
         final Collection<Rol<?>> current = listRollen(zaakUrl);
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
-            deleteDeletedRollen(current, rollen);
-            deleteUpdatedRollen(current, rollen);
-            createUpdatedRollen(current, rollen);
-            createCreatedRollen(current, rollen);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        deleteDeletedRollen(current, rollen, toelichting);
+        deleteUpdatedRollen(current, rollen, toelichting);
+        createUpdatedRollen(current, rollen, toelichting);
+        createCreatedRollen(current, rollen, toelichting);
     }
 
     public void updateRol(final URI zaakUrl, final Rol<?> rol, final String toelichting) {
@@ -243,12 +244,8 @@ public class ZRCClientService implements Caching {
      * @return Updated {@link Zaak}
      */
     public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
-            return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
     }
 
     /**
@@ -368,60 +365,48 @@ public class ZRCClientService implements Caching {
     }
 
     public Resultaat createResultaat(final Resultaat resultaat) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(resultaat.getToelichting());
-            return zrcClient.resultaatCreate(resultaat);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(resultaat.getToelichting());
+        return zrcClient.resultaatCreate(resultaat);
     }
 
     public Zaak createZaak(final Zaak zaak) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(zaak.getToelichting());
-            return zrcClient.zaakCreate(zaak);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(zaak.getToelichting());
+        return zrcClient.zaakCreate(zaak);
     }
 
     public Status createStatus(final Status status) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(status.getStatustoelichting());
-            return zrcClient.statusCreate(status);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(status.getStatustoelichting());
+        return zrcClient.statusCreate(status);
     }
 
-    private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .noneMatch(oud::equalBetrokkeneRol))
-                .forEach(this::deleteRol);
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
-    private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .filter(oud::equalBetrokkeneRol)
                         .anyMatch(nieuw -> !nieuw.equals(oud)))
-                .forEach(this::deleteRol);
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
-    private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         rollen.stream()
                 .filter(nieuw -> current.stream()
                         .filter(nieuw::equalBetrokkeneRol)
                         .anyMatch(oud -> !oud.equals(nieuw)))
-                .forEach(this::createRol);
+                .forEach(rol -> createRol(rol, toelichting));
     }
 
-    private void createCreatedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {
+    private void createCreatedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen, final String toelichting) {
         rollen.stream()
                 .filter(nieuw -> currentRollen.stream()
                         .noneMatch(nieuw::equalBetrokkeneRol))
-                .forEach(this::createRol);
+                .forEach(rol -> createRol(rol, toelichting));
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
