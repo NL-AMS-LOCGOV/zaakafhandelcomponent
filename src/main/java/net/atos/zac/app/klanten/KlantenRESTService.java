@@ -75,7 +75,7 @@ public class KlantenRESTService {
             final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
             final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
             return new RESTResult<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
             return new RESTResult<>(e.getMessage());
         }
@@ -86,9 +86,9 @@ public class KlantenRESTService {
     public RESTResult<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
         try {
             KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
-            Resultaat resultaat = kvkClientService.zoeken(zoekenParameters);
+            Resultaat resultaat = kvkClientService.find(zoekenParameters);
             return new RESTResult<>(bedrijfConverter.convert(resultaat));
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
             return new RESTResult<>(e.getMessage());
         }
