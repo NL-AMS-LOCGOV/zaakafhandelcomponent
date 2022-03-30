@@ -44,7 +44,7 @@ public class RESTZaak {
 
     public LocalDate publicatiedatum;
 
-    public String communicatiekanaal;
+    public RESTCommunicatiekanaal communicatiekanaal;
 
     public String vertrouwelijkheidaanduiding;
 

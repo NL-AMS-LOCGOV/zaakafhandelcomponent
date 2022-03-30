@@ -35,6 +35,7 @@ import org.flowable.idm.api.Group;
 import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
+import net.atos.client.vrl.VRLClientService;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -59,9 +60,11 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.model.KlantType;
+import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
+import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
@@ -139,6 +142,12 @@ public class ZakenRESTService {
 
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+
+    @Inject
+    private VRLClientService vrlClientService;
+
+    @Inject
+    private RESTCommunicatiekanaalConverter communicatiekanaalConverter;
 
     @GET
     @Path("zaak/{uuid}")
@@ -231,7 +240,7 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaken")
-    public TableResponse<RESTZaakOverzicht> getZaken(@Context final HttpServletRequest request) {
+    public TableResponse<RESTZaakOverzicht> listZaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
 
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
@@ -362,6 +371,14 @@ public class ZakenRESTService {
     public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
         final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
         return auditTrailConverter.convert(auditTrail);
+    }
+
+    @GET
+    @Path("communicatiekanalen")
+    public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
+        return vrlClientService.listCommunicatiekanalen().stream()
+                .map(communicatiekanaalConverter::convert)
+                .toList();
     }
 
     private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,

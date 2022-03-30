@@ -49,7 +49,7 @@ public class RESTBedrijfConverter {
     }
 
     public List<RESTBedrijf> convert(final Resultaat resultaat) {
-        if (resultaat == null || CollectionUtils.isEmpty(resultaat.getResultaten())) {
+        if (CollectionUtils.isEmpty(resultaat.getResultaten())) {
             return Collections.emptyList();
         }
         return resultaat.getResultaten().stream().filter(RESTBedrijfConverter::isNotRechtspersoon).map(this::convert).collect(Collectors.toList());

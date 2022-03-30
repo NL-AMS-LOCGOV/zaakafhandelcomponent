@@ -41,6 +41,7 @@ import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
+import net.atos.client.zgw.zrc.util.JsonbConfiguration;
 
 /**
  *
@@ -50,7 +51,8 @@ import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 @RegisterProviders({
         @RegisterProvider(FoutExceptionMapper.class),
         @RegisterProvider(ValidatieFoutExceptionMapper.class),
-        @RegisterProvider(RuntimeExceptionMapper.class)})
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Path("documenten/api/v1")
 @Produces(APPLICATION_JSON)
 public interface DRCClient {
