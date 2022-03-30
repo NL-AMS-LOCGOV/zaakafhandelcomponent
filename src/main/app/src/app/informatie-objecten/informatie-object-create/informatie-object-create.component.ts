@@ -184,7 +184,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('beschrijving').reset();
-        formGroup.get('nogmaals').setValue('false');
+        formGroup.get('nogmaals').setValue(false);
         this.form.reset();
         formGroup.setErrors({invalid: true});
     }
