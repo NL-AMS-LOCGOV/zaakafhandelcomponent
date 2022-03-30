@@ -7,4 +7,5 @@ export class MailObject {
     ontvanger: string;
     onderwerp: string;
     body: string;
+    createDocumentFromMail: boolean;
 }

@@ -241,14 +241,23 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`, 'upload_file'));
+        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`,
+            'upload_file'));
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
-        this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        // TODO #650 onderstaande url aanpassen naar juiste component
+        // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
+        this.menu.push(
+            new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
+                'mark_email_read'));
 
-        this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
+        if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        }
+
         if (!this.zaak.initiatorIdentificatie) {
+            this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
             this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                 this.actionsSidenav.open();
                 this.action = this.actions.ZOEK_PERSOON;
@@ -439,11 +448,21 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     deleteInitiator(): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.deleteInitiator(this.zaak).subscribe(() => {
-            this.utilService.openSnackbar('msg.initiator.verwijderd');
-            this.zaak.initiatorIdentificatie = null;
-            this.init(this.zaak);
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
+                this.zakenService.deleteInitiator(this.zaak)
+            ),
+            width: '400px',
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.initiator.ontkoppelen.uitgevoerd');
+                this.zaak.initiatorIdentificatie = null;
+                this.init(this.zaak);
+            }
         });
+
     }
 
     assignTaskToMe(taak: Taak) {

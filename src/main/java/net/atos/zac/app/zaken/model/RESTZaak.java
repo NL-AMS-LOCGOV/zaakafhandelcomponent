@@ -71,4 +71,6 @@ public class RESTZaak {
     public List<RESTZaakEigenschap> eigenschappen;
 
     public String initiatorIdentificatie;
+
+    public RESTZaakRechten rechten;
 }

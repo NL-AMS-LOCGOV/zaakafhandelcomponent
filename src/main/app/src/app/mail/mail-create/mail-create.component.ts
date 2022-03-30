@@ -71,6 +71,7 @@ export class MailCreateComponent implements OnInit {
             mailObject.ontvanger = formGroup.controls['ontvanger'].value;
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
+            mailObject.createDocumentFromMail = true;
 
             this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(() => {
                 this.utilService.openSnackbar('msg.email.verstuurd');
