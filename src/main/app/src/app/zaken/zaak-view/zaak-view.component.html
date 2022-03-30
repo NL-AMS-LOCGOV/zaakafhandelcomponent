@@ -32,7 +32,7 @@
                                     <zac-static-text [label]="'zaaktype' | translate"
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
                                     <zac-static-text [label]="'kanaal' | translate"
-                                                     [value]="'-'"></zac-static-text>
+                                                     [value]="zaak.communicatiekanaal | empty: 'naam'"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

@@ -24,7 +24,7 @@ public class VRLClientService {
     private CommunicatiekanalenClient communicatiekanalenClient;
 
     public List<CommunicatieKanaal> listCommunicatiekanalen() {
-        final InlineResponse200 results = communicatiekanalenClient.communicatiekanaalList(0);
+        final InlineResponse200 results = communicatiekanalenClient.communicatiekanaalList(null);
         if (results.getNext() == null) {
             return results.getResults();
         } else {

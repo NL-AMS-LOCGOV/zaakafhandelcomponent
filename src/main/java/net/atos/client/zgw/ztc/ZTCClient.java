@@ -25,6 +25,7 @@ import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
+import net.atos.client.zgw.zrc.util.JsonbConfiguration;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 import net.atos.client.zgw.ztc.model.Eigenschap;
@@ -47,7 +48,8 @@ import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 @RegisterProviders({
         @RegisterProvider(FoutExceptionMapper.class),
         @RegisterProvider(ValidatieFoutExceptionMapper.class),
-        @RegisterProvider(RuntimeExceptionMapper.class)})
+        @RegisterProvider(RuntimeExceptionMapper.class),
+        @RegisterProvider(JsonbConfiguration.class)})
 @Path("catalogi/api/v1")
 @Produces(APPLICATION_JSON)
 public interface ZTCClient {
