@@ -22,6 +22,7 @@ import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
+import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
@@ -168,10 +169,5 @@ public class RESTZaakConverter {
     private RESTZaaktype getZaaktype(final URI zaaktypeURI) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeURI);
         return zaaktypeConverter.convert(zaaktype);
-    }
-
-    private URI getCommunicatieKanaal(final String id) {
-        //TODO het daadwerkelijke kanaal moet worden opgezocht
-        return id != null ? URI.create(id) : null;
     }
 }
