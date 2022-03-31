@@ -46,6 +46,7 @@ import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieObjectZoekParameters;
@@ -131,6 +132,16 @@ public class InformatieObjectenRESTService {
                                                                                                           restEnkelvoudigInformatieobject.beschrijving,
                                                                                                           OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         return UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject());
+    }
+
+    @POST
+    @Path("informatieobject/verplaats")
+    public void verplaatsEnkelvoudigInformatieobject(final RESTDocumentVerplaatsGegevens documentVerplaatsGegevens) {
+        final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.zaakID);
+        final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
+        final EnkelvoudigInformatieobject informatieobject =
+                drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(documentVerplaatsGegevens.documentUUID));
+        zrcClientService.verplaatsInformatieobject(informatieobject, oudeZaak, nieuweZaak);
     }
 
     @GET

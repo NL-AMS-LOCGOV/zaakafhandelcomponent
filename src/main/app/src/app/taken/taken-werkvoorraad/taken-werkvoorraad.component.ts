@@ -55,7 +55,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.getIngelogdeMedewerker();
         this.dataSource = new TakenWerkvoorraadDatasource(this.takenService, this.utilService);
 
-        this.werklijstData = SessionStorageUtil.getSessionStorage('takenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getItem('takenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -216,7 +216,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             pageSize: this.paginator.pageSize
         };
 
-        SessionStorageUtil.setSessionStorage('takenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setItem('takenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

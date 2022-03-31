@@ -71,7 +71,7 @@ describe('IdentityService', () => {
         service.readIngelogdeMedewerker().subscribe(response => {
             expect(response).toEqual(jaap);
         });
-        expect(SessionStorageUtil.getSessionStorage).toHaveBeenCalled();
+        expect(SessionStorageUtil.getItem).toHaveBeenCalled();
     });
 
     it('should return user jaap@mail.com', () => {
@@ -83,6 +83,6 @@ describe('IdentityService', () => {
             expect(response).toEqual(jaap);
         });
         expect(mockHttpClient.get).toHaveBeenCalled();
-        expect(SessionStorageUtil.setSessionStorage).toHaveBeenCalled();
+        expect(SessionStorageUtil.setItem).toHaveBeenCalled();
     });
 });

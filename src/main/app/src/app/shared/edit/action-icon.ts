@@ -6,6 +6,6 @@
 import {Subject} from 'rxjs';
 
 export class ActionIcon {
-    constructor(public icon: string, public iconClicked: Subject<void>) {
+    constructor(public icon: string, public iconClicked: Subject<any>) {
     }
 }

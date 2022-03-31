@@ -44,7 +44,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
         this.utilService.setTitle('title.taken.mijn');
         this.dataSource = new TakenMijnDatasource(this.takenService, this.utilService);
 
-        this.werklijstData = SessionStorageUtil.getSessionStorage('mijnTakenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getItem('mijnTakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -113,7 +113,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             pageSize: this.paginator.pageSize
         };
 
-        SessionStorageUtil.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setItem('afgehandeldeZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

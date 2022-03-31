@@ -35,7 +35,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.defaults = SessionStorageUtil.getSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc')) as ListParameters;
+        this.defaults = SessionStorageUtil.getItem('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc')) as ListParameters;
     }
 
     ngAfterViewInit(): void {
@@ -50,7 +50,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setSessionStorage('ontkoppeldeDocumenten', this.getListParameters());
+                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.getListParameters());
                 return data;
             })
         ).subscribe(data => {
@@ -71,7 +71,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     reset(): void {
-        SessionStorageUtil.setSessionStorage('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
+        SessionStorageUtil.setItem('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
         this.utilService.reloadRoute();
     }
 }
