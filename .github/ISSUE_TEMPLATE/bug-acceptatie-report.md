@@ -32,7 +32,7 @@ _Een duidelijke en beknopte beschrijving van wat je verwachtte dat er zou gebeur
 **Daadwerkelijk gedrag**
 _Een duidelijke en beknope beschrijving van wat er daadwerkelijk gebeurde_
 
-**Screenshots/Bijlage**
+**Screenshots**
 _Er is tenmiste 1 screenshot als bijlage toegevoegd_
 
 **Foutmelding/Log tekst**
