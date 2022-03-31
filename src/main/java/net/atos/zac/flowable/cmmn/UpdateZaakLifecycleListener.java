@@ -37,6 +37,8 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
 
     private static final String NAAM_RESULTAAT_CLOSE = "}";
 
+    private static final String VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING = "nietOntvankelijkToelichting";
+
     private String sourceState;
 
     private String targetState;
@@ -104,8 +106,12 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
             FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
         }
         if (resultaattypeOmschrijving != null) {
+            final Object variableValue = FlowableHelper.getInstance().getFlowableService()
+                    .readVariableForCase(caseInstanceId, VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING);
             LOG.info(format("Zaak %s: Change Resultaat to '%s'", zaakUUID, resultaattypeOmschrijving));
-            FlowableHelper.getInstance().getZgwApiService().createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
+            FlowableHelper.getInstance().getZgwApiService()
+                    .createResultaatForZaak(zaak, resultaattypeOmschrijving,
+                                            variableValue != null ? (String) variableValue : RESULTAAT_TOELICHTING);
         }
     }
 }

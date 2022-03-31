@@ -24,6 +24,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -55,6 +56,8 @@ import net.atos.zac.app.taken.model.TaakSortering;
 @ApplicationScoped
 @Transactional
 public class FlowableService {
+
+    private static final String VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING = "nietOntvankelijkToelichting";
 
     public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
@@ -190,9 +193,12 @@ public class FlowableService {
                 .start();
     }
 
-    public void startPlanItem(final String planItemInstanceId) {
+    public void startPlanItem(final String planItemInstanceId, final String toelichting) {
         final PlanItemInstance planItem = readPlanItem(planItemInstanceId);
         if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
+            if (StringUtils.isNotEmpty(toelichting)) {
+                cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING, toelichting);
+            }
             cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
         } else {
             cmmnRuntimeService.startPlanItemInstance(planItemInstanceId);
@@ -375,7 +381,7 @@ public class FlowableService {
         }
     }
 
-    private Object readVariableForCase(final String caseInstanceId, final String variableName) {
+    public Object readVariableForCase(final String caseInstanceId, final String variableName) {
         final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;

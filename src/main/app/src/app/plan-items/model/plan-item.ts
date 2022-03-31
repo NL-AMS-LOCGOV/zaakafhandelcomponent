@@ -16,4 +16,5 @@ export class PlanItem {
     formulierDefinitie: string;
     zaakUuid: string;
     taakdata: {};
+    toelichting: string;
 }
