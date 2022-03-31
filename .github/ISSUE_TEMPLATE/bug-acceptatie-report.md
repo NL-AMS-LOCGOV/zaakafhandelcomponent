@@ -15,7 +15,6 @@ assignees: ''
 
 **Issuenummer**
 _Welk issue was je aan het testen? Met een # voor het nummer wordt het een link_
-#
 
 **Beschrijf de bug**
 _Een duidelijke en beknopte beschrijving van wat de bug is_
