@@ -22,10 +22,13 @@ export class DashboardComponent implements OnInit {
         SignaleringType.ZAAK_OP_NAAM, 'ZAAK');
     takenNieuwOpNaamCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.taken',
         SignaleringType.TAAK_OP_NAAM, 'TAAK');
+    zakenMetNieuweDocumentenCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.documenten',
+        SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD, 'ZAAK');
 
     /** Based on the screen size, switch from standard to one column per row */
     cards: Array<DashboardCardData[]> = [
-        [this.zakenNieuwOpNaamCard, this.takenNieuwOpNaamCard]
+        [this.zakenNieuwOpNaamCard, this.takenNieuwOpNaamCard],
+        [this.zakenMetNieuweDocumentenCard]
     ];
 
     constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService,

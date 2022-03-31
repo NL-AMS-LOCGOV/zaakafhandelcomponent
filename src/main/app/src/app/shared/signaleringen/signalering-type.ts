@@ -4,6 +4,7 @@
  */
 
 export enum SignaleringType {
+    ZAAK_DOCUMENT_TOEGEVOEGD = 'ZAAK_DOCUMENT_TOEGEVOEGD',
     ZAAK_OP_NAAM = 'ZAAK_OP_NAAM',
     TAAK_OP_NAAM = 'TAAK_OP_NAAM'
 }
