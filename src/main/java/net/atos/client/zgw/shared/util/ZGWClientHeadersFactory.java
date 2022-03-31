@@ -38,34 +38,37 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     private static final String SECRET = ConfigProvider.getConfig().getValue("zgw.api.secret", String.class);
 
-    private static final Map<String, String> TOELICHTINGEN = new ConcurrentHashMap<>();
+    private static final Map<String, String> AUDIT_TOELICHTINGEN = new ConcurrentHashMap<>();
 
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
         final Medewerker medewerker = ingelogdeMedewerker.get();
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
-        addXAuditToelichtingHeader(clientOutgoingHeaders, medewerker);
-        return clientOutgoingHeaders;
+        try {
+            addAutorizationHeader(clientOutgoingHeaders, medewerker);
+            addXAuditToelichtingHeader(clientOutgoingHeaders, medewerker);
+            return clientOutgoingHeaders;
+        } finally {
+            clearAuditToelichting(medewerker);
+        }
     }
 
     public String generateJWTToken() {
         return generateJWTToken(ingelogdeMedewerker.get());
     }
 
-    public void putMedewerkerToelichting(final String toelichting) {
+    public void setAuditToelichting(final String toelichting) {
         if (toelichting != null) {
             final Medewerker medewerker = ingelogdeMedewerker.get();
             if (medewerker != null) {
-                TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+                AUDIT_TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
             }
         }
     }
 
-    public void removeMedewerkerToelichting() {
-        final Medewerker medewerker = ingelogdeMedewerker.get();
+    private void clearAuditToelichting(final Medewerker medewerker) {
         if (medewerker != null) {
-            TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
+            AUDIT_TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
         }
     }
 
@@ -89,9 +92,13 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
         return "Bearer " + jwtToken;
     }
 
+    private void addAutorizationHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final Medewerker medewerker) {
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
+    }
+
     private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final Medewerker medewerker) {
         if (medewerker != null) {
-            final String toelichting = TOELICHTINGEN.get(medewerker.getGebruikersnaam());
+            final String toelichting = AUDIT_TOELICHTINGEN.get(medewerker.getGebruikersnaam());
             if (toelichting != null) {
                 clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
             }

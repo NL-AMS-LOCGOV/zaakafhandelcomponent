@@ -14,7 +14,7 @@ import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../../core/service/util.service';
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -63,7 +63,7 @@ export class ZaakCreateComponent implements OnInit {
         this.utilService.setTitle('title.zaak.aanmaken');
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
-        const communicatiekanalen = of([{id: 'test1', doel: 'test1'}, {id: 'test2', doel: 'test2'}]);
+        const communicatiekanalen = this.zakenService.listCommunicatiekanalen();
         const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
@@ -86,7 +86,7 @@ export class ZaakCreateComponent implements OnInit {
                                                          .validators(CustomValidators.bsnOrVesPrefixed).build();
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                                               .optionLabel('doel').options(communicatiekanalen)
+                                                               .optionLabel('naam').options(communicatiekanalen)
                                                                .build();
 
         const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')

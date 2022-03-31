@@ -28,40 +28,36 @@ public class KVKClientService {
     @RestClient
     private ZoekenClient zoekenClient;
 
-    public Resultaat zoeken(final KVKZoekenParameters parameters) {
+    public Resultaat find(final KVKZoekenParameters parameters) {
         try {
             return zoekenClient.getResults(parameters);
         } catch (final KvKClientNoResultException e) {
             return new Resultaat().totaal(0);
         } catch (final TimeoutException | ProcessingException e) {
             LOG.severe(() -> String.format("Error while calling KVKClient provider: %s", e.getMessage()));
+            return new Resultaat().totaal(0);
         }
-        return null;
     }
 
     public ResultaatItem findHoofdvestiging(final String kvkNummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setType("hoofdvestiging");
         zoekParameters.setKvkNummer(kvkNummer);
-        return getSingleItem(zoekParameters);
+        return findSingleItem(zoekParameters);
     }
 
     public ResultaatItem findVestiging(final String vestigingsnummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setVestigingsnummer(vestigingsnummer);
-        return getSingleItem(zoekParameters);
+        return findSingleItem(zoekParameters);
     }
 
-    private ResultaatItem getSingleItem(final KVKZoekenParameters parameters) {
-        final Resultaat resultaat = zoeken(parameters);
-        if (resultaat != null) {
-            return switch (resultaat.getTotaal()) {
-                case 0 -> null;
-                case 1 -> resultaat.getResultaten().get(0);
-                default -> throw new IllegalStateException("%s: %d".formatted("Too many results", resultaat.getAantal()));
-            };
-        }
-        return null;
+    private ResultaatItem findSingleItem(final KVKZoekenParameters parameters) {
+        final Resultaat resultaat = find(parameters);
+        return switch (resultaat.getTotaal()) {
+            case 0 -> null;
+            case 1 -> resultaat.getResultaten().get(0);
+            default -> throw new IllegalStateException("%s: %d".formatted("Too many results", resultaat.getAantal()));
+        };
     }
-
 }

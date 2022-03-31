@@ -15,9 +15,8 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Readiness;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import net.atos.client.zgw.ztc.ZTCClient;
+import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 
 @Readiness
@@ -30,14 +29,13 @@ public class OpenZaakReadinessHealthCheck implements HealthCheck {
         CATALOGUS_LIST_PARAMETERS.setDomein(CATALOGUS_DOMEIN);
     }
 
-    @RestClient
     @Inject
-    private ZTCClient ztcClient;
+    private ZTCClientService ztcClientService;
 
     @Override
     public HealthCheckResponse call() {
         try {
-            ztcClient.catalogusList(CATALOGUS_LIST_PARAMETERS);
+            ztcClientService.listCatalogus(CATALOGUS_LIST_PARAMETERS);
             return HealthCheckResponse.up(OpenZaakReadinessHealthCheck.class.getName());
         } catch (final Exception exception) {
             return HealthCheckResponse.named(OpenZaakReadinessHealthCheck.class.getName())

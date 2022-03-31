@@ -24,6 +24,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Catalogus;
@@ -64,6 +65,10 @@ public class ZTCClientService implements Caching {
 
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
+
+    public Results<Catalogus> listCatalogus(final CatalogusListParameters catalogusListParameters) {
+        return ztcClient.catalogusList(catalogusListParameters);
+    }
 
     /**
      * Read {@link Catalogus} filtered by {@link CatalogusListParameters}.

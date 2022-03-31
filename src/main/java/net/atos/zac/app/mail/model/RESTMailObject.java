@@ -10,4 +10,6 @@ public class RESTMailObject {
     public String onderwerp;
 
     public String body;
+
+    public boolean createDocumentFromMail;
 }
