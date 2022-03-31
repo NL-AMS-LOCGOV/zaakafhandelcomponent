@@ -6,6 +6,7 @@
 package net.atos.zac.signalering.event;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
@@ -16,12 +17,15 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
@@ -53,32 +57,35 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
-        final Signalering signalering = buildSignalering(
-                signaleringenService.signaleringInstance(event.getObjectType()), event);
-
-        if (signalering != null && signaleringenService.isSubcribedTo(signalering)) {
+        final Signalering signalering = buildSignalering(signaleringenService.signaleringInstance(event.getObjectType()), event);
+        if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor()) && signaleringenService.isSubcribedTo(signalering)) {
             signaleringenService.createSignalering(signalering);
         }
     }
 
     private Signalering buildSignalering(final Signalering signalering, final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
+            case ZAAK_DOCUMENT_TOEGEVOEGD -> {
+                final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId());
+                final Optional<Rol<?>> behandelaar = getRolBehandelaarMedewerker(subject);
+                if (behandelaar.isPresent()) {
+                    signalering.setSubject(subject);
+                    return addTarget(signalering, behandelaar.get());
+                }
+            }
             case ZAAK_OP_NAAM -> {
                 final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
-                final Zaak zaak = zrcClientService.readZaak(rol.getZaak());
-                final URI roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR).getUrl();
-                if (URIUtil.equals(roltype, rol.getRoltype())) {
-                    signalering.setSubject(zaak);
+                final Zaak subject = zrcClientService.readZaak(rol.getZaak());
+                if (URIUtil.equals(rol.getRoltype(), getRoltypeBehandelaar(subject).getUrl())) {
+                    signalering.setSubject(subject);
                     return addTarget(signalering, rol);
                 }
             }
             case TAAK_OP_NAAM -> {
-                final TaskInfo taskInfo = flowableService.readTask((String) event.getObjectId());
-                if (taskInfo.getAssignee() != null) {
-                    signalering.setSubject(taskInfo);
-                    signalering.setTarget(
-                            flowableHelper.createMedewerker(taskInfo.getAssignee()));
-                    return signalering;
+                final TaskInfo subject = flowableService.readTask((String) event.getObjectId());
+                if (subject.getAssignee() != null) {
+                    signalering.setSubject(subject);
+                    return addTarget(signalering, subject);
                 }
             }
             default -> LOG.warning(String.format("unknown SignaleringType %s", event.getObjectType()));
@@ -86,22 +93,52 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         return null;
     }
 
+    private Roltype getRoltypeBehandelaar(final Zaak zaak) {
+        return ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+    }
+
+    private Optional<Rol<?>> getRolBehandelaarMedewerker(final Zaak zaak) {
+        return getRol(zaak, getRoltypeBehandelaar(zaak), BetrokkeneType.MEDEWERKER);
+    }
+
+    private Optional<Rol<?>> getRolBehandelaarGroup(final Zaak zaak) {
+        return getRol(zaak, getRoltypeBehandelaar(zaak), BetrokkeneType.ORGANISATORISCHE_EENHEID);
+    }
+
+    private Optional<Rol<?>> getRol(final Zaak zaak, final Roltype roltype, final BetrokkeneType betrokkeneType) {
+        final RolListParameters rolListParameters = new RolListParameters();
+        rolListParameters.setZaak(zaak.getUrl());
+        rolListParameters.setRoltype(roltype.getUrl());
+        rolListParameters.setBetrokkeneType(betrokkeneType);
+        return zrcClientService.listRollen(rolListParameters).getSingleResult();
+    }
+
     private Signalering addTarget(final Signalering signalering, final Rol<?> rol) {
         switch (rol.getBetrokkeneType()) {
             case MEDEWERKER -> {
                 final RolMedewerker rolMedewerker = (RolMedewerker) rol;
-                signalering.setTarget(
-                        flowableHelper.createMedewerker(rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie()));
-                return signalering;
+                return addTargetMedewerker(signalering, rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie());
             }
             case ORGANISATORISCHE_EENHEID -> {
                 final RolOrganisatorischeEenheid rolGroep = (RolOrganisatorischeEenheid) rol;
-                signalering.setTarget(
-                        flowableService.readGroup(rolGroep.getBetrokkeneIdentificatie().getIdentificatie()));
-                return signalering;
+                return addTargetGroep(signalering, rolGroep.getBetrokkeneIdentificatie().getIdentificatie());
             }
             default -> LOG.warning(String.format("unexpected BetrokkeneType %s", rol.getBetrokkeneType()));
         }
         return null;
+    }
+
+    private Signalering addTarget(final Signalering signalering, final TaskInfo taskInfo) {
+        return addTargetMedewerker(signalering, taskInfo.getAssignee());
+    }
+
+    private Signalering addTargetMedewerker(final Signalering signalering, final String gebruikersnaam) {
+        signalering.setTarget(flowableHelper.createMedewerker(gebruikersnaam));
+        return signalering;
+    }
+
+    private Signalering addTargetGroep(final Signalering signalering, final String groupId) {
+        signalering.setTarget(flowableService.readGroup(groupId));
+        return signalering;
     }
 }
