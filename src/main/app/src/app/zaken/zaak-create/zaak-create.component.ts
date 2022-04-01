@@ -52,6 +52,8 @@ export class ZaakCreateComponent implements OnInit {
     private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
+    private locatie: { naam: string, coordinates: Coordinate };
+
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
@@ -118,9 +120,8 @@ export class ZaakCreateComponent implements OnInit {
                 }
 
                 if (key === 'zaakgeometrie') {
-                    const val = formGroup.controls[key].value;
                     const zaakgeometrie = new Geometry('Point');
-                    zaakgeometrie.point = new Coordinates(val[0], val[1]);
+                    zaakgeometrie.point = new Coordinates(this.locatie.coordinates[0], this.locatie.coordinates[1]);
                     zaak[key] = zaakgeometrie;
                 }
             });
@@ -137,8 +138,9 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
-    locatieGeselecteerd(locatie: Coordinate): void {
-        this.locatieField.formControl.setValue(locatie);
+    locatieGeselecteerd(locatie: { naam: string, coordinates: Coordinate }): void {
+        this.locatie = locatie;
+        this.locatieField.formControl.setValue(locatie.naam);
         this.actionsSidenav.close();
     }
 
