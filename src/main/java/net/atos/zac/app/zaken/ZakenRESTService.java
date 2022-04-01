@@ -153,7 +153,7 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        deleteSignalering(zaak);
+        deleteSignaleringen(zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -161,7 +161,7 @@ public class ZakenRESTService {
     @Path("zaak/id/{identificatie}")
     public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
         final Zaak zaak = zrcClientService.readZaakByID(identificatie);
-        deleteSignalering(zaak);
+        deleteSignaleringen(zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -435,12 +435,12 @@ public class ZakenRESTService {
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 
-    private void deleteSignalering(final Zaak zaak) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
-        parameters.target(ingelogdeMedewerker.get());
-        parameters.subject(zaak);
-        signaleringenService.deleteSignalering(parameters);
+    private void deleteSignaleringen(final Zaak zaak) {
+        signaleringenService.deleteSignaleringen(
+                new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                        .types(SignaleringType.Type.ZAAK_OP_NAAM,
+                               SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
+                        .subject(zaak));
     }
 
     private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
@@ -461,6 +461,4 @@ public class ZakenRESTService {
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
     }
-
-
 }
