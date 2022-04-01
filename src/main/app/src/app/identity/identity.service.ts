@@ -41,13 +41,13 @@ export class IdentityService {
     }
 
     readIngelogdeMedewerker(): Observable<Medewerker> {
-        const ingelogdeMedewerker = SessionStorageUtil.getSessionStorage('ingelogdeMedewerker');
+        const ingelogdeMedewerker = SessionStorageUtil.getItem('ingelogdeMedewerker') as Medewerker;
         if (ingelogdeMedewerker) {
             return of(ingelogdeMedewerker);
         }
         return this.http.get<Medewerker>(`${this.basepath}/ingelogdemedewerker`).pipe(
             tap(medewerker => {
-                SessionStorageUtil.setSessionStorage('ingelogdeMedewerker', medewerker);
+                SessionStorageUtil.setItem('ingelogdeMedewerker', medewerker);
             }),
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

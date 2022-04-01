@@ -160,15 +160,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/id/{identificatie}")
     public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
-        final ZaakListParameters zaakListParameters = new ZaakListParameters();
-        zaakListParameters.setIdentificatie(identificatie);
-        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-        if (zaakResults.getCount() == 0) {
-            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
-        } else if (zaakResults.getCount() > 1) {
-            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
-        }
-        final Zaak zaak = zaakResults.getResults().get(0);
+        final Zaak zaak = zrcClientService.readZaakByID(identificatie);
         deleteSignalering(zaak);
         return zaakConverter.convert(zaak);
     }
@@ -215,16 +207,17 @@ public class ZakenRESTService {
     @Path("zaakinformatieobjecten/{informatieObjectUuid}/{zaakUuid}")
     public void ontkoppelInformatieObject(@PathParam("informatieObjectUuid") final UUID uuid, @PathParam("zaakUuid") final UUID zaakUuid) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         parameters.setInformatieobject(informatieobject.getUrl());
-        parameters.setZaak(zrcClientService.readZaak(zaakUuid).getUrl());
+        parameters.setZaak(zaak.getUrl());
         List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(parameters);
         if (zaakInformatieobjecten.isEmpty()) {
             throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", zaakUuid, uuid));
         }
         zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid());
         if (findZakenInformatieobject(uuid).isEmpty()) {
-            ontkoppeldeDocumentenService.create(informatieobject);
+            ontkoppeldeDocumentenService.create(informatieobject, zaak, "-"); //TODO REDEN #692
         }
     }
 

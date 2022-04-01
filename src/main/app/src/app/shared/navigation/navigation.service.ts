@@ -33,11 +33,11 @@ export class NavigationService {
             this.utilService.setLoading(true);
         } else {
             if (e instanceof NavigationEnd) {
-                const history = SessionStorageUtil.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
+                const history = SessionStorageUtil.getItem(NavigationService.NAVIGATION_HISTORY, []);
                 if (history.length === 0 || history[history.length - 1] !== e.urlAfterRedirects) {
                     history.push(e.urlAfterRedirects);
                 }
-                SessionStorageUtil.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
+                SessionStorageUtil.setItem(NavigationService.NAVIGATION_HISTORY, history);
                 this.backDisabled.next(history.length <= 1);
             }
 
@@ -46,14 +46,14 @@ export class NavigationService {
     }
 
     back(): void {
-        const history = SessionStorageUtil.getSessionStorage(NavigationService.NAVIGATION_HISTORY, []);
+        const history = SessionStorageUtil.getItem(NavigationService.NAVIGATION_HISTORY, []);
         history.pop();
         if (history.length > 0) {
             this.location.back();
         } else {
             this.router.navigate(['..']);
         }
-        SessionStorageUtil.setSessionStorage(NavigationService.NAVIGATION_HISTORY, history);
+        SessionStorageUtil.setItem(NavigationService.NAVIGATION_HISTORY, history);
         this.backDisabled.next(history.length <= 1);
     }
 }

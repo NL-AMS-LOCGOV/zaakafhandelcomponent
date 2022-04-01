@@ -193,7 +193,7 @@ public class TakenRESTService {
 
     private TaskInfo assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
         final TaskInfo taskInfo = flowableService.assignTask(taakId, assignee);
-        eventingService.send(SignaleringEventUtil.created(SignaleringType.Type.TAAK_OP_NAAM, taskInfo));
+        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, taskInfo, ingelogdeMedewerker.get()));
         taakBehandelaarGewijzigd(taskInfo, zaakUuid);
         return taskInfo;
     }

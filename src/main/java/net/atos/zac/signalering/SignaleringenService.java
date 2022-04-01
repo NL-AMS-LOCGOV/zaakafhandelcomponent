@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 
 import net.atos.zac.event.EventingService;
 import net.atos.zac.signalering.model.Signalering;
+import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
@@ -41,14 +42,26 @@ public class SignaleringenService {
     /**
      * Factory method for constructing Signalering instances.
      *
-     * @param type the type op the signalering to construct
+     * @param signaleringsType the type op the signalering to construct
      * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
      */
-    public Signalering signaleringInstance(final SignaleringType.Type type) {
+    public Signalering signaleringInstance(final SignaleringType.Type signaleringsType) {
         final Signalering instance = new Signalering();
-        instance.setType(entityManager.find(SignaleringType.class, type.toString()));
+        instance.setType(entityManager.find(SignaleringType.class, signaleringsType.toString()));
         instance.setTijdstip(ZonedDateTime.now());
         return instance;
+    }
+
+    /**
+     * Business logic for deciding if signalling is necessary. Groep-targets will always get signalled but Medewerker-targets only when they are not themselves
+     * the actor that caused the event (or when the actor is unknown).
+     *
+     * @param signalering the signalering (should have the target set)
+     * @param actor       the actor (a gebruikersnaam) or null if unknown
+     * @return true if signalling is necessary
+     */
+    public boolean isNecessary(final Signalering signalering, final String actor) {
+        return signalering.getTargettype() != SignaleringTarget.MEDEWERKER || !signalering.getTarget().equals(actor);
     }
 
     public boolean isSubcribedTo(final Signalering signalering) {

@@ -49,6 +49,7 @@ public class SignaleringType {
      * !! Remember to add the enum value to signaleringtype table !!
      */
     public enum Type {
+        ZAAK_DOCUMENT_TOEGEVOEGD,
         ZAAK_OP_NAAM,
         TAAK_OP_NAAM;
     }

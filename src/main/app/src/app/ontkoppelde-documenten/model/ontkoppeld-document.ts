@@ -7,7 +7,11 @@ export class OntkoppeldDocument {
     id: number;
     documentUUID: string;
     documentID: string;
+    zaakID: string;
     creatiedatum: string;
     titel: string;
     bestandsnaam: string;
+    ontkoppeldDoor: string;
+    ontkoppeldOp: string;
+    reden: string;
 }
