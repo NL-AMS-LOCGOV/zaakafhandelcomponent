@@ -120,9 +120,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (event) => this.updateZaak(event));
             this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
-
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
             this.getIngelogdeMedewerker();
@@ -134,7 +133,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = SessionStorageUtil.getSessionStorage('toonAfgerondeTaken');
+        this.toonAfgerondeTaken = SessionStorageUtil.getItem('toonAfgerondeTaken');
 
     }
 
@@ -480,7 +479,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        SessionStorageUtil.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+        SessionStorageUtil.setItem('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
@@ -510,6 +509,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         });
+    }
+
+    documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {
+        this.informatieObjectenService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
+    }
+
+    isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
+        return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
     }
 
     get initiatorType() {

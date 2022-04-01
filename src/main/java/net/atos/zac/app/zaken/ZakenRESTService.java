@@ -160,15 +160,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/id/{identificatie}")
     public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
-        final ZaakListParameters zaakListParameters = new ZaakListParameters();
-        zaakListParameters.setIdentificatie(identificatie);
-        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-        if (zaakResults.getCount() == 0) {
-            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
-        } else if (zaakResults.getCount() > 1) {
-            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
-        }
-        final Zaak zaak = zaakResults.getResults().get(0);
+        final Zaak zaak = zrcClientService.readZaakByID(identificatie);
         deleteSignalering(zaak);
         return zaakConverter.convert(zaak);
     }

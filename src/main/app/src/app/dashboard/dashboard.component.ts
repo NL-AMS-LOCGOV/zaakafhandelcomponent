@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
         // TODO instead of session storage use userpreferences in a db
-        SessionStorageUtil.setSessionStorage('dashboardOpened', moment());
+        SessionStorageUtil.setItem('dashboardOpened', moment());
         this.signaleringenService.updateSignaleringen();
     }
 }

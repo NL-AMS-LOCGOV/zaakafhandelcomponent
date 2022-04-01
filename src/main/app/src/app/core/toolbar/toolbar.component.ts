@@ -56,7 +56,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.subscription$ = this.signaleringenService.latestSignalering$.subscribe(
             value => {
                 // TODO instead of session storage use userpreferences in a db
-                const dashboardLastOpenendStorage: string = SessionStorageUtil.getSessionStorage(
+                const dashboardLastOpenendStorage: string = SessionStorageUtil.getItem(
                     'dashboardOpened');
                 if (!dashboardLastOpenendStorage) {
                     this.hasNewSignaleringen = !!value;

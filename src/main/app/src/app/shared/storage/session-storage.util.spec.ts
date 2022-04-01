@@ -18,16 +18,16 @@ describe('SessionStorageService', () => {
 
         spyOn(sessionStorage, 'getItem').and.returnValue(gebruikerJSON);
 
-        expect(SessionStorageUtil.getSessionStorage('gebruikersnaam')).toEqual(JSON.parse(gebruikerJSON));
+        expect(SessionStorageUtil.getItem('gebruikersnaam')).toEqual(JSON.parse(gebruikerJSON));
         expect(sessionStorage.getItem).toHaveBeenCalled();
     });
 
     it('key value v should be equal to v', () => {
-        expect(SessionStorageUtil.getSessionStorage('k', 'v')).toEqual('v');
+        expect(SessionStorageUtil.getItem('k', 'v')).toEqual('v');
     });
 
     it('should return Jaap', () => {
-        const naam = SessionStorageUtil.setSessionStorage('gebruikersnaam', 'Jaap');
+        const naam = SessionStorageUtil.setItem('gebruikersnaam', 'Jaap');
         expect(naam).toBe('Jaap');
     });
 
@@ -36,7 +36,7 @@ describe('SessionStorageService', () => {
         spyOn(JSON, 'stringify');
         spyOn(sessionStorage, 'setItem');
 
-        const gebruiker = SessionStorageUtil.getSessionStorage('', 'Jaap');
+        const gebruiker = SessionStorageUtil.getItem('', 'Jaap');
 
         expect(JSON.parse).toHaveBeenCalled();
         expect(JSON.stringify).toHaveBeenCalled();
@@ -52,9 +52,9 @@ describe('SessionStorageService', () => {
     // session storage word momenteel niet leeggegooid. Echter, in de afterAll() gebeurt dit wel
     xit('should call clear', () => {
         spyOn(sessionStorage, 'clear');
-        SessionStorageUtil.setSessionStorage('testWaarde', 'waarde');
+        SessionStorageUtil.setItem('testWaarde', 'waarde');
         SessionStorageUtil.clearSessionStorage();
         expect(sessionStorage.clear).toHaveBeenCalled();
-        expect(SessionStorageUtil.getSessionStorage('testWaarde')).toBe(undefined);
+        expect(SessionStorageUtil.getItem('testWaarde')).toBe(undefined);
     });
 });

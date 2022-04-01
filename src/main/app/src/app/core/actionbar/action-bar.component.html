@@ -1,0 +1,26 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<ng-template>
+    <mat-list>
+        <mat-list-item *ngFor="let action of actions">
+            <div mat-line>{{action.text}}</div>
+            <div class="sub-text" mat-line>{{action.subText}}</div>
+            <div fxFlex fxLayoutAlign="end center">
+                <button mat-icon-button color="primary"
+                        title="{{'actie.uitvoeren' | translate}}"
+                        [disabled]="!action.actionEnabled()"
+                        (click)="actionTextClicked(action)">
+                    <mat-icon>{{action.action.icon}}</mat-icon>
+                </button>
+                <button mat-icon-button
+                        title="{{'actie.annuleren' | translate}}"
+                        (click)="dismissAction(action)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </mat-list-item>
+    </mat-list>
+</ng-template>

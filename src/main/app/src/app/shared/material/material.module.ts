@@ -32,6 +32,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 
 @NgModule({
     exports: [
@@ -58,6 +59,7 @@ import {MatChipsModule} from '@angular/material/chips';
         MatStepperModule,
         MatBadgeModule,
         MatDialogModule,
+        MatBottomSheetModule,
         MatProgressSpinnerModule,
         MatTooltipModule,
         MatAutocompleteModule,
