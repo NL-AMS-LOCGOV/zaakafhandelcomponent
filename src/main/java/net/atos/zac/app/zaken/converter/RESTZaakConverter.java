@@ -57,9 +57,6 @@ public class RESTZaakConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private RESTGeometryConverter restGeometryConverter;
-
-    @Inject
     private RESTZaakRechtenConverter zaakRechtenConverter;
 
     @Inject
@@ -67,6 +64,9 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTCommunicatiekanaalConverter communicatiekanaalConverter;
+
+    @Inject
+    private RESTGeometryConverter restGeometryConverter;
 
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
