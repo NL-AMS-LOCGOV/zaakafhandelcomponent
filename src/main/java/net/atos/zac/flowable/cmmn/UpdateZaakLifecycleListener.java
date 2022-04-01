@@ -11,6 +11,9 @@ import static org.apache.commons.lang3.StringUtils.substringBetween;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import net.atos.zac.flowable.FlowableService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.common.engine.api.delegate.Expression;
@@ -36,8 +39,6 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
     private static final String NAAM_RESULTAAT_OPEN = "{";
 
     private static final String NAAM_RESULTAAT_CLOSE = "}";
-
-    private static final String VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING = "nietOntvankelijkToelichting";
 
     private String sourceState;
 
@@ -106,12 +107,13 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
             FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
         }
         if (resultaattypeOmschrijving != null) {
-            final Object variableValue = FlowableHelper.getInstance().getFlowableService()
-                    .readVariableForCase(caseInstanceId, VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING);
+            final String variableValue = (String) FlowableHelper.getInstance().getFlowableService()
+                    .findVariableForCase(caseInstanceId, FlowableService.VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING);
             LOG.info(format("Zaak %s: Change Resultaat to '%s'", zaakUUID, resultaattypeOmschrijving));
             FlowableHelper.getInstance().getZgwApiService()
                     .createResultaatForZaak(zaak, resultaattypeOmschrijving,
-                                            variableValue != null ? (String) variableValue : RESULTAAT_TOELICHTING);
+                                            StringUtils.isNotEmpty(variableValue) ? variableValue :
+                                                   RESULTAAT_TOELICHTING);
         }
     }
 }
