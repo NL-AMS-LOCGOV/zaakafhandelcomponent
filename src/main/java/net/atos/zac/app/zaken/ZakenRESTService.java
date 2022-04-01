@@ -207,16 +207,17 @@ public class ZakenRESTService {
     @Path("zaakinformatieobjecten/{informatieObjectUuid}/{zaakUuid}")
     public void ontkoppelInformatieObject(@PathParam("informatieObjectUuid") final UUID uuid, @PathParam("zaakUuid") final UUID zaakUuid) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         parameters.setInformatieobject(informatieobject.getUrl());
-        parameters.setZaak(zrcClientService.readZaak(zaakUuid).getUrl());
+        parameters.setZaak(zaak.getUrl());
         List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(parameters);
         if (zaakInformatieobjecten.isEmpty()) {
             throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", zaakUuid, uuid));
         }
         zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid());
         if (findZakenInformatieobject(uuid).isEmpty()) {
-            ontkoppeldeDocumentenService.create(informatieobject);
+            ontkoppeldeDocumentenService.create(informatieobject, zaak, "-"); //TODO REDEN #692
         }
     }
 
