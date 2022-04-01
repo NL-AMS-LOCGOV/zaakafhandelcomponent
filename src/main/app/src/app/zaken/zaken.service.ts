@@ -201,6 +201,12 @@ export class ZakenService {
         );
     }
 
+    listCommunicatiekanalen(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     private handleError(err: HttpErrorResponse): Observable<never> {
         return this.foutAfhandelingService.redirect(err);
     }

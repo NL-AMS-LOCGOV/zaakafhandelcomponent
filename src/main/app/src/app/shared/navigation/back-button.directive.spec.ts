@@ -46,7 +46,7 @@ describe('BackButtonDirective', () => {
     // TODO: ESUITEDEV-25310
     // navigationHistory word niet aangemaakt bij tests
     xit('should build navigation history, then tear it down', () => {
-        const history = SessionStorageUtil.getSessionStorage('navigationHistory');
+        const history = SessionStorageUtil.getItem('navigationHistory') as string[];
 
         expect(history.length).toBe(1);
 

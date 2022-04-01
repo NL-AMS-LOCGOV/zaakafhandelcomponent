@@ -63,7 +63,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        this.werklijstData = SessionStorageUtil.getSessionStorage('zakenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getItem('zakenWerkvoorraadData') as WerklijstData;
 
         if (this.werklijstData) {
             this.dataSource.zoekParameters = this.werklijstData.searchParameters;
@@ -285,7 +285,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             pageSize: this.paginator.pageSize
         };
 
-        SessionStorageUtil.setSessionStorage('zakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setItem('zakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

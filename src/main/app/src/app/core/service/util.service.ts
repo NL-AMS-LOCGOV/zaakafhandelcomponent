@@ -4,7 +4,7 @@
  */
 
 import {Inject, Injectable, Optional} from '@angular/core';
-import {BehaviorSubject, iif, Observable, of} from 'rxjs';
+import {BehaviorSubject, iif, Observable, of, Subject} from 'rxjs';
 import {delay, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {TranslateService} from '@ngx-translate/core';
@@ -12,6 +12,8 @@ import {Title} from '@angular/platform-browser';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DOCUMENT} from '@angular/common';
 import {Router} from '@angular/router';
+import {ActionBarAction} from '../actionbar/model/action-bar-action';
+import {ActionIcon} from '../../shared/edit/action-icon';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +24,8 @@ export class UtilService {
     private loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     public headerTitle$: Observable<string> = this.headerTitle.asObservable();
+    public addAction$ = new Subject<ActionBarAction>();
+
     public loading$: Observable<boolean> = this.loading.pipe(switchMap((loading) =>
         iif(() => loading,
             of(loading).pipe(delay(700)),
@@ -95,6 +99,10 @@ export class UtilService {
 
     openSnackbar(message: string, params?: {}) {
         this.snackbar.open(this.translate.instant(message, params), this.translate.instant('actie.sluiten'), {duration: 3000});
+    }
+
+    addAction(text: string, subText: string, action: ActionIcon, dismissClicked: Subject<any>, actionEnabled?: () => boolean) {
+        this.addAction$.next(new ActionBarAction(text, subText, action, dismissClicked, actionEnabled));
     }
 
     reloadRoute(): void {

@@ -120,9 +120,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (event) => this.updateZaak(event));
             this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
-
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
             this.getIngelogdeMedewerker();
@@ -134,7 +133,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = SessionStorageUtil.getSessionStorage('toonAfgerondeTaken');
+        this.toonAfgerondeTaken = SessionStorageUtil.getItem('toonAfgerondeTaken');
 
     }
 
@@ -246,16 +245,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
-        // TODO #650 onderstaande url aanpassen naar juiste component
         // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
         this.menu.push(
             new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
                 'mark_email_read'));
 
-        this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+        }
 
-        this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
         if (!this.zaak.initiatorIdentificatie) {
+            this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
             this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                 this.actionsSidenav.open();
                 this.action = this.actions.ZOEK_PERSOON;
@@ -478,7 +478,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        SessionStorageUtil.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+        SessionStorageUtil.setItem('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
@@ -508,6 +508,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         });
+    }
+
+    documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {
+        this.informatieObjectenService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
+    }
+
+    isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
+        return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
     }
 
     get initiatorType() {

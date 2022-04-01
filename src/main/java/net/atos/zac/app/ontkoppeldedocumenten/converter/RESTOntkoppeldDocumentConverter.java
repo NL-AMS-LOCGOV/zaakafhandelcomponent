@@ -18,9 +18,13 @@ public class RESTOntkoppeldDocumentConverter {
         restDocument.id = document.getId();
         restDocument.documentUUID = document.getDocumentUUID();
         restDocument.documentID = document.getDocumentID();
+        restDocument.titel = document.getTitel();
+        restDocument.zaakID = document.getZaakID();
         restDocument.creatiedatum = document.getCreatiedatum().toLocalDate();
         restDocument.bestandsnaam = document.getBestandsnaam();
-        restDocument.titel = document.getTitel();
+        restDocument.ontkoppeldDoor = document.getOntkoppeldDoorID();
+        restDocument.ontkoppeldOp = document.getOntkoppeldOp();
+        restDocument.reden = document.getReden();
         return restDocument;
     }
 

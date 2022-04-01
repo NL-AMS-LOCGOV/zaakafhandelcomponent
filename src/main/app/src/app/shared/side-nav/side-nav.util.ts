@@ -15,10 +15,10 @@ export class SideNavUtil {
     }
 
     static store(menuMode: MenuMode): void {
-        SessionStorageUtil.setSessionStorage('menuMode', menuMode);
+        SessionStorageUtil.setItem('menuMode', menuMode);
     }
 
     static load(): MenuMode {
-        return SessionStorageUtil.getSessionStorage('menuMode', MenuMode.OPEN) as MenuMode;
+        return SessionStorageUtil.getItem('menuMode', MenuMode.OPEN) as MenuMode;
     }
 }

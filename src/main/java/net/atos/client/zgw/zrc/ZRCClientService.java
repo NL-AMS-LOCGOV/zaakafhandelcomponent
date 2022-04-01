@@ -7,6 +7,7 @@ package net.atos.client.zgw.zrc;
 
 import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
 import static net.atos.zac.util.OpenZaakPaginationUtil.PAGE_SIZE_OPEN_ZAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
@@ -49,6 +52,7 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.util.UriUtil;
 
 /**
  * Careful!
@@ -79,13 +83,19 @@ public class ZRCClientService implements Caching {
      * @return Created {@link Rol}.
      */
     public Rol<?> createRol(final Rol<?> rol) {
+        return createRol(rol, null);
+    }
+
+    private Rol<?> createRol(final Rol<?> rol, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         final Rol<?> created = zrcClient.rolCreate(rol);
         // This event will also happen via open-notificaties
         eventingService.send(CacheEventType.ZAAKROL.event(created));
         return created;
     }
 
-    private void deleteRol(final Rol<?> rol) {
+    private void deleteRol(final Rol<?> rol, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         zrcClient.rolDelete(rol.getUuid());
         // This event will also happen via open-notificaties
         eventingService.send(CacheEventType.ZAAKROL.event(rol));
@@ -151,15 +161,10 @@ public class ZRCClientService implements Caching {
      */
     private void updateRollen(final URI zaakUrl, final Collection<Rol<?>> rollen, final String toelichting) {
         final Collection<Rol<?>> current = listRollen(zaakUrl);
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
-            deleteDeletedRollen(current, rollen);
-            deleteUpdatedRollen(current, rollen);
-            createUpdatedRollen(current, rollen);
-            createCreatedRollen(current, rollen);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        deleteDeletedRollen(current, rollen, toelichting);
+        deleteUpdatedRollen(current, rollen, toelichting);
+        createUpdatedRollen(current, rollen, toelichting);
+        createCreatedRollen(current, rollen, toelichting);
     }
 
     public void updateRol(final URI zaakUrl, final Rol<?> rol, final String toelichting) {
@@ -243,12 +248,8 @@ public class ZRCClientService implements Caching {
      * @return Updated {@link Zaak}
      */
     public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(toelichting);
-            return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
     }
 
     /**
@@ -342,6 +343,46 @@ public class ZRCClientService implements Caching {
         return zrcClient.rolList(rolListParameters).getResults();
     }
 
+    public Zaak readZaakByID(final String identificatie) {
+        final ZaakListParameters zaakListParameters = new ZaakListParameters();
+        zaakListParameters.setIdentificatie(identificatie);
+        final Results<Zaak> zaakResults = listZaken(zaakListParameters);
+        if (zaakResults.getCount() == 0) {
+            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
+        } else if (zaakResults.getCount() > 1) {
+            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
+        }
+        return zaakResults.getResults().get(0);
+    }
+
+    public void verplaatsInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak oudeZaak, final Zaak nieuweZaak) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(informatieobject.getUrl());
+        parameters.setZaak(oudeZaak.getUrl());
+        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(parameters);
+        if (zaakInformatieobjecten.isEmpty()) {
+            throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'",
+                                                      oudeZaak.getIdentificatie(),
+                                                      UriUtil.uuidFromURI(informatieobject.getInhoud())));
+        }
+
+        final ZaakInformatieobject oudeZaakInformatieobject = zaakInformatieobjecten.get(0);
+        final ZaakInformatieobject nieuweZaakInformatieObject = new ZaakInformatieobject();
+        nieuweZaakInformatieObject.setZaak(nieuweZaak.getUrl());
+        nieuweZaakInformatieObject.setInformatieobject(informatieobject.getUrl());
+        nieuweZaakInformatieObject.setTitel(oudeZaakInformatieobject.getTitel());
+        nieuweZaakInformatieObject.setBeschrijving(oudeZaakInformatieobject.getBeschrijving());
+
+
+        final String toelichting = "Verplaatst: %s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        createZaakInformatieobject(nieuweZaakInformatieObject);
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid());
+        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
+        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
+    }
+
     @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
     public String clearZaakstatusManagedCache() {
         return cleared(ZRC_STATUS_MANAGED);
@@ -368,60 +409,48 @@ public class ZRCClientService implements Caching {
     }
 
     public Resultaat createResultaat(final Resultaat resultaat) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(resultaat.getToelichting());
-            return zrcClient.resultaatCreate(resultaat);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(resultaat.getToelichting());
+        return zrcClient.resultaatCreate(resultaat);
     }
 
     public Zaak createZaak(final Zaak zaak) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(zaak.getToelichting());
-            return zrcClient.zaakCreate(zaak);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(zaak.getToelichting());
+        return zrcClient.zaakCreate(zaak);
     }
 
     public Status createStatus(final Status status) {
-        try {
-            zgwClientHeadersFactory.putMedewerkerToelichting(status.getStatustoelichting());
-            return zrcClient.statusCreate(status);
-        } finally {
-            zgwClientHeadersFactory.removeMedewerkerToelichting();
-        }
+        zgwClientHeadersFactory.setAuditToelichting(status.getStatustoelichting());
+        return zrcClient.statusCreate(status);
     }
 
-    private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .noneMatch(oud::equalBetrokkeneRol))
-                .forEach(this::deleteRol);
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
-    private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .filter(oud::equalBetrokkeneRol)
                         .anyMatch(nieuw -> !nieuw.equals(oud)))
-                .forEach(this::deleteRol);
+                .forEach(rol -> deleteRol(rol, toelichting));
     }
 
-    private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen) {
+    private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         rollen.stream()
                 .filter(nieuw -> current.stream()
                         .filter(nieuw::equalBetrokkeneRol)
                         .anyMatch(oud -> !oud.equals(nieuw)))
-                .forEach(this::createRol);
+                .forEach(rol -> createRol(rol, toelichting));
     }
 
-    private void createCreatedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen) {
+    private void createCreatedRollen(final Collection<Rol<?>> currentRollen, final Collection<Rol<?>> rollen, final String toelichting) {
         rollen.stream()
                 .filter(nieuw -> currentRollen.stream()
                         .noneMatch(nieuw::equalBetrokkeneRol))
-                .forEach(this::createRol);
+                .forEach(rol -> createRol(rol, toelichting));
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {

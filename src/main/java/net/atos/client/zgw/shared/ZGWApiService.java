@@ -19,6 +19,7 @@ import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,11 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.signalering.model.SignaleringType;
 
 /**
  * Careful!
@@ -74,6 +79,10 @@ public class ZGWApiService implements Caching {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     /**
      * Create {@link Zaak} and calculate Doorlooptijden.
@@ -172,7 +181,9 @@ public class ZGWApiService implements Caching {
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
-        return zrcClientService.createZaakInformatieobject(zaakInformatieObject);
+        final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject);
+        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, ingelogdeMedewerker.get()));
+        return created;
     }
 
     /**

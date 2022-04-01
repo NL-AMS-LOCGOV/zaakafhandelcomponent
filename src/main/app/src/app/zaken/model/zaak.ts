@@ -12,6 +12,8 @@ import {ZaakKenmerk} from './zaak-kenmerk';
 import {ZaakEigenschap} from './zaak-eigenschap';
 import {Medewerker} from '../../identity/model/medewerker';
 import {Geometry} from './geometry';
+import {Communicatiekanaal} from './communicatiekanaal';
+import {ZaakRechten} from './zaak-rechten';
 
 export class Zaak {
     uuid: string;
@@ -29,7 +31,7 @@ export class Zaak {
     einddatum: string;
     uiterlijkeEinddatumAfdoening: string;
     publicatiedatum: string;
-    communicatiekanaal: string;
+    communicatiekanaal: Communicatiekanaal;
     vertrouwelijkheidaanduiding: string;
     zaakgeometrie: Geometry;
     indicatieOpschorting: boolean;
@@ -42,6 +44,6 @@ export class Zaak {
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
-    rechten: {};
+    rechten: ZaakRechten;
     initiatorIdentificatie: string; // BSN or Vestigingsnummer
 }

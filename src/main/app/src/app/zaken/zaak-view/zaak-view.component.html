@@ -32,7 +32,7 @@
                                     <zac-static-text [label]="'zaaktype' | translate"
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
                                     <zac-static-text [label]="'kanaal' | translate"
-                                                     [value]="'-'"></zac-static-text>
+                                                     [value]="zaak.communicatiekanaal | empty: 'naam'"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -318,9 +318,13 @@
                                             title="{{ 'actie.document.bekijken' | translate}}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
-                                    <button mat-flat-button [disabled]=row.loading (click)="ontkoppelDocument(row)"
+                                    <button mat-flat-button [disabled]="row.loading" (click)="ontkoppelDocument(row)"
                                             title="{{ 'actie.document.ontkoppelen' | translate}}">
                                         <mat-icon>link_off</mat-icon>
+                                    </button>
+                                    <button mat-flat-button [disabled]="isDocumentVerplaatsenDisabled(row)" (click)="documentVerplaatsen(row)"
+                                            title="{{ 'actie.document.verplaatsen' | translate}}">
+                                        <mat-icon>content_cut</mat-icon>
                                     </button>
                                 </td>
                             </ng-container>

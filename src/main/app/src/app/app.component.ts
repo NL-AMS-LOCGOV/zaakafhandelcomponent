@@ -3,19 +3,23 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {UtilService} from './core/service/util.service';
+import {InformatieObjectenService} from './informatie-objecten/informatie-objecten.service';
 
 @Component({
     selector: 'zac-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
-    constructor(private translate: TranslateService, private titleService: Title, public utilService: UtilService) {
+    initialized = false;
+
+    constructor(private translate: TranslateService, private titleService: Title,
+                private infoService: InformatieObjectenService, public utilService: UtilService) {
 
     }
 
@@ -23,8 +27,14 @@ export class AppComponent implements OnInit {
         this.titleService.setTitle('Zaakafhandelcomponent');
         this.translate.addLangs(['nl', 'en']);
         this.translate.setDefaultLang('nl');
-
-        let browserLanguage = this.translate.getBrowserLang();
+        const browserLanguage = this.translate.getBrowserLang();
         this.translate.use(browserLanguage.match(/nl|en/) ? browserLanguage : 'nl');
+    }
+
+    ngAfterViewInit(): void {
+        if (!this.initialized) {
+            this.infoService.appInit();
+            this.initialized = true;
+        }
     }
 }
