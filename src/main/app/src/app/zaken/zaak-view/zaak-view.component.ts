@@ -54,6 +54,10 @@ import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {
+    ConfirmDialogMetRedenComponent,
+    ConfirmMetRedenDialogData
+} from '../../shared/confirm-dialog-met-reden/confirm-dialog-met-reden.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -233,9 +237,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             case PlanItemType.HumanTask:
                 return new LinkMenuTitem(planItem.naam, `/plan-items/${planItem.id}/do`, 'assignment');
             case PlanItemType.UserEventListener:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem, planItem.naam === 'Niet ontvankelijk'), 'fact_check');
+                return new ButtonMenuItem(planItem.naam, () => planItem.naam === 'Niet ontvankelijk' ?
+                    this.openPlanItemStartenMetRedenDialog(planItem) : this.openPlanItemStartenDialog(planItem), 'fact_check');
             case PlanItemType.ProcessTask:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem, false), 'launch');
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'launch');
         }
         throw new Error(`Onbekend type: ${planItem.type}`);
     }
@@ -283,12 +288,29 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    openPlanItemStartenDialog(planItem: PlanItem, metRedenVeld: boolean): void {
+    openPlanItemStartenDialog(planItem: PlanItem): void {
         this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam}),
-                metRedenVeld, planItem, this.planItemsService.doPlanItem(planItem)
+                this.planItemsService.doPlanItem(planItem)
+            ),
+            width: '400px',
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
+                this.updateZaak();
+            }
+        });
+    }
+
+    openPlanItemStartenMetRedenDialog(planItem: PlanItem): void {
+        this.websocketService.doubleSuspendListener(this.zaakListener);
+        this.dialog.open(ConfirmDialogMetRedenComponent, {
+            data: new ConfirmMetRedenDialogData(
+                this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam}),
+                planItem
             ),
             width: '400px',
             autoFocus: 'dialog'
@@ -452,7 +474,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'), false, null,
+                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
                 this.zakenService.deleteInitiator(this.zaak)
             ),
             width: '400px',
@@ -502,7 +524,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
             }
             this.dialog.open(ConfirmDialogComponent, {
-                data: new ConfirmDialogData(melding, false, null, this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid)),
+                data: new ConfirmDialogData(melding, this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid)),
                 autoFocus: 'dialog'
             }).afterClosed().subscribe(result => {
                 if (result) {

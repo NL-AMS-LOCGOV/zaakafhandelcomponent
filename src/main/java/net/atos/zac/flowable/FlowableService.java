@@ -57,7 +57,7 @@ import net.atos.zac.app.taken.model.TaakSortering;
 @Transactional
 public class FlowableService {
 
-    public static final String VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING = "nietOntvankelijkToelichting";
+    private static final String VAR_CASE_NIET_ONTVANKELIJK_TOELICHTING = "nietOntvankelijkToelichting";
 
     public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
@@ -381,12 +381,8 @@ public class FlowableService {
         }
     }
 
-    public Object findVariableForCase(final String caseInstanceId, final String variabelName) {
-        return cmmnRuntimeService.getVariable(caseInstanceId, variabelName);
-    }
-
-    private Object readVariableForCase(final String caseInstanceId, final String variableName) {
-        final Object variableValue = findVariableForCase(caseInstanceId, variableName);
+    public Object readVariableForCase(final String caseInstanceId, final String variableName) {
+        final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
