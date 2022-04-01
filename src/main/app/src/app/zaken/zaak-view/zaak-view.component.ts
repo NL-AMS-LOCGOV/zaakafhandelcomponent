@@ -245,7 +245,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
-        // TODO #650 onderstaande url aanpassen naar juiste component
         // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
         this.menu.push(
             new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
