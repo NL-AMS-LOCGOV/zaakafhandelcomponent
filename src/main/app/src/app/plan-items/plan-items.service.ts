@@ -32,7 +32,8 @@ export class PlanItemsService {
         );
     }
 
-    doPlanItem(planItem: PlanItem): Observable<PlanItem> {
+    doPlanItem(planItem: PlanItem, toelichting?: string): Observable<PlanItem> {
+        planItem.toelichting = toelichting;
         return this.http.put<PlanItem>(`${this.basepath}/do/${planItem.id}`, planItem).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

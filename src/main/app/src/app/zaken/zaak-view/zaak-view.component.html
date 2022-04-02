@@ -61,12 +61,12 @@
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
                                     <zac-static-text [label]="'status' | translate"
                                                      [value]="zaak.status | empty:'naam'"
-                                                     [icon]="zaak.status && zaak.status.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.status && zaak.status.toelichting ? zaak.status.toelichting : ''"></zac-static-text>
+                                                     [icon]="zaak.status?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak.status?.toelichting ? zaak.status.toelichting : ''"></zac-static-text>
                                     <zac-static-text [label]="'resultaat' | translate"
                                                      [value]="zaak.resultaat | empty:'naam'"
-                                                     [icon]="zaak.resultaat && zaak.resultaat.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.resultaat && zaak.resultaat.toelichting ? zaak.resultaat.toelichting : ''"></zac-static-text>
+                                                     [icon]="zaak.resultaat?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak.resultaat?.toelichting ? zaak.resultaat.toelichting : ''"></zac-static-text>
                                 </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>

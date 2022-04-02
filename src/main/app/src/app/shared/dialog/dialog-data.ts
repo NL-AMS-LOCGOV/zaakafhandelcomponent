@@ -10,5 +10,6 @@ export class DialogData {
     constructor(public confirmButtonActionKey: string,
                 public cancelButtonActionKey: string,
                 public formField: AbstractFormField,
-                public fn?: (result: any) => Observable<any>) { }
+                public fn?: (result: any) => Observable<any>,
+                public melding?: string) {}
 }
