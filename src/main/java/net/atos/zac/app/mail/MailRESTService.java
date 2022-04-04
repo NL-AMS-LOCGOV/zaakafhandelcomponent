@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 
 import net.atos.zac.app.mail.model.RESTMailObject;
@@ -34,7 +35,7 @@ public class MailRESTService {
 
     @POST
     @Path("send/{zaakUuid}")
-    public int sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
+    public MailjetResponse sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
                                     restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
@@ -42,10 +43,10 @@ public class MailRESTService {
 
     @POST
     @Path("acknowledge/{zaakUuid}")
-    public int sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
+    public MailjetResponse sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            return Response.Status.BAD_REQUEST.getStatusCode();
+            return new MailjetResponse(Response.Status.BAD_REQUEST.getStatusCode(), "email is not valid");
         }
 
         // TODO #651 flowable service aanroepen
