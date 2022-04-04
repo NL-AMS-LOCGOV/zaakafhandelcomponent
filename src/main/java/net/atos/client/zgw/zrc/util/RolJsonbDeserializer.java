@@ -6,7 +6,7 @@
 package net.atos.client.zgw.zrc.util;
 
 import static net.atos.client.zgw.shared.util.JsonbUtil.JSONB;
-import static net.atos.client.zgw.zrc.model.Rol.BETROKKENE_TYPE_NAM;
+import static net.atos.client.zgw.zrc.model.Rol.BETROKKENE_TYPE_NAAM;
 
 import java.lang.reflect.Type;
 
@@ -28,7 +28,7 @@ public class RolJsonbDeserializer implements JsonbDeserializer<Rol> {
     @Override
     public Rol deserialize(final JsonParser parser, final DeserializationContext ctx, final Type rtType) {
         final JsonObject jsonObject = parser.getObject();
-        final BetrokkeneType betrokkenetype = BetrokkeneType.fromValue(jsonObject.getJsonString(BETROKKENE_TYPE_NAM).getString());
+        final BetrokkeneType betrokkenetype = BetrokkeneType.fromValue(jsonObject.getJsonString(BETROKKENE_TYPE_NAAM).getString());
         switch (betrokkenetype) {
             case VESTIGING:
                 return JSONB.fromJson(jsonObject.toString(), RolVestiging.class);

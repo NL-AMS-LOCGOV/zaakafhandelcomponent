@@ -1,0 +1,44 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<div>
+    <div class="search" fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
+        <div fxFlex="calc(30%-20px)" fxFlex.lt-lg="80">
+            <zac-static-text [label]="'zaak.locatie.' +( selectedAddress ? selectedAddress.type: 'adres') | translate"
+                             [value]="selectedAddress ? selectedAddress.weergavenaam + ' | ' + selectedAddress.gemeentenaam : null"></zac-static-text>
+        </div>
+        <div fxFlex="20" fxLayoutAlign="center center">
+            <button mat-flat-button color="primary"
+
+                    [disabled]="!selectedAddress"
+                    id="opslaan_button"
+                    (click)="save()"
+                    type="button">
+                <mat-icon>save</mat-icon>
+                {{'opslaan' | translate}}
+            </button>
+        </div>
+
+        <mat-form-field appearance="fill" fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
+            <mat-label>Locatie</mat-label>
+            <input type="text"
+                   placeholder="Zoek een adres"
+                   matInput
+                   [formControl]="searchControl"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectionChanged($event)" [displayWith]="resultDisplay">
+                <mat-option *ngFor="let result of results" [value]="result">
+                    <mat-icon mat-list-icon *ngIf="result.type === 'weg'">add_road</mat-icon>
+                    <mat-icon mat-list-icon *ngIf="result.type === 'adres'">home</mat-icon>
+                    <mat-icon mat-list-icon *ngIf="result.type === 'postcode'">holiday_village</mat-icon>
+
+                    <span>{{result.weergavenaam}}</span>
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </div>
+    <div class="map-container">
+        <div [id]="'open-layers-map'" #openLayersMap class="open-layers-map"></div>
+    </div>
+</div>

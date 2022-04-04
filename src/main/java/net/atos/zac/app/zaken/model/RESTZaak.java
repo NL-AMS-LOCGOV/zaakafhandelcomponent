@@ -48,7 +48,7 @@ public class RESTZaak {
 
     public String vertrouwelijkheidaanduiding;
 
-    public String zaakgeometrie;
+    public RESTGeometry zaakgeometrie;
 
     public boolean indicatieOpschorting;
 
