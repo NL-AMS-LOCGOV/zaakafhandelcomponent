@@ -54,11 +54,15 @@
                             title="{{ 'actie.document.bekijken' | translate}}">
                         <mat-icon>visibility</mat-icon>
                     </button>
-                    <a mat-icon-button
+                    <a mat-flat-button
                        [href]="getDownloadURL(row)"
                        title="{{ 'actie.document.downloaden' | translate}}">
                         <mat-icon>download</mat-icon>
                     </a>
+                    <button mat-flat-button [disabled]="isDocumentVerplaatsenDisabled(row)" (click)="documentVerplaatsen(row)"
+                            title="{{ 'actie.document.verplaatsen' | translate}}">
+                        <mat-icon>content_cut</mat-icon>
+                    </button>
                 </td>
             </ng-container>
 

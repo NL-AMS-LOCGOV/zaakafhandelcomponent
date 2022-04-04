@@ -13,7 +13,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {DOCUMENT} from '@angular/common';
 import {Router} from '@angular/router';
 import {ActionBarAction} from '../actionbar/model/action-bar-action';
-import {ActionIcon} from '../../shared/edit/action-icon';
 
 @Injectable({
     providedIn: 'root'
@@ -101,8 +100,8 @@ export class UtilService {
         this.snackbar.open(this.translate.instant(message, params), this.translate.instant('actie.sluiten'), {duration: 3000});
     }
 
-    addAction(text: string, subText: string, action: ActionIcon, dismissClicked: Subject<any>, actionEnabled?: () => boolean) {
-        this.addAction$.next(new ActionBarAction(text, subText, action, dismissClicked, actionEnabled));
+    addAction(action: ActionBarAction) {
+        this.addAction$.next(action);
     }
 
     reloadRoute(): void {

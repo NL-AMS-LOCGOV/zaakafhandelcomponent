@@ -18,6 +18,7 @@ import {UtilService} from '../core/service/util.service';
 import {Router} from '@angular/router';
 import {ActionIcon} from '../shared/edit/action-icon';
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
+import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
 
 @Injectable({
     providedIn: 'root'
@@ -100,11 +101,11 @@ export class InformatieObjectenService {
     appInit() {
         const documenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
         documenten.forEach(document => {
-            this._verplaatsenDocument(document);
+            this._verplaatsenDocument(document, true);
         });
     }
 
-    private _verplaatsenDocument(document: DocumentVerplaatsGegevens) {
+    private _verplaatsenDocument(document: DocumentVerplaatsGegevens, onInit?: boolean) {
         const dismiss: Subject<void> = new Subject<void>();
         dismiss.asObservable().subscribe(() => {
             this.deleteTeVerplaatsenDocument(document);
@@ -119,11 +120,12 @@ export class InformatieObjectenService {
         });
         const teVerplaatsenDocumenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
         teVerplaatsenDocumenten.push(document);
-        SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
-        this.utilService.addAction(
-            document.documentTitel, document.zaakID,
+        if (!onInit) {
+            SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
+        }
+        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.zaakID,
             new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document));
-
+        this.utilService.addAction(action);
     }
 
     private deleteTeVerplaatsenDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens) {
