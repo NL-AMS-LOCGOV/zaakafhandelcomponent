@@ -8,10 +8,10 @@ import {AbstractFormField} from '../material-form-builder/model/abstract-form-fi
 
 export class DialogData {
 
-    public melding;
     public confirmButtonActionKey: string = 'actie.ja';
     public cancelButtonActionKey: string = 'actie.annuleren';
 
     constructor(public formField: AbstractFormField,
-                public fn?: (result: any) => Observable<any>) { }
+                public fn?: (result: any) => Observable<any>,
+                public melding?: string) { }
 }
