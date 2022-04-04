@@ -75,10 +75,13 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
             }
             case ZAAK_OP_NAAM -> {
                 final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
-                final Zaak subject = zrcClientService.readZaak(rol.getZaak());
-                if (URIUtil.equals(rol.getRoltype(), getRoltypeBehandelaar(subject).getUrl())) {
-                    signalering.setSubject(subject);
-                    return addTarget(signalering, rol);
+                // ZAAK_OP_NAAM for groep targets also works but for now we only need ZAAK_OP_NAAM for behandelaar targets
+                if (rol.getBetrokkeneType() != BetrokkeneType.MEDEWERKER) { // So ignore the event when the betrokkene is not a MEDEWERKER
+                    final Zaak subject = zrcClientService.readZaak(rol.getZaak());
+                    if (URIUtil.equals(rol.getRoltype(), getRoltypeBehandelaar(subject).getUrl())) {
+                        signalering.setSubject(subject);
+                        return addTarget(signalering, rol);
+                    }
                 }
             }
             case TAAK_OP_NAAM -> {

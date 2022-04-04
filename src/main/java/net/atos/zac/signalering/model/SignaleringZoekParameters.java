@@ -11,6 +11,12 @@ import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
 import static net.atos.zac.signalering.model.SignaleringTarget.GROEP;
 import static net.atos.zac.signalering.model.SignaleringTarget.MEDEWERKER;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.UUID;
+
 import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
@@ -20,23 +26,24 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.Medewerker;
 
 public class SignaleringZoekParameters {
-    private SignaleringType.Type type;
+    private final SignaleringTarget targettype;
 
-    private SignaleringTarget targettype;
+    private final String target;
 
-    private String target;
+    private Set<SignaleringType.Type> types;
 
     private SignaleringSubject subjecttype;
 
     private String subject;
 
-    public SignaleringType.Type getType() {
-        return type;
+    public SignaleringZoekParameters(final Group target) {
+        this.targettype = GROEP;
+        this.target = target.getId();
     }
 
-    public SignaleringZoekParameters type(final SignaleringType.Type type) {
-        this.type = type;
-        return this;
+    public SignaleringZoekParameters(final Medewerker target) {
+        this.targettype = MEDEWERKER;
+        this.target = target.getGebruikersnaam();
     }
 
     public SignaleringTarget getTargettype() {
@@ -47,15 +54,17 @@ public class SignaleringZoekParameters {
         return target;
     }
 
-    public SignaleringZoekParameters target(final Group target) {
-        this.targettype = GROEP;
-        this.target = target.getId();
+    public Set<SignaleringType.Type> getTypes() {
+        return types == null ? Collections.emptySet() : Collections.unmodifiableSet(types);
+    }
+
+    public SignaleringZoekParameters types(final SignaleringType.Type... types) {
+        this.types = EnumSet.copyOf(Arrays.asList(types));
         return this;
     }
 
-    public SignaleringZoekParameters target(final Medewerker target) {
-        this.targettype = MEDEWERKER;
-        this.target = target.getGebruikersnaam();
+    public SignaleringZoekParameters types(final SignaleringType.Type type) {
+        this.types = EnumSet.of(type);
         return this;
     }
 
@@ -67,21 +76,35 @@ public class SignaleringZoekParameters {
         return subject;
     }
 
-    public SignaleringZoekParameters subject(final Zaak subject) {
-        this.subjecttype = ZAAK;
-        this.subject = subject.getUuid().toString();
+    public SignaleringZoekParameters subjecttype(final SignaleringSubject subjecttype) {
+        this.subjecttype = subjecttype;
         return this;
+    }
+
+    public SignaleringZoekParameters subject(final Zaak subject) {
+        return subjectZaak(subject.getUuid());
     }
 
     public SignaleringZoekParameters subject(final TaskInfo subject) {
-        this.subjecttype = TAAK;
-        this.subject = subject.getId();
-        return this;
+        return subjectTaak(subject.getId());
     }
 
     public SignaleringZoekParameters subject(final EnkelvoudigInformatieobject subject) {
-        this.subjecttype = INFORMATIEOBJECT;
-        this.subject = URIUtil.parseUUIDFromResourceURI(subject.getUrl()).toString();
-        return this;
+        return subjectInformatieobject(URIUtil.parseUUIDFromResourceURI(subject.getUrl()));
+    }
+
+    public SignaleringZoekParameters subjectZaak(final UUID zaakId) {
+        this.subject = zaakId.toString();
+        return subjecttype(ZAAK);
+    }
+
+    public SignaleringZoekParameters subjectTaak(final String taakId) {
+        this.subject = taakId;
+        return subjecttype(TAAK);
+    }
+
+    public SignaleringZoekParameters subjectInformatieobject(final UUID informatieobjectId) {
+        this.subject = informatieobjectId.toString();
+        return subjecttype(INFORMATIEOBJECT);
     }
 }
