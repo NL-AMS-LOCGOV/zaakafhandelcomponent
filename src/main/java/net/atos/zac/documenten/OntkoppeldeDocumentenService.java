@@ -56,7 +56,7 @@ public class OntkoppeldeDocumentenService {
         ontkoppeldDocument.setTitel(informatieobject.getTitel());
         ontkoppeldDocument.setBestandsnaam(informatieobject.getBestandsnaam());
         ontkoppeldDocument.setOntkoppeldOp(ZonedDateTime.now());
-        ontkoppeldDocument.setOntkoppeldDoorID(ingelogdeMedewerker.get().getGebruikersnaam());
+        ontkoppeldDocument.setOntkoppeldDoor(ingelogdeMedewerker.get().getGebruikersnaam());
         ontkoppeldDocument.setZaakID(zaak.getIdentificatie());
         ontkoppeldDocument.setReden(reden);
         return create(ontkoppeldDocument);

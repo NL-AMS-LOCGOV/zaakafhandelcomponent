@@ -65,6 +65,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
+import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
@@ -203,29 +204,32 @@ public class ZakenRESTService {
         return zaakConverter.convert(updatedZaak);
     }
 
-    @DELETE
-    @Path("zaakinformatieobjecten/{informatieObjectUuid}/{zaakUuid}")
-    public void ontkoppelInformatieObject(@PathParam("informatieObjectUuid") final UUID uuid, @PathParam("zaakUuid") final UUID zaakUuid) {
+    @PUT
+    @Path("zaakinformatieobjecten/ontkoppel")
+    public void ontkoppelInformatieObject(final RESTDocumentOntkoppelGegevens ontkoppelGegevens) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppelGegevens.documentUUID);
+        final Zaak zaak = zrcClientService.readZaak(ontkoppelGegevens.zaakUUID);
         parameters.setInformatieobject(informatieobject.getUrl());
         parameters.setZaak(zaak.getUrl());
         List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(parameters);
         if (zaakInformatieobjecten.isEmpty()) {
-            throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", zaakUuid, uuid));
+            throw new NotFoundException(
+                    String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", ontkoppelGegevens.zaakUUID,
+                                  ontkoppelGegevens.documentUUID));
         }
-        zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid());
-        if (findZakenInformatieobject(uuid).isEmpty()) {
-            ontkoppeldeDocumentenService.create(informatieobject, zaak, "-"); //TODO REDEN #692
+
+        zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid(), ontkoppelGegevens.reden);
+        if (findZakenInformatieobject(ontkoppelGegevens.documentUUID).isEmpty()) {
+            ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden); //TODO REDEN #692
         }
     }
 
     @GET
     @Path("zaken/informatieobject/{informatieObjectUuid}")
-    public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID uuid) {
+    public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
+        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid).getUrl());
         List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
         return zaakInformatieobjects.stream()
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).collect(Collectors.toList());

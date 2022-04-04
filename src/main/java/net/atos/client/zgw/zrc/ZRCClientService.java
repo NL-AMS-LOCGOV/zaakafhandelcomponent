@@ -117,7 +117,8 @@ public class ZRCClientService implements Caching {
      * @param zaakInformatieobject describes relation between ZAAK en INFORMATIEOBJECT
      * @return ZaakInformatieobject
      */
-    public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject) {
+    public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return zrcClient.zaakinformatieobjectCreate(zaakInformatieobject);
     }
 
@@ -126,7 +127,8 @@ public class ZRCClientService implements Caching {
      *
      * @param zaakInformatieobjectUuid uuid
      */
-    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid) {
+    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
@@ -375,10 +377,8 @@ public class ZRCClientService implements Caching {
 
 
         final String toelichting = "Verplaatst: %s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
-        zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        createZaakInformatieobject(nieuweZaakInformatieObject);
-        zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid());
+        createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting);
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }

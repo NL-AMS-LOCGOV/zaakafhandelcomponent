@@ -123,6 +123,8 @@
   "bron": "Via source",
   "grootte": "Size",
   "relevanteDocumenten": "Relevant documents",
+  "ontkoppeldOp": "Unlinked op",
+  "ontkoppeldDoor": "Unlinked by",
   " 4 ": ">>--> ENTITEITEN <--<<",
   "informatieobject": "Document",
   "enkelvoudigInformatieObjecten": "Documents",
