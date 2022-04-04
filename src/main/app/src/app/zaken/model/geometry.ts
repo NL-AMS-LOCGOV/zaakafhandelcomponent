@@ -1,25 +1,22 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+import {GeometryCoordinate} from './geometryCoordinate';
+import {GeometryType} from './geometryType';
+
 export class Geometry {
 
-    constructor(type: 'Point' | 'Polygon' | 'GeometryCollection') {
+    constructor(type: GeometryType) {
         this.type = type;
     }
 
-    type: 'Point' | 'Polygon' | 'GeometryCollection';
+    type: GeometryType;
 
-    point: Coordinates;
+    point: GeometryCoordinate;
 
-    polygon: Coordinates[][];
+    polygon: GeometryCoordinate[][];
 
     geometrycollection: Geometry[];
-}
-
-export class Coordinates {
-
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-
-    x: number;
-    y: number;
 }

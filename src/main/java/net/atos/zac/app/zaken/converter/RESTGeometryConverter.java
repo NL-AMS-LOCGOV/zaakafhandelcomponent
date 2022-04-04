@@ -5,10 +5,7 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.GeometryCollection;
@@ -29,17 +26,9 @@ public class RESTGeometryConverter {
         final RESTGeometry restGeometry = new RESTGeometry();
         restGeometry.type = geometry.getType().toValue();
         switch (geometry.getType()) {
-            case POINT -> restGeometry.point = new RESTCoordinates(((Point) geometry).getCoordinates().getX().doubleValue(),
-                                                                   ((Point) geometry).getCoordinates().getY().doubleValue());
-            case POLYGON -> restGeometry.polygon = ((Polygon) geometry).getCoordinates().stream()
-                    .map(point2DS -> point2DS.stream()
-                            .map(point2D -> new RESTCoordinates(point2D.getX().doubleValue(), point2D.getY().doubleValue()))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
-            case GEOMETRYCOLLECTION -> restGeometry.geometrycollection =
-                    ((GeometryCollection) geometry).getGeometries().stream()
-                            .map(geometry1 -> convert(geometry))
-                            .collect(Collectors.toList());
+            case POINT -> restGeometry.point = createRESTPoint((Point) geometry);
+            case POLYGON -> restGeometry.polygon = createRESTPolygon((Polygon) geometry);
+            case GEOMETRYCOLLECTION -> restGeometry.geometrycollection = createRESTGeometryCollection((GeometryCollection) geometry);
             default -> throw new IllegalStateException("Unexpected value: " + geometry.getType());
         }
 
@@ -50,36 +39,49 @@ public class RESTGeometryConverter {
         if (restGeometry == null) {
             return null;
         }
-        final Geometry geometry;
-        switch (GeometryType.fromValue(restGeometry.type)) {
-            case POINT -> geometry = createPoint(restGeometry);
-            case POLYGON -> geometry = createPolygon(restGeometry);
-            case GEOMETRYCOLLECTION -> geometry = createGeometryCollection(restGeometry);
-            default -> throw new IllegalStateException("Unexpected value: " + restGeometry.type);
-        }
 
-        return geometry;
+        return switch (GeometryType.fromValue(restGeometry.type)) {
+            case POINT -> createPoint(restGeometry);
+            case POLYGON -> createPolygon(restGeometry);
+            case GEOMETRYCOLLECTION -> createGeometryCollection(restGeometry);
+        };
+    }
+
+    private RESTCoordinates createRESTPoint(final Point point) {
+        return new RESTCoordinates(point.getCoordinates().getX().doubleValue(),
+                                   point.getCoordinates().getY().doubleValue());
     }
 
     private Point createPoint(final RESTGeometry restGeometry) {
-        final Point2D point2D = new Point2D(new BigDecimal(restGeometry.point.x), new BigDecimal(restGeometry.point.y));
+        final Point2D point2D = new Point2D(restGeometry.point.x, restGeometry.point.y);
         return new Point(point2D);
+    }
+
+    private List<List<RESTCoordinates>> createRESTPolygon(final Polygon polygon) {
+        return polygon.getCoordinates().stream()
+                .map(point2DS -> point2DS.stream()
+                        .map(point2D -> new RESTCoordinates(point2D.getX().doubleValue(), point2D.getY().doubleValue()))
+                        .toList())
+                .toList();
     }
 
     private Polygon createPolygon(final RESTGeometry restGeometry) {
         final List<List<Point2D>> polygonCoordinates = restGeometry.polygon.stream()
                 .map(polygon -> polygon.stream()
-                        .map(coordinates -> new Point2D(new BigDecimal(coordinates.x), new BigDecimal(coordinates.y)))
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+                        .map(coordinates -> new Point2D(coordinates.x, coordinates.y))
+                        .toList())
+                .toList();
         return new Polygon(polygonCoordinates);
     }
 
+    private List<RESTGeometry> createRESTGeometryCollection(final GeometryCollection geometryCollection) {
+        return geometryCollection.getGeometries().stream()
+                .map(geometry1 -> convert(geometryCollection))
+                .toList();
+    }
+
     private GeometryCollection createGeometryCollection(final RESTGeometry restGeometry) {
-        final List<Geometry> collection = new ArrayList<>();
-        for (final RESTGeometry geometry : restGeometry.geometrycollection) {
-            collection.add(convert(geometry));
-        }
+        final List<Geometry> collection = restGeometry.geometrycollection.stream().map(this::convert).toList();
         return new GeometryCollection(collection);
     }
 }

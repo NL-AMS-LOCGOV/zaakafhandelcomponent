@@ -27,6 +27,11 @@ public class Point2D {
         this.y = y;
     }
 
+    public Point2D(final double x, final double y) {
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
+    }
+
     public BigDecimal getX() {
         return x;
     }

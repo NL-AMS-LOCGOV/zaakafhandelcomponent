@@ -13,12 +13,12 @@ import net.atos.client.zgw.zrc.util.GeometryJsonbDeserializer;
  *
  */
 @JsonbTypeDeserializer(GeometryJsonbDeserializer.class)
-public class Geometry {
+public abstract class Geometry {
     public static final String GEOMETRY_TYPE_NAAM = "type";
 
     private final GeometryType type;
 
-    public Geometry(final GeometryType type) {
+    protected Geometry(final GeometryType type) {
         this.type = type;
     }
 

@@ -28,17 +28,10 @@ public class GeometryJsonbDeserializer implements JsonbDeserializer<Geometry> {
         final JsonObject jsonObject = parser.getObject();
         final GeometryType geometryType = GeometryType.fromValue(jsonObject.getJsonString(GEOMETRY_TYPE_NAAM).getString());
 
-        switch (geometryType) {
-            case POINT -> {
-                return JSONB.fromJson(jsonObject.toString(), Point.class);
-            }
-            case POLYGON -> {
-                return JSONB.fromJson(jsonObject.toString(), Polygon.class);
-            }
-            case GEOMETRYCOLLECTION -> {
-                return JSONB.fromJson(jsonObject.toString(), GeometryCollection.class);
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + geometryType);
-        }
+        return switch (geometryType) {
+            case POINT -> JSONB.fromJson(jsonObject.toString(), Point.class);
+            case POLYGON -> JSONB.fromJson(jsonObject.toString(), Polygon.class);
+            case GEOMETRYCOLLECTION -> JSONB.fromJson(jsonObject.toString(), GeometryCollection.class);
+        };
     }
 }

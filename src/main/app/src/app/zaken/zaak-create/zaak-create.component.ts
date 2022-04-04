@@ -25,8 +25,9 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
-import {Coordinate} from 'ol/coordinate.js';
-import {Coordinates, Geometry} from '../model/geometry';
+import {Geometry} from '../model/geometry';
+import {GeometryCoordinate} from '../model/geometryCoordinate';
+import {GeometryType} from '../model/geometryType';
 import {Klant} from '../../klanten/model/klant';
 
 @Component({
@@ -52,7 +53,7 @@ export class ZaakCreateComponent implements OnInit {
     private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
-    private locatie: { naam: string, coordinates: Coordinate };
+    private locatie: { naam: string, coordinates: GeometryCoordinate };
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
@@ -99,8 +100,8 @@ export class ZaakCreateComponent implements OnInit {
 
         this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie').icon(this.locatieToevoegenIcon).label('locatie').build();
 
-        this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum], [tussenTitel],
-            [communicatiekanaal, vertrouwelijkheidaanduiding], [this.locatieField], [omschrijving], [toelichting]];
+        this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum, this.locatieField], [tussenTitel],
+            [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
 
     }
 
@@ -120,8 +121,8 @@ export class ZaakCreateComponent implements OnInit {
                 }
 
                 if (key === 'zaakgeometrie') {
-                    const zaakgeometrie = new Geometry('Point');
-                    zaakgeometrie.point = new Coordinates(this.locatie.coordinates[0], this.locatie.coordinates[1]);
+                    const zaakgeometrie = new Geometry(GeometryType.POINT);
+                    zaakgeometrie.point = new GeometryCoordinate(this.locatie.coordinates[0], this.locatie.coordinates[1]);
                     zaak[key] = zaakgeometrie;
                 }
             });
@@ -138,7 +139,7 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
-    locatieGeselecteerd(locatie: { naam: string, coordinates: Coordinate }): void {
+    locatieGeselecteerd(locatie: { naam: string, coordinates: GeometryCoordinate }): void {
         this.locatie = locatie;
         this.locatieField.formControl.setValue(locatie.naam);
         this.actionsSidenav.close();

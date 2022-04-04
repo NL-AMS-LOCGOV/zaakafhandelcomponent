@@ -24,8 +24,4 @@ public class Point extends Geometry {
     public Point2D getCoordinates() {
         return coordinates;
     }
-
-    public void setCoordinates(final Point2D coordinates) {
-        this.coordinates = coordinates;
-    }
 }

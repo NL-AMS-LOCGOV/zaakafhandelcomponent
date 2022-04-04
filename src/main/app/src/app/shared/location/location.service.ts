@@ -14,18 +14,21 @@ import {Observable} from 'rxjs';
 })
 export class LocationService {
 
+    private readonly flSuggest: string = 'type,weergavenaam,id';
+
+    private readonly typeSuggest: string = 'type:adres';
+
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
     addressSuggest(zoekOpdracht) {
-        const fq = 'type:(weg OR postcode OR adres)';
-        const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${zoekOpdracht}&fq=${fq}&rows=5`;
+        const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${zoekOpdracht}&fl=${this.flSuggest}&fq=${this.typeSuggest}&rows=5`;
         return this.http.get<any>(url, {headers: new HttpHeaders({'Content-Type': 'application/json'})})
                    .pipe(catchError(this.handleError));
     }
 
     geolocationToAddress(coordinates) {
-        const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&rows=1&q=type:adres&lon=${coordinates[0]}&lat=${coordinates[1]}`;
+        const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&rows=1&fq=${this.typeSuggest}&fl=${this.flSuggest}&lon=${coordinates[0]}&lat=${coordinates[1]}`;
         return this.http.get<any>(url, {headers: new HttpHeaders({'Content-Type': 'application/json'})})
                    .pipe(catchError(this.handleError));
     }

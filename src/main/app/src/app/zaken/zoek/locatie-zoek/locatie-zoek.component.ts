@@ -39,8 +39,9 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
     private map: ol.Map;
     private view: ol.View;
     private locationSource: source.Vector;
-    private WGS84: string = 'WGS84';
-    private EPSG3857 = 'EPSG:3857';
+    private readonly WGS84: string = 'WGS84';
+    private readonly EPSG3857: string = 'EPSG:3857';
+    private readonly EXTENT_MATRIX: number = 20;
 
     private layers: any[];
 
@@ -73,9 +74,9 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
         const projection = proj.get(this.EPSG3857);
         const projectionExtent = projection.getExtent();
         const size = extent.getWidth(projectionExtent) / 256;
-        const resolutions = new Array(20);
-        const matrixIds = new Array(20);
-        for (let z = 0; z < 20; ++z) {
+        const resolutions = new Array(this.EXTENT_MATRIX);
+        const matrixIds = new Array(this.EXTENT_MATRIX);
+        for (let z = 0; z < this.EXTENT_MATRIX; ++z) {
             resolutions[z] = size / Math.pow(2, z);
             matrixIds[z] = ('0' + z).slice(-2);
         }
