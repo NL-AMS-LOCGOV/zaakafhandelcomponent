@@ -26,7 +26,7 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.klantExpanded = SessionStorageUtil.getSessionStorage('klantExpanded', true);
+        this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
         this.klantenService.readBedrijf(this.vestigingsnummer).subscribe(bedrijf => {
             this.bedrijf = bedrijf;
             this.loading = false;
@@ -35,7 +35,7 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     klantExpandedChanged($event: boolean): void {
         if (this.viewInitialized) {
-            SessionStorageUtil.setSessionStorage('klantExpanded', $event ? 'true' : 'false');
+            SessionStorageUtil.setItem('klantExpanded', $event ? 'true' : 'false');
         }
     }
 

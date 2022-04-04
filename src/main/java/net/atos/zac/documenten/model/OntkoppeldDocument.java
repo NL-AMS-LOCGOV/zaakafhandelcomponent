@@ -38,6 +38,10 @@ public class OntkoppeldDocument {
     @Column(name = "id_document", nullable = false)
     private String documentID;
 
+    @NotBlank
+    @Column(name = "id_zaak", nullable = false)
+    private String zaakID;
+
     @NotNull
     @Column(name = "creatiedatum", nullable = false)
     private ZonedDateTime creatiedatum;
@@ -48,6 +52,17 @@ public class OntkoppeldDocument {
 
     @Column(name = "bestandsnaam")
     private String bestandsnaam;
+
+    @NotNull
+    @Column(name = "ontkoppeld_op", nullable = false)
+    private ZonedDateTime ontkoppeldOp;
+
+    @NotBlank
+    @Column(name = "id_ontkoppeld_door", nullable = false)
+    private String ontkoppeldDoor;
+
+    @Column(name = "reden")
+    private String reden;
 
     public Long getId() {
         return id;
@@ -95,6 +110,38 @@ public class OntkoppeldDocument {
 
     public void setBestandsnaam(final String bestandsnaam) {
         this.bestandsnaam = bestandsnaam;
+    }
+
+    public String getZaakID() {
+        return zaakID;
+    }
+
+    public void setZaakID(final String zaakID) {
+        this.zaakID = zaakID;
+    }
+
+    public ZonedDateTime getOntkoppeldOp() {
+        return ontkoppeldOp;
+    }
+
+    public void setOntkoppeldOp(final ZonedDateTime ontkoppeldOp) {
+        this.ontkoppeldOp = ontkoppeldOp;
+    }
+
+    public String getOntkoppeldDoor() {
+        return ontkoppeldDoor;
+    }
+
+    public void setOntkoppeldDoor(final String ontkoppeldDoor) {
+        this.ontkoppeldDoor = ontkoppeldDoor;
+    }
+
+    public String getReden() {
+        return reden;
+    }
+
+    public void setReden(final String reden) {
+        this.reden = reden;
     }
 }
 

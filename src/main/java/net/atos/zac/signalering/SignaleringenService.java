@@ -10,6 +10,7 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import javax.transaction.Transactional;
 
 import net.atos.zac.event.EventingService;
 import net.atos.zac.signalering.model.Signalering;
+import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
@@ -41,14 +43,26 @@ public class SignaleringenService {
     /**
      * Factory method for constructing Signalering instances.
      *
-     * @param type the type op the signalering to construct
+     * @param signaleringsType the type op the signalering to construct
      * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
      */
-    public Signalering signaleringInstance(final SignaleringType.Type type) {
+    public Signalering signaleringInstance(final SignaleringType.Type signaleringsType) {
         final Signalering instance = new Signalering();
-        instance.setType(entityManager.find(SignaleringType.class, type.toString()));
+        instance.setType(entityManager.find(SignaleringType.class, signaleringsType.toString()));
         instance.setTijdstip(ZonedDateTime.now());
         return instance;
+    }
+
+    /**
+     * Business logic for deciding if signalling is necessary. Groep-targets will always get signalled but Medewerker-targets only when they are not themselves
+     * the actor that caused the event (or when the actor is unknown).
+     *
+     * @param signalering the signalering (should have the target set)
+     * @param actor       the actor (a gebruikersnaam) or null if unknown
+     * @return true if signalling is necessary
+     */
+    public boolean isNecessary(final Signalering signalering, final String actor) {
+        return signalering.getTargettype() != SignaleringTarget.MEDEWERKER || !signalering.getTarget().equals(actor);
     }
 
     public boolean isSubcribedTo(final Signalering signalering) {
@@ -68,9 +82,8 @@ public class SignaleringenService {
         entityManager.remove(signalering);
     }
 
-    public void deleteSignalering(final SignaleringZoekParameters parameters) {
-        final List<Signalering> signaleringen = findSignaleringen(parameters);
-        signaleringen.forEach(this::deleteSignalering);
+    public void deleteSignaleringen(final SignaleringZoekParameters parameters) {
+        findSignaleringen(parameters).forEach(this::deleteSignalering);
     }
 
     public Signalering readSignalering(final long id) {
@@ -83,30 +96,29 @@ public class SignaleringenService {
         final Root<Signalering> root = query.from(Signalering.class);
         return entityManager.createQuery(
                         query.select(root)
-                                .where(builder.and(getPredicates(parameters, builder, root)))
+                                .where(getWhere(parameters, builder, root))
                                 .orderBy(builder.desc(root.get("tijdstip"))))
                 .getResultList();
     }
 
-    private Predicate[] getPredicates(final SignaleringZoekParameters parameters, final CriteriaBuilder builder,
-            final Root<Signalering> root) {
+    private Predicate getWhere(final SignaleringZoekParameters parameters, final CriteriaBuilder builder, final Root<Signalering> root) {
         final List<Predicate> where = new ArrayList<>();
-        if (parameters.getType() != null) {
-            where.add(builder.equal(root.get("type").get("id"), parameters.getType().toString()));
+        if (parameters.getTargettype() != null) {
+            where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
+            if (parameters.getTarget() != null) {
+                where.add(builder.equal(root.get("target"), parameters.getTarget()));
+            }
+        }
+        if (!parameters.getTypes().isEmpty()) {
+            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
         }
         if (parameters.getSubjecttype() != null) {
             where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));
+            if (parameters.getSubject() != null) {
+                where.add(builder.equal(root.get("subject"), parameters.getSubject()));
+            }
         }
-        if (parameters.getSubject() != null) {
-            where.add(builder.equal(root.get("subject"), parameters.getSubject()));
-        }
-        if (parameters.getTargettype() != null) {
-            where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
-        }
-        if (parameters.getTarget() != null) {
-            where.add(builder.equal(root.get("target"), parameters.getTarget()));
-        }
-        return where.toArray(new Predicate[0]);
+        return builder.and(where.toArray(new Predicate[0]));
     }
 
     public ZonedDateTime latestSignalering(final SignaleringZoekParameters parameters) {
@@ -116,7 +128,7 @@ public class SignaleringenService {
 
 
         query.select(root.get("tijdstip"))
-                .where(builder.and(getPredicates(parameters, builder, root)))
+                .where(getWhere(parameters, builder, root))
                 .orderBy(builder.desc(root.get("tijdstip")));
 
         final List<ZonedDateTime> resultList = entityManager.createQuery(query).getResultList();

@@ -122,9 +122,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (event) => this.updateZaak(event));
             this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
+            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
-
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
             this.getIngelogdeMedewerker();
@@ -136,7 +135,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
         };
 
-        this.toonAfgerondeTaken = SessionStorageUtil.getSessionStorage('toonAfgerondeTaken');
+        this.toonAfgerondeTaken = SessionStorageUtil.getItem('toonAfgerondeTaken');
 
     }
 
@@ -248,7 +247,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
-        // TODO #650 onderstaande url aanpassen naar juiste component
         // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
         this.menu.push(
             new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
@@ -301,7 +299,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     openZaakAfbrekenDialog(): void {
-        const dialogData = new DialogData('actie.zaak.afbreken', 'actie.annuleren',
+        const dialogData = new DialogData(
             new SelectFormFieldBuilder().id('reden')
                                         .label('actie.zaak.afbreken.reden')
                                         .optionLabel('naam')
@@ -309,6 +307,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                         .validators(Validators.required)
                                         .build(),
             (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
+        dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
+
         this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(DialogComponent, {
             width: '400px',
@@ -482,7 +482,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.takenDataSource.filter = this.takenFilter;
-        SessionStorageUtil.setSessionStorage('toonAfgerondeTaken', this.toonAfgerondeTaken);
+        SessionStorageUtil.setItem('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
     ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
@@ -501,8 +501,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             } else {
                 melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
             }
-            this.dialog.open(ConfirmDialogComponent, {
-                data: new ConfirmDialogData(melding, false, null, this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid)),
+            const dialogData = new DialogData(
+                new TextareaFormFieldBuilder().id('reden').label('reden').build(),
+                (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden));
+            dialogData.melding = melding;
+            this.dialog.open(DialogComponent, {
+                width: '600px',
+                data: dialogData,
                 autoFocus: 'dialog'
             }).afterClosed().subscribe(result => {
                 if (result) {
@@ -512,6 +517,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         });
+    }
+
+    documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {
+        this.informatieObjectenService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
+    }
+
+    isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
+        return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
     }
 
     get initiatorType() {

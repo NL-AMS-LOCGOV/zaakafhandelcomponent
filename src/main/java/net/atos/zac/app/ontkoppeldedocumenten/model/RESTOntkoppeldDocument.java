@@ -6,7 +6,10 @@
 package net.atos.zac.app.ontkoppeldedocumenten.model;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
+
+import net.atos.zac.app.identity.model.RESTMedewerker;
 
 public class RESTOntkoppeldDocument {
 
@@ -16,9 +19,17 @@ public class RESTOntkoppeldDocument {
 
     public String documentID;
 
+    public String zaakID;
+
     public LocalDate creatiedatum;
 
     public String titel;
 
     public String bestandsnaam;
+
+    public RESTMedewerker ontkoppeldDoor;
+
+    public ZonedDateTime ontkoppeldOp;
+
+    public String reden;
 }

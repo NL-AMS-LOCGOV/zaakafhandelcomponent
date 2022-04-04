@@ -7,6 +7,7 @@ package net.atos.client.zgw.zrc;
 
 import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
 import static net.atos.zac.util.OpenZaakPaginationUtil.PAGE_SIZE_OPEN_ZAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
@@ -49,6 +52,7 @@ import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.util.UriUtil;
 
 /**
  * Careful!
@@ -113,7 +117,8 @@ public class ZRCClientService implements Caching {
      * @param zaakInformatieobject describes relation between ZAAK en INFORMATIEOBJECT
      * @return ZaakInformatieobject
      */
-    public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject) {
+    public ZaakInformatieobject createZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return zrcClient.zaakinformatieobjectCreate(zaakInformatieobject);
     }
 
@@ -122,7 +127,8 @@ public class ZRCClientService implements Caching {
      *
      * @param zaakInformatieobjectUuid uuid
      */
-    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid) {
+    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
@@ -337,6 +343,44 @@ public class ZRCClientService implements Caching {
         final RolListParameters rolListParameters = new RolListParameters();
         rolListParameters.setZaak(zaakURI);
         return zrcClient.rolList(rolListParameters).getResults();
+    }
+
+    public Zaak readZaakByID(final String identificatie) {
+        final ZaakListParameters zaakListParameters = new ZaakListParameters();
+        zaakListParameters.setIdentificatie(identificatie);
+        final Results<Zaak> zaakResults = listZaken(zaakListParameters);
+        if (zaakResults.getCount() == 0) {
+            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
+        } else if (zaakResults.getCount() > 1) {
+            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
+        }
+        return zaakResults.getResults().get(0);
+    }
+
+    public void verplaatsInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak oudeZaak, final Zaak nieuweZaak) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(informatieobject.getUrl());
+        parameters.setZaak(oudeZaak.getUrl());
+        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(parameters);
+        if (zaakInformatieobjecten.isEmpty()) {
+            throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'",
+                                                      oudeZaak.getIdentificatie(),
+                                                      UriUtil.uuidFromURI(informatieobject.getInhoud())));
+        }
+
+        final ZaakInformatieobject oudeZaakInformatieobject = zaakInformatieobjecten.get(0);
+        final ZaakInformatieobject nieuweZaakInformatieObject = new ZaakInformatieobject();
+        nieuweZaakInformatieObject.setZaak(nieuweZaak.getUrl());
+        nieuweZaakInformatieObject.setInformatieobject(informatieobject.getUrl());
+        nieuweZaakInformatieObject.setTitel(oudeZaakInformatieobject.getTitel());
+        nieuweZaakInformatieObject.setBeschrijving(oudeZaakInformatieobject.getBeschrijving());
+
+
+        final String toelichting = "Verplaatst: %s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
+        createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting);
+        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
+        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }
 
     @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)

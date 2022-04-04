@@ -65,6 +65,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
+import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
@@ -153,23 +154,15 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        deleteSignalering(zaak);
+        deleteSignaleringen(zaak);
         return zaakConverter.convert(zaak);
     }
 
     @GET
     @Path("zaak/id/{identificatie}")
     public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
-        final ZaakListParameters zaakListParameters = new ZaakListParameters();
-        zaakListParameters.setIdentificatie(identificatie);
-        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-        if (zaakResults.getCount() == 0) {
-            throw new NotFoundException(String.format("Zaak met identificatie '%s' niet gevonden", identificatie));
-        } else if (zaakResults.getCount() > 1) {
-            throw new IllegalStateException(String.format("Meerdere zaken met identificatie '%s' gevonden", identificatie));
-        }
-        final Zaak zaak = zaakResults.getResults().get(0);
-        deleteSignalering(zaak);
+        final Zaak zaak = zrcClientService.readZaakByID(identificatie);
+        deleteSignaleringen(zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -211,28 +204,32 @@ public class ZakenRESTService {
         return zaakConverter.convert(updatedZaak);
     }
 
-    @DELETE
-    @Path("zaakinformatieobjecten/{informatieObjectUuid}/{zaakUuid}")
-    public void ontkoppelInformatieObject(@PathParam("informatieObjectUuid") final UUID uuid, @PathParam("zaakUuid") final UUID zaakUuid) {
+    @PUT
+    @Path("zaakinformatieobjecten/ontkoppel")
+    public void ontkoppelInformatieObject(final RESTDocumentOntkoppelGegevens ontkoppelGegevens) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppelGegevens.documentUUID);
+        final Zaak zaak = zrcClientService.readZaak(ontkoppelGegevens.zaakUUID);
         parameters.setInformatieobject(informatieobject.getUrl());
-        parameters.setZaak(zrcClientService.readZaak(zaakUuid).getUrl());
+        parameters.setZaak(zaak.getUrl());
         List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(parameters);
         if (zaakInformatieobjecten.isEmpty()) {
-            throw new NotFoundException(String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", zaakUuid, uuid));
+            throw new NotFoundException(
+                    String.format("Geen ZaakInformatieobject gevonden voor Zaak: '%s' en InformatieObject: '%s'", ontkoppelGegevens.zaakUUID,
+                                  ontkoppelGegevens.documentUUID));
         }
-        zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid());
-        if (findZakenInformatieobject(uuid).isEmpty()) {
-            ontkoppeldeDocumentenService.create(informatieobject);
+
+        zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid(), ontkoppelGegevens.reden);
+        if (findZakenInformatieobject(ontkoppelGegevens.documentUUID).isEmpty()) {
+            ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden); //TODO REDEN #692
         }
     }
 
     @GET
     @Path("zaken/informatieobject/{informatieObjectUuid}")
-    public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID uuid) {
+    public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
+        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid).getUrl());
         List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
         return zaakInformatieobjects.stream()
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).collect(Collectors.toList());
@@ -442,12 +439,12 @@ public class ZakenRESTService {
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 
-    private void deleteSignalering(final Zaak zaak) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(SignaleringType.Type.ZAAK_OP_NAAM);
-        parameters.target(ingelogdeMedewerker.get());
-        parameters.subject(zaak);
-        signaleringenService.deleteSignalering(parameters);
+    private void deleteSignaleringen(final Zaak zaak) {
+        signaleringenService.deleteSignaleringen(
+                new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                        .types(SignaleringType.Type.ZAAK_OP_NAAM,
+                               SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
+                        .subject(zaak));
     }
 
     private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
@@ -468,6 +465,4 @@ public class ZakenRESTService {
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
     }
-
-
 }

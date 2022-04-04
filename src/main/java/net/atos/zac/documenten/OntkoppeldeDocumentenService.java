@@ -8,9 +8,12 @@ package net.atos.zac.documenten;
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -20,6 +23,9 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.SortDirection;
@@ -32,19 +38,27 @@ public class OntkoppeldeDocumentenService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
+    @Inject
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
+
     public OntkoppeldDocument create(final OntkoppeldDocument document) {
         valideerObject(document);
         entityManager.persist(document);
         return document;
     }
 
-    public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject) {
+    public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject, final Zaak zaak, final String reden) {
         final OntkoppeldDocument ontkoppeldDocument = new OntkoppeldDocument();
         ontkoppeldDocument.setDocumentID(informatieobject.getIdentificatie());
         ontkoppeldDocument.setDocumentUUID(UriUtil.uuidFromURI(informatieobject.getUrl()));
         ontkoppeldDocument.setCreatiedatum(informatieobject.getCreatiedatum().atStartOfDay(ZoneId.systemDefault()));
         ontkoppeldDocument.setTitel(informatieobject.getTitel());
         ontkoppeldDocument.setBestandsnaam(informatieobject.getBestandsnaam());
+        ontkoppeldDocument.setOntkoppeldOp(ZonedDateTime.now());
+        ontkoppeldDocument.setOntkoppeldDoor(ingelogdeMedewerker.get().getGebruikersnaam());
+        ontkoppeldDocument.setZaakID(zaak.getIdentificatie());
+        ontkoppeldDocument.setReden(reden);
         return create(ontkoppeldDocument);
     }
 

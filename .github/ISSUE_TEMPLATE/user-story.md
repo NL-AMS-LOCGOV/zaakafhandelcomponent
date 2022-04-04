@@ -25,3 +25,11 @@ assignees: ''
 - Should haves
 - Could haves
 - Won't haves
+
+***
+### Gerealiseerd
+_Omschrijving van de op te leveren functionaliteit in deze story_
+
+***Belangrijkste functionaliteiten:***
+- 
+-

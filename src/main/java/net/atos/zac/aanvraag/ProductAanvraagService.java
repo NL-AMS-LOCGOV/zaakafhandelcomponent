@@ -44,6 +44,8 @@ public class ProductAanvraagService {
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 
+    private static final String ZAAK_INFORMATIEOBJECT_REDEN = "Aanvraag document toegevoegd tijdens het starten van de van de zaak vanuit een product aanvraag";
+
     private static final String ROL_TOELICHTING = "Initiator";
 
     @Inject
@@ -127,6 +129,6 @@ public class ProductAanvraagService {
         zaakInformatieobject.setZaak(zaakUrl);
         zaakInformatieobject.setTitel(ZAAK_INFORMATIEOBJECT_TITEL);
         zaakInformatieobject.setBeschrijving(ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
-        zrcClientService.createZaakInformatieobject(zaakInformatieobject);
+        zrcClientService.createZaakInformatieobject(zaakInformatieobject, ZAAK_INFORMATIEOBJECT_REDEN);
     }
 }

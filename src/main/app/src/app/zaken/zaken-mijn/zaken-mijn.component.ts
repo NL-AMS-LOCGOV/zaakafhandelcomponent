@@ -51,7 +51,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             this.zaaktypes = zaaktypes;
         });
 
-        this.werklijstData = SessionStorageUtil.getSessionStorage('mijnZakenWerkvoorraadData') as WerklijstData;
+        this.werklijstData = SessionStorageUtil.getItem('mijnZakenWerkvoorraadData') as WerklijstData;
 
         this.setColumns();
     }
@@ -129,7 +129,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             pageSize: this.paginator.pageSize
         };
 
-        SessionStorageUtil.setSessionStorage('mijnZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setItem('mijnZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {

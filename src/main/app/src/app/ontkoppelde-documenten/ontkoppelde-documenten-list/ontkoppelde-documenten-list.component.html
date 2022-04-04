@@ -8,19 +8,38 @@
     <div class="table-wrapper">
         <table mat-table [dataSource]="dataSource" matSort [matSortActive]="defaults.sort" matSortDisableClear [matSortDirection]="defaults.order">
 
-            <ng-container matColumnDef="documentID">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'identificatie' | translate}}</th>
-                <td mat-cell *matCellDef="let row">{{row.documentID}}</td>
-            </ng-container>
-
             <ng-container matColumnDef="titel">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'titel' | translate}}</th>
-                <td mat-cell *matCellDef="let row">{{row.titel}}</td>
+                <td mat-cell *matCellDef="let row">
+                    <read-more [text]="row.titel" [maxLength]="120"></read-more>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="creatiedatum">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'creatiedatum' | translate}}</th>
                 <td mat-cell *matCellDef="let row">{{row.creatiedatum | datum}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="zaakID">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'zaak' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.zaakID}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ontkoppeldDoor">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'ontkoppeldDoor' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.ontkoppeldDoor.naam}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ontkoppeldOp">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'ontkoppeldOp' | translate}}</th>
+                <td mat-cell *matCellDef="let row">{{row.ontkoppeldOp | datum:'short' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="reden">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'reden' | translate}}</th>
+                <td mat-cell *matCellDef="let row">
+                    <read-more [text]="row.reden" [maxLength]="150"></read-more>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="actions" stickyEnd>

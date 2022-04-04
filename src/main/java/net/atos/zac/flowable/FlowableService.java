@@ -181,6 +181,8 @@ public class FlowableService {
         }
     }
 
+    // TODO Set the owner of a human task
+    // https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/672
     public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
             final Map<String, String> taakdata) {
         final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());

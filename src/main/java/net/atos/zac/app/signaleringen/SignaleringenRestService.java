@@ -19,10 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.flowable.task.api.Task;
-
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
@@ -31,6 +28,7 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
+import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 
@@ -62,38 +60,31 @@ public class SignaleringenRestService {
     @GET
     @Path("/medewerker/latestsignalering")
     public ZonedDateTime latestSignaleringenMedewerker() {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.target(ingelogdeMedewerker.get());
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get());
         return signaleringenService.latestSignalering(parameters);
     }
 
     @GET
     @Path("/zaken/{type}")
     public List<RESTZaakOverzicht> listZakenSignalering(@PathParam("type") final SignaleringType.Type signaleringsType) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(signaleringsType);
-        parameters.target(ingelogdeMedewerker.get());
-
-        final List<Zaak> zaken = signaleringenService.findSignaleringen(parameters)
-                .stream()
-                .map(signalering ->
-                             zrcClientService.readZaak(
-                                     UUID.fromString(signalering.getSubject())))
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                .types(signaleringsType)
+                .subjecttype(SignaleringSubject.ZAAK);
+        return signaleringenService.findSignaleringen(parameters).stream()
+                .map(signalering -> zrcClientService.readZaak(UUID.fromString(signalering.getSubject())))
+                .map(restZaakOverzichtConverter::convert)
                 .toList();
-        return zaken.stream().map(restZaakOverzichtConverter::convert).toList();
     }
 
     @GET
     @Path("/taken/{type}")
     public List<RESTTaak> listTakenSignalering(@PathParam("type") final SignaleringType.Type signaleringsType) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters();
-        parameters.type(signaleringsType);
-        parameters.target(ingelogdeMedewerker.get());
-
-        final List<Task> taken = signaleringenService.findSignaleringen(parameters)
-                .stream()
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                .types(signaleringsType)
+                .subjecttype(SignaleringSubject.TAAK);
+        return signaleringenService.findSignaleringen(parameters).stream()
                 .map(signalering -> flowableService.readTask(signalering.getSubject()))
+                .map(restTaakConverter::convertTaskInfo)
                 .toList();
-        return taken.stream().map(restTaakConverter::convertTaskInfo).toList();
     }
 }

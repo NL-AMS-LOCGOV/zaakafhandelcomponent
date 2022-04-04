@@ -14,7 +14,7 @@ export class DatumPipe implements PipeTransform {
 
     transform(value: Date | moment.Moment | string, dateFormat?: string): any {
         if (value) {
-            let m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
+            const m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
             if (m.isValid()) {
                 return m.format(this.getFormat(dateFormat));
             }
@@ -22,25 +22,25 @@ export class DatumPipe implements PipeTransform {
         return value;
     }
 
-    //angular date format mappen op moment formaat
-    getFormat(dateFormat: string) {
-        if (!dateFormat || dateFormat == 'shortDate') {
+    // angular date format mappen op moment formaat
+    getFormat(dateFormat: string): string {
+        if (!dateFormat || dateFormat === 'shortDate') {
             return 'L';
-        } else if (dateFormat == 'mediumDate') {
+        } else if (dateFormat === 'mediumDate') {
             return 'll';
-        } else if (dateFormat == 'longDate') {
+        } else if (dateFormat === 'longDate') {
             return 'LL';
-        } else if (dateFormat == 'short') {
+        } else if (dateFormat === 'short') {
             return 'L LT';
-        } else if (dateFormat == 'medium') {
+        } else if (dateFormat === 'medium') {
             return 'll LT';
-        } else if (dateFormat == 'long') {
+        } else if (dateFormat === 'long') {
             return 'LL LT';
-        } else if (dateFormat == 'mediumDate') {
+        } else if (dateFormat === 'mediumDate') {
             return 'LL';
-        } else if (dateFormat == 'full') {
+        } else if (dateFormat === 'full') {
             return 'LLLL';
-        } else if (dateFormat == 'fullDate') {
+        } else if (dateFormat === 'fullDate') {
             return 'dddd, LL';
         }
         return dateFormat;

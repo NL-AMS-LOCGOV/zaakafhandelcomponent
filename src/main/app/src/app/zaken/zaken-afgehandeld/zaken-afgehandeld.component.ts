@@ -48,7 +48,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         this.zaaktypesOphalen();
         this.groepenOphalen();
 
-        this.werklijstData = SessionStorageUtil.getSessionStorage(
+        this.werklijstData = SessionStorageUtil.getItem(
             'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
 
         if (this.werklijstData) {
@@ -185,7 +185,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             pageSize: this.paginator.pageSize
         };
 
-        SessionStorageUtil.setSessionStorage('afgehandeldeZakenWerkvoorraadData', werklijstData);
+        SessionStorageUtil.setItem('afgehandeldeZakenWerkvoorraadData', werklijstData);
     }
 
     resetSearchCriteria() {
