@@ -148,9 +148,7 @@ public class TakenRESTService {
         final TaskInfo task = flowableService.readTaskInfo(taskId);
         final FormulierDefinitie formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
         final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
-
-        deleteSignalering(task, SignaleringType.Type.TAAK_OP_NAAM);
-
+        deleteSignaleringen(task);
         return taakConverter.convertTaskInfo(task, formulierDefinitie, taakdata);
     }
 
@@ -297,11 +295,14 @@ public class TakenRESTService {
         }
     }
 
-    private void deleteSignalering(final TaskInfo taskInfo, final SignaleringType.Type type) {
-        final SignaleringZoekParameters parameters =
-                new SignaleringZoekParameters().type(type).target(ingelogdeMedewerker.get()).subject(taskInfo);
-
-        signaleringenService.deleteSignalering(parameters);
+    private void deleteSignaleringen(final TaskInfo taskInfo) {
+        signaleringenService.deleteSignaleringen(
+                new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                        .types(SignaleringType.Type.TAAK_OP_NAAM)
+                        .subject(taskInfo));
+        signaleringenService.deleteSignaleringen(
+                new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                        .types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
+                        .subjectZaak(flowableService.readZaakUuidForTask(taskInfo.getId())));
     }
-
 }
