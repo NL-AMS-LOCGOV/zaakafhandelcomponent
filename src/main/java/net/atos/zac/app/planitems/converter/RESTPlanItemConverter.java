@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -29,6 +30,8 @@ import net.atos.zac.zaaksturing.model.PlanItemParameters;
  */
 public class RESTPlanItemConverter {
 
+    private static final String TOELICHTING_VEREIST_MARKER = "*";
+
     @Inject
     private RESTGroepConverter groepConverter;
 
@@ -39,9 +42,10 @@ public class RESTPlanItemConverter {
     public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid) {
         final RESTPlanItem restPlanItem = new RESTPlanItem();
         restPlanItem.id = planItem.getId();
-        restPlanItem.naam = planItem.getName();
+        restPlanItem.naam = StringUtils.remove(planItem.getName(), TOELICHTING_VEREIST_MARKER);
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
+        restPlanItem.toelichtingVereist = planItem.getName().contains(TOELICHTING_VEREIST_MARKER);
         return restPlanItem;
     }
 

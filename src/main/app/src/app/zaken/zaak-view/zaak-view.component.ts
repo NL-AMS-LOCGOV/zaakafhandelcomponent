@@ -82,8 +82,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
     viewInitialized = false;
-    toolTipIcon = new TextIcon(Conditionals.always,
-        'help_outline', 'toolTip_icon', '', 'pointer');
+    toolTipIcon = new TextIcon(Conditionals.always, 'help_outline', 'toolTip_icon', '', 'pointer');
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -232,9 +231,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             case PlanItemType.HumanTask:
                 return new LinkMenuTitem(planItem.naam, `/plan-items/${planItem.id}/do`, 'assignment');
             case PlanItemType.UserEventListener:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem, planItem.naam === 'Niet ontvankelijk'), 'fact_check');
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'fact_check');
             case PlanItemType.ProcessTask:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem, false), 'launch');
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'launch');
         }
         throw new Error(`Onbekend type: ${planItem.type}`);
     }
@@ -281,13 +280,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    openPlanItemStartenDialog(planItem: PlanItem, metRedenVeld: boolean): void {
+    openPlanItemStartenDialog(planItem: PlanItem): void {
         this.websocketService.doubleSuspendListener(this.zaakListener);
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam}),
-                metRedenVeld, planItem, this.planItemsService.doPlanItem(planItem)
-            ),
+        const melding = this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam});
+
+        const planItemDialog = planItem.toelichtingVereist ?
+            this.createPlanItemStartenConfirmWithReasonDialog(planItem, melding) :
+            this.createPlanItemStartenConfirmDialog(planItem, melding);
+
+        this.dialog.open(planItemDialog.dialogComponent, {
+            data: planItemDialog.dialogData,
             width: '400px',
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
@@ -296,6 +298,25 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.updateZaak();
             }
         });
+    }
+
+    createPlanItemStartenConfirmDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        return {
+            dialogComponent: ConfirmDialogComponent,
+            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem))
+        };
+    }
+
+    createPlanItemStartenConfirmWithReasonDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        return {
+            dialogComponent: DialogComponent,
+            dialogData: new DialogData(
+                'actie.ja',
+                'actie.nee',
+                new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
+                (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
+                melding)
+        };
     }
 
     openZaakAfbrekenDialog(): void {
@@ -452,7 +473,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'), false, null,
+                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
                 this.zakenService.deleteInitiator(this.zaak)
             ),
             width: '400px',

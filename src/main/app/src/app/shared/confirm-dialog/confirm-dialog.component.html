@@ -5,12 +5,7 @@
 
 <div mat-dialog-content [innerHTML]="data.melding"></div>
 <div mat-dialog-actions>
-    <mat-form-field *ngIf="data.reden" appearance="fill" class="full-width">
-        <mat-label>{{ 'reden' | translate}}</mat-label>
-        <textarea [required]="true" [(ngModel)]="redenText" (ngModelChange)="updateState()" matInput cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="15" id="redenTextArea"></textarea>
-        <mat-error *ngIf="redenError">{{ 'msg.error.required' | translate:{label: 'reden'} }}</mat-error>
-    </mat-form-field>
-    <button [disabled]="loading || (redenEmpty && data.reden)" mat-button color="primary" (click)="confirm()" id="confirmButton">
+    <button [disabled]="loading" mat-button color="primary" (click)="confirm()" id="confirmButton">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
         </mat-icon>
