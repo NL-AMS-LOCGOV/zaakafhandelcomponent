@@ -15,7 +15,7 @@ public class GeometryCollection extends Geometry {
     private final List<Geometry> geometries;
 
     public GeometryCollection(final List<Geometry> geometries) {
-        super("GeometryCollection");
+        super(GeometryType.GEOMETRYCOLLECTION);
         this.geometries = geometries;
     }
 
