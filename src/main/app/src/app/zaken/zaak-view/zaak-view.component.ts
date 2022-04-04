@@ -311,8 +311,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return {
             dialogComponent: DialogComponent,
             dialogData: new DialogData(
-                'actie.ja',
-                'actie.nee',
                 new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
                 (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
                 melding)
@@ -524,8 +522,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
             const dialogData = new DialogData(
                 new TextareaFormFieldBuilder().id('reden').label('reden').build(),
-                (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden));
-            dialogData.melding = melding;
+                (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden), melding);
             this.dialog.open(DialogComponent, {
                 data: dialogData,
                 autoFocus: 'dialog'
