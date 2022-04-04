@@ -58,7 +58,9 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
         if (context.getTaskEntity().getAssignee() != null) {
             // On creation of a human task the owner is assumed to be the actor who created it
-            final Medewerker actor = FlowableHelper.getInstance().createMedewerker(context.getHumanTask().getOwner());
+            final Medewerker actor = context.getHumanTask().getOwner() != null ?
+                    FlowableHelper.getInstance().createMedewerker(context.getHumanTask().getOwner())
+                    : null;
             final SignaleringEvent<String> signaleringEvent = SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), actor);
             FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
         }
