@@ -4,7 +4,7 @@
   -->
 
 <div mat-dialog-content>
-    <p *ngIf="data.melding">{{ data.melding }}</p>
+    <p *ngIf="data.melding" [innerHTML]="data.melding"></p>
     <mfb-form-field [field]="data.formField"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
