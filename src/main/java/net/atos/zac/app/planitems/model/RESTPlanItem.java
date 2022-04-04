@@ -32,4 +32,8 @@ public class RESTPlanItem {
     public Map<String, String> taakdata;
 
     public UUID zaakUuid;
+
+    public Boolean toelichtingVereist;
+
+    public String toelichting;
 }

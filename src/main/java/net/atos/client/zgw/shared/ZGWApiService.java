@@ -181,7 +181,7 @@ public class ZGWApiService implements Caching {
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
-        final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject);
+        final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, ingelogdeMedewerker.get()));
         return created;
     }

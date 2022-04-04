@@ -82,6 +82,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
     viewInitialized = false;
+    toolTipIcon = new TextIcon(Conditionals.always, 'help_outline', 'toolTip_icon', '', 'pointer');
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -281,11 +282,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     openPlanItemStartenDialog(planItem: PlanItem): void {
         this.websocketService.doubleSuspendListener(this.zaakListener);
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam}),
-                this.planItemsService.doPlanItem(planItem)
-            ),
+        const melding = this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam});
+
+        const planItemDialog = planItem.toelichtingVereist ?
+            this.createPlanItemStartenConfirmWithReasonDialog(planItem, melding) :
+            this.createPlanItemStartenConfirmDialog(planItem, melding);
+
+        this.dialog.open(planItemDialog.dialogComponent, {
+            data: planItemDialog.dialogData,
             width: '400px',
             autoFocus: 'dialog'
         }).afterClosed().subscribe(result => {
@@ -296,8 +300,25 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    createPlanItemStartenConfirmDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        return {
+            dialogComponent: ConfirmDialogComponent,
+            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem))
+        };
+    }
+
+    createPlanItemStartenConfirmWithReasonDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        return {
+            dialogComponent: DialogComponent,
+            dialogData: new DialogData(
+                new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
+                (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
+                melding)
+        };
+    }
+
     openZaakAfbrekenDialog(): void {
-        const dialogData = new DialogData('actie.zaak.afbreken', 'actie.annuleren',
+        const dialogData = new DialogData(
             new SelectFormFieldBuilder().id('reden')
                                         .label('actie.zaak.afbreken.reden')
                                         .optionLabel('naam')
@@ -305,6 +326,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                         .validators(Validators.required)
                                         .build(),
             (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
+        dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
+
         this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(DialogComponent, {
             width: '400px',
@@ -497,8 +520,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             } else {
                 melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
             }
-            this.dialog.open(ConfirmDialogComponent, {
-                data: new ConfirmDialogData(melding, this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid)),
+            const dialogData = new DialogData(
+                new TextareaFormFieldBuilder().id('reden').label('reden').build(),
+                (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden), melding);
+            this.dialog.open(DialogComponent, {
+                data: dialogData,
                 autoFocus: 'dialog'
             }).afterClosed().subscribe(result => {
                 if (result) {

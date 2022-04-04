@@ -7,8 +7,11 @@ import {Observable} from 'rxjs';
 import {AbstractFormField} from '../material-form-builder/model/abstract-form-field';
 
 export class DialogData {
-    constructor(public confirmButtonActionKey: string,
-                public cancelButtonActionKey: string,
-                public formField: AbstractFormField,
-                public fn?: (result: any) => Observable<any>) { }
+
+    public confirmButtonActionKey: string = 'actie.ja';
+    public cancelButtonActionKey: string = 'actie.annuleren';
+
+    constructor(public formField: AbstractFormField,
+                public fn?: (result: any) => Observable<any>,
+                public melding?: string) { }
 }

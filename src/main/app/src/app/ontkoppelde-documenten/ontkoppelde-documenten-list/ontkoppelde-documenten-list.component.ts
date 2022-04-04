@@ -26,7 +26,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     dataSource: MatTableDataSource<OntkoppeldDocument> = new MatTableDataSource<OntkoppeldDocument>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['documentID', 'creatiedatum', 'titel', 'actions'];
+    displayedColumns: string[] = ['titel', 'creatiedatum', 'zaakID', 'ontkoppeldDoor', 'ontkoppeldOp', 'reden', 'actions'];
     defaults: ListParameters;
 
     constructor(private service: OntkoppeldeDocumentenService,
@@ -35,7 +35,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.defaults = SessionStorageUtil.getItem('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc')) as ListParameters;
+        this.defaults = SessionStorageUtil.getItem('ontkoppeldeDocumenten', new ListParameters('ontkoppeldOp', 'desc')) as ListParameters;
     }
 
     ngAfterViewInit(): void {

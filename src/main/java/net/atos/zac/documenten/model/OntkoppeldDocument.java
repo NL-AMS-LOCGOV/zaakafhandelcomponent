@@ -59,7 +59,7 @@ public class OntkoppeldDocument {
 
     @NotBlank
     @Column(name = "id_ontkoppeld_door", nullable = false)
-    private String ontkoppeldDoorID;
+    private String ontkoppeldDoor;
 
     @Column(name = "reden")
     private String reden;
@@ -128,12 +128,12 @@ public class OntkoppeldDocument {
         this.ontkoppeldOp = ontkoppeldOp;
     }
 
-    public String getOntkoppeldDoorID() {
-        return ontkoppeldDoorID;
+    public String getOntkoppeldDoor() {
+        return ontkoppeldDoor;
     }
 
-    public void setOntkoppeldDoorID(final String ontkoppeldDoorID) {
-        this.ontkoppeldDoorID = ontkoppeldDoorID;
+    public void setOntkoppeldDoor(final String ontkoppeldDoor) {
+        this.ontkoppeldDoor = ontkoppeldDoor;
     }
 
     public String getReden() {

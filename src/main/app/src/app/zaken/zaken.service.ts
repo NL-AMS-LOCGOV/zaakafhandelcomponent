@@ -22,6 +22,7 @@ import {ZaakEditMetRedenGegevens} from './model/zaak-edit-met-reden-gegevens';
 import {ZaakBetrokkeneGegevens} from './model/zaak-betrokkene-gegevens';
 import {ZaakbeeindigReden} from '../admin/model/zaakbeeindig-reden';
 import {ZaakAfbrekenGegevens} from './model/zaak-afbreken-gegevens';
+import {DocumentOntkoppelGegevens} from './model/document-ontkoppel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -163,8 +164,9 @@ export class ZakenService {
         );
     }
 
-    ontkoppelInformatieObject(zaakUUID: string, documentUUID: string): Observable<void> {
-        return this.http.delete<void>(`${this.basepath}/zaakinformatieobjecten/${documentUUID}/${zaakUUID}`).pipe(
+    ontkoppelInformatieObject(zaakUUID: string, documentUUID: string, reden: string): Observable<void> {
+        const gegevens = new DocumentOntkoppelGegevens(zaakUUID, documentUUID, reden);
+        return this.http.put<void>(`${this.basepath}/zaakinformatieobjecten/ontkoppel`, gegevens).pipe(
             catchError(this.handleError)
         );
     }
