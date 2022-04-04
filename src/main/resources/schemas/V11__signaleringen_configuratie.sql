@@ -12,8 +12,8 @@ CREATE TABLE ${schema}.signalering_instellingen
     id_medewerker               VARCHAR,
     dashboard                   BOOLEAN NOT NULL DEFAULT FALSE,
     mail                        BOOLEAN NOT NULL DEFAULT FALSE,
-    CONSTRAINT pk_signalering PRIMARY KEY (id_signalering_instellingen),
-    CONSTRAINT fk_signalering_type FOREIGN KEY (signaleringtype_enum)
+    CONSTRAINT pk_signalering_instellingen PRIMARY KEY (id_signalering_instellingen),
+    CONSTRAINT fk_signalering_instellingen_type FOREIGN KEY (signaleringtype_enum)
         REFERENCES ${schema}.signaleringtype (signaleringtype_enum)
             MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT re_signalering_instellingen_owner CHECK ((id_groep IS NULL AND id_medewerker IS NOT NULL) OR (id_groep IS NOT NULL AND id_medewerker IS NULL)),
