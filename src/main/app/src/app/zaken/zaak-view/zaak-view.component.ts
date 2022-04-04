@@ -506,7 +506,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden));
             dialogData.melding = melding;
             this.dialog.open(DialogComponent, {
-                width: '600px',
                 data: dialogData,
                 autoFocus: 'dialog'
             }).afterClosed().subscribe(result => {
