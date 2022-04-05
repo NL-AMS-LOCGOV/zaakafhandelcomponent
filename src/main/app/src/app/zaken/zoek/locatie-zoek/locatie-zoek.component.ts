@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import * as ol from 'ol/index.js';
 import * as layer from 'ol/layer.js';
 import * as proj from 'ol/proj.js';
@@ -18,17 +18,20 @@ import * as interaction from 'ol/interaction.js';
 import {LocationService} from '../../../shared/location/location.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {GeometryCoordinate} from '../../model/geometryCoordinate';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {LocationUtil} from '../../../shared/location/location-util';
 
 @Component({
     selector: 'zac-locatie-zoek',
     templateUrl: './locatie-zoek.component.html',
     styleUrls: ['./locatie-zoek.component.less']
 })
-export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-    @Output() locatie = new EventEmitter<{ naam: string, coordinates: Coordinate }>();
+    @Input() huidigeLocatie: GeometryCoordinate;
+    @Output() locatie = new EventEmitter<any>();
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
     selectedAddress: any;
     results: any[];
@@ -145,10 +148,9 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.map.on('click', (event) => {
             const locationCoordinates: Array<number> = proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-            this.locationService.geolocationToAddress(locationCoordinates).subscribe(data => {
-                this.addressLookup(data.response.docs[0].id);
+            this.locationService.coordinatesToAddress(locationCoordinates).subscribe(objectData => {
+                this.setAddress(objectData.response.docs[0]);
             });
-
         });
 
         this.map.on('click', () => {
@@ -158,6 +160,25 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
         this.map.on('pointerdrag', () => {
             this.openLayersMapRef.nativeElement.focus();
         });
+
+        if (this.huidigeLocatie) {
+            this.setAddress(this.huidigeLocatie);
+        }
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        for (const propName in changes) {
+            if (changes.hasOwnProperty(propName)) {
+                switch (propName) {
+                    case 'huidigeLocatie':
+                        if (!changes.huidigeLocatie.firstChange && changes.huidigeLocatie.currentValue) {
+                            console.log(changes.huidigeLocatie);
+                            this.setAddress(changes.huidigeLocatie.currentValue);
+                        }
+                        break;
+                }
+            }
+        }
     }
 
     ngOnDestroy(): void {
@@ -175,27 +196,25 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
 
     save(): void {
         if (this.selectedAddress) {
-            const locationCoordinates = this.selectedAddress.centroide_ll.replace('POINT(', '').replace(')', '').split(' ');
-            this.locatie.next({naam: this.selectedAddress.weergavenaam, coordinates: locationCoordinates});
+            this.locatie.next(this.selectedAddress);
         }
     }
 
     selectionChanged($event: MatAutocompleteSelectedEvent): void {
-        this.addressLookup($event.option.value.id);
+        this.locationService.addressLookup($event.option.value.id).subscribe(objectData => {
+            this.setAddress(objectData.response.docs[0]);
+        });
     }
 
-    addressLookup(id: string): void {
+    setAddress(address) {
+        this.selectedAddress = address;
+        const locationCoordinates = LocationUtil.centroide_llToArray(address.centroide_ll);
+        const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
 
-        this.locationService.addressLookup(id).subscribe(objectData => {
-            this.selectedAddress = objectData.response.docs[0];
-            const locationCoordinates = objectData.response.docs[0].centroide_ll.replace('POINT(', '').replace(')', '').split(' ');
-            const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
+        this.map.getView().setCenter(mapCenter);
+        this.addMarker(locationCoordinates);
 
-            this.map.getView().setCenter(mapCenter);
-            this.addMarker(locationCoordinates);
-
-            this.zoomToLocation(this.locationSource);
-        });
+        this.zoomToLocation(this.locationSource);
     }
 
     private addMarker(locationCoordinates: Coordinate) {
@@ -225,6 +244,6 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     resultDisplay = (result: any): string => {
-        return result.weergavenaam;
-    };
+        return result?.weergavenaam;
+    }
 }
