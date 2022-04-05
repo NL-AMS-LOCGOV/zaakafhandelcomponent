@@ -26,7 +26,7 @@ export class TaakFormulierenService {
     public getFormulierBuilder(formulierNaam: string): FormulierBuilder {
         switch (formulierNaam) {
             case 'AANVULLENDE_INFORMATIE':
-                return new FormulierBuilder(new AanvullendeInformatie(this.translate));
+                return new FormulierBuilder(new AanvullendeInformatie(this.translate, this.takenService, this.informatieObjectenService));
             case 'ADVIES':
                 return new FormulierBuilder(
                     new Advies(this.translate, this.takenService, this.informatieObjectenService));

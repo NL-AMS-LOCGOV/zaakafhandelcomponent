@@ -9,43 +9,106 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {CustomValidators} from '../../shared/validators/customValidators';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {TaakDocumentUploadFieldBuilder} from '../../shared/material-form-builder/form-components/taak-document-upload/taak-document-upload-field-builder';
+import {Observable, of} from 'rxjs';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {TakenService} from '../../taken/taken.service';
+import * as moment from 'moment/moment';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
+    private bodyTemplate: string =
+        'Beste klant,\n' +
+        '\n' +
+        'Voor het behandelen van de zaak hebben wij de volgende informatie van u nodig:\n' +
+        '- omschrijf informatie 1\n' +
+        '- omschrijf informatie 2\n' +
+        '\n' +
+        'We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres Y. ' +
+        'Vermeld op de informatie ook het zaaknummer van uw zaak.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
+
     fields = {
-        TOELICHTING: 'toelichting',
-        OPGEVRAAGDEINFO: 'opgevraagdeInfo',
+        EMAILADRES: 'emailadres',
+        BODY: 'body',
         DATUMGEVRAAGD: 'datumGevraagd',
-        DATUMGELEVERD: 'datumGeleverd'
+        DATUMGELEVERD: 'datumGeleverd',
+        OPMERKINGEN: 'opmerkingen',
+        BIJLAGE: 'bijlage'
     };
 
-    constructor(translate: TranslateService) {
+    constructor(translate: TranslateService, public takenService: TakenService,
+                public informatieObjectenService: InformatieObjectenService) {
         super(translate);
     }
 
     _initStartForm() {
+        this.planItem.taakStuurGegevens.sendMail = true;
+        this.planItem.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
-                                           .validators(Validators.required).build()]
+            [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
+                                        .validators(Validators.required, CustomValidators.emails).build()],
+            [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
+                                           .validators(Validators.required).build()],
+            [new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
+                                       .readonly(true).build()]
         );
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.TOELICHTING).label(fields.TOELICHTING).value(this.getDataElement(fields.TOELICHTING))
+            [new ReadonlyFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES).value(this.getDataElement(fields.EMAILADRES))
                                            .build()],
-            [new TextareaFormFieldBuilder().id(fields.OPGEVRAAGDEINFO).label(fields.OPGEVRAAGDEINFO)
-                                           .value(this.getDataElement(fields.OPGEVRAAGDEINFO))
+            [new ReadonlyFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.getDataElement(fields.BODY))
+                                           .build()],
+            [new TextareaFormFieldBuilder().id(fields.OPMERKINGEN).label(fields.OPMERKINGEN)
+                                           .value(this.getDataElement(fields.OPMERKINGEN))
                                            .validators(Validators.required).readonly(this.isAfgerond()).build()],
             [
                 new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(this.getDataElement(fields.DATUMGEVRAAGD))
-                                          .readonly(this.isAfgerond()).build(),
+                                          .readonly(true).build(),
                 new DateFormFieldBuilder().id(fields.DATUMGELEVERD).label(fields.DATUMGELEVERD).value(this.getDataElement(fields.DATUMGELEVERD))
                                           .readonly(this.isAfgerond()).build()
             ]
         );
+        if (this.isAfgerond()) {
+            this.form.push(
+                [new DocumentenLijstFieldBuilder().id(fields.BIJLAGE)
+                                                  .label(fields.BIJLAGE)
+                                                  .documenten(this.getDocumenten$(fields.BIJLAGE))
+                                                  .readonly(true)
+                                                  .build()]);
+        } else {
+            this.form.push(
+                [new TaakDocumentUploadFieldBuilder().id(fields.BIJLAGE)
+                                                     .label(fields.BIJLAGE)
+                                                     .defaultTitel(this.translate.instant('advies'))
+                                                     .uploadURL(this.takenService.getUploadURL(this.taak.id, fields.BIJLAGE))
+                                                     .zaakUUID(this.taak.zaakUUID)
+                                                     .readonly(this.isAfgerond())
+                                                     .build()]);
+        }
+    }
+
+    getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
+        const dataElement = this.getDataElement(field);
+        if (dataElement) {
+            const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+            zoekParameters.UUIDs = dataElement.split(';');
+            return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+        } else {
+            return of([]);
+        }
     }
 
     getStartTitel(): string {

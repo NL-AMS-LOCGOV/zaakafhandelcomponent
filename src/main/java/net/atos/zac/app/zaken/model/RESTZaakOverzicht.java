@@ -28,8 +28,6 @@ public class RESTZaakOverzicht {
 
     public String status;
 
-    public String initiator;
-
     public RESTMedewerker behandelaar;
 
     public LocalDate einddatumGepland;

@@ -10,6 +10,7 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -30,6 +31,7 @@ import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.SortDirection;
 import net.atos.zac.util.UriUtil;
+
 
 @ApplicationScoped
 @Transactional
@@ -79,6 +81,14 @@ public class OntkoppeldeDocumentenService {
             emQuery.setMaxResults(listParameters.getPaging().getMaxResults());
         }
         return emQuery.getResultList();
+    }
+
+    public OntkoppeldDocument read(final UUID documentUUID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
+        final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
+        query.select(root).where(builder.equal(root.get("documentUUID"), documentUUID));
+        return entityManager.createQuery(query).getSingleResult();
     }
 
     public int count() {

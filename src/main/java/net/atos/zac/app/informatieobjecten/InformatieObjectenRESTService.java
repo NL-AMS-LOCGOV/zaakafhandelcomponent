@@ -55,6 +55,8 @@ import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.documenten.OntkoppeldeDocumentenService;
+import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -74,6 +76,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
 
     @Inject
     private RESTZaakInformatieobjectConverter restZaakInformatieobjectConverter;
@@ -137,11 +142,18 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("informatieobject/verplaats")
     public void verplaatsEnkelvoudigInformatieobject(final RESTDocumentVerplaatsGegevens documentVerplaatsGegevens) {
-        final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.zaakID);
+        final UUID documentUUID = UUID.fromString(documentVerplaatsGegevens.documentUUID);
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        final EnkelvoudigInformatieobject informatieobject =
-                drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(documentVerplaatsGegevens.documentUUID));
-        zrcClientService.verplaatsInformatieobject(informatieobject, oudeZaak, nieuweZaak);
+        if ("ontkoppelde-documenten".equals(documentVerplaatsGegevens.zaakID)) {
+            OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(documentUUID);
+            String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
+            zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
+            ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
+        } else {
+            final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.zaakID);
+            zrcClientService.verplaatsInformatieobject(informatieobject, oudeZaak, nieuweZaak);
+        }
     }
 
     @GET

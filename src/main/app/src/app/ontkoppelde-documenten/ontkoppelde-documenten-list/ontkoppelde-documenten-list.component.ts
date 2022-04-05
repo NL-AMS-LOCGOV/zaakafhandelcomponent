@@ -15,6 +15,7 @@ import {ListParameters} from '../../shared/model/list-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -74,4 +75,21 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         SessionStorageUtil.setItem('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
         this.utilService.reloadRoute();
     }
+
+    documentVerplaatsen(od: OntkoppeldDocument): void {
+        this.infoService.addTeVerplaatsenDocument(OntkoppeldeDocumentenListComponent.getInformatieobject(od), 'ontkoppelde-documenten');
+    }
+
+    isDocumentVerplaatsenDisabled(od: OntkoppeldDocument): boolean {
+        return this.infoService.isReedsTeVerplaatsen(OntkoppeldeDocumentenListComponent.getInformatieobject(od));
+    }
+
+    private static getInformatieobject(ontkoppeldDocument: OntkoppeldDocument): EnkelvoudigInformatieobject {
+        const informatieobject = new EnkelvoudigInformatieobject();
+        informatieobject.titel = ontkoppeldDocument.titel;
+        informatieobject.uuid = ontkoppeldDocument.documentUUID;
+        informatieobject.identificatie = ontkoppeldDocument.documentID;
+        return informatieobject;
+    }
+
 }

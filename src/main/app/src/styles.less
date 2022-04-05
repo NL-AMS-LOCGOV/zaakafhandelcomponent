@@ -86,7 +86,7 @@ mat-sidenav-container.over .mat-sidenav-content {
 
     tr {
       & .mat-table-sticky.mat-table-sticky-border-elem-right {
-        button {
+        button, a {
           float: right;
         }
       }
@@ -99,7 +99,7 @@ mat-sidenav-container.over .mat-sidenav-content {
         cursor: all-scroll;
       }
 
-      td > button.mat-button-base {
+      td > .mat-button-base {
         min-width: 40px;
         padding: 0;
       }
@@ -196,6 +196,10 @@ button.mat-button-base + button.mat-button-base {
 
 .warning {
   color: @warning-color;
+}
+
+.gold-star {
+  color: orange;
 }
 
 //tablet portrait

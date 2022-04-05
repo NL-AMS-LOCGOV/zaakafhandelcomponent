@@ -6,6 +6,7 @@
 import {PlanItemType} from './plan-item-type.enum';
 import {Groep} from '../../identity/model/groep';
 import {Medewerker} from '../../identity/model/medewerker';
+import {TaakStuurGegevens} from './taak-stuur-gegevens';
 
 export class PlanItem {
     id: string;
@@ -18,4 +19,5 @@ export class PlanItem {
     taakdata: {};
     toelichtingVereist: boolean;
     toelichting: string;
+    taakStuurGegevens: TaakStuurGegevens;
 }

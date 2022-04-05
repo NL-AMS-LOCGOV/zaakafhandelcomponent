@@ -14,6 +14,7 @@ import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-c
 import {TranslateService} from '@ngx-translate/core';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
+import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
 
 export abstract class AbstractFormulier {
 
@@ -30,6 +31,7 @@ export abstract class AbstractFormulier {
     protected constructor(protected translate: TranslateService) {}
 
     initStartForm() {
+        this.planItem.taakStuurGegevens = new TaakStuurGegevens();
         this.form = [];
         this.form.push(
             [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level('2').build()]);

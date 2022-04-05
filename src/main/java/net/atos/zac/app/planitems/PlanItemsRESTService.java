@@ -72,7 +72,8 @@ public class PlanItemsRESTService {
             final Date streefdatum = DateUtils.addDays(new Date(), planItemParameters.getDoorlooptijd());
             flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
                                                    restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
-                                                   restPlanItem.taakdata);
+                                                   restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail,
+                                                   restPlanItem.taakStuurGegevens.onderwerp);
         } else {
             flowableService.startPlanItem(restPlanItem.id, restPlanItem.toelichting);
         }

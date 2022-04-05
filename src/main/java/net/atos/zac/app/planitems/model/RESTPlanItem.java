@@ -36,4 +36,6 @@ public class RESTPlanItem {
     public Boolean toelichtingVereist;
 
     public String toelichting;
+
+    public RESTTaakStuurGegevens taakStuurGegevens;
 }

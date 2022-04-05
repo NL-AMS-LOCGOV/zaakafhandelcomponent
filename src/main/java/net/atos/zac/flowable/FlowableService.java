@@ -24,6 +24,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import net.atos.zac.mail.MailService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
@@ -85,6 +87,9 @@ public class FlowableService {
 
     @Inject
     private IdmIdentityService idmIdentityService;
+
+    @Inject
+    private MailService mailService;
 
     public UUID readZaakUuidForCase(final String caseInstanceId) {
         return (UUID) readVariableForCase(caseInstanceId, VAR_CASE_ZAAK_UUID);
@@ -184,8 +189,14 @@ public class FlowableService {
     // TODO Set the owner of a human task
     // https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/672
     public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
-            final Map<String, String> taakdata) {
+            final Map<String, String> taakdata, final boolean sendMail, final String onderwerp) {
         final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());
+
+        if (sendMail) {
+            mailService.sendMail(taakdata.get("emailadres"), onderwerp,
+                                 taakdata.get("body"), true, zaakUUID);
+        }
+
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
                 .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
                 .transientVariable(VAR_TASK_ASSIGNEE, assignee)

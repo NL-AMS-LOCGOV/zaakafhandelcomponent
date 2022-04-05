@@ -2,7 +2,7 @@
 name: Bug acceptatie report
 about: Bugs gevonden op de acceptatie omgeving
 title: 'ACCEPTATIE BUG: '
-labels: bug
+labels: acceptance, bug
 assignees: ''
 
 ---

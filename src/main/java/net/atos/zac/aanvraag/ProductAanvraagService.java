@@ -36,11 +36,11 @@ import net.atos.client.zgw.ztc.model.Roltype;
 @ApplicationScoped
 public class ProductAanvraagService {
 
+    public static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
+
     private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
 
     private static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
-
-    private static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 

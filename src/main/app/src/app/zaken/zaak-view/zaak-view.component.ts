@@ -73,7 +73,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     action: string;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
-    enkelvoudigInformatieObjecten: EnkelvoudigInformatieobject[] = [];
+    enkelvoudigInformatieObjecten: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
+
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'relatieType', 'omschrijving', 'startdatum', 'einddatum', 'uuid'];
@@ -95,6 +96,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
 
     @ViewChild(MatSort) sort: MatSort;
+    @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
     constructor(private informatieObjectenService: InformatieObjectenService,
                 private takenService: TakenService,
@@ -178,6 +180,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
         };
         this.historie.sort = this.sort;
+        this.enkelvoudigInformatieObjecten.sort = this.docSort;
     }
 
     ngOnDestroy(): void {
@@ -422,7 +425,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekParameters.zaakUUID = this.zaak.uuid;
         this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
-            this.enkelvoudigInformatieObjecten = objecten;
+            this.enkelvoudigInformatieObjecten.data = objecten;
         });
     }
 
