@@ -1,0 +1,6 @@
+export enum SideNavAction {
+    GEEN = 'GEEN',
+    ZOEK_PERSOON = 'ZOEK_PERSOON',
+    ZOEK_BEDRIJF = 'ZOEK_BEDRIJF',
+    ZOEK_LOCATIE = 'ZOEK_LOCATIE'
+}

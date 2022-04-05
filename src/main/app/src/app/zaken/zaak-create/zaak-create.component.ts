@@ -25,10 +25,9 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
-import {Geometry} from '../model/geometry';
-import {GeometryCoordinate} from '../model/geometryCoordinate';
-import {GeometryType} from '../model/geometryType';
 import {Klant} from '../../klanten/model/klant';
+import {SideNavAction} from '../../shared/side-nav/side-nav-action';
+import {LocationUtil} from '../../shared/location/location-util';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -39,12 +38,6 @@ export class ZaakCreateComponent implements OnInit {
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
-    actions = {
-        GEEN: 'GEEN',
-        ZOEK_PERSOON: 'ZOEK_PERSOON',
-        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF',
-        ZOEK_LOCATIE: 'ZOEK_LOCATIE'
-    };
     action: string;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
@@ -53,15 +46,15 @@ export class ZaakCreateComponent implements OnInit {
     private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
-    private locatie: { naam: string, coordinates: GeometryCoordinate };
+    private locatie: any;
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
-        this.persoonToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_PERSOON));
-        this.bedrijfToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_BEDRIJF));
-        this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(this.actions.ZOEK_LOCATIE));
+        this.persoonToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_PERSOON));
+        this.bedrijfToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_BEDRIJF));
+        this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
         this.utilService.setTitle('title.zaak.aanmaken');
 
@@ -121,9 +114,7 @@ export class ZaakCreateComponent implements OnInit {
                 }
 
                 if (key === 'zaakgeometrie') {
-                    const zaakgeometrie = new Geometry(GeometryType.POINT);
-                    zaakgeometrie.point = new GeometryCoordinate(this.locatie.coordinates[0], this.locatie.coordinates[1]);
-                    zaak[key] = zaakgeometrie;
+                    zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
                 }
             });
             this.zakenService.createZaak(zaak).subscribe(newZaak => {
@@ -139,9 +130,9 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
-    locatieGeselecteerd(locatie: { naam: string, coordinates: GeometryCoordinate }): void {
+    locatieGeselecteerd(locatie: any): void {
         this.locatie = locatie;
-        this.locatieField.formControl.setValue(locatie.naam);
+        this.locatieField.formControl.setValue(locatie.weergavenaam);
         this.actionsSidenav.close();
     }
 

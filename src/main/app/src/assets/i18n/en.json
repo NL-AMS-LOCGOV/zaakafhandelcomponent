@@ -140,6 +140,8 @@
   "historie": "History",
   "behandelaar.-kies-": "- Select a handler -",
   "caseDefinition": "CMMN model",
+  "locatie": "Location",
+  "locatie.zoeken.melding": "The address is being looked up, please wait...",
   "model.-kies-": "- Select a CMMN model -",
   "notities": "Notes",
   "parameters": "Parameters",

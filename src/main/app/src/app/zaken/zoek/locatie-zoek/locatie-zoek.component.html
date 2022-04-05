@@ -6,7 +6,7 @@
     <div class="search" fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
         <div fxFlex="calc(30%-20px)" fxFlex.lt-lg="80">
             <zac-static-text [label]="'zaak.locatie.' +( selectedAddress ? selectedAddress.type: 'adres') | translate"
-                             [value]="selectedAddress ? selectedAddress.weergavenaam + ' | ' + selectedAddress.gemeentenaam : null"></zac-static-text>
+                             [value]="selectedAddress ? selectedAddress.weergavenaam : null"></zac-static-text>
         </div>
         <div fxFlex="20" fxLayoutAlign="center center">
             <button mat-flat-button color="primary"
@@ -16,7 +16,7 @@
                     (click)="save()"
                     type="button">
                 <mat-icon>save</mat-icon>
-                {{'opslaan' | translate}}
+                {{'actie.opslaan' | translate}}
             </button>
         </div>
 

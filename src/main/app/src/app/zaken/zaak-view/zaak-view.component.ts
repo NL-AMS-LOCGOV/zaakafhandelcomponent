@@ -54,6 +54,10 @@ import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {LocationService} from '../../shared/location/location.service';
+import {GeometryType} from '../model/geometryType';
+import {SideNavAction} from '../../shared/side-nav/side-nav-action';
+import {LocationUtil} from '../../shared/location/location-util';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -62,15 +66,10 @@ import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     zaak: Zaak;
+    zaakLocatie: any;
     menu: MenuItem[];
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
     toonAfgerondeTaken = false;
-    actions = {
-        GEEN: 'GEEN',
-        ZOEK_PERSOON: 'ZOEK_PERSOON',
-        ZOEK_BEDRIJF: 'ZOEK_BEDRIJF'
-
-    };
     action: string;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
@@ -84,6 +83,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
     viewInitialized = false;
     toolTipIcon = new TextIcon(Conditionals.always, 'help_outline', 'toolTip_icon', '', 'pointer');
+    locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -109,7 +109,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 public utilService: UtilService,
                 public websocketService: WebsocketService,
                 public dialog: MatDialog,
-                private translate: TranslateService) {
+                private translate: TranslateService,
+                private locationService: LocationService) {
         super();
     }
 
@@ -145,6 +146,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
+        this.loadLocatie();
     }
 
     private getIngelogdeMedewerker() {
@@ -262,11 +264,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
             this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                 this.actionsSidenav.open();
-                this.action = this.actions.ZOEK_PERSOON;
+                this.action = SideNavAction.ZOEK_PERSOON;
             }, 'emoji_people'));
             this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
                 this.actionsSidenav.open();
-                this.action = this.actions.ZOEK_BEDRIJF;
+                this.action = SideNavAction.ZOEK_BEDRIJF;
             }, 'business'));
         }
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
@@ -433,6 +435,23 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    editZaakLocatie(): void {
+        this.action = SideNavAction.ZOEK_LOCATIE;
+        this.actionsSidenav.open();
+    }
+
+    private loadLocatie(): void {
+        if (this.zaak.zaakgeometrie) {
+            switch (this.zaak.zaakgeometrie.type) {
+                case GeometryType.POINT:
+                    this.locationService.coordinatesToAddress([this.zaak.zaakgeometrie.point.x, this.zaak.zaakgeometrie.point.y]).subscribe(objectData => {
+                        this.zaakLocatie = objectData.response.docs[0];
+                    });
+                    break;
+            }
+        }
+    }
+
     private loadTaken(event?: ScreenEvent): void {
         if (event) {
             console.log('callback loadTaken: ' + event.key);
@@ -457,6 +476,18 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.init(zaak);
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
         });
+    }
+
+    locatieGeselecteerd(locatie: any): void {
+        this.zaakLocatie = locatie;
+        this.actionsSidenav.close();
+
+        const zaak: Zaak = new Zaak();
+        zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+        this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak);
     }
 
     initiatorGeselecteerd(initiator: Klant): void {
