@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -52,6 +54,8 @@ public class MailService {
     private static final String MAILJET_API_SECRET_KEY = ConfigProvider.getConfig().getValue("mailjet.api.secret.key",
                                                                                        String.class);
 
+    private static final Logger LOG = Logger.getLogger(MailService.class.getName());
+
     @Inject
     private ZGWApiService zgwApiService;
 
@@ -68,20 +72,26 @@ public class MailService {
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public int sendMail(final String ontvanger, final String onderwerp, final String body,
-            final boolean createDocumentFromMail, final UUID zaakUuid) throws MailjetException {
+    public MailjetResponse sendMail(final String ontvanger, final String onderwerp, final String body,
+            final boolean createDocumentFromMail, final UUID zaakUuid) {
         final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
 
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JsonbBuilder.create().toJson(new EMails(List.of(eMail))));
 
-        final MailjetResponse response = mailjetClient.post(request);
+        MailjetResponse response = null;
+        try {
+            response = mailjetClient.post(request);
+        } catch (MailjetException e) {
+            LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s' on case '%s'.",
+                                                onderwerp, zaakUuid), e);
+        }
 
-        if (createDocumentFromMail && response.getStatus() == Response.Status.OK.getStatusCode()) {
+        if (createDocumentFromMail && response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
         }
 
-        return response.getStatus();
+        return response;
     }
 
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
