@@ -5,4 +5,5 @@
 
 export class TaakStuurGegevens {
     sendMail: boolean;
+    onderwerp: string;
 }

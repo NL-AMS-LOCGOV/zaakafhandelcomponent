@@ -8,4 +8,6 @@ package net.atos.zac.app.planitems.model;
 public class RESTTaakStuurGegevens {
 
     public boolean sendMail;
+
+    public String onderwerp;
 }

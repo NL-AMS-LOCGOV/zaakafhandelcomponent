@@ -189,12 +189,12 @@ public class FlowableService {
     // TODO Set the owner of a human task
     // https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/672
     public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
-            final Map<String, String> taakdata, final boolean sendMail) {
+            final Map<String, String> taakdata, final boolean sendMail, final String onderwerp) {
         final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());
 
         if (sendMail) {
-            mailService.sendMail(taakdata.get("emailadres"), planItemInstance.getName(), taakdata.get("body"),
-                                 true, zaakUUID);
+            mailService.sendMail(taakdata.get("emailadres"), onderwerp,
+                                 taakdata.get("body"), true, zaakUUID);
         }
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
