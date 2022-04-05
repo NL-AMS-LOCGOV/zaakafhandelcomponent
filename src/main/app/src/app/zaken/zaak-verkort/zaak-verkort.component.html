@@ -37,10 +37,10 @@
                          [value]="zaak.status | empty:'naam'"></zac-static-text>
 
         <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
-                         [value]="zaak.startdatum"></zac-static-text>
+                         [value]="zaak.startdatum | datum"></zac-static-text>
 
         <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
-                         [value]="zaak.einddatumGepland"
+                         [value]="zaak.einddatumGepland | datum"
                          [icon]="einddatumGeplandIcon"></zac-static-text>
 
         <zac-static-text fxFlex="100" [label]="'toelichting' | translate"

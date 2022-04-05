@@ -12,8 +12,6 @@ import java.util.List;
 import javax.json.bind.adapter.JsonbAdapter;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 /**
  *
  */
@@ -27,6 +25,11 @@ public class Point2D {
     public Point2D(final BigDecimal x, final BigDecimal y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Point2D(final double x, final double y) {
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
     }
 
     public BigDecimal getX() {
@@ -49,7 +52,7 @@ public class Point2D {
 
         @Override
         public Point2D adaptFromJson(final List<BigDecimal> coordinates) {
-            throw new NotImplementedException(String.format("Deserializing '%s' object is not supported", Point2D.class.getSimpleName()));
+            return new Point2D(coordinates.get(0), coordinates.get(1));
         }
     }
 }

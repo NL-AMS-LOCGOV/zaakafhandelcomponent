@@ -33,5 +33,9 @@ public class RESTPlanItem {
 
     public UUID zaakUuid;
 
+    public Boolean toelichtingVereist;
+
+    public String toelichting;
+
     public RESTTaakStuurGegevens taakStuurGegevens;
 }

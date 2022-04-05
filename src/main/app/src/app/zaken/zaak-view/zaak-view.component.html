@@ -56,13 +56,24 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
-                                                     [value]="zaak.registratiedatum"></zac-static-text>
+                                                     [value]="zaak.registratiedatum | datum"></zac-static-text>
                                     <zac-static-text *ngIf="zaak.einddatum" fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
                                     <zac-static-text [label]="'status' | translate"
-                                                     [value]="zaak.status | empty:'naam'"></zac-static-text>
+                                                     [value]="zaak.status | empty:'naam'"
+                                                     [icon]="zaak.status?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak.status?.toelichting ? zaak.status.toelichting : ''"></zac-static-text>
                                     <zac-static-text [label]="'resultaat' | translate"
-                                                     [value]="zaak.resultaat | empty:'naam'"></zac-static-text>
+                                                     [value]="zaak.resultaat | empty:'naam'"
+                                                     [icon]="zaak.resultaat?.toelichting ? toolTipIcon : null"
+                                                     [matTooltip]="zaak.resultaat?.toelichting ? zaak.resultaat.toelichting : ''"></zac-static-text>
+                                </div>
+                                <div fxFlex="100" fxLayout.sm="row">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'locatie' | translate"
+                                                     [value]="zaak.zaakgeometrie"></zac-static-text>
                                 </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>

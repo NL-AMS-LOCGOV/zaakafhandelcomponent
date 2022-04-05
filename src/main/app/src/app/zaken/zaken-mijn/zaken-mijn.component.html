@@ -49,10 +49,6 @@
             <th mat-header-cell *matHeaderCellDef></th>
         </ng-container>
 
-        <ng-container matColumnDef="initiator_filter">
-            <th mat-header-cell *matHeaderCellDef></th>
-        </ng-container>
-
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening_filter">
             <th mat-header-cell *matHeaderCellDef></th>
         </ng-container>
@@ -120,14 +116,6 @@
                 <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
                           *ngIf="isAfterDate(row.einddatumGepland)">warning
                 </mat-icon>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="initiator">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'initiator' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.initiator | translate | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">

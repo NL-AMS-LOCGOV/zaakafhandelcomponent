@@ -17,5 +17,7 @@ export class PlanItem {
     formulierDefinitie: string;
     zaakUuid: string;
     taakdata: {};
+    toelichtingVereist: boolean;
+    toelichting: string;
     taakStuurGegevens: TaakStuurGegevens;
 }

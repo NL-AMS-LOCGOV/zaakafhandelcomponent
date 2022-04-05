@@ -11,12 +11,14 @@ import static org.apache.commons.lang3.StringUtils.substringBetween;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.common.engine.api.delegate.Expression;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.FlowableHelper;
+import net.atos.zac.flowable.FlowableService;
 
 /**
  *
@@ -104,8 +106,12 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
             FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
         }
         if (resultaattypeOmschrijving != null) {
+            final String resultaatToelichting = (String) FlowableHelper.getInstance().getFlowableService()
+                    .findVariableForCase(caseInstanceId, FlowableService.VAR_CASE_RESULTAAT_TOELICHTING);
             LOG.info(format("Zaak %s: Change Resultaat to '%s'", zaakUUID, resultaattypeOmschrijving));
-            FlowableHelper.getInstance().getZgwApiService().createResultaatForZaak(zaak, resultaattypeOmschrijving, RESULTAAT_TOELICHTING);
+            FlowableHelper.getInstance().getZgwApiService()
+                    .createResultaatForZaak(zaak, resultaattypeOmschrijving,
+                                            StringUtils.isNotEmpty(resultaatToelichting) ? resultaatToelichting : RESULTAAT_TOELICHTING);
         }
     }
 }

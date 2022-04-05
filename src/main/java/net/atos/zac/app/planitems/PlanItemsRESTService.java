@@ -74,7 +74,7 @@ public class PlanItemsRESTService {
                                                    restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
                                                    restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail);
         } else {
-            flowableService.startPlanItem(restPlanItem.id);
+            flowableService.startPlanItem(restPlanItem.id, restPlanItem.toelichting);
         }
         return restPlanItem;
     }

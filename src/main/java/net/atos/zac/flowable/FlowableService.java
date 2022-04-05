@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 
 import net.atos.zac.mail.MailService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -57,6 +58,8 @@ import net.atos.zac.app.taken.model.TaakSortering;
 @ApplicationScoped
 @Transactional
 public class FlowableService {
+
+    public static final String VAR_CASE_RESULTAAT_TOELICHTING = "resultaatToelichting";
 
     public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
@@ -203,9 +206,12 @@ public class FlowableService {
                 .start();
     }
 
-    public void startPlanItem(final String planItemInstanceId) {
+    public void startPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
         final PlanItemInstance planItem = readPlanItem(planItemInstanceId);
         if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
+            if (StringUtils.isNotEmpty(resultaatToelichting)) {
+                cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
+            }
             cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
         } else {
             cmmnRuntimeService.startPlanItemInstance(planItemInstanceId);
@@ -369,7 +375,7 @@ public class FlowableService {
                 .singleResult();
     }
 
-    public List<HumanTask> readHumanTasks(final String caseDefinitionKey) {
+    public List<HumanTask> listHumanTasks(final String caseDefinitionKey) {
         final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
         return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
     }
@@ -388,7 +394,11 @@ public class FlowableService {
         }
     }
 
-    private Object readVariableForCase(final String caseInstanceId, final String variableName) {
+    public Object findVariableForCase(final String caseInstanceId, final String variableName) {
+        return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
+    }
+
+    public Object readVariableForCase(final String caseInstanceId, final String variableName) {
         final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;

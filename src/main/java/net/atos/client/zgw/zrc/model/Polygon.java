@@ -15,7 +15,7 @@ public class Polygon extends Geometry {
     private final List<List<Point2D>> coordinates;
 
     public Polygon(final List<List<Point2D>> coordinates) {
-        super("Polygon");
+        super(GeometryType.POLYGON);
         this.coordinates = coordinates;
     }
 

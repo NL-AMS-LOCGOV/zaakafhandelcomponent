@@ -27,7 +27,7 @@ public class RESTCaseDefinitionConverter {
             return null;
         }
         final CaseDefinition caseDefinition = flowableService.readCaseDefinition(key);
-        final List<HumanTask> humanTasks = flowableService.readHumanTasks(caseDefinition.getId());
+        final List<HumanTask> humanTasks = flowableService.listHumanTasks(caseDefinition.getId());
         final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), key);
         final List<RESTPlanItemDefinition> planItemDefinitions = new ArrayList<>();
         humanTasks.forEach(humanTask -> {

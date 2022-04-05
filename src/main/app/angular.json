@@ -33,7 +33,8 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.less",
-              "src/variables.less"
+              "src/variables.less",
+              "node_modules/ol/ol.css"
             ],
             "scripts": [],
             "vendorChunk": true,
