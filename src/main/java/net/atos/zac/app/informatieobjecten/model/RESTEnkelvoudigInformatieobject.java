@@ -63,5 +63,7 @@ public class RESTEnkelvoudigInformatieobject {
     //public URI informatieobjecttype;
     public boolean locked;
 
+    public boolean startformulier;
+
     public String inhoudUrl;
 }
