@@ -56,7 +56,7 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text fxFlex.sm="25" [label]="'registratiedatum' | translate"
-                                                     [value]="zaak.registratiedatum"></zac-static-text>
+                                                     [value]="zaak.registratiedatum | datum"></zac-static-text>
                                     <zac-static-text *ngIf="zaak.einddatum" fxFlex.sm="25" [label]="'einddatum' | translate"
                                                      [value]="zaak.einddatum | datum | empty"></zac-static-text>
                                     <zac-static-text [label]="'status' | translate"
