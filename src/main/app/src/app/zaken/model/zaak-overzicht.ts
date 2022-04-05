@@ -14,7 +14,6 @@ export class ZaakOverzicht {
     startdatum: string;
     status: string;
     zaaktype: string;
-    initiator: string;
     behandelaar: Medewerker;
     uiterlijkeDatumAfdoening: string;
     resultaat: ZaakResultaat;
