@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.zaken.converter;
 
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+
 import java.net.URI;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -24,6 +27,7 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 
@@ -67,6 +71,9 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTGeometryConverter restGeometryConverter;
+
+    @Inject
+    private FlowableService flowableService;
 
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
@@ -127,6 +134,7 @@ public class RESTZaakConverter {
         restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);
+        restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));
         return restZaak;
     }
 

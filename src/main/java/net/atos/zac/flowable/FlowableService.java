@@ -24,8 +24,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import net.atos.zac.mail.MailService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
@@ -51,6 +49,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
+import net.atos.zac.mail.MailService;
 
 /**
  *
@@ -68,6 +67,8 @@ public class FlowableService {
     public static final String VAR_CASE_ZAAKTYPE_UUUID = "zaaktypeUUID";
 
     public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+
+    public static final String VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
@@ -398,12 +399,29 @@ public class FlowableService {
         return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
     }
 
+    public Object findVariableForCase(final UUID zaakUUID, final String variableName) {
+        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
+                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
+                .includeCaseVariables()
+                .singleResult();
+        return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
+    }
+
     public Object readVariableForCase(final String caseInstanceId, final String variableName) {
         final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
             throw new RuntimeException(String.format("No variable found with name '%s' for case instance id '%s'", variableName, caseInstanceId));
+        }
+    }
+
+    public void createVariableForCase(final UUID zaakUUID, final String variableName, final Object value) {
+        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+        if (caseInstance != null) {
+            cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
+        } else {
+            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
         }
     }
 
