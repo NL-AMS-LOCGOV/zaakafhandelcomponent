@@ -146,7 +146,7 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
         if ("ontkoppelde-documenten".equals(documentVerplaatsGegevens.zaakID)) {
-            OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(documentUUID);
+            OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.readByDocumentUUID(documentUUID);
             String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
