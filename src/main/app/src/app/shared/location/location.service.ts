@@ -21,25 +21,25 @@ export class LocationService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    addressSuggest(zoekOpdracht: string) {
+    addressSuggest(zoekOpdracht: string): Observable<any> {
         const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?wt=json&q=${zoekOpdracht}&fl=${this.flSuggest}&fq=${this.typeSuggest}&rows=5`;
         return this.http.get<any>(url, {headers: new HttpHeaders({'Content-Type': 'application/json'})})
                    .pipe(catchError(this.handleError));
     }
 
-    geolocationAddressSuggest(coordinates: number[]) {
+    geolocationAddressSuggest(coordinates: number[]): Observable<any> {
         const url = `https://geodata.nationaalgeoregister.nl/locatieserver/revgeo?lon=${coordinates[0]}&lat=${coordinates[1]}&type=adres&rows=1`;
         return this.http.get<any>(url, {headers: new HttpHeaders({'Content-Type': 'application/json'})})
                    .pipe(catchError(this.handleError));
     }
 
-    addressLookup(objectId: string) {
+    addressLookup(objectId: string): Observable<any> {
         const url = `https://geodata.nationaalgeoregister.nl/locatieserver/v3/lookup?wt=json&id=${objectId}`;
         return this.http.get<any>(url, {headers: new HttpHeaders({'Content-Type': 'application/json'})})
                    .pipe(catchError(this.handleError));
     }
 
-    coordinatesToAddress(coordinates: number[]) {
+    coordinatesToAddress(coordinates: number[]): Observable<any> {
         return this.geolocationAddressSuggest(coordinates).pipe(
             mergeMap(data => this.addressLookup(data.response.docs[0].id))
         );

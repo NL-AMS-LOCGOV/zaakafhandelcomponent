@@ -10,6 +10,11 @@ export class LocationUtil {
         return geometrie;
     }
 
+    /**
+     * Het converteren van een het centroide_ll attribuut vanuit de response van de locatieserver
+     * @param centroidell centroide_ll zijn latitude,longitude coordinaten in graden volgens de ETRS:89 projectie.
+     * @private
+     */
     private static centroide_llToCoordinate(centroidell: string): GeometryCoordinate {
         const coordinates: string[] = centroidell.replace('POINT(', '').replace(')', '').split(' ');
         return new GeometryCoordinate(+coordinates[0], +coordinates[1]);
