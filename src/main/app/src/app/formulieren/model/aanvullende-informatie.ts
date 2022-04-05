@@ -22,6 +22,20 @@ import * as moment from 'moment/moment';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
+    private bodyTemplate: string =
+        'Beste klant,\n' +
+        '\n' +
+        'Voor het behandelen van de zaak hebben wij de volgende informatie van u nodig:\n' +
+        '- omschrijf informatie 1\n' +
+        '- omschrijf informatie 2\n' +
+        '\n' +
+        'We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres Y. ' +
+        'Vermeld op de informatie ook het zaaknummer van uw zaak.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
+
     fields = {
         EMAILADRES: 'emailadres',
         BODY: 'body',
@@ -38,11 +52,13 @@ export class AanvullendeInformatie extends AbstractFormulier {
 
     _initStartForm() {
         this.planItem.taakStuurGegevens.sendMail = true;
+        this.planItem.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
         const fields = this.fields;
         this.form.push(
             [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
                                         .validators(Validators.required, CustomValidators.emails).build()],
-            [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).validators(Validators.required).build()],
+            [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
+                                           .validators(Validators.required).build()],
             [new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
                                        .readonly(true).build()]
         );
