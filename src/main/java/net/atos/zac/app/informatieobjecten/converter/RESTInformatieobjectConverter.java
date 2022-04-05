@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.informatieobjecten.converter;
 
+import static net.atos.zac.aanvraag.ProductAanvraagService.ZAAK_INFORMATIEOBJECT_TITEL;
+
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Base64;
@@ -51,6 +53,7 @@ public class RESTInformatieobjectConverter {
         if (zaakInformatieObject.getAardRelatieWeergave() != null) {
             restObject.zaakRelatie = zaakInformatieObject.getAardRelatieWeergave().name();
         }
+        restObject.startformulier = ZAAK_INFORMATIEOBJECT_TITEL.equals(zaakInformatieObject.getTitel());
         return restObject;
     }
 
