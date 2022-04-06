@@ -54,7 +54,7 @@ import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {LocationService} from '../../shared/location/location.service';
+import {AddressResult, LocationService} from '../../shared/location/location.service';
 import {GeometryType} from '../model/geometryType';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
@@ -66,7 +66,7 @@ import {LocationUtil} from '../../shared/location/location-util';
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     zaak: Zaak;
-    zaakLocatie: any;
+    zaakLocatie: AddressResult;
     menu: MenuItem[];
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
     toonAfgerondeTaken = false;
@@ -478,7 +478,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    locatieGeselecteerd(locatie: any): void {
+    locatieGeselecteerd(locatie: AddressResult): void {
         this.zaakLocatie = locatie;
         this.actionsSidenav.close();
 

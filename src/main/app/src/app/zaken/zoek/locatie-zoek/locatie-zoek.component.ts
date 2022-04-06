@@ -15,7 +15,7 @@ import * as control from 'ol/control.js';
 import * as style from 'ol/style.js';
 import {Coordinate} from 'ol/coordinate.js';
 import * as interaction from 'ol/interaction.js';
-import {LocationService} from '../../../shared/location/location.service';
+import {AddressResult, LocationService, SuggestResult} from '../../../shared/location/location.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {GeometryCoordinate} from '../../model/geometryCoordinate';
@@ -31,10 +31,10 @@ import {LocationUtil} from '../../../shared/location/location-util';
 export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
     @Input() huidigeLocatie: GeometryCoordinate;
-    @Output() locatie = new EventEmitter<any>();
+    @Output() locatie = new EventEmitter<AddressResult>();
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
-    selectedAddress: any;
-    results: any[];
+    selectedAddress: AddressResult;
+    results: SuggestResult[];
     searchControl: FormControl = new FormControl();
 
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -243,7 +243,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         features.forEach((feature) => this.locationSource.removeFeature(feature));
     }
 
-    resultDisplay = (result: any): string => {
+    resultDisplay = (result: SuggestResult): string => {
         return result?.weergavenaam;
-    }
+    };
 }
