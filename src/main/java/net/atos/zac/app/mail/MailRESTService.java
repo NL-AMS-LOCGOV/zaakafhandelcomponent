@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.mail;
 
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD;
+
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -21,6 +23,7 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 
 import net.atos.zac.app.mail.model.RESTMailObject;
+import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.util.ValidationUtil;
 
@@ -33,8 +36,12 @@ public class MailRESTService {
     @Inject
     private MailService mailService;
 
+    @Inject
+    private FlowableService flowableService;
+
     @POST
     @Path("send/{zaakUuid}")
+    // ToDo #726
     public MailjetResponse sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
@@ -43,15 +50,16 @@ public class MailRESTService {
 
     @POST
     @Path("acknowledge/{zaakUuid}")
+    // ToDo #726
     public MailjetResponse sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             return new MailjetResponse(Response.Status.BAD_REQUEST.getStatusCode(), "email is not valid");
         }
 
-        // TODO #651 flowable service aanroepen
-        return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                                    restMailObject.createDocumentFromMail, zaakUuid);
+        final MailjetResponse mailjetResponse = mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
+                                                                     restMailObject.createDocumentFromMail, zaakUuid);
+        flowableService.createVariableForCase(zaakUuid, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, Boolean.TRUE);
+        return mailjetResponse;
     }
-
 }
