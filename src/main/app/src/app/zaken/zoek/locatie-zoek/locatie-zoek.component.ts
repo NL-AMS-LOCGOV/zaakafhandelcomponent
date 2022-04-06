@@ -194,6 +194,12 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         }
     }
 
+    clear(): void {
+        if (this.selectedAddress) {
+            this.locatie.next(null);
+        }
+    }
+
     save(): void {
         if (this.selectedAddress) {
             this.locatie.next(this.selectedAddress);
@@ -208,13 +214,11 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     setAddress(address) {
         this.selectedAddress = address;
-        const locationCoordinates = LocationUtil.centroide_llToArray(address.centroide_ll);
-        const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
+        const locationCoordinates: Array<number> = LocationUtil.centroide_llToArray(address.centroide_ll);
 
-        this.map.getView().setCenter(mapCenter);
         this.addMarker(locationCoordinates);
 
-        this.zoomToLocation(this.locationSource);
+        this.zoomToLocation(this.locationSource, locationCoordinates);
     }
 
     private addMarker(locationCoordinates: Coordinate) {
@@ -230,12 +234,17 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     }
 
-    private zoomToLocation(sourceLayer: source.Vector): void {
-        const locationExtent = sourceLayer.getExtent();
-        this.map.getView().fit(locationExtent, {
-            size: this.map.getSize(),
-            maxZoom: 14
-        });
+    private zoomToLocation(sourceLayer: source.Vector, locationCoordinates: Array<number>): void {
+        if (this.map.getView().getZoom() < 14) {
+            const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
+            this.map.getView().setCenter(mapCenter);
+
+            const locationExtent = sourceLayer.getExtent();
+            this.map.getView().fit(locationExtent, {
+                size: this.map.getSize(),
+                maxZoom: 14
+            });
+        }
     }
 
     private clearFeatures(): void {
