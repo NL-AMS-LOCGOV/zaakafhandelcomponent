@@ -33,4 +33,8 @@ export class OntkoppeldeDocumentenService {
     private handleError(err: HttpErrorResponse): Observable<never> {
         return this.foutAfhandelingService.redirect(err);
     }
+
+    delete(od: OntkoppeldDocument): Observable<void> {
+        return this.http.delete<void>(`${this.basepath}/${od.id}`);
+    }
 }
