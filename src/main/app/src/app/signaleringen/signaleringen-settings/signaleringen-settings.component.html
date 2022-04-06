@@ -1,0 +1,37 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-container">
+    <div class="table-loading-shade" *ngIf="isLoadingResults"></div>
+    <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource"
+               matSort #instellingenTable
+               matSortDisableClear="true"
+               matSortActive="type"
+               matSortDirection="asc">
+            <ng-container [matColumnDef]="column" *ngFor="let column of columns">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{'signalering.' + column | translate}}
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <ng-container *ngIf="column == 'type' || column == 'subjecttype'">
+                        {{'signalering.' + column + '.' + row[column] | translate | empty}}
+                    </ng-container>
+                    <ng-container *ngIf="column != 'type' && column != 'subjecttype'">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                                      (change)="$event ? changed(row,column,$event.checked) : null"
+                                      [checked]="row[column]"
+                                      [id]="row.type+'_'+column +'_checkbox'"
+                                      [title]="'actie.signalering.' + column | translate">
+                        </mat-checkbox>
+                    </ng-container>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        </table>
+        <p *ngIf="dataSource.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    </div>
+</div>

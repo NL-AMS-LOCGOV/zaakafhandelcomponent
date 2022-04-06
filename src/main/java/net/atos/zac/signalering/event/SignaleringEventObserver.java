@@ -31,6 +31,7 @@ import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
+import net.atos.zac.signalering.model.SignaleringInstellingen;
 
 /**
  * Deze bean luistert naar CmmnUpdateEvents, en werkt daar vervolgens flowable mee bij.
@@ -58,8 +59,14 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
         final Signalering signalering = buildSignalering(signaleringenService.signaleringInstance(event.getObjectType()), event);
-        if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor()) && signaleringenService.isSubcribedTo(signalering)) {
-            signaleringenService.createSignalering(signalering);
+        if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
+            final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
+            if (subscriptions.isDashboard()) {
+                signaleringenService.createSignalering(signalering);
+            }
+            if (subscriptions.isMail()) {
+                // TODO soon this will be implemented
+            }
         }
     }
 
