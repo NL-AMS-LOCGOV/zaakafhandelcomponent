@@ -28,6 +28,7 @@ import {ActionIcon} from '../../shared/edit/action-icon';
 import {Klant} from '../../klanten/model/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
+import {AddressResult} from '../../shared/location/location.service';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -46,7 +47,7 @@ export class ZaakCreateComponent implements OnInit {
     private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
-    private locatie: any;
+    private locatie: AddressResult;
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
@@ -113,7 +114,7 @@ export class ZaakCreateComponent implements OnInit {
                     zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
                 }
 
-                if (key === 'zaakgeometrie') {
+                if (key === 'zaakgeometrie' && formGroup.controls[key].value) {
                     zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
                 }
             });
@@ -130,7 +131,7 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
-    locatieGeselecteerd(locatie: any): void {
+    locatieGeselecteerd(locatie: AddressResult): void {
         this.locatie = locatie;
         this.locatieField.formControl.setValue(locatie.weergavenaam);
         this.actionsSidenav.close();
