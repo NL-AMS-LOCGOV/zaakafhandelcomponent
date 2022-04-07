@@ -10,7 +10,7 @@
            cdkDropListOrientation="horizontal"
            (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container matColumnDef="identificatie_filter">
+        <ng-container matColumnDef="zaak.identificatie_filter">
             <th mat-header-cell *matHeaderCellDef></th>
         </ng-container>
 
@@ -58,7 +58,7 @@
         </ng-container>
 
 
-        <ng-container matColumnDef="identificatie">
+        <ng-container matColumnDef="zaak.identificatie">
             <th mat-header-cell cdkDrag *matHeaderCellDef>
                 {{ 'zaak.identificatie' | translate }}
             </th>
