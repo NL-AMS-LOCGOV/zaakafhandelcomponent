@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(schema = SCHEMA, name = "signaleringtype")
-public class SignaleringType {
+public class SignaleringType implements Comparable<SignaleringType> {
 
     @Id
     @Column(name = "signaleringtype_enum", updatable = false, insertable = false)
@@ -52,6 +52,12 @@ public class SignaleringType {
         ZAAK_DOCUMENT_TOEGEVOEGD,
         ZAAK_OP_NAAM,
         TAAK_OP_NAAM;
+    }
+
+    @Override
+    public int compareTo(final SignaleringType other) {
+        final int result = this.getSubjecttype().compareTo(other.getSubjecttype());
+        return result != 0 ? result : this.getType().compareTo(other.getType());
     }
 
     @Override

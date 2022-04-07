@@ -4,8 +4,7 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {MatSort} from '@angular/material/sort';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {SignaleringenSettingsService} from '../signaleringen-settings.service';
 import {SignaleringSettings} from '../model/signalering-settings';
@@ -17,19 +16,18 @@ import {SignaleringSettings} from '../model/signalering-settings';
 export class SignaleringenSettingsComponent implements OnInit, AfterViewInit {
 
     isLoadingResults = true;
-    columns: string[] = ['type', 'subjecttype', 'dashboard', 'mail'];
+    columns: string[] = ['subjecttype', 'type', 'dashboard', 'mail'];
     dataSource: MatTableDataSource<SignaleringSettings> = new MatTableDataSource<SignaleringSettings>();
-    @ViewChild('instellingenTable', {read: MatSort, static: true}) sort: MatSort;
 
     constructor(private service: SignaleringenSettingsService,
-                private utilService: UtilService) { }
+                private utilService: UtilService) {
+    }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.signaleringen.settings');
     }
 
     ngAfterViewInit(): void {
-        this.dataSource.sort = this.sort;
         this.service.list().subscribe(instellingen => {
             this.dataSource.data = instellingen;
             this.isLoadingResults = false;

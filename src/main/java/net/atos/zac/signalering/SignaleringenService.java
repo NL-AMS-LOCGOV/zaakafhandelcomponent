@@ -10,7 +10,7 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -219,13 +219,15 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public Collection<SignaleringInstellingen> listInstellingen(final SignaleringInstellingenZoekParameters parameters) {
+    public List<SignaleringInstellingen> listInstellingen(final SignaleringInstellingenZoekParameters parameters) {
         final Map<SignaleringType.Type, SignaleringInstellingen> map = findInstellingen(parameters).stream()
                 .collect(Collectors.toMap(instellingen -> instellingen.getType().getType(), Function.identity()));
         Arrays.stream(SignaleringType.Type.values())
                 .filter(type -> !map.containsKey(type))
                 .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(), parameters.getOwner())));
-        return map.values();
+        return map.values().stream()
+                .sorted(Comparator.comparing(SignaleringInstellingen::getType))
+                .toList();
     }
 
     public int count() {
