@@ -1,0 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+export class SignaleringSettings {
+    type: string;
+    subjecttype: string;
+    dashboard: boolean;
+    mail: boolean;
+}
