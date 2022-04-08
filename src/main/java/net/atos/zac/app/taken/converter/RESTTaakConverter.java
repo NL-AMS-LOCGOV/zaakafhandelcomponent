@@ -107,24 +107,25 @@ public class RESTTaakConverter {
     }
 
     private RESTTaak convertTaskInfoForOpenCase(final TaskInfo taskInfo) {
-        final RESTTaak restTaak = new RESTTaak();
+        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
         restTaak.zaakUUID = (UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID);
         restTaak.zaakIdentificatie = (String) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_IDENTIFICATIE);
         restTaak.zaaktypeOmschrijving = (String) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
-        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
-        return convertTaskInfoForCase(restTaak, taskInfo, zaaktypeUUID);
+        return restTaak;
     }
 
     private RESTTaak convertTaskInfoForClosedCase(final HistoricTaskInstance taskInfo) {
-        final RESTTaak restTaak = new RESTTaak();
+        final UUID zaaktypeUUID = (UUID) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
         restTaak.zaakUUID = (UUID) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID);
         restTaak.zaakIdentificatie = (String) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_IDENTIFICATIE);
         restTaak.zaaktypeOmschrijving = (String) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
-        final UUID zaaktypeUUID = (UUID) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
-        return convertTaskInfoForCase(restTaak, taskInfo, zaaktypeUUID);
+        return restTaak;
     }
 
-    private RESTTaak convertTaskInfoForCase(final RESTTaak restTaak, final TaskInfo taskInfo, final UUID zaaktypeUUID) {
+    private RESTTaak convertTaskInfoForCase(final TaskInfo taskInfo, final UUID zaaktypeUUID) {
+        final RESTTaak restTaak = new RESTTaak();
         restTaak.id = taskInfo.getId();
         restTaak.naam = taskInfo.getName();
         restTaak.toelichting = taskInfo.getDescription();
