@@ -6,6 +6,7 @@
 CREATE TABLE ${schema}.usereventlistener_parameters
 (
     id_usereventlistener_parameters     BIGINT   NOT NULL,
+    id_planitem_definition              VARCHAR  NOT NULL,
     id_zaakafhandelparameters           BIGINT   NOT NULL,
     toelichting                         VARCHAR,
     CONSTRAINT pk_usereventlistener_parameters PRIMARY KEY (id_usereventlistener_parameters),
