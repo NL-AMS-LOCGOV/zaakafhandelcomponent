@@ -391,7 +391,7 @@ public class FlowableService {
     }
 
     public void createVariableForCase(final UUID zaakUUID, final String variableName, final Object value) {
-        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
         } else {
