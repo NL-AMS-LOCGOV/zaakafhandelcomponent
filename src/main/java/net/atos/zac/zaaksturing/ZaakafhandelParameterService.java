@@ -5,6 +5,8 @@
 
 package net.atos.zac.zaaksturing;
 
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_UUUID;
+
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,7 +14,6 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
-import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.FlowableService;
@@ -23,6 +24,8 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
 public class ZaakafhandelParameterService {
+
+    private static final String PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK = "humantask";
 
     @Inject
     private FlowableService flowableService;
@@ -36,8 +39,8 @@ public class ZaakafhandelParameterService {
     }
 
     public PlanItemParameters getPlanItemParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDForCase(planItem.getCaseInstanceId());
-        if (planItem.getPlanItemDefinitionType().equals("humantask")) {
+        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAKTYPE_UUUID);
+        if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
             return beheerService.readPlanItemParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         }
         final PlanItemParameters parameters = new PlanItemParameters();
@@ -47,14 +50,12 @@ public class ZaakafhandelParameterService {
         return parameters;
     }
 
-    public FormulierDefinitie findFormulierDefinitie(final TaskInfo taskInfo) {
-        final UUID zaakTypeUUID = flowableService.readZaaktypeUUIDForTask(taskInfo.getId());
-        PlanItemParameters planItemParameters = beheerService.readPlanItemParameters(zaakTypeUUID, taskInfo.getTaskDefinitionKey());
+    public FormulierDefinitie findFormulierDefinitie(final UUID zaaktypeUUID, final String taskDefinitionKey) {
+        final PlanItemParameters planItemParameters = beheerService.readPlanItemParameters(zaaktypeUUID, taskDefinitionKey);
         if (planItemParameters == null) {
-            throw new NotFoundException(String.format("PlanItemParameters not configured! zaakTypeUUID: %s, planItemDefinitionKey: %s",
-                                                      zaakTypeUUID, taskInfo.getTaskDefinitionKey()));
+            throw new NotFoundException(
+                    String.format("PlanItemParameters not configured! zaakTypeUUID: %s, planItemDefinitionKey: %s", zaaktypeUUID, zaaktypeUUID));
         }
         return FormulierDefinitie.valueOf(planItemParameters.getFormulierDefinitieID());
     }
-
 }

@@ -29,6 +29,7 @@ import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.CmmnTaskService;
+import org.flowable.cmmn.api.history.HistoricCaseInstance;
 import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -92,36 +93,20 @@ public class FlowableService {
     @Inject
     private MailService mailService;
 
-    public UUID readZaakUuidForCase(final String caseInstanceId) {
-        return (UUID) readVariableForCase(caseInstanceId, VAR_CASE_ZAAK_UUID);
-    }
-
-    public UUID readZaakUuidForTask(final String taskId) {
-        return (UUID) readCaseVariableForTask(taskId, VAR_CASE_ZAAK_UUID);
-    }
-
-    public String readZaakIdentificatieForTask(final String taskId) {
-        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAK_IDENTIFICATIE);
-    }
-
-    public String readZaaktypeOmschrijvingorTask(final String taskId) {
-        return (String) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
-    }
-
-    public UUID readZaaktypeUUIDForTask(final String taskId) {
-        return (UUID) readCaseVariableForTask(taskId, VAR_CASE_ZAAKTYPE_UUUID);
-    }
-
-    public UUID readZaaktypeUUIDForCase(final String caseInstanceId) {
-        return (UUID) readVariableForCase(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
-    }
-
-    public List<TaskInfo> listAllTasksForZaak(final UUID zaakUUID) {
-        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+    public List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
+        final List<TaskInfo> tasks = new ArrayList<>();
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
-            final List<TaskInfo> taken = new ArrayList<>(listOpenTasksForCase(caseInstance.getId()));
-            taken.addAll(listCompletedTasksForCase(caseInstance.getId()));
-            return taken;
+            tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
+            tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
+        }
+        return tasks;
+    }
+
+    public List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
+        final HistoricCaseInstance historicCaseInstance = findClosedCaseForZaak(zaakUUID);
+        if (historicCaseInstance != null) {
+            return listClosedTasksForCase(historicCaseInstance.getId());
         } else {
             return Collections.emptyList();
         }
@@ -134,7 +119,7 @@ public class FlowableService {
                 .list();
     }
 
-    private List<HistoricTaskInstance> listCompletedTasksForCase(final String caseInstanceId) {
+    private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .caseInstanceId(caseInstanceId)
                 .finished()
@@ -142,14 +127,14 @@ public class FlowableService {
                 .list();
     }
 
-    public List<Task> listOpenTasksOwnedByMedewerker(final String gebruikersnaam, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final String direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
-                .taskAssignee(gebruikersnaam)
+                .taskAssignee(userid)
                 .listPage(firstResult, maxResults);
     }
 
-    public List<Task> listOpenTasksForGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksAssignedToGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskCandidateGroupIn(groupIds)
@@ -157,17 +142,17 @@ public class FlowableService {
                 .listPage(firstResult, maxResults);
     }
 
-    public int countOpenTasksOwnedByMedewerker(final String gebruikersnaam) {
-        return (int) cmmnTaskService.createTaskQuery().taskAssignee(gebruikersnaam).count();
+    public int countOpenTasksAssignedToUser(final String userId) {
+        return (int) cmmnTaskService.createTaskQuery().taskAssignee(userId).count();
     }
 
-    public int countOpenTasksForGroups(final List<String> groupIds) {
+    public int countOpenTasksAssignedToGroups(final List<String> groupIds) {
         return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
     }
 
-    public List<PlanItemInstance> listPlanItemsForZaak(final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = listAvailablePlanItemsForZaak(zaakUUID);
-        planItems.addAll(listAvailableUserEventListenersForZaak(zaakUUID));
+    public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
+        final List<PlanItemInstance> planItems = listEnabledPlanItemsForOpenCase(zaakUUID);
+        planItems.addAll(listAvailableUserEventListenersForOpenCase(zaakUUID));
         return planItems;
     }
 
@@ -182,8 +167,7 @@ public class FlowableService {
                     .variable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
                     .start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {
-            LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.",
-                                      caseDefinitionKey, zaak.getUuid()));
+            LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.", caseDefinitionKey, zaak.getUuid()));
         }
     }
 
@@ -191,7 +175,7 @@ public class FlowableService {
     // https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/672
     public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
             final Map<String, String> taakdata, final boolean sendMail, final String onderwerp) {
-        final UUID zaakUUID = readZaakUuidForCase(planItemInstance.getCaseInstanceId());
+        final UUID zaakUUID = (UUID) readOpenCaseVariable(planItemInstance.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
 
         if (sendMail) {
             mailService.sendMail(taakdata.get("emailadres"), onderwerp,
@@ -208,7 +192,7 @@ public class FlowableService {
     }
 
     public void startPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
-        final PlanItemInstance planItem = readPlanItem(planItemInstanceId);
+        final PlanItemInstance planItem = readOpenPlanItem(planItemInstanceId);
         if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
             if (StringUtils.isNotEmpty(resultaatToelichting)) {
                 cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
@@ -219,7 +203,7 @@ public class FlowableService {
         }
     }
 
-    public PlanItemInstance readPlanItem(final String planItemInstanceId) {
+    public PlanItemInstance readOpenPlanItem(final String planItemInstanceId) {
         final PlanItemInstance planItemInstance = cmmnRuntimeService.createPlanItemInstanceQuery()
                 .planItemInstanceId(planItemInstanceId)
                 .singleResult();
@@ -238,14 +222,14 @@ public class FlowableService {
      * @param userId Id of the user to assign the task to or null which implies that the task is released.
      * @return Assigned or released task.
      */
-    public Task assignTask(final String taskId, final String userId) {
+    public Task assignTaskToUser(final String taskId, final String userId) {
         if (userId != null) {
             cmmnTaskService.unclaim(taskId);
             cmmnTaskService.claim(taskId, userId);
         } else {
             cmmnTaskService.unclaim(taskId);
         }
-        return readTask(taskId);
+        return readOpenTask(taskId);
     }
 
     /**
@@ -256,7 +240,7 @@ public class FlowableService {
      * @return Assigned Task
      */
     public Task assignTaskToGroup(final String taskId, final String groupId) {
-        final Task task = readTask(taskId);
+        final Task task = readOpenTask(taskId);
 
         task.getIdentityLinks().stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
@@ -265,40 +249,27 @@ public class FlowableService {
 
         cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
 
-        return readTask(taskId);
+        return readOpenTask(taskId);
     }
 
     public Task updateTask(final Task task) {
         cmmnTaskService.saveTask(task);
-        return readTask(task.getId());
+        return readOpenTask(task.getId());
     }
 
     public HistoricTaskInstance completeTask(final String taskId) {
         cmmnTaskService.complete(taskId);
-        return readCompletedTask(taskId);
+        return readClosedTask(taskId);
     }
 
-    public TaskInfo readTaskInfo(final String taskId) {
-        TaskInfo taskInfo = findOpenTask(taskId);
-        if (taskInfo == null) {
-            taskInfo = findCompletedTask(taskId);
-        }
-        if (taskInfo != null) {
-            return taskInfo;
-        } else {
-            throw new RuntimeException(String.format("No TaskInfo found with task id '%s'", taskId));
-        }
-    }
-
-    public Task readTask(final String taskId) {
+    public Task readOpenTask(final String taskId) {
         final Task task = findOpenTask(taskId);
         if (task != null) {
             return task;
         } else {
-            throw new RuntimeException(String.format("No Task found with task id '%s'", taskId));
+            throw new RuntimeException(String.format("No open task found with task id '%s'", taskId));
         }
     }
-
 
     public List<Group> listGroups() {
         return idmIdentityService.createGroupQuery()
@@ -314,7 +285,7 @@ public class FlowableService {
         if (group != null) {
             return group;
         } else {
-            throw new RuntimeException(String.format("No Group found with group id '%s'", groupId));
+            throw new RuntimeException(String.format("No group found with group id '%s'", groupId));
         }
     }
 
@@ -325,7 +296,7 @@ public class FlowableService {
         if (user != null) {
             return user;
         } else {
-            throw new RuntimeException(String.format("No User found with user id '%s'", userId));
+            throw new RuntimeException(String.format("No user found with user id '%s'", userId));
         }
     }
 
@@ -345,19 +316,17 @@ public class FlowableService {
         return idmIdentityService.createUserQuery().list();
     }
 
-    public Map<String, String> readTaakdata(final String taskId) {
-        final Map<String, String> taakdata;
-        if (isOpenTask(taskId)) {
-            taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, VAR_TASK_TAAKDATA);
-        } else {
-            final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
-                    .taskId(taskId)
-                    .variableName(VAR_TASK_TAAKDATA)
-                    .singleResult();
-            taakdata = historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : null;
-        }
-
+    public Map<String, String> readTaakdataForOpenTask(final String taskId) {
+        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, VAR_TASK_TAAKDATA);
         return taakdata != null ? taakdata : Collections.emptyMap();
+    }
+
+    public Map<String, String> readTaakdataForClosedTask(final String taskId) {
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .taskId(taskId)
+                .variableName(VAR_TASK_TAAKDATA)
+                .singleResult();
+        return historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : Collections.emptyMap();
     }
 
     public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
@@ -370,10 +339,15 @@ public class FlowableService {
     }
 
     public CaseDefinition readCaseDefinition(final String caseDefinitionKey) {
-        return cmmnRepositoryService.createCaseDefinitionQuery()
+        final CaseDefinition caseDefinition = cmmnRepositoryService.createCaseDefinitionQuery()
                 .caseDefinitionKey(caseDefinitionKey)
                 .latestVersion()
                 .singleResult();
+        if (caseDefinition != null) {
+            return caseDefinition;
+        } else {
+            throw new RuntimeException(String.format("No case definition found for case definition key: '%s'", caseDefinitionKey));
+        }
     }
 
     public List<HumanTask> listHumanTasks(final String caseDefinitionKey) {
@@ -389,13 +363,13 @@ public class FlowableService {
      * @param zaakUUID UUID of the zaak for which the caxse should be terminated.
      */
     public void terminateCase(final UUID zaakUUID) {
-        final CaseInstance caseInstance = findCaseInstanceForZaak(zaakUUID);
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.terminateCaseInstance(caseInstance.getId());
         }
     }
 
-    public Object findVariableForCase(final String caseInstanceId, final String variableName) {
+    public Object findOpenCaseVariable(final String caseInstanceId, final String variableName) {
         return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
     }
 
@@ -407,12 +381,12 @@ public class FlowableService {
         return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
     }
 
-    public Object readVariableForCase(final String caseInstanceId, final String variableName) {
-        final Object variableValue = cmmnRuntimeService.getVariable(caseInstanceId, variableName);
+    public Object readOpenCaseVariable(final String caseInstanceId, final String variableName) {
+        final Object variableValue = findOpenCaseVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for case instance id '%s'", variableName, caseInstanceId));
+            throw new RuntimeException(String.format("No variable found with name '%s' for open case instance id '%s'", variableName, caseInstanceId));
         }
     }
 
@@ -425,18 +399,45 @@ public class FlowableService {
         }
     }
 
-    private Object findCaseVariableForTask(final String taskId, final String variableName) {
-        final TaskInfo taskInfo = readTaskInfo(taskId);
-        return cmmnRuntimeService.getVariable(taskInfo.getScopeId(), variableName);
+    public Object findClosedCaseVariable(final String caseInstanceId, final String variableName) {
+        return cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .caseInstanceId(caseInstanceId)
+                .variableName(variableName)
+                .singleResult()
+                .getValue();
     }
 
-    private Object readCaseVariableForTask(final String taskId, final String variableName) {
-        final Object variableValue = findCaseVariableForTask(taskId, variableName);
+    public Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
+        final Object variableValue = findClosedCaseVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for task id '%s'", variableName, taskId));
+            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
         }
+    }
+
+    public TaskInfo readTask(final String taskId) {
+        TaskInfo task = findOpenTask(taskId);
+        if (task != null) {
+            return task;
+        }
+        task = findClosedTask(taskId);
+        if (task != null) {
+            return task;
+        }
+        throw new RuntimeException(String.format("No task found with task id '%s'", taskId));
+    }
+
+    public boolean isOpenCase(final UUID zaakUUID) {
+        return cmmnRuntimeService.createCaseInstanceQuery()
+                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
+                .count() > 0;
+    }
+
+    public boolean isOpenCase(final String caseInstanceId) {
+        return cmmnRuntimeService.createCaseInstanceQuery()
+                .caseInstanceId(caseInstanceId)
+                .count() > 0;
     }
 
     private Task findOpenTask(final String taskId) {
@@ -446,36 +447,30 @@ public class FlowableService {
                 .singleResult();
     }
 
-    private boolean isOpenTask(final String taskId) {
-        return cmmnTaskService.createTaskQuery()
-                .taskId(taskId)
-                .count() > 0;
-    }
-
-    private HistoricTaskInstance readCompletedTask(final String taskId) {
-        final HistoricTaskInstance historicTask = findCompletedTask(taskId);
-        if (historicTask != null) {
-            return historicTask;
+    private HistoricTaskInstance readClosedTask(final String taskId) {
+        final HistoricTaskInstance task = findClosedTask(taskId);
+        if (task != null) {
+            return task;
         } else {
-            throw new RuntimeException(String.format("No HistoricTaskInstance found with task id '%s'", taskId));
+            throw new RuntimeException(String.format("No closed task found with task id '%s'", taskId));
         }
     }
 
-    private HistoricTaskInstance findCompletedTask(final String taskId) {
+    private HistoricTaskInstance findClosedTask(final String taskId) {
         return cmmnHistoryService.createHistoricTaskInstanceQuery()
                 .taskId(taskId)
                 .includeIdentityLinks()
                 .singleResult();
     }
 
-    private List<PlanItemInstance> listAvailablePlanItemsForZaak(final UUID zaakUUID) {
+    private List<PlanItemInstance> listEnabledPlanItemsForOpenCase(final UUID zaakUUID) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .caseVariableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .planItemInstanceStateEnabled()
                 .list();
     }
 
-    private List<PlanItemInstance> listAvailableUserEventListenersForZaak(final UUID zaakUUID) {
+    private List<PlanItemInstance> listAvailableUserEventListenersForOpenCase(final UUID zaakUUID) {
         return cmmnRuntimeService.createPlanItemInstanceQuery()
                 .caseVariableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .planItemInstanceStateAvailable()
@@ -483,8 +478,14 @@ public class FlowableService {
                 .list();
     }
 
-    private CaseInstance findCaseInstanceForZaak(final UUID zaakUUID) {
+    private CaseInstance findOpenCaseForZaak(final UUID zaakUUID) {
         return cmmnRuntimeService.createCaseInstanceQuery()
+                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
+                .singleResult();
+    }
+
+    private HistoricCaseInstance findClosedCaseForZaak(final UUID zaakUUID) {
+        return cmmnHistoryService.createHistoricCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .singleResult();
     }
