@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.planitems;
 
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -50,15 +52,15 @@ public class PlanItemsRESTService {
     @GET
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = flowableService.listPlanItemsForZaak(zaakUUID);
+        final List<PlanItemInstance> planItems = flowableService.listPlanItemsForOpenCase(zaakUUID);
         return planItemConverter.convertPlanItems(planItems, zaakUUID);
     }
 
     @GET
     @Path("{id}")
     public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = flowableService.readPlanItem(planItemId);
-        final UUID zaakUuidForCase = flowableService.readZaakUuidForCase(planItem.getCaseInstanceId());
+        final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
+        final UUID zaakUuidForCase = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
         final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
         return planItemConverter.convertPlanItem(planItem, zaakUuidForCase, planItemParameters);
     }
@@ -67,7 +69,7 @@ public class PlanItemsRESTService {
     @Path("do/{id}")
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
         if (restPlanItem.type == PlanItemType.HUMAN_TASK) {
-            final PlanItemInstance planItem = flowableService.readPlanItem(restPlanItem.id);
+            final PlanItemInstance planItem = flowableService.readOpenPlanItem(restPlanItem.id);
             final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
             final Date streefdatum = DateUtils.addDays(new Date(), planItemParameters.getDoorlooptijd());
             flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,

@@ -179,7 +179,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     partialEditTaak(value: string, field: string): void {
         this.taak[field] = value[field];
         this.websocketService.suspendListener(this.taakListener);
-        this.takenService.partialUpdateTaak(this.taak).subscribe((taak) => {
+        this.takenService.update(this.taak).subscribe((taak) => {
             this.utilService.openSnackbar('msg.taak.opgeslagen');
             this.initTaakGegevens(taak);
         });

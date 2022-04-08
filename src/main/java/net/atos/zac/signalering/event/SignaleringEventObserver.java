@@ -92,7 +92,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 }
             }
             case TAAK_OP_NAAM -> {
-                final TaskInfo subject = flowableService.readTask((String) event.getObjectId());
+                final TaskInfo subject = flowableService.readOpenTask((String) event.getObjectId());
                 if (subject.getAssignee() != null) {
                     signalering.setSubject(subject);
                     return addTarget(signalering, subject);
