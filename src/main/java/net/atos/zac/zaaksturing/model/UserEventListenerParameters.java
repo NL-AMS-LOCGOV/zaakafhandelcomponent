@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
@@ -23,6 +24,10 @@ public class UserEventListenerParameters {
     @GeneratedValue(generator = "sq_usereventlistener_parameters", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_usereventlistener_parameters")
     private Long id;
+
+    @NotBlank
+    @Column(name = "id_planitem_definition", nullable = false)
+    private String planItemDefinitionID;
 
     @NotNull
     @ManyToOne
@@ -46,6 +51,14 @@ public class UserEventListenerParameters {
 
     public void setZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         this.zaakafhandelParameters = zaakafhandelParameters;
+    }
+
+    public String getPlanItemDefinitionID() {
+        return planItemDefinitionID;
+    }
+
+    public void setPlanItemDefinitionID(final String planItemDefinitionID) {
+        this.planItemDefinitionID = planItemDefinitionID;
     }
 
     public String getToelichting() {
