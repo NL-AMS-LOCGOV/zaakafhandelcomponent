@@ -72,8 +72,7 @@ public class MailService {
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    // ToDo #726
-    public MailjetResponse sendMail(final String ontvanger, final String onderwerp, final String body,
+    public void sendMail(final String ontvanger, final String onderwerp, final String body,
             final boolean createDocumentFromMail, final UUID zaakUuid) {
         final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
 
@@ -91,8 +90,6 @@ public class MailService {
         if (createDocumentFromMail && response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
         }
-
-        return response;
     }
 
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
