@@ -484,8 +484,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
 
         const zaak: Zaak = new Zaak();
-        zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
-        this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+        if (locatie) {
+            zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+            this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+        }
 
         this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak);
