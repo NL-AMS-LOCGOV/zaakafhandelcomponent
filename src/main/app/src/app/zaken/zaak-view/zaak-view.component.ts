@@ -246,8 +246,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`,
-            'upload_file'));
+        this.menu.push(new ButtonMenuItem('actie.document.aanmaken', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+        }, 'upload_file'));
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
@@ -589,4 +591,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return null;
     }
 
+    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
+    }
 }
