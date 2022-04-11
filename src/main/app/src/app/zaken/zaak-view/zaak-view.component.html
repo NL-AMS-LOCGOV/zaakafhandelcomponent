@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -32,8 +32,10 @@
                                                      [value]="zaak.identificatie"></zac-static-text>
                                     <zac-static-text [label]="'zaaktype' | translate"
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
-                                    <zac-static-text [label]="'kanaal' | translate"
-                                                     [value]="zaak.communicatiekanaal | empty: 'naam'"></zac-static-text>
+                                    <zac-edit-communicatiekanaal [formField]="editFormFields.get('communicatiekanaal')"
+                                                                 [reasonField]="editFormFields.get('reden')"
+                                                                 (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
+                                    </zac-edit-communicatiekanaal>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
