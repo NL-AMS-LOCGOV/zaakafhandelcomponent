@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
 import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTPlanItemParameters;
@@ -39,6 +40,9 @@ public class RESTZaakafhandelParametersConverter {
 
     @Inject
     private RESTZaakbeeindigParameterConverter zaakbeeindigParameterConverter;
+
+    @Inject
+    private RESTUserEventListenerParametersConverter restUserEventListenerParametersConverter;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -73,6 +77,18 @@ public class RESTZaakafhandelParametersConverter {
                 list.add(restPlanParameters);
             }
             restParameters.planItemParameters = list;
+
+            final List<RESTUserEventListenerParameter> actieParameters = new ArrayList<>();
+            restParameters.caseDefinition.userEventListenerDefinitions.forEach(planItem -> {
+                final RESTUserEventListenerParameter restUserEventListenerParameter = new RESTUserEventListenerParameter();
+                restUserEventListenerParameter.id = planItem.id;
+                restUserEventListenerParameter.naam = planItem.naam;
+                parameters.getUserEventListenerParameters().stream()
+                        .filter(uelParameter -> uelParameter.getPlanItemDefinitionID().equals(planItem.id)).forEach(
+                                uelParameter -> restUserEventListenerParameter.toelichting = uelParameter.getToelichting());
+                actieParameters.add(restUserEventListenerParameter);
+            });
+            restParameters.userEventListenerParameters = actieParameters;
         }
         restParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertToRest(parameters.getZaakbeeindigParameters());
         return restParameters;
@@ -102,6 +118,8 @@ public class RESTZaakafhandelParametersConverter {
         });
         parameters.setPlanItemParametersCollection(list);
         parameters.setZaakbeeindigParameters(zaakbeeindigParameterConverter.convertToDomain(restParameters.zaakbeeindigParameters));
+        parameters.setUserEventListenerParameters(restUserEventListenerParametersConverter
+                                                          .convertToDomain(restParameters.userEventListenerParameters));
         return parameters;
     }
 }

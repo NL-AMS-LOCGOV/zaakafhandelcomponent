@@ -309,7 +309,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createPlanItemStartenConfirmDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ConfirmDialogComponent,
-            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem))
+            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem), planItem.uitleg)
         };
     }
 
@@ -319,7 +319,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             dialogData: new DialogData(
                 new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
                 (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
-                melding)
+                melding, planItem.uitleg)
         };
     }
 
