@@ -409,7 +409,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editZaakMetReden(event: any, field: string): void {
         const zaak: Zaak = new Zaak();
         zaak[field] = event[field];
-        console.log(zaak);
         this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);

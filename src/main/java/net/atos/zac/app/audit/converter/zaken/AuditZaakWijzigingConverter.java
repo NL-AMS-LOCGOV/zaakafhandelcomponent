@@ -49,8 +49,9 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         final List<RESTHistorieRegel> historieRegels = new LinkedList<>();
         checkAttribuut("zaak.identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
         checkZaaktype(oud.getZaaktype(), nieuw.getZaaktype(), historieRegels);
-        checkKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
-        checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
+        checkCommunicatieKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
+        checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(),
+                       nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
         checkAttribuut("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
         checkAttribuut("startdatum", oud.getStartdatum(), nieuw.getStartdatum(), historieRegels);
         checkAttribuut("einddatumGepland", oud.getEinddatumGepland(), nieuw.getEinddatumGepland(), historieRegels);
@@ -68,9 +69,10 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         }
     }
 
-    private void checkKanaal(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+    private void checkCommunicatieKanaal(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
         if (ObjectUtils.notEqual(oud, nieuw)) {
-            historieRegels.add(new RESTHistorieRegel("kanaal", kanaalToWaarde(oud), kanaalToWaarde(nieuw)));
+            historieRegels.add(new RESTHistorieRegel("communicatiekanaal", communicatieKanaalToWaarde(oud),
+                                                     communicatieKanaalToWaarde(nieuw)));
         }
     }
 
@@ -82,7 +84,7 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         return zaaktype != null ? ztcClientService.readZaaktype(zaaktype).getIdentificatie() : null;
     }
 
-    private String kanaalToWaarde(final URI kanaal) {
+    private String communicatieKanaalToWaarde(final URI kanaal) {
         final CommunicatieKanaal communicatieKanaal =
                 vrlClientService.readCommunicatiekanaal(UriUtil.uuidFromURI(kanaal));
         return communicatieKanaal != null ? communicatieKanaal.getNaam() : null;
