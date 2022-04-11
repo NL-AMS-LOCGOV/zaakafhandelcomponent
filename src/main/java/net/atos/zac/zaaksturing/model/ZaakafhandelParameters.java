@@ -61,6 +61,10 @@ public class ZaakafhandelParameters {
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<UserEventListenerParameters> userEventListenerParametersCollection;
+
+    // The set is necessary for Hibernate when you have more than one eager collection on an entity.
+    @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<ZaakbeeindigParameter> zaakbeeindigParameters;
 
     public Long getId() {
@@ -135,6 +139,23 @@ public class ZaakafhandelParameters {
     public void setZaakbeeindigParameters(final Collection<ZaakbeeindigParameter> collection) {
         getZaakbeeindigParameters().clear();
         collection.forEach(this::addZaakbeeindigParameter);
+    }
+
+    public Collection<UserEventListenerParameters> getUserEventListenerParameters() {
+        if (userEventListenerParametersCollection == null) {
+            userEventListenerParametersCollection = new HashSet<>();
+        }
+        return userEventListenerParametersCollection;
+    }
+
+    public void addUserEventListenerParameter(final UserEventListenerParameters userEventListenerParameters) {
+        userEventListenerParameters.setZaakafhandelParameters(this);
+        getUserEventListenerParameters().add(userEventListenerParameters);
+    }
+
+    public void setUserEventListenerParameters(final Collection<UserEventListenerParameters> collection) {
+        getUserEventListenerParameters().clear();
+        collection.forEach(this::addUserEventListenerParameter);
     }
 }
 

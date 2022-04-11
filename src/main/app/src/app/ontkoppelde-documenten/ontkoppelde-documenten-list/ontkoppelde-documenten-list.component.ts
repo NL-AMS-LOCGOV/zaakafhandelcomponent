@@ -16,6 +16,9 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {MatTableDataSource} from '@angular/material/table';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -32,7 +35,9 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     constructor(private service: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
-                private utilService: UtilService) { }
+                private utilService: UtilService,
+                public dialog: MatDialog,
+                private translate: TranslateService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
@@ -78,6 +83,22 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     documentVerplaatsen(od: OntkoppeldDocument): void {
         this.infoService.addTeVerplaatsenDocument(OntkoppeldeDocumentenListComponent.getInformatieobject(od), 'ontkoppelde-documenten');
+    }
+
+    documentVerwijderen(od: OntkoppeldDocument): void {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('actie.document.verwijderen.bevestigen', {document: od.titel}),
+                this.service.delete(od)
+            ),
+            width: '400px',
+            autoFocus: 'dialog'
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('actie.document.verwijderen.uitgevoerd', {document: od.titel});
+                this.paginator.page.emit();
+            }
+        });
     }
 
     isDocumentVerplaatsenDisabled(od: OntkoppeldDocument): boolean {

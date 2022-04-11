@@ -4,12 +4,15 @@
  */
 
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {SharedModule} from '../shared/shared.module';
+import {SignaleringenRoutingModule} from './signaleringen-routing.module';
+import {SignaleringenSettingsComponent} from './signaleringen-settings/signaleringen-settings.component';
 
 @NgModule({
-    declarations: [],
+    declarations: [SignaleringenSettingsComponent],
     imports: [
-        CommonModule
+        SharedModule,
+        SignaleringenRoutingModule
     ]
 })
 export class SignaleringenModule {}

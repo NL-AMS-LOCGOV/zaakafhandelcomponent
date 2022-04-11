@@ -73,4 +73,6 @@ public class RESTZaak {
     public String initiatorIdentificatie;
 
     public RESTZaakRechten rechten;
+
+    public boolean ontvangstbevestigingVerstuurd;
 }

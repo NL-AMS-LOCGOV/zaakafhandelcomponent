@@ -46,4 +46,5 @@ export class Zaak {
     eigenschappen: ZaakEigenschap[];
     rechten: ZaakRechten;
     initiatorIdentificatie: string; // BSN or Vestigingsnummer
+    ontvangstbevestigingVerstuurd: boolean;
 }

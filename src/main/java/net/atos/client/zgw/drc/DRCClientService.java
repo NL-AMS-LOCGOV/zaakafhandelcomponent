@@ -62,6 +62,17 @@ public class DRCClientService {
         return drcClient.enkelvoudigInformatieobjectRead(uuid);
     }
 
+
+    /**
+     * DELETE {@link EnkelvoudigInformatieobject} via its UUID.
+     * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be deleted.
+     *
+     * @param uuid UUID of the {@link EnkelvoudigInformatieobject}.
+     */
+    public void deleteEnkelvoudigInformatieobject(final UUID uuid) {
+        drcClient.enkelvoudigInformatieobjectDelete(uuid);
+    }
+
     /**
      * Read {@link EnkelvoudigInformatieobject} via its URI.
      * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be read.

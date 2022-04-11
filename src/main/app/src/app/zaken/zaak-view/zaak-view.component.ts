@@ -251,10 +251,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
-        // TODO #651 onderstaande menu item moet niet zichtbaar zijn als ontvangstbevestiging al verstuurd is
-        this.menu.push(
-            new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
-                'mark_email_read'));
+        if (!this.zaak.ontvangstbevestigingVerstuurd) {
+            this.menu.push(
+                new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
+                    'mark_email_read'));
+        }
 
         if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));

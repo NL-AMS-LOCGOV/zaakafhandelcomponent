@@ -1,0 +1,36 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-container">
+    <div class="table-wrapper" [ngClass]="{'table-loading-shade':isLoadingResults}">
+        <table mat-table [dataSource]="dataSource">
+            <ng-container [matColumnDef]="column" *ngFor="let column of columns">
+                <th mat-header-cell *matHeaderCellDef>
+                    {{'signalering.' + column | translate}}
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <ng-container *ngIf="column == 'type' || column == 'subjecttype'">
+                        {{'signalering.' + column + '.' + row[column] | translate}}
+                    </ng-container>
+                    <ng-container *ngIf="column != 'type' && column != 'subjecttype'">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                                      (change)="changed(row,column,$event.checked)"
+                                      [checked]="row[column]"
+                                      [id]="row.type+'_'+column +'_checkbox'"
+                                      [title]="'actie.signalering.' + column | translate">
+                        </mat-checkbox>
+                    </ng-container>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+            <tr mat-row *matNoDataRow>
+                <td [colSpan]="columns.length">
+                    {{'msg.geen.gegevens.gevonden' | translate}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

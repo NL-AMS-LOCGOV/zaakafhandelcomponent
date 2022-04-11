@@ -128,7 +128,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     initialColumns(): Map<string, ColumnPickerValue> {
         return new Map([
             ['select', ColumnPickerValue.STICKY],
-            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['zaak.identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.VISIBLE],
             ['zaaktype', ColumnPickerValue.HIDDEN],
             ['groep', ColumnPickerValue.VISIBLE],

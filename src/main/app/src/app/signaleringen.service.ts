@@ -21,7 +21,7 @@ export class SignaleringenService {
 
     private latestSignaleringSubject: BehaviorSubject<void> = new BehaviorSubject<void>(null);
     latestSignalering$ = this.latestSignaleringSubject.pipe(
-        switchMap(() => this.http.get<string>(`${this.basepath}/medewerker/latestsignalering`))
+        switchMap(() => this.http.get<string>(`${this.basepath}/latest`))
     );
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) { }

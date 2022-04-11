@@ -384,9 +384,7 @@ public class ZRCClientService implements Caching {
     }
 
     public void koppelInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak nieuweZaak, final String toelichting) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(informatieobject.getUrl());
-        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(parameters);
+        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(informatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
             throw new IllegalStateException(String.format("Informatieobject is reeds gekoppeld aan zaak '%s'", zaakUuid));
@@ -398,6 +396,12 @@ public class ZRCClientService implements Caching {
         nieuweZaakInformatieObject.setBeschrijving(informatieobject.getBeschrijving());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
+    }
+
+    public List<ZaakInformatieobject> listZaakinformatieobjecten(final EnkelvoudigInformatieobject informatieobject) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(informatieobject.getUrl());
+        return listZaakinformatieobjecten(parameters);
     }
 
     @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)

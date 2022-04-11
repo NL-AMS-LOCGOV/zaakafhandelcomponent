@@ -83,12 +83,16 @@ public class OntkoppeldeDocumentenService {
         return emQuery.getResultList();
     }
 
-    public OntkoppeldDocument read(final UUID documentUUID) {
+    public OntkoppeldDocument readByDocumentUUID(final UUID documentUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
         query.select(root).where(builder.equal(root.get("documentUUID"), documentUUID));
         return entityManager.createQuery(query).getSingleResult();
+    }
+
+    public OntkoppeldDocument read(final long id) {
+        return entityManager.find(OntkoppeldDocument.class, id);
     }
 
     public int count() {

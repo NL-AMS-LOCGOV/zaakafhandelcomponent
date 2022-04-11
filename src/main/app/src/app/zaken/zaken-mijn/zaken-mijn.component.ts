@@ -101,7 +101,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
 
     initialColumns(): Map<string, ColumnPickerValue> {
         return new Map([
-            ['identificatie', ColumnPickerValue.VISIBLE],
+            ['zaak.identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.VISIBLE],
             ['zaaktype', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.HIDDEN],
