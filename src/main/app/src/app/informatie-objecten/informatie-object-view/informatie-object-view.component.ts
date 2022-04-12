@@ -23,6 +23,7 @@ import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
+import {FileFormat} from '../model/file-format';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -31,6 +32,7 @@ import {ViewComponent} from '../../shared/abstract-view/view-component';
 export class InformatieObjectViewComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
+    documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
@@ -51,6 +53,7 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
+            this.documentPreviewBeschikbaar = this.infoObject.formaat === FileFormat.PDF;
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
             this.documentListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
