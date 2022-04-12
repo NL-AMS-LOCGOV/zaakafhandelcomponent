@@ -19,6 +19,7 @@ import {NotitiesComponent} from '../notities/notities.component';
 import {KlantenModule} from '../klanten/klanten.module';
 import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
 import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
+import {PlanItemsModule} from '../plan-items/plan-items.module';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import {InformatieObjectenModule} from '../informatie-objecten/informatie-object
         SharedModule,
         ZakenRoutingModule,
         KlantenModule,
-        InformatieObjectenModule
+        InformatieObjectenModule,
+        PlanItemsModule
     ]
 })
 export class ZakenModule {

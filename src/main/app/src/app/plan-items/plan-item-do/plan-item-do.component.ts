@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
@@ -21,6 +21,7 @@ import {Observable} from 'rxjs';
 import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
+    selector: 'zac-plan-item-do',
     templateUrl: './plan-item-do.component.html',
     styleUrls: ['./plan-item-do.component.less']
 })
@@ -28,8 +29,9 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
 
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
-    private planItem: PlanItem;
     private formulier: AbstractFormulier;
+    @Input() planItem: PlanItem;
+    @Output() done = new EventEmitter<void>();
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
                 private router: Router, private navigation: NavigationService, private utilService: UtilService,
@@ -37,7 +39,6 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.planItem = this.route.snapshot.data['planItem'];
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
@@ -59,16 +60,13 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
     }
 
     onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
-            if (this.planItem.type === PlanItemType.HumanTask) {
-                this.planItem = this.formulier.getPlanItem(formGroup);
-            }
-            this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
-                this.navigation.back();
-            });
-        } else {
-            this.navigation.back();
+        if (this.planItem.type === PlanItemType.HumanTask) {
+            this.planItem = this.formulier.getPlanItem(formGroup);
         }
+        this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
+            this.done.emit();
+        });
+
     }
 
     reloadMedewerkersOnChange() {

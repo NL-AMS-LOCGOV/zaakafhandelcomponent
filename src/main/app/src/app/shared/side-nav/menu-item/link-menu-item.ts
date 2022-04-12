@@ -5,7 +5,7 @@
 
 import {MenuItem, MenuItemType} from './menu-item';
 
-export class LinkMenuTitem extends MenuItem {
+export class LinkMenuItem extends MenuItem {
 
     readonly type: MenuItemType = MenuItemType.LINK;
 
