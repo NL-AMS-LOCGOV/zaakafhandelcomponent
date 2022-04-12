@@ -42,6 +42,7 @@ public class CmmnEngineLookupImpl implements CmmnEngineLookup {
         cmmnEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);
         cmmnEngineConfiguration.addPlanItemInstanceLifeCycleListener(STAGE, new UpdateZaakLifecycleListener(AVAILABLE, ACTIVE));
         cmmnEngineConfiguration.addPlanItemInstanceLifeCycleListener(MILESTONE, new UpdateZaakLifecycleListener(ACTIVE, COMPLETED));
+        cmmnEngineConfiguration.setEnableHistoricTaskLogging(true);
         CaseInstanceState.END_STATES.forEach(
                 endState -> cmmnEngineConfiguration.addCaseInstanceLifeCycleListener(new EndCaseLifecycleListener(CaseInstanceState.ACTIVE, endState)));
         cmmnEngineConfiguration.setCreateHumanTaskInterceptor(new CreateHumanTaskInterceptor());
