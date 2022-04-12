@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -35,6 +37,9 @@ public class RESTPlanItemConverter {
     @Inject
     private RESTGroepConverter groepConverter;
 
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
     public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final UUID zaakUuid) {
         return planItems.stream().map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid)).collect(Collectors.toList());
     }
@@ -46,6 +51,9 @@ public class RESTPlanItemConverter {
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
         restPlanItem.toelichtingVereist = planItem.getName().contains(TOELICHTING_VEREIST_MARKER);
+        if (USER_EVENT_LISTENER == convertDefinitionType(planItem.getPlanItemDefinitionType())) {
+            restPlanItem.uitleg = zaakafhandelParameterService.getUserEventParameters(planItem).getToelichting();
+        }
         return restPlanItem;
     }
 

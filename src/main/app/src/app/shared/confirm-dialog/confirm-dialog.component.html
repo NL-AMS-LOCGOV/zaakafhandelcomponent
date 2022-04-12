@@ -3,7 +3,10 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div mat-dialog-content [innerHTML]="data.melding"></div>
+<div mat-dialog-content>
+    <p [innerHTML]="data.melding"></p>
+    <p *ngIf="data.uitleg" class="uitleg" [innerHTML]="data.uitleg"></p>
+</div>
 <div mat-dialog-actions>
     <button [disabled]="loading" mat-button color="primary" (click)="confirm()" id="confirmButton">
         <mat-icon *ngIf="loading">

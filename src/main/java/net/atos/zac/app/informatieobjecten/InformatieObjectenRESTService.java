@@ -57,7 +57,6 @@ import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
-import net.atos.zac.util.UriUtil;
 
 @Singleton
 @Path("informatieobjecten")
@@ -128,7 +127,7 @@ public class InformatieObjectenRESTService {
 
     @POST
     @Path("informatieobject/{zaakUuid}")
-    public UUID createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
+    public RESTEnkelvoudigInformatieobject createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
@@ -136,7 +135,7 @@ public class InformatieObjectenRESTService {
         final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
                                                                                                           restEnkelvoudigInformatieobject.beschrijving,
                                                                                                           OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
-        return UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject());
+        return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
 
     @POST

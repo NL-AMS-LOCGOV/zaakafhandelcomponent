@@ -19,6 +19,7 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../../taken/taken.service';
 import * as moment from 'moment/moment';
+import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
@@ -42,7 +43,8 @@ export class AanvullendeInformatie extends AbstractFormulier {
         DATUMGEVRAAGD: 'datumGevraagd',
         DATUMGELEVERD: 'datumGeleverd',
         OPMERKINGEN: 'opmerkingen',
-        BIJLAGE: 'bijlage'
+        BIJLAGE: 'bijlage',
+        AANVULLENDE_INFORMATIE: 'aanvullendeInformatie'
     };
 
     constructor(translate: TranslateService, public takenService: TakenService,
@@ -79,7 +81,16 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                           .readonly(true).build(),
                 new DateFormFieldBuilder().id(fields.DATUMGELEVERD).label(fields.DATUMGELEVERD).value(this.getDataElement(fields.DATUMGELEVERD))
                                           .readonly(this.isAfgerond()).build()
-            ]
+            ],
+            [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
+                                        .label(fields.AANVULLENDE_INFORMATIE)
+                                        .readonly(this.isAfgerond())
+                                        .value(this.isAfgerond() ?
+                                            this.translate.instant(this.getDataElement(fields.AANVULLENDE_INFORMATIE)) :
+                                            this.getDataElement(fields.AANVULLENDE_INFORMATIE))
+                                        .options(this.getAanvullendeInformatieOpties())
+                                        .validators(Validators.required)
+                                        .readonly(this.isAfgerond()).build()],
         );
         if (this.isAfgerond()) {
             this.form.push(
@@ -121,6 +132,14 @@ export class AanvullendeInformatie extends AbstractFormulier {
         } else {
             return this.translate.instant('title.taak.aanvullende-informatie.behandelen');
         }
+    }
+
+    getAanvullendeInformatieOpties(): Observable<string[]> {
+        return of([
+            'aanvullende-informatie.geleverd-akkoord',
+            'aanvullende-informatie.geleverd-niet-akkoord',
+            'aanvullende-informatie.niet-geleverd'
+        ]);
     }
 }
 

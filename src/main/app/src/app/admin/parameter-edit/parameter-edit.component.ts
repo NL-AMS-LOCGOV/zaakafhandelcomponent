@@ -27,6 +27,7 @@ import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
+import {UserEventListenerParameter} from '../model/user-event-listener-parameter';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -40,11 +41,13 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     parameters: ZaakafhandelParameters;
     planItemParameters: PlanItemParameter[] = [];
+    userEventListenerParameters: UserEventListenerParameter[] = [];
     zaakbeeindigParameters: ZaakbeeindigParameter[] = [];
     selection = new SelectionModel<ZaakbeeindigParameter>(true);
 
     algemeenFormGroup: FormGroup;
     planItemFormGroup: FormGroup;
+    UserEventListenerFormGroup: FormGroup;
     zaakbeeindigFormGroup: FormGroup;
 
     caseDefinitionControl = new FormControl(null, [Validators.required]);
@@ -63,6 +66,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         super();
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
+            this.userEventListenerParameters = this.parameters.userEventListenerParameters;
             this.planItemParameters = this.parameters.planItemParameters;
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
             this.groepControl.setValue(this.parameters.defaultGroep);
@@ -120,6 +124,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             behandelaarControl: this.behandelaarControl
         });
         this.updatePlanItemForm();
+        this.updateUserEventListenerForm();
         this.createZaakbeeindigForm();
     }
 
@@ -138,6 +143,17 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         return this.getPlanItemControl(planItemParameter, 'defaultGroep').valid &&
             this.getPlanItemControl(planItemParameter, 'formulierDefinitie').valid &&
             this.getPlanItemControl(planItemParameter, 'doorlooptijd').valid;
+    }
+
+    getActieControl(parameter: UserEventListenerParameter, field: string): FormControl {
+        return this.UserEventListenerFormGroup.get(`${parameter.id}__${field}`) as FormControl;
+    }
+
+    updateUserEventListenerForm() {
+        this.UserEventListenerFormGroup = this.formBuilder.group({});
+        this.userEventListenerParameters.forEach(parameter => {
+            this.UserEventListenerFormGroup.addControl(parameter.id + '__toelichting', new FormControl(parameter.toelichting));
+        });
     }
 
     createZaakbeeindigForm() {
@@ -207,6 +223,11 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             param.doorlooptijd = this.getPlanItemControl(param, 'doorlooptijd').value;
         });
         this.parameters.planItemParameters = this.planItemParameters;
+
+        this.userEventListenerParameters.forEach(param => {
+           param.toelichting = this.getActieControl(param, 'toelichting').value;
+        });
+        this.parameters.userEventListenerParameters = this.userEventListenerParameters;
 
         this.selection.selected.forEach(param => {
             param.zaakResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;

@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {UtilService} from '../../core/service/util.service';
@@ -29,28 +28,28 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {IdentityService} from '../../identity/identity.service';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
-import {AbstractFileFormField} from '../../shared/material-form-builder/model/abstract-file-form-field';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
+    selector: 'zac-informatie-object-create',
     templateUrl: './informatie-object-create.component.html',
     styleUrls: ['./informatie-object-create.component.less']
 })
 export class InformatieObjectCreateComponent implements OnInit {
 
+    @Input() zaak: Zaak;
+    @Input() sideNav: MatSidenav;
+    @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
+
     @ViewChild(FormComponent) form: FormComponent;
 
-    zaakUuid: string;
-    zaak: Zaak;
     fields: Array<AbstractFormField[]>;
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
     ingelogdeMedewerker: Medewerker;
-    inhoudField: AbstractFileFormField;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
-                private route: ActivatedRoute,
-                private router: Router,
                 private navigation: NavigationService,
                 public utilService: UtilService,
                 private configuratieService: ConfiguratieService,
@@ -60,89 +59,88 @@ export class InformatieObjectCreateComponent implements OnInit {
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
-        this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
         this.getIngelogdeMedewerker();
 
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
 
-        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.utilService.setTitle('title.document.aanmaken', {zaak: zaak.identificatie});
+        this.utilService.setTitle('title.document.aanmaken', {zaak: this.zaak.identificatie});
 
-            const titel = new InputFormFieldBuilder().id('titel').label('titel')
-                                                     .validators(Validators.required)
-                                                     .build();
+        const titel = new InputFormFieldBuilder().id('titel').label('titel')
+                                                 .validators(Validators.required)
+                                                 .build();
 
-            const beschrijving = new InputFormFieldBuilder().id('beschrijving')
-                                                            .label('beschrijving')
-                                                            .build();
+        const beschrijving = new InputFormFieldBuilder().id('beschrijving')
+                                                        .label('beschrijving')
+                                                        .build();
 
-            this.inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                         .uploadURL(
-                                                             this.informatieObjectenService.getUploadURL(this.zaakUuid))
+        const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
+                                                      .uploadURL(
+                                                          this.informatieObjectenService.getUploadURL(this.zaak.uuid))
+                                                      .validators(Validators.required)
+                                                      .build();
+
+        const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum')
+                                                           .label('creatiedatum')
+                                                           .value(moment())
+                                                           .validators(Validators.required)
+                                                           .build();
+
+        const taal = new SelectFormFieldBuilder().id('taal').label('taal')
+                                                 .value$(this.configuratieService.defaultTaal())
+                                                 .optionLabel('naam').options(this.configuratieService.listTalen())
+                                                 .validators(Validators.required)
+                                                 .build();
+
+        const status = new SelectFormFieldBuilder().id('status').label('status')
+                                                   .validators(Validators.required)
+                                                   .optionLabel('label').options(informatieobjectStatussen)
+                                                   .build();
+
+        const documentType = new SelectFormFieldBuilder().id('informatieobjectType')
+                                                         .label('informatieobjectType')
+                                                         .options(
+                                                             this.informatieObjectenService.listInformatieobjecttypes(
+                                                                 this.zaak.zaaktype.uuid))
+                                                         .optionLabel('omschrijving')
                                                          .validators(Validators.required)
                                                          .build();
 
-            const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum')
-                                                               .label('creatiedatum')
-                                                               .value(moment())
-                                                               .validators(Validators.required)
-                                                               .build();
+        const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
+                                                  .validators(Validators.required)
+                                                  .value(this.ingelogdeMedewerker.naam)
+                                                  .build();
 
-            const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                     .value$(this.configuratieService.defaultTaal())
-                                                     .optionLabel('naam').options(this.configuratieService.listTalen())
-                                                     .validators(Validators.required)
-                                                     .build();
+        const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
+                                                          .label('vertrouwelijkheidaanduiding')
+                                                          .optionLabel('label')
+                                                          .options(vertrouwelijkheidsAanduidingen)
+                                                          .validators(Validators.required)
+                                                          .build();
 
-            const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                       .validators(Validators.required)
-                                                       .optionLabel('label').options(informatieobjectStatussen)
+        const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
+                                                       .label(this.translateService.instant(
+                                                           'actie.document.aanmaken.nogmaals'))
                                                        .build();
 
-            const documentType = new SelectFormFieldBuilder().id('informatieobjectType')
-                                                             .label('informatieobjectType')
-                                                             .options(
-                                                                 this.informatieObjectenService.listInformatieobjecttypes(
-                                                                     zaak.zaaktype.uuid))
-                                                             .optionLabel('omschrijving')
-                                                             .validators(Validators.required)
-                                                             .build();
+        this.fields =
+            [[inhoudField], [titel], [beschrijving], [documentType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
 
-            const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
-                                                      .validators(Validators.required)
-                                                      .value(this.ingelogdeMedewerker.naam)
-                                                      .build();
-
-            const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
-                                                              .label('vertrouwelijkheidaanduiding')
-                                                              .optionLabel('label')
-                                                              .options(vertrouwelijkheidsAanduidingen)
-                                                              .validators(Validators.required)
-                                                              .build();
-
-            const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
-                                                           .label(this.translateService.instant(
-                                                               'actie.document.aanmaken.nogmaals'))
-                                                           .build();
-
-            this.fields =
-                [[this.inhoudField], [titel], [beschrijving], [documentType, vertrouwelijk, beginRegistratie], [auteur, status, taal], [nogmaals]];
-
-            let vorigeBestandsnaam = null;
-            this.inhoudField.fileUploaded.subscribe(bestandsnaam => {
-                const titelCtrl = titel.formControl;
-                if (!titelCtrl.value || titelCtrl.value === vorigeBestandsnaam) {
-                    titelCtrl.setValue(bestandsnaam.replace(/\.[^/.]+$/, ''));
-                    vorigeBestandsnaam = '' + titelCtrl.value;
-                }
-            });
-
-            documentType.formControl.valueChanges.subscribe(value => {
-                vertrouwelijk.formControl.setValue(vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
-            });
+        let vorigeBestandsnaam = null;
+        inhoudField.fileUploaded.subscribe(bestandsnaam => {
+            const titelCtrl = titel.formControl;
+            if (!titelCtrl.value || titelCtrl.value === vorigeBestandsnaam) {
+                titelCtrl.setValue(bestandsnaam.replace(/\.[^/.]+$/, ''));
+                vorigeBestandsnaam = '' + titelCtrl.value;
+            }
         });
+
+        documentType.formControl.valueChanges.subscribe(value => {
+            if (value) {
+                vertrouwelijk.formControl.setValue(vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
+            }
+        });
+
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -165,28 +163,38 @@ export class InformatieObjectCreateComponent implements OnInit {
             });
 
             this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak.uuid, infoObject)
-                .subscribe(() => {
+                .subscribe((document) => {
+                    this.document.emit(document);
                     this.utilService.openSnackbar('msg.document.toegevoegd.aan.zaak');
                     if (formGroup.get('nogmaals').value) {
                         this.resetForm(formGroup);
                     } else {
-                        this.router.navigate(['/zaken/', this.zaak.identificatie]);
+                        this.clearForm(formGroup);
+                        this.sideNav.close();
                     }
                 });
-        } else {
-            this.navigation.back();
         }
     }
 
     resetForm(formGroup: FormGroup) {
-        this.inhoudField.reset();
-        this.inhoudField.formControl.setErrors(null);
+        formGroup.get('bestandsnaam').reset();
+        formGroup.get('bestandsnaam').setErrors(null);
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('beschrijving').reset();
         formGroup.get('nogmaals').setValue(false);
         this.form.reset();
         formGroup.setErrors({invalid: true});
+    }
+
+    clearForm(formGroup: FormGroup) {
+        formGroup.get('status').reset();
+        formGroup.get('status').setErrors(null);
+        formGroup.get('vertrouwelijkheidaanduiding').reset();
+        formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
+        formGroup.get('informatieobjectType').reset();
+        formGroup.get('informatieobjectType').setErrors(null);
+        this.resetForm(formGroup);
     }
 
     private getIngelogdeMedewerker() {

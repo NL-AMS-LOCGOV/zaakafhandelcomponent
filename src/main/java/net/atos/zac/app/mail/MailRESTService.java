@@ -41,25 +41,26 @@ public class MailRESTService {
 
     @POST
     @Path("send/{zaakUuid}")
-    // ToDo #726
-    public MailjetResponse sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
+    public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
-        return mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
-                                    restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
+        if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
+        }
+
+        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
+                             restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
     }
 
     @POST
     @Path("acknowledge/{zaakUuid}")
-    // ToDo #726
-    public MailjetResponse sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
+    public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            return new MailjetResponse(Response.Status.BAD_REQUEST.getStatusCode(), "email is not valid");
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
 
-        final MailjetResponse mailjetResponse = mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                                                                     restMailObject.createDocumentFromMail, zaakUuid);
+        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
+                             restMailObject.createDocumentFromMail, zaakUuid);
         flowableService.createVariableForCase(zaakUuid, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, Boolean.TRUE);
-        return mailjetResponse;
     }
 }
