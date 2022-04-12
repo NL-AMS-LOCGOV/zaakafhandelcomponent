@@ -7,6 +7,7 @@ package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricTaskLogEntry;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,8 +50,10 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
+import net.atos.zac.app.taken.converter.RESTTaakHistorieConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
+import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.app.taken.model.TaakSortering;
@@ -65,8 +69,6 @@ import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
  *
@@ -85,9 +87,6 @@ public class TakenRESTService {
 
     @Inject
     private EventingService eventingService;
-
-    @Inject
-    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     @IngelogdeMedewerker
@@ -109,47 +108,52 @@ public class TakenRESTService {
     @Inject
     private SignaleringenService signaleringenService;
 
+    @Inject
+    private RESTTaakHistorieConverter taakHistorieConverter;
+
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<Task> tasks = flowableService.listOpenTasksForGroups(ingelogdeMedewerker.get().getGroupIds(),
-                                                                        TaakSortering.fromValue(tableState.getSort().getPredicate()),
-                                                                        tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
-                                                                        tableState.getPagination().getPageSize());
-        final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksForGroups(ingelogdeMedewerker.get().getGroupIds()));
+        final List<Task> tasks = flowableService.listOpenTasksAssignedToGroups(ingelogdeMedewerker.get().getGroupIds(),
+                                                                               TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                                                               tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
+                                                                               tableState.getPagination().getPageSize());
+        final List<RESTTaak> taken = taakConverter.convertTasksForOpenCase(tasks);
+        return new TableResponse<>(taken, flowableService.countOpenTasksAssignedToGroups(ingelogdeMedewerker.get().getGroupIds()));
     }
 
     @GET
     @Path("mijn")
     public TableResponse<RESTTaak> listMijnTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<Task> tasks = flowableService.listOpenTasksOwnedByMedewerker(ingelogdeMedewerker.get().getGebruikersnaam(),
-                                                                                TaakSortering.fromValue(tableState.getSort().getPredicate()),
-                                                                                tableState.getSort().getDirection(),
-                                                                                tableState.getPagination().getFirstResult(),
-                                                                                tableState.getPagination().getPageSize());
-        final List<RESTTaak> taken = taakConverter.convertTaskInfoList(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksOwnedByMedewerker(ingelogdeMedewerker.get().getGebruikersnaam()));
+        final List<Task> tasks = flowableService.listOpenTasksAssignedToUser(ingelogdeMedewerker.get().getGebruikersnaam(),
+                                                                             TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                                                             tableState.getSort().getDirection(),
+                                                                             tableState.getPagination().getFirstResult(),
+                                                                             tableState.getPagination().getPageSize());
+        final List<RESTTaak> taken = taakConverter.convertTasksForOpenCase(tasks);
+        return new TableResponse<>(taken, flowableService.countOpenTasksAssignedToUser(ingelogdeMedewerker.get().getGebruikersnaam()));
     }
-
 
     @GET
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> listTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
-        final List<TaskInfo> tasks = flowableService.listAllTasksForZaak(zaakUUID);
-        return taakConverter.convertTaskInfoList(tasks);
+        if (flowableService.isOpenCase(zaakUUID)) {
+            final List<TaskInfo> tasks = flowableService.listTasksForOpenCase(zaakUUID);
+            return taakConverter.convertTasksForOpenCase(tasks);
+        } else {
+            final List<HistoricTaskInstance> tasks = flowableService.listTasksForClosedCase(zaakUUID);
+            return taakConverter.convertTasksForClosedCase(tasks);
+        }
     }
 
     @GET
     @Path("{taskId}")
     public RESTTaak readTaak(@PathParam("taskId") final String taskId) {
-        final TaskInfo task = flowableService.readTaskInfo(taskId);
-        final FormulierDefinitie formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(task);
-        final Map<String, String> taakdata = flowableService.readTaakdata(taskId);
+        final TaskInfo task = flowableService.readTask(taskId);
         deleteSignaleringen(task);
-        return taakConverter.convertTaskInfo(task, formulierDefinitie, taakdata);
+        return taakConverter.convertTask(task);
     }
 
     @PUT
@@ -184,16 +188,8 @@ public class TakenRESTService {
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        final TaskInfo taskInfo = assignTaak(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam(),
-                                             restTaakToekennenGegevens.zaakUuid);
-        return taakConverter.convertTaskInfo(taskInfo);
-    }
-
-    private TaskInfo assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
-        final TaskInfo taskInfo = flowableService.assignTask(taakId, assignee);
-        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, taskInfo, ingelogdeMedewerker.get()));
-        taakBehandelaarGewijzigd(taskInfo, zaakUuid);
-        return taskInfo;
+        final Task task = assignTaak(restTaakToekennenGegevens.taakId, ingelogdeMedewerker.get().getGebruikersnaam(), restTaakToekennenGegevens.zaakUuid);
+        return taakConverter.convertTaskForOpenCase(task);
     }
 
     @PATCH
@@ -203,38 +199,15 @@ public class TakenRESTService {
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
     }
 
-    /**
-     * Methode voor het updaten van de taakgegevens inclusief de formulierdefinitie.
-     *
-     * @param restTaak Rest representatie van een taak.
-     * @return Een up to date taak inclusief de formulierdefinitie.
-     */
     @PATCH
     @Path("")
     public RESTTaak updateTaak(final RESTTaak restTaak) {
-        Task task = flowableService.readTask(restTaak.id);
-        taakConverter.convertRESTTaak(restTaak, task);
-        final Task updatedTask = flowableService.updateTask(task);
-        eventingService.send(TAAK.updated(updatedTask));
+        Task task = flowableService.readOpenTask(restTaak.id);
+        taakConverter.updateOpenTask(task, restTaak);
+        task = flowableService.updateTask(task);
+        eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertTaskInfo(updatedTask);
-    }
-
-    /**
-     * Methode voor het updaten van de taak gegevens exclusief de formulierdefinitie.
-     *
-     * @param restTaak Rest representatie van een taak.
-     * @return Een up to date taak exclusief de formulierdefinitie.
-     */
-    @PATCH
-    @Path("partial")
-    public RESTTaak partialUpdateTaak(final RESTTaak restTaak) {
-        Task task = flowableService.readTask(restTaak.id);
-        taakConverter.convertRESTTaak(restTaak, task);
-        final Task updatedTask = flowableService.updateTask(task);
-        eventingService.send(TAAK.updated(updatedTask));
-        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertPartialTaskInfo(updatedTask);
+        return taakConverter.convertTaskForOpenCase(task);
     }
 
     @PATCH
@@ -242,7 +215,7 @@ public class TakenRESTService {
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         if (restTaak.behandelaar == null || !restTaak.behandelaar.gebruikersnaam.equals(
                 ingelogdeMedewerker.get().getGebruikersnaam())) {
-            flowableService.assignTask(restTaak.id, ingelogdeMedewerker.get().getGebruikersnaam());
+            flowableService.assignTaskToUser(restTaak.id, ingelogdeMedewerker.get().getGebruikersnaam());
         }
 
         createDocuments(restTaak);
@@ -250,12 +223,7 @@ public class TakenRESTService {
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
-        return taakConverter.convertTaskInfo(task, taakdata);
-    }
-
-    private void taakBehandelaarGewijzigd(final TaskInfo taskInfo, final UUID zaakUuid) {
-        eventingService.send(TAAK.updated(taskInfo));
-        eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
+        return taakConverter.convertTaskForOpenCase(task);
     }
 
     @POST
@@ -265,6 +233,20 @@ public class TakenRESTService {
         String fileKey = String.format("_FILE__%s__%s", uuid, field);
         httpSession.get().setAttribute(fileKey, data);
         return Response.ok("\"Success\"").build();
+    }
+
+    @GET
+    @Path("{taskId}/historie")
+    public List<RESTTaakHistorieRegel> listHistorie(@PathParam("taskId") final String taskId) {
+        final List<HistoricTaskLogEntry> historicTaskLogEntries = flowableService.listHistorieForTask(taskId);
+        return taakHistorieConverter.convert(historicTaskLogEntries);
+    }
+
+    private Task assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
+        final Task task = flowableService.assignTaskToUser(taakId, assignee);
+        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, task, ingelogdeMedewerker.get()));
+        taakBehandelaarGewijzigd(task, zaakUuid);
+        return task;
     }
 
     private void createDocuments(final RESTTaak restTaak) {
@@ -303,6 +285,11 @@ public class TakenRESTService {
         signaleringenService.deleteSignaleringen(
                 new SignaleringZoekParameters(ingelogdeMedewerker.get())
                         .types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
-                        .subjectZaak(flowableService.readZaakUuidForTask(taskInfo.getId())));
+                        .subjectZaak((UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID)));
+    }
+
+    private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
+        eventingService.send(TAAK.updated(task));
+        eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
     }
 }

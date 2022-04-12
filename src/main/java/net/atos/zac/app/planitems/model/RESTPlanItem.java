@@ -38,4 +38,6 @@ public class RESTPlanItem {
     public String toelichting;
 
     public RESTTaakStuurGegevens taakStuurGegevens;
+
+    public String uitleg;
 }

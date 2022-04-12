@@ -6,6 +6,8 @@
 package net.atos.zac.flowable.cmmn;
 
 import static java.lang.String.format;
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_RESULTAAT_TOELICHTING;
+import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
 import static org.apache.commons.lang3.StringUtils.substringBetween;
 
 import java.util.UUID;
@@ -18,7 +20,6 @@ import org.flowable.common.engine.api.delegate.Expression;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.FlowableHelper;
-import net.atos.zac.flowable.FlowableService;
 
 /**
  *
@@ -99,7 +100,7 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
     }
 
     private void updateZaak(final String caseInstanceId, final String statustypeOmschrijving, final String resultaattypeOmschrijving) {
-        final UUID zaakUUID = FlowableHelper.getInstance().getFlowableService().readZaakUuidForCase(caseInstanceId);
+        final UUID zaakUUID = (UUID) FlowableHelper.getInstance().getFlowableService().readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
         final Zaak zaak = FlowableHelper.getInstance().getZrcClientService().readZaak(zaakUUID);
         if (statustypeOmschrijving != null) {
             LOG.info(format("Zaak %s: Change Status to '%s'", zaakUUID, statustypeOmschrijving));
@@ -107,7 +108,7 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
         }
         if (resultaattypeOmschrijving != null) {
             final String resultaatToelichting = (String) FlowableHelper.getInstance().getFlowableService()
-                    .findVariableForCase(caseInstanceId, FlowableService.VAR_CASE_RESULTAAT_TOELICHTING);
+                    .findOpenCaseVariable(caseInstanceId, VAR_CASE_RESULTAAT_TOELICHTING);
             LOG.info(format("Zaak %s: Change Resultaat to '%s'", zaakUUID, resultaattypeOmschrijving));
             FlowableHelper.getInstance().getZgwApiService()
                     .createResultaatForZaak(zaak, resultaattypeOmschrijving,

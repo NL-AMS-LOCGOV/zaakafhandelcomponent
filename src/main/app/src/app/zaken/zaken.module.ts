@@ -18,6 +18,7 @@ import {ZakenVrijgevenDialogComponent} from './zaken-vrijgeven-dialog/zaken-vrij
 import {NotitiesComponent} from '../notities/notities.component';
 import {KlantenModule} from '../klanten/klanten.module';
 import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
+import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
     imports: [
         SharedModule,
         ZakenRoutingModule,
-        KlantenModule
+        KlantenModule,
+        InformatieObjectenModule
     ]
 })
 export class ZakenModule {

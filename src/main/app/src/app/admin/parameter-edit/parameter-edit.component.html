@@ -127,6 +127,39 @@
                     </form>
                 </ng-template>
             </mat-step>
+
+            <mat-step [stepControl]="UserEventListenerFormGroup">
+                <ng-template matStepLabel>{{"gegevens.acties" | translate}}</ng-template>
+                <ng-template matStepContent>
+                    <form [formGroup]="UserEventListenerFormGroup" fxLayout="column">
+                        <mat-accordion>
+                            <mat-expansion-panel fxLayout="column" *ngFor="let actieParameter of userEventListenerParameters">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{actieParameter.naam}}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div fxLayout="row wrap">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
+                                                    floatLabel="always">
+                                        <mat-label>{{'toelichting' | translate}}</mat-label>
+                                        <textarea matInput class="toelichting"
+                                               [formControl]="getActieControl(actieParameter, 'toelichting')"></textarea>
+                                    </mat-form-field>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                        <div class="button-group" fxLayout="row wrap">
+                            <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="zaakbeeindigParameters.length == 0"
+                                    matStepperNext>{{"actie.volgende" | translate}}</button>
+                            <button mat-raised-button color="primary" (click)="opslaan()"
+                                    [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
+                        </div>
+                    </form>
+                </ng-template>
+            </mat-step>
+
             <mat-step [stepControl]="zaakbeeindigFormGroup">
                 <ng-template matStepLabel>{{"gegevens.beeindiging" | translate}}</ng-template>
                 <ng-template matStepContent>

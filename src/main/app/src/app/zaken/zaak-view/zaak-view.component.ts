@@ -250,8 +250,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new LinkMenuTitem('actie.document.aanmaken', `/informatie-objecten/create/${this.zaak.uuid}`,
-            'upload_file'));
+        this.menu.push(new ButtonMenuItem('actie.document.aanmaken', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+        }, 'upload_file'));
 
         this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
 
@@ -313,7 +315,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createPlanItemStartenConfirmDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ConfirmDialogComponent,
-            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem))
+            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem), planItem.uitleg)
         };
     }
 
@@ -323,7 +325,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             dialogData: new DialogData(
                 new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
                 (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
-                melding)
+                melding, planItem.uitleg)
         };
     }
 
@@ -488,8 +490,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
 
         const zaak: Zaak = new Zaak();
-        zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
-        this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+        if (locatie) {
+            zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+            this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
+        }
 
         this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak);
@@ -591,6 +595,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return 'BEDRIJF';
         }
         return null;
+    }
+
+    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
     }
 
     isPreviewBeschikbaar(formaat: string): boolean {

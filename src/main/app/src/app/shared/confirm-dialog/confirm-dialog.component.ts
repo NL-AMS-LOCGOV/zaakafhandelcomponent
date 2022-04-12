@@ -9,7 +9,8 @@ import {Observable} from 'rxjs';
 
 @Component({
     selector: 'zac-confirm-dialog',
-    templateUrl: 'confirm-dialog.component.html'
+    templateUrl: 'confirm-dialog.component.html',
+    styleUrls: ['./confirm-dialog.component.less']
 })
 
 export class ConfirmDialogComponent {
@@ -38,6 +39,6 @@ export class ConfirmDialogComponent {
 }
 
 export class ConfirmDialogData {
-    constructor(public melding: string, public observable?: Observable<any>) {
+    constructor(public melding: string, public observable?: Observable<any>, public uitleg?: string) {
     }
 }

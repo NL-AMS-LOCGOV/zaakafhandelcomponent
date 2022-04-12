@@ -46,6 +46,9 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
     private readonly EPSG3857: string = 'EPSG:3857';
     private readonly EXTENT_MATRIX: number = 20;
 
+    private readonly DEFAULT_ZOOM: number = 8;
+    private readonly MAX_ZOOM: number = 14;
+
     private layers: any[];
 
     private defaultStyle: style.Style = new style.Style({
@@ -116,7 +119,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
             projection: proj.get(this.EPSG3857),
             center: [631711.827985, 6856275.890632],
             constrainResolution: true,
-            zoom: 8
+            zoom: this.DEFAULT_ZOOM
         });
 
         const interactions = interaction.defaults({
@@ -194,6 +197,12 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         }
     }
 
+    clear(): void {
+        if (this.selectedAddress) {
+            this.locatie.next(null);
+        }
+    }
+
     save(): void {
         if (this.selectedAddress) {
             this.locatie.next(this.selectedAddress);
@@ -208,13 +217,11 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     setAddress(address) {
         this.selectedAddress = address;
-        const locationCoordinates = LocationUtil.centroide_llToArray(address.centroide_ll);
-        const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
+        const locationCoordinates: Array<number> = LocationUtil.centroide_llToArray(address.centroide_ll);
 
-        this.map.getView().setCenter(mapCenter);
         this.addMarker(locationCoordinates);
 
-        this.zoomToLocation(this.locationSource);
+        this.zoomToLocation(this.locationSource, locationCoordinates);
     }
 
     private addMarker(locationCoordinates: Coordinate) {
@@ -230,12 +237,17 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     }
 
-    private zoomToLocation(sourceLayer: source.Vector): void {
-        const locationExtent = sourceLayer.getExtent();
-        this.map.getView().fit(locationExtent, {
-            size: this.map.getSize(),
-            maxZoom: 14
-        });
+    private zoomToLocation(sourceLayer: source.Vector, locationCoordinates: Array<number>): void {
+        if (this.map.getView().getZoom() < this.MAX_ZOOM) {
+            const mapCenter: Array<number> = proj.transform(locationCoordinates, 'EPSG:4326', 'EPSG:3857');
+            this.map.getView().setCenter(mapCenter);
+
+            const locationExtent = sourceLayer.getExtent();
+            this.map.getView().fit(locationExtent, {
+                size: this.map.getSize(),
+                maxZoom: this.MAX_ZOOM
+            });
+        }
     }
 
     private clearFeatures(): void {

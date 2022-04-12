@@ -94,6 +94,10 @@
             <mat-menu #accountMenu="matMenu">
                 <h4 class="user-name" fxHide.xs>{{ ingelogdeMedewerker?.naam }}</h4>
                 <mat-divider fxHide.gt-xs></mat-divider>
+                <button [routerLink]="['/signaleringen/settings']" id="signaleringen_button" mat-menu-item routerLinkActive="active">
+                    <mat-icon>settings</mat-icon>
+                    <span>{{'actie.mijn.signaleringen.settings' | translate}}</span>
+                </button>
                 <button aria-label="Uitloggen" id="uitloggen_button" mat-menu-item>
                     <mat-icon>logout</mat-icon>
                     <span>{{'actie.uitloggen' | translate}}</span>

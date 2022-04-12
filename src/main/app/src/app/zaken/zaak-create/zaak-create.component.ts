@@ -133,7 +133,7 @@ export class ZaakCreateComponent implements OnInit {
 
     locatieGeselecteerd(locatie: AddressResult): void {
         this.locatie = locatie;
-        this.locatieField.formControl.setValue(locatie.weergavenaam);
+        this.locatieField.formControl.setValue(locatie?.weergavenaam);
         this.actionsSidenav.close();
     }
 

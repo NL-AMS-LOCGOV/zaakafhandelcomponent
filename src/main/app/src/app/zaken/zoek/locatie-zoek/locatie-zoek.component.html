@@ -10,13 +10,17 @@
         </div>
         <div fxFlex="20" fxLayoutAlign="center center">
             <button mat-flat-button color="primary"
-
                     [disabled]="!selectedAddress"
                     id="opslaan_button"
                     (click)="save()"
                     type="button">
-                <mat-icon>save</mat-icon>
                 {{'actie.opslaan' | translate}}
+            </button>
+            <button mat-flat-button
+                    id="verwijder_button"
+                    (click)="clear()"
+                    type="button">
+                {{'actie.verwijderen' | translate}}
             </button>
         </div>
 
