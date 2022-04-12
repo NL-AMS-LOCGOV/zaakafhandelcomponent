@@ -44,7 +44,7 @@ public class MailRESTService {
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            throw new RuntimeException("email is not valid");
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
 
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
@@ -56,7 +56,7 @@ public class MailRESTService {
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
-            throw new RuntimeException("email is not valid");
+            throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
 
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
