@@ -43,6 +43,10 @@ public class MailRESTService {
     @Path("send/{zaakUuid}")
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
+        if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
+            throw new RuntimeException("email is not valid");
+        }
+
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
                              restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
     }
@@ -51,6 +55,10 @@ public class MailRESTService {
     @Path("acknowledge/{zaakUuid}")
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
             final RESTMailObject restMailObject) throws MailjetException {
+        if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
+            throw new RuntimeException("email is not valid");
+        }
+
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
                              restMailObject.createDocumentFromMail, zaakUuid);
         flowableService.createVariableForCase(zaakUuid, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, Boolean.TRUE);
