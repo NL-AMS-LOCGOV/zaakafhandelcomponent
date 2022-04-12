@@ -290,6 +290,6 @@ public class TakenRESTService {
 
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
         eventingService.send(TAAK.updated(task));
-        eventingService.send(ZAAK_TAKEN.updated(task));
+        eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
     }
 }
