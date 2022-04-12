@@ -26,6 +26,8 @@ public class RESTZaakafhandelParameters {
 
     public List<RESTPlanItemParameters> planItemParameters = new ArrayList<>();
 
+    public List<RESTUserEventListenerParameter> userEventListenerParameters = new ArrayList<>();
+
     public List<RESTZaakbeeindigParameter> zaakbeeindigParameters = new ArrayList<>();
 
     public RESTZaakafhandelParameters() {

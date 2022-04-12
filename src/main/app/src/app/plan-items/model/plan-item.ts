@@ -20,4 +20,5 @@ export class PlanItem {
     toelichtingVereist: boolean;
     toelichting: string;
     taakStuurGegevens: TaakStuurGegevens;
+    uitleg: string;
 }

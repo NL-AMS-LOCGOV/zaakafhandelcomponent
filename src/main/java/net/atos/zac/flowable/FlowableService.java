@@ -38,6 +38,7 @@ import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.HumanTask;
+import org.flowable.cmmn.model.UserEventListener;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.engine.HistoryService;
 import org.flowable.identitylink.api.IdentityLinkInfo;
@@ -389,6 +390,11 @@ public class FlowableService {
     public List<HumanTask> listHumanTasks(final String caseDefinitionKey) {
         final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
         return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
+    }
+
+    public List<UserEventListener> listUserEventListeners(final String caseDefinitionKey) {
+        final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
+        return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(UserEventListener.class);
     }
 
     /**
