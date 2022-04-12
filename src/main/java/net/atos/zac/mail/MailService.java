@@ -19,14 +19,12 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
-import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 
@@ -51,8 +49,9 @@ import net.atos.zac.mail.model.Verstuurder;
 public class MailService {
 
     private static final String MAILJET_API_KEY = ConfigProvider.getConfig().getValue("mailjet.api.key", String.class);
+
     private static final String MAILJET_API_SECRET_KEY = ConfigProvider.getConfig().getValue("mailjet.api.secret.key",
-                                                                                       String.class);
+                                                                                             String.class);
 
     private static final Logger LOG = Logger.getLogger(MailService.class.getName());
 
@@ -70,26 +69,32 @@ public class MailService {
     private Instance<Medewerker> ingelogdeMedewerker;
 
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
+
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public void sendMail(final String ontvanger, final String onderwerp, final String body,
-            final boolean createDocumentFromMail, final UUID zaakUuid) {
-        final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
-
+    public boolean sendMail(final Ontvanger ontvanger, final String onderwerp, final String body) {
+        final EMail eMail = new EMail(body, new Verstuurder(), List.of(ontvanger), onderwerp);
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JSONB.toJson(new EMails(List.of(eMail))));
-
-        MailjetResponse response = null;
         try {
-            response = mailjetClient.post(request);
+            final int status = mailjetClient.post(request).getStatus();
+            if (status < 300) {
+                return true;
+            }
+            LOG.log(Level.WARNING, String.format("Failed to send mail with subject '%s' (http result %d).", onderwerp, status));
         } catch (MailjetException e) {
-            LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s' on case '%s'.",
-                                                onderwerp, zaakUuid), e);
+            LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s'.", onderwerp), e);
         }
+        return false;
+    }
 
-        if (createDocumentFromMail && response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
+    public boolean sendMail(final String ontvanger, final String onderwerp, final String body,
+            final boolean createDocumentFromMail, final UUID zaakUuid) {
+        final boolean sent = sendMail(new Ontvanger(ontvanger), onderwerp, body);
+        if (sent && createDocumentFromMail) {
             createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
         }
+        return sent;
     }
 
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
