@@ -221,7 +221,7 @@ public class ZakenRESTService {
 
         zrcClientService.deleteZaakInformatieobject(zaakInformatieobjecten.get(0).getUuid(), ontkoppelGegevens.reden);
         if (findZakenInformatieobject(ontkoppelGegevens.documentUUID).isEmpty()) {
-            ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden); //TODO REDEN #692
+            ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }
     }
 
