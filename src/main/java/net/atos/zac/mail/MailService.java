@@ -6,6 +6,7 @@
 package net.atos.zac.mail;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -78,7 +78,7 @@ public class MailService {
         final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
 
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .setBody(JsonbBuilder.create().toJson(new EMails(List.of(eMail))));
+                .setBody(JSONB.toJson(new EMails(List.of(eMail))));
 
         MailjetResponse response = null;
         try {

@@ -5,10 +5,11 @@
 
 package net.atos.zac.datatable;
 
+import static net.atos.zac.util.JsonbUtil.JSONB;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import javax.json.bind.JsonbBuilder;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,7 +56,7 @@ public class TableRequest {
             //in de getQueryString ()is "tableRequest=" voor de querystring geplakt
             //deze er eerst afhalen voor het mappen
             final String decodeQueryString = URLDecoder.decode(request.getQueryString(), StandardCharsets.UTF_8).substring(13);
-            return JsonbBuilder.create().fromJson(decodeQueryString, TableRequest.class);
+            return JSONB.fromJson(decodeQueryString, TableRequest.class);
         }
 
         return new TableRequest();
