@@ -150,6 +150,14 @@ public class FlowableService {
         return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
     }
 
+    public List<Task> listOpenTasksforCase(final UUID zaakUUID) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            return listOpenTasksForCase(caseInstance.getId());
+        }
+        return null;
+    }
+
     public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = listEnabledPlanItemsForOpenCase(zaakUUID);
         planItems.addAll(listAvailableUserEventListenersForOpenCase(zaakUUID));

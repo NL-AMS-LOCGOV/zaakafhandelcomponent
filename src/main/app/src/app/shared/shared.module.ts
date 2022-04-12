@@ -34,6 +34,7 @@ import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker
 import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
 
 @NgModule({
     declarations: [
@@ -53,6 +54,7 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         ConfirmDialogComponent,
         DialogComponent,
         NoStickyColumnPipe,
+        TooltipListPipe,
         ColumnPickerComponent
     ],
     imports: [
@@ -89,6 +91,7 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,
+        TooltipListPipe,
         ColumnPickerComponent
     ],
     providers: [
