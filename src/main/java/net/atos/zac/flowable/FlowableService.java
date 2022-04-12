@@ -8,7 +8,9 @@ package net.atos.zac.flowable;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ASSIGNEE;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_CANDIDATE_GROUP;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_DUE_DATE;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_OWNER;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
+import static net.atos.zac.util.JsonbUtil.JSONB;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
@@ -21,6 +23,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -35,7 +38,9 @@ import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.HumanTask;
+import org.flowable.cmmn.model.UserEventListener;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
+import org.flowable.engine.HistoryService;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.idm.api.Group;
@@ -45,11 +50,14 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricTaskLogEntry;
 import org.flowable.variable.api.history.HistoricVariableInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
+import net.atos.zac.authentication.IngelogdeMedewerker;
+import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.mail.MailService;
 
 /**
@@ -73,6 +81,8 @@ public class FlowableService {
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
+    public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
+
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
     @Inject
@@ -92,6 +102,27 @@ public class FlowableService {
 
     @Inject
     private MailService mailService;
+
+    @Inject
+    private HistoryService historyService;
+
+    @Inject
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
+
+    public static class TaskDescriptionChangedData {
+
+        public String newDescription;
+
+        public String previousDescription;
+
+        public TaskDescriptionChangedData() {}
+
+        public TaskDescriptionChangedData(final String previousDescription, final String newDescription) {
+            this.newDescription = newDescription;
+            this.previousDescription = previousDescription;
+        }
+    }
 
     public List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
         final List<TaskInfo> tasks = new ArrayList<>();
@@ -171,8 +202,6 @@ public class FlowableService {
         }
     }
 
-    // TODO Set the owner of a human task
-    // https://github.com/nl-ams-locgov/zaakafhandelcomponent/issues/672
     public void startHumanTaskPlanItem(final PlanItemInstance planItemInstance, final String groupId, final String assignee, final Date dueDate,
             final Map<String, String> taakdata, final boolean sendMail, final String onderwerp) {
         final UUID zaakUUID = (UUID) readOpenCaseVariable(planItemInstance.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
@@ -183,6 +212,7 @@ public class FlowableService {
         }
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
+                .transientVariable(VAR_TASK_OWNER, ingelogdeMedewerker.get().getGebruikersnaam())
                 .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
                 .transientVariable(VAR_TASK_ASSIGNEE, assignee)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
@@ -224,8 +254,7 @@ public class FlowableService {
      */
     public Task assignTaskToUser(final String taskId, final String userId) {
         if (userId != null) {
-            cmmnTaskService.unclaim(taskId);
-            cmmnTaskService.claim(taskId, userId);
+            cmmnTaskService.setAssignee(taskId, userId);
         } else {
             cmmnTaskService.unclaim(taskId);
         }
@@ -253,7 +282,15 @@ public class FlowableService {
     }
 
     public Task updateTask(final Task task) {
+        final Task originalTask = readOpenTask(task.getId());
         cmmnTaskService.saveTask(task);
+        if (!StringUtils.equals(originalTask.getDescription(), task.getDescription())) {
+            final TaskDescriptionChangedData descriptionChangedData = new TaskDescriptionChangedData(originalTask.getDescription(), task.getDescription());
+            cmmnHistoryService.createHistoricTaskLogEntryBuilder(originalTask)
+                    .type(USER_TASK_DESCRIPTION_CHANGED)
+                    .data(JSONB.toJson(descriptionChangedData))
+                    .create();
+        }
         return readOpenTask(task.getId());
     }
 
@@ -355,6 +392,11 @@ public class FlowableService {
         return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
     }
 
+    public List<UserEventListener> listUserEventListeners(final String caseDefinitionKey) {
+        final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
+        return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(UserEventListener.class);
+    }
+
     /**
      * Terminate the case for a zaak.
      * This also terminates all open tasks related to the case,
@@ -438,6 +480,10 @@ public class FlowableService {
         return cmmnRuntimeService.createCaseInstanceQuery()
                 .caseInstanceId(caseInstanceId)
                 .count() > 0;
+    }
+
+    public List<HistoricTaskLogEntry> listHistorieForTask(final String taskId) {
+        return cmmnHistoryService.createHistoricTaskLogEntryQuery().taskId(taskId).list();
     }
 
     private Task findOpenTask(final String taskId) {

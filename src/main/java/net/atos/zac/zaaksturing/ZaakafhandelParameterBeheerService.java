@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.PlanItemParameters;
+import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
@@ -75,6 +76,25 @@ public class ZaakafhandelParameterBeheerService {
         predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
         query.where(predicates.toArray(new Predicate[0]));
         final List<PlanItemParameters> resultList = entityManager.createQuery(query).getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID,
+            final String planitemDefinitionID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
+        final Root<UserEventListenerParameters> queryRoot = query.from(UserEventListenerParameters.class);
+
+        final Join<UserEventListenerParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
+        final List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
+        predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
+        query.where(predicates.toArray(new Predicate[0]));
+        final List<UserEventListenerParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {

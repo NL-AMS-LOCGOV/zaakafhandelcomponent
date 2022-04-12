@@ -6,6 +6,7 @@
 package net.atos.zac.mail;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -72,13 +72,12 @@ public class MailService {
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    // ToDo #726
-    public MailjetResponse sendMail(final String ontvanger, final String onderwerp, final String body,
+    public void sendMail(final String ontvanger, final String onderwerp, final String body,
             final boolean createDocumentFromMail, final UUID zaakUuid) {
         final EMail eMail = new EMail(body, new Verstuurder(), List.of(new Ontvanger(ontvanger)), onderwerp);
 
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .setBody(JsonbBuilder.create().toJson(new EMails(List.of(eMail))));
+                .setBody(JSONB.toJson(new EMails(List.of(eMail))));
 
         MailjetResponse response = null;
         try {
@@ -91,8 +90,6 @@ public class MailService {
         if (createDocumentFromMail && response != null && response.getStatus() == Response.Status.OK.getStatusCode()) {
             createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
         }
-
-        return response;
     }
 
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {

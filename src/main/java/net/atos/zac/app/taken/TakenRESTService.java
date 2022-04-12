@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricTaskLogEntry;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,8 +50,10 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
+import net.atos.zac.app.taken.converter.RESTTaakHistorieConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
+import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
 import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.app.taken.model.TaakSortering;
@@ -104,6 +107,9 @@ public class TakenRESTService {
 
     @Inject
     private SignaleringenService signaleringenService;
+
+    @Inject
+    private RESTTaakHistorieConverter taakHistorieConverter;
 
     @GET
     @Path("werkvoorraad")
@@ -229,6 +235,13 @@ public class TakenRESTService {
         return Response.ok("\"Success\"").build();
     }
 
+    @GET
+    @Path("{taskId}/historie")
+    public List<RESTTaakHistorieRegel> listHistorie(@PathParam("taskId") final String taskId) {
+        final List<HistoricTaskLogEntry> historicTaskLogEntries = flowableService.listHistorieForTask(taskId);
+        return taakHistorieConverter.convert(historicTaskLogEntries);
+    }
+
     private Task assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
         final Task task = flowableService.assignTaskToUser(taakId, assignee);
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, task, ingelogdeMedewerker.get()));
@@ -277,6 +290,6 @@ public class TakenRESTService {
 
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
         eventingService.send(TAAK.updated(task));
-        eventingService.send(ZAAK_TAKEN.updated(task));
+        eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
     }
 }

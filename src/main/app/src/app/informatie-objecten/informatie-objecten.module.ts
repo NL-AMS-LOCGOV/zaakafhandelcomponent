@@ -12,6 +12,9 @@ import {InformatieObjectCreateComponent} from './informatie-object-create/inform
 
 @NgModule({
     declarations: [InformatieObjectViewComponent, InformatieObjectCreateComponent],
+    exports: [
+        InformatieObjectCreateComponent
+    ],
     imports: [
         SharedModule,
         InformatieObjectenRoutingModule

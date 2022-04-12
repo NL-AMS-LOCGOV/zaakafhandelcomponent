@@ -20,6 +20,8 @@ public class RESTCaseDefinition {
 
     public List<RESTPlanItemDefinition> planItemDefinitions;
 
+    public List<RESTPlanItemDefinition> userEventListenerDefinitions;
+
     public RESTCaseDefinition() {
     }
 
@@ -34,4 +36,12 @@ public class RESTCaseDefinition {
         }
         return planItemDefinitions.stream().filter(planItemDefinition -> PlanItemType.HUMAN_TASK == planItemDefinition.type).collect(Collectors.toList());
     }
+
+    public List<RESTPlanItemDefinition> getUserEventListenerDefinitions() {
+        if (CollectionUtils.isEmpty(userEventListenerDefinitions)) {
+            return Collections.emptyList();
+        }
+        return userEventListenerDefinitions.stream().filter(planItemDefinition -> PlanItemType.USER_EVENT_LISTENER == planItemDefinition.type).collect(Collectors.toList());
+    }
+
 }

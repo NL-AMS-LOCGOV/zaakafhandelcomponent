@@ -33,8 +33,14 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
     public static final String VAR_TASK_ASSIGNEE = "assignee";
 
+    public static final String VAR_TASK_OWNER = "owner";
+
     @Override
     public void beforeCreateHumanTask(final CreateHumanTaskBeforeContext context) {
+        final String owner = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_OWNER);
+        if (owner != null) {
+            context.setOwner(owner);
+        }
         final String candidateGroupId = (String) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TASK_CANDIDATE_GROUP);
         if (candidateGroupId != null) {
             context.setCandidateGroups(List.of(candidateGroupId));

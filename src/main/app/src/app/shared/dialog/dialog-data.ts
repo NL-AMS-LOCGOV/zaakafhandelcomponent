@@ -13,5 +13,6 @@ export class DialogData {
 
     constructor(public formField: AbstractFormField,
                 public fn?: (result: any) => Observable<any>,
-                public melding?: string) { }
+                public melding?: string,
+                public uitleg?: string) {}
 }
