@@ -31,7 +31,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
         '- omschrijf informatie 2\n' +
         '\n' +
         'We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres Y. ' +
-        'Vermeld op de informatie ook het zaaknummer (' + this.planItem.zaakUuid + ') van uw zaak.\n' +
+        'Vermeld op de informatie ook het zaaknummer van uw zaak.\n' +
         '\n' +
         'Met vriendelijke groet,\n' +
         '\n' +

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
@@ -15,17 +15,14 @@ import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
-import {IdentityService} from '../../identity/identity.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {Observable} from 'rxjs';
-import {Medewerker} from '../../identity/model/medewerker';
 
 @Component({
     selector: 'zac-plan-item-do',
     templateUrl: './plan-item-do.component.html',
     styleUrls: ['./plan-item-do.component.less']
 })
-export class PlanItemDoComponent implements OnInit, AfterViewInit {
+export class PlanItemDoComponent implements OnInit {
 
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
@@ -34,15 +31,14 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
     @Output() done = new EventEmitter<void>();
 
     constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
-                private router: Router, private navigation: NavigationService, private utilService: UtilService,
-                private identityService: IdentityService, private cd: ChangeDetectorRef) {
+                private router: Router, private navigation: NavigationService, private utilService: UtilService) {
     }
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.starten').cancelText('actie.annuleren').build();
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.formulier = this.taakFormulierenService.getFormulierBuilder(this.planItem.formulierDefinitie)
-                                 .startForm(this.planItem, this.identityService.listGroepen()).build();
+                                 .startForm(this.planItem).build();
             if (this.formulier.disablePartialSave) {
                 this.formConfig.partialButtonText = null;
             }
@@ -54,11 +50,6 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
         }
     }
 
-    ngAfterViewInit() {
-        this.loadMedewerkers();
-        this.reloadMedewerkersOnChange();
-    }
-
     onFormSubmit(formGroup: FormGroup): void {
         if (this.planItem.type === PlanItemType.HumanTask) {
             this.planItem = this.formulier.getPlanItem(formGroup);
@@ -67,29 +58,5 @@ export class PlanItemDoComponent implements OnInit, AfterViewInit {
             this.done.emit();
         });
 
-    }
-
-    reloadMedewerkersOnChange() {
-        this.formulier.groepFormField.formControl.valueChanges.subscribe(() => {
-            this.loadMedewerkers();
-        });
-        this.formulier.filterFormField.formControl.valueChanges.subscribe(() => {
-            this.loadMedewerkers();
-        });
-    }
-
-    loadMedewerkers(): void {
-        let medewerkers: Observable<Medewerker[]>;
-
-        if (this.formulier.groepFormField.formControl.value && this.formulier.filterFormField.formControl.value) {
-            medewerkers = this.identityService.listMedewerkersInGroep(
-                this.formulier.groepFormField.formControl.value.id);
-        } else {
-            medewerkers = this.identityService.listMedewerkers();
-        }
-
-        this.formulier.medewerkerFormField.options = medewerkers;
-
-        this.cd.detectChanges();
     }
 }
