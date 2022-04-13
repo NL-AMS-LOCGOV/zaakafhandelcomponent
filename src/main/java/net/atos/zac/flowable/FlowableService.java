@@ -466,6 +466,12 @@ public class FlowableService {
         }
     }
 
+    public Object readCaseVariable(final String caseInstanceId, final String variableName) {
+        return isOpenCase(caseInstanceId)
+                ? readOpenCaseVariable(caseInstanceId, variableName)
+                : readClosedCaseVariable(caseInstanceId, variableName);
+    }
+
     public TaskInfo readTask(final String taskId) {
         TaskInfo task = findOpenTask(taskId);
         if (task != null) {

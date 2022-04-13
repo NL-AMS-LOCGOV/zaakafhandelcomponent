@@ -85,6 +85,14 @@ mat-sidenav-container.over .mat-sidenav-content {
     }
 
     tr {
+      &.mat-row.document-preview {
+        height: 0;
+
+        & td {
+          border: none;
+        }
+      }
+
       & .mat-table-sticky.mat-table-sticky-border-elem-right {
         button, a {
           float: right;

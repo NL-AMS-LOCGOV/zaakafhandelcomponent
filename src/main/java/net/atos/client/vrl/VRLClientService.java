@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.vrl.model.InlineResponse200;
 
@@ -32,7 +33,11 @@ public class VRLClientService {
         }
     }
 
-    public CommunicatieKanaal readCommunicatiekanaal(final UUID communicatiekanaalUUID) {
-        return communicatiekanalenClient.communicatiekanaalRead(communicatiekanaalUUID);
+    public CommunicatieKanaal findCommunicatiekanaal(final UUID communicatiekanaalUUID) {
+        try {
+            return communicatiekanalenClient.communicatiekanaalRead(communicatiekanaalUUID);
+        } catch (final CommunicatiekanaalNotFoundException e) {
+            return null;
+        }
     }
 }

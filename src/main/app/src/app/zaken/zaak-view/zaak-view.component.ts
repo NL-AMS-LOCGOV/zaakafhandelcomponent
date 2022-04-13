@@ -58,10 +58,13 @@ import {AddressResult, LocationService} from '../../shared/location/location.ser
 import {GeometryType} from '../model/geometryType';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
+import {detailExpand} from '../../shared/animations/animations';
+import {FileFormat} from '../../informatie-objecten/model/file-format';
 
 @Component({
     templateUrl: './zaak-view.component.html',
-    styleUrls: ['./zaak-view.component.less']
+    styleUrls: ['./zaak-view.component.less'],
+    animations: [detailExpand]
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -74,6 +77,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
     enkelvoudigInformatieObjecten: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
+    documentPreviewRow: EnkelvoudigInformatieobject | null;
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -596,4 +600,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
     }
+
+    isPreviewBeschikbaar(formaat: string): boolean {
+        return formaat === FileFormat.PDF;
+    }
+
 }

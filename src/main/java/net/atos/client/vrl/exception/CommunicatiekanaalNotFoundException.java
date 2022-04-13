@@ -5,5 +5,5 @@
 
 package net.atos.client.vrl.exception;
 
-public class CommunicatiekanaalNotFoundException extends RuntimeException {
+public class CommunicatiekanaalNotFoundException extends Exception {
 }

@@ -17,6 +17,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * If the requested resource doesn't exist, use index.html
@@ -27,27 +28,34 @@ public class indexRewriteFilter implements Filter {
 
     private final List<String> resourcePaths = List.of("/assets", "/rest", "/websocket");
 
-    private static final Pattern REGEX_RESOURCES = Pattern.compile("^.*.(js|js.map|json|css|txt|jpe?g|png|gif|svg|ico|webmanifest|eot|ttf|woff|woff2)$");
+    private static final Pattern REGEX_RESOURCES = Pattern.compile("\\.(js(on|\\.map)?|css|txt|jpe?g|png|gif|svg|ico|webmanifest|eot|ttf|woff2?)$");
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        if (request instanceof HttpServletRequest) {
-            final HttpServletRequest req = (HttpServletRequest) request;
-            if (req.getServletPath().equals("/start")) {
-                req.getRequestDispatcher("/startformulieren.html").forward(request, response);
-            } else if (isResourcePath(req) || isResource(req)) {
+        if (request instanceof final HttpServletRequest httpRequest) {
+            final String path = httpRequest.getServletPath();
+            if (isResourcePath(path) || isResource(path)) {
                 chain.doFilter(request, response);
+            } else if (path.equals("/logout")) {
+                logout(httpRequest, (HttpServletResponse) response);
+            } else if (path.equals("/start")) {
+                httpRequest.getRequestDispatcher("/startformulieren.html").forward(request, response);
             } else {
-                req.getRequestDispatcher("/index.html").forward(request, response);
+                httpRequest.getRequestDispatcher("/index.html").forward(request, response);
             }
         }
     }
 
-    private boolean isResourcePath(final HttpServletRequest req) {
-        return resourcePaths.stream().anyMatch(s -> req.getServletPath().startsWith(s));
+    private void logout(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        request.logout();
+        response.sendRedirect("/");
     }
 
-    private boolean isResource(final HttpServletRequest req) {
-        return REGEX_RESOURCES.matcher(req.getServletPath()).find();
+    private boolean isResourcePath(final String path) {
+        return resourcePaths.stream().anyMatch(path::startsWith);
+    }
+
+    private boolean isResource(final String path) {
+        return REGEX_RESOURCES.matcher(path).find();
     }
 }
