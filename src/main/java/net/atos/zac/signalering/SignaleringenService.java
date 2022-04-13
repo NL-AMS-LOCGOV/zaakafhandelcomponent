@@ -30,9 +30,12 @@ import org.flowable.idm.api.Group;
 
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
+import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -48,6 +51,12 @@ public class SignaleringenService {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private MailService mailService;
+
+    @Inject
+    private SignaleringenMailHelper signaleringenMailHelper;
 
     private SignaleringType signaleringTypeInstance(final SignaleringType.Type signaleringsType) {
         return entityManager.find(SignaleringType.class, signaleringsType.toString());
@@ -107,10 +116,6 @@ public class SignaleringenService {
         findSignaleringen(parameters).forEach(this::deleteSignalering);
     }
 
-    public Signalering readSignalering(final long id) {
-        return entityManager.find(Signalering.class, id);
-    }
-
     public List<Signalering> findSignaleringen(final SignaleringZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Signalering> query = builder.createQuery(Signalering.class);
@@ -157,6 +162,19 @@ public class SignaleringenService {
             }
         }
         return builder.and(where.toArray(new Predicate[0]));
+    }
+
+    public void sendSignalering(final Signalering signalering) {
+        valideerObject(signalering);
+        final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
+        if (mail != null) {
+            final Ontvanger to = signaleringenMailHelper.formatTo(mail);
+            final SignaleringType.Type type = signalering.getType().getType();
+            final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
+            final String subject = signaleringenMailHelper.formatSubject(type, link);
+            final String body = signaleringenMailHelper.formatBody(type, mail, link);
+            mailService.sendMail(to, subject, body);
+        }
     }
 
     public SignaleringInstellingen createUpdateOrDeleteInstellingen(final SignaleringInstellingen instellingen) {
