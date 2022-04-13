@@ -29,6 +29,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
 import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundExceptionMapping;
 import net.atos.client.vrl.exception.RuntimeExceptionMapper;
 import net.atos.client.vrl.model.CommunicatieKanaal;
@@ -72,5 +73,5 @@ public interface CommunicatiekanalenClient {
 
     @GET
     @Path("/{uuid}")
-    CommunicatieKanaal communicatiekanaalRead(@PathParam("uuid") UUID uuid);
+    CommunicatieKanaal communicatiekanaalRead(@PathParam("uuid") UUID uuid) throws CommunicatiekanaalNotFoundException;
 }
