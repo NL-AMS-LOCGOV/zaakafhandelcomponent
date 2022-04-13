@@ -285,7 +285,7 @@ public class TakenRESTService {
         signaleringenService.deleteSignaleringen(
                 new SignaleringZoekParameters(ingelogdeMedewerker.get())
                         .types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
-                        .subjectZaak((UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID)));
+                        .subjectZaak((UUID) flowableService.readCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID)));
     }
 
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
