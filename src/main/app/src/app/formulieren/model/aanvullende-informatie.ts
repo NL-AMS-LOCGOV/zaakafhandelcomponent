@@ -54,7 +54,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
 
     _initStartForm() {
         this.planItem.taakStuurGegevens.sendMail = true;
-        this.planItem.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak: ' + this.planItem.zaakUuid;
+        this.planItem.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
         const fields = this.fields;
         this.form.push(
             [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
