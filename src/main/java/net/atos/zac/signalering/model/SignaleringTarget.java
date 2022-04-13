@@ -9,4 +9,15 @@ public enum SignaleringTarget {
 
     GROEP,
     MEDEWERKER;
+
+    public static final class Mail {
+        public final String naam;
+
+        public final String adres;
+
+        public Mail(final String naam, final String adres) {
+            this.naam = naam;
+            this.adres = adres;
+        }
+    }
 }
