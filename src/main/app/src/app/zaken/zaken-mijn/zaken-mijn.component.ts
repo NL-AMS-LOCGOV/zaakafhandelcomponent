@@ -106,6 +106,7 @@ export class ZakenMijnComponent implements OnInit, AfterViewInit, OnDestroy {
             ['zaaktype', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.HIDDEN],
             ['startdatum', ColumnPickerValue.VISIBLE],
+            ['openstaandeTaken', ColumnPickerValue.VISIBLE],
             ['einddatum', ColumnPickerValue.HIDDEN],
             ['einddatumGepland', ColumnPickerValue.HIDDEN],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],

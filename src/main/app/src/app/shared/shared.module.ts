@@ -36,6 +36,8 @@ import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {DocumentViewerComponent} from './document-viewer/document-viewer.component';
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
+import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
+
 
 @NgModule({
     declarations: [
@@ -55,6 +57,7 @@ import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
         ConfirmDialogComponent,
         DialogComponent,
         NoStickyColumnPipe,
+        TooltipListPipe,
         ColumnPickerComponent,
         DocumentViewerComponent
     ],
@@ -93,6 +96,7 @@ import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
         DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,
+        TooltipListPipe,
         DocumentViewerComponent,
         ColumnPickerComponent
     ],

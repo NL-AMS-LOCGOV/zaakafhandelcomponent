@@ -57,6 +57,9 @@
             <th mat-header-cell *matHeaderCellDef></th>
         </ng-container>
 
+        <ng-container matColumnDef="openstaandeTaken_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
 
         <ng-container matColumnDef="zaak.identificatie">
             <th mat-header-cell cdkDrag *matHeaderCellDef>
@@ -135,6 +138,15 @@
             </th>
             <td mat-cell *matCellDef="let row">
                 {{ row.toelichting | translate | empty }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="openstaandeTaken">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'openstaandeTaken' | translate | empty}}
+            </th>
+            <td mat-cell *matCellDef="let row" [matTooltip]="row.openstaandeTaken.taakNamen | tooltipList"
+                matTooltipClass="tooltip-list">
+                {{row.openstaandeTaken.aantalOpenstaandeTaken}}
             </td>
         </ng-container>
 
