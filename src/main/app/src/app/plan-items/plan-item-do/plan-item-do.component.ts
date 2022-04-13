@@ -51,12 +51,16 @@ export class PlanItemDoComponent implements OnInit {
     }
 
     onFormSubmit(formGroup: FormGroup): void {
-        if (this.planItem.type === PlanItemType.HumanTask) {
-            this.planItem = this.formulier.getPlanItem(formGroup);
-        }
-        this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
+        if (formGroup) {
+            if (this.planItem.type === PlanItemType.HumanTask) {
+                this.planItem = this.formulier.getPlanItem(formGroup);
+            }
+            this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
+                this.done.emit();
+            });
+        } else { // cancel button clicked
             this.done.emit();
-        });
+        }
 
     }
 }
