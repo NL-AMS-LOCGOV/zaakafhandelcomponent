@@ -22,4 +22,10 @@ public class Polygon extends Geometry {
     public List<List<Point2D>> getCoordinates() {
         return coordinates;
     }
+
+    @Override
+    public String toString() {
+        //TODO yet to be implemented
+        return "POLYGON()";
+    }
 }

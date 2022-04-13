@@ -22,4 +22,10 @@ public class GeometryCollection extends Geometry {
     public List<Geometry> getGeometries() {
         return geometries;
     }
+
+    @Override
+    public String toString() {
+        //TODO yet to be implemented
+        return "GEOMETRYCOLLECTION()";
+    }
 }

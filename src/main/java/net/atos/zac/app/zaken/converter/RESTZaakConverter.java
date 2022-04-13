@@ -176,6 +176,7 @@ public class RESTZaakConverter {
             zaak.setVertrouwelijkheidaanduiding(
                     Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
+        zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaak;
     }
 

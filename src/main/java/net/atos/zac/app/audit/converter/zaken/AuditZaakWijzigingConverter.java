@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
+import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.audit.converter.AbstractAuditWijzigingConverter;
@@ -44,6 +45,7 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         checkAttribuut("zaak.identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
         checkZaaktype(oud.getZaaktype(), nieuw.getZaaktype(), historieRegels);
         checkKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
+        checkZaakgeometrie(oud.getZaakgeometrie(), nieuw.getZaakgeometrie(), historieRegels);
         checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
         checkAttribuut("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
         checkAttribuut("startdatum", oud.getStartdatum(), nieuw.getStartdatum(), historieRegels);
@@ -68,6 +70,12 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         }
     }
 
+    private void checkZaakgeometrie(final Geometry oud, final Geometry nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel("zaakgeometrie", geoMetrieToWaarde(oud), geoMetrieToWaarde(nieuw)));
+        }
+    }
+
     private String toWaarde(final Zaak zaak) {
         return zaak != null ? zaak.getIdentificatie() : null;
     }
@@ -79,5 +87,9 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
     private String kanaalToWaarde(final URI kanaal) {
         // ToDo: Het kanaal moet worden opgehaald uit de VNG referentielijst
         return kanaal != null ? kanaal.toString() : null;
+    }
+
+    private String geoMetrieToWaarde(final Geometry geometry) {
+        return geometry != null ? geometry.toString() : null;
     }
 }
