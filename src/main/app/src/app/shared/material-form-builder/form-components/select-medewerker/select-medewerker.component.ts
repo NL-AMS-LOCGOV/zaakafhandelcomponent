@@ -44,6 +44,7 @@ export class SelectMedewerkerComponent extends FormComponent implements OnInit {
             this.data.formControl.setValue(data);
         });
         this.groepControl.valueChanges.subscribe(data => {
+            this.behandelaarControl.setValue(null);
             this.getBehandelaren();
         });
         this.getBehandelaren();
