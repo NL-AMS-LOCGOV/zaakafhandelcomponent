@@ -46,12 +46,29 @@ public class SignaleringType implements Comparable<SignaleringType> {
 
     /**
      * Maps to signalering-type.ts
-     * !! Remember to add the enum value to signaleringtype table !!
+     * !! Remember to add the enum value to signaleringtype table and to add the translation !!
      */
     public enum Type {
-        ZAAK_DOCUMENT_TOEGEVOEGD,
-        ZAAK_OP_NAAM,
-        TAAK_OP_NAAM;
+        ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd."),
+        ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
+        TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet.");
+
+        private final String naam;
+
+        private final String bericht;
+
+        Type(final String naam, final String bericht) {
+            this.naam = naam;
+            this.bericht = bericht;
+        }
+
+        public String getNaam() {
+            return naam;
+        }
+
+        public String getBericht() {
+            return bericht;
+        }
     }
 
     @Override

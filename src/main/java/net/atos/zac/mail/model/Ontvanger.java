@@ -10,17 +10,33 @@ import javax.json.bind.annotation.JsonbProperty;
 public class Ontvanger {
 
     @JsonbProperty("Email")
-    private String ontvanger;
+    private String email;
 
-    public Ontvanger(final String ontvanger) {
-        this.ontvanger = ontvanger;
+    @JsonbProperty("Name")
+    private String name;
+
+    public Ontvanger(final String email, final String name) {
+        this.email = email;
+        this.name = name;
     }
 
-    public String getOntvanger() {
-        return ontvanger;
+    public Ontvanger(final String email) {
+        this(email, null);
     }
 
-    public void setOntvanger(final String ontvanger) {
-        this.ontvanger = ontvanger;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String naam) {
+        this.name = naam;
     }
 }

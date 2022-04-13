@@ -136,5 +136,16 @@
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
+        <div fxLayout *ngIf="documentPreviewBeschikbaar">
+            <mat-expansion-panel fxFlex="calc(100%-20px)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon class="material-icons-outlined">plagiarism</mat-icon>
+                        {{infoObject.titel}} | {{ 'document.preview' | translate}}
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <zac-document-viewer [document]="infoObject"></zac-document-viewer>
+            </mat-expansion-panel>
+        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>

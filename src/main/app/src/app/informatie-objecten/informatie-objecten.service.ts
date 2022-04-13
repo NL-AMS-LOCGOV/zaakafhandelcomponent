@@ -80,6 +80,13 @@ export class InformatieObjectenService {
         return `${this.basepath}/informatieobject/upload/${uuid}`;
     }
 
+    getPreviewDocument(uuid: string) {
+        const url = `${this.basepath}/informatieobject/${uuid}/download`;
+        return this.http.get(url, {responseType: 'blob'}).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {
         documentVerplaatsGegevens.nieuweZaakID = nieuweZaakID;
         return this.http.post<void>(`${this.basepath}/informatieobject/verplaats`, documentVerplaatsGegevens).pipe(
