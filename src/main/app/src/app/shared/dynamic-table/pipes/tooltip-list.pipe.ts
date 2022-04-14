@@ -12,9 +12,11 @@ export class TooltipListPipe implements PipeTransform {
     transform(lines: string[]): string {
         let list: string = '';
 
-        lines.forEach(line => {
-            list += '• ' + line + '\n';
-        });
+        if (lines) {
+            lines.forEach(line => {
+                list += '• ' + line + '\n';
+            });
+        }
 
         return list;
     }
