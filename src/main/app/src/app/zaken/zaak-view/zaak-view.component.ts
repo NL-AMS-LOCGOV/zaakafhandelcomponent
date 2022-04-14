@@ -199,10 +199,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
             new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                        .value({
-                                            label: this.zaak.communicatiekanaal,
-                                            value: this.zaak.communicatiekanaal?.naam
-                                        })
+                                        .value(this.zaak.communicatiekanaal)
                                         .optionLabel('naam')
                                         .options(this.zakenService.listCommunicatiekanalen()).build());
 
