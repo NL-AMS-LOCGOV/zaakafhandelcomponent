@@ -67,15 +67,15 @@
                                     <zac-static-text [label]="'status' | translate"
                                                      [value]="zaak.status | empty:'naam'"
                                                      [icon]="zaak.status?.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.status?.toelichting ? zaak.status.toelichting : ''"
+                                                     [matTooltip]="zaak.status?.toelichting"
                                                      [attr.role]="zaak.status?.toelichting ? 'tooltip' : null"
-                                                     [attr.aria-label]="zaak.status?.toelichting ? zaak.status.toelichting : ''"></zac-static-text>
+                                                     [attr.aria-label]="zaak.status?.toelichting"></zac-static-text>
                                     <zac-static-text [label]="'resultaat' | translate"
                                                      [value]="zaak.resultaat | empty:'naam'"
                                                      [icon]="zaak.resultaat?.toelichting ? toolTipIcon : null"
-                                                     [matTooltip]="zaak.resultaat?.toelichting ? zaak.resultaat.toelichting : ''"
+                                                     [matTooltip]="zaak.resultaat?.toelichting"
                                                      [attr.role]="zaak.resultaat?.toelichting ? 'tooltip' : null"
-                                                     [attr.aria-label]="zaak.resultaat?.toelichting ? zaak.resultaat.toelichting : ''"></zac-static-text>
+                                                     [attr.aria-label]="zaak.resultaat?.toelichting"></zac-static-text>
                                 </div>
                                 <div fxFlex="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
