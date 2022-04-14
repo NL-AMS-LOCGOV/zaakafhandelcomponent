@@ -25,6 +25,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
+    loading = true;
 
     constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
         super();
@@ -41,7 +42,8 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
             }
             this.data.formControl.setValue(documenten.map(v => v.uuid).join(';'));
-            this.dataSource = new MatTableDataSource(documenten);
+            this.dataSource.data = documenten;
+            this.loading = false;
         });
     }
 

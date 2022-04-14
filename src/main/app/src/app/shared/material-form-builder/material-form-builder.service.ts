@@ -22,6 +22,7 @@ import {DocumentenLijstComponent} from './form-components/documenten-lijst/docum
 import {TaakDocumentUploadComponent} from './form-components/taak-document-upload/taak-document-upload.component';
 import {RadioComponent} from './form-components/radio/radio.component';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
+import {SelectMedewerkerComponent} from './form-components/select-medewerker/select-medewerker.component';
 
 @Injectable({
     providedIn: 'root'
@@ -57,6 +58,8 @@ export class MaterialFormBuilderService {
                 return HeadingComponent;
             case FieldType.SELECT:
                 return SelectComponent;
+            case FieldType.SELECT_MEDEWERKER:
+                return SelectMedewerkerComponent;
             case FieldType.CHECKBOX:
                 return CheckboxComponent;
             case FieldType.GOOGLEMAPS:

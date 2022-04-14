@@ -6,15 +6,18 @@
 import {NgModule} from '@angular/core';
 import {EmptyPipe} from './empty.pipe';
 import {DatumPipe} from './datum.pipe';
+import {LocationPipe} from './location.pipe';
 
 @NgModule({
     declarations: [
         EmptyPipe,
-        DatumPipe
+        DatumPipe,
+        LocationPipe
     ],
     exports: [
         EmptyPipe,
-        DatumPipe
+        DatumPipe,
+        LocationPipe
     ]
 })
 export class PipesModule {

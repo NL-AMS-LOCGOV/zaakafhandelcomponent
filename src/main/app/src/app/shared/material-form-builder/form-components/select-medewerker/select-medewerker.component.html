@@ -1,0 +1,21 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{'actie.taak.toekennen.groep' | translate}}</mat-label>
+    <mat-select placeholder="{{'groep.-kies-' | translate}}" [compareWith]="compareGroep" [formControl]="groepControl">
+        <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
+    </mat-select>
+</mat-form-field>
+<mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{'actie.taak.toekennen.medewerker' | translate}}</mat-label>
+    <mat-select placeholder="{{'behandelaar.-kies-' | translate}}" [compareWith]="compareMedewerker" [formControl]="behandelaarControl">
+        <mat-option [value]="">{{'behandelaar.-kies-' | translate}}</mat-option>
+        <mat-option *ngFor="let b of behandelaren | async" [value]="b">{{ b.naam }}</mat-option>
+    </mat-select>
+    <button mat-icon-button [title]="'filter.groep' | translate" type="button" matSuffix (click)="inGroepChanged($event)">
+        <mat-icon [color]="inGroep ? 'primary' : 'warn'">{{inGroep ? 'group' : 'group_off'}}</mat-icon>
+    </button>
+</mat-form-field>
