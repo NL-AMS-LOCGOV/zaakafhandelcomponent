@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 - 2022 Atos
+ * SPDX-FileCopyrightText: 2021 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -176,11 +176,7 @@ public class RESTZaakConverter {
             zaak.setVertrouwelijkheidaanduiding(
                     Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
-        if (restZaak.communicatiekanaal != null) {
-            final CommunicatieKanaal communicatieKanaal = vrlClientService.readCommunicatiekanaal(
-                    restZaak.communicatiekanaal.uuid);
-            zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
-        }
+        zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaak;
     }
 

@@ -12,6 +12,9 @@ import {OntvangstbevestigingComponent} from './ontvangstbevestiging/ontvangstbev
 
 @NgModule({
     declarations: [MailCreateComponent, OntvangstbevestigingComponent],
+    exports: [
+        MailCreateComponent
+    ],
     imports: [
         SharedModule,
         MailRoutingModule

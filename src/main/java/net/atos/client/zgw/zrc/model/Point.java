@@ -24,4 +24,9 @@ public class Point extends Geometry {
     public Point2D getCoordinates() {
         return coordinates;
     }
+
+    @Override
+    public String toString() {
+        return String.format("POINT(%s %s)", getCoordinates().getX(), getCoordinates().getY());
+    }
 }

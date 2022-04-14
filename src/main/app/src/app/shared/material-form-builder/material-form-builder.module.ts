@@ -45,6 +45,7 @@ import {ParagraphComponent} from './form-components/paragraph/paragraph.componen
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {SelectMedewerkerComponent} from './form-components/select-medewerker/select-medewerker.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         InputComponent,
         FileComponent,
         SelectComponent,
+        SelectMedewerkerComponent,
         CheckboxComponent,
         TextareaComponent,
         GoogleMapsComponent,
@@ -99,6 +101,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         InputComponent,
         FileComponent,
         SelectComponent,
+        SelectMedewerkerComponent,
         CheckboxComponent,
         TextareaComponent,
         GoogleMapsComponent,

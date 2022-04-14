@@ -18,7 +18,7 @@ import {PlanItemType} from '../../plan-items/model/plan-item-type.enum';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
+import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZakenService} from '../zaken.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
@@ -70,6 +70,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     zaak: Zaak;
     zaakLocatie: AddressResult;
+    actiefPlanItem: PlanItem;
     menu: MenuItem[];
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
     toonAfgerondeTaken = false;
@@ -126,7 +127,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (event) => this.updateZaak(event));
             this.zaakRollenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_ROLLEN, this.zaak.uuid,
                 (event) => this.updateZaak(event));
-            this.zaakTakenListener = this.websocketService.addListenerWithSnackbar(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
+            this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
             this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
                 (event) => this.loadInformatieObjecten(event));
@@ -257,7 +258,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private createMenuItem(planItem: PlanItem): MenuItem {
         switch (planItem.type) {
             case PlanItemType.HumanTask:
-                return new LinkMenuTitem(planItem.naam, `/plan-items/${planItem.id}/do`, 'assignment');
+                return new ButtonMenuItem(planItem.naam, () => {
+                    if (!this.actiefPlanItem || this.actiefPlanItem.id !== planItem.id) {
+                        this.action = null;
+                        this.planItemsService.readPlanItem(planItem.id).subscribe(data => {
+                            this.actiefPlanItem = data;
+                            this.actionsSidenav.open();
+                            this.action = SideNavAction.TAAK_STARTEN;
+                        });
+                    } else {
+                        this.action = SideNavAction.TAAK_STARTEN;
+                        this.actionsSidenav.open();
+                    }
+                }, 'assignment');
+
             case PlanItemType.UserEventListener:
                 return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'fact_check');
             case PlanItemType.ProcessTask:
@@ -274,11 +288,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
         }, 'upload_file'));
 
-        this.menu.push(new LinkMenuTitem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
+        this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.MAIL_VERSTUREN;
+        }, 'mail'));
 
         if (!this.zaak.ontvangstbevestigingVerstuurd) {
             this.menu.push(
-                new LinkMenuTitem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
+                new LinkMenuItem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
                     'mark_email_read'));
         }
 
@@ -444,14 +461,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    informatieObjectenLoading = false;
     private loadInformatieObjecten(event?: ScreenEvent): void {
         if (event) {
+            this.informatieObjectenLoading = true;
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekParameters.zaakUUID = this.zaak.uuid;
         this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
             this.enkelvoudigInformatieObjecten.data = objecten;
+            this.informatieObjectenLoading = false;
         });
     }
 
@@ -478,8 +498,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
+    takenLoading = false;
     private loadTaken(event?: ScreenEvent): void {
         if (event) {
+            this.takenLoading = true;
             console.log('callback loadTaken: ' + event.key);
         }
         // TODO #315
@@ -489,6 +511,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
+            this.takenLoading = false;
         });
     }
 
@@ -511,11 +534,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         if (locatie) {
             zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
-            this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
         }
 
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
     }
 
     initiatorGeselecteerd(initiator: Klant): void {
@@ -606,6 +630,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
     }
 
+    isOntkoppelenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
+        return informatieobject['loading'] || this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
+    }
+
     get initiatorType() {
         if (this.zaak.initiatorIdentificatie) {
             if (this.zaak.initiatorIdentificatie.length === 9) {
@@ -618,6 +646,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
+    }
+
+    taakGestart(): void {
+        this.actiefPlanItem = null;
+        this.actionsSidenav.close();
+    }
+
+    mailVerstuurd(): void {
+        this.action = null;
+        this.actionsSidenav.close();
     }
 
     isPreviewBeschikbaar(formaat: string): boolean {
