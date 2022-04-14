@@ -18,7 +18,7 @@ import {PlanItemParameter} from '../model/plan-item-parameter';
 import {FormulierDefinitieVerwijzing} from '../model/formulier-definitie-verwijzing';
 import {MatSelectChange} from '@angular/material/select';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
+import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakbeeindigParameter} from '../model/zaakbeeindig-parameter';
@@ -91,7 +91,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     setupMenu() {
         this.menu = [];
         this.menu.push(new HeaderMenuItem('title.parameters'));
-        this.menu.push(new LinkMenuTitem('parameters', '/admin/parameters', 'tune'));
+        this.menu.push(new LinkMenuItem('parameters', '/admin/parameters', 'tune'));
     }
 
     readPlanItemParameters(event: MatSelectChange): void {

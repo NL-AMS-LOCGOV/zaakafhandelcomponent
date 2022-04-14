@@ -5,15 +5,16 @@
 
 import {NgModule} from '@angular/core';
 
-import {PlanItemsRoutingModule} from './plan-items-routing.module';
 import {PlanItemDoComponent} from './plan-item-do/plan-item-do.component';
 import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
     declarations: [PlanItemDoComponent],
+    exports: [
+        PlanItemDoComponent
+    ],
     imports: [
-        SharedModule,
-        PlanItemsRoutingModule
+        SharedModule
     ]
 })
 export class PlanItemsModule {

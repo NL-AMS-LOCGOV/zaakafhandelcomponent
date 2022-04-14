@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
@@ -25,13 +25,15 @@ import {MailObject} from '../model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
 
 @Component({
-    templateUrl: './mail-create.component.html'
+    selector: 'zac-mail-create',
+    templateUrl: './mail-create.component.html',
+    styleUrls: ['./mail-create.component.less']
 })
 export class MailCreateComponent implements OnInit {
 
-    zaakUuid: string;
     formConfig: FormConfig;
-    zaak: Zaak;
+    @Input() zaak: Zaak;
+    @Output() mailVerstuurd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     ingelogdeMedewerker: Medewerker;
 
@@ -49,20 +51,16 @@ export class MailCreateComponent implements OnInit {
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
-        this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
         this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
 
-        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.utilService.setTitle('title.mail.versturen', {zaak: zaak.identificatie});
-            const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
-                                                         .validators(Validators.required, CustomValidators.emails).build();
-            const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();
-            const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required).build();
-            this.fields = [[ontvanger], [onderwerp], [body]];
-        });
+        this.utilService.setTitle('title.mail.versturen', {zaak: this.zaak.identificatie});
+        const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
+                                                     .validators(Validators.required, CustomValidators.emails).build();
+        const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();
+        const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required).build();
+        this.fields = [[ontvanger], [onderwerp], [body]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -73,12 +71,12 @@ export class MailCreateComponent implements OnInit {
             mailObject.body = formGroup.controls['body'].value;
             mailObject.createDocumentFromMail = true;
 
-            this.mailService.sendMail(this.zaakUuid, mailObject).subscribe(() => {
+            this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {
                 this.utilService.openSnackbar('msg.email.verstuurd');
-                this.router.navigate(['/zaken/', this.zaak.identificatie]);
+                this.mailVerstuurd.emit(true);
             });
         } else {
-            this.navigation.back();
+            this.mailVerstuurd.emit(false);
         }
     }
 }
