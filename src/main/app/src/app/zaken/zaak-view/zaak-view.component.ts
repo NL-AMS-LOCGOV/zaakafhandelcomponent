@@ -269,7 +269,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
         }, 'upload_file'));
 
-        this.menu.push(new LinkMenuItem('actie.mail.versturen', `/mail/create/${this.zaak.uuid}`, 'mail'));
+        this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.MAIL_VERSTUREN;
+        }, 'mail'));
 
         if (!this.zaak.ontvangstbevestigingVerstuurd) {
             this.menu.push(
@@ -627,6 +630,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taakGestart(): void {
         this.actiefPlanItem = null;
+        this.actionsSidenav.close();
+    }
+
+    mailVerstuurd(): void {
+        this.action = null;
         this.actionsSidenav.close();
     }
 

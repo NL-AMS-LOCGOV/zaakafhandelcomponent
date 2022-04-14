@@ -20,6 +20,7 @@ import {KlantenModule} from '../klanten/klanten.module';
 import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
 import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
 import {PlanItemsModule} from '../plan-items/plan-items.module';
+import {MailModule} from '../mail/mail.module';
 
 @NgModule({
     declarations: [
@@ -42,7 +43,8 @@ import {PlanItemsModule} from '../plan-items/plan-items.module';
         ZakenRoutingModule,
         KlantenModule,
         InformatieObjectenModule,
-        PlanItemsModule
+        PlanItemsModule,
+        MailModule
     ]
 })
 export class ZakenModule {

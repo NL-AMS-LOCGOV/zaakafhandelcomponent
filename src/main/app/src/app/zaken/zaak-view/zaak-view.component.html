@@ -14,6 +14,7 @@
         <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
                                       (document)="documentToegevoegd($event)"></zac-informatie-object-create>
         <zac-plan-item-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-plan-item-do>
+        <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie" (delete)="deleteInitiator()"></zac-persoongegevens>
