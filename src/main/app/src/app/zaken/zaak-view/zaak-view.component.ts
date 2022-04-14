@@ -274,7 +274,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.MAIL_VERSTUREN;
         }, 'mail'));
 
-        if (!this.zaak.ontvangstbevestigingVerstuurd) {
+        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.status.naam !== 'Afgerond') {
             this.menu.push(
                 new LinkMenuItem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
                     'mark_email_read'));
