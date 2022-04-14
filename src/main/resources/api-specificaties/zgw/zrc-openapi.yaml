@@ -721,7 +721,7 @@ paths:
           required: false
           schema:
             type: string
-        - name: betrokkeneIdentificatie__organisatorischeeenheid__identificatie
+        - name: betrokkeneIdentificatie__organisatorischeEenheid__identificatie
           in: query
           description: Een korte identificatie van de organisatorische eenheid.
           required: false
@@ -3143,7 +3143,7 @@ paths:
           type: string
           format: uuid
 servers:
-  - url: http://open-zaak/zaken/api/v1
+  - url: http://open-zaak.default/zaken/api/v1
 components:
   responses:
     '400':
@@ -5900,13 +5900,13 @@ components:
           maxLength: 1000
           minLength: 1
         resource:
-          title: ResourceInfo
+          title: Resource
           description: Het type resource waarop de actie gebeurde.
           type: string
           maxLength: 50
           minLength: 1
         resourceUrl:
-          title: ResourceInfo url
+          title: Resource url
           description: De URL naar het object.
           type: string
           format: uri
@@ -5917,7 +5917,7 @@ components:
           description: Toelichting waarom de handeling is uitgevoerd.
           type: string
         resourceWeergave:
-          title: ResourceInfo weergave
+          title: Resource weergave
           description: Vriendelijke identificatie van het object.
           type: string
           maxLength: 200

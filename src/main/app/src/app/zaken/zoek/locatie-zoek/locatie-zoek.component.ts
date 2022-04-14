@@ -18,7 +18,6 @@ import * as interaction from 'ol/interaction.js';
 import {AddressResult, LocationService, SuggestResult} from '../../../shared/location/location.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {GeometryCoordinate} from '../../model/geometryCoordinate';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {LocationUtil} from '../../../shared/location/location-util';
@@ -30,7 +29,7 @@ import {LocationUtil} from '../../../shared/location/location-util';
 })
 export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-    @Input() huidigeLocatie: GeometryCoordinate;
+    @Input() huidigeLocatie: AddressResult;
     @Output() locatie = new EventEmitter<AddressResult>();
     @ViewChild('openLayersMap', {static: true}) openLayersMapRef: ElementRef;
     selectedAddress: AddressResult;

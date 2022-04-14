@@ -3078,7 +3078,7 @@ paths:
           type: string
           format: uuid
 servers:
-  - url: http://open-zaak/catalogi/api/v1
+  - url: http://open-zaak.default/catalogi/api/v1
 components:
   responses:
     '400':

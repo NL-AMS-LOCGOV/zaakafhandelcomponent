@@ -6,9 +6,8 @@
 import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
-import {Groep} from '../identity/model/groep';
-import {Observable} from 'rxjs';
 import {TaakStatus} from '../taken/model/taak-status.enum';
+import {SelectMedewerkerFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/select-medewerker-field-builder';
 
 export class FormulierBuilder {
 
@@ -18,11 +17,15 @@ export class FormulierBuilder {
         this._formulier = formulier;
     }
 
-    startForm(planItem: PlanItem, groepen: Observable<Groep[]>): FormulierBuilder {
+    startForm(planItem: PlanItem): FormulierBuilder {
         this._formulier.planItem = planItem;
         this._formulier.dataElementen = planItem.taakdata;
         this._formulier.initStartForm();
-        this._formulier.addAssignment(groepen);
+        this._formulier.form.push(
+            [new SelectMedewerkerFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
+                                               .defaultMedewerker(planItem.medewerker)
+                                               .defaultGroep(planItem.groep)
+                                               .build()]);
         return this;
     }
 

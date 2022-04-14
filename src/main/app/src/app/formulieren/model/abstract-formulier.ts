@@ -5,18 +5,17 @@
 
 import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {FormGroup, Validators} from '@angular/forms';
+import {FormGroup} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
 import {Groep} from '../../identity/model/groep';
-import {Observable, of} from 'rxjs';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
-import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
-import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
+import {Medewerker} from '../../identity/model/medewerker';
 
 export abstract class AbstractFormulier {
+
+    public static TOEKENNING_FIELD: string = 'toekenning-field';
 
     planItem: PlanItem;
     taak: Taak;
@@ -24,9 +23,6 @@ export abstract class AbstractFormulier {
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
     disablePartialSave: boolean = false;
-    groepFormField: AbstractFormField;
-    filterFormField: AbstractFormField;
-    medewerkerFormField: AbstractChoicesFormField;
 
     protected constructor(protected translate: TranslateService) {}
 
@@ -61,8 +57,9 @@ export abstract class AbstractFormulier {
     }
 
     getPlanItem(formGroup: FormGroup): PlanItem {
-        this.planItem.groep = formGroup.controls['groep']?.value;
-        this.planItem.medewerker = formGroup.controls['behandelaar']?.value;
+        const toekenning: { groep: Groep, behandelaar?: Medewerker } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
+        this.planItem.medewerker = toekenning.behandelaar;
+        this.planItem.groep = toekenning.groep;
         this.planItem.taakdata = this.getDataElementen(formGroup);
         return this.planItem;
     }
@@ -81,38 +78,12 @@ export abstract class AbstractFormulier {
 
     private getDataElementen(formGroup: FormGroup): {} {
         const dataElementen: {} = {};
-
         Object.keys(formGroup.controls).forEach((key) => {
-            if (key !== 'groep' && key !== 'behandelaar' && key !== 'filter') {
+            if (key !== AbstractFormulier.TOEKENNING_FIELD) {
                 dataElementen[key] = formGroup.controls[key]?.value;
             }
         });
-
         return dataElementen;
-    }
-
-    addAssignment(groepen: Observable<Groep[]>): void {
-        this.groepFormField = new SelectFormFieldBuilder().id('groep')
-                                                          .label('actie.taak.toekennen.groep')
-                                                          .value(this.planItem.groep)
-                                                          .optionLabel('naam').options(groepen)
-                                                          .validators(Validators.required).build();
-
-        this.filterFormField = new CheckboxFormFieldBuilder().id('filter')
-                                                             .label('filter.groep')
-                                                             .value(true)
-                                                             .build();
-
-        this.medewerkerFormField = new SelectFormFieldBuilder().id('behandelaar')
-                                                               .label('actie.taak.toekennen.medewerker')
-                                                               .value(this.planItem.medewerker)
-                                                               .optionLabel('naam')
-                                                               .options(of([]))
-                                                               .build();
-
-        this.form.push([this.groepFormField]);
-        this.form.push([this.filterFormField]);
-        this.form.push([this.medewerkerFormField]);
     }
 
     isAfgerond(): boolean {

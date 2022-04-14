@@ -6,7 +6,11 @@
 package net.atos.zac.configuratie;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,6 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -73,6 +78,9 @@ public class ConfiguratieService {
 
     public static final String TAAL_NEDERLANDS = "dut"; // ISO 639-2/B
 
+    // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
+    public static final String CONTEXT_URL = ConfigProvider.getConfig().getValue("context.url", String.class);
+
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -93,5 +101,25 @@ public class ConfiguratieService {
 
     public boolean isLocalDevelopment() {
         return authResource.contains("localhost");
+    }
+
+    private URI absoluteUrl(final String path, final String key) {
+        try {
+            return new URI(String.format("%s/%s/%s", CONTEXT_URL, path, URLEncoder.encode(key, StandardCharsets.UTF_8)));
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    public URI zaakTonenUrl(final String zaakIdentificatie) {
+        return absoluteUrl("zaken", zaakIdentificatie);
+    }
+
+    public URI taakTonenUrl(final String taakId) {
+        return absoluteUrl("taken", taakId);
+    }
+
+    public URI informatieobjectTonenUrl(final UUID enkelvoudigInformatieobjectUUID) {
+        return absoluteUrl("informatie-objecten", enkelvoudigInformatieobjectUUID.toString());
     }
 }

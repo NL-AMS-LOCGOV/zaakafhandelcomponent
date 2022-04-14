@@ -41,6 +41,9 @@ public class RESTZaakOverzichtConverter {
     @Inject
     private RESTMedewerkerConverter medewerkerConverter;
 
+    @Inject
+    private RESTOpenstaandeTakenConverter openstaandeTakenConverter;
+
 
     public RESTZaakOverzicht convert(final Zaak zaak) {
         final RESTZaakOverzicht restZaakOverzicht = new RESTZaakOverzicht();
@@ -53,6 +56,7 @@ public class RESTZaakOverzichtConverter {
         restZaakOverzicht.toelichting = zaak.getToelichting();
         restZaakOverzicht.omschrijving = zaak.getOmschrijving();
         restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
+        restZaakOverzicht.openstaandeTaken = openstaandeTakenConverter.convert(zaak.getUuid());
         if (zaak.getStatus() != null) {
             restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }

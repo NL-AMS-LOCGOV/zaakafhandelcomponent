@@ -11,7 +11,7 @@ import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
-import {LinkMenuTitem} from '../../shared/side-nav/menu-item/link-menu-titem';
+import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
 
 @Component({
@@ -34,7 +34,7 @@ export class ParametersComponent extends ViewComponent implements OnInit {
     ngOnInit(): void {
         this.menu = [];
         this.menu.push(new HeaderMenuItem('actie.admin'));
-        this.menu.push(new LinkMenuTitem('parameters', 'parameters', 'tune'));
+        this.menu.push(new LinkMenuItem('parameters', 'parameters', 'tune'));
         this.utilService.setTitle('title.parameters');
         this.getZaakafhandelParameters();
     }
