@@ -20,7 +20,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.signaleringen.converter.RESTSignaleringInstellingenConverter;
 import net.atos.zac.app.signaleringen.model.RESTSignaleringInstellingen;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
@@ -52,10 +55,16 @@ public class SignaleringenRestService {
     private FlowableService flowableService;
 
     @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
     private RESTZaakOverzichtConverter restZaakOverzichtConverter;
 
     @Inject
     private RESTTaakConverter restTaakConverter;
+
+    @Inject
+    private RESTInformatieobjectConverter restInformatieobjectConverter;
 
     @Inject
     private RESTSignaleringInstellingenConverter restSignaleringInstellingenConverter;
@@ -96,10 +105,23 @@ public class SignaleringenRestService {
     }
 
     @GET
+    @Path("/informatieobjecten/{type}")
+    public List<RESTEnkelvoudigInformatieobject> listInformatieobjectenSignaleringen(@PathParam("type") final SignaleringType.Type signaleringsType) {
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                .types(signaleringsType)
+                .subjecttype(SignaleringSubject.INFORMATIEOBJECT);
+        return signaleringenService.findSignaleringen(parameters).stream()
+                .map(signalering -> drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(signalering.getSubject())))
+                .map(restInformatieobjectConverter::convert)
+                .toList();
+    }
+
+    @GET
     @Path("/instellingen")
     public List<RESTSignaleringInstellingen> listSignaleringInstellingen() {
+        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(ingelogdeMedewerker.get());
         return restSignaleringInstellingenConverter.convert(
-                signaleringenService.listInstellingen(new SignaleringInstellingenZoekParameters(ingelogdeMedewerker.get())));
+                signaleringenService.listInstellingen(parameters));
     }
 
     @PUT
@@ -107,5 +129,15 @@ public class SignaleringenRestService {
     public void updateSignaleringInstellingen(final RESTSignaleringInstellingen restInstellingen) {
         signaleringenService.createUpdateOrDeleteInstellingen(
                 restSignaleringInstellingenConverter.convert(restInstellingen, ingelogdeMedewerker.get()));
+    }
+
+    @GET
+    @Path("/typen/dashboard")
+    public List<SignaleringType.Type> listDashboardSignaleringTypen() {
+        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(ingelogdeMedewerker.get())
+                .dashboard();
+        return signaleringenService.findInstellingen(parameters).stream()
+                .map(instellingen -> instellingen.getType().getType())
+                .toList();
     }
 }

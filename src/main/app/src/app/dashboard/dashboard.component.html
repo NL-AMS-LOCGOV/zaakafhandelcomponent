@@ -3,9 +3,9 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<ng-container *ngFor="let row of cards">
+<ng-container *ngFor="let row of grid">
     <div class="grid-container" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px">
-        <mat-card *ngFor="let card of row " [fxFlex]="row.length > 1 ? 100/row.length: 50">
+        <mat-card *ngFor="let card of row " [fxFlex]="100/(width<grid[0].length?width:grid[0].length)+'%'">
             <mat-card-header>
                 <mat-card-title>
                     {{card.title | translate}}
@@ -14,7 +14,18 @@
             <mat-card-content class="dashboard-card-content" [ngSwitch]="card.objectType">
                 <zac-zaken-card [data]="card" *ngSwitchCase="'ZAAK'"></zac-zaken-card>
                 <zac-taken-card [data]="card" *ngSwitchCase="'TAAK'"></zac-taken-card>
+                <zac-informatieobjecten-card [data]="card" *ngSwitchCase="'INFORMATIEOBJECT'"></zac-informatieobjecten-card>
             </mat-card-content>
         </mat-card>
+    </div>
+</ng-container>
+<ng-container *ngIf="grid.length===0">
+    <div class="table-wrapper">
+        <p><br/><br/><br/>{{'msg.geen.cards.gevonden' | translate}}<br/><br/></p>
+        <p>
+            <button routerLink="/signaleringen/settings" id="hint_button" mat-button>
+                {{'msg.geen.cards.hint' | translate }}
+            </button>
+        </p>
     </div>
 </ng-container>

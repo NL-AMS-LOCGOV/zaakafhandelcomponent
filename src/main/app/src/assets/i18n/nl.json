@@ -298,6 +298,8 @@
   "msg.error.date.invalid.streef": "Streefdatum mag niet voor startdatum liggen",
   "msg.error.date.invalid.fatale": "Fatale datum mag niet voor streefdatum liggen",
   "msg.email.verstuurd": "Email is verstuurd",
+  "msg.geen.cards.gevonden": "Geen cards geconfigureerd",
+  "msg.geen.cards.hint": "Gebruik de Signalering-instellingen in uw Profiel om cards aan het dashboard toe te voegen",
   "msg.geen.gegevens.gevonden": "Geen gegevens gevonden",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "Dit document",
   "msg.gewijzigd.objecttype.TAAK": "Deze taak",

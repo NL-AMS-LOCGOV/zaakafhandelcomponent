@@ -11,6 +11,7 @@ import {catchError, switchMap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from './fout-afhandeling/fout-afhandeling.service';
 import {Taak} from './taken/model/taak';
+import {EnkelvoudigInformatieobject} from './informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Injectable({
     providedIn: 'root'
@@ -30,6 +31,12 @@ export class SignaleringenService {
         this.latestSignaleringSubject.next();
     }
 
+    listDashboardSignaleringTypen(): Observable<SignaleringType[]> {
+        return this.http.get<SignaleringType[]>(`${this.basepath}/typen/dashboard`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     listZakenSignalering(signaleringType: SignaleringType): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/zaken/${signaleringType}`).pipe(
             catchError(this.handleError)
@@ -38,6 +45,12 @@ export class SignaleringenService {
 
     listTakenSignalering(signaleringType: SignaleringType): Observable<Taak[]> {
         return this.http.get<Taak[]>(`${this.basepath}/taken/${signaleringType}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    listInformatieobjectenSignalering(signaleringType: SignaleringType): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten/${signaleringType}`).pipe(
             catchError(this.handleError)
         );
     }

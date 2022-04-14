@@ -18,18 +18,17 @@ import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 })
 export class DashboardComponent implements OnInit {
 
-    zakenNieuwOpNaamCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.zaken',
-        SignaleringType.ZAAK_OP_NAAM, 'ZAAK');
-    takenNieuwOpNaamCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.taken',
-        SignaleringType.TAAK_OP_NAAM, 'TAAK');
-    zakenMetNieuweDocumentenCard: DashboardCardData = new DashboardCardData('dashboard.mijn.nieuwe.documenten',
-        SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD, 'ZAAK');
+    /** Cards will be added to the grid on the dashboard in this order */
+    private cards: Array<DashboardCardData> = [
+        new DashboardCardData('ZAAK', SignaleringType.ZAAK_OP_NAAM, 'dashboard.mijn.nieuwe.zaken'),
+        new DashboardCardData('TAAK', SignaleringType.TAAK_OP_NAAM, 'dashboard.mijn.nieuwe.taken'),
+        new DashboardCardData('ZAAK', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD, 'dashboard.mijn.nieuwe.documenten')
+    ];
+
+    width: number; // Maximum number of cards horizontally
 
     /** Based on the screen size, switch from standard to one column per row */
-    cards: Array<DashboardCardData[]> = [
-        [this.zakenNieuwOpNaamCard, this.takenNieuwOpNaamCard],
-        [this.zakenMetNieuweDocumentenCard]
-    ];
+    grid: Array<DashboardCardData[]> = [];
 
     constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService,
                 private signaleringenService: SignaleringenService) {
@@ -37,8 +36,29 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
+        this.width = SessionStorageUtil.getItem('dashboardWidth', 2);
+        this.addCards();
         // TODO instead of session storage use userpreferences in a db
         SessionStorageUtil.setItem('dashboardOpened', moment());
         this.signaleringenService.updateSignaleringen();
+    }
+
+    private addCards(): void {
+        this.signaleringenService.listDashboardSignaleringTypen().subscribe(typen => {
+            for (const card of this.cards) {
+                for (const type of typen) {
+                    if (card.signaleringType === type) {
+                        this.addCard(card);
+                    }
+                }
+            }
+        });
+    }
+
+    private addCard(card: DashboardCardData): void {
+        if (this.grid.length < 1 || this.width <= this.grid[this.grid.length - 1].length) {
+            this.grid.push([]);
+        }
+        this.grid[this.grid.length - 1].push(card);
     }
 }
