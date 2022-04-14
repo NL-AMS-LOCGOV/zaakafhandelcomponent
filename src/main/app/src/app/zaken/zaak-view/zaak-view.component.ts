@@ -492,11 +492,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         if (locatie) {
             zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
-            this.zaak.zaakgeometrie = LocationUtil.point(locatie.centroide_ll);
         }
 
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak);
+        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
     }
 
     initiatorGeselecteerd(initiator: Klant): void {
