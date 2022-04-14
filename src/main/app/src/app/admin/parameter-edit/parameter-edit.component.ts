@@ -14,7 +14,7 @@ import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service'
 import {Groep} from '../../identity/model/groep';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
-import {PlanItemParameter} from '../model/plan-item-parameter';
+import {HumanTaskParameter} from '../model/human-task-parameter';
 import {FormulierDefinitieVerwijzing} from '../model/formulier-definitie-verwijzing';
 import {MatSelectChange} from '@angular/material/select';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
@@ -40,13 +40,13 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     menu: MenuItem[] = [];
 
     parameters: ZaakafhandelParameters;
-    planItemParameters: PlanItemParameter[] = [];
+    humanTaskParameters: HumanTaskParameter[] = [];
     userEventListenerParameters: UserEventListenerParameter[] = [];
     zaakbeeindigParameters: ZaakbeeindigParameter[] = [];
     selection = new SelectionModel<ZaakbeeindigParameter>(true);
 
     algemeenFormGroup: FormGroup;
-    planItemFormGroup: FormGroup;
+    humanTaskFormGroup: FormGroup;
     UserEventListenerFormGroup: FormGroup;
     zaakbeeindigFormGroup: FormGroup;
 
@@ -67,7 +67,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
-            this.planItemParameters = this.parameters.planItemParameters;
+            this.humanTaskParameters = this.parameters.humanTaskParameters;
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
             this.groepControl.setValue(this.parameters.defaultGroep);
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
@@ -94,27 +94,27 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.menu.push(new LinkMenuItem('parameters', '/admin/parameters', 'tune'));
     }
 
-    readPlanItemParameters(event: MatSelectChange): void {
-        this.planItemParameters = [];
+    readHumanTaskParameters(event: MatSelectChange): void {
+        this.humanTaskParameters = [];
         const caseDefinition = event.value;
         if (this.compareObject(caseDefinition, this.parameters.caseDefinition)) {
-            this.planItemParameters = this.parameters.planItemParameters;
-            this.updatePlanItemForm();
+            this.humanTaskParameters = this.parameters.humanTaskParameters;
+            this.updateHumanTaskForm();
         } else {
             this.adminService.readCaseDefinition(caseDefinition.key).subscribe(data => {
                 data.planItemDefinitions.forEach(planItemDefinition => {
-                    const planItemParameter: PlanItemParameter = new PlanItemParameter();
-                    planItemParameter.planItemDefinition = planItemDefinition;
-                    planItemParameter.defaultGroep = this.parameters.defaultGroep;
-                    this.planItemParameters.push(planItemParameter);
+                    const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
+                    humanTaskParameter.planItemDefinition = planItemDefinition;
+                    humanTaskParameter.defaultGroep = this.parameters.defaultGroep;
+                    this.humanTaskParameters.push(humanTaskParameter);
                 });
-                this.updatePlanItemForm();
+                this.updateHumanTaskForm();
             });
         }
     }
 
-    getPlanItemControl(parameter: PlanItemParameter, field: string): FormControl {
-        return this.planItemFormGroup.get(`${parameter.planItemDefinition.id}__${field}`) as FormControl;
+    getHumanTaskControl(parameter: HumanTaskParameter, field: string): FormControl {
+        return this.humanTaskFormGroup.get(`${parameter.planItemDefinition.id}__${field}`) as FormControl;
     }
 
     createForm() {
@@ -123,26 +123,26 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             groepControl: this.groepControl,
             behandelaarControl: this.behandelaarControl
         });
-        this.updatePlanItemForm();
+        this.updateHumanTaskForm();
         this.updateUserEventListenerForm();
         this.createZaakbeeindigForm();
     }
 
-    updatePlanItemForm() {
-        this.planItemFormGroup = this.formBuilder.group({});
-        this.planItemParameters.forEach(parameter => {
-            this.planItemFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
-            this.planItemFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
+    updateHumanTaskForm() {
+        this.humanTaskFormGroup = this.formBuilder.group({});
+        this.humanTaskParameters.forEach(parameter => {
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
                 new FormControl(parameter.formulierDefinitie, [Validators.required]));
-            this.planItemFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
                 new FormControl(parameter.doorlooptijd, [Validators.required, Validators.min(0)]));
         });
     }
 
-    isPlanItemParameterValid(planItemParameter: PlanItemParameter): boolean {
-        return this.getPlanItemControl(planItemParameter, 'defaultGroep').valid &&
-            this.getPlanItemControl(planItemParameter, 'formulierDefinitie').valid &&
-            this.getPlanItemControl(planItemParameter, 'doorlooptijd').valid;
+    isHumanTaskParameterValid(humanTaskParameter: HumanTaskParameter): boolean {
+        return this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid &&
+            this.getHumanTaskControl(humanTaskParameter, 'formulierDefinitie').valid &&
+            this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid;
     }
 
     getActieControl(parameter: UserEventListenerParameter, field: string): FormControl {
@@ -208,7 +208,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     isValid(): boolean {
         return this.algemeenFormGroup.valid &&
-            this.planItemFormGroup.valid &&
+            this.humanTaskFormGroup.valid &&
             this.zaakbeeindigFormGroup.valid;
     }
 
@@ -217,12 +217,12 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.parameters.defaultGroep = this.groepControl.value;
         this.parameters.defaultBehandelaar = this.behandelaarControl.value;
 
-        this.planItemParameters.forEach(param => {
-            param.defaultGroep = this.getPlanItemControl(param, 'defaultGroep').value;
-            param.formulierDefinitie = this.getPlanItemControl(param, 'formulierDefinitie').value;
-            param.doorlooptijd = this.getPlanItemControl(param, 'doorlooptijd').value;
+        this.humanTaskParameters.forEach(param => {
+            param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
+            param.formulierDefinitie = this.getHumanTaskControl(param, 'formulierDefinitie').value;
+            param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
         });
-        this.parameters.planItemParameters = this.planItemParameters;
+        this.parameters.humanTaskParameters = this.humanTaskParameters;
 
         this.userEventListenerParameters.forEach(param => {
            param.toelichting = this.getActieControl(param, 'toelichting').value;

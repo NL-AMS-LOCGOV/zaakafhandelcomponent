@@ -21,13 +21,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Entity
-@Table(schema = SCHEMA, name = "planitem_parameters")
-@SequenceGenerator(schema = SCHEMA, name = "sq_planitem_parameters", sequenceName = "sq_planitem_parameters", allocationSize = 1)
-public class PlanItemParameters {
+@Table(schema = SCHEMA, name = "humantask_parameters")
+@SequenceGenerator(schema = SCHEMA, name = "sq_humantask_parameters", sequenceName = "sq_humantask_parameters",
+        allocationSize = 1)
+public class HumanTaskParameters {
 
     @Id
-    @GeneratedValue(generator = "sq_planitem_parameters", strategy = GenerationType.SEQUENCE)
-    @Column(name = "id_planitem_parameters")
+    @GeneratedValue(generator = "sq_humantask_parameters", strategy = GenerationType.SEQUENCE)
+    @Column(name = "id_humantask_parameters")
     private Long id;
 
     @NotNull

@@ -25,7 +25,7 @@ import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
-import net.atos.zac.zaaksturing.model.PlanItemParameters;
+import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
 /**
  *
@@ -57,7 +57,7 @@ public class RESTPlanItemConverter {
         return restPlanItem;
     }
 
-    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid, final PlanItemParameters parameters) {
+    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid, final HumanTaskParameters parameters) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem, zaakUuid);
         restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
         if (parameters.getFormulierDefinitieID() != null) {
