@@ -31,13 +31,12 @@ import {EditGroepComponent} from './edit/edit-groep/edit-groep.component';
 import {DialogComponent} from './dialog/dialog.component';
 import {NoStickyColumnPipe} from './dynamic-table/pipes/no-sticky-column.pipe';
 import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker.component';
-import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {DocumentViewerComponent} from './document-viewer/document-viewer.component';
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
-
+import {EditSelectComponent} from './edit/edit-select/edit-select.component';
 
 @NgModule({
     declarations: [
@@ -53,14 +52,12 @@ import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
         EditDatumGroepComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
-        EditVertrouwelijkheidaanduidingComponent,
+        EditSelectComponent,
         ConfirmDialogComponent,
         DialogComponent,
         NoStickyColumnPipe,
         ColumnPickerComponent,
-        EditCommunicatiekanaalComponent
         TooltipListPipe,
-        ColumnPickerComponent,
         DocumentViewerComponent
     ],
     imports: [
@@ -94,7 +91,7 @@ import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
         EditDatumGroepComponent,
         EditAutocompleteComponent,
         EditTekstComponent,
-        EditVertrouwelijkheidaanduidingComponent,
+        EditSelectComponent,
         DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,

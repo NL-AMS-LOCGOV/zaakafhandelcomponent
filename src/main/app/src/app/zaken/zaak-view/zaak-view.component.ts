@@ -200,7 +200,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                         .value({
                                             label: this.zaak.communicatiekanaal,
-                                            value: this.zaak.communicatiekanaal
+                                            value: this.zaak.communicatiekanaal?.naam
                                         })
                                         .optionLabel('naam')
                                         .options(this.zakenService.listCommunicatiekanalen()).build());
@@ -220,23 +220,28 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                               .maxlength(80)
                                                                               .build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
-                                                                             .value(this.zaak.toelichting).maxlength(1000).build());
+                                                                             .value(this.zaak.toelichting)
+                                                                             .maxlength(1000).build());
         this.editFormFields.set('vertrouwelijkheidaanduiding',
             new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
                                         .value({
-                                            label: this.translate.instant('vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
-                                            value: this.zaak.vertrouwelijkheidaanduiding
+                                            label: this.translate.instant(
+                                                'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                                            value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
                                         })
                                         .optionLabel('label')
                                         .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                                             Vertrouwelijkheidaanduiding)).build());
+
         this.editFormFields.set('startdatum',
             new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
         this.editFormFields.set('einddatumGepland',
-            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland').value(this.zaak.einddatumGepland).build());
-        this.editFormFieldIcons.set('einddatumGepland', new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
-            'msg.datum.overschreden', 'warning'));
+            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
+                                      .value(this.zaak.einddatumGepland).build());
+        this.editFormFieldIcons.set('einddatumGepland',
+            new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
+                'msg.datum.overschreden', 'warning'));
 
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
             new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
@@ -414,7 +419,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editZaakMetReden(event: any, field: string): void {
         const zaak: Zaak = new Zaak();
-        zaak[field] = event[field];
+        zaak[field] = event[field].value ? event[field].value : event[field];
         this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
