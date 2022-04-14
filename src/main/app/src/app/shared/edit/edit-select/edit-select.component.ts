@@ -27,8 +27,7 @@ export class EditSelectComponent extends EditComponent {
     }
 
     init(formField: SelectFormField): void {
-        this.option = formField.formControl.value;
-        this.value = formField.formControl.value.value ? formField.formControl.value.value : formField.formControl.value[formField.optionLabel];
+        this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
     }
 
     valueChanges(): void {

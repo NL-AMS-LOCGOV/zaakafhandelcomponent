@@ -8,7 +8,7 @@
         <mat-icon>edit</mat-icon>
     </label>
     <div *ngIf="!editing" class="static-text-content">
-        {{value | translate}}
+        {{value | translate | empty}}
         <div class="edit-icon">
             <mat-icon>edit</mat-icon>
         </div>
