@@ -34,6 +34,10 @@ import {ColumnPickerComponent} from './dynamic-table/column-picker/column-picker
 import {EditVertrouwelijkheidaanduidingComponent} from './edit/edit-vertrouwelijkheidaanduiding/edit-vertrouwelijkheidaanduiding.component';
 import {EditDatumGroepComponent} from './edit/edit-datum-groep/edit-datum-groep.component';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {DocumentViewerComponent} from './document-viewer/document-viewer.component';
+import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
+import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
+
 
 @NgModule({
     declarations: [
@@ -53,7 +57,9 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         ConfirmDialogComponent,
         DialogComponent,
         NoStickyColumnPipe,
-        ColumnPickerComponent
+        TooltipListPipe,
+        ColumnPickerComponent,
+        DocumentViewerComponent
     ],
     imports: [
         FormsModule,
@@ -63,7 +69,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         PipesModule,
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
-        TranslateModule
+        TranslateModule,
+        PdfJsViewerModule
     ],
     exports: [
         BrowserAnimationsModule,
@@ -89,6 +96,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
         DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,
+        TooltipListPipe,
+        DocumentViewerComponent,
         ColumnPickerComponent
     ],
     providers: [

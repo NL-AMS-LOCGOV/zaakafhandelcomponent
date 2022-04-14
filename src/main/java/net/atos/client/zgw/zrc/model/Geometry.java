@@ -29,4 +29,7 @@ public abstract class Geometry {
     public GeometryType getType() {
         return type;
     }
+
+    @Override
+    public abstract String toString();
 }

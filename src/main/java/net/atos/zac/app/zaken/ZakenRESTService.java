@@ -36,6 +36,7 @@ import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
 import net.atos.client.vrl.VRLClientService;
+import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -373,9 +374,8 @@ public class ZakenRESTService {
     @GET
     @Path("communicatiekanalen")
     public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
-        return vrlClientService.listCommunicatiekanalen().stream()
-                .map(communicatiekanaalConverter::convert)
-                .toList();
+        final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
+        return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 
     private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,

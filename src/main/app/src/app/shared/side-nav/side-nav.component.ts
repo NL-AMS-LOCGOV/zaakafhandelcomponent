@@ -7,7 +7,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MenuItem} from './menu-item/menu-item';
 import {ButtonMenuItem} from './menu-item/button-menu-item';
 import {HrefMenuItem} from './menu-item/href-menu-item';
-import {LinkMenuTitem} from './menu-item/link-menu-titem';
+import {LinkMenuItem} from './menu-item/link-menu-item';
 import {rotate180, sideNavToggle} from '../animations/animations';
 import {SideNavUtil} from './side-nav.util';
 
@@ -82,8 +82,8 @@ export class SideNavComponent implements OnInit {
         return menuItem as HrefMenuItem;
     }
 
-    asLinkMenuItem(menuItem: MenuItem): LinkMenuTitem {
-        return menuItem as LinkMenuTitem;
+    asLinkMenuItem(menuItem: MenuItem): LinkMenuItem {
+        return menuItem as LinkMenuItem;
     }
 
     get MenuMode() {

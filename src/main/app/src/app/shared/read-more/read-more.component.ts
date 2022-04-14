@@ -17,7 +17,7 @@ export class ReadMoreComponent implements OnChanges {
     }
 
     ngOnChanges() {
-        this.showTooltip = typeof this.text == 'string' ? this.text.length > this.maxLength : false;
+        this.showTooltip = typeof this.text === 'string' ? this.text.length > this.maxLength : false;
         this.subText = this.showTooltip ? this.text.substring(0, this.maxLength - 3) + '...' : null;
     }
 }

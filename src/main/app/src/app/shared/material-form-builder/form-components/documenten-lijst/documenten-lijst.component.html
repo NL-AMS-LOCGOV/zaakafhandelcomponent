@@ -7,8 +7,8 @@
     <label [for]="data.id" class="label">
         <div>{{data.label | translate}}</div>
     </label>
-    <div *ngIf="dataSource.data.length == 0" [id]="data.id" class="value">-</div>
-    <div *ngIf="dataSource.data.length > 0" [id]="data.id" class="value">
+
+    <div [id]="data.id" class="value">
         <mat-form-field *ngIf="!data.readonly" appearance="standard">
             <mat-label>{{'filter' | translate}}</mat-label>
             <input matInput (keyup)="applyFilter($event)">
@@ -71,6 +71,8 @@
                 <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: columns;"></tr>
             </table>
+            <p *ngIf="dataSource.data.length == 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+            <p *ngIf="loading ">{{'msg.loading' | translate}}</p>
         </div>
     </div>
 </div>

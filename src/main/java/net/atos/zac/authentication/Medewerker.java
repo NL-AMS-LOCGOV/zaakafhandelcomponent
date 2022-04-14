@@ -32,6 +32,10 @@ public class Medewerker {
         return RESTMedewerkerConverter.convertToNaam(user);
     }
 
+    public String getEmail() {
+        return user.getEmail();
+    }
+
     public List<String> getGroupIds() {
         return groups.stream().map(Group::getId).collect(Collectors.toList());
     }

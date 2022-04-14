@@ -10,6 +10,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -114,8 +115,9 @@ public class RESTZaakConverter {
         }
 
         if (zaak.getCommunicatiekanaal() != null) {
-            final CommunicatieKanaal communicatieKanaal = vrlClientService.readCommunicatiekanaal(UriUtil.uuidFromURI(zaak.getCommunicatiekanaal()));
-            restZaak.communicatiekanaal = communicatiekanaalConverter.convert(communicatieKanaal);
+            final UUID communicatiekanaalUUID = UriUtil.uuidFromURI(zaak.getCommunicatiekanaal());
+            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(communicatiekanaalUUID);
+            restZaak.communicatiekanaal = communicatiekanaalConverter.convert(communicatieKanaal, communicatiekanaalUUID);
         }
 
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
@@ -150,7 +152,7 @@ public class RESTZaakConverter {
         zaak.setRegistratiedatum(restZaak.registratiedatum);
 
         if (restZaak.communicatiekanaal != null) {
-            final CommunicatieKanaal communicatieKanaal = vrlClientService.readCommunicatiekanaal(restZaak.communicatiekanaal.uuid);
+            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(restZaak.communicatiekanaal.uuid);
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
 
@@ -174,6 +176,7 @@ public class RESTZaakConverter {
             zaak.setVertrouwelijkheidaanduiding(
                     Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
+        zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaak;
     }
 
