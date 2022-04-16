@@ -2,7 +2,9 @@
   "auth-server-url": "${env.AUTH_SERVER}/auth/",
   "realm": "${env.AUTH_REALM}",
   "client-id": "${env.AUTH_RESOURCE}",
+  "credentials": {
+    "secret": "${env.AUTH_SECRET}"
+  },
   "ssl-required": "external",
-  "public-client": true,
   "principal-attribute": "preferred_username"
 }
