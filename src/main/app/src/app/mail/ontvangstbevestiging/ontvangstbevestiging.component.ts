@@ -52,11 +52,11 @@ export class OntvangstbevestigingComponent implements OnInit {
 
         this.utilService.setTitle('title.ontvangstbevestiging.versturen', {zaak: this.zaak.identificatie});
 
-            const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
-                {zaakIdentificatie: zaak.identificatie});
+        const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
+            {zaakIdentificatie: this.zaak.identificatie});
 
-            const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
-                {zaakIdentificatie: zaak.identificatie});
+        const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
+            {zaakIdentificatie: this.zaak.identificatie});
 
         const ontvanger = new InputFormFieldBuilder().id('ontvanger')
                                                      .label('ontvanger')
