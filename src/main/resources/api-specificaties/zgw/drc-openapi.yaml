@@ -1526,7 +1526,7 @@ paths:
           type: string
           format: uuid
 servers:
-  - url: http://open-zaak/documenten/api/v1
+  - url: http://open-zaak.default/documenten/api/v1
 components:
   responses:
     '400':
@@ -2384,13 +2384,13 @@ components:
           maxLength: 1000
           minLength: 1
         resource:
-          title: ResourceInfo
+          title: Resource
           description: Het type resource waarop de actie gebeurde.
           type: string
           maxLength: 50
           minLength: 1
         resourceUrl:
-          title: ResourceInfo url
+          title: Resource url
           description: De URL naar het object.
           type: string
           format: uri
@@ -2401,7 +2401,7 @@ components:
           description: Toelichting waarom de handeling is uitgevoerd.
           type: string
         resourceWeergave:
-          title: ResourceInfo weergave
+          title: Resource weergave
           description: Vriendelijke identificatie van het object.
           type: string
           maxLength: 200
