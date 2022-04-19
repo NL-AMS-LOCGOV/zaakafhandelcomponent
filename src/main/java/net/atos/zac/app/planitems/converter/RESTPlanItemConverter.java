@@ -57,7 +57,7 @@ public class RESTPlanItemConverter {
         return restPlanItem;
     }
 
-    public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid, final HumanTaskParameters parameters) {
+    public RESTPlanItem convertHumanTask(final PlanItemInstance planItem, final UUID zaakUuid, final HumanTaskParameters parameters) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem, zaakUuid);
         restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
         if (parameters.getFormulierDefinitieID() != null) {

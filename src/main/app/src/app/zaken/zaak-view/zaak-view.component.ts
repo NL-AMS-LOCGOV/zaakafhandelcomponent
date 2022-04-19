@@ -258,7 +258,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 return new ButtonMenuItem(planItem.naam, () => {
                     if (!this.actiefPlanItem || this.actiefPlanItem.id !== planItem.id) {
                         this.action = null;
-                        this.planItemsService.readPlanItem(planItem.id).subscribe(data => {
+                        this.planItemsService.readHumanTask(planItem.id).subscribe(data => {
                             this.actiefPlanItem = data;
                             this.actionsSidenav.open();
                             this.action = SideNavAction.TAAK_STARTEN;

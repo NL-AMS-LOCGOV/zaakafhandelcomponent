@@ -58,11 +58,11 @@ public class PlanItemsRESTService {
 
     @GET
     @Path("{id}")
-    public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
+    public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
-        return planItemConverter.convertPlanItem(planItem, zaakUuidForCase, humanTaskParameters);
+        return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
     }
 
     @PUT
