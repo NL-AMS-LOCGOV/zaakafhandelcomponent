@@ -20,7 +20,7 @@ export class PlanItemsService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    readPlanItem(id: string): Observable<PlanItem> {
+    readHumanTask(id: string): Observable<PlanItem> {
         return this.http.get<PlanItem>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

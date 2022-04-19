@@ -57,7 +57,7 @@ public class ZaakafhandelParameters {
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<PlanItemParameters> planItemParametersCollection;
+    private Set<HumanTaskParameters> humanTaskParametersCollection;
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -107,21 +107,21 @@ public class ZaakafhandelParameters {
         this.gebruikersnaamMedewerker = gebruikersnaamMedewerker;
     }
 
-    public Collection<PlanItemParameters> getPlanItemParametersCollection() {
-        if (planItemParametersCollection == null) {
-            planItemParametersCollection = new HashSet<>();
+    public Collection<HumanTaskParameters> getHumanTaskParametersCollection() {
+        if (humanTaskParametersCollection == null) {
+            humanTaskParametersCollection = new HashSet<>();
         }
-        return planItemParametersCollection;
+        return humanTaskParametersCollection;
     }
 
-    public void addPlanItemParameters(PlanItemParameters planItemParameters) {
-        planItemParameters.setZaakafhandelParameters(this);
-        getPlanItemParametersCollection().add(planItemParameters);
+    public void addHumanTaskParameters(HumanTaskParameters humanTaskParameters) {
+        humanTaskParameters.setZaakafhandelParameters(this);
+        getHumanTaskParametersCollection().add(humanTaskParameters);
     }
 
-    public void setPlanItemParametersCollection(final Collection<PlanItemParameters> collection) {
-        getPlanItemParametersCollection().clear();
-        collection.forEach(this::addPlanItemParameters);
+    public void setHumanTaskParametersCollection(final Collection<HumanTaskParameters> collection) {
+        getHumanTaskParametersCollection().clear();
+        collection.forEach(this::addHumanTaskParameters);
     }
 
     public Collection<ZaakbeeindigParameter> getZaakbeeindigParameters() {

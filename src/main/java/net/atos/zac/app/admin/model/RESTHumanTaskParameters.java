@@ -7,7 +7,7 @@ package net.atos.zac.app.admin.model;
 
 import net.atos.zac.app.identity.model.RESTGroep;
 
-public class RESTPlanItemParameters {
+public class RESTHumanTaskParameters {
 
     public Long id;
 
@@ -19,7 +19,7 @@ public class RESTPlanItemParameters {
 
     public RESTGroep defaultGroep;
 
-    public RESTPlanItemParameters() {
+    public RESTHumanTaskParameters() {
     }
 
 }
