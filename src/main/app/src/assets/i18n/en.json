@@ -317,7 +317,7 @@
   "msg.pagina": "of",
   "msg.pagina.items": "Items per page",
   "msg.initiator.toegevoegd": "The initiator {{naam}} has been added",
-  "msg.ontvangstbevestiging.bericht": "Hello,\n\nThis is the acknowledgment of receipt of case {{zaakIdentificatie}}.\n{{behandelaar}} is going to process your case.",
+  "msg.ontvangstbevestiging.bericht": "Hello,\n\nThis is the acknowledgment of receipt of case {{zaakIdentificatie}}.",
   "msg.ontvangstbevestiging.onderwerp": "Acknowledgment of receipt of case {{zaakIdentificatie}}",
   "msg.taak.afgerond": "The task has been finished",
   "msg.taak.opgeslagen": "The task has been saved",

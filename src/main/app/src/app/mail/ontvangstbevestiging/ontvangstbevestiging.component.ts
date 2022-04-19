@@ -54,8 +54,9 @@ export class OntvangstbevestigingComponent implements OnInit {
 
         const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
             {zaakIdentificatie: this.zaak.identificatie});
+
         const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
-            {zaakIdentificatie: this.zaak.identificatie, behandelaar: this.zaak.behandelaar.naam});
+            {zaakIdentificatie: this.zaak.identificatie});
 
         const ontvanger = new InputFormFieldBuilder().id('ontvanger')
                                                      .label('ontvanger')
