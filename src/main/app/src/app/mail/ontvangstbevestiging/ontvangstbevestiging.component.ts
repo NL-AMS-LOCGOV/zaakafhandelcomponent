@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormGroup, Validators} from '@angular/forms';
 import {MailObject} from '../model/mailobject';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
@@ -24,14 +24,17 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
-    templateUrl: './ontvangstbevestiging.component.html'
+    selector: 'zac-ontvangstbevestiging',
+    templateUrl: './ontvangstbevestiging.component.html',
+    styleUrls: ['./ontvangstbevestiging.component.less']
 })
 export class OntvangstbevestigingComponent implements OnInit {
 
-    zaakUuid: string;
     formConfig: FormConfig;
-    zaak: Zaak;
     fields: Array<AbstractFormField[]>;
+
+    @Input() zaak: Zaak;
+    @Output() ontvangstBevestigd = new EventEmitter<boolean>();
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -46,34 +49,31 @@ export class OntvangstbevestigingComponent implements OnInit {
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
-        this.zaakUuid = this.route.snapshot.paramMap.get('zaakUuid');
 
-        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.utilService.setTitle('title.ontvangstbevestiging.versturen', {zaak: zaak.identificatie});
+        this.utilService.setTitle('title.ontvangstbevestiging.versturen', {zaak: this.zaak.identificatie});
 
-            const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
-                {zaakIdentificatie: zaak.identificatie});
-            const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
-                {zaakIdentificatie: zaak.identificatie, behandelaar: zaak.behandelaar.naam});
+        const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
+            {zaakIdentificatie: this.zaak.identificatie});
+        const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
+            {zaakIdentificatie: this.zaak.identificatie, behandelaar: this.zaak.behandelaar.naam});
 
-            const ontvanger = new InputFormFieldBuilder().id('ontvanger')
-                                                         .label('ontvanger')
-                                                         .validators(Validators.required, CustomValidators.email)
-                                                         .build();
-            const onderwerp = new InputFormFieldBuilder().id('onderwerp')
-                                                         .label('onderwerp')
-                                                         .value(ontvangstOnderwerp)
-                                                         .validators(Validators.required)
-                                                         .build();
-            const body = new TextareaFormFieldBuilder().id('body')
-                                                       .label('body')
-                                                       .value(ontvangstBericht)
-                                                       .validators(Validators.required)
-                                                       .build();
+        const ontvanger = new InputFormFieldBuilder().id('ontvanger')
+                                                     .label('ontvanger')
+                                                     .validators(Validators.required, CustomValidators.email)
+                                                     .build();
+        const onderwerp = new InputFormFieldBuilder().id('onderwerp')
+                                                     .label('onderwerp')
+                                                     .value(ontvangstOnderwerp)
+                                                     .validators(Validators.required)
+                                                     .build();
+        const body = new TextareaFormFieldBuilder().id('body')
+                                                   .label('body')
+                                                   .value(ontvangstBericht)
+                                                   .validators(Validators.required)
+                                                   .build();
 
-            this.fields = [[ontvanger], [onderwerp], [body]];
-        });
+        this.fields = [[ontvanger], [onderwerp], [body]];
+
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -84,12 +84,12 @@ export class OntvangstbevestigingComponent implements OnInit {
             mailObject.body = formGroup.controls['body'].value;
             mailObject.createDocumentFromMail = true;
 
-            this.mailService.sendAcknowledgeReceipt(this.zaakUuid, mailObject).subscribe(() => {
+            this.mailService.sendAcknowledgeReceipt(this.zaak.uuid, mailObject).subscribe(() => {
                 this.utilService.openSnackbar('msg.email.verstuurd');
-                this.router.navigate(['/zaken/', this.zaak.identificatie]);
+                this.ontvangstBevestigd.emit(true);
             });
         } else {
-            this.navigation.back();
+            this.ontvangstBevestigd.emit(false);
         }
     }
 

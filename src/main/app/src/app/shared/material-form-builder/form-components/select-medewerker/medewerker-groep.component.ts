@@ -14,10 +14,10 @@ import {Groep} from '../../../../identity/model/groep';
 import {Medewerker} from '../../../../identity/model/medewerker';
 
 @Component({
-    templateUrl: './select-medewerker.component.html',
-    styleUrls: ['./select-medewerker.component.less']
+    templateUrl: './medewerker-groep.component.html',
+    styleUrls: ['./medewerker-groep.component.less']
 })
-export class SelectMedewerkerComponent extends FormComponent implements OnInit {
+export class MedewerkerGroepComponent extends FormComponent implements OnInit {
 
     data: SelectMedewerkerFormField;
     formGroup: FormGroup;

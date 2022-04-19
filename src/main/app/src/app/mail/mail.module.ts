@@ -7,17 +7,16 @@ import {NgModule} from '@angular/core';
 
 import {SharedModule} from '../shared/shared.module';
 import {MailCreateComponent} from './mail-create/mail-create.component';
-import {MailRoutingModule} from './mail-routing.module';
 import {OntvangstbevestigingComponent} from './ontvangstbevestiging/ontvangstbevestiging.component';
 
 @NgModule({
     declarations: [MailCreateComponent, OntvangstbevestigingComponent],
     exports: [
-        MailCreateComponent
+        MailCreateComponent,
+        OntvangstbevestigingComponent
     ],
     imports: [
         SharedModule,
-        MailRoutingModule
     ]
 })
 export class MailModule {

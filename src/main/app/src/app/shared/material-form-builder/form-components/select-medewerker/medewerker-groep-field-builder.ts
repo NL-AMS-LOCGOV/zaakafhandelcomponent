@@ -9,7 +9,7 @@ import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder'
 import {Groep} from '../../../../identity/model/groep';
 import {Medewerker} from '../../../../identity/model/medewerker';
 
-export class SelectMedewerkerFieldBuilder extends AbstractFormFieldBuilder {
+export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: SelectMedewerkerFormField;
 
