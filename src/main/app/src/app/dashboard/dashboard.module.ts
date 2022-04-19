@@ -10,12 +10,14 @@ import {SharedModule} from '../shared/shared.module';
 import {ZakenCardComponent} from './zaken-card/zaken-card.component';
 import {RouterModule} from '@angular/router';
 import {TakenCardComponent} from './taken-card/taken-card.component';
+import {InformatieobjectenCardComponent} from './informatieobjecten-card/informatieobjecten-card.component';
 
 @NgModule({
     declarations: [
         DashboardComponent,
         ZakenCardComponent,
-        TakenCardComponent
+        TakenCardComponent,
+        InformatieobjectenCardComponent
     ],
     exports: [
         DashboardComponent

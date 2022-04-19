@@ -6,13 +6,13 @@
 import {SignaleringType} from '../../shared/signaleringen/signalering-type';
 
 export class DashboardCardData {
-    title: string;
+    objectType: 'ZAAK' | 'TAAK' | 'INFORMATIEOBJECT';
     signaleringType: SignaleringType;
-    objectType: 'ZAAK' | 'TAAK';
+    title: string;
 
-    constructor(title: string, signaleringType: SignaleringType, objectType: 'ZAAK' | 'TAAK') {
-        this.title = title;
-        this.signaleringType = signaleringType;
+    constructor(objectType: 'ZAAK' | 'TAAK' | 'INFORMATIEOBJECT', signaleringType: SignaleringType, title: string) {
         this.objectType = objectType;
+        this.signaleringType = signaleringType;
+        this.title = title;
     }
 }
