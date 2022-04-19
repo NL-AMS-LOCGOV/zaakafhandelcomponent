@@ -18,7 +18,6 @@ import {PlanItemType} from '../../plan-items/model/plan-item-type.enum';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZakenService} from '../zaken.service';
 import {WebsocketService} from '../../core/websocket/websocket.service';
@@ -291,9 +290,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }, 'mail'));
 
         if (!this.zaak.ontvangstbevestigingVerstuurd) {
-            this.menu.push(
-                new LinkMenuItem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
-                    'mark_email_read'));
+            this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.ONTVANGSTBEVESTIGING;
+            }, 'mark_email_read'));
         }
 
         if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
@@ -653,6 +653,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     mailVerstuurd(): void {
         this.action = null;
         this.actionsSidenav.close();
+    }
+
+    ontvangstBevestigd(bevestigd: boolean): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        this.zaak.ontvangstbevestigingVerstuurd = bevestigd;
+        this.setupMenu();
     }
 
     isPreviewBeschikbaar(formaat: string): boolean {

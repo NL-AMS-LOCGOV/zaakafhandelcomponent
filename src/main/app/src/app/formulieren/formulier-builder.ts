@@ -7,7 +7,7 @@ import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
 import {TaakStatus} from '../taken/model/taak-status.enum';
-import {SelectMedewerkerFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/select-medewerker-field-builder';
+import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 
 export class FormulierBuilder {
 
@@ -22,10 +22,10 @@ export class FormulierBuilder {
         this._formulier.dataElementen = planItem.taakdata;
         this._formulier.initStartForm();
         this._formulier.form.push(
-            [new SelectMedewerkerFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
-                                               .defaultMedewerker(planItem.medewerker)
-                                               .defaultGroep(planItem.groep)
-                                               .build()]);
+            [new MedewerkerGroepFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
+                                              .defaultMedewerker(planItem.medewerker)
+                                              .defaultGroep(planItem.groep)
+                                              .build()]);
         return this;
     }
 
