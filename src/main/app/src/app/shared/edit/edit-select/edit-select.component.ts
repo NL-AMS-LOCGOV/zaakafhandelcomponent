@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -11,11 +11,11 @@ import {EditComponent} from '../edit.component';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
 
 @Component({
-    selector: 'zac-edit-vertrouwelijkheidaanduiding',
-    templateUrl: './edit-vertrouwelijkheidaanduiding.component.html',
+    selector: 'zac-edit-select',
+    templateUrl: './edit-select.component.html',
     styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less']
 })
-export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
+export class EditSelectComponent extends EditComponent {
 
     @Input() formField: SelectFormField;
     @Input() reasonField: InputFormField;
@@ -28,7 +28,7 @@ export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
 
     init(formField: SelectFormField): void {
         this.option = formField.formControl.value;
-        this.value = formField.formControl.value.value;
+        this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
     }
 
     valueChanges(): void {
@@ -43,7 +43,8 @@ export class EditVertrouwelijkheidaanduidingComponent extends EditComponent {
 
     protected submitSave(): void {
         if (this.formField.formControl.valid) {
-            this.onSave.emit({vertrouwelijkheidaanduiding: this.formField.formControl.value.value, reden: this.reasonField?.formControl.value});
+            this.onSave.emit(
+                {[this.formField.id]: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
         }
         this.editing = false;
     }

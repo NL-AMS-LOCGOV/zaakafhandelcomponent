@@ -299,6 +299,8 @@
   "msg.error.date.invalid.streef": "Target date should not be before start date",
   "msg.error.date.invalid.fatale": "Fatal date should not be before target date",
   "msg.email.verstuurd": "Email has been sent",
+  "msg.geen.cards.gevonden": "No cards configured",
+  "msg.geen.cards.hint": "Use the Alert settings in your Profile to add cards to the dashboard",
   "msg.geen.gegevens.gevonden": "No data found",
   "msg.gewijzigd.objecttype.ENKELVOUDIG_INFORMATIEOBJECT": "This document",
   "msg.gewijzigd.objecttype.TAAK": "This task",

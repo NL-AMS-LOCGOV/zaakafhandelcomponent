@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -15,6 +15,8 @@
                                       (document)="documentToegevoegd($event)"></zac-informatie-object-create>
         <zac-plan-item-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-plan-item-do>
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
+        <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
+                                  [zaak]="zaak"></zac-ontvangstbevestiging>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie" (delete)="deleteInitiator()"></zac-persoongegevens>
@@ -36,17 +38,19 @@
                                                      [value]="zaak.identificatie"></zac-static-text>
                                     <zac-static-text [label]="'zaaktype' | translate"
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
-                                    <zac-static-text [label]="'kanaal' | translate"
-                                                     [value]="zaak.communicatiekanaal | empty: 'naam'"></zac-static-text>
+                                    <zac-edit-select [formField]="editFormFields.get('communicatiekanaal')"
+                                                     [reasonField]="editFormFields.get('reden')"
+                                                     (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
+                                    </zac-edit-select>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                         <mat-divider></mat-divider>
                                     </div>
-                                    <zac-edit-vertrouwelijkheidaanduiding [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
-                                                                          [reasonField]="editFormFields.get('reden')"
-                                                                          (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
-                                    </zac-edit-vertrouwelijkheidaanduiding>
+                                    <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
+                                                     [reasonField]="editFormFields.get('reden')"
+                                                     (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
+                                    </zac-edit-select>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('reden')"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>

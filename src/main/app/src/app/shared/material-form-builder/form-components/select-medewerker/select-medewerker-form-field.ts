@@ -10,7 +10,7 @@ import {Medewerker} from '../../../../identity/model/medewerker';
 
 export class SelectMedewerkerFormField extends AbstractFormField {
 
-    fieldType = FieldType.SELECT_MEDEWERKER;
+    fieldType = FieldType.MEDEWERKER_GROEP;
     defaultGroep: Groep;
     defaultMedewerker: Medewerker;
 
