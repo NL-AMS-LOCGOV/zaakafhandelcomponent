@@ -322,9 +322,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.createPlanItemStartenConfirmDialog(planItem, melding);
 
         this.dialog.open(planItemDialog.dialogComponent, {
-            data: planItemDialog.dialogData,
-            width: '400px',
-            autoFocus: 'dialog'
+            data: planItemDialog.dialogData
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
@@ -363,9 +361,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(DialogComponent, {
-            width: '400px',
-            data: dialogData,
-            autoFocus: 'dialog'
+            data: dialogData
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();
@@ -530,9 +526,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             data: new ConfirmDialogData(
                 this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
                 this.zakenService.deleteInitiator(this.zaak)
-            ),
-            width: '400px',
-            autoFocus: 'dialog'
+            )
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('actie.initiator.ontkoppelen.uitgevoerd');

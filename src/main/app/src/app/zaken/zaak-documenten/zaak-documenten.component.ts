@@ -118,8 +118,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                     new TextareaFormFieldBuilder().id('reden').label('reden').build(),
                     (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden), melding);
                 this.dialog.open(DialogComponent, {
-                    data: dialogData,
-                    autoFocus: 'dialog'
+                    data: dialogData
                 }).afterClosed().subscribe(result => {
                     if (result) {
                         this.utilService.openSnackbar('actie.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
