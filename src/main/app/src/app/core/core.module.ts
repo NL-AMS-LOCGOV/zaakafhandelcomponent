@@ -17,6 +17,7 @@ import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../../environments/environment';
+import {MAT_DIALOG_DEFAULT_OPTIONS} from '@angular/material/dialog';
 
 registerLocaleData(localeNl, 'nl-NL');
 
@@ -49,7 +50,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     providers: [
         UtilService,
         {provide: LOCALE_ID, useValue: 'nl-NL'},
-        {provide: MAT_DATE_LOCALE, useValue: 'nl-NL'}
+        {provide: MAT_DATE_LOCALE, useValue: 'nl-NL'},
+        {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {width: '500px', autoFocus: 'dialog'}}
     ]
 })
 
