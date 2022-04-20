@@ -15,13 +15,13 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
 import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
-import net.atos.zac.app.admin.model.RESTPlanItemParameters;
+import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
-import net.atos.zac.zaaksturing.model.PlanItemParameters;
+import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class RESTZaakafhandelParametersConverter {
@@ -55,28 +55,28 @@ public class RESTZaakafhandelParametersConverter {
         restParameters.defaultBehandelaar = medewerkerConverter.convertGebruikersnaam(parameters.getGebruikersnaamMedewerker());
         restParameters.caseDefinition = caseDefinitionConverter.convertToRest(parameters.getCaseDefinitionID());
         if (inclusiefPlanitems && restParameters.caseDefinition != null) {
-            final List<RESTPlanItemParameters> list = new ArrayList<>();
+            final List<RESTHumanTaskParameters> list = new ArrayList<>();
             //remove non-existent plan-item-definition params and add new plan-item-definition
             for (RESTPlanItemDefinition pDef : restParameters.caseDefinition.planItemDefinitions) {
                 boolean found = false;
-                final RESTPlanItemParameters restPlanParameters = new RESTPlanItemParameters();
-                for (PlanItemParameters pParam : parameters.getPlanItemParametersCollection()) {
-                    if (pParam.getPlanItemDefinitionID().equals(pDef.id)) {
+                final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
+                for (HumanTaskParameters htParam : parameters.getHumanTaskParametersCollection()) {
+                    if (htParam.getPlanItemDefinitionID().equals(pDef.id)) {
                         found = true;
-                        restPlanParameters.id = pParam.getId();
-                        restPlanParameters.defaultGroep = groepConverter.convertGroupId(pParam.getGroepID());
-                        restPlanParameters.formulierDefinitie = new RESTFormulierDefinitie(FormulierDefinitie.valueOf(pParam.getFormulierDefinitieID()));
-                        restPlanParameters.planItemDefinition = pDef;
-                        restPlanParameters.doorlooptijd = pParam.getDoorlooptijd();
+                        restHumanTaskParameters.id = htParam.getId();
+                        restHumanTaskParameters.defaultGroep = groepConverter.convertGroupId(htParam.getGroepID());
+                        restHumanTaskParameters.formulierDefinitie = new RESTFormulierDefinitie(FormulierDefinitie.valueOf(htParam.getFormulierDefinitieID()));
+                        restHumanTaskParameters.planItemDefinition = pDef;
+                        restHumanTaskParameters.doorlooptijd = htParam.getDoorlooptijd();
                         break;
                     }
                 }
                 if (!found) {
-                    restPlanParameters.planItemDefinition = pDef;
+                    restHumanTaskParameters.planItemDefinition = pDef;
                 }
-                list.add(restPlanParameters);
+                list.add(restHumanTaskParameters);
             }
-            restParameters.planItemParameters = list;
+            restParameters.humanTaskParameters = list;
 
             final List<RESTUserEventListenerParameter> actieParameters = new ArrayList<>();
             restParameters.caseDefinition.userEventListenerDefinitions.forEach(planItem -> {
@@ -103,20 +103,20 @@ public class RESTZaakafhandelParametersConverter {
             parameters.setGebruikersnaamMedewerker(restParameters.defaultBehandelaar.gebruikersnaam);
         }
         parameters.setGroepID(restParameters.defaultGroep.id);
-        final List<PlanItemParameters> list = new ArrayList<>();
-        restParameters.planItemParameters.forEach(restPlanItemParameters -> {
-            PlanItemParameters planItemParameters = new PlanItemParameters();
-            planItemParameters.setId(restPlanItemParameters.id);
-            planItemParameters.setZaakafhandelParameters(parameters);
-            planItemParameters.setDoorlooptijd(restPlanItemParameters.doorlooptijd);
-            planItemParameters.setPlanItemDefinitionID(restPlanItemParameters.planItemDefinition.id);
-            planItemParameters.setFormulierDefinitieID(restPlanItemParameters.formulierDefinitie.id);
-            if (restPlanItemParameters.defaultGroep != null) {
-                planItemParameters.setGroepID(restPlanItemParameters.defaultGroep.id);
+        final List<HumanTaskParameters> list = new ArrayList<>();
+        restParameters.humanTaskParameters.forEach(restHumanTaskParameters -> {
+            HumanTaskParameters humanTaskParameters = new HumanTaskParameters();
+            humanTaskParameters.setId(restHumanTaskParameters.id);
+            humanTaskParameters.setZaakafhandelParameters(parameters);
+            humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
+            humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
+            humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitie.id);
+            if (restHumanTaskParameters.defaultGroep != null) {
+                humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
             }
-            list.add(planItemParameters);
+            list.add(humanTaskParameters);
         });
-        parameters.setPlanItemParametersCollection(list);
+        parameters.setHumanTaskParametersCollection(list);
         parameters.setZaakbeeindigParameters(zaakbeeindigParameterConverter.convertToDomain(restParameters.zaakbeeindigParameters));
         parameters.setUserEventListenerParameters(restUserEventListenerParametersConverter
                                                           .convertToDomain(restParameters.userEventListenerParameters));

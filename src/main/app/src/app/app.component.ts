@@ -8,6 +8,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {Title} from '@angular/platform-browser';
 import {UtilService} from './core/service/util.service';
 import {InformatieObjectenService} from './informatie-objecten/informatie-objecten.service';
+import {SessionStorageUtil} from './shared/storage/session-storage.util';
 
 @Component({
     selector: 'zac-root',
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+        SessionStorageUtil.clearSessionStorage();
         this.titleService.setTitle('Zaakafhandelcomponent');
         this.translate.addLangs(['nl', 'en']);
         this.translate.setDefaultLang('nl');

@@ -29,7 +29,7 @@ import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.model.PlanItemParameters;
+import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
 /**
  *
@@ -58,11 +58,11 @@ public class PlanItemsRESTService {
 
     @GET
     @Path("{id}")
-    public RESTPlanItem readPlanItem(@PathParam("id") final String planItemId) {
+    public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
-        final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
-        return planItemConverter.convertPlanItem(planItem, zaakUuidForCase, planItemParameters);
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
+        return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
     }
 
     @PUT
@@ -70,8 +70,8 @@ public class PlanItemsRESTService {
     public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
         if (restPlanItem.type == PlanItemType.HUMAN_TASK) {
             final PlanItemInstance planItem = flowableService.readOpenPlanItem(restPlanItem.id);
-            final PlanItemParameters planItemParameters = zaakafhandelParameterService.getPlanItemParameters(planItem);
-            final Date streefdatum = DateUtils.addDays(new Date(), planItemParameters.getDoorlooptijd());
+            final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
+            final Date streefdatum = DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd());
             flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
                                                    restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
                                                    restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail,
