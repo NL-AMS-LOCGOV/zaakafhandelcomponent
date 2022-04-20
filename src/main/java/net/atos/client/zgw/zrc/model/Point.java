@@ -39,13 +39,13 @@ public class Point extends Geometry {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         final Point point = (Point) o;
 
-        return new EqualsBuilder().append(coordinates, point.coordinates).isEquals();
+        return new EqualsBuilder().append(super.getType(), point.getType()).append(coordinates, point.coordinates).isEquals();
     }
 
     @Override

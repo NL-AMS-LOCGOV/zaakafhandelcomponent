@@ -38,12 +38,12 @@ public class Polygon extends Geometry {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         final Polygon polygon = (Polygon) o;
-        return new EqualsBuilder().append(coordinates, polygon.coordinates).isEquals();
+        return new EqualsBuilder().append(super.getType(), polygon.getType()).append(coordinates, polygon.coordinates).isEquals();
     }
 
     @Override

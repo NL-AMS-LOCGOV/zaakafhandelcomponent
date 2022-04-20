@@ -35,24 +35,4 @@ public abstract class Geometry {
 
     @Override
     public abstract String toString();
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Geometry geometry = (Geometry) o;
-
-        return new EqualsBuilder().append(type, geometry.type).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(type).toHashCode();
-    }
 }

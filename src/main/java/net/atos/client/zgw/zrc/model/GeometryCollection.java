@@ -38,13 +38,13 @@ public class GeometryCollection extends Geometry {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        final GeometryCollection that = (GeometryCollection) o;
+        final GeometryCollection geometryCollection = (GeometryCollection) o;
 
-        return new EqualsBuilder().append(geometries, that.geometries).isEquals();
+        return new EqualsBuilder().append(super.getType(), geometryCollection.getType()).append(geometries, geometryCollection.geometries).isEquals();
     }
 
     @Override
