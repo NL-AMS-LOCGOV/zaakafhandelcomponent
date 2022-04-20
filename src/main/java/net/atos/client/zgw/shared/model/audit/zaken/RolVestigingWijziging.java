@@ -7,9 +7,9 @@ package net.atos.client.zgw.shared.model.audit.zaken;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolVestiging;
 
-public class RolVestigingWijziging extends AuditWijziging<RolOrganisatorischeEenheid> {
+public class RolVestigingWijziging extends AuditWijziging<RolVestiging> {
 
     @Override
     public ObjectType getObjectType() {
