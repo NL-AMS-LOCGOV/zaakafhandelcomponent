@@ -35,6 +35,13 @@ import {detailExpand} from '../../shared/animations/animations';
 export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
+
+    @Input() set documentToegevoegd(informatieobject: EnkelvoudigInformatieobject) {
+        if (informatieobject) {
+            this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
+        }
+    }
+
     taakModus: boolean;
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
@@ -81,10 +88,6 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
             this.enkelvoudigInformatieObjecten.data = objecten;
             this.informatieObjectenLoading = false;
         });
-    }
-
-    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
-        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
     }
 
     documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {

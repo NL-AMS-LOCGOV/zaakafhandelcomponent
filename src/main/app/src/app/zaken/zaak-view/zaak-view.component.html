@@ -12,7 +12,7 @@
         <zac-bedrijf-zoek *ngSwitchCase="'ZOEK_BEDRIJF'" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
         <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
-        ></zac-informatie-object-create>
+                                      (document)="documentToegevoegd($event)"></zac-informatie-object-create>
         <zac-plan-item-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-plan-item-do>
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
@@ -315,7 +315,7 @@
                 </mat-card-content>
             </mat-card>
         </div>
-        <zac-zaak-documenten [zaak]="zaak"></zac-zaak-documenten>
+        <zac-zaak-documenten [zaak]="zaak" [documentToegevoegd]="toegevoegdDocument"></zac-zaak-documenten>
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-sidenav-content>
 </mat-sidenav-container>

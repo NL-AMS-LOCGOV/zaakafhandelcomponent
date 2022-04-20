@@ -54,6 +54,7 @@ import {AddressResult, LocationService} from '../../shared/location/location.ser
 import {GeometryType} from '../model/geometryType';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -70,6 +71,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     action: string;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
+    toegevoegdDocument: EnkelvoudigInformatieobject;
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -584,6 +586,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.actionsSidenav.close();
         this.zaak.ontvangstbevestigingVerstuurd = bevestigd;
         this.setupMenu();
+    }
+
+    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.toegevoegdDocument = informatieobject;
     }
 
 }
