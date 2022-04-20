@@ -5,16 +5,15 @@
 
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {IdentityService} from '../../identity/identity.service';
 import {ZakenService} from '../zaken.service';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
-import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {of} from 'rxjs';
-import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {Groep} from '../../identity/model/groep';
+import {Medewerker} from '../../identity/model/medewerker';
+import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
+import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
 @Component({
     templateUrl: 'zaken-verdelen-dialog.component.html',
@@ -22,9 +21,7 @@ import {AbstractChoicesFormField} from '../../shared/material-form-builder/model
 })
 export class ZakenVerdelenDialogComponent implements OnInit {
 
-    groepFormField: AbstractFormField;
-    filterFormField: AbstractFormField;
-    medewerkerFormField: AbstractChoicesFormField;
+    medewerkerGroepFormField: MedewerkerGroepFormField;
     redenFormField: AbstractFormField;
     loading: boolean;
 
@@ -32,8 +29,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<ZakenVerdelenDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
         private mfbService: MaterialFormBuilderService,
-        private zakenService: ZakenService,
-        private identityService: IdentityService) {
+        private zakenService: ZakenService) {
     }
 
     close(): void {
@@ -41,54 +37,21 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.groepFormField =
-            new AutocompleteFormFieldBuilder()
-            .id('groep')
-            .label('groep')
-            .optionLabel('naam')
-            .options(this.identityService.listGroepen())
-            .build();
-        this.filterFormField =
-            new CheckboxFormFieldBuilder()
-            .id('filter')
-            .label('filter.groep')
-            .value(true)
-            .build();
-        this.redenFormField =
-            new TextareaFormFieldBuilder()
-            .id('reden')
-            .label('reden')
-            .build();
-        this.medewerkerFormField =
-            new AutocompleteFormFieldBuilder()
-            .id('behandelaar')
-            .label('behandelaar')
-            .optionLabel('naam')
-            .options(of([]))
-            .build();
-        this.laadMedewerkers();
-    }
-
-    public laadMedewerkers(): void {
-        let medewerkers;
-        if (this.groepFormField.formControl.value && this.filterFormField.formControl.value) {
-            medewerkers = this.identityService.listMedewerkersInGroep(this.groepFormField.formControl.value.id);
-        } else {
-            medewerkers = this.identityService.listMedewerkers();
-        }
-        this.medewerkerFormField.options = medewerkers;
+        this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('toekenning').groepOptioneel().build();
+        this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').build();
     }
 
     verdeel(): void {
+        const toekenning: { groep?: Groep, behandelaar?: Medewerker } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
         this.zakenService.verdelen(
             this.data,
-            this.groepFormField.formControl.value,
-            this.medewerkerFormField.formControl.value,
+            toekenning.groep,
+            toekenning.behandelaar,
             this.redenFormField.formControl.value
         ).subscribe(() => {
-            this.dialogRef.close(this.groepFormField.formControl.value || this.medewerkerFormField.formControl.value);
+            this.dialogRef.close(toekenning.groep || toekenning.behandelaar);
         });
     }
 }

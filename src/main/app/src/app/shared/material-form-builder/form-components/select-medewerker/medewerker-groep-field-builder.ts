@@ -3,19 +3,24 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {SelectMedewerkerFormField} from './select-medewerker-form-field';
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 
 import {Groep} from '../../../../identity/model/groep';
 import {Medewerker} from '../../../../identity/model/medewerker';
+import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 
 export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: SelectMedewerkerFormField;
+    protected readonly formField: MedewerkerGroepFormField;
 
     constructor() {
         super();
-        this.formField = new SelectMedewerkerFormField();
+        this.formField = new MedewerkerGroepFormField();
+    }
+
+    groepOptioneel(): this {
+        this.formField.groepOptioneel = true;
+        return this;
     }
 
     defaultGroep(groep: Groep): this {
