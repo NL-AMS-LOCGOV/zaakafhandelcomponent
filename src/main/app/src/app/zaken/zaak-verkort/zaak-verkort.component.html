@@ -3,79 +3,33 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div *ngIf="zaak" [@sideNavToggle]="{value:!collapsed ? 'open' : 'closed'}">
-    <mat-toolbar class="toolbar-footer" fxLayout="row" *ngIf="collapsed">
-        <button (click)="toggleMenu()" color="" id="zaakVerkortUitklappen_button" mat-icon-button
-                title="{{ 'actie.paneel.openen' | translate }}">
-            <mat-icon>menu_open</mat-icon>
-        </button>
-    </mat-toolbar>
-    <div class="content" fxLayout="column wrap" *ngIf="collapsed">
-        <button [routerLink]="['/zaken', zaak.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
-                mat-icon-button>
-            <mat-icon>visibility</mat-icon>
-        </button>
-    </div>
-    <div class="content" fxLayout="row wrap" *ngIf="!collapsed">
-        <div fxLayout="row" fxFlex="95" fxLayoutAlign="start center" fxHide.lt-md>
-            <zac-static-text [label]="'zaak' | translate"
-                             [value]="zaak.identificatie"
-                             (iconClicked)="openZaak()"
-                             [icon]="visibilityIcon"></zac-static-text>
-        </div>
-        <div fxLayout="row" fxFlex="5" fxLayoutAlign="end center" fxHide.lt-md>
-            <button (click)="toggleMenu()" id="zaakVerkortInklappen_button" mat-icon-button
-                    title="{{ 'actie.paneel.sluiten' | translate }}">
-                <mat-icon>cancel</mat-icon>
+<mat-card *ngIf="zaak">
+    <mat-card-header>
+        <mat-card-title>
+            {{'zaak' | translate}} {{zaak.identificatie}}
+            <button [routerLink]="['/zaken', zaak.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+                    mat-icon-button>
+                <mat-icon>visibility</mat-icon>
             </button>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+            <zac-static-text fxFlex="50" [label]="'zaaktype' | translate"
+                             [value]="zaak.zaaktype.omschrijving"></zac-static-text>
+
+            <zac-static-text fxFlex="50" [label]="'status' | translate"
+                             [value]="zaak.status | empty:'naam'"></zac-static-text>
+
+            <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
+                             [value]="zaak.startdatum | datum"></zac-static-text>
+
+            <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
+                             [value]="zaak.einddatumGepland | datum"
+                             [icon]="einddatumGeplandIcon"></zac-static-text>
+
+            <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
+                             [value]="zaak.toelichting"></zac-static-text>
         </div>
-
-
-        <zac-static-text fxFlex="100" [label]="'zaaktype' | translate"
-                         [value]="zaak.zaaktype.omschrijving"></zac-static-text>
-        <zac-static-text fxFlex="100" [label]="'status' | translate"
-                         [value]="zaak.status | empty:'naam'"></zac-static-text>
-
-        <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
-                         [value]="zaak.startdatum | datum"></zac-static-text>
-
-        <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
-                         [value]="zaak.einddatumGepland | datum"
-                         [icon]="einddatumGeplandIcon"></zac-static-text>
-
-        <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
-                         [value]="zaak.toelichting"></zac-static-text>
-    </div>
-</div>
-<div class="table-wrapper" *ngIf="!collapsed">
-    <h2>{{'enkelvoudigInformatieObjecten'|translate}}</h2>
-    <table mat-table [dataSource]="(enkelvoudigInformatieObjecten | slice: lowValue : highValue)">
-        <ng-container matColumnDef="titel">
-            <th mat-header-cell *matHeaderCellDef>{{ 'titel' | translate }}</th>
-            <td mat-cell *matCellDef="let informatieObject">{{ informatieObject.titel | empty }}</td>
-        </ng-container>
-        <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>{{ 'informatieobject.status' | translate }}</th>
-            <td mat-cell *matCellDef="let informatieObject">{{ 'informatieobject.status.' + informatieObject.status |translate| empty }}</td>
-        </ng-container>
-        <ng-container matColumnDef="url" stickyEnd>
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let informatieObject">
-                <button mat-flat-button [routerLink]="['/informatie-objecten', informatieObject.uuid]">
-                    <mat-icon>visibility</mat-icon>
-                </button>
-            </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="objectenColumnsToDisplay"></tr>
-        <tr mat-row *matRowDef="let row; columns: objectenColumnsToDisplay;"></tr>
-    </table>
-
-    <mat-paginator (page)="onPageChanged($event)"
-                   [length]="enkelvoudigInformatieObjecten.length"
-                   [pageIndex]="0"
-                   [pageSize]="5"
-                   hidePageSize
-                   sticky>
-    </mat-paginator>
-    <p *ngIf="enkelvoudigInformatieObjecten.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
-</div>
+    </mat-card-content>
+</mat-card>

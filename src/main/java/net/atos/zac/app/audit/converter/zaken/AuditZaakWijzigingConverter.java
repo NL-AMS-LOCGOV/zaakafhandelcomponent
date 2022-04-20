@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
@@ -92,6 +93,10 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
     }
 
     private String communicatieKanaalToWaarde(final URI kanaal) {
+        if (StringUtils.isBlank(kanaal.toString())) {
+            return null;
+        }
+
         final CommunicatieKanaal communicatieKanaal =
                 vrlClientService.findCommunicatiekanaal(UriUtil.uuidFromURI(kanaal));
         return communicatieKanaal != null ? communicatieKanaal.getNaam() : null;

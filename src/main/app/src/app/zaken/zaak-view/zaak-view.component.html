@@ -12,7 +12,7 @@
         <zac-bedrijf-zoek *ngSwitchCase="'ZOEK_BEDRIJF'" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
         <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
-                                      (document)="documentToegevoegd($event)"></zac-informatie-object-create>
+        ></zac-informatie-object-create>
         <zac-plan-item-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-plan-item-do>
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
@@ -183,7 +183,6 @@
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'" [text]="regel.oudeWaarde | location | async | empty"
                                                        [maxLength]="20"></read-more>
-
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="nieuweWaarde">
@@ -316,78 +315,7 @@
                 </mat-card-content>
             </mat-card>
         </div>
-
-        <div fxLayout>
-            <mat-card fxFlex="calc(100%-20px)">
-                <mat-card-header>
-                    <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}
-                        <mat-icon *ngIf="informatieObjectenLoading">hourglass_bottom</mat-icon>
-                    </mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div class="table-wrapper">
-                        <table mat-table [dataSource]="enkelvoudigInformatieObjecten" matSort #documentenTable matSortDisableClear="true"
-                               matSortActive="registratiedatumTijd" matSortDirection="asc" multiTemplateDataRows>
-                            <ng-container matColumnDef="titel">
-                                <th mat-sort-header mat-header-cell *matHeaderCellDef> {{'titel' | translate}} </th>
-                                <td mat-cell *matCellDef="let row" (click)="documentPreviewRow = documentPreviewRow === row ? null : row"
-                                    [ngClass]="{'pointer': isPreviewBeschikbaar(row.formaat)}">
-                                    {{row.titel | empty}}
-                                    <mat-icon *ngIf="isPreviewBeschikbaar(row.formaat)" class="material-icons-outlined">plagiarism</mat-icon>
-                                    <mat-icon *ngIf="row.startformulier" title="{{'startformulier' | translate}}" class="gold-star">star</mat-icon>
-                                </td>
-                            </ng-container>
-
-                            <ng-container [matColumnDef]="column"
-                                          *ngFor="let column of [ 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur']">
-                                <th mat-sort-header mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
-                                <td mat-cell *matCellDef="let row">
-                                    <ng-container *ngIf="column == 'status'">{{'informatieobject.status.' + row[column]|translate | empty}}</ng-container>
-                                    <ng-container
-                                            *ngIf="column == 'vertrouwelijkheidaanduiding'">{{'vertrouwelijkheidaanduiding.' + row[column]|translate | empty}}</ng-container>
-                                    <ng-container *ngIf="column == 'creatiedatum'">{{row[column] | datum | empty}}</ng-container>
-                                    <ng-container *ngIf="column == 'registratiedatumTijd'">{{row[column] | datum:'short' | empty}}</ng-container>
-                                    <ng-container *ngIf="column == 'auteur'">{{row[column]| empty}}</ng-container>
-                                </td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="url" stickyEnd>
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let row">
-                                    <button mat-flat-button [routerLink]="['/informatie-objecten', row.uuid]"
-                                            title="{{ 'actie.document.bekijken' | translate}}">
-                                        <mat-icon>visibility</mat-icon>
-                                    </button>
-                                    <button mat-flat-button [disabled]="isOntkoppelenDisabled(row)" (click)="ontkoppelDocument(row)"
-                                            title="{{ 'actie.document.ontkoppelen' | translate}}">
-                                        <mat-icon>link_off</mat-icon>
-                                    </button>
-                                    <button mat-flat-button [disabled]="isDocumentVerplaatsenDisabled(row)" (click)="documentVerplaatsen(row)"
-                                            title="{{ 'actie.document.verplaatsen' | translate}}">
-                                        <mat-icon>content_cut</mat-icon>
-                                    </button>
-                                </td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="expandedDetail">
-                                <td mat-cell *matCellDef="let row" colspan="7">
-                                    <div [@detailExpand]="row == documentPreviewRow ? 'expanded' : 'collapsed'">
-                                        <zac-document-viewer [document]="row" *ngIf="row == documentPreviewRow"></zac-document-viewer>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row
-                                *matHeaderRowDef="['titel','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url']"></tr>
-                            <tr mat-row
-                                *matRowDef="let row; columns: ['titel','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];"
-                                [class.expanded-row]="documentPreviewRow === row"></tr>
-                            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
-                        </table>
-                        <p *ngIf="enkelvoudigInformatieObjecten.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
+        <zac-zaak-documenten [zaak]="zaak"></zac-zaak-documenten>
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-sidenav-content>
 </mat-sidenav-container>
