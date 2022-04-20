@@ -7,6 +7,9 @@ package net.atos.client.zgw.zrc.model;
 
 import javax.json.bind.annotation.JsonbTypeDeserializer;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import net.atos.client.zgw.zrc.util.GeometryJsonbDeserializer;
 
 /**
