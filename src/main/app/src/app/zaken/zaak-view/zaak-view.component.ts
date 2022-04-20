@@ -10,7 +10,6 @@ import {UtilService} from '../../core/service/util.service';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../../taken/taken.service';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {Zaak} from '../model/zaak';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
@@ -39,7 +38,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
@@ -49,7 +47,6 @@ import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-comp
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
-import {map} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
@@ -57,13 +54,11 @@ import {AddressResult, LocationService} from '../../shared/location/location.ser
 import {GeometryType} from '../model/geometryType';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
-import {detailExpand} from '../../shared/animations/animations';
-import {FileFormat} from '../../informatie-objecten/model/file-format';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Component({
     templateUrl: './zaak-view.component.html',
-    styleUrls: ['./zaak-view.component.less'],
-    animations: [detailExpand]
+    styleUrls: ['./zaak-view.component.less']
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -76,8 +71,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     action: string;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
-    enkelvoudigInformatieObjecten: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
-    documentPreviewRow: EnkelvoudigInformatieobject | null;
+    toegevoegdDocument: EnkelvoudigInformatieobject;
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -92,7 +86,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
-    private zaakDocumentenListener: WebsocketListener;
     private ingelogdeMedewerker: Medewerker;
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
@@ -100,7 +93,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
 
     @ViewChild(MatSort) sort: MatSort;
-    @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
     constructor(private informatieObjectenService: InformatieObjectenService,
                 private takenService: TakenService,
@@ -110,9 +102,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private klantenService: KlantenService,
                 private zaakafhandelParametersService: ZaakafhandelParametersService,
                 private route: ActivatedRoute,
-                public utilService: UtilService,
-                public websocketService: WebsocketService,
-                public dialog: MatDialog,
+                private utilService: UtilService,
+                private websocketService: WebsocketService,
+                private dialog: MatDialog,
                 private translate: TranslateService,
                 private locationService: LocationService) {
         super();
@@ -128,13 +120,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 (event) => this.updateZaak(event));
             this.zaakTakenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_TAKEN, this.zaak.uuid,
                 (event) => this.loadTaken(event));
-            this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.zaak.uuid,
-                (event) => this.loadInformatieObjecten(event));
+
             this.utilService.setTitle('title.zaak', {zaak: this.zaak.identificatie});
 
             this.getIngelogdeMedewerker();
             this.loadTaken();
-            this.loadInformatieObjecten();
         }));
 
         this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
@@ -184,7 +174,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
         };
         this.historie.sort = this.sort;
-        this.enkelvoudigInformatieObjecten.sort = this.docSort;
     }
 
     ngOnDestroy(): void {
@@ -192,7 +181,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakTakenListener);
-        this.websocketService.removeListener(this.zaakDocumentenListener);
     }
 
     private setEditableFormFields(): void {
@@ -458,20 +446,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    informatieObjectenLoading = false;
-    private loadInformatieObjecten(event?: ScreenEvent): void {
-        if (event) {
-            this.informatieObjectenLoading = true;
-            console.log('callback loadInformatieObjecten: ' + event.key);
-        }
-        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-        zoekParameters.zaakUUID = this.zaak.uuid;
-        this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
-            this.enkelvoudigInformatieObjecten.data = objecten;
-            this.informatieObjectenLoading = false;
-        });
-    }
-
     private loadHistorie(): void {
         this.zakenService.listHistorieVoorZaak(this.zaak.uuid).subscribe(historie => {
             this.historie.data = historie;
@@ -587,50 +561,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         SessionStorageUtil.setItem('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
-    ontkoppelDocument(informatieobject: EnkelvoudigInformatieobject): void {
-        informatieobject['loading'] = true;
-        this.utilService.setLoading(true);
-        this.zakenService.findZakenForInformatieobject(informatieobject.uuid).pipe(
-            map(zaakIDs => {
-                delete informatieobject['loading'];
-                this.utilService.setLoading(false);
-                return zaakIDs.filter(zaakID => zaakID !== this.zaak.identificatie).join(', ');
-            })
-        ).subscribe(zaakIDs => {
-            let melding: string;
-            if (zaakIDs) {
-                melding = this.translate.instant('actie.document.ontkoppelen.meerdere.zaken.bevestigen', {zaken: zaakIDs, document: informatieobject.titel});
-            } else {
-                melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
-            }
-            const dialogData = new DialogData(
-                new TextareaFormFieldBuilder().id('reden').label('reden').build(),
-                (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden), melding);
-            this.dialog.open(DialogComponent, {
-                data: dialogData,
-                autoFocus: 'dialog'
-            }).afterClosed().subscribe(result => {
-                if (result) {
-                    this.utilService.openSnackbar('actie.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
-                    this.websocketService.suspendListener(this.zaakDocumentenListener);
-                    this.loadInformatieObjecten();
-                }
-            });
-        });
-    }
-
-    documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {
-        this.informatieObjectenService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
-    }
-
-    isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
-    }
-
-    isOntkoppelenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return informatieobject['loading'] || this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
-    }
-
     get initiatorType() {
         if (this.zaak.initiatorIdentificatie) {
             if (this.zaak.initiatorIdentificatie.length === 9) {
@@ -639,10 +569,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             return 'BEDRIJF';
         }
         return null;
-    }
-
-    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
-        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
     }
 
     taakGestart(): void {
@@ -662,8 +588,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setupMenu();
     }
 
-    isPreviewBeschikbaar(formaat: string): boolean {
-        return formaat === FileFormat.PDF;
+    documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.toegevoegdDocument = informatieobject;
     }
 
 }

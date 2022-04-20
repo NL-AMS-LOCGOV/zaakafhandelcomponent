@@ -7,69 +7,66 @@
     <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
-    <mat-sidenav #verkorteZaakSideNav [mode]="(utilService.isTablet$|async) ?'over':'side'" [opened]="!(utilService.isTablet$|async)" position="end">
-        <zac-zaak-verkort [zaakUuid]="taak.zaakUUID" (zaakToggle)="updateMargins()"></zac-zaak-verkort>
-    </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>{{'taak' | translate}}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                        <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
-                        <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
+        <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
+            <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100" *ngIf="formulier">
+                <mat-card-content>
+                    <div class="form">
+                        <mfb-form (formPartial)="onFormPartial($event)"
+                                  (formSubmit)="onFormSubmit($event)"
+                                  [formFields]="formulier.form"
+                                  [config]="formConfig"
+                                  [submitted]="posts"></mfb-form>
                     </div>
+                </mat-card-content>
+            </mat-card>
+            <div fxFlex="calc(40%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{'taak' | translate}}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                            <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
+                                <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
+                            </div>
 
-                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                        <zac-edit-groep [readonly]="isAfgerond()"
-                                        [formField]="editFormFields.get('groep')"
-                                        (onSave)="editGroep($event)"></zac-edit-groep>
-                        <zac-edit-behandelaar [readonly]="isAfgerond()"
-                                              [formField]="editFormFields.get('behandelaar')"
-                                              (onSave)="editBehandelaar($event)"
-                                              [showAssignToMe]="showAssignToMe()"
-                                              (onAssignToMe)="assignToMe()">
-                        </zac-edit-behandelaar>
-                    </div>
+                            <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                <zac-edit-groep [readonly]="isAfgerond()"
+                                                [formField]="editFormFields.get('groep')"
+                                                (onSave)="editGroep($event)"></zac-edit-groep>
+                                <zac-edit-behandelaar [readonly]="isAfgerond()"
+                                                      [formField]="editFormFields.get('behandelaar')"
+                                                      (onSave)="editBehandelaar($event)"
+                                                      [showAssignToMe]="showAssignToMe()"
+                                                      (onAssignToMe)="assignToMe()">
+                                </zac-edit-behandelaar>
+                            </div>
 
-                    <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
-                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                            <mat-divider></mat-divider>
+                            <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
+                                <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                    <mat-divider></mat-divider>
+                                </div>
+                                <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd | datum"></zac-static-text>
+                                <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate" [value]="taak.streefdatum | datum"
+                                                 [icon]="streefdatumIcon"></zac-static-text>
+                            </div>
+
+                            <div fxFlex="100">
+                                <zac-edit-tekst [readonly]="isAfgerond()"
+                                                [formField]="editFormFields.get('toelichting')"
+                                                (onSave)="partialEditTaak($event, 'toelichting')">
+                                </zac-edit-tekst>
+                            </div>
                         </div>
-                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd | datum"></zac-static-text>
-                        <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate" [value]="taak.streefdatum | datum"
-                                         [icon]="streefdatumIcon"></zac-static-text>
-                    </div>
+                    </mat-card-content>
+                </mat-card>
 
-                    <div fxFlex="100">
-                        <zac-edit-tekst [readonly]="isAfgerond()"
-                                        [formField]="editFormFields.get('toelichting')"
-                                        (onSave)="partialEditTaak($event, 'toelichting')">
-                        </zac-edit-tekst>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+                <zac-zaak-verkort [zaakUuid]="taak.zaakUUID"></zac-zaak-verkort>
+            </div>
+        </div>
 
-        <mat-card fxFlex="100" *ngIf="formulier">
-            <mat-card-content>
-                <div class="form">
-                    <mfb-form (formPartial)="onFormPartial($event)"
-                              (formSubmit)="onFormSubmit($event)"
-                              [formFields]="formulier.form"
-                              [config]="formConfig"
-                              [submitted]="posts"></mfb-form>
-                </div>
-            </mat-card-content>
-        </mat-card>
+        <zac-zaak-documenten [zaakUUID]="taak.zaakUUID"></zac-zaak-documenten>
     </mat-sidenav-content>
 </mat-sidenav-container>
-<mat-toolbar class="bottom-toolbar" fxHide.gt-sm>
-    <div fxLayout="row" fxFlex fxLayoutAlign="end center">
-        <button mat-icon-button (click)="verkorteZaakSideNav.toggle()">
-            <mat-icon>folder_open</mat-icon>
-        </button>
-    </div>
-</mat-toolbar>
