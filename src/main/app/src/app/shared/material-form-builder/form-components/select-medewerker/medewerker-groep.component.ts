@@ -5,13 +5,13 @@
 
 import {Component, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
-import {SelectMedewerkerFormField} from './select-medewerker-form-field';
 import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {Groep} from '../../../../identity/model/groep';
 import {Medewerker} from '../../../../identity/model/medewerker';
+import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 
 @Component({
     templateUrl: './medewerker-groep.component.html',
@@ -19,9 +19,9 @@ import {Medewerker} from '../../../../identity/model/medewerker';
 })
 export class MedewerkerGroepComponent extends FormComponent implements OnInit {
 
-    data: SelectMedewerkerFormField;
+    data: MedewerkerGroepFormField;
     formGroup: FormGroup;
-    groepControl = new FormControl(null, [Validators.required]);
+    groepControl = new FormControl();
     behandelaarControl = new FormControl();
     groepen: Observable<Groep[]>;
     behandelaren: Observable<Medewerker[]>;
@@ -34,6 +34,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
     ngOnInit(): void {
         this.groepen = this.identityService.listGroepen();
         this.groepControl.setValue(this.data.defaultGroep);
+        if (!this.data.groepOptioneel) {
+            this.groepControl.setValidators(Validators.required);
+        }
         this.behandelaarControl.setValue(this.data.defaultMedewerker);
         this.formGroup = this.formBuilder.group({
             groep: this.groepControl,
