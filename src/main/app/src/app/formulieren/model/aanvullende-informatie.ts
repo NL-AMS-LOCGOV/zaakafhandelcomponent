@@ -69,28 +69,41 @@ export class AanvullendeInformatie extends AbstractFormulier {
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES).value(this.getDataElement(fields.EMAILADRES))
+            [new ReadonlyFormFieldBuilder().id(fields.EMAILADRES)
+                                           .label(fields.EMAILADRES)
+                                           .value(this.getDataElement(fields.EMAILADRES))
                                            .build()],
-            [new ReadonlyFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.getDataElement(fields.BODY))
+            [new ReadonlyFormFieldBuilder().id(fields.BODY)
+                                           .label(fields.BODY)
+                                           .value(this.getDataElement(fields.BODY))
                                            .build()],
-            [new TextareaFormFieldBuilder().id(fields.OPMERKINGEN).label(fields.OPMERKINGEN)
+            [new TextareaFormFieldBuilder().id(fields.OPMERKINGEN)
+                                           .label(fields.OPMERKINGEN)
                                            .value(this.getDataElement(fields.OPMERKINGEN))
-                                           .validators(Validators.required).readonly(this.isAfgerond()).build()],
+                                           .validators(Validators.required)
+                                           .readonly(this.isAfgerond())
+                                           .build()],
             [
-                new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(this.getDataElement(fields.DATUMGEVRAAGD))
-                                          .readonly(true).build(),
-                new DateFormFieldBuilder().id(fields.DATUMGELEVERD).label(fields.DATUMGELEVERD).value(this.getDataElement(fields.DATUMGELEVERD))
-                                          .readonly(this.isAfgerond()).build()
+                new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD)
+                                          .label(fields.DATUMGEVRAAGD)
+                                          .value(this.getDataElement(fields.DATUMGEVRAAGD))
+                                          .readonly(true)
+                                          .build(),
+                new DateFormFieldBuilder().id(fields.DATUMGELEVERD)
+                                          .label(fields.DATUMGELEVERD)
+                                          .value(this.getDataElement(fields.DATUMGELEVERD))
+                                          .readonly(this.isAfgerond())
+                                          .build()
             ],
             [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
                                         .label(fields.AANVULLENDE_INFORMATIE)
-                                        .readonly(this.isAfgerond())
                                         .value(this.isAfgerond() && this.getDataElement(fields.AANVULLENDE_INFORMATIE) ?
                                             this.translate.instant(this.getDataElement(fields.AANVULLENDE_INFORMATIE)) :
                                             this.getDataElement(fields.AANVULLENDE_INFORMATIE))
                                         .options(this.getAanvullendeInformatieOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond()).build()],
+                                        .readonly(this.isAfgerond())
+                                        .build()]
         );
         if (this.isAfgerond()) {
             this.form.push(
