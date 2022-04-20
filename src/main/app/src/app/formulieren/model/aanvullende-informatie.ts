@@ -85,7 +85,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
             [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
                                         .label(fields.AANVULLENDE_INFORMATIE)
                                         .readonly(this.isAfgerond())
-                                        .value(this.isAfgerond() ?
+                                        .value(this.isAfgerond() && this.getDataElement(fields.AANVULLENDE_INFORMATIE) ?
                                             this.translate.instant(this.getDataElement(fields.AANVULLENDE_INFORMATIE)) :
                                             this.getDataElement(fields.AANVULLENDE_INFORMATIE))
                                         .options(this.getAanvullendeInformatieOpties())
