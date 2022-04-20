@@ -229,9 +229,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     openVerdelenScherm(): void {
         const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVerdelenDialogComponent, {
-            width: '500px',
-            data: zaken,
-            autoFocus: 'dialog'
+            data: zaken
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -249,9 +247,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     openVrijgevenScherm(): void {
         const zaken = this.selection.selected;
         const dialogRef = this.dialog.open(ZakenVrijgevenDialogComponent, {
-            width: '350px',
-            data: zaken,
-            autoFocus: 'dialog'
+            data: zaken
         });
 
         dialogRef.afterClosed().subscribe(result => {
