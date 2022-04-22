@@ -50,6 +50,7 @@ export class Goedkeuren extends AbstractFormulier {
     _initBehandelForm() {
         this.doDisablePartialSave();
         const fields = this.fields;
+        const goedkeurenDataElement = this.getDataElement(fields.GOEDKEUREN);
         this.form.push(
             [new ParagraphFormFieldBuilder().text(
                 this.translate.instant('msg.goedkeuring.behandelen', {zaaknummer: this.taak.zaakIdentificatie}))
@@ -65,19 +66,18 @@ export class Goedkeuren extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.GOEDKEUREN)
                                         .label(fields.GOEDKEUREN)
-                                        .readonly(this.isAfgerond())
-                                        .value(this.isAfgerond() ?
-                                            this.translate.instant(
-                                                this.getDataElement(fields.GOEDKEUREN)) : this.getDataElement(
-                                                fields.GOEDKEUREN))
+                                        .value(this.isAfgerond() && goedkeurenDataElement ?
+                                            this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement)
                                         .options(this.getGoedkeurenOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond()).build()],
+                                        .readonly(this.isAfgerond())
+                                        .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
                                            .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond()).build()]
+                                           .readonly(this.isAfgerond())
+                                           .build()]
         );
         if (this.isAfgerond()) {
             this.form.push(
