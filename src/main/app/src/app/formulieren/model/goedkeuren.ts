@@ -50,6 +50,7 @@ export class Goedkeuren extends AbstractFormulier {
     _initBehandelForm() {
         this.doDisablePartialSave();
         const fields = this.fields;
+        const goedkeurenDataElement = this.getDataElement(fields.GOEDKEUREN);
         this.form.push(
             [new ParagraphFormFieldBuilder().text(
                 this.translate.instant('msg.goedkeuring.behandelen', {zaaknummer: this.taak.zaakIdentificatie}))
@@ -65,9 +66,8 @@ export class Goedkeuren extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.GOEDKEUREN)
                                         .label(fields.GOEDKEUREN)
-                                        .value(this.isAfgerond() && this.getDataElement(fields.GOEDKEUREN) ?
-                                            this.translate.instant(this.getDataElement(fields.GOEDKEUREN)) :
-                                            this.getDataElement(fields.GOEDKEUREN))
+                                        .value(this.isAfgerond() && goedkeurenDataElement ?
+                                            this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement)
                                         .options(this.getGoedkeurenOpties())
                                         .validators(Validators.required)
                                         .readonly(this.isAfgerond())

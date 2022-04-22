@@ -68,6 +68,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
 
     _initBehandelForm() {
         const fields = this.fields;
+        const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(
             [new ReadonlyFormFieldBuilder().id(fields.EMAILADRES)
                                            .label(fields.EMAILADRES)
@@ -97,9 +98,8 @@ export class AanvullendeInformatie extends AbstractFormulier {
             ],
             [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
                                         .label(fields.AANVULLENDE_INFORMATIE)
-                                        .value(this.isAfgerond() && this.getDataElement(fields.AANVULLENDE_INFORMATIE) ?
-                                            this.translate.instant(this.getDataElement(fields.AANVULLENDE_INFORMATIE)) :
-                                            this.getDataElement(fields.AANVULLENDE_INFORMATIE))
+                                        .value(this.isAfgerond() && aanvullendeInformatieDataElement ?
+                                            this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement)
                                         .options(this.getAanvullendeInformatieOpties())
                                         .validators(Validators.required)
                                         .readonly(this.isAfgerond())
