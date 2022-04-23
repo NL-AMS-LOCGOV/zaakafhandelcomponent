@@ -18,11 +18,11 @@ import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 
 @Component({
-    selector: 'zac-plan-item-do',
-    templateUrl: './plan-item-do.component.html',
-    styleUrls: ['./plan-item-do.component.less']
+    selector: 'zac-human-task-do',
+    templateUrl: './human-task-do.component.html',
+    styleUrls: ['./human-task-do.component.less']
 })
-export class PlanItemDoComponent implements OnInit {
+export class HumanTaskDoComponent implements OnInit {
 
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
@@ -52,15 +52,12 @@ export class PlanItemDoComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            if (this.planItem.type === PlanItemType.HumanTask) {
-                this.planItem = this.formulier.getPlanItem(formGroup);
-            }
-            this.planItemsService.doPlanItem(this.planItem).subscribe(() => {
+            this.planItem = this.formulier.getPlanItem(formGroup);
+            this.planItemsService.doHumanTask(this.planItem).subscribe(() => {
                 this.done.emit();
             });
         } else { // cancel button clicked
             this.done.emit();
         }
-
     }
 }

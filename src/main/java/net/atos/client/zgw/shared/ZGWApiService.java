@@ -138,15 +138,28 @@ public class ZGWApiService implements Caching {
     }
 
     /**
+     * Create {@link Resultaat} for a given {@link Zaak} based on @link Zaak}.UUID, {@link Resultaattype}.UUID and with {@link Resultaat}.toelichting.
+     *
+     * @param zaakUUID             UUID of the {@link Zaak}.
+     * @param resultaattypeUUID    UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param resultaatToelichting Toelichting for thew {@link Resultaat}.
+     * @return Created {@link Resultaat}.
+     */
+    public Resultaat createResultaatForZaak(final UUID zaakUUID, final UUID resultaattypeUUID, final String resultaatToelichting) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return createResultaatForZaak(zaak, resultaattypeUUID, resultaatToelichting);
+    }
+
+    /**
      * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
      *
      * @param zaak                  {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
-     * @return Created Eind {@link Status}.
      */
-    public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
+    public void endZaak(final Zaak zaak, final String eindstatusToelichting) {
         final Statustype eindStatustype = ztcClientService.readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
-        return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+        createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+        berekenArchiveringsparameters(zaak.getUuid());
     }
 
     /**
@@ -154,11 +167,10 @@ public class ZGWApiService implements Caching {
      *
      * @param zaakUUID              UUID of the {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
-     * @return Created Eind {@link Status}.
      */
-    public Status endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
+    public void endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        return endZaak(zaak, eindstatusToelichting);
+        endZaak(zaak, eindstatusToelichting);
     }
 
     /**
@@ -306,4 +318,7 @@ public class ZGWApiService implements Caching {
                                 String.format("Zaaktype '%s': Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
     }
 
+    private void berekenArchiveringsparameters(final UUID zaakUUID) {
+        // ToDo:
+    }
 }
