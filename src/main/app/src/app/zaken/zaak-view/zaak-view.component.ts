@@ -466,6 +466,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     takenLoading = false;
+
     private loadTaken(event?: ScreenEvent): void {
         if (event) {
             this.takenLoading = true;
@@ -504,7 +505,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaakGeometrie(this.zaak.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }

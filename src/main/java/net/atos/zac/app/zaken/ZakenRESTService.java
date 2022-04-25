@@ -52,6 +52,7 @@ import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -62,6 +63,7 @@ import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.model.KlantType;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
+import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -151,6 +153,9 @@ public class ZakenRESTService {
     @Inject
     private RESTCommunicatiekanaalConverter communicatiekanaalConverter;
 
+    @Inject
+    private RESTGeometryConverter restGeometryConverter;
+
     @GET
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
@@ -202,6 +207,15 @@ public class ZakenRESTService {
     public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakEditMetRedenGegevens.zaak),
                                                                       restZaakEditMetRedenGegevens.reden);
+        return zaakConverter.convert(updatedZaak);
+    }
+
+    @PATCH
+    @Path("{uuid}/zaakgeometrie")
+    public RESTZaak updateZaakGeometrie(@PathParam("uuid") final String uuid, final RESTZaak restZaak) {
+        final UUID zaakUUID = UUID.fromString(uuid);
+        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(restGeometryConverter.convert(restZaak.zaakgeometrie));
+        final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(zaakUUID, zaakGeometriePatch);
         return zaakConverter.convert(updatedZaak);
     }
 

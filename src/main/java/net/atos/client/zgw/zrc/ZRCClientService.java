@@ -46,6 +46,7 @@ import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakEigenschap;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -252,6 +253,17 @@ public class ZRCClientService implements Caching {
     public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
+    }
+
+    /**
+     * Update or delete the field ZaakGeometrie
+     *
+     * @param zaakUUID           UUID of {@link Zaak}.
+     * @param zaakGeometriePatch {@link ZaakGeometriePatch} with a {@link net.atos.client.zgw.zrc.model.Geometry} that needs to be updated or deleted
+     * @return Updated {@link Zaak}
+     */
+    public Zaak updateZaakGeometrie(final UUID zaakUUID, final ZaakGeometriePatch zaakGeometriePatch) {
+        return zrcClient.zaakGeometriePatch(zaakUUID, zaakGeometriePatch);
     }
 
     /**
