@@ -13,8 +13,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
-import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
-
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -22,6 +20,7 @@ import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
@@ -53,9 +52,7 @@ public class ZaakafhandelParameterService {
     }
 
     public UserEventListenerParameters getUserEventParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(),
-                                                                              VAR_CASE_ZAAKTYPE_UUUID);
-
+        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAKTYPE_UUUID);
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
 

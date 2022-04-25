@@ -24,9 +24,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
+import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
-import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
+import net.atos.zac.app.planitems.model.UserEventListenerData;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -49,6 +50,9 @@ public class PlanItemsRESTService {
     @Inject
     private RESTPlanItemConverter planItemConverter;
 
+    @Inject
+    private ZGWApiService zgwApiService;
+
     @GET
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
@@ -66,19 +70,29 @@ public class PlanItemsRESTService {
     }
 
     @PUT
-    @Path("do/{id}")
-    public RESTPlanItem doPlanItem(final RESTPlanItem restPlanItem) {
-        if (restPlanItem.type == PlanItemType.HUMAN_TASK) {
-            final PlanItemInstance planItem = flowableService.readOpenPlanItem(restPlanItem.id);
-            final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
-            final Date streefdatum = DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd());
-            flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
-                                                   restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
-                                                   restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail,
-                                                   restPlanItem.taakStuurGegevens.onderwerp);
-        } else {
-            flowableService.startPlanItem(restPlanItem.id, restPlanItem.toelichting);
+    @Path("doHumanTask")
+    public void doHumanTask(final RESTPlanItem restPlanItem) {
+        final PlanItemInstance planItem = flowableService.readOpenPlanItem(restPlanItem.id);
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
+        final Date streefdatum = DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd());
+        flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
+                                               restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
+                                               restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail,
+                                               restPlanItem.taakStuurGegevens.onderwerp);
+    }
+
+    @PUT
+    @Path("doUserEventListener")
+    public void doUserEventListener(final UserEventListenerData userEventListenerData) {
+        switch (userEventListenerData.actie) {
+            case ONTVANKELIJK -> flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, null);
+            case NIET_ONTVANKELIJK ->
+                    flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, userEventListenerData.resultaatToelichting);
+            case AFHANDELEN -> {
+                zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, userEventListenerData.resultaattypeUuid,
+                                                     userEventListenerData.resultaatToelichting);
+                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, userEventListenerData.resultaatToelichting);
+            }
         }
-        return restPlanItem;
     }
 }

@@ -83,8 +83,7 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
-    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID,
-            final String planitemDefinitionID) {
+    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
         final Root<UserEventListenerParameters> queryRoot = query.from(UserEventListenerParameters.class);

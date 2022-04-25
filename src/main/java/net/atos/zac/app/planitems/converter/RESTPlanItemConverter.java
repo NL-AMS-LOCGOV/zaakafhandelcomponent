@@ -15,15 +15,14 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
+import net.atos.zac.app.planitems.model.UserEventListenerActie;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
@@ -31,8 +30,6 @@ import net.atos.zac.zaaksturing.model.HumanTaskParameters;
  *
  */
 public class RESTPlanItemConverter {
-
-    private static final String TOELICHTING_VEREIST_MARKER = "*";
 
     @Inject
     private RESTGroepConverter groepConverter;
@@ -47,12 +44,12 @@ public class RESTPlanItemConverter {
     public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid) {
         final RESTPlanItem restPlanItem = new RESTPlanItem();
         restPlanItem.id = planItem.getId();
-        restPlanItem.naam = StringUtils.remove(planItem.getName(), TOELICHTING_VEREIST_MARKER);
+        restPlanItem.naam = planItem.getName();
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
-        restPlanItem.toelichtingVereist = planItem.getName().contains(TOELICHTING_VEREIST_MARKER);
-        if (USER_EVENT_LISTENER == convertDefinitionType(planItem.getPlanItemDefinitionType())) {
-            restPlanItem.uitleg = zaakafhandelParameterService.getUserEventParameters(planItem).getToelichting();
+        if (restPlanItem.type == USER_EVENT_LISTENER) {
+            restPlanItem.userEventListenerActie = UserEventListenerActie.valueOf(planItem.getPlanItemDefinitionId());
+            restPlanItem.toelichting = zaakafhandelParameterService.getUserEventParameters(planItem).getToelichting();
         }
         return restPlanItem;
     }

@@ -5,13 +5,13 @@
 
 import {NgModule} from '@angular/core';
 
-import {PlanItemDoComponent} from './plan-item-do/plan-item-do.component';
+import {HumanTaskDoComponent} from './human-task-do/human-task-do.component';
 import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
-    declarations: [PlanItemDoComponent],
+    declarations: [HumanTaskDoComponent],
     exports: [
-        PlanItemDoComponent
+        HumanTaskDoComponent
     ],
     imports: [
         SharedModule
