@@ -40,6 +40,7 @@ import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
@@ -258,11 +259,12 @@ public class ZRCClientService implements Caching {
     /**
      * Update or delete the field ZaakGeometrie
      *
-     * @param zaakUUID           UUID of {@link Zaak}.
-     * @param zaakGeometriePatch {@link ZaakGeometriePatch} with a {@link net.atos.client.zgw.zrc.model.Geometry} that needs to be updated or deleted
+     * @param zaakUUID UUID of {@link Zaak}.
+     * @param geometry new value of {@link Geometry} that needs to be updated
      * @return Updated {@link Zaak}
      */
-    public Zaak updateZaakGeometrie(final UUID zaakUUID, final ZaakGeometriePatch zaakGeometriePatch) {
+    public Zaak updateZaakGeometrie(final UUID zaakUUID, final Geometry geometry) {
+        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(geometry);
         return zrcClient.zaakGeometriePatch(zaakUUID, zaakGeometriePatch);
     }
 

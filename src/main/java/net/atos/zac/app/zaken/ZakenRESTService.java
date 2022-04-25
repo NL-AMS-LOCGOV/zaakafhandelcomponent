@@ -52,7 +52,6 @@ import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -212,10 +211,8 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("{uuid}/zaakgeometrie")
-    public RESTZaak updateZaakGeometrie(@PathParam("uuid") final String uuid, final RESTZaak restZaak) {
-        final UUID zaakUUID = UUID.fromString(uuid);
-        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(restGeometryConverter.convert(restZaak.zaakgeometrie));
-        final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(zaakUUID, zaakGeometriePatch);
+    public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID uuid, final RESTZaak restZaak) {
+        final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(uuid, restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaakConverter.convert(updatedZaak);
     }
 
