@@ -50,8 +50,6 @@ export class OntvangstbevestigingComponent implements OnInit {
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
 
-        this.utilService.setTitle('title.ontvangstbevestiging.versturen', {zaak: this.zaak.identificatie});
-
         const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
             {zaakIdentificatie: this.zaak.identificatie});
 
