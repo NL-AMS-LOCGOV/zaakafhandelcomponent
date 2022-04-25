@@ -40,12 +40,14 @@ import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakEigenschap;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -252,6 +254,18 @@ public class ZRCClientService implements Caching {
     public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
+    }
+
+    /**
+     * Update or delete the field ZaakGeometrie
+     *
+     * @param zaakUUID UUID of {@link Zaak}.
+     * @param geometry new value of {@link Geometry} that needs to be updated
+     * @return Updated {@link Zaak}
+     */
+    public Zaak updateZaakGeometrie(final UUID zaakUUID, final Geometry geometry) {
+        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(geometry);
+        return zrcClient.zaakGeometriePatch(zaakUUID, zaakGeometriePatch);
     }
 
     /**
