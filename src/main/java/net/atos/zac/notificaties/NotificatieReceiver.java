@@ -7,8 +7,11 @@ package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
 import static net.atos.zac.notificaties.Action.CREATE;
+import static net.atos.zac.notificaties.Action.DELETE;
 import static net.atos.zac.notificaties.Action.UPDATE;
 import static net.atos.zac.notificaties.Resource.OBJECT;
+import static net.atos.zac.notificaties.Resource.STATUS;
+import static net.atos.zac.notificaties.Resource.ZAAK;
 
 import java.util.logging.Logger;
 
@@ -107,8 +110,16 @@ public class NotificatieReceiver {
     }
 
     private void handleIndexering(final Notificatie notificatie) {
-        if (notificatie.getChannel() == Channel.ZAKEN && (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE)) {
-            zoekenService.indexeerZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+        if (notificatie.getChannel() == Channel.ZAKEN) {
+            if (notificatie.getResource() == ZAAK) {
+                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                    zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                } else if (notificatie.getAction() == DELETE) {
+                    zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                }
+            } else if (notificatie.getResource() == STATUS && notificatie.getAction() == CREATE) {
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+            }
         }
     }
 }

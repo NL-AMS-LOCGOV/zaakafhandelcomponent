@@ -56,10 +56,19 @@ public class ZoekenService {
         }
     }
 
-    public void indexeerZaak(final UUID zaakUUID) {
+    public void addZaak(final UUID zaakUUID) {
         final ZoekZaakResultaat zoekZaakResultaat = readZoekZaakResultaat(zaakUUID);
         try {
             solrClient.addBean(zoekZaakResultaat);
+            solrClient.commit();
+        } catch (final IOException | SolrServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeZaak(final UUID zaakUUID) {
+        try {
+            solrClient.deleteById(zaakUUID.toString());
             solrClient.commit();
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
