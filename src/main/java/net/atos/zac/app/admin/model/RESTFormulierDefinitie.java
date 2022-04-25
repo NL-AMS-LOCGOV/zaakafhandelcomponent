@@ -8,7 +8,6 @@ package net.atos.zac.app.admin.model;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 public class RESTFormulierDefinitie {
-    public String naam;
 
     public String id;
 
@@ -16,8 +15,7 @@ public class RESTFormulierDefinitie {
     }
 
     public RESTFormulierDefinitie(final FormulierDefinitie formulierDefinitie) {
-        this.naam = formulierDefinitie.getNaam();
-        this.id = formulierDefinitie.name();
+        this.id = formulierDefinitie.toString();
     }
 
     public FormulierDefinitie getFormulierDefinitie() {

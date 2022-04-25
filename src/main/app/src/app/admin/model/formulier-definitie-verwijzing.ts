@@ -5,5 +5,4 @@
 
 export class FormulierDefinitieVerwijzing {
     id: string;
-    naam: string;
 }
