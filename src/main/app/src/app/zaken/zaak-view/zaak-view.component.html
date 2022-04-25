@@ -13,7 +13,7 @@
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
         <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
                                       (document)="documentToegevoegd($event)"></zac-informatie-object-create>
-        <zac-plan-item-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-plan-item-do>
+        <zac-human-task-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-human-task-do>
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
                                   [zaak]="zaak"></zac-ontvangstbevestiging>

@@ -55,6 +55,9 @@ import {GeometryType} from '../model/geometryType';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
+import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
+import {Observable} from 'rxjs';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -316,13 +319,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     openPlanItemStartenDialog(planItem: PlanItem): void {
         this.websocketService.doubleSuspendListener(this.zaakListener);
         const melding = this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam});
-
-        const planItemDialog = planItem.toelichtingVereist ?
-            this.createPlanItemStartenConfirmWithReasonDialog(planItem, melding) :
-            this.createPlanItemStartenConfirmDialog(planItem, melding);
-
-        this.dialog.open(planItemDialog.dialogComponent, {
-            data: planItemDialog.dialogData
+        const userEventListenerDialog = this.createUserEventListenerDialog(planItem, melding);
+        this.dialog.open(userEventListenerDialog.dialogComponent, {
+            data: userEventListenerDialog.dialogData
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
@@ -331,21 +330,62 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    createPlanItemStartenConfirmDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        switch (planItem.userEventListenerActie) {
+            case UserEventListenerActie.Ontvankelijk:
+                return this.createUserEventListenerOntvankelijkDialog(planItem, melding);
+            case UserEventListenerActie.NietOntvankelijk:
+                return this.createUserEventListenerNietOntvankelijkDialog(planItem, melding);
+            case UserEventListenerActie.Afhandelen:
+                return this.createUserEventListenerAfhandelenDialog(planItem, melding);
+            default:
+                throw new Error(`Niet bestaande UserEventListenerActie: ${planItem.userEventListenerActie}`);
+        }
+    }
+
+    createUserEventListenerOntvankelijkDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ConfirmDialogComponent,
-            dialogData: new ConfirmDialogData(melding, this.planItemsService.doPlanItem(planItem), planItem.uitleg)
+            dialogData: new ConfirmDialogData(melding, this.doUserEventListenerOntvankelijk(planItem.id), planItem.toelichting)
         };
     }
 
-    createPlanItemStartenConfirmWithReasonDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    private doUserEventListenerOntvankelijk(planItemId: string): Observable<void> {
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.Ontvankelijk, planItemId, this.zaak.uuid);
+        return this.planItemsService.doUserEventListener(userEventListenerData);
+    }
+
+    createUserEventListenerNietOntvankelijkDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: DialogComponent,
             dialogData: new DialogData(
                 new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
-                (reden: string) => this.planItemsService.doPlanItem(planItem, reden),
-                melding, planItem.uitleg)
+                (reden: string) => this.doUserEventListenerNietOntvankelijk(planItem.id, reden), melding, planItem.toelichting)
         };
+    }
+
+    private doUserEventListenerNietOntvankelijk(planItemId: string, resultaatToelichting: string): Observable<void> {
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.NietOntvankelijk, planItemId, this.zaak.uuid);
+        userEventListenerData.resultaatToelichting = resultaatToelichting;
+        return this.planItemsService.doUserEventListener(userEventListenerData);
+    }
+
+    createUserEventListenerAfhandelenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        // ToDo resultaattype en eventueel ook resultaat toelichting moet gekozen kunnen worden in dropdown
+        const resultaattypeUuid = '4580d1fb-c5b5-4d5e-b39b-fe8bbfd32516';
+        const resultaatToelichting = 'Toelichting op resultaat';
+        return {
+            dialogComponent: ConfirmDialogComponent,
+            dialogData: new ConfirmDialogData(melding, this.doUserEventListenerAfhandelen(planItem.id, resultaattypeUuid, resultaatToelichting),
+                planItem.toelichting)
+        };
+    }
+
+    private doUserEventListenerAfhandelen(planItemId: string, resultaattypeUuid: string, resultaatToelichting: string): Observable<void> {
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.Afhandelen, planItemId, this.zaak.uuid);
+        userEventListenerData.resultaattypeUuid = resultaattypeUuid;
+        userEventListenerData.resultaatToelichting = resultaatToelichting;
+        return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
     openZaakAfbrekenDialog(): void {
@@ -586,5 +626,4 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.toegevoegdDocument = informatieobject;
     }
-
 }
