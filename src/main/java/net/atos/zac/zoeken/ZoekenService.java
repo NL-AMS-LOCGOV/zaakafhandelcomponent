@@ -45,7 +45,7 @@ public class ZoekenService {
     }
 
     public List<ZoekZaakResultaat> zoekZaak(final ZoekZaakParameters zoekZaakParameters) {
-        final SolrQuery query = new SolrQuery(zoekZaakParameters.getVrijeTekst());
+        final SolrQuery query = new SolrQuery(zoekZaakParameters.getTekst());
         query.setShowDebugInfo(true); // ToDo: Remove
 
         try {

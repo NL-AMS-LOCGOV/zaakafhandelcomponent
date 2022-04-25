@@ -7,13 +7,13 @@ package net.atos.zac.zoeken.model;
 
 public class ZoekZaakParameters {
 
-    private String vrijeTekst;
+    private String tekst;
 
-    public String getVrijeTekst() {
-        return vrijeTekst;
+    public String getTekst() {
+        return tekst;
     }
 
-    public void setVrijeTekst(final String vrijeTekst) {
-        this.vrijeTekst = vrijeTekst;
+    public void setTekst(final String tekst) {
+        this.tekst = tekst;
     }
 }

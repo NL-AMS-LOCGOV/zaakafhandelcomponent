@@ -9,6 +9,6 @@ import javax.ws.rs.QueryParam;
 
 public class RESTZoekZaakParameters {
 
-    @QueryParam("vrijeTekst")
-    public String vrijeTekst;
+    @QueryParam("tekst")
+    public String tekst;
 }

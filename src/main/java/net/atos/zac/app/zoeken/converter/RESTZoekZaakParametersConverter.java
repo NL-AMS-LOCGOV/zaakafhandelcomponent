@@ -12,7 +12,7 @@ public class RESTZoekZaakParametersConverter {
 
     public ZoekZaakParameters convert(final RESTZoekZaakParameters restZoekZaakParameters) {
         final ZoekZaakParameters zoekZaakParameters = new ZoekZaakParameters();
-        zoekZaakParameters.setVrijeTekst(restZoekZaakParameters.vrijeTekst);
+        zoekZaakParameters.setTekst(restZoekZaakParameters.tekst);
         return zoekZaakParameters;
     }
 }
