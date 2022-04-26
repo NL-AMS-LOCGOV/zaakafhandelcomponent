@@ -28,6 +28,7 @@ export class DocumentViewerComponent implements OnInit {
         this.informatieObjectenService.getPreviewDocument(this.document.uuid).subscribe(value => {
             this.pdfViewer.openFile = false;
             this.pdfViewer.viewBookmark = false;
+            this.pdfViewer.iframe.nativeElement.frameBorder = 0;
             this.pdfViewer.pdfSrc = value;
             this.pdfViewer.refresh();
         });
