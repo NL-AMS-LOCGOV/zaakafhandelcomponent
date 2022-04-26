@@ -26,8 +26,9 @@ import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
+import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
-import net.atos.zac.app.planitems.model.UserEventListenerData;
+import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -71,19 +72,19 @@ public class PlanItemsRESTService {
 
     @PUT
     @Path("doHumanTask")
-    public void doHumanTask(final RESTPlanItem restPlanItem) {
-        final PlanItemInstance planItem = flowableService.readOpenPlanItem(restPlanItem.id);
+    public void doHumanTask(final RESTHumanTaskData humanTaskData) {
+        final PlanItemInstance planItem = flowableService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
         final Date streefdatum = DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd());
-        flowableService.startHumanTaskPlanItem(planItem, restPlanItem.groep.id,
-                                               restPlanItem.medewerker != null ? restPlanItem.medewerker.gebruikersnaam : null, streefdatum,
-                                               restPlanItem.taakdata, restPlanItem.taakStuurGegevens.sendMail,
-                                               restPlanItem.taakStuurGegevens.onderwerp);
+        flowableService.startHumanTaskPlanItem(planItem, humanTaskData.groep.id,
+                                               humanTaskData.medewerker != null ? humanTaskData.medewerker.gebruikersnaam : null, streefdatum,
+                                               humanTaskData.taakdata, humanTaskData.taakStuurGegevens.sendMail,
+                                               humanTaskData.taakStuurGegevens.onderwerp);
     }
 
     @PUT
     @Path("doUserEventListener")
-    public void doUserEventListener(final UserEventListenerData userEventListenerData) {
+    public void doUserEventListener(final RESTUserEventListenerData userEventListenerData) {
         switch (userEventListenerData.actie) {
             case ONTVANKELIJK -> flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, null);
             case NIET_ONTVANKELIJK ->

@@ -10,6 +10,7 @@ import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {PlanItem} from './model/plan-item';
 import {UserEventListenerData} from './model/user-event-listener-data';
+import {HumanTaskData} from './model/human-task-data';
 
 @Injectable({
     providedIn: 'root'
@@ -33,8 +34,8 @@ export class PlanItemsService {
         );
     }
 
-    doHumanTask(planItem: PlanItem): Observable<PlanItem> {
-        return this.http.put<PlanItem>(`${this.basepath}/doHumanTask`, planItem).pipe(
+    doHumanTask(humanTaskData: HumanTaskData): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/doHumanTask`, humanTaskData).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

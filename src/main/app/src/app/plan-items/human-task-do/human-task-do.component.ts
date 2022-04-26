@@ -14,6 +14,7 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {HumanTaskData} from '../model/human-task-data';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -48,7 +49,13 @@ export class HumanTaskDoComponent implements OnInit {
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.planItem = this.formulier.getPlanItem(formGroup);
-            this.planItemsService.doHumanTask(this.planItem).subscribe(() => {
+            const humanTaskData = new HumanTaskData();
+            humanTaskData.planItemInstanceId = this.planItem.id;
+            humanTaskData.groep = this.planItem.groep;
+            humanTaskData.medewerker = this.planItem.medewerker;
+            humanTaskData.taakdata = this.planItem.taakdata;
+            humanTaskData.taakStuurGegevens = this.planItem.taakStuurGegevens;
+            this.planItemsService.doHumanTask(humanTaskData).subscribe(() => {
                 this.done.emit();
             });
         } else { // cancel button clicked
