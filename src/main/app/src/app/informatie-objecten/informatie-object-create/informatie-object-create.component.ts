@@ -171,6 +171,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                         this.sideNav.close();
                     }
                 });
+        } else {
+            this.sideNav.close();
         }
     }
 
