@@ -48,7 +48,6 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
                 if (data.medewerker === '') {
                     data.medewerker = undefined;
                 }
-                console.log(data);
                 this.data.formControl.setValue(data);
             } else {
                 this.data.formControl.setErrors([]);
