@@ -64,8 +64,6 @@ export class InformatieObjectCreateComponent implements OnInit {
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
 
-        this.utilService.setTitle('title.document.aanmaken', {zaak: this.zaak.identificatie});
-
         const titel = new InputFormFieldBuilder().id('titel').label('titel')
                                                  .validators(Validators.required)
                                                  .build();
