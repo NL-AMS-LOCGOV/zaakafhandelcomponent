@@ -15,7 +15,6 @@ import {Groep} from '../../identity/model/groep';
 import {IdentityService} from '../../identity/identity.service';
 import {Medewerker} from '../../identity/model/medewerker';
 import {HumanTaskParameter} from '../model/human-task-parameter';
-import {FormulierDefinitieVerwijzing} from '../model/formulier-definitie-verwijzing';
 import {MatSelectChange} from '@angular/material/select';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
@@ -55,7 +54,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     behandelaarControl = new FormControl();
 
     caseDefinitions: Observable<CaseDefinition[]>;
-    formulierDefinities: Observable<FormulierDefinitieVerwijzing[]>;
+    formulierDefinities: Observable<string[]>;
     groepen: Observable<Groep[]>;
     medewerkers: Observable<Medewerker[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;

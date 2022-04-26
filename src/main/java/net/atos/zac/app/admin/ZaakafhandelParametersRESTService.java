@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,6 @@ import net.atos.zac.app.admin.converter.RESTZaakResultaattypeConverter;
 import net.atos.zac.app.admin.converter.RESTZaakafhandelParametersConverter;
 import net.atos.zac.app.admin.converter.RESTZaakbeeindigRedenConverter;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
-import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTZaakResultaattype;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
@@ -190,8 +190,8 @@ public class ZaakafhandelParametersRESTService {
      */
     @GET
     @Path("formulierDefinities")
-    public List<RESTFormulierDefinitie> listFormulierDefinities() {
-        return Arrays.stream(FormulierDefinitie.values()).map(RESTFormulierDefinitie::new).collect(Collectors.toList());
+    public List<String> listFormulierDefinities() {
+        return Arrays.stream(FormulierDefinitie.values()).map(Objects::toString).collect(Collectors.toList());
     }
 
     private List<Zaaktype> listZaaktypes() {
