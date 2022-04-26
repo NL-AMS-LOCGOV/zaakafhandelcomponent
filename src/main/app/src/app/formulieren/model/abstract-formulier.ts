@@ -57,8 +57,8 @@ export abstract class AbstractFormulier {
     }
 
     getPlanItem(formGroup: FormGroup): PlanItem {
-        const toekenning: { groep: Groep, behandelaar?: Medewerker } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
-        this.planItem.medewerker = toekenning.behandelaar;
+        const toekenning: { groep: Groep, medewerker?: Medewerker } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
+        this.planItem.medewerker = toekenning.medewerker;
         this.planItem.groep = toekenning.groep;
         this.planItem.taakdata = this.getDataElementen(formGroup);
         return this.planItem;
