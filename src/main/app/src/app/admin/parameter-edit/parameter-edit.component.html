@@ -87,7 +87,7 @@
                                                     [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')"
                                                     [compareWith]="compareObject">
                                             <mat-option *ngFor="let formDef of formulierDefinities | async"
-                                                        [value]="formDef">{{ formDef.naam }}</mat-option>
+                                                        [value]="formDef">{{ 'formulierDefinitie.' + formDef | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
