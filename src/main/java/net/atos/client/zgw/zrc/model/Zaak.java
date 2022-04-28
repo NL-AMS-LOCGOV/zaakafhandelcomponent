@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbDateFormat;
-import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Archiefnominatie;
@@ -207,9 +205,6 @@ public class Zaak {
      */
     private URI resultaat;
 
-    /**
-     * Constructor for PATCH request
-     */
     public Zaak() {
     }
 
@@ -233,34 +228,20 @@ public class Zaak {
         this.startdatum = LocalDate.now();
     }
 
-    /**
-     * Constructor for reading readOnly attributes from GET response
-     */
-    @JsonbCreator
-    public Zaak(@JsonbProperty("url") final URI url,
-            @JsonbProperty("uuid") final UUID uuid,
-            @JsonbProperty("einddatum") final LocalDate einddatum,
-            @JsonbProperty("betalingsindicatieWeergave") final String betalingsindicatieWeergave,
-            @JsonbProperty("deelzaken") final Set<URI> deelzaken,
-            @JsonbProperty("eigenschappen") final Set<URI> eigenschappen,
-            @JsonbProperty("status") final URI status,
-            @JsonbProperty("resultaat") final URI resultaat) {
-        this.url = url;
-        this.uuid = uuid;
-        this.einddatum = einddatum;
-        this.betalingsindicatieWeergave = betalingsindicatieWeergave;
-        this.deelzaken = deelzaken;
-        this.eigenschappen = eigenschappen;
-        this.status = status;
-        this.resultaat = resultaat;
-    }
-
     public URI getUrl() {
         return url;
     }
 
+    public void setUrl(final URI url) {
+        this.url = url;
+    }
+
     public UUID getUuid() {
         return uuid;
+    }
+
+    public void setUuid(final UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getIdentificatie() {
@@ -347,6 +328,10 @@ public class Zaak {
         return einddatum;
     }
 
+    public void setEinddatum(final LocalDate einddatum) {
+        this.einddatum = einddatum;
+    }
+
     public LocalDate getEinddatumGepland() {
         return einddatumGepland;
     }
@@ -407,6 +392,10 @@ public class Zaak {
         return betalingsindicatieWeergave;
     }
 
+    public void setBetalingsindicatieWeergave(final String betalingsindicatieWeergave) {
+        this.betalingsindicatieWeergave = betalingsindicatieWeergave;
+    }
+
     public ZonedDateTime getLaatsteBetaaldatum() {
         return laatsteBetaaldatum;
     }
@@ -451,6 +440,10 @@ public class Zaak {
         return deelzaken;
     }
 
+    public void setDeelzaken(final Set<URI> deelzaken) {
+        this.deelzaken = deelzaken;
+    }
+
     public List<RelevanteZaak> getRelevanteAndereZaken() {
         return relevanteAndereZaken;
     }
@@ -463,8 +456,16 @@ public class Zaak {
         return eigenschappen;
     }
 
+    public void setEigenschappen(final Set<URI> eigenschappen) {
+        this.eigenschappen = eigenschappen;
+    }
+
     public URI getStatus() {
         return status;
+    }
+
+    public void setStatus(final URI status) {
+        this.status = status;
     }
 
     public Archiefnominatie getArchiefnominatie() {
@@ -493,6 +494,10 @@ public class Zaak {
 
     public URI getResultaat() {
         return resultaat;
+    }
+
+    public void setResultaat(final URI resultaat) {
+        this.resultaat = resultaat;
     }
 
     @JsonbTransient

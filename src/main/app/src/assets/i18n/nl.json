@@ -173,6 +173,8 @@
   "zaaktypeOmschrijving": "Zaaktype",
   "zaaktype.-kies-": "- Kies een zaaktype -",
   " 5 ": ">>--> OPSOMMINGEN <--<<",
+  "archiefNominatie.datum.BLIJVEND_BEWAREN": "Archiveerdatum",
+  "archiefNominatie.datum.VERNIETIGEN": "Vernietigdatum",
   "informatieobject.status": "Status",
   "informatieobject.status.DEFINITIEF": "Definitief",
   "informatieobject.status.IN_BEWERKING": "In bewerking",

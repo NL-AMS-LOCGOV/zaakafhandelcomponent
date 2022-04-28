@@ -90,6 +90,10 @@ public class RESTZaakConverter {
         restZaak.uiterlijkeEinddatumAfdoening = zaak.getUiterlijkeEinddatumAfdoening();
         restZaak.publicatiedatum = zaak.getPublicatiedatum();
         restZaak.registratiedatum = zaak.getRegistratiedatum();
+        if (zaak.getArchiefnominatie() != null) {
+            restZaak.archiefNominatie = zaak.getArchiefnominatie().name();
+            restZaak.archiefActiedatum = zaak.getArchiefactiedatum();
+        }
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
         restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);

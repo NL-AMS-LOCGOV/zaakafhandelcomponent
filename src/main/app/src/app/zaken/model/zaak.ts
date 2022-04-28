@@ -31,6 +31,8 @@ export class Zaak {
     einddatum: string;
     uiterlijkeEinddatumAfdoening: string;
     publicatiedatum: string;
+    archiefActiedatum: string;
+    archiefNominatie: string;
     communicatiekanaal: Communicatiekanaal;
     vertrouwelijkheidaanduiding: string;
     zaakgeometrie: Geometry;
