@@ -11,8 +11,17 @@ export class DialogData {
     public confirmButtonActionKey: string = 'actie.ja';
     public cancelButtonActionKey: string = 'actie.annuleren';
 
-    constructor(public formField: AbstractFormField,
-                public fn?: (result: any) => Observable<any>,
+    constructor(public formFields: AbstractFormField[],
+                public fn?: (results: any[]) => Observable<any>,
                 public melding?: string,
                 public uitleg?: string) {}
+
+    formFieldsInvalid(): boolean {
+        for (const formField of this.formFields) {
+            if (formField.formControl.invalid) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
