@@ -362,6 +362,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     new TextareaFormFieldBuilder().id('reden')
                                                   .label('reden')
                                                   .validators(Validators.required)
+                                                  .maxlength(100)
                                                   .build()],
                 (results: any[]) => this.doUserEventListenerNietOntvankelijk(planItem.id, results['reden']),
                 melding,
