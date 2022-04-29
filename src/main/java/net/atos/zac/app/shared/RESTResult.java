@@ -14,11 +14,11 @@ public class RESTResult<TYPE> {
 
     Collection<TYPE> results;
 
-    int count;
+    float count;
 
     String foutmelding;
 
-    public RESTResult(final Collection<TYPE> results, final int count) {
+    public RESTResult(final Collection<TYPE> results, final float count) {
         this.results = results;
         this.count = count;
         this.foutmelding = StringUtils.EMPTY;
@@ -40,7 +40,7 @@ public class RESTResult<TYPE> {
         return results;
     }
 
-    public int getCount() {
+    public float getCount() {
         return count;
     }
 

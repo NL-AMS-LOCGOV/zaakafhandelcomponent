@@ -5,7 +5,7 @@
 
 package net.atos.zac.zoeken.model;
 
-public class ZoekZaakParameters {
+public class ZaakZoekParameters {
 
     private String tekst;
 

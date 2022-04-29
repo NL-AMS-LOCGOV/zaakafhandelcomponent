@@ -7,19 +7,26 @@ package net.atos.zac.app.zoeken.model;
 
 import java.util.UUID;
 
-public class RESTZoekZaakResultaat {
+public class RESTZaakZoekItem {
 
     public UUID uuid;
 
     public String identificatie;
 
-    public String zaaktype;
+    public String zaaktypeNaam;
 
-    public String status;
+    public String statusNaam;
+
+    public String resultaatNaam;
 
     public String omschrijving;
 
     public String toelichting;
 
     public String locatie;
+
+    public String behandelaarNaam;
+
+    public String groepNaam;
+
 }

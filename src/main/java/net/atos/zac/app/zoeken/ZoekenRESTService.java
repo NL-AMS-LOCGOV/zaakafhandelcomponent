@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zoeken;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BeanParam;
@@ -16,12 +14,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.app.shared.RESTResult;
 import net.atos.zac.app.zoeken.converter.RESTZoekZaakParametersConverter;
 import net.atos.zac.app.zoeken.converter.RESTZoekZaakResultaatConverter;
+import net.atos.zac.app.zoeken.model.RESTZaakZoekItem;
 import net.atos.zac.app.zoeken.model.RESTZoekZaakParameters;
-import net.atos.zac.app.zoeken.model.RESTZoekZaakResultaat;
 import net.atos.zac.zoeken.ZoekenService;
-import net.atos.zac.zoeken.model.ZoekZaakResultaat;
+import net.atos.zac.zoeken.model.ZaakZoekItem;
+import net.atos.zac.zoeken.model.ZoekResultaat;
 
 @Path("zoeken")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -40,8 +40,8 @@ public class ZoekenRESTService {
 
     @GET
     @Path("zaken")
-    public List<RESTZoekZaakResultaat> zoekZaken(@BeanParam final RESTZoekZaakParameters zoekZaakParameters) {
-        final List<ZoekZaakResultaat> zoekZaakResultaten = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
-        return zoekZaakResultaatConverter.convert(zoekZaakResultaten);
+    public RESTResult<RESTZaakZoekItem> zoekZaken(@BeanParam final RESTZoekZaakParameters zoekZaakParameters) {
+        final ZoekResultaat<ZaakZoekItem> zoekResultaat = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
+        return zoekZaakResultaatConverter.convert(zoekResultaat);
     }
 }

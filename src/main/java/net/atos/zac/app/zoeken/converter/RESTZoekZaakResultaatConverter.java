@@ -5,26 +5,29 @@
 
 package net.atos.zac.app.zoeken.converter;
 
-import java.util.List;
+import java.util.UUID;
 
-import net.atos.zac.app.zoeken.model.RESTZoekZaakResultaat;
-import net.atos.zac.zoeken.model.ZoekZaakResultaat;
+import net.atos.zac.app.shared.RESTResult;
+import net.atos.zac.app.zoeken.model.RESTZaakZoekItem;
+import net.atos.zac.zoeken.model.ZaakZoekItem;
+import net.atos.zac.zoeken.model.ZoekResultaat;
 
 public class RESTZoekZaakResultaatConverter {
 
-    public List<RESTZoekZaakResultaat> convert(final List<ZoekZaakResultaat> zoekZaakResultaten) {
-        return zoekZaakResultaten.stream().map(this::convert).toList();
+    public RESTResult<RESTZaakZoekItem> convert(final ZoekResultaat<ZaakZoekItem> zoekResultaat) {
+        return new RESTResult<>(zoekResultaat.getItems().stream().map(this::convert).toList(), zoekResultaat.getCount());
     }
 
-    private RESTZoekZaakResultaat convert(final ZoekZaakResultaat zoekZaakResultaat) {
-        final RESTZoekZaakResultaat restZoekZaakResultaat = new RESTZoekZaakResultaat();
-        restZoekZaakResultaat.uuid = zoekZaakResultaat.getUuid();
-        restZoekZaakResultaat.identificatie = zoekZaakResultaat.getIdentificatie();
-        restZoekZaakResultaat.zaaktype = zoekZaakResultaat.getZaaktype();
-        restZoekZaakResultaat.status = zoekZaakResultaat.getStatus();
-        restZoekZaakResultaat.omschrijving = zoekZaakResultaat.getOmschrijving();
-        restZoekZaakResultaat.toelichting = zoekZaakResultaat.getToelichting();
-        restZoekZaakResultaat.locatie = zoekZaakResultaat.getLocatie();
-        return restZoekZaakResultaat;
+    private RESTZaakZoekItem convert(final ZaakZoekItem zoekItem) {
+        final RESTZaakZoekItem restZoekItem = new RESTZaakZoekItem();
+        restZoekItem.uuid = UUID.fromString(zoekItem.getUuid());
+        restZoekItem.identificatie = zoekItem.getIdentificatie();
+        restZoekItem.zaaktypeNaam = zoekItem.getZaaktypeOmschrijving();
+        restZoekItem.statusNaam = zoekItem.getStatusNaam();
+        restZoekItem.behandelaarNaam = zoekItem.getBehandelaarNaam();
+        restZoekItem.groepNaam = zoekItem.getGroepNaam();
+        restZoekItem.omschrijving = zoekItem.getOmschrijving();
+        restZoekItem.toelichting = zoekItem.getToelichting();
+        return restZoekItem;
     }
 }

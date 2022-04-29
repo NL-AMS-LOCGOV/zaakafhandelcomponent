@@ -10,6 +10,8 @@ import static net.atos.zac.notificaties.Action.CREATE;
 import static net.atos.zac.notificaties.Action.DELETE;
 import static net.atos.zac.notificaties.Action.UPDATE;
 import static net.atos.zac.notificaties.Resource.OBJECT;
+import static net.atos.zac.notificaties.Resource.RESULTAAT;
+import static net.atos.zac.notificaties.Resource.ROL;
 import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
 
@@ -66,6 +68,7 @@ public class NotificatieReceiver {
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
+        handleIndexering(notificatie);
         if (!configuratieService.isLocalDevelopment()) {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
@@ -118,7 +121,11 @@ public class NotificatieReceiver {
                     zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS && notificatie.getAction() == CREATE) {
-                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
+            } else if (notificatie.getResource() == RESULTAAT && notificatie.getAction() == CREATE) {
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
+            } else if(notificatie.getResource() == ROL){
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
             }
         }
     }
