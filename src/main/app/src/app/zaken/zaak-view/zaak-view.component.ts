@@ -280,15 +280,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.MAIL_VERSTUREN;
         }, 'mail'));
 
-        if (!this.zaak.ontvangstbevestigingVerstuurd) {
+        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ONTVANGSTBEVESTIGING;
             }, 'mark_email_read'));
-        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.status.naam !== 'Afgerond') {
-            this.menu.push(
-                new LinkMenuItem('actie.ontvangstbevestiging.versturen', `/mail/ontvangstbevestiging/${this.zaak.uuid}`,
-                    'mark_email_read'));
         }
 
         if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
