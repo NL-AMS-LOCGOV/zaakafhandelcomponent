@@ -5,11 +5,10 @@
 
 import {Groep} from '../../identity/model/groep';
 import {PlanItemDefinition} from './plan-item-definition';
-import {FormulierDefinitieVerwijzing} from './formulier-definitie-verwijzing';
 
 export class HumanTaskParameter {
     planItemDefinition: PlanItemDefinition;
-    formulierDefinitie: FormulierDefinitieVerwijzing;
+    formulierDefinitie: string;
     defaultGroep: Groep;
     doorlooptijd: number;
 }

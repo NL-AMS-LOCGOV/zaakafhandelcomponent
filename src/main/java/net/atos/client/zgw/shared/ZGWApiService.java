@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -42,6 +43,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.BrondatumArchiefprocedure;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -61,6 +63,8 @@ import net.atos.zac.signalering.model.SignaleringType;
  */
 @ApplicationScoped
 public class ZGWApiService implements Caching {
+
+    private static final Logger LOG = Logger.getLogger(ZGWApiService.class.getName());
 
     // Page numbering in ZGW Api's starts with 1
     public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
@@ -319,6 +323,27 @@ public class ZGWApiService implements Caching {
     }
 
     private void berekenArchiveringsparameters(final UUID zaakUUID) {
-        // ToDo:
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID); // refetch to get the einddatum (the archiefNominatie has also been set)
+        final Resultaattype resultaattype = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype());
+        final LocalDate brondatum = bepaalBrondatum(resultaattype, zaak);
+        if (brondatum != null) {
+            final Zaak zaakPatch = new Zaak();
+            zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
+            zrcClientService.updateZaakPartially(zaakUUID, zaakPatch);
+        }
+    }
+
+    private LocalDate bepaalBrondatum(final Resultaattype resultaattype, final Zaak zaak) {
+        final BrondatumArchiefprocedure brondatumArchiefprocedure = resultaattype.getBrondatumArchiefprocedure();
+        if (brondatumArchiefprocedure != null) {
+            switch (brondatumArchiefprocedure.getAfleidingswijze()) {
+                case AFGEHANDELD:
+                    return zaak.getEinddatum();
+                default:
+                    LOG.warning(String.format("De brondatum bepaling voor afleidingswijze %s is nog niet geimplementeerd",
+                                              brondatumArchiefprocedure.getAfleidingswijze()));
+            }
+        }
+        return null;
     }
 }

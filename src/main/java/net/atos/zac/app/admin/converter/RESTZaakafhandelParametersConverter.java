@@ -12,10 +12,9 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
-import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
-import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
+import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
+import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
@@ -65,7 +64,7 @@ public class RESTZaakafhandelParametersConverter {
                         found = true;
                         restHumanTaskParameters.id = htParam.getId();
                         restHumanTaskParameters.defaultGroep = groepConverter.convertGroupId(htParam.getGroepID());
-                        restHumanTaskParameters.formulierDefinitie = new RESTFormulierDefinitie(FormulierDefinitie.valueOf(htParam.getFormulierDefinitieID()));
+                        restHumanTaskParameters.formulierDefinitie = FormulierDefinitie.valueOf(htParam.getFormulierDefinitieID());
                         restHumanTaskParameters.planItemDefinition = pDef;
                         restHumanTaskParameters.doorlooptijd = htParam.getDoorlooptijd();
                         break;
@@ -110,7 +109,7 @@ public class RESTZaakafhandelParametersConverter {
             humanTaskParameters.setZaakafhandelParameters(parameters);
             humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
             humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
-            humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitie.id);
+            humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitie.toString());
             if (restHumanTaskParameters.defaultGroep != null) {
                 humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
             }

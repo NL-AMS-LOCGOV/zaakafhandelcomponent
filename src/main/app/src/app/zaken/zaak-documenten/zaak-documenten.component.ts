@@ -117,9 +117,12 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                 } else {
                     melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
                 }
-                const dialogData = new DialogData(
-                    new TextareaFormFieldBuilder().id('reden').label('reden').build(),
-                    (reden: string) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, reden), melding);
+                const dialogData = new DialogData([
+                        new TextareaFormFieldBuilder().id('reden')
+                                                      .label('reden')
+                                                      .build()],
+                    (results: any[]) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, results['reden']),
+                    melding);
                 this.dialog.open(DialogComponent, {
                     data: dialogData
                 }).afterClosed().subscribe(result => {

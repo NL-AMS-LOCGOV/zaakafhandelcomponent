@@ -5,17 +5,16 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {PlanItemsService} from '../plan-items.service';
 import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
 import {PlanItemType} from '../model/plan-item-type.enum';
-import {NavigationService} from '../../shared/navigation/navigation.service';
-import {UtilService} from '../../core/service/util.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {HumanTaskData} from '../model/human-task-data';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -30,8 +29,7 @@ export class HumanTaskDoComponent implements OnInit {
     @Input() planItem: PlanItem;
     @Output() done = new EventEmitter<void>();
 
-    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService,
-                private router: Router, private navigation: NavigationService, private utilService: UtilService) {
+    constructor(private route: ActivatedRoute, private planItemsService: PlanItemsService, private taakFormulierenService: TaakFormulierenService) {
     }
 
     ngOnInit(): void {
@@ -42,10 +40,8 @@ export class HumanTaskDoComponent implements OnInit {
             if (this.formulier.disablePartialSave) {
                 this.formConfig.partialButtonText = null;
             }
-            this.utilService.setTitle(this.formulier.getStartTitel());
             this.formItems = this.formulier.form;
         } else {
-            this.utilService.setTitle(this.planItem.naam);
             this.formItems = [[]];
         }
     }
@@ -53,7 +49,13 @@ export class HumanTaskDoComponent implements OnInit {
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             this.planItem = this.formulier.getPlanItem(formGroup);
-            this.planItemsService.doHumanTask(this.planItem).subscribe(() => {
+            const humanTaskData = new HumanTaskData();
+            humanTaskData.planItemInstanceId = this.planItem.id;
+            humanTaskData.groep = this.planItem.groep;
+            humanTaskData.medewerker = this.planItem.medewerker;
+            humanTaskData.taakdata = this.planItem.taakdata;
+            humanTaskData.taakStuurGegevens = this.planItem.taakStuurGegevens;
+            this.planItemsService.doHumanTask(humanTaskData).subscribe(() => {
                 this.done.emit();
             });
         } else { // cancel button clicked

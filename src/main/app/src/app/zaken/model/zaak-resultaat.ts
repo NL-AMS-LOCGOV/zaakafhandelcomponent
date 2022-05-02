@@ -4,6 +4,7 @@
  */
 
 export class ZaakResultaat {
+    id: string;
     naam: string;
     naamGeneriek: string;
     toelichting: string;

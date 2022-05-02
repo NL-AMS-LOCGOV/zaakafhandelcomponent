@@ -7,7 +7,8 @@ package net.atos.zac.app.planitems.model;
 
 import java.util.UUID;
 
-public class UserEventListenerData {
+public class RESTUserEventListenerData {
+
     public UUID zaakUuid;
 
     public String planItemInstanceId;

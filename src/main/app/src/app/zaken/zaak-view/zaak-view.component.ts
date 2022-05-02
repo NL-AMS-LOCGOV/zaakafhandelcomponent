@@ -46,7 +46,6 @@ import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertr
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
-import {ZaakbeeindigReden} from '../../admin/model/zaakbeeindig-reden';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {Klant} from '../../klanten/model/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
@@ -57,6 +56,7 @@ import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
+import {ZaakResultaat} from '../model/zaak-resultaat';
 import {Observable, share} from 'rxjs';
 
 @Component({
@@ -281,7 +281,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.MAIL_VERSTUREN;
         }, 'mail'));
 
-        if (!this.zaak.ontvangstbevestigingVerstuurd) {
+        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ONTVANGSTBEVESTIGING;
@@ -359,9 +359,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createUserEventListenerNietOntvankelijkDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: DialogComponent,
-            dialogData: new DialogData(
-                new TextareaFormFieldBuilder().id('reden').label('reden').validators(Validators.required).build(),
-                (reden: string) => this.doUserEventListenerNietOntvankelijk(planItem.id, reden), melding, planItem.toelichting)
+            dialogData: new DialogData([
+                    new TextareaFormFieldBuilder().id('reden')
+                                                  .label('reden')
+                                                  .validators(Validators.required)
+                                                  .maxlength(100)
+                                                  .build()],
+                (results: any[]) => this.doUserEventListenerNietOntvankelijk(planItem.id, results['reden']),
+                melding,
+                planItem.toelichting)
         };
     }
 
@@ -372,32 +378,40 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerAfhandelenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
-        // ToDo resultaattype en eventueel ook resultaat toelichting moet gekozen kunnen worden in dropdown
-        const resultaattypeUuid = '4580d1fb-c5b5-4d5e-b39b-fe8bbfd32516';
-        const resultaatToelichting = 'Toelichting op resultaat';
         return {
-            dialogComponent: ConfirmDialogComponent,
-            dialogData: new ConfirmDialogData(melding, this.doUserEventListenerAfhandelen(planItem.id, resultaattypeUuid, resultaatToelichting),
+            dialogComponent: DialogComponent,
+            dialogData: new DialogData([
+                    new SelectFormFieldBuilder().id('resultaattype')
+                                                .label('resultaat')
+                                                .optionLabel('naam')
+                                                .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                                .validators(Validators.required)
+                                                .build(),
+                    new InputFormFieldBuilder().id('toelichting')
+                                               .label('toelichting')
+                                               .build()],
+                (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
+                melding,
                 planItem.toelichting)
         };
     }
 
-    private doUserEventListenerAfhandelen(planItemId: string, resultaattypeUuid: string, resultaatToelichting: string): Observable<void> {
+    private doUserEventListenerAfhandelen(planItemId: string, resultaattype: ZaakResultaat, resultaatToelichting: string): Observable<void> {
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.Afhandelen, planItemId, this.zaak.uuid);
-        userEventListenerData.resultaattypeUuid = resultaattypeUuid;
+        userEventListenerData.resultaattypeUuid = resultaattype.id;
         userEventListenerData.resultaatToelichting = resultaatToelichting;
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
     openZaakAfbrekenDialog(): void {
-        const dialogData = new DialogData(
-            new SelectFormFieldBuilder().id('reden')
-                                        .label('actie.zaak.afbreken.reden')
-                                        .optionLabel('naam')
-                                        .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
-                                        .validators(Validators.required)
-                                        .build(),
-            (zaakbeeindigReden: ZaakbeeindigReden) => this.zakenService.afbreken(this.zaak.uuid, zaakbeeindigReden));
+        const dialogData = new DialogData([
+                new SelectFormFieldBuilder().id('reden')
+                                            .label('actie.zaak.afbreken.reden')
+                                            .optionLabel('naam')
+                                            .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
+                                            .validators(Validators.required)
+                                            .build()],
+            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']));
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
         this.websocketService.doubleSuspendListener(this.zaakListener);

@@ -42,16 +42,16 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     verdeel(): void {
-        const toekenning: { groep?: Groep, behandelaar?: Medewerker } = this.medewerkerGroepFormField.formControl.value;
+        const toekenning: { groep?: Groep, medewerker?: Medewerker } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
         this.zakenService.verdelen(
             this.data,
             toekenning.groep,
-            toekenning.behandelaar,
+            toekenning.medewerker,
             this.redenFormField.formControl.value
         ).subscribe(() => {
-            this.dialogRef.close(toekenning.groep || toekenning.behandelaar);
+            this.dialogRef.close(toekenning.groep || toekenning.medewerker);
         });
     }
 }
