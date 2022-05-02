@@ -280,7 +280,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.MAIL_VERSTUREN;
         }, 'mail'));
 
-        if (!this.zaak.ontvangstbevestigingVerstuurd) {
+        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ONTVANGSTBEVESTIGING;
