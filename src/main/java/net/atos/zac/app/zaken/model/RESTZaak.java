@@ -44,6 +44,10 @@ public class RESTZaak {
 
     public LocalDate publicatiedatum;
 
+    public LocalDate archiefActiedatum;
+
+    public String archiefNominatie;
+
     public RESTCommunicatiekanaal communicatiekanaal;
 
     public String vertrouwelijkheidaanduiding;
