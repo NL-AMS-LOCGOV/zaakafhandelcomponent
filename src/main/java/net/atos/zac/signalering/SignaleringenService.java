@@ -26,10 +26,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.flowable.idm.api.Group;
-
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.identity.model.Group;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;

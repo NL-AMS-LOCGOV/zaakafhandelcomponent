@@ -1,0 +1,176 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+package net.atos.zac.identity;
+
+import static org.apache.commons.lang3.StringUtils.substringBetween;
+
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
+
+@ApplicationScoped
+public class IdentityService {
+
+    private static final String USER_ID_ATTRIBUTE = "cn";
+
+    private static final String USER_FIRST_NAME_ATTRIBUTE = "givenName";
+
+    private static final String USER_LAST_NAME_ATTRIBUTE = "sn";
+
+    private static final String USER_MAIL_ATTRIBUTE = "mail";
+
+    private static final String[] USER_ATTRIBUTES = {USER_ID_ATTRIBUTE, USER_FIRST_NAME_ATTRIBUTE, USER_LAST_NAME_ATTRIBUTE, USER_MAIL_ATTRIBUTE};
+
+    private static final String GROUP_NAME_ATTRIBUTE = "cn";
+
+    private static final String[] GROUP_ATTRIBUTES = {GROUP_NAME_ATTRIBUTE};
+
+    private static final String GROUP_MEMBER_ATTRIBUTE = "uniqueMember";
+
+    private static final String[] GROUP_MEMBERSHIP_ATTRIBUTES = {GROUP_MEMBER_ATTRIBUTE};
+
+    private static final String USER_OBJECT_CLASS = "inetOrgPerson";
+
+    private static final String GROUP_OBJECT_CLASS = "groupOfUniqueNames";
+
+    private Hashtable<String, String> environment = new Hashtable<String, String>();
+
+    private String usersDN;
+
+    private String groupsDN;
+
+    public IdentityService() {
+        environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        environment.put(Context.PROVIDER_URL, "ldap://openldap.default:1389"); // ToDo: Configuratie item
+        environment.put(Context.SECURITY_AUTHENTICATION, "simple");
+        environment.put(Context.SECURITY_PRINCIPAL, "cn=admin,dc=public-service-platform,dc=org"); // ToDo: Configuratie item
+        environment.put(Context.SECURITY_CREDENTIALS, "admin"); // ToDo: Configuratie item
+
+        // ToDo: 1 enkel Configuratie item
+        usersDN = "ou=ldap,dc=public-service-platform,dc=org";
+        groupsDN = "ou=ldap,dc=public-service-platform,dc=org";
+    }
+
+    public List<User> listUsers() {
+        final String filter = String.format("(&(objectClass=%s))", USER_OBJECT_CLASS);
+        return search(usersDN, filter, USER_ATTRIBUTES).stream()
+                .map(this::convertToUser)
+                .toList();
+    }
+
+    public List<Group> listGroups() {
+        final String filter = String.format("(&(objectClass=%s))", GROUP_OBJECT_CLASS);
+        return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
+                .map(this::convertToGroup)
+                .toList();
+    }
+
+    public User readUser(final String userId) {
+        final String filter = String.format("(&(objectClass=%s)(cn=%s))", USER_OBJECT_CLASS, userId);
+        return search(usersDN, filter, USER_ATTRIBUTES).stream()
+                .map(this::convertToUser)
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(String.format("User not found: '%s'", userId)));
+    }
+
+    public Group readGroup(final String groupId) {
+        final String filter = String.format("(&(objectClass=%s)(cn=%s))", GROUP_OBJECT_CLASS, groupId);
+        return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
+                .map(this::convertToGroup)
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(String.format("Group not found: '%s'", groupId)));
+
+    }
+
+    public List<Group> listGroupsForUser(final String userId) {
+        return Collections.emptyList();
+    }
+
+    public List<User> listUsersInGroup(final String groupId) {
+        final String filter = String.format("(&(objectClass=%s)(cn=%s))", GROUP_OBJECT_CLASS, groupId);
+        return search(groupsDN, filter, GROUP_MEMBERSHIP_ATTRIBUTES).stream()
+                .flatMap(this::convertToMembers)
+                .map(this::readUser)
+                .toList();
+    }
+
+    private User convertToUser(final Attributes attributes) {
+        return new User(readAttributeToString(attributes, USER_ID_ATTRIBUTE),
+                        readAttributeToString(attributes, USER_FIRST_NAME_ATTRIBUTE),
+                        readAttributeToString(attributes, USER_LAST_NAME_ATTRIBUTE),
+                        readAttributeToString(attributes, USER_MAIL_ATTRIBUTE));
+    }
+
+    private Group convertToGroup(final Attributes attributes) {
+        return new Group(readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE));
+    }
+
+    private Stream<String> convertToMembers(final Attributes attributes) {
+        return readAttributeToListOfStrings(attributes, GROUP_MEMBER_ATTRIBUTE).stream()
+                .map(member -> substringBetween(member, "cn=", ","))
+                .filter(Objects::nonNull);
+    }
+
+    private List<Attributes> search(final String root, final String filter, final String[] attributesToReturn) {
+        final SearchControls searchControls = new SearchControls();
+        searchControls.setReturningAttributes(attributesToReturn);
+        searchControls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+        try {
+            final DirContext dirContext = new InitialDirContext(environment);
+            final NamingEnumeration<SearchResult> namingEnumeration = dirContext.search(root, filter, searchControls);
+            final List<Attributes> attributesList = new LinkedList<>();
+            while (namingEnumeration.hasMore()) {
+                attributesList.add(namingEnumeration.next().getAttributes());
+            }
+            dirContext.close();
+            return attributesList;
+        } catch (final NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String readAttributeToString(final Attributes attributes, final String attributeName) {
+        try {
+            final Attribute attribute = attributes.get(attributeName);
+            return attribute != null ? attribute.get().toString() : null;
+        } catch (final NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<String> readAttributeToListOfStrings(final Attributes attributes, final String attributeName) {
+        try {
+            final List<String> strings = new LinkedList<>();
+            final Attribute attribute = attributes.get(attributeName);
+            if (attribute != null) {
+                final NamingEnumeration<?> enumeration = attribute.getAll();
+                while (enumeration.hasMore()) {
+                    strings.add(enumeration.next().toString());
+                }
+            }
+            return strings;
+        } catch (final NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

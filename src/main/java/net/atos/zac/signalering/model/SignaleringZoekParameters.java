@@ -17,13 +17,13 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.identity.model.Group;
 
 public class SignaleringZoekParameters {
     private final SignaleringTarget targettype;

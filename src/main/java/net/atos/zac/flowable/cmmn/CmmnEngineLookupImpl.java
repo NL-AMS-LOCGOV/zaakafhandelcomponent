@@ -46,6 +46,8 @@ public class CmmnEngineLookupImpl implements CmmnEngineLookup {
         CaseInstanceState.END_STATES.forEach(
                 endState -> cmmnEngineConfiguration.addCaseInstanceLifeCycleListener(new EndCaseLifecycleListener(CaseInstanceState.ACTIVE, endState)));
         cmmnEngineConfiguration.setCreateHumanTaskInterceptor(new CreateHumanTaskInterceptor());
+        cmmnEngineConfiguration.setDisableIdmEngine(true);
+
         return cmmnEngineConfiguration.buildCmmnEngine();
     }
 

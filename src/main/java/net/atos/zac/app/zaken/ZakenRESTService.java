@@ -31,8 +31,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
 import net.atos.client.vrl.VRLClientService;
@@ -83,6 +81,9 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -120,6 +121,9 @@ public class ZakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private IdentityService identityService;
 
     @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
@@ -301,7 +305,7 @@ public class ZakenRESTService {
 
         if (!StringUtils.isEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
             // Toekennen of overdragen
-            final User user = flowableService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+            final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
             zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         } else {
             // Vrijgeven
@@ -314,9 +318,9 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? flowableService.readGroup(verdeelGegevens.groepId) : null;
+        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? identityService.readGroup(verdeelGegevens.groepId) : null;
         final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
-                flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
+                identityService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             if (group != null) {
@@ -369,7 +373,7 @@ public class ZakenRESTService {
     public RESTZaak groepToekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
 
-        final Group group = flowableService.readGroup(toekennenGegevens.groepId);
+        final Group group = identityService.readGroup(toekennenGegevens.groepId);
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolGroep(group, zaak), toekennenGegevens.reden);
 
         return zaakConverter.convert(zaak);
@@ -409,7 +413,7 @@ public class ZakenRESTService {
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        final User user = flowableService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
+        final User user = identityService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         return zaak;
     }
