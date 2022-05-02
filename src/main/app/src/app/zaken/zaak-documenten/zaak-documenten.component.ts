@@ -25,6 +25,7 @@ import {ZakenService} from '../zaken.service';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
+import {Observable, share} from 'rxjs';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -46,7 +47,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
-    informatieObjectenLoading = false;
+    informatieObjecten$: Observable<EnkelvoudigInformatieobject[]>;
+
     enkelvoudigInformatieObjecten: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     documentPreviewRow: EnkelvoudigInformatieobject | null;
 
@@ -79,14 +81,15 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
         if (event) {
-            this.informatieObjectenLoading = true;
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekParameters.zaakUUID = this.taakModus ? this.zaakUUID : this.zaak.uuid;
-        this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).subscribe(objecten => {
+
+        this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(share());
+
+        this.informatieObjecten$.subscribe(objecten => {
             this.enkelvoudigInformatieObjecten.data = objecten;
-            this.informatieObjectenLoading = false;
         });
     }
 

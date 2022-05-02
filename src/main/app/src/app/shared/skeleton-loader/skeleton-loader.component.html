@@ -1,0 +1,63 @@
+<ng-container [ngSwitch]="options.layout" *ngIf="showLoader$|async">
+    <ng-container *ngSwitchCase="'card'">
+        <mat-card @loadingFadeIn>
+            <ngx-skeleton-loader [theme]="cardHeaderTheme" appearance="line"></ngx-skeleton-loader>
+            <mat-card-content>
+                <div class="content" fxLayout="row wrap">
+
+                    <div *ngFor="let field of getFields(options.fields)" [fxFlex]="100/options.fieldsPerRow">
+                        <div class="label-value-loading">
+                            <label>
+                                <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>
+                            </label>
+                            <div>
+                                <ngx-skeleton-loader [theme]="valueTheme" appearance="line"></ngx-skeleton-loader>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="label-value-loading" fxFlex="100">
+                        <label>
+                            <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>
+                        </label>
+                        <div>
+                            <ngx-skeleton-loader [theme]="valueFullwidthTheme" appearance="line"></ngx-skeleton-loader>
+                        </div>
+                    </div>
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'table'">
+        <div class="row" @loadingFadeIn>
+            <ngx-skeleton-loader [theme]="tableTheme" appearance="line"></ngx-skeleton-loader>
+        </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'fields'">
+        <div class="content" fxLayout="row wrap" @loadingFadeIn>
+
+            <div *ngFor="let field of getFields(options.fields)" [fxFlex]="100/options.fieldsPerRow">
+                <div class="label-value-loading">
+                    <label>
+                        <ngx-skeleton-loader [theme]="labelTheme" appearance="line"></ngx-skeleton-loader>
+                    </label>
+                    <div>
+                        <ngx-skeleton-loader [theme]="valueTheme" appearance="line"></ngx-skeleton-loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngSwitchDefault>
+        <div class="loading-wrapper">
+            <ngx-skeleton-loader @loadingFadeIn [theme]="valueTheme" appearance="line"></ngx-skeleton-loader>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="!(showLoader$|async)">
+    <ng-content></ng-content>
+</ng-container>

@@ -252,9 +252,7 @@
 
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
-                    <mat-card-title fxLayout="row">{{'taken'| translate}}
-                        <mat-icon *ngIf="takenLoading">hourglass_bottom</mat-icon>
-                    </mat-card-title>
+                    <mat-card-title fxLayout="row">{{'taken'| translate}}                    </mat-card-title>
                     <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" fxLayout="row"
                                       id="takenAfgerondeToon_toggle"
                                       (change)="filterTakenOpStatus()">{{ 'toonAfgerondeTaken' | translate }}</mat-slide-toggle>
@@ -309,8 +307,14 @@
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="takenColumnsToDisplay"></tr>
                             <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"></tr>
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell" colspan="7">
+                                    <zac-skeleton-loader [loading$]="taken$" [options]="{layout:'table'}">
+                                        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                                    </zac-skeleton-loader>
+                                </td>
+                            </tr>
                         </table>
-                        <p *ngIf="takenDataSource.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                     </div>
                 </mat-card-content>
             </mat-card>

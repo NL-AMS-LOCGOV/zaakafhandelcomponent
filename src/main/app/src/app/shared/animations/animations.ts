@@ -23,3 +23,10 @@ export const detailExpand = trigger('detailExpand', [
     state('expanded', style({height: '*'})),
     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
 ]);
+
+export const loadingFadeIn = trigger('loadingFadeIn', [
+    transition(':enter', [
+        style({opacity: 0}),
+        animate('400ms 150ms ease-in')
+    ])
+]);
