@@ -524,6 +524,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (event) {
             console.log('callback loadTaken: ' + event.key);
         }
+        this.utilService.setLoading(true);
         // TODO #315
         this.websocketService.suspendListener(this.zaakTakenListener);
         this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid).pipe(share());
@@ -533,6 +534,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
+            this.utilService.setLoading(false);
         });
     }
 
