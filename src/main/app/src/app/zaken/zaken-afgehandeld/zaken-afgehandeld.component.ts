@@ -143,6 +143,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
             ['zaak.identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.HIDDEN],
             ['zaaktype', ColumnPickerValue.VISIBLE],
+            ['omschrijving', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.HIDDEN],
             ['startdatum', ColumnPickerValue.VISIBLE],
             ['einddatum', ColumnPickerValue.VISIBLE],
