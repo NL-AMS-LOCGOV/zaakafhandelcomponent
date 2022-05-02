@@ -6,8 +6,8 @@
 package net.atos.zac.identity;
 
 import static org.apache.commons.lang3.StringUtils.substringBetween;
+import static org.eclipse.microprofile.config.ConfigProvider.getConfig;
 
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -24,6 +25,9 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -55,20 +59,20 @@ public class IdentityService {
 
     private Hashtable<String, String> environment = new Hashtable<String, String>();
 
+    @Inject
+    @ConfigProperty(name = "LDAP_DN")
     private String usersDN;
 
+    @Inject
+    @ConfigProperty(name = "LDAP_DN")
     private String groupsDN;
 
     public IdentityService() {
         environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        environment.put(Context.PROVIDER_URL, "ldap://openldap.default:1389"); // ToDo: Configuratie item
+        environment.put(Context.PROVIDER_URL, getConfig().getValue("LDAP_URL", String.class));
         environment.put(Context.SECURITY_AUTHENTICATION, "simple");
-        environment.put(Context.SECURITY_PRINCIPAL, "cn=admin,dc=public-service-platform,dc=org"); // ToDo: Configuratie item
-        environment.put(Context.SECURITY_CREDENTIALS, "admin"); // ToDo: Configuratie item
-
-        // ToDo: 1 enkel Configuratie item
-        usersDN = "ou=ldap,dc=public-service-platform,dc=org";
-        groupsDN = "ou=ldap,dc=public-service-platform,dc=org";
+        environment.put(Context.SECURITY_PRINCIPAL, getConfig().getValue("LDAP_USER", String.class));
+        environment.put(Context.SECURITY_CREDENTIALS, getConfig().getValue("LDAP_PASSWORD", String.class));
     }
 
     public List<User> listUsers() {
@@ -102,8 +106,9 @@ public class IdentityService {
 
     }
 
+    // ToDo Deze methode kan verwijderd worden na uitvoeren van #860
     public List<Group> listGroupsForUser(final String userId) {
-        return Collections.emptyList();
+        throw new NotImplementedException("Deze functionaliteit is niet nodig.");
     }
 
     public List<User> listUsersInGroup(final String groupId) {
