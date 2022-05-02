@@ -9,6 +9,8 @@ import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.servi
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {PlanItem} from './model/plan-item';
+import {UserEventListenerData} from './model/user-event-listener-data';
+import {HumanTaskData} from './model/human-task-data';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +22,7 @@ export class PlanItemsService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    readPlanItem(id: string): Observable<PlanItem> {
+    readHumanTask(id: string): Observable<PlanItem> {
         return this.http.get<PlanItem>(`${this.basepath}/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
@@ -32,9 +34,14 @@ export class PlanItemsService {
         );
     }
 
-    doPlanItem(planItem: PlanItem, toelichting?: string): Observable<PlanItem> {
-        planItem.toelichting = toelichting;
-        return this.http.put<PlanItem>(`${this.basepath}/do/${planItem.id}`, planItem).pipe(
+    doHumanTask(humanTaskData: HumanTaskData): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/doHumanTask`, humanTaskData).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    doUserEventListener(userEventListenerData: UserEventListenerData): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/doUserEventListener`, userEventListenerData).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

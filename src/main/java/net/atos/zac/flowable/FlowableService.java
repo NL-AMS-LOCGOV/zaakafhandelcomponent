@@ -229,16 +229,12 @@ public class FlowableService {
                 .start();
     }
 
-    public void startPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
+    public void startUserEventListenerPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
         final PlanItemInstance planItem = readOpenPlanItem(planItemInstanceId);
-        if (planItem.getPlanItemDefinitionType().equals(USER_EVENT_LISTENER)) {
-            if (StringUtils.isNotEmpty(resultaatToelichting)) {
-                cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
-            }
-            cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
-        } else {
-            cmmnRuntimeService.startPlanItemInstance(planItemInstanceId);
+        if (StringUtils.isNotEmpty(resultaatToelichting)) {
+            cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
         }
+        cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
     }
 
     public PlanItemInstance readOpenPlanItem(final String planItemInstanceId) {

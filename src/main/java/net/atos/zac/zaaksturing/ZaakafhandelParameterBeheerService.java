@@ -25,7 +25,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.zac.util.ValidationUtil;
-import net.atos.zac.zaaksturing.model.PlanItemParameters;
+import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
@@ -40,7 +40,7 @@ public class ZaakafhandelParameterBeheerService {
 
     public ZaakafhandelParameters createZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getPlanItemParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         entityManager.persist(zaakafhandelParameters);
         return zaakafhandelParameters;
     }
@@ -61,21 +61,21 @@ public class ZaakafhandelParameterBeheerService {
 
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getPlanItemParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         return entityManager.merge(zaakafhandelParameters);
     }
 
-    public PlanItemParameters readPlanItemParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
+    public HumanTaskParameters readHumanTaskParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<PlanItemParameters> query = builder.createQuery(PlanItemParameters.class);
-        final Root<PlanItemParameters> queryRoot = query.from(PlanItemParameters.class);
+        final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
+        final Root<HumanTaskParameters> queryRoot = query.from(HumanTaskParameters.class);
 
-        final Join<PlanItemParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
+        final Join<HumanTaskParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
         final List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
         predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
         query.where(predicates.toArray(new Predicate[0]));
-        final List<PlanItemParameters> resultList = entityManager.createQuery(query).getResultList();
+        final List<HumanTaskParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
@@ -83,8 +83,7 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
-    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID,
-            final String planitemDefinitionID) {
+    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
         final Root<UserEventListenerParameters> queryRoot = query.from(UserEventListenerParameters.class);

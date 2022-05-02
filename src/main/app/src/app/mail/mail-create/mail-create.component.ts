@@ -54,8 +54,6 @@ export class MailCreateComponent implements OnInit {
         this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
-
-        this.utilService.setTitle('title.mail.versturen', {zaak: this.zaak.identificatie});
         const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
                                                      .validators(Validators.required, CustomValidators.emails).build();
         const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();

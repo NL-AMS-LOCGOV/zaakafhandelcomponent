@@ -139,9 +139,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     openVerdelenScherm() {
         const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVerdelenDialogComponent, {
-            width: '350px',
-            data: taken,
-            autoFocus: 'dialog'
+            data: taken
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -159,9 +157,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     openVrijgevenScherm() {
         const taken = this.selection.selected;
         const dialogRef = this.dialog.open(TakenVrijgevenDialogComponent, {
-            width: '350px',
-            data: taken,
-            autoFocus: 'dialog'
+            data: taken
         });
 
         dialogRef.afterClosed().subscribe(result => {

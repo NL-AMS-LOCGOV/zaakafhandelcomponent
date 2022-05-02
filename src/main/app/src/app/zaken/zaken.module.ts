@@ -21,6 +21,7 @@ import {LocatieZoekComponent} from './zoek/locatie-zoek/locatie-zoek.component';
 import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
 import {PlanItemsModule} from '../plan-items/plan-items.module';
 import {MailModule} from '../mail/mail.module';
+import {ZaakDocumentenComponent} from './zaak-documenten/zaak-documenten.component';
 
 @NgModule({
     declarations: [
@@ -33,10 +34,12 @@ import {MailModule} from '../mail/mail.module';
         ZakenVerdelenDialogComponent,
         ZakenVrijgevenDialogComponent,
         NotitiesComponent,
-        LocatieZoekComponent
+        LocatieZoekComponent,
+        ZaakDocumentenComponent
     ],
     exports: [
-        ZaakVerkortComponent
+        ZaakVerkortComponent,
+        ZaakDocumentenComponent
     ],
     imports: [
         SharedModule,

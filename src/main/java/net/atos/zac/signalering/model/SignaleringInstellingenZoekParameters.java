@@ -19,6 +19,10 @@ public class SignaleringInstellingenZoekParameters {
 
     private SignaleringType.Type type;
 
+    private boolean dashboard;
+
+    private boolean mail;
+
     public SignaleringInstellingenZoekParameters(final Signalering signalering) {
         this.ownertype = signalering.getTargettype();
         this.owner = signalering.getTarget();
@@ -49,6 +53,24 @@ public class SignaleringInstellingenZoekParameters {
 
     public SignaleringInstellingenZoekParameters type(final SignaleringType.Type type) {
         this.type = type;
+        return this;
+    }
+
+    public Boolean getDashboard() {
+        return dashboard;
+    }
+
+    public SignaleringInstellingenZoekParameters dashboard() {
+        this.dashboard = true;
+        return this;
+    }
+
+    public Boolean getMail() {
+        return mail;
+    }
+
+    public SignaleringInstellingenZoekParameters mail() {
+        this.mail = true;
         return this;
     }
 }

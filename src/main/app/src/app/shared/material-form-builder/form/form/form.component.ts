@@ -77,7 +77,6 @@ export class FormComponent {
     }
 
     cancel(): void {
-        this.submitting = true;
         this.formSubmit.emit(null);
     }
 }

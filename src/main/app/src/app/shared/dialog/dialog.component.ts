@@ -24,7 +24,11 @@ export class DialogComponent {
         this.dialogRef.disableClose = true;
         this.loading = true;
         if (this.data.fn) {
-            this.data.fn(this.data.formField.formControl.value).subscribe(() => {
+            const results: any[] = [];
+            for (const formField of this.data.formFields) {
+                results[formField.id] = formField.formControl.value;
+            }
+            this.data.fn(results).subscribe(() => {
                 this.dialogRef.close(true);
             });
         } else {
@@ -33,6 +37,6 @@ export class DialogComponent {
     }
 
     cancel(): void {
-        this.dialogRef.close();
+        this.dialogRef.close(false);
     }
 }

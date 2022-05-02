@@ -50,6 +50,7 @@ export class Advies extends AbstractFormulier {
     _initBehandelForm() {
         this.doDisablePartialSave();
         const fields = this.fields;
+        const adviesDataElement = this.getDataElement(fields.ADVIES);
         this.form.push(
             [new ParagraphFormFieldBuilder().text('msg.advies.behandelen').build()],
             [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
@@ -63,17 +64,18 @@ export class Advies extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.ADVIES)
                                         .label(fields.ADVIES)
-                                        .readonly(this.isAfgerond())
-                                        .value(this.isAfgerond() ?
-                                            this.translate.instant(this.getDataElement(fields.ADVIES)) : this.getDataElement(fields.ADVIES))
+                                        .value(this.isAfgerond() && adviesDataElement ?
+                                            this.translate.instant(adviesDataElement) : adviesDataElement)
                                         .options(this.getAdviesOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond()).build()],
+                                        .readonly(this.isAfgerond())
+                                        .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
                                            .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond()).build()]
+                                           .readonly(this.isAfgerond())
+                                           .build()]
         );
         if (this.isAfgerond()) {
             this.form.push(

@@ -164,6 +164,12 @@ export class ZakenService {
         );
     }
 
+    updateZaakGeometrie(uuid: string, zaak: Zaak): Observable<Zaak> {
+        return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaakgeometrie`, zaak).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     ontkoppelInformatieObject(zaakUUID: string, documentUUID: string, reden: string): Observable<void> {
         const gegevens = new DocumentOntkoppelGegevens(zaakUUID, documentUUID, reden);
         return this.http.put<void>(`${this.basepath}/zaakinformatieobjecten/ontkoppel`, gegevens).pipe(

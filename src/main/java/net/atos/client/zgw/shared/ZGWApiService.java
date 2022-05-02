@@ -6,6 +6,7 @@
 package net.atos.client.zgw.shared;
 
 import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -41,6 +43,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.BrondatumArchiefprocedure;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -60,6 +63,8 @@ import net.atos.zac.signalering.model.SignaleringType;
  */
 @ApplicationScoped
 public class ZGWApiService implements Caching {
+
+    private static final Logger LOG = Logger.getLogger(ZGWApiService.class.getName());
 
     // Page numbering in ZGW Api's starts with 1
     public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
@@ -137,15 +142,28 @@ public class ZGWApiService implements Caching {
     }
 
     /**
+     * Create {@link Resultaat} for a given {@link Zaak} based on @link Zaak}.UUID, {@link Resultaattype}.UUID and with {@link Resultaat}.toelichting.
+     *
+     * @param zaakUUID             UUID of the {@link Zaak}.
+     * @param resultaattypeUUID    UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param resultaatToelichting Toelichting for thew {@link Resultaat}.
+     * @return Created {@link Resultaat}.
+     */
+    public Resultaat createResultaatForZaak(final UUID zaakUUID, final UUID resultaattypeUUID, final String resultaatToelichting) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return createResultaatForZaak(zaak, resultaattypeUUID, resultaatToelichting);
+    }
+
+    /**
      * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
      *
      * @param zaak                  {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
-     * @return Created Eind {@link Status}.
      */
-    public Status endZaak(final Zaak zaak, final String eindstatusToelichting) {
+    public void endZaak(final Zaak zaak, final String eindstatusToelichting) {
         final Statustype eindStatustype = ztcClientService.readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
-        return createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+        createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+        berekenArchiveringsparameters(zaak.getUuid());
     }
 
     /**
@@ -153,11 +171,10 @@ public class ZGWApiService implements Caching {
      *
      * @param zaakUUID              UUID of the {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
-     * @return Created Eind {@link Status}.
      */
-    public Status endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
+    public void endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        return endZaak(zaak, eindstatusToelichting);
+        endZaak(zaak, eindstatusToelichting);
     }
 
     /**
@@ -182,6 +199,7 @@ public class ZGWApiService implements Caching {
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
         final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
+        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(zaak));
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, ingelogdeMedewerker.get()));
         return created;
     }
@@ -304,4 +322,28 @@ public class ZGWApiService implements Caching {
                                 String.format("Zaaktype '%s': Resultaattype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
     }
 
+    private void berekenArchiveringsparameters(final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID); // refetch to get the einddatum (the archiefNominatie has also been set)
+        final Resultaattype resultaattype = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype());
+        final LocalDate brondatum = bepaalBrondatum(resultaattype, zaak);
+        if (brondatum != null) {
+            final Zaak zaakPatch = new Zaak();
+            zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
+            zrcClientService.updateZaakPartially(zaakUUID, zaakPatch);
+        }
+    }
+
+    private LocalDate bepaalBrondatum(final Resultaattype resultaattype, final Zaak zaak) {
+        final BrondatumArchiefprocedure brondatumArchiefprocedure = resultaattype.getBrondatumArchiefprocedure();
+        if (brondatumArchiefprocedure != null) {
+            switch (brondatumArchiefprocedure.getAfleidingswijze()) {
+                case AFGEHANDELD:
+                    return zaak.getEinddatum();
+                default:
+                    LOG.warning(String.format("De brondatum bepaling voor afleidingswijze %s is nog niet geimplementeerd",
+                                              brondatumArchiefprocedure.getAfleidingswijze()));
+            }
+        }
+        return null;
+    }
 }

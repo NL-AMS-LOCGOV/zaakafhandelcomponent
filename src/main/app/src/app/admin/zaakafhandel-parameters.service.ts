@@ -10,7 +10,6 @@ import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 import {CaseDefinition} from './model/case-definition';
-import {FormulierDefinitieVerwijzing} from './model/formulier-definitie-verwijzing';
 import {ZaakbeeindigReden} from './model/zaakbeeindig-reden';
 import {ZaakResultaat} from '../zaken/model/zaak-resultaat';
 
@@ -66,8 +65,8 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    listFormulierDefinities(): Observable<FormulierDefinitieVerwijzing[]> {
-        return this.http.get<FormulierDefinitieVerwijzing[]>(`${this.basepath}/formulierDefinities`).pipe(
+    listFormulierDefinities(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/formulierDefinities`).pipe(
             catchError(this.handleError)
         );
     }

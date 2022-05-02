@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -13,7 +13,10 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.vrl.VRLClientService;
+import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
 import net.atos.client.zgw.zrc.model.Geometry;
@@ -21,11 +24,15 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.audit.converter.AbstractAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
+import net.atos.zac.util.UriUtil;
 
 public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter<ZaakWijziging> {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private VRLClientService vrlClientService;
 
     @Override
     public boolean supports(final ObjectType objectType) {
@@ -44,7 +51,7 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         final List<RESTHistorieRegel> historieRegels = new LinkedList<>();
         checkAttribuut("zaak.identificatie", oud.getIdentificatie(), nieuw.getIdentificatie(), historieRegels);
         checkZaaktype(oud.getZaaktype(), nieuw.getZaaktype(), historieRegels);
-        checkKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
+        checkCommunicatieKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
         checkZaakgeometrie(oud.getZaakgeometrie(), nieuw.getZaakgeometrie(), historieRegels);
         checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
         checkAttribuut("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
@@ -64,9 +71,10 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         }
     }
 
-    private void checkKanaal(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+    private void checkCommunicatieKanaal(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
         if (ObjectUtils.notEqual(oud, nieuw)) {
-            historieRegels.add(new RESTHistorieRegel("kanaal", kanaalToWaarde(oud), kanaalToWaarde(nieuw)));
+            historieRegels.add(new RESTHistorieRegel("communicatiekanaal", communicatieKanaalToWaarde(oud),
+                                                     communicatieKanaalToWaarde(nieuw)));
         }
     }
 
@@ -84,9 +92,14 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         return zaaktype != null ? ztcClientService.readZaaktype(zaaktype).getIdentificatie() : null;
     }
 
-    private String kanaalToWaarde(final URI kanaal) {
-        // ToDo: Het kanaal moet worden opgehaald uit de VNG referentielijst
-        return kanaal != null ? kanaal.toString() : null;
+    private String communicatieKanaalToWaarde(final URI kanaal) {
+        if (StringUtils.isBlank(kanaal.toString())) {
+            return null;
+        }
+
+        final CommunicatieKanaal communicatieKanaal =
+                vrlClientService.findCommunicatiekanaal(UriUtil.uuidFromURI(kanaal));
+        return communicatieKanaal != null ? communicatieKanaal.getNaam() : null;
     }
 
     private String geoMetrieToWaarde(final Geometry geometry) {

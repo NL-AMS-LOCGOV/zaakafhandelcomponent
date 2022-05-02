@@ -234,6 +234,12 @@ public class SignaleringenService {
         if (parameters.getType() != null) {
             where.add(builder.equal(root.get("type").get("id"), parameters.getType().toString()));
         }
+        if (parameters.getDashboard()) {
+            where.add(builder.isTrue(root.get("dashboard")));
+        }
+        if (parameters.getMail()) {
+            where.add(builder.isTrue(root.get("mail")));
+        }
         return builder.and(where.toArray(new Predicate[0]));
     }
 

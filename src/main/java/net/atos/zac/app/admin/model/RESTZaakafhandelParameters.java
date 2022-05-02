@@ -24,7 +24,7 @@ public class RESTZaakafhandelParameters {
 
     public RESTGroep defaultGroep;
 
-    public List<RESTPlanItemParameters> planItemParameters = new ArrayList<>();
+    public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
 
     public List<RESTUserEventListenerParameter> userEventListenerParameters = new ArrayList<>();
 

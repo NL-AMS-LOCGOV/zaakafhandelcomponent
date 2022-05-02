@@ -39,6 +39,7 @@ import net.atos.client.zgw.zrc.model.RolListParameters;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakEigenschap;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -89,6 +90,13 @@ public interface ZRCClient {
             @ClientHeaderParam(name = ACCEPT_CRS, value = ACCEPT_CRS_VALUE),
             @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
     Zaak zaakPartialUpdate(@PathParam("uuid") final UUID uuid, final Zaak zaak);
+
+    @PATCH
+    @Path("zaken/{uuid}")
+    @ClientHeaderParams({
+            @ClientHeaderParam(name = ACCEPT_CRS, value = ACCEPT_CRS_VALUE),
+            @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
+    Zaak zaakGeometriePatch(@PathParam("uuid") final UUID uuid, final ZaakGeometriePatch zaakGeometriePatch);
 
     @GET
     @Path("zaken/{uuid}")

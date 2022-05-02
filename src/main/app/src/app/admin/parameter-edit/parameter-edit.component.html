@@ -46,7 +46,7 @@
                         <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                             <mat-label>{{'caseDefinition' | translate}}</mat-label>
                             <mat-select placeholder="{{'model.-kies-' | translate}}"
-                                        (selectionChange)="readPlanItemParameters($event)"
+                                        (selectionChange)="readHumanTaskParameters($event)"
                                         [formControl]="caseDefinitionControl" [compareWith]="compareObject">
                                 <mat-option *ngFor="let cd of caseDefinitions | async"
                                             [value]="cd">{{ cd.naam }}</mat-option>
@@ -55,28 +55,28 @@
                     </div>
 
                     <div class="button-group" fxLayout="row wrap">
-                        <button mat-raised-button color="primary" [disabled]="planItemParameters.length == 0"
+                        <button mat-raised-button color="primary" [disabled]="humanTaskParameters.length == 0"
                                 matStepperNext>{{"actie.volgende" | translate}}</button>
                         <button mat-raised-button [disabled]="!isValid()"
                                 (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                     </div>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="planItemFormGroup">
-                <ng-template matStepLabel>{{"gegevens.planitems" | translate}}</ng-template>
+            <mat-step [stepControl]="humanTaskFormGroup">
+                <ng-template matStepLabel>{{"gegevens.humantasks" | translate}}</ng-template>
                 <ng-template matStepContent>
-                    <form [formGroup]="planItemFormGroup" fxLayout="column">
+                    <form [formGroup]="humanTaskFormGroup" fxLayout="column">
                         <mat-accordion>
-                            <mat-expansion-panel fxLayout="column" *ngFor="let planItemParameter of planItemParameters">
+                            <mat-expansion-panel fxLayout="column" *ngFor="let humanTaskParameter of humanTaskParameters">
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        <mat-icon *ngIf="isPlanItemParameterValid(planItemParameter)" color="primary">
+                                        <mat-icon *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">
                                             check_circle_outline
                                         </mat-icon>
-                                        <mat-icon *ngIf="!isPlanItemParameterValid(planItemParameter)" color="warn">
+                                        <mat-icon *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">
                                             error_outline
                                         </mat-icon>
-                                        {{planItemParameter.planItemDefinition.naam}}
+                                        {{humanTaskParameter.planItemDefinition.naam}}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <div fxLayout="row wrap">
@@ -84,10 +84,10 @@
                                                     floatLabel="always">
                                         <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
                                         <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
-                                                    [formControl]="getPlanItemControl(planItemParameter, 'formulierDefinitie')"
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')"
                                                     [compareWith]="compareObject">
                                             <mat-option *ngFor="let formDef of formulierDefinities | async"
-                                                        [value]="formDef">{{ formDef.naam }}</mat-option>
+                                                        [value]="formDef">{{ 'formulierDefinitie.' + formDef | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
@@ -96,7 +96,7 @@
                                                     floatLabel="always">
                                         <mat-label>{{'groep' | translate}}</mat-label>
                                         <mat-select placeholder="{{'groep.-kies-' | translate}}"
-                                                    [formControl]="getPlanItemControl(planItemParameter, 'defaultGroep')"
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')"
                                                     [compareWith]="compareObject">
                                             <mat-option [value]="">{{'groep.-kies-' | translate}}</mat-option>
                                             <mat-option *ngFor="let groep of groepen | async"
@@ -109,7 +109,7 @@
                                                     floatLabel="always">
                                         <mat-label>{{'doorlooptijd.gewenst' | translate}}</mat-label>
                                         <input matInput type="number"
-                                               [formControl]="getPlanItemControl(planItemParameter, 'doorlooptijd')"
+                                               [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')"
                                                min="0"
                                                max="2147483647">
                                         <span matSuffix>{{'dagen' | translate}}</span>

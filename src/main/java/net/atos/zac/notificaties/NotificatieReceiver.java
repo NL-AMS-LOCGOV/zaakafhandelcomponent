@@ -7,7 +7,11 @@ package net.atos.zac.notificaties;
 
 import static javax.ws.rs.core.Response.noContent;
 import static net.atos.zac.notificaties.Action.CREATE;
+import static net.atos.zac.notificaties.Action.DELETE;
+import static net.atos.zac.notificaties.Action.UPDATE;
 import static net.atos.zac.notificaties.Resource.OBJECT;
+import static net.atos.zac.notificaties.Resource.STATUS;
+import static net.atos.zac.notificaties.Resource.ZAAK;
 
 import java.util.logging.Logger;
 
@@ -25,7 +29,9 @@ import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
+import net.atos.zac.zoeken.ZoekenService;
 
 /**
  *
@@ -50,6 +56,9 @@ public class NotificatieReceiver {
     @Inject
     private ConfiguratieService configuratieService;
 
+    @Inject
+    private ZoekenService zoekenService;
+
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
@@ -61,6 +70,7 @@ public class NotificatieReceiver {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
             handleProductAanvraag(notificatie);
+            handleIndexering(notificatie);
         }
         return noContent().build();
     }
@@ -96,6 +106,20 @@ public class NotificatieReceiver {
                 notificatie.getProperties().containsKey(PRODUCT_AANVRAAG_KENMERK_KEY) &&
                 notificatie.getProperties().containsValue(PRODUCT_AANVRAAG_KENMERK_VALUE)) {
             productAanvraagService.createZaak(notificatie.getResourceUrl());
+        }
+    }
+
+    private void handleIndexering(final Notificatie notificatie) {
+        if (notificatie.getChannel() == Channel.ZAKEN) {
+            if (notificatie.getResource() == ZAAK) {
+                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                    zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                } else if (notificatie.getAction() == DELETE) {
+                    zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                }
+            } else if (notificatie.getResource() == STATUS && notificatie.getAction() == CREATE) {
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+            }
         }
     }
 }

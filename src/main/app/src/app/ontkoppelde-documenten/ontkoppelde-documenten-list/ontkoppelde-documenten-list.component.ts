@@ -90,9 +90,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             data: new ConfirmDialogData(
                 this.translate.instant('actie.document.verwijderen.bevestigen', {document: od.titel}),
                 this.service.delete(od)
-            ),
-            width: '400px',
-            autoFocus: 'dialog'
+            )
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('actie.document.verwijderen.uitgevoerd', {document: od.titel});

@@ -8,11 +8,12 @@ import {AbstractFormField} from '../../model/abstract-form-field';
 import {Groep} from '../../../../identity/model/groep';
 import {Medewerker} from '../../../../identity/model/medewerker';
 
-export class SelectMedewerkerFormField extends AbstractFormField {
+export class MedewerkerGroepFormField extends AbstractFormField {
 
-    fieldType = FieldType.SELECT_MEDEWERKER;
+    fieldType = FieldType.MEDEWERKER_GROEP;
     defaultGroep: Groep;
     defaultMedewerker: Medewerker;
+    groepOptioneel = false;
 
     constructor() {
         super();
