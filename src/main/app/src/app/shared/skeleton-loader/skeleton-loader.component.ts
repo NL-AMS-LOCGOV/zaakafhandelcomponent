@@ -55,7 +55,7 @@ export class SkeletonLoaderComponent implements OnInit {
 
     ngOnInit(): void {
         this.showLoader$ = this.loading$.pipe(
-            this.showLoaderTime(this.delay, this.duration)
+            this.showLoader(this.delay, this.duration)
         );
     }
 
@@ -63,20 +63,25 @@ export class SkeletonLoaderComponent implements OnInit {
         return new Array(fields).fill(1).map((x, i) => i);
     }
 
-    showLoaderTime = <T>(loaderDelay: number, loaderDuration: number) => {
+    showLoader = <T>(loaderDelay: number, loaderDuration: number) => {
         return (source: Observable<T>): Observable<boolean> => {
             return new Observable<boolean>(subscriber => {
+
+                // delay loader and set loading to true until the source observable emits a value
                 const loader$ = timer(loaderDelay).pipe(
                     mapTo(true),
                     takeUntil(source)
                 );
 
+                // set loader to false when both observables finish
                 const result$ = combineLatest([
                     source,
                     timer(loaderDelay + loaderDuration)
                 ]).pipe(
-                    mapTo(false));
+                    mapTo(false)
+                );
 
+                // merge the 2 observables and only emit a value when the loading changes from true to false
                 return merge(loader$, result$)
                 .pipe(
                     startWith(true), distinctUntilChanged())
