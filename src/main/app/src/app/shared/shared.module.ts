@@ -37,6 +37,8 @@ import {DocumentViewerComponent} from './document-viewer/document-viewer.compone
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
 import {EditSelectComponent} from './edit/edit-select/edit-select.component';
+import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
+import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.component';
 
 @NgModule({
     declarations: [
@@ -58,7 +60,8 @@ import {EditSelectComponent} from './edit/edit-select/edit-select.component';
         NoStickyColumnPipe,
         ColumnPickerComponent,
         TooltipListPipe,
-        DocumentViewerComponent
+        DocumentViewerComponent,
+        SkeletonLoaderComponent
     ],
     imports: [
         FormsModule,
@@ -69,7 +72,8 @@ import {EditSelectComponent} from './edit/edit-select/edit-select.component';
         MaterialModule,
         MaterialFormBuilderModule.forRoot(),
         TranslateModule,
-        PdfJsViewerModule
+        PdfJsViewerModule,
+        NgxSkeletonLoaderModule.forRoot({animation: 'pulse'})
     ],
     exports: [
         BrowserAnimationsModule,
@@ -97,7 +101,8 @@ import {EditSelectComponent} from './edit/edit-select/edit-select.component';
         NoStickyColumnPipe,
         TooltipListPipe,
         DocumentViewerComponent,
-        ColumnPickerComponent
+        ColumnPickerComponent,
+        SkeletonLoaderComponent
     ],
     providers: [
         Title,

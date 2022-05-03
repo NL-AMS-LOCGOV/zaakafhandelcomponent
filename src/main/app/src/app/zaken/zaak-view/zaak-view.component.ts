@@ -56,8 +56,8 @@ import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
-import {Observable} from 'rxjs';
 import {ZaakResultaat} from '../model/zaak-resultaat';
+import {Observable, share} from 'rxjs';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -69,6 +69,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     zaakLocatie: AddressResult;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
+    taken$: Observable<Taak[]>;
     takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
     toonAfgerondeTaken = false;
     action: string;
@@ -519,21 +520,21 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    takenLoading = false;
-
     private loadTaken(event?: ScreenEvent): void {
         if (event) {
-            this.takenLoading = true;
             console.log('callback loadTaken: ' + event.key);
         }
+        this.utilService.setLoading(true);
         // TODO #315
         this.websocketService.suspendListener(this.zaakTakenListener);
-        this.takenService.listTakenVoorZaak(this.zaak.uuid).subscribe(taken => {
+        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid).pipe(share());
+
+        this.taken$.subscribe(taken => {
             taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
                 a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
-            this.takenLoading = false;
+            this.utilService.setLoading(false);
         });
     }
 

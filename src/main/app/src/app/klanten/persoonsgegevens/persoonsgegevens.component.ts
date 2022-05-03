@@ -7,6 +7,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@an
 import {KlantenService} from '../klanten.service';
 import {Persoon} from '../model/personen/persoon';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {Observable, share} from 'rxjs';
 
 @Component({
     selector: 'zac-persoongegevens',
@@ -18,18 +19,19 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
     @Output() delete = new EventEmitter<Persoon>();
 
     persoon: Persoon;
+    persoon$: Observable<Persoon>;
     klantExpanded: boolean;
     viewInitialized = false;
-    loading = true;
 
     constructor(private klantenService: KlantenService) {
     }
 
     ngOnInit(): void {
+        this.persoon$ = this.klantenService.readPersoon(this.bsn).pipe(share());
         this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
-        this.klantenService.readPersoon(this.bsn).subscribe(persoon => {
+
+        this.persoon$.subscribe(persoon => {
             this.persoon = persoon;
-            this.loading = false;
         });
     }
 
