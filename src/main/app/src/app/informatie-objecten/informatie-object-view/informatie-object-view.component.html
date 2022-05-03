@@ -30,7 +30,7 @@
                                                      [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'bestandsnaam' | translate"
                                                      [value]="infoObject.bestandsnaam"
-                                                     [fileIcon]="getFileExtension(infoObject.bestandsnaam)"></zac-static-text>
+                                                     [fileIcon]="getFileIcon(infoObject.bestandsnaam)"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

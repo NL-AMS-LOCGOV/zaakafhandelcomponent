@@ -130,7 +130,7 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
             });
     }
 
-    getFileExtension(filename) {
+    getFileIcon(filename) {
         const extension = filename.split('.').pop();
         const obj = this.fileIconList.filter(row => {
             if (row.type === extension) {
