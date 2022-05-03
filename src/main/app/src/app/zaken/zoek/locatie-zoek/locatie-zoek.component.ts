@@ -48,6 +48,9 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
     private readonly DEFAULT_ZOOM: number = 8;
     private readonly MAX_ZOOM: number = 14;
 
+    // Default Center, middle of the Netherlands
+    private readonly DEFAULT_CENTER: number[] = [631711.827985, 6856275.890632];
+
     private layers: any[];
 
     private defaultStyle: style.Style = new style.Style({
@@ -116,7 +119,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
         this.view = new ol.View({
             projection: proj.get(this.EPSG3857),
-            center: [631711.827985, 6856275.890632],
+            center: this.DEFAULT_CENTER,
             constrainResolution: true,
             zoom: this.DEFAULT_ZOOM
         });
@@ -200,6 +203,7 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
         if (this.selectedAddress) {
             this.locatie.next(null);
         }
+        this.resetMap();
     }
 
     save(): void {
@@ -247,6 +251,13 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
                 maxZoom: this.MAX_ZOOM
             });
         }
+    }
+
+    private resetMap(): void {
+        this.selectedAddress = null;
+        this.clearFeatures();
+        this.map.getView().setCenter(this.DEFAULT_CENTER);
+        this.map.getView().setZoom(this.DEFAULT_ZOOM);
     }
 
     private clearFeatures(): void {
