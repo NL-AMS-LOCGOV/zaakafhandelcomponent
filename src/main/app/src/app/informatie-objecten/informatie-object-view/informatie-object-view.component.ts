@@ -38,9 +38,9 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     fileIconList = [
-        { type: 'xlsx', icon: 'fa-file-excel' },
-        { type: 'xls', icon: 'fa-file-excel' },
-        { type: 'pdf', icon: 'fa-file-pdf' },
+        { type: 'xlsx', icon: 'fa-file-excel', color: 'green' },
+        { type: 'xls', icon: 'fa-file-excel', color: 'green' },
+        { type: 'pdf', icon: 'fa-file-pdf', color: 'red' },
         { type: 'jpg', icon: 'fa-file-image' },
         { type: 'png', icon: 'fa-file-image' },
         { type: 'jpeg', icon: 'fa-file-image' },
@@ -48,10 +48,10 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
         { type: 'rtf', icon: 'fa-file-image' },
         { type: 'vsd', icon: 'fa-file-image' },
         { type: 'bmp', icon: 'fa-file-image' },
-        { type: 'doc', icon: 'fa-file-word' },
-        { type: 'docx', icon: 'fa-file-word' },
-        { type: 'odt', icon: 'fa-file-word' },
-        { type: 'pptx', icon: 'fa-file-powerpoint' },
+        { type: 'doc', icon: 'fa-file-word', color: 'blue' },
+        { type: 'docx', icon: 'fa-file-word', color: 'blue' },
+        { type: 'odt', icon: 'fa-file-word', color: 'blue' },
+        { type: 'pptx', icon: 'fa-file-powerpoint', color: 'red' },
         { type: 'txt', icon: 'fa-file-lines' }
     ];
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -138,9 +138,9 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
             }
         });
         if (obj.length > 0) {
-            return obj[0].icon;
+            return obj[0];
         } else {
-            return 'fa-file-circle-question';
+            return { type: 'unknown', icon: 'fa-file-circle-question' };
         }
     }
 

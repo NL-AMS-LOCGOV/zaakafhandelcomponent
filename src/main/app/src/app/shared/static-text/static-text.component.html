@@ -6,7 +6,7 @@
 <div class="static-text">
     <label class="static-text-label">{{label}}</label>
     <div class="static-text-content">
-        <i *ngIf="fileIcon" class="fa-solid {{fileIcon}}"></i>  {{value | empty}}
+        <i *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></i>  {{value | empty}}
         <mat-icon class="label-icon"
                   [ngClass]="icon.styleClass"
                   *ngIf="icon"
