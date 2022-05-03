@@ -11,7 +11,10 @@
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header>
-                    <mat-card-title>{{'informatieobject' | translate}}</mat-card-title>
+                    <mat-card-title>
+                        <mat-icon *ngIf="infoObject.locked" class="material-icons-outlined">lock</mat-icon>
+                        {{'informatieobject' | translate}}
+                    </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
@@ -26,11 +29,8 @@
                                     <zac-static-text [label]="'vertrouwelijkheidaanduiding' | translate"
                                                      [value]="'vertrouwelijkheidaanduiding.'+infoObject.vertrouwelijkheidaanduiding | translate"></zac-static-text>
                                     <zac-static-text [label]="'bestandsnaam' | translate"
-                                                     [value]="infoObject.bestandsnaam"></zac-static-text>
-                                    <zac-static-text [label]="'indicatieGebruiksrecht' | translate"
-                                                     [value]="infoObject.indicatieGebruiksrecht ? 'Ja' : 'Nee'"></zac-static-text>
-                                    <zac-static-text [label]="'taal' | translate"
-                                                     [value]="infoObject.taal"></zac-static-text>
+                                                     [value]="infoObject.bestandsnaam"
+                                                     [fileIcon]="getFileExtension(infoObject.bestandsnaam)"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -38,12 +38,8 @@
                                     </div>
                                     <zac-static-text [label]="'documentType' | translate" [value]="infoObject.documentType"></zac-static-text>
                                     <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
-                                    <zac-static-text [label]="'ontvangstdatum' | translate"
-                                                     [value]="infoObject.ontvangstdatum | datum"></zac-static-text>
-                                    <zac-static-text [label]="'registratiedatum' | translate"
-                                                     [value]="infoObject.registratiedatumTijd | datum:'short'"></zac-static-text>
-                                    <zac-static-text [label]="'locked' | translate" [value]="infoObject.locked ? 'Ja' : 'Nee'"></zac-static-text>
                                     <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie"></zac-static-text>
+                                    <zac-static-text [label]="'beschrijving' | translate" [value]="infoObject.beschrijving"></zac-static-text>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -51,11 +47,31 @@
                                     </div>
                                     <zac-static-text [label]="'informatieobject.status' | translate"
                                                      [value]="'informatieobject.status.'+infoObject.status | translate"></zac-static-text>
-                                    <zac-static-text [label]="'bronorganisatie' | translate" [value]="infoObject.bronorganisatie"></zac-static-text>
-                                    <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum"></zac-static-text>
-                                    <zac-static-text [label]="'formaat' | translate" [value]="infoObject.formaat"></zac-static-text>
-                                    <zac-static-text [label]="'ondertekening' | translate" [value]="infoObject.ondertekening"></zac-static-text>
+                                    <zac-static-text [label]="'bronorganisatie' | translate" *ngIf="infoObject.bronorganisatie"
+                                                     [value]="infoObject.bronorganisatie"></zac-static-text>
+                                    <zac-static-text [label]="'taal' | translate"
+                                                     [value]="infoObject.taal"></zac-static-text>
+                                </div>
+                            </div>
+                            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <zac-static-text [label]="'creatiedatum' | translate" [value]="infoObject.creatiedatum | datum"></zac-static-text>
+                                </div>
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'registratiedatum' | translate"
+                                                     [value]="infoObject.registratiedatumTijd | datum:'short'"></zac-static-text>
+                                </div>
+                                <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                        <mat-divider></mat-divider>
+                                    </div>
+                                    <zac-static-text [label]="'verzenddatum' | translate" [value]="infoObject.verzenddatum | datum"
+                                                     *ngIf="infoObject.verzenddatum"></zac-static-text>
+                                    <zac-static-text [label]="'ontvangstdatum' | translate" *ngIf="infoObject.ontvangstdatum"
+                                                     [value]="infoObject.ontvangstdatum | datum"></zac-static-text>
                                 </div>
                             </div>
                         </mat-tab>

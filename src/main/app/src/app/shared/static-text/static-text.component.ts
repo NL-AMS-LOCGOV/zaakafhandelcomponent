@@ -17,6 +17,7 @@ export class StaticTextComponent implements OnInit {
     @Input() label: string;
     @Input() value: any;
     @Input() icon: TextIcon;
+    @Input() fileIcon: string;
     @Output() iconClicked = new EventEmitter<void>();
 
     showIcon: boolean;

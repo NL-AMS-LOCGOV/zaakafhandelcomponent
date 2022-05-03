@@ -37,6 +37,23 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    fileIconList = [
+        { type: 'xlsx', icon: 'fa-file-excel' },
+        { type: 'xls', icon: 'fa-file-excel' },
+        { type: 'pdf', icon: 'fa-file-pdf' },
+        { type: 'jpg', icon: 'fa-file-image' },
+        { type: 'png', icon: 'fa-file-image' },
+        { type: 'jpeg', icon: 'fa-file-image' },
+        { type: 'gif', icon: 'fa-file-image' },
+        { type: 'rtf', icon: 'fa-file-image' },
+        { type: 'vsd', icon: 'fa-file-image' },
+        { type: 'bmp', icon: 'fa-file-image' },
+        { type: 'doc', icon: 'fa-file-word' },
+        { type: 'docx', icon: 'fa-file-word' },
+        { type: 'odt', icon: 'fa-file-word' },
+        { type: 'pptx', icon: 'fa-file-powerpoint' },
+        { type: 'txt', icon: 'fa-file-lines' }
+    ];
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
@@ -111,6 +128,20 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
             });
+    }
+
+    getFileExtension(filename) {
+        const extension = filename.split('.').pop();
+        const obj = this.fileIconList.filter(row => {
+            if (row.type === extension) {
+                return true;
+            }
+        });
+        if (obj.length > 0) {
+            return obj[0].icon;
+        } else {
+            return 'fa-file-circle-question';
+        }
     }
 
 }

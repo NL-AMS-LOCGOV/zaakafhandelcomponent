@@ -113,7 +113,6 @@ public class MailService {
         data.setFormaat("text/plain");
         data.setBestandsnaam(String.format("%s.txt", onderwerp));
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
 
         return data;

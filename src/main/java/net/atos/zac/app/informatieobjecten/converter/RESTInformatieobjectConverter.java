@@ -68,7 +68,8 @@ public class RESTInformatieobjectConverter {
         restObject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
         restObject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restObject.titel = enkelvoudigInformatieObject.getTitel();
-        restObject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie();
+        restObject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
+                .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
         restObject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
         if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
             restObject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
@@ -91,7 +92,6 @@ public class RESTInformatieobjectConverter {
         restObject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
         restObject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
         restObject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
-        restObject.indicatieGebruiksrecht = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getIndicatieGebruiksrecht());
         restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
         restObject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
@@ -117,7 +117,6 @@ public class RESTInformatieobjectConverter {
         data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
         data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
         return data;
     }
@@ -135,7 +134,6 @@ public class RESTInformatieobjectConverter {
         data.setFormaat(bestand.type);
         data.setBestandsnaam(bestand.filename);
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(documentData.documentType.vertrouwelijkheidaanduiding));
         return data;
     }
