@@ -1,35 +1,38 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card *ngIf="zaak">
-    <mat-card-header>
-        <mat-card-title>
-            {{'zaak' | translate}} {{zaak.identificatie}}
-            <button [routerLink]="['/zaken', zaak.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
-                    mat-icon-button>
-                <mat-icon>visibility</mat-icon>
-            </button>
-        </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-            <zac-static-text fxFlex="50" [label]="'zaaktype' | translate"
-                             [value]="zaak.zaaktype.omschrijving"></zac-static-text>
+<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:'card', fields:4, fieldsPerRow:2}">
+    <mat-card class="zaak-gegevens" *ngIf="zaak$ | async as zaak">
+        <mat-card-header>
+            <mat-card-title>
+                {{'zaak' | translate}} {{zaak.identificatie}}
+                <button [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+                        mat-icon-button>
+                    <mat-icon>visibility</mat-icon>
+                </button>
 
-            <zac-static-text fxFlex="50" [label]="'status' | translate"
-                             [value]="zaak.status | empty:'naam'"></zac-static-text>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                <zac-static-text fxFlex="50" [label]="'zaaktype' | translate"
+                                 [value]="zaak.zaaktype.omschrijving"></zac-static-text>
 
-            <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
-                             [value]="zaak.startdatum | datum"></zac-static-text>
+                <zac-static-text fxFlex="50" [label]="'status' | translate"
+                                 [value]="zaak.status | empty:'naam'"></zac-static-text>
 
-            <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
-                             [value]="zaak.einddatumGepland | datum"
-                             [icon]="einddatumGeplandIcon"></zac-static-text>
+                <zac-static-text fxFlex="50" [label]="'startdatum' | translate"
+                                 [value]="zaak.startdatum | datum"></zac-static-text>
 
-            <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
-                             [value]="zaak.toelichting"></zac-static-text>
-        </div>
-    </mat-card-content>
-</mat-card>
+                <zac-static-text fxFlex="50" [label]="'einddatumGepland' | translate"
+                                 [value]="zaak.einddatumGepland | datum"
+                                 [icon]="einddatumGeplandIcon"></zac-static-text>
+
+                <zac-static-text fxFlex="100" [label]="'toelichting' | translate"
+                                 [value]="zaak.toelichting"></zac-static-text>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</zac-skeleton-loader>

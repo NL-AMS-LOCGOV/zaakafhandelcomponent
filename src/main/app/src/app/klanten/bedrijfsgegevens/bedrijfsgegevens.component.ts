@@ -7,6 +7,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@an
 import {KlantenService} from '../klanten.service';
 import {Bedrijf} from '../model/bedrijven/bedrijf';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {Observable, share} from 'rxjs';
 
 @Component({
     selector: 'zac-bedrijfsgegevens',
@@ -18,18 +19,18 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Output() delete = new EventEmitter<Bedrijf>();
 
     bedrijf: Bedrijf;
+    bedrijf$: Observable<Bedrijf>;
     klantExpanded: boolean;
     viewInitialized = false;
-    loading = true;
 
     constructor(private klantenService: KlantenService) {
     }
 
     ngOnInit(): void {
         this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
-        this.klantenService.readBedrijf(this.vestigingsnummer).subscribe(bedrijf => {
+        this.bedrijf$ = this.klantenService.readBedrijf(this.vestigingsnummer).pipe(share());
+        this.bedrijf$.subscribe(bedrijf => {
             this.bedrijf = bedrijf;
-            this.loading = false;
         });
     }
 

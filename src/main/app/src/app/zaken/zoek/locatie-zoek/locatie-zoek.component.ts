@@ -47,6 +47,8 @@ export class LocatieZoekComponent implements OnInit, AfterViewInit, OnChanges, O
 
     private readonly DEFAULT_ZOOM: number = 8;
     private readonly MAX_ZOOM: number = 14;
+
+    // Default Center, middle of the Netherlands
     private readonly DEFAULT_CENTER: number[] = [631711.827985, 6856275.890632];
 
     private layers: any[];

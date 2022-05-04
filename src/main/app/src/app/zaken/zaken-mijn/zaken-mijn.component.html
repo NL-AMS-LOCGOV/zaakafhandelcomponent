@@ -223,6 +223,8 @@
             class="collapsed-row"></tr>
     </table>
 
+    <!--    <ngx-skeleton-loader count="25" appearance="line" *ngIf="utilService.loading$ | async"></ngx-skeleton-loader>-->
+
     <ng-container *ngIf="dataSource.totalItems === 0">
         <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
     </ng-container>
