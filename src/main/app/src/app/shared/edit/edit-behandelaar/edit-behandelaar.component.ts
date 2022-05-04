@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -31,8 +31,8 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
 
     release(): void {
         this.formField.formControl.setValue(null);
+        this.submitSave();
         this.reasonField?.formControl.setValue(null);
-        this.save();
     }
 
     protected submitSave(): void {
