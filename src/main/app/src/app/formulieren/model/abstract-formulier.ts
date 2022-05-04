@@ -90,10 +90,14 @@ export abstract class AbstractFormulier {
     }
 
     private getTaakinformatie(formGroup: FormGroup): Taakinformatie {
+        let bijlage = formGroup.controls[this.taakinformatieMapping.bijlage]?.value;
+        if (bijlage) {
+            bijlage = JSON.parse(bijlage).documentTitel;
+        }
         return {
             uitkomst: formGroup.controls[this.taakinformatieMapping.uitkomst]?.value,
             opmerking: formGroup.controls[this.taakinformatieMapping.opmerking]?.value,
-            bijlage: formGroup.controls[this.taakinformatieMapping.bijlage]?.value.documentTitel
+            bijlage: bijlage
         };
     }
 

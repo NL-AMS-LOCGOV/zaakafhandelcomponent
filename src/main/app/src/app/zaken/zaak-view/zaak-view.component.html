@@ -321,12 +321,15 @@
                             </ng-container>
 
                             <ng-container matColumnDef="expandedTaakDetail">
-                                <td mat-cell *matCellDef="let row" colspan="8">
+                                <td mat-cell *matCellDef="let row" colspan="9">
                                     <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
                                         <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                                            <zac-static-text fxFlex="50" label="uitkomst" [value]="row.taakinformatie?.uitkomst"></zac-static-text>
-                                            <zac-static-text fxFlex="50" label="bijlage" [value]="row.taakinformatie?.bijlage | empty"></zac-static-text>
-                                            <zac-static-text label="opmerking" [value]="row.taakinformatie?.opmerking | empty"></zac-static-text>
+                                            <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
+                                                             [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
+                                            <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlage"
+                                                             [value]="row.data.taakinformatie?.bijlage"></zac-static-text>
+                                            <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
+                                                             [value]="row.data.taakinformatie?.opmerking"></zac-static-text>
                                         </div>
                                     </div>
                                 </td>
@@ -339,7 +342,7 @@
                             <tr mat-row *matRowDef="let row; columns: ['expandedTaakDetail']"
                                 class="collapsed-row"></tr>
                             <tr class="mat-row" *matNoDataRow>
-                                <td class="mat-cell" colspan="7">
+                                <td class="mat-cell" colspan="9">
                                     <zac-skeleton-loader [loading$]="taken$" [options]="{layout:'table'}">
                                         <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                                     </zac-skeleton-loader>

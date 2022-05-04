@@ -159,6 +159,7 @@ public class TakenRESTService {
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
         flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
     }
 
