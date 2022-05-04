@@ -1,9 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Zaak} from '../model/zaak';
 import {ZakenService} from '../zaken.service';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
@@ -16,6 +16,7 @@ import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {Router} from '@angular/router';
+import {Observable, share} from 'rxjs';
 
 @Component({
     selector: 'zac-zaak-verkort',
@@ -24,11 +25,9 @@ import {Router} from '@angular/router';
 })
 export class ZaakVerkortComponent implements OnInit, OnDestroy {
     @Input() zaakUuid: string;
-    @Output() zaakToggle: EventEmitter<void> = new EventEmitter<void>();
 
-    zaak: Zaak;
     einddatumGeplandIcon: TextIcon;
-    visibilityIcon = new TextIcon(Conditionals.always, 'visibility', 'visibility_icon', '', 'pointer');
+    zaak$: Observable<Zaak>;
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -51,21 +50,19 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
         if (event) {
             console.log('callback loadZaak: ' + event.key);
         }
-        this.zakenService.readZaak(this.zaakUuid).subscribe(zaak => {
-            this.zaak = zaak;
-            this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
+
+        this.zaak$ = this.zakenService.readZaak(this.zaakUuid).pipe(share());
+
+        this.zaak$.subscribe(zaak => {
+            this.einddatumGeplandIcon = new TextIcon(Conditionals.isAfterDate(zaak.einddatum), 'report_problem', 'warningZaakVerkortVerlopen_icon',
                 'msg.datum.overschreden', 'warning');
-            this.zaakToggle.emit();
         });
+
     }
 
     ngOnDestroy(): void {
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakDocumentenListener);
-    }
-
-    openZaak(): void {
-        this.router.navigate(['/zaken/', this.zaak.identificatie]);
     }
 }

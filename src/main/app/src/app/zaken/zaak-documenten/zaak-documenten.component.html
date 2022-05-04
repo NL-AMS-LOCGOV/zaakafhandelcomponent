@@ -6,9 +6,7 @@
 <div fxLayout>
     <mat-card fxFlex="calc(100%-20px)">
         <mat-card-header>
-            <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}
-                <mat-icon *ngIf="informatieObjectenLoading">hourglass_bottom</mat-icon>
-            </mat-card-title>
+            <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div class="table-wrapper">
@@ -25,9 +23,10 @@
                     </ng-container>
 
                     <ng-container [matColumnDef]="column"
-                                  *ngFor="let column of [ 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur']">
+                                  *ngFor="let column of [ 'documentType', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur']">
                         <th mat-sort-header mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
                         <td mat-cell *matCellDef="let row">
+                            <ng-container *ngIf="column == 'documentType'">{{'informatieobject.documentType.' + row[column]|translate | empty}}</ng-container>
                             <ng-container *ngIf="column == 'status'">{{'informatieobject.status.' + row[column]|translate | empty}}</ng-container>
                             <ng-container
                                     *ngIf="column == 'vertrouwelijkheidaanduiding'">{{'vertrouwelijkheidaanduiding.' + row[column]|translate | empty}}</ng-container>
@@ -63,13 +62,21 @@
                         </td>
                     </ng-container>
                     <tr mat-header-row
-                        *matHeaderRowDef="['titel','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url']"></tr>
+                        *matHeaderRowDef="['titel','documentType','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url']"></tr>
                     <tr mat-row
-                        *matRowDef="let row; columns: ['titel','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];"
+                        *matRowDef="let row; columns: ['titel','documentType','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];"
                         [class.expanded-row]="documentPreviewRow === row"></tr>
                     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
+
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="7">
+                            <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:'table'}">
+                                <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                            </zac-skeleton-loader>
+                        </td>
+                    </tr>
+
                 </table>
-                <p *ngIf="enkelvoudigInformatieObjecten.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
             </div>
         </mat-card-content>
     </mat-card>
