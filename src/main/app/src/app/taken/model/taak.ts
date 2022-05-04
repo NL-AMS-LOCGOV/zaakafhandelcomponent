@@ -6,6 +6,7 @@
 import {TaakStatus} from './taak-status.enum';
 import {Groep} from '../../identity/model/groep';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Taakinformatie} from './taakinformatie';
 
 export class Taak {
     id: string;
@@ -22,4 +23,5 @@ export class Taak {
     status: TaakStatus;
     formulierDefinitie: string;
     taakdata: {};
+    taakinformatie: Taakinformatie;
 }

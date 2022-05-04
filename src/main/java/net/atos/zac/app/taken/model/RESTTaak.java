@@ -47,4 +47,6 @@ public class RESTTaak {
     public FormulierDefinitie formulierDefinitie;
 
     public Map<String, String> taakdata;
+
+    public Map<String, String> taakinformatie;
 }

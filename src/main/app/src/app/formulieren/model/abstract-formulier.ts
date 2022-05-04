@@ -12,6 +12,7 @@ import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-c
 import {TranslateService} from '@ngx-translate/core';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
 import {Medewerker} from '../../identity/model/medewerker';
+import {Taakinformatie} from '../../taken/model/taakinformatie';
 
 export abstract class AbstractFormulier {
 
@@ -19,6 +20,7 @@ export abstract class AbstractFormulier {
 
     planItem: PlanItem;
     taak: Taak;
+    abstract taakinformatieMapping: { uitkomst: string, bijlage?: string, opmerking?: string };
     dataElementen: {};
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
@@ -66,6 +68,7 @@ export abstract class AbstractFormulier {
 
     getTaak(formGroup: FormGroup): Taak {
         this.taak.taakdata = this.getDataElementen(formGroup);
+        this.taak.taakinformatie = this.getTaakinformatie(formGroup);
         return this.taak;
     }
 
@@ -86,6 +89,14 @@ export abstract class AbstractFormulier {
         return dataElementen;
     }
 
+    private getTaakinformatie(formGroup: FormGroup): Taakinformatie {
+        return {
+            uitkomst: formGroup.controls[this.taakinformatieMapping.uitkomst]?.value,
+            opmerking: formGroup.controls[this.taakinformatieMapping.opmerking]?.value,
+            bijlage: formGroup.controls[this.taakinformatieMapping.bijlage]?.value.documentTitel
+        };
+    }
+
     isAfgerond(): boolean {
         return this.afgerond;
     }
@@ -93,5 +104,4 @@ export abstract class AbstractFormulier {
     doDisablePartialSave(): void {
         this.disablePartialSave = true;
     }
-
 }
