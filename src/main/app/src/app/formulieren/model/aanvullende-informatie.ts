@@ -67,6 +67,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
     }
 
     _initBehandelForm() {
+        this.doDisablePartialSave();
         const fields = this.fields;
         const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(
