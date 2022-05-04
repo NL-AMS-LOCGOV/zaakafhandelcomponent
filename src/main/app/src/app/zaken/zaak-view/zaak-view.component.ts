@@ -72,11 +72,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     zaakLocatie: AddressResult;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
-    taken$: Observable<Taak[]>;
-    takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
-    toonAfgerondeTaken = false;
     action: string;
 
+    taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
     allTakenExpanded: boolean = false;
     toonAfgerondeTaken = false;
@@ -532,7 +530,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (event) {
             console.log('callback loadTaken: ' + event.key);
         }
-        this.utilService.setLoading(true);
         // TODO #315
         this.websocketService.suspendListener(this.zaakTakenListener);
 
@@ -546,7 +543,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 a.data.creatiedatumTijd?.localeCompare(b.data.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
-            this.takenLoading = false;
         });
     }
 
