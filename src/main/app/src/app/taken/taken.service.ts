@@ -14,6 +14,7 @@ import {TableResponse} from '../shared/dynamic-table/datasource/table-response';
 import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
 import {Medewerker} from '../identity/model/medewerker';
 import {TaakVerdelenGegevens} from './model/taak-verdelen-gegevens';
+import {TaakHistorieRegel} from '../shared/historie/model/taak-historie-regel';
 
 @Injectable({
     providedIn: 'root'
@@ -54,6 +55,12 @@ export class TakenService {
         return this.http.get<TableResponse<Taak>>(`${this.basepath}/werkvoorraad`, {
             params: TakenService.getTableParams(request)
         }).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listHistorieVoorTaak(id: string): Observable<TaakHistorieRegel[]> {
+        return this.http.get<TaakHistorieRegel[]>(`${this.basepath}/${id}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
