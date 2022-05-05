@@ -1,10 +1,5 @@
 package net.atos.zac.zoeken.converter;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -17,21 +12,19 @@ import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
-import net.atos.client.zgw.zrc.model.GeometryType;
 import net.atos.client.zgw.zrc.model.Resultaat;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zoeken.model.ZaakZoekItem;
+import net.atos.zac.zoeken.model.ZaakZoekObject;
 
-public class ZaakZoekItemConverter {
+public class ZaakZoekObjectConverter {
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -49,31 +42,31 @@ public class ZaakZoekItemConverter {
     private FlowableService flowableService;
 
 
-    public ZaakZoekItem convert(final UUID zaakUUID){
+    public ZaakZoekObject convert(final UUID zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         return convert(zaak);
     }
 
-    private ZaakZoekItem convert(final Zaak zaak){
-        final ZaakZoekItem zoekItem = new ZaakZoekItem();
+    private ZaakZoekObject convert(final Zaak zaak) {
+        final ZaakZoekObject zoekItem = new ZaakZoekObject();
         zoekItem.setUuid(zaak.getUuid().toString());
         zoekItem.setType("ZAAK");
         zoekItem.setIdentificatie(zaak.getIdentificatie());
         zoekItem.setOmschrijving(zaak.getOmschrijving());
         zoekItem.setToelichting(zaak.getToelichting());
-        zoekItem.setRegistratiedatum(toSolrDate(zaak.getRegistratiedatum()));
-        zoekItem.setStartdatum(toSolrDate(zaak.getStartdatum()));
-        zoekItem.setStreefdatum(toSolrDate(zaak.getEinddatumGepland()));
-        zoekItem.setEinddatum(toSolrDate(zaak.getEinddatum()));
-        zoekItem.setFataledatum(toSolrDate(zaak.getUiterlijkeEinddatumAfdoening()));
-        zoekItem.setPublicatiedatum(toSolrDate(zaak.getPublicatiedatum()));
+        zoekItem.setRegistratiedatum(DateTimeConverterUtil.convertToDate(zaak.getRegistratiedatum()));
+        zoekItem.setStartdatum(DateTimeConverterUtil.convertToDate(zaak.getStartdatum()));
+        zoekItem.setStreefdatum(DateTimeConverterUtil.convertToDate(zaak.getEinddatumGepland()));
+        zoekItem.setEinddatum(DateTimeConverterUtil.convertToDate(zaak.getEinddatum()));
+        zoekItem.setFataledatum(DateTimeConverterUtil.convertToDate(zaak.getUiterlijkeEinddatumAfdoening()));
+        zoekItem.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zoekItem.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zoekItem.setAfgehandeld(zaak.getEinddatum() != null);
         zoekItem.setInitiatorIdentificatie(zgwApiService.findInitiatorForZaak(zaak.getUrl()));
         zoekItem.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
         final CommunicatieKanaal kanaal = getCommunicatieKanaal(zaak);
-        if(kanaal != null){
+        if (kanaal != null) {
             zoekItem.setCommunicatiekanaal(kanaal.getNaam());
         }
 
@@ -109,7 +102,7 @@ public class ZaakZoekItemConverter {
         zoekItem.setStatusNaam(statustype.getOmschrijving());
         zoekItem.setStatusEindstatus(statustype.getEindstatus());
         zoekItem.setStatusToelichting(status.getStatustoelichting());
-        zoekItem.setStatusToekenningsdatum(toSolrDate(status.getDatumStatusGezet()));
+        zoekItem.setStatusToekenningsdatum(DateTimeConverterUtil.convertToDate(status.getDatumStatusGezet()));
 
         if(zaak.getResultaat() != null) {
             final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
@@ -163,20 +156,6 @@ public class ZaakZoekItemConverter {
             return vrlClientService.findCommunicatiekanaal(communicatiekanaalUUID);
         }
         return null;
-    }
-
-    private String toSolrDate(final LocalDate localDate){
-        if(localDate == null){
-            return null;
-        }
-        return localDate.format(DateTimeFormatter.ISO_DATE);
-    }
-
-    private String toSolrDate(final ZonedDateTime zonedDateTime){
-        if(zonedDateTime == null){
-            return null;
-        }
-        return zonedDateTime.format(DateTimeFormatter.ISO_INSTANT);
     }
 
 }

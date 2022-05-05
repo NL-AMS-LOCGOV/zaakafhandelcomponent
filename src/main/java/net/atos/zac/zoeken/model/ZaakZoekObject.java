@@ -5,14 +5,11 @@
 
 package net.atos.zac.zoeken.model;
 
-import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.UUID;
+import java.util.Date;
 
 import org.apache.solr.client.solrj.beans.Field;
 
-public class ZaakZoekItem {
+public class ZaakZoekObject {
 
     @Field
     private String uuid;
@@ -30,22 +27,22 @@ public class ZaakZoekItem {
     private String toelichting;
 
     @Field("zaak_registratiedatum")
-    private String registratiedatum;
+    private Date registratiedatum;
 
     @Field("zaak_startdatum")
-    private String startdatum;
+    private Date startdatum;
 
     @Field("zaak_streefdatum")
-    private String streefdatum;
+    private Date streefdatum;
 
     @Field("zaak_einddatum")
-    private String einddatum;
+    private Date einddatum;
 
     @Field("zaak_fataledatum")
-    private String fataledatum;
+    private Date fataledatum;
 
     @Field("zaak_publicatiedatum")
-    private String publicatiedatum;
+    private Date publicatiedatum;
 
     @Field("zaak_communicatiekanaal")
     private String communicatiekanaal;
@@ -108,13 +105,13 @@ public class ZaakZoekItem {
     private String statusNaam;
 
     @Field("zaak_statusToekenningsdatum")
-    private String statusToekenningsdatum;
+    private Date statusToekenningsdatum;
 
     @Field("zaak_statusToelichting")
     private String statusToelichting;
 
 
-    public ZaakZoekItem() {
+    public ZaakZoekObject() {
     }
 
     public String getUuid() {
@@ -157,52 +154,56 @@ public class ZaakZoekItem {
         this.toelichting = toelichting;
     }
 
-    public String getRegistratiedatum() {
+    public Date getRegistratiedatum() {
         return registratiedatum;
     }
 
-    public void setRegistratiedatum(final String registratiedatum) {
+    public void setRegistratiedatum(final Date registratiedatum) {
         this.registratiedatum = registratiedatum;
     }
 
-    public String getStartdatum() {
+    public Date getStartdatum() {
         return startdatum;
     }
 
-    public void setStartdatum(final String startdatum) {
+    public void setStartdatum(final Date startdatum) {
         this.startdatum = startdatum;
     }
 
-    public String getStreefdatum() {
+    public Date getStreefdatum() {
         return streefdatum;
     }
 
-    public void setStreefdatum(final String streefdatum) {
+    public void setStreefdatum(final Date streefdatum) {
         this.streefdatum = streefdatum;
     }
 
-    public String getEinddatum() {
+    public Date getEinddatum() {
         return einddatum;
     }
 
-    public void setEinddatum(final String einddatum) {
+    public void setEinddatum(final Date einddatum) {
         this.einddatum = einddatum;
     }
 
-    public String getFataledatum() {
+    public Date getFataledatum() {
         return fataledatum;
     }
 
-    public void setFataledatum(final String fataledatum) {
+    public void setFataledatum(final Date fataledatum) {
         this.fataledatum = fataledatum;
     }
 
-    public String getPublicatiedatum() {
+    public Date getPublicatiedatum() {
         return publicatiedatum;
     }
 
-    public void setPublicatiedatum(final String publicatiedatum) {
+    public void setPublicatiedatum(final Date publicatiedatum) {
         this.publicatiedatum = publicatiedatum;
+    }
+
+    public void setStatusToekenningsdatum(final Date statusToekenningsdatum) {
+        this.statusToekenningsdatum = statusToekenningsdatum;
     }
 
     public String getCommunicatiekanaal() {
@@ -365,12 +366,8 @@ public class ZaakZoekItem {
         this.statusNaam = statusNaam;
     }
 
-    public String getStatusToekenningsdatum() {
+    public Date getStatusToekenningsdatum() {
         return statusToekenningsdatum;
-    }
-
-    public void setStatusToekenningsdatum(final String statusToekenningsdatum) {
-        this.statusToekenningsdatum = statusToekenningsdatum;
     }
 
     public String getStatusToelichting() {

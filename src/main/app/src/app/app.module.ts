@@ -25,6 +25,7 @@ import {MailModule} from './mail/mail.module';
 import {OntkoppeldeDocumentenModule} from './ontkoppelde-documenten/ontkoppelde-documenten.module';
 import {ActionBarComponent} from './core/actionbar/action-bar.component';
 import {SignaleringenModule} from './signaleringen/signaleringen.module';
+import {ZoekenModule} from './zoeken/zoeken.module';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -41,6 +42,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
         DashboardModule,
         FoutAfhandelingModule,
         ZakenModule,
+        ZoekenModule,
         InformatieObjectenModule,
         OntkoppeldeDocumentenModule,
         MailModule,

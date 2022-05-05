@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../service/util.service';
 import {IdentityService} from '../../identity/identity.service';
@@ -23,7 +23,7 @@ import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
-
+    @Output() zoekenClicked = new EventEmitter<void>();
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
     ingelogdeMedewerker: Medewerker;

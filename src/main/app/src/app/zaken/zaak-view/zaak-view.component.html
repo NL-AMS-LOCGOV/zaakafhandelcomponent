@@ -3,11 +3,11 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
-    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+<mat-drawer-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-drawer #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
-    </mat-sidenav>
-    <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
+    </mat-drawer>
+    <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-persoon-zoek *ngSwitchCase="'ZOEK_PERSOON'" (persoon)="initiatorGeselecteerd($event)"></zac-persoon-zoek>
         <zac-bedrijf-zoek *ngSwitchCase="'ZOEK_BEDRIJF'" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
@@ -17,8 +17,8 @@
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
                                   [zaak]="zaak"></zac-ontvangstbevestiging>
-    </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    </mat-drawer>
+    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie" (delete)="deleteInitiator()"></zac-persoongegevens>
         <zac-bedrijfsgegevens *ngIf="initiatorType==='BEDRIJF'" [vestigingsnummer]="zaak.initiatorIdentificatie"
                               (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
@@ -324,5 +324,5 @@
         </div>
         <zac-zaak-documenten [zaak]="zaak" [documentToegevoegd]="toegevoegdDocument"></zac-zaak-documenten>
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+    </mat-drawer-content>
+</mat-drawer-container>

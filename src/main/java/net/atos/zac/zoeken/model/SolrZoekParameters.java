@@ -5,7 +5,7 @@
 
 package net.atos.zac.zoeken.model;
 
-public class ZaakZoekParameters {
+public class SolrZoekParameters {
 
     private String tekst;
 

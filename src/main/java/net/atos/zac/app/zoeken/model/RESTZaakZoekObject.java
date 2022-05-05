@@ -5,13 +5,26 @@
 
 package net.atos.zac.app.zoeken.model;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
-public class RESTZaakZoekItem {
+public class RESTZaakZoekObject {
+
+    public String type;
 
     public UUID uuid;
 
     public String identificatie;
+
+    public LocalDate startdatum;
+
+    public LocalDate registratiedatum;
+
+    public LocalDate einddatum;
+
+    public LocalDate streefdatum;
+
+    public LocalDate fataledatum;
 
     public String zaaktypeNaam;
 
