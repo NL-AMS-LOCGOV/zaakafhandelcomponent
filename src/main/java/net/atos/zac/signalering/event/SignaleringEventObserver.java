@@ -29,6 +29,7 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
@@ -49,6 +50,9 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private IdentityService identityService;
 
     @Inject
     private FlowableHelper flowableHelper;
@@ -148,7 +152,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     }
 
     private Signalering addTargetGroep(final Signalering signalering, final String groupId) {
-        signalering.setTarget(flowableService.readGroup(groupId));
+        signalering.setTarget(identityService.readGroup(groupId));
         return signalering;
     }
 }

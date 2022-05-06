@@ -13,7 +13,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -26,6 +25,8 @@ import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringSubject;
@@ -50,12 +51,15 @@ public class SignaleringenMailHelper {
     private FlowableService flowableService;
 
     @Inject
+    private IdentityService identityService;
+
+    @Inject
     private FlowableHelper flowableHelper;
 
     public SignaleringTarget.Mail getTargetMail(final Signalering signalering) {
         switch (signalering.getTargettype()) {
             case GROEP -> {
-                final Group group = flowableService.readGroup(signalering.getTarget());
+                final Group group = identityService.readGroup(signalering.getTarget());
                 // TODO return group name and E-Mail address when and if available
                 return null;
             }

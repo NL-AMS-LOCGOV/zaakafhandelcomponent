@@ -11,10 +11,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.flowable.idm.api.Group;
-
 import net.atos.zac.app.signaleringen.model.RESTSignaleringInstellingen;
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.identity.model.Group;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 

@@ -11,13 +11,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
-
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 /**
  * A Helper for Flowable CMMN and BPMN LifecycleListener's, Interceptors etc. in order to get access to CDI resources.
@@ -36,6 +36,9 @@ public class FlowableHelper {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private IdentityService identityService;
 
     public static FlowableHelper getInstance() {
         return CDI.current().select(FlowableHelper.class).get();
@@ -58,11 +61,11 @@ public class FlowableHelper {
     }
 
     public Medewerker createMedewerker(final String gebruikersnaam) {
-        final User user = flowableService.readUser(gebruikersnaam);
+        final User user = identityService.readUser(gebruikersnaam);
         if (user == null) {
             throw new RuntimeException(String.format("Gebruiker met gebruikersnaam '%s' is niet bekend.", gebruikersnaam));
         }
-        final List<Group> groups = flowableService.listGroupsForUser(gebruikersnaam);
+        final List<Group> groups = identityService.listGroupsForUser(gebruikersnaam);
         return new Medewerker(user, groups);
     }
 }

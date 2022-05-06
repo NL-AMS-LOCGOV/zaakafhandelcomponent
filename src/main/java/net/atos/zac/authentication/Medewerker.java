@@ -8,10 +8,9 @@ package net.atos.zac.authentication;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
-
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 public class Medewerker {
 

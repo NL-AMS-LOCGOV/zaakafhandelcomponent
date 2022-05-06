@@ -10,19 +10,18 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.flowable.idm.api.User;
-
 import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.User;
 
 public class RESTMedewerkerConverter {
 
     @Inject
-    private FlowableService flowableService;
+    private IdentityService identityService;
 
     public RESTMedewerker convertGebruikersnaam(final String gebruikersnaam) {
         if (gebruikersnaam != null) {
-            final User user = flowableService.readUser(gebruikersnaam);
+            final User user = identityService.readUser(gebruikersnaam);
             return convertUser(user);
         } else {
             return null;
@@ -44,7 +43,7 @@ public class RESTMedewerkerConverter {
 
     public RESTMedewerker convertUserId(final String medewerkerId) {
         if (medewerkerId != null) {
-            final User user = flowableService.readUser(medewerkerId);
+            final User user = identityService.readUser(medewerkerId);
             final RESTMedewerker restMedewerker = convertUser(user);
             return restMedewerker;
         }
@@ -57,7 +56,7 @@ public class RESTMedewerkerConverter {
         } else if (user.getFirstName() != null && user.getLastName() != null) {
             return String.format("%s %s", user.getFirstName(), user.getLastName());
         } else {
-            return user.getId();
+            return user.getLastName();
         }
     }
 }

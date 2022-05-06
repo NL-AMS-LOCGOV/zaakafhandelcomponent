@@ -8,9 +8,8 @@ package net.atos.zac.signalering.model;
 import static net.atos.zac.signalering.model.SignaleringTarget.GROEP;
 import static net.atos.zac.signalering.model.SignaleringTarget.MEDEWERKER;
 
-import org.flowable.idm.api.Group;
-
 import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.identity.model.Group;
 
 public class SignaleringInstellingenZoekParameters {
     private final SignaleringTarget ownertype;

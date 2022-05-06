@@ -17,9 +17,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
-
 import net.atos.zac.app.identity.converter.RESTGroepConverter;
 import net.atos.zac.app.identity.converter.RESTIngelogdeMedewerkerConverter;
 import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
@@ -28,7 +25,9 @@ import net.atos.zac.app.identity.model.RESTIngelogdeMedewerker;
 import net.atos.zac.app.identity.model.RESTMedewerker;
 import net.atos.zac.authentication.IngelogdeMedewerker;
 import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 @Singleton
 @Path("identity")
@@ -46,30 +45,30 @@ public class IdentityRESTService {
     private RESTIngelogdeMedewerkerConverter ingelogdeMedewerkerConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private IdentityService identityService;
 
     @Inject
-    private FlowableService flowableService;
+    @IngelogdeMedewerker
+    private Instance<Medewerker> ingelogdeMedewerker;
 
     @GET
     @Path("groepen")
     public List<RESTGroep> listGroepen() {
-        final List<Group> groups = flowableService.listGroups();
+        final List<Group> groups = identityService.listGroups();
         return groepConverter.convertGroups(groups);
     }
 
     @GET
     @Path("groepen/{groepId}/medewerkers")
     public List<RESTMedewerker> listMedewerkersInGroep(@PathParam("groepId") final String groepId) {
-        final List<User> users = flowableService.listUsersInGroup(groepId);
+        final List<User> users = identityService.listUsersInGroup(groepId);
         return medewerkerConverter.convertUsers(users);
     }
 
     @GET
     @Path("medewerkers")
     public List<RESTMedewerker> listMedewerkers() {
-        final List<User> users = flowableService.listUsers();
+        final List<User> users = identityService.listUsers();
         return medewerkerConverter.convertUsers(users);
     }
 

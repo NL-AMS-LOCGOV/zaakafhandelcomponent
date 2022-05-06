@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.idm.api.Group;
 
 import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
 
 public class RESTGroepConverter {
 
     @Inject
-    private FlowableService flowableService;
+    private IdentityService identityService;
 
     public List<RESTGroep> convertGroups(final List<Group> groups) {
         return groups.stream()
@@ -38,9 +38,9 @@ public class RESTGroepConverter {
         }
     }
 
-    public RESTGroep convertGroupId(final String groepId) {
-        if (StringUtils.isNotEmpty(groepId)) {
-            final Group group = flowableService.readGroup(groepId);
+    public RESTGroep convertGroupId(final String groupId) {
+        if (StringUtils.isNotEmpty(groupId)) {
+            final Group group = identityService.readGroup(groupId);
             final RESTGroep restGroep = convertGroup(group);
             return restGroep;
         }
