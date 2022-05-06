@@ -4,7 +4,7 @@
  */
 
 import {EmptyPipe} from './empty.pipe';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 
 describe('EmptyPipe', () => {
     let pipe;
@@ -18,7 +18,7 @@ describe('EmptyPipe', () => {
     });
 
     it('should return -', () => {
-        let medewerker = new Medewerker();
+        let medewerker = new User();
 
         expect(pipe.transform(medewerker.naam)).toBe('-');
     });

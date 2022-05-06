@@ -11,9 +11,9 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {CaseDefinition} from '../model/case-definition';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
-import {Groep} from '../../identity/model/groep';
+import {Group} from '../../identity/model/group';
 import {IdentityService} from '../../identity/identity.service';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {HumanTaskParameter} from '../model/human-task-parameter';
 import {MatSelectChange} from '@angular/material/select';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
@@ -55,8 +55,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     caseDefinitions: Observable<CaseDefinition[]>;
     formulierDefinities: Observable<string[]>;
-    groepen: Observable<Groep[]>;
-    medewerkers: Observable<Medewerker[]>;
+    groepen: Observable<Group[]>;
+    medewerkers: Observable<User[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
 
     constructor(public utilService: UtilService, private adminService: ZaakafhandelParametersService,
@@ -76,8 +76,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             });
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
-        this.groepen = identityService.listGroepen();
-        this.medewerkers = identityService.listMedewerkers();
+        this.groepen = identityService.listGroups();
+        this.medewerkers = identityService.listUsers();
         this.formulierDefinities = adminService.listFormulierDefinities();
     }
 

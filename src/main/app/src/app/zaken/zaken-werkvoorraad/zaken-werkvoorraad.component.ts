@@ -13,13 +13,13 @@ import {ZakenService} from '../zaken.service';
 import {UtilService} from '../../core/service/util.service';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
-import {Groep} from '../../identity/model/groep';
+import {Group} from '../../identity/model/group';
 import {detailExpand} from '../../shared/animations/animations';
 import {SelectionModel} from '@angular/cdk/collections';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -40,9 +40,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
 
     expandedRow: ZaakOverzicht | null;
 
-    groepen: Groep[] = [];
+    groepen: Group[] = [];
     zaakTypes: Zaaktype[] = [];
-    private ingelogdeMedewerker: Medewerker;
+    private ingelogdeMedewerker: User;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
@@ -105,13 +105,13 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     private groepenOphalen() {
-        this.identityService.listGroepen().subscribe(groepen => {
+        this.identityService.listGroups().subscribe(groepen => {
             this.groepen = groepen;
         });
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
@@ -186,7 +186,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     showAssignToMe(row: ZaakOverzicht): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== row.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.id !== row.behandelaar?.id;
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

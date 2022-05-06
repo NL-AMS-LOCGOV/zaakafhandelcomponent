@@ -10,8 +10,8 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
-import {Groep} from '../../identity/model/groep';
-import {Medewerker} from '../../identity/model/medewerker';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 
@@ -42,7 +42,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     }
 
     verdeel(): void {
-        const toekenning: { groep?: Groep, medewerker?: Medewerker } = this.medewerkerGroepFormField.formControl.value;
+        const toekenning: { groep?: Group, medewerker?: User } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
         this.zakenService.verdelen(

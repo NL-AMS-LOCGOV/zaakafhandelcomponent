@@ -27,7 +27,7 @@ public class RESTUserConverter {
 
     public RESTUser convertUser(final User user) {
         final RESTUser restUser = new RESTUser();
-        restUser.gebruikersnaam = user.getId();
+        restUser.id = user.getId();
         restUser.naam = user.getFullName();
         return restUser;
     }

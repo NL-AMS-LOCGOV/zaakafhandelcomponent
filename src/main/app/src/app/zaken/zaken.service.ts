@@ -14,10 +14,10 @@ import {Zaaktype} from './model/zaaktype';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {ZaakOverzicht} from './model/zaak-overzicht';
 import {ZaakToekennenGegevens} from './model/zaak-toekennen-gegevens';
-import {Medewerker} from '../identity/model/medewerker';
+import {User} from '../identity/model/user';
 import {ZakenVerdeelGegevens} from './model/zaken-verdeel-gegevens';
 import {HistorieRegel} from '../shared/historie/model/historie-regel';
-import {Groep} from '../identity/model/groep';
+import {Group} from '../identity/model/group';
 import {ZaakEditMetRedenGegevens} from './model/zaak-edit-met-reden-gegevens';
 import {ZaakBetrokkeneGegevens} from './model/zaak-betrokkene-gegevens';
 import {ZaakbeeindigReden} from '../admin/model/zaakbeeindig-reden';
@@ -98,7 +98,7 @@ export class ZakenService {
     toekennen(zaak: Zaak, reden?: string): Observable<Zaak> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
-        toekennenGegevens.behandelaarGebruikersnaam = zaak.behandelaar?.gebruikersnaam;
+        toekennenGegevens.behandelaarGebruikersnaam = zaak.behandelaar?.id;
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
@@ -117,11 +117,11 @@ export class ZakenService {
         );
     }
 
-    verdelen(zaken: ZaakOverzicht[], groep?: Groep, medewerker?: Medewerker, reden?: string): Observable<void> {
+    verdelen(zaken: ZaakOverzicht[], groep?: Group, medewerker?: User, reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
         verdeelGegevens.groepId = groep?.id;
-        verdeelGegevens.behandelaarGebruikersnaam = medewerker?.gebruikersnaam;
+        verdeelGegevens.behandelaarGebruikersnaam = medewerker?.id;
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(

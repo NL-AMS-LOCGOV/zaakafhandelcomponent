@@ -7,7 +7,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {UtilService} from '../service/util.service';
 import {IdentityService} from '../../identity/identity.service';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {Observable, Subscription} from 'rxjs';
 import {SignaleringenService} from '../../signaleringen.service';
 import {Opcode} from '../websocket/model/opcode';
@@ -26,7 +26,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
-    ingelogdeMedewerker: Medewerker;
+    ingelogdeMedewerker: User;
 
     private subscription$: Subscription;
     private signaleringListener: WebsocketListener;
@@ -37,10 +37,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.headerTitle$ = this.utilService.headerTitle$;
-        this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
+        this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
             this.signaleringListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN,
-                medewerker.gebruikersnaam,
+                medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
         });
 

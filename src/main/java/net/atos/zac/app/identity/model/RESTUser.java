@@ -7,7 +7,7 @@ package net.atos.zac.app.identity.model;
 
 public class RESTUser {
 
-    public String gebruikersnaam;
+    public String id;
 
     public String naam;
 }

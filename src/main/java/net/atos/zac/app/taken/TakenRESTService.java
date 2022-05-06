@@ -182,7 +182,7 @@ public class TakenRESTService {
     @PATCH
     @Path("assign")
     public void assignTaak(final RESTTaak restTaak) {
-        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.gebruikersnaam : null, restTaak.zaakUUID);
+        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.id : null, restTaak.zaakUUID);
     }
 
     @PATCH
@@ -214,7 +214,7 @@ public class TakenRESTService {
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         final String loggedInUserId = loggedInUserInstance.get().getId();
-        if (restTaak.behandelaar == null || !restTaak.behandelaar.gebruikersnaam.equals(loggedInUserId)) {
+        if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
             flowableService.assignTaskToUser(restTaak.id, loggedInUserId);
         }
 

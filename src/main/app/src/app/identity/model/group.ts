@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class Medewerker {
-    gebruikersnaam: string;
+export class Group {
+    id: string;
     naam: string;
 }

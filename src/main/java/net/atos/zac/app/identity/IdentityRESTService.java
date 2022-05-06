@@ -45,29 +45,29 @@ public class IdentityRESTService {
     private Instance<LoggedInUser> loggedInUserInstance;
 
     @GET
-    @Path("groepen")
-    public List<RESTGroup> listGroepen() {
+    @Path("groups")
+    public List<RESTGroup> listGroups() {
         final List<Group> groups = identityService.listGroups();
         return groupConverter.convertGroups(groups);
     }
 
     @GET
-    @Path("groepen/{groepId}/medewerkers")
-    public List<RESTUser> listMedewerkersInGroep(@PathParam("groepId") final String groepId) {
-        final List<User> users = identityService.listUsersInGroup(groepId);
+    @Path("groups/{groupId}/users")
+    public List<RESTUser> listUsersInGroup(@PathParam("groupId") final String groupId) {
+        final List<User> users = identityService.listUsersInGroup(groupId);
         return userConverter.convertUsers(users);
     }
 
     @GET
-    @Path("medewerkers")
-    public List<RESTUser> listMedewerkers() {
+    @Path("users")
+    public List<RESTUser> listUsers() {
         final List<User> users = identityService.listUsers();
         return userConverter.convertUsers(users);
     }
 
     @GET
-    @Path("ingelogdemedewerker")
-    public RESTUser readIngelogdeMedewerker() {
+    @Path("loggedInUser")
+    public RESTUser readLoggedInUser() {
         return userConverter.convertUser(loggedInUserInstance.get());
     }
 }

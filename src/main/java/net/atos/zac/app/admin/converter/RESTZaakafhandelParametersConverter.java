@@ -99,7 +99,7 @@ public class RESTZaakafhandelParametersConverter {
         parameters.setZaakTypeUUID(UUID.fromString(restParameters.zaaktype.uuid));
         parameters.setCaseDefinitionID(restParameters.caseDefinition.key);
         if (restParameters.defaultBehandelaar != null) {
-            parameters.setGebruikersnaamMedewerker(restParameters.defaultBehandelaar.gebruikersnaam);
+            parameters.setGebruikersnaamMedewerker(restParameters.defaultBehandelaar.id);
         }
         parameters.setGroepID(restParameters.defaultGroep.id);
         final List<HumanTaskParameters> list = new ArrayList<>();
