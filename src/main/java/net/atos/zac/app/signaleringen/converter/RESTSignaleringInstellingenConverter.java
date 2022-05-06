@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import net.atos.zac.app.signaleringen.model.RESTSignaleringInstellingen;
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 
@@ -36,15 +36,15 @@ public class RESTSignaleringInstellingenConverter {
         return instellingen.stream().map(this::convert).collect(Collectors.toList());
     }
 
-    public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final Group groep) {
-        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, groep);
+    public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final Group group) {
+        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, group);
         instellingen.setDashboard(restInstellingen.dashboard);
         instellingen.setMail(restInstellingen.mail);
         return instellingen;
     }
 
-    public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final Medewerker medewerker) {
-        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, medewerker);
+    public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final User user) {
+        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, user);
         instellingen.setDashboard(restInstellingen.dashboard);
         instellingen.setMail(restInstellingen.mail);
         return instellingen;

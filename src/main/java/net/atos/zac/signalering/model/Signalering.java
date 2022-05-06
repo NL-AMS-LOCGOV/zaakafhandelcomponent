@@ -8,8 +8,8 @@ package net.atos.zac.signalering.model;
 import static net.atos.zac.signalering.model.SignaleringSubject.INFORMATIEOBJECT;
 import static net.atos.zac.signalering.model.SignaleringSubject.TAAK;
 import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
-import static net.atos.zac.signalering.model.SignaleringTarget.GROEP;
-import static net.atos.zac.signalering.model.SignaleringTarget.MEDEWERKER;
+import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
+import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.time.ZonedDateTime;
@@ -33,8 +33,8 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 /* Construction is easiest with the factory method in SignaleringService. */
 @Entity
@@ -89,13 +89,13 @@ public class Signalering {
     }
 
     public void setTarget(final Group target) {
-        this.targettype = GROEP;
+        this.targettype = GROUP;
         this.target = target.getId();
     }
 
-    public void setTarget(final Medewerker target) {
-        this.targettype = MEDEWERKER;
-        this.target = target.getGebruikersnaam();
+    public void setTarget(final User target) {
+        this.targettype = USER;
+        this.target = target.getId();
     }
 
     public SignaleringSubject getSubjecttype() {

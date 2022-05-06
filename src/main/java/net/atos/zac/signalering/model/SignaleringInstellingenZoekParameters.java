@@ -5,11 +5,11 @@
 
 package net.atos.zac.signalering.model;
 
-import static net.atos.zac.signalering.model.SignaleringTarget.GROEP;
-import static net.atos.zac.signalering.model.SignaleringTarget.MEDEWERKER;
+import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
+import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 public class SignaleringInstellingenZoekParameters {
     private final SignaleringTarget ownertype;
@@ -29,13 +29,13 @@ public class SignaleringInstellingenZoekParameters {
     }
 
     public SignaleringInstellingenZoekParameters(final Group owner) {
-        this.ownertype = GROEP;
+        this.ownertype = GROUP;
         this.owner = owner.getId();
     }
 
-    public SignaleringInstellingenZoekParameters(final Medewerker owner) {
-        this.ownertype = MEDEWERKER;
-        this.owner = owner.getGebruikersnaam();
+    public SignaleringInstellingenZoekParameters(final User owner) {
+        this.ownertype = USER;
+        this.owner = owner.getId();
     }
 
     public SignaleringTarget getOwnertype() {

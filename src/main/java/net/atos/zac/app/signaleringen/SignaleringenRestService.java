@@ -30,8 +30,7 @@ import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
@@ -70,20 +69,19 @@ public class SignaleringenRestService {
     private RESTSignaleringInstellingenConverter restSignaleringInstellingenConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     @GET
     @Path("/latest")
     public ZonedDateTime latestSignaleringen() {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get());
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get());
         return signaleringenService.latestSignalering(parameters);
     }
 
     @GET
     @Path("/zaken/{type}")
     public List<RESTZaakOverzicht> listZakenSignaleringen(@PathParam("type") final SignaleringType.Type signaleringsType) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.ZAAK);
         return signaleringenService.findSignaleringen(parameters).stream()
@@ -95,7 +93,7 @@ public class SignaleringenRestService {
     @GET
     @Path("/taken/{type}")
     public List<RESTTaak> listTakenSignaleringen(@PathParam("type") final SignaleringType.Type signaleringsType) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.TAAK);
         return signaleringenService.findSignaleringen(parameters).stream()
@@ -107,7 +105,7 @@ public class SignaleringenRestService {
     @GET
     @Path("/informatieobjecten/{type}")
     public List<RESTEnkelvoudigInformatieobject> listInformatieobjectenSignaleringen(@PathParam("type") final SignaleringType.Type signaleringsType) {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(ingelogdeMedewerker.get())
+        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get())
                 .types(signaleringsType)
                 .subjecttype(SignaleringSubject.INFORMATIEOBJECT);
         return signaleringenService.findSignaleringen(parameters).stream()
@@ -119,7 +117,7 @@ public class SignaleringenRestService {
     @GET
     @Path("/instellingen")
     public List<RESTSignaleringInstellingen> listSignaleringInstellingen() {
-        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(ingelogdeMedewerker.get());
+        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get());
         return restSignaleringInstellingenConverter.convert(
                 signaleringenService.listInstellingen(parameters));
     }
@@ -128,13 +126,13 @@ public class SignaleringenRestService {
     @Path("/instellingen")
     public void updateSignaleringInstellingen(final RESTSignaleringInstellingen restInstellingen) {
         signaleringenService.createUpdateOrDeleteInstellingen(
-                restSignaleringInstellingenConverter.convert(restInstellingen, ingelogdeMedewerker.get()));
+                restSignaleringInstellingenConverter.convert(restInstellingen, loggedInUserInstance.get()));
     }
 
     @GET
     @Path("/typen/dashboard")
     public List<SignaleringType.Type> listDashboardSignaleringTypen() {
-        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(ingelogdeMedewerker.get())
+        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get())
                 .dashboard();
         return signaleringenService.findInstellingen(parameters).stream()
                 .map(instellingen -> instellingen.getType().getType())

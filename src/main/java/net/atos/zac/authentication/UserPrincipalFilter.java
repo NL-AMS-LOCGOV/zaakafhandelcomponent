@@ -21,9 +21,6 @@ import javax.servlet.http.HttpSession;
 import org.wildfly.security.http.oidc.IDToken;
 import org.wildfly.security.http.oidc.OidcPrincipal;
 
-import net.atos.zac.identity.model.Group;
-import net.atos.zac.identity.model.User;
-
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
 
@@ -45,20 +42,20 @@ public class UserPrincipalFilter implements Filter {
 
             if (principal != null) {
                 HttpSession httpSession = httpServletRequest.getSession(true);
-                Medewerker ingelogdeMedewerker = SecurityUtil.getIngelogdeMedewerker(httpSession);
+                LoggedInUser loggedInUser = SecurityUtil.getLoggedInUser(httpSession);
 
-                if (ingelogdeMedewerker != null && !ingelogdeMedewerker.getGebruikersnaam().equals(principal.getName())) {
-                    LOG.info(String.format("HTTP session of medewerker '%s' on context path %s is invalidated", ingelogdeMedewerker.getGebruikersnaam(),
+                if (loggedInUser != null && !loggedInUser.getId().equals(principal.getName())) {
+                    LOG.info(String.format("HTTP session of user '%s' on context path %s is invalidated", loggedInUser.getId(),
                                            httpServletRequest.getServletContext().getContextPath()));
-                    ingelogdeMedewerker = null;
+                    loggedInUser = null;
                     httpSession.invalidate();
                     httpSession = httpServletRequest.getSession(true);
                 }
 
-                if (ingelogdeMedewerker == null) {
-                    ingelogdeMedewerker = createMedewerker(principal.getOidcSecurityContext().getIDToken());
-                    SecurityUtil.setIngelogdeMedewerker(httpSession, ingelogdeMedewerker);
-                    LOG.info(String.format("Medewerker '%s' logged in on context path %s", ingelogdeMedewerker.getGebruikersnaam(),
+                if (loggedInUser == null) {
+                    loggedInUser = createLoggedInUser(principal.getOidcSecurityContext().getIDToken());
+                    SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
+                    LOG.info(String.format("User '%s' logged in on context path %s", loggedInUser.getId(),
                                            httpServletRequest.getServletContext().getContextPath()));
                 }
             }
@@ -72,8 +69,12 @@ public class UserPrincipalFilter implements Filter {
         Filter.super.destroy();
     }
 
-    public Medewerker createMedewerker(final IDToken idToken) {
-        final User user = new User(idToken.getPreferredUsername(), idToken.getGivenName(), idToken.getFamilyName(), idToken.getName(), idToken.getEmail());
-        return new Medewerker(user, idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME).stream().map(groupId -> new Group(groupId, null)).toList());
+    private LoggedInUser createLoggedInUser(final IDToken idToken) {
+        return new LoggedInUser(idToken.getPreferredUsername(),
+                                idToken.getGivenName(),
+                                idToken.getFamilyName(),
+                                idToken.getName(),
+                                idToken.getEmail(),
+                                idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME));
     }
 }

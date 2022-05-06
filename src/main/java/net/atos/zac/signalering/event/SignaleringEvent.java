@@ -6,9 +6,9 @@
 package net.atos.zac.signalering.event;
 
 
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.AbstractEvent;
 import net.atos.zac.event.Opcode;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.model.SignaleringType;
 
 public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID> {
@@ -33,10 +33,10 @@ public class SignaleringEvent<ID> extends AbstractEvent<SignaleringType.Type, ID
      * @param objectId   the identification of the object the operation was done on
      * @param actor      the user that initiated the operation directly or indirectly
      */
-    public SignaleringEvent(final SignaleringType.Type objectType, final ID objectId, final Medewerker actor) {
+    public SignaleringEvent(final SignaleringType.Type objectType, final ID objectId, final User actor) {
         super(Opcode.UPDATED, objectId);
         this.objectType = objectType;
-        this.actor = actor == null ? null : actor.getGebruikersnaam();
+        this.actor = actor == null ? null : actor.getId();
     }
 
     @Override

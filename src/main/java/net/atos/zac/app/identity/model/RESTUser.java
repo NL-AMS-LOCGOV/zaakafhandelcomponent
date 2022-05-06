@@ -5,9 +5,9 @@
 
 package net.atos.zac.app.identity.model;
 
-public class RESTGroep {
+public class RESTUser {
 
-    public String id;
+    public String gebruikersnaam;
 
     public String naam;
 }

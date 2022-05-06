@@ -20,8 +20,7 @@ describe('IdentityService', () => {
     let mockSnackbar;
     let mockTranslate;
 
-    const groepenJaap: Groep[] = [{id: 'groepa', naam: 'GroepA'}, {id: 'groepb', naam: 'GroepB'}];
-    const jaap: Medewerker = {gebruikersnaam: 'jaap@mail.com', naam: 'Jaap Doe', groepen: groepenJaap};
+    const jaap: Medewerker = {gebruikersnaam: 'jaap@mail.com', naam: 'Jaap Doe'};
 
     beforeEach(() => {
         mockRouter = jasmine.createSpyObj(['navigate']);
@@ -53,7 +52,7 @@ describe('IdentityService', () => {
     });
     it('should return users of groepa', () => {
         const groepenKees: Groep[] = [{id: 'admin', naam: 'Admin'}, {id: 'groepb', naam: 'GroepB'}];
-        const kees: Medewerker = {gebruikersnaam: 'kees@mail.com', naam: 'Kees Seek', groepen: groepenKees};
+        const kees: Medewerker = {gebruikersnaam: 'kees@mail.com', naam: 'Kees Seek'};
         const medewerkers: Medewerker[] = [];
         medewerkers.push(jaap);
         medewerkers.push(kees);

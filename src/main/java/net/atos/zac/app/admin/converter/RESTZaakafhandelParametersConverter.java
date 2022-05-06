@@ -16,8 +16,8 @@ import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -29,10 +29,10 @@ public class RESTZaakafhandelParametersConverter {
     private RESTCaseDefinitionConverter caseDefinitionConverter;
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groupConverter;
 
     @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private RESTUserConverter userConverter;
 
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
@@ -50,8 +50,8 @@ public class RESTZaakafhandelParametersConverter {
         final RESTZaakafhandelParameters restParameters = new RESTZaakafhandelParameters();
         restParameters.id = parameters.getId();
         restParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(parameters.getZaakTypeUUID()));
-        restParameters.defaultGroep = groepConverter.convertGroupId(parameters.getGroepID());
-        restParameters.defaultBehandelaar = medewerkerConverter.convertGebruikersnaam(parameters.getGebruikersnaamMedewerker());
+        restParameters.defaultGroep = groupConverter.convertGroupId(parameters.getGroepID());
+        restParameters.defaultBehandelaar = userConverter.convertUserId(parameters.getGebruikersnaamMedewerker());
         restParameters.caseDefinition = caseDefinitionConverter.convertToRest(parameters.getCaseDefinitionID());
         if (inclusiefPlanitems && restParameters.caseDefinition != null) {
             final List<RESTHumanTaskParameters> list = new ArrayList<>();
@@ -63,7 +63,7 @@ public class RESTZaakafhandelParametersConverter {
                     if (htParam.getPlanItemDefinitionID().equals(pDef.id)) {
                         found = true;
                         restHumanTaskParameters.id = htParam.getId();
-                        restHumanTaskParameters.defaultGroep = groepConverter.convertGroupId(htParam.getGroepID());
+                        restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(htParam.getGroepID());
                         restHumanTaskParameters.formulierDefinitie = FormulierDefinitie.valueOf(htParam.getFormulierDefinitieID());
                         restHumanTaskParameters.planItemDefinition = pDef;
                         restHumanTaskParameters.doorlooptijd = htParam.getDoorlooptijd();

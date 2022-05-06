@@ -7,8 +7,8 @@ package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
 
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
 
 public class RESTZaakOverzicht {
 
@@ -28,13 +28,13 @@ public class RESTZaakOverzicht {
 
     public String status;
 
-    public RESTMedewerker behandelaar;
+    public RESTUser behandelaar;
 
     public LocalDate einddatumGepland;
 
     public LocalDate uiterlijkeEinddatumAfdoening;
 
-    public RESTGroep groep;
+    public RESTGroup groep;
 
     public RESTZaakResultaat resultaat;
 

@@ -13,7 +13,7 @@ public class User {
 
     private final String lastName;
 
-    private final String displayName;
+    private final String fullName;
 
     private final String email;
 
@@ -26,7 +26,7 @@ public class User {
         this.id = id;
         this.firstName = null;
         this.lastName = id;
-        this.displayName = id;
+        this.fullName = id;
         this.email = null;
     }
 
@@ -34,15 +34,15 @@ public class User {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.displayName = firstName != null ? firstName + " " + lastName : lastName;
+        this.fullName = firstName != null ? firstName + " " + lastName : lastName;
         this.email = email;
     }
 
-    public User(final String id, final String firstName, final String lastName, final String displayName, final String email) {
+    protected User(final String id, final String firstName, final String lastName, final String fullName, final String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.displayName = displayName;
+        this.fullName = fullName;
         this.email = email;
     }
 
@@ -62,7 +62,7 @@ public class User {
         return lastName;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getFullName() {
+        return fullName;
     }
 }

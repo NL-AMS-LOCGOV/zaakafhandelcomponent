@@ -7,7 +7,7 @@ package net.atos.zac.app.planitems.model;
 
 import java.util.UUID;
 
-import net.atos.zac.app.identity.model.RESTGroep;
+import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
@@ -21,7 +21,7 @@ public class RESTPlanItem {
 
     public PlanItemType type;
 
-    public RESTGroep groep;
+    public RESTGroup groep;
 
     public FormulierDefinitie formulierDefinitie;
 

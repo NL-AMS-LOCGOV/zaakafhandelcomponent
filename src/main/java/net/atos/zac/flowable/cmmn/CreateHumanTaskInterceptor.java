@@ -15,8 +15,8 @@ import java.util.UUID;
 import org.flowable.cmmn.engine.interceptor.CreateHumanTaskAfterContext;
 import org.flowable.cmmn.engine.interceptor.CreateHumanTaskBeforeContext;
 
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.flowable.FlowableHelper;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.event.SignaleringEvent;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -64,10 +64,9 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
 
         if (context.getTaskEntity().getAssignee() != null) {
             // On creation of a human task the owner is assumed to be the actor who created it
-            final Medewerker actor = context.getHumanTask().getOwner() != null ?
-                    FlowableHelper.getInstance().createMedewerker(context.getHumanTask().getOwner())
-                    : null;
-            final SignaleringEvent<String> signaleringEvent = SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), actor);
+            final String owner = context.getHumanTask().getOwner();
+            final User user = owner != null ? FlowableHelper.getInstance().getIdentityService().readUser(owner) : null;
+            final SignaleringEvent<String> signaleringEvent = SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), user);
             FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
         }
     }
