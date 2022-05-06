@@ -7,15 +7,28 @@ package net.atos.zac.identity.model;
 
 public class User {
 
-    private String id;
+    private final String id;
 
-    private String firstName;
+    private final String firstName;
 
-    private String lastName;
+    private final String lastName;
 
-    private String displayName;
+    private final String displayName;
 
-    private String email;
+    private final String email;
+
+    /**
+     * Constructor for creating an unknown User, a user with a given user id which is not known in the identity system.
+     *
+     * @param id Id of the user who is unknown
+     */
+    public User(final String id) {
+        this.id = id;
+        this.firstName = null;
+        this.lastName = id;
+        this.displayName = id;
+        this.email = null;
+    }
 
     public User(final String id, final String firstName, final String lastName, final String email) {
         this.id = id;

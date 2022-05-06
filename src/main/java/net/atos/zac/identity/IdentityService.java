@@ -96,7 +96,7 @@ public class IdentityService {
         return search(usersDN, filter, USER_ATTRIBUTES).stream()
                 .map(this::convertToUser)
                 .findAny()
-                .orElseThrow(() -> new RuntimeException(String.format("User not found: '%s'", userId)));
+                .orElse(new User(userId));
     }
 
     public Group readGroup(final String groupId) {
@@ -104,7 +104,7 @@ public class IdentityService {
         return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
                 .map(this::convertToGroup)
                 .findAny()
-                .orElseThrow(() -> new RuntimeException(String.format("Group not found: '%s'", groupId)));
+                .orElse(new Group(groupId));
 
     }
 
