@@ -74,6 +74,6 @@ public class UserPrincipalFilter implements Filter {
 
     public Medewerker createMedewerker(final IDToken idToken) {
         final User user = new User(idToken.getPreferredUsername(), idToken.getGivenName(), idToken.getFamilyName(), idToken.getName(), idToken.getEmail());
-        return new Medewerker(user, idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME).stream().map(Group::new).toList());
+        return new Medewerker(user, idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME).stream().map(groupId -> new Group(groupId, null)).toList());
     }
 }
