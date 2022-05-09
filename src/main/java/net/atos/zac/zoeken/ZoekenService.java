@@ -6,12 +6,12 @@
 package net.atos.zac.zoeken;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -19,12 +19,10 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Geometry;
-import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.zoeken.model.ZoekZaakParameters;
-import net.atos.zac.zoeken.model.ZoekZaakResultaat;
+import net.atos.zac.zoeken.converter.ZaakZoekObjectConverter;
+import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.ZoekParameters;
+import net.atos.zac.zoeken.model.ZoekResultaat;
 
 @ApplicationScoped
 public class ZoekenService {
@@ -32,34 +30,33 @@ public class ZoekenService {
     private static final String SOLR_CORE = "zac";
 
     @Inject
-    private ZRCClientService zrcClientService;
-
-    @Inject
-    private ZTCClientService ztcClientService;
+    private ZaakZoekObjectConverter zaakZoekObjectConverter;
 
     private SolrClient solrClient;
 
     public ZoekenService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
-        solrClient = new HttpSolrClient.Builder(String.format("%s/%s", solrUrl, SOLR_CORE)).build();
+        solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
-    public List<ZoekZaakResultaat> zoekZaak(final ZoekZaakParameters zoekZaakParameters) {
-        final SolrQuery query = new SolrQuery(zoekZaakParameters.getTekst());
-        query.setShowDebugInfo(true); // ToDo: Remove
-
+    public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
+        if (StringUtils.isBlank(zoekZaakParameters.getTekst())) {
+            zoekZaakParameters.setTekst("*");
+        }
+        final SolrQuery query = new SolrQuery("text:%s".formatted(zoekZaakParameters.getTekst()));
         try {
             final QueryResponse response = solrClient.query(query);
-            return response.getBeans(ZoekZaakResultaat.class);
+            return new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class), response.getResults().getNumFound());
+
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void addZaak(final UUID zaakUUID) {
-        final ZoekZaakResultaat zoekZaakResultaat = readZoekZaakResultaat(zaakUUID);
+        final ZaakZoekObject zaak = zaakZoekObjectConverter.convert(zaakUUID);
         try {
-            solrClient.addBean(zoekZaakResultaat);
+            solrClient.addBean(zaak);
             solrClient.commit();
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
@@ -73,23 +70,5 @@ public class ZoekenService {
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private ZoekZaakResultaat readZoekZaakResultaat(final UUID zaakUUID) {
-        final ZoekZaakResultaat zoekZaakResultaat = new ZoekZaakResultaat();
-        zoekZaakResultaat.setUuid(zaakUUID);
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        zoekZaakResultaat.setIdentificatie(zaak.getIdentificatie());
-        zoekZaakResultaat.setOmschrijving(zaak.getOmschrijving());
-        zoekZaakResultaat.setToelichting(zaak.getToelichting());
-        zoekZaakResultaat.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
-        zoekZaakResultaat.setZaaktype(ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving());
-        zoekZaakResultaat.setStatus(ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving());
-        return zoekZaakResultaat;
-    }
-
-    private String convertToLocatie(final Geometry zaakgeometrie) {
-        // ToDo
-        return null;
     }
 }

@@ -12,7 +12,7 @@ import {ListPersonenParameters} from './model/personen/list-personen-parameters'
 import {Persoon} from './model/personen/persoon';
 import {ListBedrijvenParameters} from './model/bedrijven/list-bedrijven-parameters';
 import {Bedrijf} from './model/bedrijven/bedrijf';
-import {Results} from '../shared/model/results';
+import {Resultaat} from '../shared/model/resultaat';
 
 @Injectable({
     providedIn: 'root'
@@ -36,14 +36,14 @@ export class KlantenService {
         );
     }
 
-    listPersonen(listPersonenParameters: ListPersonenParameters): Observable<Results<Persoon>> {
-        return this.http.put<Results<Persoon>>(`${this.basepath}/personen`, listPersonenParameters).pipe(
+    listPersonen(listPersonenParameters: ListPersonenParameters): Observable<Resultaat<Persoon>> {
+        return this.http.put<Resultaat<Persoon>>(`${this.basepath}/personen`, listPersonenParameters).pipe(
             catchError(this.handleError)
         );
     }
 
-    listBedrijven(listBedrijvenParameters: ListBedrijvenParameters): Observable<Results<Bedrijf>> {
-        return this.http.put<Results<Bedrijf>>(`${this.basepath}/bedrijven`, listBedrijvenParameters).pipe(
+    listBedrijven(listBedrijvenParameters: ListBedrijvenParameters): Observable<Resultaat<Bedrijf>> {
+        return this.http.put<Resultaat<Bedrijf>>(`${this.basepath}/bedrijven`, listBedrijvenParameters).pipe(
             catchError(this.handleError)
         );
     }

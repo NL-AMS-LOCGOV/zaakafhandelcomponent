@@ -10,7 +10,7 @@ import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {OntkoppeldDocument} from './model/ontkoppeld-document';
 import {ListParameters} from '../shared/model/list-parameters';
-import {Results} from '../shared/model/results';
+import {Resultaat} from '../shared/model/resultaat';
 
 @Injectable({
     providedIn: 'root'
@@ -22,8 +22,8 @@ export class OntkoppeldeDocumentenService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    list(parameters: ListParameters): Observable<Results<OntkoppeldDocument>> {
-        return this.http.get<Results<OntkoppeldDocument>>(this.basepath, {
+    list(parameters: ListParameters): Observable<Resultaat<OntkoppeldDocument>> {
+        return this.http.get<Resultaat<OntkoppeldDocument>>(this.basepath, {
             params: parameters as any
         }).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))

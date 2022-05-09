@@ -10,6 +10,8 @@ import static net.atos.zac.notificaties.Action.CREATE;
 import static net.atos.zac.notificaties.Action.DELETE;
 import static net.atos.zac.notificaties.Action.UPDATE;
 import static net.atos.zac.notificaties.Resource.OBJECT;
+import static net.atos.zac.notificaties.Resource.RESULTAAT;
+import static net.atos.zac.notificaties.Resource.ROL;
 import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
 
@@ -117,8 +119,8 @@ public class NotificatieReceiver {
                 } else if (notificatie.getAction() == DELETE) {
                     zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 }
-            } else if (notificatie.getResource() == STATUS && notificatie.getAction() == CREATE) {
-                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+            } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
+                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
             }
         }
     }

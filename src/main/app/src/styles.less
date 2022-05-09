@@ -20,11 +20,16 @@ body {
   height: 100%;
 }
 
-.mat-sidenav-container {
+mat-drawer-container {
   height: calc(100% - 64px);
+
+  .mat-drawer-content {
+    padding: 10px
+  }
+
 }
 
-mat-sidenav-container.over .mat-sidenav-content {
+mat-drawer-container.over mat-drawer-content {
   margin-left: 67px;
 }
 
@@ -179,14 +184,6 @@ button.mat-button-base + button.mat-button-base {
   }
 }
 
-.inner-sidenav-container {
-  height: calc(100% - 64px);
-
-  .mat-sidenav-content {
-    padding: 10px
-  }
-}
-
 .mat-divider-wrapper {
   padding-bottom: 10px;
 }
@@ -210,14 +207,14 @@ button.mat-button-base + button.mat-button-base {
     height: 50px;
   }
 
-  .inner-sidenav-container.tablet-bottom-toolbar {
+  mat-drawer-container.tablet-bottom-toolbar {
     height: calc(100% - 116px);
   }
 }
 
 //telefoon
 @media (max-width: 599px) {
-  .inner-sidenav-container {
+  mat-drawer-container {
     height: calc(100% - 56px);
 
     &.tablet-bottom-toolbar {

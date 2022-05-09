@@ -77,7 +77,7 @@ export class PersoonZoekComponent implements OnInit {
         this.loading = true;
         this.personen.data = [];
         this.klantenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {
-            this.personen.data = personen.results;
+            this.personen.data = personen.resultaten;
             this.foutmelding = personen.foutmelding;
             this.loading = false;
         });

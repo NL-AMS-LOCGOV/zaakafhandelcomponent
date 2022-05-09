@@ -13,6 +13,14 @@
                     title="{{ 'dashboard' | translate }}" aria-label="Mijn dashboard">
                 <mat-icon mat-list-icon>home</mat-icon>
             </button>
+
+            <button mat-mini-fab
+                    (click)="zoekenClicked.emit()"
+                    color="primary"
+                    title="{{ 'actie.zoeken' | translate }}">
+                <mat-icon>search</mat-icon>
+            </button>
+
             <button mat-icon-button
                     fxHide.gt-xs [disabled]="navigation.backDisabled$ | async" aria-label="Terug"
                     title="{{ 'actie.terug' | translate }}" zacBackButton>

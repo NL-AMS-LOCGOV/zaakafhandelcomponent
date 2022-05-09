@@ -27,7 +27,7 @@ import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTListParametersConver
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocument;
 import net.atos.zac.app.shared.RESTListParameters;
-import net.atos.zac.app.shared.RESTResult;
+import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.util.UriUtil;
@@ -52,8 +52,8 @@ public class OntkoppeldeDocumentenRESTService {
 
     @GET
     @Path("")
-    public RESTResult<RESTOntkoppeldDocument> list(@BeanParam final RESTListParameters listParameters) {
-        return new RESTResult<>(converter.convert(service.list(RESTListParametersConverter.convert(listParameters))), service.count());
+    public RESTResultaat<RESTOntkoppeldDocument> list(@BeanParam final RESTListParameters listParameters) {
+        return new RESTResultaat<>(converter.convert(service.list(RESTListParametersConverter.convert(listParameters))), service.count());
     }
 
     @DELETE

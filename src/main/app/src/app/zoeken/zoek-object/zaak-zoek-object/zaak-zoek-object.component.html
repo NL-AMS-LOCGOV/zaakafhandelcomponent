@@ -1,0 +1,15 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-card>
+    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+        <zac-static-text [label]="'zaak.identificatie' | translate"
+                         [value]="zaak.identificatie"></zac-static-text>
+        <zac-static-text [label]="'zaaktype' | translate"
+                         [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
+        <zac-static-text [label]="'communicatiekanaal' | translate"
+                         [value]="zaak.communicatiekanaal"></zac-static-text>
+    </div>
+</mat-card>
