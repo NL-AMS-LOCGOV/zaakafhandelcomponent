@@ -5,11 +5,9 @@
 
 package net.atos.zac.app.zaken.model;
 
-public class RESTZaakRechten {
+public class RESTZaakOpschortGegevens {
 
-    public boolean afbreekbaar;
+    public RESTZaak zaak;
 
-    public boolean open;
-
-    public boolean opgeschort;
+    public Integer duurDagen;
 }

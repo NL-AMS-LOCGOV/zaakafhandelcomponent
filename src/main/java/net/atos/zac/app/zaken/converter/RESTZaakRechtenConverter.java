@@ -21,6 +21,7 @@ public class RESTZaakRechtenConverter {
         final RESTZaakRechten restZaakRechten = new RESTZaakRechten();
         restZaakRechten.afbreekbaar = !zaakafhandelParameterService.getZaakafhandelParameters(zaak).getZaakbeeindigParameters().isEmpty();
         restZaakRechten.open = zaak.isOpen();
+        restZaakRechten.opgeschort = zaak.isOpgeschort();
         return restZaakRechten;
     }
 }
