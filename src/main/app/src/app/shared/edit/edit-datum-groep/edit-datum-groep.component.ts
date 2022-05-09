@@ -65,11 +65,15 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.showStreefDatumIcon = this.streefDatumIcon?.showIcon(new FormControl(this.streefDatumField.formControl.value));
-        this.showFataleDatumIcon = this.fataleDatumIcon?.showIcon(new FormControl(this.fataleDatumField.formControl.value));
+        this.updateGroep();
+    }
+
+    updateGroep(): void {
         this.startDatum = this.startDatumField.formControl.value;
         this.streefDatum = this.streefDatumField.formControl.value;
         this.fataleDatum = this.fataleDatumField.formControl.value;
+        this.showStreefDatumIcon = this.streefDatumIcon?.showIcon(new FormControl(this.streefDatumField.formControl.value));
+        this.showFataleDatumIcon = this.fataleDatumIcon?.showIcon(new FormControl(this.fataleDatumField.formControl.value));
     }
 
     init(formField: DateFormField): void {
@@ -85,11 +89,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
                 uiterlijkeEinddatumAfdoening: this.fataleDatumField.formControl.value,
                 reden: this.reasonField?.formControl.value
             });
-            this.startDatum = this.startDatumField.formControl.value;
-            this.streefDatum = this.streefDatumField.formControl.value;
-            this.fataleDatum = this.fataleDatumField.formControl.value;
-            this.showStreefDatumIcon = this.streefDatumIcon?.showIcon(new FormControl(this.streefDatumField.formControl.value));
-            this.showFataleDatumIcon = this.fataleDatumIcon?.showIcon(new FormControl(this.fataleDatumField.formControl.value));
+            this.updateGroep();
             this.editing = false;
         }
     }
@@ -179,8 +179,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
             if (!result) {
                 this.resetDatums(vorigeStreefDatum, vorigeFataleDatum);
             }
-            this.streefDatum = this.streefDatumField.formControl.value;
-            this.fataleDatum = this.fataleDatumField.formControl.value;
+            this.updateGroep();
         });
     }
 
@@ -199,19 +198,17 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
 
         this.dialog.open(DialogComponent, {
             data: dialogData
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                this.streefDatum = this.streefDatumField.formControl.value;
-                this.fataleDatum = this.fataleDatumField.formControl.value;
-            }
         });
     }
 
     saveHervatting(results: any[]): Observable<void> {
         const verschil: number = this.werkelijkeOpschortDuur - this.opschortDuur;
+        this.streefDatumField.formControl.setValue(moment(this.streefDatumField.formControl.value).add(verschil, 'days'));
+        this.fataleDatumField.formControl.setValue(moment(this.fataleDatumField.formControl.value).add(verschil, 'days'));
+        this.updateGroep();
         results['duurDagen'] = this.werkelijkeOpschortDuur;
-        results['einddatumGepland'] = moment(this.streefDatumField.formControl.value).add(verschil, 'days');
-        results['uiterlijkeEinddatumAfdoening'] = moment(this.fataleDatumField.formControl.value).add(verschil, 'days');
+        results['einddatumGepland'] = this.streefDatumField.formControl.value;
+        results['uiterlijkeEinddatumAfdoening'] = this.fataleDatumField.formControl.value;
         return this.saveOpschorting(results);
     }
 

@@ -7,5 +7,5 @@ import {Zaak} from './zaak';
 
 export class ZaakOpschortGegevens {
     zaak: Zaak;
-    duurDagen?: number;
+    duurDagen: number;
 }
