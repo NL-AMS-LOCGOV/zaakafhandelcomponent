@@ -55,7 +55,7 @@
                     </ng-container>
 
                     <ng-container matColumnDef="expandedDetail">
-                        <td mat-cell *matCellDef="let row" colspan="7">
+                        <td mat-cell *matCellDef="let row" colspan="8">
                             <div [@detailExpand]="row == documentPreviewRow ? 'expanded' : 'collapsed'">
                                 <zac-document-viewer [document]="row" *ngIf="row == documentPreviewRow"></zac-document-viewer>
                             </div>
@@ -69,7 +69,7 @@
                     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
 
                     <tr class="mat-row" *matNoDataRow>
-                        <td class="mat-cell" colspan="7">
+                        <td class="mat-cell" colspan="8">
                             <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:'table'}">
                                 <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </zac-skeleton-loader>

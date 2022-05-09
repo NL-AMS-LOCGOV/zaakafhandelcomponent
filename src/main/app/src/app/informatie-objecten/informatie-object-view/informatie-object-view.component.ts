@@ -23,7 +23,7 @@ import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
-import {FileFormat} from '../model/file-format';
+import {FileFormatUtil} from '../model/file-format';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -38,21 +38,21 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
     fileIconList = [
-        { type: 'xlsx', icon: 'fa-file-excel', color: 'green' },
-        { type: 'xls', icon: 'fa-file-excel', color: 'green' },
-        { type: 'pdf', icon: 'fa-file-pdf', color: 'red' },
-        { type: 'jpg', icon: 'fa-file-image' },
-        { type: 'png', icon: 'fa-file-image' },
-        { type: 'jpeg', icon: 'fa-file-image' },
-        { type: 'gif', icon: 'fa-file-image' },
-        { type: 'rtf', icon: 'fa-file-image' },
-        { type: 'vsd', icon: 'fa-file-image' },
-        { type: 'bmp', icon: 'fa-file-image' },
-        { type: 'doc', icon: 'fa-file-word', color: 'blue' },
-        { type: 'docx', icon: 'fa-file-word', color: 'blue' },
-        { type: 'odt', icon: 'fa-file-word', color: 'blue' },
-        { type: 'pptx', icon: 'fa-file-powerpoint', color: 'red' },
-        { type: 'txt', icon: 'fa-file-lines' }
+        {type: 'xlsx', icon: 'fa-file-excel', color: 'green'},
+        {type: 'xls', icon: 'fa-file-excel', color: 'green'},
+        {type: 'pdf', icon: 'fa-file-pdf', color: 'red'},
+        {type: 'jpg', icon: 'fa-file-image'},
+        {type: 'png', icon: 'fa-file-image'},
+        {type: 'jpeg', icon: 'fa-file-image'},
+        {type: 'gif', icon: 'fa-file-image'},
+        {type: 'rtf', icon: 'fa-file-image'},
+        {type: 'vsd', icon: 'fa-file-image'},
+        {type: 'bmp', icon: 'fa-file-image'},
+        {type: 'doc', icon: 'fa-file-word', color: 'blue'},
+        {type: 'docx', icon: 'fa-file-word', color: 'blue'},
+        {type: 'odt', icon: 'fa-file-word', color: 'blue'},
+        {type: 'pptx', icon: 'fa-file-powerpoint', color: 'red'},
+        {type: 'txt', icon: 'fa-file-lines'}
     ];
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
@@ -70,7 +70,7 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
-            this.documentPreviewBeschikbaar = this.infoObject.formaat === FileFormat.PDF;
+            this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
             this.documentListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
@@ -140,7 +140,7 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
         if (obj.length > 0) {
             return obj[0];
         } else {
-            return { type: 'unknown', icon: 'fa-file-circle-question' };
+            return {type: 'unknown', icon: 'fa-file-circle-question'};
         }
     }
 

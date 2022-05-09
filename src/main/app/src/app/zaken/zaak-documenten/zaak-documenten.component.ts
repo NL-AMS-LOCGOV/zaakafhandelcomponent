@@ -9,7 +9,7 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {FileFormat} from '../../informatie-objecten/model/file-format';
+import {FileFormat, FileFormatUtil} from '../../informatie-objecten/model/file-format';
 import {Zaak} from '../model/zaak';
 import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
@@ -144,8 +144,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         return informatieobject['loading'] || this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
     }
 
-    isPreviewBeschikbaar(formaat: string): boolean {
-        return formaat === FileFormat.PDF;
+    isPreviewBeschikbaar(formaat: FileFormat): boolean {
+        return FileFormatUtil.isPreviewAvailable(formaat);
     }
 
 }
