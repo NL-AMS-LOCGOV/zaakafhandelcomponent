@@ -107,87 +107,87 @@
 <!--  points to the root document of a block of nested documents. Required for nested
        document support, may be removed otherwise
      -->
-<field name="_root_" type="string" indexed="true" stored="false"/>
-<!--  Only remove the "id" field if you have a very good reason to. While not strictly
-      required, it is highly recommended. A <uniqueKey> is present in almost all Solr
-      installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
-     -->
-<field name="uuid" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
-<field name="identificatie" type="string" indexed="true" stored="true"/>
-<field name="type" type="string" indexed="true" stored="true"/>
-<field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW"/>
-<field name="zaak_omschrijving" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_toelichting" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_registratiedatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_startdatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_streefdatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_einddatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_fataledatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_publicatiedatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_communicatiekanaal" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_afgehandeld" type="boolean" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_groepId" type="string" indexed="true" stored="true"/>
+    <field name="_root_" type="string" indexed="true" stored="false"/>
+    <!--  Only remove the "id" field if you have a very good reason to. While not strictly
+          required, it is highly recommended. A <uniqueKey> is present in almost all Solr
+          installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
+         -->
+    <field name="uuid" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
+    <field name="identificatie" type="string" indexed="true" stored="true"/>
+    <field name="type" type="string" indexed="true" stored="true"/>
+    <field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW"/>
+    <field name="zaak_omschrijving" type="string" indexed="true" stored="true"/>
+    <field name="zaak_toelichting" type="string" indexed="true" stored="true"/>
+    <field name="zaak_registratiedatum" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_startdatum" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_einddatumGepland" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_einddatum" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_uiterlijkeEinddatumAfdoening" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_publicatiedatum" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_communicatiekanaal" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_afgehandeld" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_groepId" type="string" indexed="true" stored="true"/>
 <field name="zaak_groepNaam" type="string" indexed="true" stored="true" docValues="true"/>
 <field name="zaak_behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_behandelaarGebruikersnaam" type="string" indexed="true" stored="true"/>
-<field name="zaak_initiatorIdentificatie" type="string" indexed="true" stored="true"/>
-<field name="zaak_locatie" type="location" indexed="true" stored="true"/>
-<field name="zaak_redenOpschorting" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_indicatieVerlenging" type="boolean" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_redenVerlenging" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_duurVerlenging" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_zaaktypeUuid" type="string" indexed="true" stored="true"/>
-<field name="zaak_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
-<field name="zaak_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_statusNaam" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_statusToekenningsdatum" type="pdate" indexed="true" stored="true"/>
-<field name="zaak_statusToelichting" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_statusEindstatus" type="boolean" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_resultaatNaam" type="text_nl" indexed="true" stored="true"/>
-<field name="zaak_resultaatToelichting" type="text_nl" indexed="true" stored="true"/>
-<field name="informatieobject_titel" type="text_nl" indexed="true" stored="true"/>
-<field name="informatieobject_beschrijving" type="text_nl" indexed="true" stored="true"/>
-<field name="informatieobject_zaakIdentificatie" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_creatiedatum" type="pdate" indexed="true" stored="true"/>
-<field name="informatieobject_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="informatieobject_auteur" type="text_nl" indexed="true" stored="true"/>
-<field name="informatieobject_status" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="informatieobject_formaat" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="informatieobject_versie" type="pint" indexed="true" stored="true"/>
-<field name="informatieobject_registratiedatum" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_behandelaarGebruikersnaam" type="string" indexed="true" stored="true"/>
+    <field name="zaak_initiatorIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="zaak_locatie" type="location" indexed="true" stored="true"/>
+    <field name="zaak_redenOpschorting" type="string" indexed="true" stored="true"/>
+    <field name="zaak_indicatieVerlenging" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_redenVerlenging" type="string" indexed="true" stored="true"/>
+    <field name="zaak_duurVerlenging" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_zaaktypeUuid" type="string" indexed="true" stored="true"/>
+    <field name="zaak_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="zaak_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_statustypeOmschrijving" type="string" indexed="true" stored="true"/>
+    <field name="zaak_statusDatumGezet" type="pdate" indexed="true" stored="true"/>
+    <field name="zaak_statusToelichting" type="string" indexed="true" stored="true"/>
+    <field name="zaak_statusEindstatus" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_resultaattypeOmschrijving" type="string" indexed="true" stored="true"/>
+    <field name="zaak_resultaatToelichting" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_titel" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_beschrijving" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_creatiedatum" type="pdate" indexed="true" stored="true"/>
+    <field name="informatieobject_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_auteur" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_status" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_formaat" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_versie" type="pint" indexed="true" stored="true"/>
+    <field name="informatieobject_registratiedatum" type="pdate" indexed="true" stored="true"/>
 <field name="informatieobject_bestandsnaam" type="string" indexed="true" stored="true"/>
 <field name="informatieobject_bestandsomvang" type="plong" indexed="true" stored="true"/>
-<field name="informatieobject_documentType" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
-<field name="informatieobject_vezenddatum" type="pdate" indexed="true" stored="true"/>
-<field name="informatieobject_ondertekening" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_locked" type="boolean" indexed="true" stored="true"/>
-<field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
-<!--  non-tokenized version of field to make it easier to sort or group
-         results by field. copied from "field" via copyField  -->
-<field name="informatieobject_titel_sort" type="string" indexed="true" stored="false"/>
-<field name="informatieobject_auteur_sort" type="string" indexed="true" stored="false"/>
-<field name="zaak_statusNaam_sort" type="string" indexed="true" stored="false"/>
-<field name="zaak_resultaatNaam_sort" type="string" indexed="true" stored="false"/>
-<copyField source="informatieobject_auteur" dest="informatieobject_auteur_sort"/>
-<copyField source="informatieobject_titel" dest="informatieobject_titel_sort"/>
-<copyField source="zaak_statusNaam" dest="zaak_statusNaam_sort"/>
-<copyField source="zaak_resultaatNaam" dest="zaak_resultaatNaam_sort"/>
-<!--  catchall field, containing all other searchable text fields (implemented
-         via copyField further on in this schema   -->
-<field name="text" type="text_nl" indexed="true" stored="false" multiValued="true"/>
-<field name="text_exact" type="text_ws" indexed="true" stored="false" multiValued="true"/>
-<!--  catchall text field that indexes tokens both normally and in reverse for efficient
-         leading wildcard queries.  -->
-<field name="text_rev" type="text_general_rev" indexed="true" stored="false" multiValued="true"/>
-<!--  Dynamic field definitions allow using convention over configuration
-        for fields via the specification of patterns to match field names.
-        EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
-        RESTRICTION: the glob-like pattern in the name attribute must have
-        a "*" only at the start or the end.   -->
+    <field name="informatieobject_documentType" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
+    <field name="informatieobject_vezenddatum" type="pdate" indexed="true" stored="true"/>
+    <field name="informatieobject_ondertekening" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_locked" type="boolean" indexed="true" stored="true"/>
+    <field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
+    <!--  non-tokenized version of field to make it easier to sort or group
+             results by field. copied from "field" via copyField  -->
+    <field name="informatieobject_titel_sort" type="string" indexed="true" stored="false"/>
+    <field name="informatieobject_auteur_sort" type="string" indexed="true" stored="false"/>
+    <field name="zaak_statustypeOmschrijving_sort" type="string" indexed="true" stored="false"/>
+    <field name="zaak_resultaattypeOmschrijving_sort" type="string" indexed="true" stored="false"/>
+    <copyField source="informatieobject_auteur" dest="informatieobject_auteur_sort"/>
+    <copyField source="informatieobject_titel" dest="informatieobject_titel_sort"/>
+    <copyField source="zaak_statustypeOmschrijving" dest="zaak_statustypeOmschrijving_sort"/>
+    <copyField source="zaak_resultaattypeOmschrijving" dest="zaak_resultaattypeOmschrijving_sort"/>
+    <!--  catchall field, containing all other searchable text fields (implemented
+             via copyField further on in this schema   -->
+    <field name="text" type="text_nl" indexed="true" stored="false" multiValued="true"/>
+    <field name="text_exact" type="text_ws" indexed="true" stored="false" multiValued="true"/>
+    <!--  catchall text field that indexes tokens both normally and in reverse for efficient
+             leading wildcard queries.  -->
+    <field name="text_rev" type="text_general_rev" indexed="true" stored="false" multiValued="true"/>
+    <!--  Dynamic field definitions allow using convention over configuration
+            for fields via the specification of patterns to match field names.
+            EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
+            RESTRICTION: the glob-like pattern in the name attribute must have
+            a "*" only at the start or the end.   -->
 
 <!--  Type used to index the lat and lon components for the "location" FieldType  -->
 <dynamicField name="*_coordinate" type="pdouble" indexed="true" stored="false"/>
@@ -217,34 +217,34 @@
 <copyField source="zaak_initiatorIdentificatie" dest="text"/>
 <copyField source="zaak_zaaktypeIdentificatie" dest="text"/>
 <copyField source="zaak_zaaktypeOmschrijving" dest="text"/>
-<copyField source="zaak_statusNaam" dest="text"/>
+    <copyField source="zaak_statustypeOmschrijving" dest="text"/>
 <copyField source="zaak_statusToelichting" dest="text"/>
-<copyField source="zaak_resultaatNaam" dest="text"/>
+    <copyField source="zaak_resultaattypeOmschrijving" dest="text"/>
 <copyField source="zaak_resultaatToelichting" dest="text"/>
 <copyField source="informatieobject_beschrijving" dest="text"/>
 <copyField source="informatieobject_titel" dest="text"/>
-<copyField source="informatieobject_auteur" dest="text"/>
-<copyField source="informatieobject_status" dest="text"/>
-<copyField source="informatieobject_bestandsnaam" dest="text"/>
-<copyField source="informatieobject_documentType" dest="text"/>
+    <copyField source="informatieobject_auteur" dest="text"/>
+    <copyField source="informatieobject_status" dest="text"/>
+    <copyField source="informatieobject_bestandsnaam" dest="text"/>
+    <copyField source="informatieobject_documentType" dest="text"/>
 
-<copyField source="uuid" dest="text_exact"/>
-<copyField source="identificatie" dest="text_exact"/>
-<copyField source="zaak_groepNaam" dest="text_exact"/>
-<copyField source="zaak_behandelaarNaam" dest="text_exact"/>
-<copyField source="zaak_initiatorIdentificatie" dest="text_exact"/>
-<copyField source="zaak_statusNaam" dest="text_exact"/>
-<copyField source="zaak_resultaatNaam" dest="text_exact"/>
-<copyField source="informatieobject_zaakUuid" dest="text_exact"/>
-<copyField source="informatieobject_zaakIdentificatie" dest="text_exact"/>
+    <copyField source="uuid" dest="text_exact"/>
+    <copyField source="identificatie" dest="text_exact"/>
+    <copyField source="zaak_groepNaam" dest="text_exact"/>
+    <copyField source="zaak_behandelaarNaam" dest="text_exact"/>
+    <copyField source="zaak_initiatorIdentificatie" dest="text_exact"/>
+    <copyField source="zaak_statustypeOmschrijving" dest="text_exact"/>
+    <copyField source="zaak_resultaattypeOmschrijving" dest="text_exact"/>
+    <copyField source="informatieobject_zaakUuid" dest="text_exact"/>
+    <copyField source="informatieobject_zaakIdentificatie" dest="text_exact"/>
 
-<!--  Above, multiple source fields are copied to the [text] field.
-     Another way to map multiple source fields to the same
-     destination field is to use the dynamic field syntax.
-     copyField also supports a maxChars to copy setting.   -->
-<!--  <copyField source="*_t" dest="text" maxChars="3000"/>  -->
-<!--  copy name to alphaNameSort, a field designed for sorting by name  -->
-<!--  <copyField source="name" dest="alphaNameSort"/>  -->
+    <!--  Above, multiple source fields are copied to the [text] field.
+         Another way to map multiple source fields to the same
+         destination field is to use the dynamic field syntax.
+         copyField also supports a maxChars to copy setting.   -->
+    <!--  <copyField source="*_t" dest="text" maxChars="3000"/>  -->
+    <!--  copy name to alphaNameSort, a field designed for sorting by name  -->
+    <!--  <copyField source="name" dest="alphaNameSort"/>  -->
 <!--  field type definitions. The "name" attribute is
        just a label to be used by field definitions.  The "class"
        attribute and any other attributes determine the real

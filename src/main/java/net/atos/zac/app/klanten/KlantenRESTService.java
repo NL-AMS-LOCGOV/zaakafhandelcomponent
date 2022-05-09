@@ -32,7 +32,7 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
-import net.atos.zac.app.shared.RESTResult;
+import net.atos.zac.app.shared.RESTResultaat;
 
 @Path("klanten")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -70,27 +70,27 @@ public class KlantenRESTService {
 
     @PUT
     @Path("personen")
-    public RESTResult<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
+    public RESTResultaat<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
         try {
             final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
             final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
-            return new RESTResult<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
+            return new RESTResultaat<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
         } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
-            return new RESTResult<>(e.getMessage());
+            return new RESTResultaat<>(e.getMessage());
         }
     }
 
     @PUT
     @Path("bedrijven")
-    public RESTResult<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
+    public RESTResultaat<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
         try {
             KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
             Resultaat resultaat = kvkClientService.find(zoekenParameters);
-            return new RESTResult<>(bedrijfConverter.convert(resultaat));
+            return new RESTResultaat<>(bedrijfConverter.convert(resultaat));
         } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
-            return new RESTResult<>(e.getMessage());
+            return new RESTResultaat<>(e.getMessage());
         }
     }
 }

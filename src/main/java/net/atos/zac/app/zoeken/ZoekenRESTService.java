@@ -14,11 +14,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.shared.RESTResult;
-import net.atos.zac.app.zoeken.converter.RESTSolrZoekParametersConverter;
-import net.atos.zac.app.zoeken.converter.RESTSolrZoekResultaatConverter;
-import net.atos.zac.app.zoeken.model.RESTSolrZoekParameters;
+import net.atos.zac.app.shared.RESTResultaat;
+import net.atos.zac.app.zoeken.converter.RESTZoekParametersConverter;
+import net.atos.zac.app.zoeken.converter.RESTZoekResultaatConverter;
 import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
+import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.zoeken.ZoekenService;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekResultaat;
@@ -33,14 +33,14 @@ public class ZoekenRESTService {
     private ZoekenService zoekenService;
 
     @Inject
-    private RESTSolrZoekParametersConverter zoekZaakParametersConverter;
+    private RESTZoekParametersConverter zoekZaakParametersConverter;
 
     @Inject
-    private RESTSolrZoekResultaatConverter solrZoekResultaatConverter;
+    private RESTZoekResultaatConverter solrZoekResultaatConverter;
 
     @GET
     @Path("list")
-    public RESTResult<RESTZaakZoekObject> listZoekResultaat(@BeanParam final RESTSolrZoekParameters zoekZaakParameters) {
+    public RESTResultaat<RESTZaakZoekObject> listZoekResultaat(@BeanParam final RESTZoekParameters zoekZaakParameters) {
         final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
         return solrZoekResultaatConverter.convert(zoekResultaat);
     }

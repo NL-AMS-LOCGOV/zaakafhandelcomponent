@@ -32,14 +32,14 @@ public class ZaakZoekObject {
     @Field("zaak_startdatum")
     private Date startdatum;
 
-    @Field("zaak_streefdatum")
-    private Date streefdatum;
+    @Field("zaak_einddatumGepland")
+    private Date einddatumGepland;
 
     @Field("zaak_einddatum")
     private Date einddatum;
 
-    @Field("zaak_fataledatum")
-    private Date fataledatum;
+    @Field("zaak_uiterlijkeEinddatumAfdoening")
+    private Date uiterlijkeEinddatumAfdoening;
 
     @Field("zaak_publicatiedatum")
     private Date publicatiedatum;
@@ -92,8 +92,8 @@ public class ZaakZoekObject {
     @Field("zaak_zaaktypeOmschrijving")
     private String zaaktypeOmschrijving;
 
-    @Field("zaak_resultaatNaam")
-    private String resultaatNaam;
+    @Field("zaak_resultaattypeOmschrijving")
+    private String resultaattypeOmschrijving;
 
     @Field("zaak_resultaatToelichting")
     private String resultaatToelichting;
@@ -101,11 +101,11 @@ public class ZaakZoekObject {
     @Field("zaak_statusEindstatus")
     private boolean statusEindstatus;
 
-    @Field("zaak_statusNaam")
-    private String statusNaam;
+    @Field("zaak_statustypeOmschrijving")
+    private String statustypeOmschrijving;
 
-    @Field("zaak_statusToekenningsdatum")
-    private Date statusToekenningsdatum;
+    @Field("zaak_statusDatumGezet")
+    private Date statusDatumGezet;
 
     @Field("zaak_statusToelichting")
     private String statusToelichting;
@@ -170,12 +170,12 @@ public class ZaakZoekObject {
         this.startdatum = startdatum;
     }
 
-    public Date getStreefdatum() {
-        return streefdatum;
+    public Date getEinddatumGepland() {
+        return einddatumGepland;
     }
 
-    public void setStreefdatum(final Date streefdatum) {
-        this.streefdatum = streefdatum;
+    public void setEinddatumGepland(final Date einddatumGepland) {
+        this.einddatumGepland = einddatumGepland;
     }
 
     public Date getEinddatum() {
@@ -186,12 +186,12 @@ public class ZaakZoekObject {
         this.einddatum = einddatum;
     }
 
-    public Date getFataledatum() {
-        return fataledatum;
+    public Date getUiterlijkeEinddatumAfdoening() {
+        return uiterlijkeEinddatumAfdoening;
     }
 
-    public void setFataledatum(final Date fataledatum) {
-        this.fataledatum = fataledatum;
+    public void setUiterlijkeEinddatumAfdoening(final Date uiterlijkeEinddatumAfdoening) {
+        this.uiterlijkeEinddatumAfdoening = uiterlijkeEinddatumAfdoening;
     }
 
     public Date getPublicatiedatum() {
@@ -202,8 +202,8 @@ public class ZaakZoekObject {
         this.publicatiedatum = publicatiedatum;
     }
 
-    public void setStatusToekenningsdatum(final Date statusToekenningsdatum) {
-        this.statusToekenningsdatum = statusToekenningsdatum;
+    public void setStatusDatumGezet(final Date statusDatumGezet) {
+        this.statusDatumGezet = statusDatumGezet;
     }
 
     public String getCommunicatiekanaal() {
@@ -334,12 +334,12 @@ public class ZaakZoekObject {
         this.zaaktypeOmschrijving = zaaktypeOmschrijving;
     }
 
-    public String getResultaatNaam() {
-        return resultaatNaam;
+    public String getResultaattypeOmschrijving() {
+        return resultaattypeOmschrijving;
     }
 
-    public void setResultaatNaam(final String resultaatNaam) {
-        this.resultaatNaam = resultaatNaam;
+    public void setResultaattypeOmschrijving(final String resultaattypeOmschrijving) {
+        this.resultaattypeOmschrijving = resultaattypeOmschrijving;
     }
 
     public String getResultaatToelichting() {
@@ -358,16 +358,16 @@ public class ZaakZoekObject {
         this.statusEindstatus = statusEindstatus;
     }
 
-    public String getStatusNaam() {
-        return statusNaam;
+    public String getStatustypeOmschrijving() {
+        return statustypeOmschrijving;
     }
 
-    public void setStatusNaam(final String statusNaam) {
-        this.statusNaam = statusNaam;
+    public void setStatustypeOmschrijving(final String statustypeOmschrijving) {
+        this.statustypeOmschrijving = statustypeOmschrijving;
     }
 
-    public Date getStatusToekenningsdatum() {
-        return statusToekenningsdatum;
+    public Date getStatusDatumGezet() {
+        return statusDatumGezet;
     }
 
     public String getStatusToelichting() {

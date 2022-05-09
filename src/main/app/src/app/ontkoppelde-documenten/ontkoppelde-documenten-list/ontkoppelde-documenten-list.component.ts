@@ -60,8 +60,8 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 return data;
             })
         ).subscribe(data => {
-            this.paginator.length = data.count;
-            this.dataSource.data = data.results;
+            this.paginator.length = data.totaal;
+            this.dataSource.data = data.resultaten;
         });
     }
 

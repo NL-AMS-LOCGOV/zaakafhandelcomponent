@@ -119,11 +119,7 @@ public class NotificatieReceiver {
                 } else if (notificatie.getAction() == DELETE) {
                     zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 }
-            } else if (notificatie.getResource() == STATUS && notificatie.getAction() == CREATE) {
-                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
-            } else if (notificatie.getResource() == RESULTAAT && notificatie.getAction() == CREATE) {
-                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
-            } else if(notificatie.getResource() == ROL){
+            } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
                 zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
             }
         }

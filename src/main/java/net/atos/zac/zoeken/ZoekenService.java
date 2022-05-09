@@ -20,8 +20,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import net.atos.zac.zoeken.converter.ZaakZoekObjectConverter;
-import net.atos.zac.zoeken.model.SolrZoekParameters;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 
 @ApplicationScoped
@@ -39,7 +39,7 @@ public class ZoekenService {
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
-    public ZoekResultaat<ZaakZoekObject> zoekZaak(final SolrZoekParameters zoekZaakParameters) {
+    public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
         if (StringUtils.isBlank(zoekZaakParameters.getTekst())) {
             zoekZaakParameters.setTekst("*");
         }

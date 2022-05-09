@@ -10,7 +10,7 @@ import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {Results} from '../../shared/model/results';
+import {Resultaat} from '../../shared/model/resultaat';
 
 @Component({
     selector: 'zac-zoeken',
@@ -21,7 +21,7 @@ export class ZoekComponent implements OnInit {
 
     @Output() zoekItem = new EventEmitter<ZoekObject>();
 
-    zoekResultaat: Results<ZoekObject> = {count: 0, foutmelding: '', results: []};
+    zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
     loading = false;
     public zoekFormField: AbstractFormField;
 
@@ -36,7 +36,7 @@ export class ZoekComponent implements OnInit {
         const zoekParameters: ZoekParameters = new ZoekParameters();
         zoekParameters.tekst = this.zoekFormField.formControl.value;
         this.loading = true;
-        this.zoekResultaat.results = [];
+        this.zoekResultaat.resultaten = [];
         this.zoekService.list(zoekParameters).subscribe(resultaat => {
             this.zoekResultaat = resultaat;
             this.loading = false;

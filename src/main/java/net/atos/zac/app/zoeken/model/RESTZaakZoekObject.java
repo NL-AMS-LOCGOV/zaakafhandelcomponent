@@ -10,36 +10,70 @@ import java.util.UUID;
 
 public class RESTZaakZoekObject {
 
-    public String type;
-
     public UUID uuid;
 
+    public String type;
+
     public String identificatie;
-
-    public LocalDate startdatum;
-
-    public LocalDate registratiedatum;
-
-    public LocalDate einddatum;
-
-    public LocalDate streefdatum;
-
-    public LocalDate fataledatum;
-
-    public String zaaktypeNaam;
-
-    public String statusNaam;
-
-    public String resultaatNaam;
 
     public String omschrijving;
 
     public String toelichting;
 
-    public String locatie;
+    public LocalDate registratiedatum;
+
+    public LocalDate startdatum;
+
+    public LocalDate einddatumGepland;
+
+    public LocalDate einddatum;
+
+    public LocalDate uiterlijkeEinddatumAfdoening;
+
+    public LocalDate publicatiedatum;
+
+    public String communicatiekanaal;
+
+    public String vertrouwelijkheidaanduiding;
+
+    public boolean afgehandeld;
+
+    public String groepID;
+
+    public String groepNaam;
 
     public String behandelaarNaam;
 
-    public String groepNaam;
+    public String behandelaarGebruikersnaam;
+
+    public String initiatorIdentificatie;
+
+    public String locatie;
+
+    public boolean indicatieVerlenging;
+
+    public String duurVerlenging;
+
+    public String redenVerlenging;
+
+    public String redenOpschorting;
+
+    public String zaaktypeUuid;
+
+    public String zaaktypeIdentificatie;
+
+    public String zaaktypeOmschrijving;
+
+    public String resultaattypeOmschrijving;
+
+    public String resultaatToelichting;
+
+    public boolean statusEindstatus;
+
+    public String statustypeOmschrijving;
+
+    public LocalDate statusDatumGezet;
+
+    public String statusToelichting;
 
 }

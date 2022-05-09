@@ -7,7 +7,7 @@ package net.atos.zac.app.zoeken.model;
 
 import javax.ws.rs.QueryParam;
 
-public class RESTSolrZoekParameters {
+public class RESTZoekParameters {
 
     @QueryParam("tekst")
     public String tekst;

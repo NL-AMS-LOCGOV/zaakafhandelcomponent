@@ -8,7 +8,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {Results} from '../shared/model/results';
+import {Resultaat} from '../shared/model/resultaat';
 import {ZoekObject} from './model/zoek-object';
 import {ZoekParameters} from './model/zoek-parameters';
 
@@ -22,8 +22,8 @@ export class ZoekenService {
 
     private basepath = '/rest/zoeken';
 
-    list(zoekParameters: ZoekParameters): Observable<Results<ZoekObject>> {
-        return this.http.get<Results<ZoekObject>>(`${this.basepath}/list`, {
+    list(zoekParameters: ZoekParameters): Observable<Resultaat<ZoekObject>> {
+        return this.http.get<Resultaat<ZoekObject>>(`${this.basepath}/list`, {
             params: zoekParameters as any
         }).pipe(
             catchError(this.handleError)

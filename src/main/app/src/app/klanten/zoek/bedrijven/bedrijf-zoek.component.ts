@@ -85,7 +85,7 @@ export class BedrijfZoekComponent implements OnInit {
         this.loading = true;
         this.bedrijven.data = [];
         this.klantenService.listBedrijven(this.createListParameters()).subscribe(bedrijven => {
-            this.bedrijven.data = bedrijven.results;
+            this.bedrijven.data = bedrijven.resultaten;
             this.foutmelding = bedrijven.foutmelding;
             this.loading = false;
         });
