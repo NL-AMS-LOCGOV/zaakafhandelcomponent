@@ -53,8 +53,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTInformatieObjectZoekParamet
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 
@@ -92,8 +91,7 @@ public class InformatieObjectenRESTService {
     private RESTHistorieRegelConverter restHistorieRegelConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     @Inject
     @ActiveSession
@@ -238,7 +236,7 @@ public class InformatieObjectenRESTService {
     }
 
     private String lockEigenaar() {
-        return ingelogdeMedewerker.get().getGebruikersnaam();
+        return loggedInUserInstance.get().getId();
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {

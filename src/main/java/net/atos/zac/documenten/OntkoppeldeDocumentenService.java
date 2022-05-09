@@ -25,8 +25,7 @@ import javax.transaction.Transactional;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.SortDirection;
@@ -41,8 +40,7 @@ public class OntkoppeldeDocumentenService {
     private EntityManager entityManager;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public OntkoppeldDocument create(final OntkoppeldDocument document) {
         valideerObject(document);
@@ -58,7 +56,7 @@ public class OntkoppeldeDocumentenService {
         ontkoppeldDocument.setTitel(informatieobject.getTitel());
         ontkoppeldDocument.setBestandsnaam(informatieobject.getBestandsnaam());
         ontkoppeldDocument.setOntkoppeldOp(ZonedDateTime.now());
-        ontkoppeldDocument.setOntkoppeldDoor(ingelogdeMedewerker.get().getGebruikersnaam());
+        ontkoppeldDocument.setOntkoppeldDoor(loggedInUserInstance.get().getId());
         ontkoppeldDocument.setZaakID(zaak.getIdentificatie());
         ontkoppeldDocument.setReden(reden);
         return create(ontkoppeldDocument);

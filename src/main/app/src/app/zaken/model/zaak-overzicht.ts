@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {ZaakResultaat} from './zaak-resultaat';
 
 export class ZaakOverzicht {
@@ -14,7 +14,7 @@ export class ZaakOverzicht {
     startdatum: string;
     status: string;
     zaaktype: string;
-    behandelaar: Medewerker;
+    behandelaar: User;
     uiterlijkeDatumAfdoening: string;
     resultaat: ZaakResultaat;
 }

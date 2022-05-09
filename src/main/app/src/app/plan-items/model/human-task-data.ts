@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Groep} from '../../identity/model/groep';
-import {Medewerker} from '../../identity/model/medewerker';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 import {TaakStuurGegevens} from './taak-stuur-gegevens';
 
 export class HumanTaskData {
     planItemInstanceId: string;
-    groep: Groep;
-    medewerker: Medewerker;
+    groep: Group;
+    medewerker: User;
     taakdata: {};
     taakStuurGegevens: TaakStuurGegevens;
 }

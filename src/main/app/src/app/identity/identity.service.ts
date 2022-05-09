@@ -6,10 +6,10 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Groep} from './model/groep';
+import {Group} from './model/group';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {Medewerker} from './model/medewerker';
+import {User} from './model/user';
 import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 
 @Injectable({
@@ -22,32 +22,32 @@ export class IdentityService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    listGroepen(): Observable<Groep[]> {
-        return this.http.get<Groep[]>(`${this.basepath}/groepen`).pipe(
+    listGroups(): Observable<Group[]> {
+        return this.http.get<Group[]>(`${this.basepath}/groups`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    listMedewerkersInGroep(groepId: string): Observable<Medewerker[]> {
-        return this.http.get<Medewerker[]>(`${this.basepath}/groepen/${groepId}/medewerkers`).pipe(
+    listUsersInGroup(groupId: string): Observable<User[]> {
+        return this.http.get<User[]>(`${this.basepath}/groups/${groupId}/users`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    listMedewerkers(): Observable<Medewerker[]> {
-        return this.http.get<Medewerker[]>(`${this.basepath}/medewerkers`).pipe(
+    listUsers(): Observable<User[]> {
+        return this.http.get<User[]>(`${this.basepath}/users`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    readIngelogdeMedewerker(): Observable<Medewerker> {
-        const ingelogdeMedewerker = SessionStorageUtil.getItem('ingelogdeMedewerker') as Medewerker;
-        if (ingelogdeMedewerker) {
-            return of(ingelogdeMedewerker);
+    readLoggedInUser(): Observable<User> {
+        const loggedInUser = SessionStorageUtil.getItem('loggedInUser') as User;
+        if (loggedInUser) {
+            return of(loggedInUser);
         }
-        return this.http.get<Medewerker>(`${this.basepath}/ingelogdemedewerker`).pipe(
-            tap(medewerker => {
-                SessionStorageUtil.setItem('ingelogdeMedewerker', medewerker);
+        return this.http.get<User>(`${this.basepath}/loggedInUser`).pipe(
+            tap(user => {
+                SessionStorageUtil.setItem('loggedInUser', user);
             }),
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

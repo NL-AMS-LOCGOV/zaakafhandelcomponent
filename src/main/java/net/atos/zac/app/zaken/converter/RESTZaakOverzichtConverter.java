@@ -15,8 +15,8 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.datatable.Pagination;
 import net.atos.zac.util.OpenZaakPaginationUtil;
@@ -36,10 +36,10 @@ public class RESTZaakOverzichtConverter {
     private RESTZaakStatusConverter restZaakStatusConverter;
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groupConverter;
 
     @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private RESTUserConverter userConverter;
 
     @Inject
     private RESTOpenstaandeTakenConverter openstaandeTakenConverter;
@@ -61,17 +61,17 @@ public class RESTZaakOverzichtConverter {
             restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }
 
-        final String groepId = zgwApiService.findGroepForZaak(zaak.getUrl())
+        final String groupId = zgwApiService.findGroepForZaak(zaak.getUrl())
                 .filter(Objects::nonNull)
                 .map(groep -> groep.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
-        restZaakOverzicht.groep = groepConverter.convertGroupId(groepId);
+        restZaakOverzicht.groep = groupConverter.convertGroupId(groupId);
 
         final String behandelaarId = zgwApiService.findBehandelaarForZaak(zaak.getUrl())
                 .filter(Objects::nonNull)
                 .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
-        restZaakOverzicht.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
+        restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaarId);
 
         restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 

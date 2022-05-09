@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class Groep {
+export class User {
     id: string;
     naam: string;
 }

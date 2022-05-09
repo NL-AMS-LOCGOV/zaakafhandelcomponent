@@ -7,17 +7,18 @@ package net.atos.zac.signalering.model;
 
 public enum SignaleringTarget {
 
-    GROEP,
-    MEDEWERKER;
+    GROUP,
+    USER;
 
     public static final class Mail {
+
         public final String naam;
 
-        public final String adres;
+        public final String emailadres;
 
-        public Mail(final String naam, final String adres) {
+        public Mail(final String naam, final String emailadres) {
             this.naam = naam;
-            this.adres = adres;
+            this.emailadres = emailadres;
         }
     }
 }

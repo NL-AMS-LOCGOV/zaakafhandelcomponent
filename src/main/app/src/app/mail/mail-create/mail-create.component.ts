@@ -18,7 +18,7 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {HttpClient} from '@angular/common/http';
 import {TakenService} from '../../taken/taken.service';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
 import {MailService} from '../mail.service';
 import {MailObject} from '../model/mailobject';
@@ -35,7 +35,7 @@ export class MailCreateComponent implements OnInit {
     @Input() zaak: Zaak;
     @Output() mailVerstuurd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
-    ingelogdeMedewerker: Medewerker;
+    ingelogdeMedewerker: User;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -51,7 +51,7 @@ export class MailCreateComponent implements OnInit {
 
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
-        this.identityService.readIngelogdeMedewerker().subscribe(medewerker => {
+        this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
         const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')

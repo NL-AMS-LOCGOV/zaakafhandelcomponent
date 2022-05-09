@@ -13,7 +13,7 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.notificaties.Channel;
 import net.atos.zac.notificaties.Notificatie;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -25,20 +25,20 @@ import net.atos.zac.signalering.model.SignaleringType;
  */
 public class SignaleringEventUtil {
 
-    private static <ID> SignaleringEvent<ID> instance(final SignaleringType.Type signaleringType, final ID objectId, final Medewerker actor) {
+    private static <ID> SignaleringEvent<ID> instance(final SignaleringType.Type signaleringType, final ID objectId, final User actor) {
         return new SignaleringEvent<>(signaleringType, objectId, actor);
     }
 
-    public static SignaleringEvent<URI> event(final SignaleringType.Type signaleringType, final Zaak zaak, final Medewerker actor) {
+    public static SignaleringEvent<URI> event(final SignaleringType.Type signaleringType, final Zaak zaak, final User actor) {
         return instance(signaleringType, zaak.getUrl(), actor);
     }
 
     public static SignaleringEvent<URI> event(final SignaleringType.Type signaleringType, final EnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final Medewerker actor) {
+            final User actor) {
         return instance(signaleringType, enkelvoudigInformatieobject.getUrl(), actor);
     }
 
-    public static SignaleringEvent<String> event(final SignaleringType.Type signaleringType, final TaskInfo taak, final Medewerker actor) {
+    public static SignaleringEvent<String> event(final SignaleringType.Type signaleringType, final TaskInfo taak, final User actor) {
         return instance(signaleringType, taak.getId(), actor);
     }
 

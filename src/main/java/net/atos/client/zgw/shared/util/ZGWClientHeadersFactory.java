@@ -22,8 +22,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 
 /**
  *
@@ -31,8 +30,7 @@ import net.atos.zac.authentication.Medewerker;
 public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     private static final String CLIENT_ID = ConfigProvider.getConfig().getValue("zgw.api.clientId", String.class);
 
@@ -43,36 +41,36 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     @Override
     public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
             final MultivaluedMap<String, String> clientOutgoingHeaders) {
-        final Medewerker medewerker = ingelogdeMedewerker.get();
+        final LoggedInUser loggedInUser = loggedInUserInstance.get();
         try {
-            addAutorizationHeader(clientOutgoingHeaders, medewerker);
-            addXAuditToelichtingHeader(clientOutgoingHeaders, medewerker);
+            addAutorizationHeader(clientOutgoingHeaders, loggedInUser);
+            addXAuditToelichtingHeader(clientOutgoingHeaders, loggedInUser);
             return clientOutgoingHeaders;
         } finally {
-            clearAuditToelichting(medewerker);
+            clearAuditToelichting(loggedInUser);
         }
     }
 
     public String generateJWTToken() {
-        return generateJWTToken(ingelogdeMedewerker.get());
+        return generateJWTToken(loggedInUserInstance.get());
     }
 
     public void setAuditToelichting(final String toelichting) {
         if (toelichting != null) {
-            final Medewerker medewerker = ingelogdeMedewerker.get();
-            if (medewerker != null) {
-                AUDIT_TOELICHTINGEN.put(ingelogdeMedewerker.get().getGebruikersnaam(), toelichting);
+            final LoggedInUser loggedInUser = loggedInUserInstance.get();
+            if (loggedInUser != null) {
+                AUDIT_TOELICHTINGEN.put(loggedInUser.getId(), toelichting);
             }
         }
     }
 
-    private void clearAuditToelichting(final Medewerker medewerker) {
-        if (medewerker != null) {
-            AUDIT_TOELICHTINGEN.remove(ingelogdeMedewerker.get().getGebruikersnaam());
+    private void clearAuditToelichting(final LoggedInUser loggedInUser) {
+        if (loggedInUser != null) {
+            AUDIT_TOELICHTINGEN.remove(loggedInUser.getId());
         }
     }
 
-    private String generateJWTToken(final Medewerker ingelogdeMedewerker) {
+    private String generateJWTToken(final LoggedInUser loggedInUser) {
         final Map<String, Object> headerClaims = new HashMap<>();
         headerClaims.put("client_identifier", CLIENT_ID);
         final JWTCreator.Builder jwtBuilder = JWT.create();
@@ -80,25 +78,21 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
                 .withIssuedAt(new Date())
                 .withHeader(headerClaims)
                 .withClaim("client_id", CLIENT_ID);
-        if (ingelogdeMedewerker != null) {
-            if (ingelogdeMedewerker.getGebruikersnaam() != null) {
-                jwtBuilder.withClaim("user_id", ingelogdeMedewerker.getGebruikersnaam());
-            }
-            if (ingelogdeMedewerker.getNaam() != null) {
-                jwtBuilder.withClaim("user_representation", ingelogdeMedewerker.getNaam());
-            }
+        if (loggedInUser != null) {
+            jwtBuilder.withClaim("user_id", loggedInUser.getId());
+            jwtBuilder.withClaim("user_representation", loggedInUser.getFullName());
         }
         String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
         return "Bearer " + jwtToken;
     }
 
-    private void addAutorizationHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final Medewerker medewerker) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(medewerker));
+    private void addAutorizationHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final LoggedInUser loggedInUser) {
+        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(loggedInUser));
     }
 
-    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final Medewerker medewerker) {
-        if (medewerker != null) {
-            final String toelichting = AUDIT_TOELICHTINGEN.get(medewerker.getGebruikersnaam());
+    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final LoggedInUser loggedInUser) {
+        if (loggedInUser != null) {
+            final String toelichting = AUDIT_TOELICHTINGEN.get(loggedInUser.getId());
             if (toelichting != null) {
                 clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
             }

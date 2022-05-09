@@ -8,8 +8,8 @@ package net.atos.zac.app.admin.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 
 public class RESTZaakafhandelParameters {
@@ -20,9 +20,9 @@ public class RESTZaakafhandelParameters {
 
     public RESTCaseDefinition caseDefinition;
 
-    public RESTMedewerker defaultBehandelaar;
+    public RESTUser defaultBehandelaar;
 
-    public RESTGroep defaultGroep;
+    public RESTGroup defaultGroep;
 
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
 

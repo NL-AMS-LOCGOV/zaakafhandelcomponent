@@ -5,7 +5,7 @@
 
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Notitie} from './model/notitie';
-import {Medewerker} from '../identity/model/medewerker';
+import {User} from '../identity/model/user';
 import {IdentityService} from '../identity/identity.service';
 import {NotitieService} from './notities.service';
 
@@ -21,7 +21,7 @@ export class NotitiesComponent implements OnInit {
 
     @ViewChild('notitieTekst') notitieTekst;
 
-    ingelogdeMedewerker: Medewerker;
+    ingelogdeMedewerker: User;
 
     aantalNotities: number = 0;
     laatNotitiesSchermZien: boolean = true;
@@ -33,7 +33,7 @@ export class NotitiesComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
         this.haalNotitiesOp();
@@ -61,7 +61,7 @@ export class NotitiesComponent implements OnInit {
             let notitie: Notitie = new Notitie();
             notitie.zaakUUID = this.uuid;
             notitie.tekst = tekst;
-            notitie.gebruikersnaamMedewerker = this.ingelogdeMedewerker.gebruikersnaam;
+            notitie.gebruikersnaamMedewerker = this.ingelogdeMedewerker.id;
 
             this.notitieService.createNotitie(notitie).subscribe(notitie => {
                 this.notities.splice(0, 0, notitie);

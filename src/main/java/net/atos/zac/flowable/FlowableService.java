@@ -52,8 +52,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
 
 /**
@@ -97,8 +96,7 @@ public class FlowableService {
     private MailService mailService;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public static class TaskDescriptionChangedData {
 
@@ -210,7 +208,7 @@ public class FlowableService {
         }
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
-                .transientVariable(VAR_TASK_OWNER, ingelogdeMedewerker.get().getGebruikersnaam())
+                .transientVariable(VAR_TASK_OWNER, loggedInUserInstance.get().getId())
                 .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
                 .transientVariable(VAR_TASK_ASSIGNEE, assignee)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)

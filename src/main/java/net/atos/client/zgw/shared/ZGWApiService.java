@@ -48,8 +48,7 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -86,8 +85,7 @@ public class ZGWApiService implements Caching {
     private EventingService eventingService;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     /**
      * Create {@link Zaak} and calculate Doorlooptijden.
@@ -200,7 +198,7 @@ public class ZGWApiService implements Caching {
         zaakInformatieObject.setBeschrijving(beschrijving);
         final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(zaak));
-        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, ingelogdeMedewerker.get()));
+        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, loggedInUserInstance.get()));
         return created;
     }
 

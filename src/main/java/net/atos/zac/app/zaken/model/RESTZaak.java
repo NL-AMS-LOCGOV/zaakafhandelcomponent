@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
 
 public class RESTZaak {
 
@@ -64,9 +64,9 @@ public class RESTZaak {
 
     public String duurVerlenging;
 
-    public RESTGroep groep;
+    public RESTGroup groep;
 
-    public RESTMedewerker behandelaar;
+    public RESTUser behandelaar;
 
     public List<RESTGerelateerdeZaak> gerelateerdeZaken;
 

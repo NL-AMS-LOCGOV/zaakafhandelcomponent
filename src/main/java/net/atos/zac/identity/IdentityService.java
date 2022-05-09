@@ -26,7 +26,6 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.zac.identity.model.Group;
@@ -106,11 +105,6 @@ public class IdentityService {
                 .map(this::convertToGroup)
                 .orElse(new Group(groupId));
 
-    }
-
-    // ToDo Deze methode kan verwijderd worden na uitvoeren van #860
-    public List<Group> listGroupsForUser(final String userId) {
-        throw new NotImplementedException("Deze functionaliteit is niet nodig.");
     }
 
     public List<User> listUsersInGroup(final String groupId) {

@@ -7,16 +7,16 @@ package net.atos.zac.app.planitems.model;
 
 import java.util.Map;
 
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
 
 public class RESTHumanTaskData {
 
     public String planItemInstanceId;
 
-    public RESTGroep groep;
+    public RESTGroup groep;
 
-    public RESTMedewerker medewerker;
+    public RESTUser medewerker;
 
     public Map<String, String> taakdata;
 
