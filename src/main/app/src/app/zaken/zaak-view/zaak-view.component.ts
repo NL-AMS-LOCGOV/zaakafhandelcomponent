@@ -26,7 +26,7 @@ import {NotitieType} from '../../notities/model/notitietype.enum';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
@@ -97,7 +97,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
-    private ingelogdeMedewerker: Medewerker;
+    private ingelogdeMedewerker: User;
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -155,7 +155,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
@@ -205,11 +205,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                                  .value(this.zaak.behandelaar)
                                                                                  .optionLabel('naam')
                                                                                  .options(
-                                                                                     this.identityService.listMedewerkers())
+                                                                                     this.identityService.listUsers())
                                                                                  .build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroepen())
+                                                                           .options(this.identityService.listGroups())
                                                                            .build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving)
@@ -565,7 +565,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== zaakOrTaak.behandelaar?.gebruikersnaam && zaakOrTaak.status !== TaakStatus.Afgerond;
+        return this.ingelogdeMedewerker.id !== zaakOrTaak.behandelaar?.id && zaakOrTaak.status !== TaakStatus.Afgerond;
     }
 
     assignToMe(event: any): void {

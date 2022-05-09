@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.UserEventListenerActie;
@@ -32,7 +32,7 @@ import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 public class RESTPlanItemConverter {
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groepConverter;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;

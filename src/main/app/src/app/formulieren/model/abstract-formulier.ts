@@ -7,11 +7,11 @@ import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {FormGroup} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
-import {Groep} from '../../identity/model/groep';
+import {Group} from '../../identity/model/group';
 import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {Taakinformatie} from '../../taken/model/taakinformatie';
 
 export abstract class AbstractFormulier {
@@ -59,7 +59,7 @@ export abstract class AbstractFormulier {
     }
 
     getPlanItem(formGroup: FormGroup): PlanItem {
-        const toekenning: { groep: Groep, medewerker?: Medewerker } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
+        const toekenning: { groep: Group, medewerker?: User } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
         this.planItem.medewerker = toekenning.medewerker;
         this.planItem.groep = toekenning.groep;
         this.planItem.taakdata = this.getDataElementen(formGroup);

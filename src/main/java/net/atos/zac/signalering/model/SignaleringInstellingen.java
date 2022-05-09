@@ -53,10 +53,10 @@ public class SignaleringInstellingen {
     public SignaleringInstellingen(final SignaleringType type, final SignaleringTarget ownerType, final String ownerId) {
         this.type = type;
         switch (ownerType) {
-            case GROEP -> {
+            case GROUP -> {
                 this.groep = ownerId;
             }
-            case MEDEWERKER -> {
+            case USER -> {
                 this.medewerker = ownerId;
             }
         }

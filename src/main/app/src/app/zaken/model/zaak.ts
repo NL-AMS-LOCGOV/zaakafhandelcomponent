@@ -4,13 +4,13 @@
  */
 
 import {Zaaktype} from './zaaktype';
-import {Groep} from '../../identity/model/groep';
+import {Group} from '../../identity/model/group';
 import {ZaakStatus} from './zaak-status';
 import {ZaakResultaat} from './zaak-resultaat';
 import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
 import {ZaakEigenschap} from './zaak-eigenschap';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
 import {ZaakRechten} from './zaak-rechten';
@@ -41,8 +41,8 @@ export class Zaak {
     indicatieVerlenging: boolean;
     redenVerlenging: string;
     duurVerlenging: string;
-    groep: Groep;
-    behandelaar: Medewerker;
+    groep: Group;
+    behandelaar: User;
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];

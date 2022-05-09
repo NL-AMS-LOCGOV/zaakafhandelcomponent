@@ -4,8 +4,8 @@
  */
 
 import {PlanItemType} from './plan-item-type.enum';
-import {Groep} from '../../identity/model/groep';
-import {Medewerker} from '../../identity/model/medewerker';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 import {TaakStuurGegevens} from './taak-stuur-gegevens';
 import {UserEventListenerActie} from './user-event-listener-actie-enum';
 
@@ -13,8 +13,8 @@ export class PlanItem {
     id: string;
     naam: string;
     type: PlanItemType;
-    groep: Groep;
-    medewerker: Medewerker;
+    groep: Group;
+    medewerker: User;
     formulierDefinitie: string;
     zaakUuid: string;
     taakdata: {};

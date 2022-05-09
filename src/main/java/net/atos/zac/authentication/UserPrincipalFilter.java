@@ -6,10 +6,8 @@
 package net.atos.zac.authentication;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -20,15 +18,15 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.atos.zac.flowable.FlowableHelper;
+import org.wildfly.security.http.oidc.IDToken;
+import org.wildfly.security.http.oidc.OidcPrincipal;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(UserPrincipalFilter.class.getName());
 
-    @Inject
-    private FlowableHelper flowableHelper;
+    private static final String GROUP_MEMBERSHIP_CLAIM_NAME = "group_membership";
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -40,24 +38,24 @@ public class UserPrincipalFilter implements Filter {
             throws ServletException, IOException {
         if (servletRequest instanceof HttpServletRequest) {
             final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-            final Principal principal = httpServletRequest.getUserPrincipal();
+            final OidcPrincipal principal = (OidcPrincipal) httpServletRequest.getUserPrincipal();
 
             if (principal != null) {
                 HttpSession httpSession = httpServletRequest.getSession(true);
-                Medewerker ingelogdeMedewerker = SecurityUtil.getIngelogdeMedewerker(httpSession);
+                LoggedInUser loggedInUser = SecurityUtil.getLoggedInUser(httpSession);
 
-                if (ingelogdeMedewerker != null && !ingelogdeMedewerker.getGebruikersnaam().equals(principal.getName())) {
-                    ingelogdeMedewerker = null;
+                if (loggedInUser != null && !loggedInUser.getId().equals(principal.getName())) {
+                    LOG.info(String.format("HTTP session of user '%s' on context path %s is invalidated", loggedInUser.getId(),
+                                           httpServletRequest.getServletContext().getContextPath()));
+                    loggedInUser = null;
                     httpSession.invalidate();
                     httpSession = httpServletRequest.getSession(true);
-                    LOG.info(String.format("HTTP session of medewerker '%s' on context path %s is invalidated", ingelogdeMedewerker.getGebruikersnaam(),
-                                           httpServletRequest.getServletContext().getContextPath()));
                 }
 
-                if (ingelogdeMedewerker == null) {
-                    ingelogdeMedewerker = flowableHelper.createMedewerker(principal.getName());
-                    SecurityUtil.setIngelogdeMedewerker(httpSession, ingelogdeMedewerker);
-                    LOG.info(String.format("Medewerker '%s' logged in on context path %s", ingelogdeMedewerker.getGebruikersnaam(),
+                if (loggedInUser == null) {
+                    loggedInUser = createLoggedInUser(principal.getOidcSecurityContext().getIDToken());
+                    SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
+                    LOG.info(String.format("User '%s' logged in on context path %s", loggedInUser.getId(),
                                            httpServletRequest.getServletContext().getContextPath()));
                 }
             }
@@ -69,5 +67,14 @@ public class UserPrincipalFilter implements Filter {
     @Override
     public void destroy() {
         Filter.super.destroy();
+    }
+
+    private LoggedInUser createLoggedInUser(final IDToken idToken) {
+        return new LoggedInUser(idToken.getPreferredUsername(),
+                                idToken.getGivenName(),
+                                idToken.getFamilyName(),
+                                idToken.getName(),
+                                idToken.getEmail(),
+                                idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME));
     }
 }

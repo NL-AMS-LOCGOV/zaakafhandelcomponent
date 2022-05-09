@@ -6,8 +6,8 @@
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from './case-definition';
 import {HumanTaskParameter} from './human-task-parameter';
-import {Groep} from '../../identity/model/groep';
-import {Medewerker} from '../../identity/model/medewerker';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
 
@@ -17,6 +17,6 @@ export class ZaakafhandelParameters {
     humanTaskParameters: HumanTaskParameter[];
     userEventListenerParameters: UserEventListenerParameter[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];
-    defaultGroep: Groep;
-    defaultBehandelaar: Medewerker;
+    defaultGroep: Group;
+    defaultBehandelaar: User;
 }

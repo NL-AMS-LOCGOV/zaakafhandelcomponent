@@ -22,8 +22,8 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
@@ -47,13 +47,13 @@ public class RESTZaakConverter {
     private RESTZaakResultaatConverter zaakResultaatConverter;
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groupConverter;
 
     @Inject
     private RESTGerelateerdeZaakConverter gerelateerdeZaakConverter;
 
     @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private RESTUserConverter userConverter;
 
     @Inject
     private RESTZaakEigenschappenConverter zaakEigenschappenConverter;
@@ -130,13 +130,13 @@ public class RESTZaakConverter {
                 .filter(Objects::nonNull)
                 .map(groep -> groep.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
-        restZaak.groep = groepConverter.convertGroupId(groepId);
+        restZaak.groep = groupConverter.convertGroupId(groepId);
 
         final String behandelaarId = zgwApiService.findBehandelaarForZaak(zaak.getUrl())
                 .filter(Objects::nonNull)
                 .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
-        restZaak.behandelaar = medewerkerConverter.convertUserId(behandelaarId);
+        restZaak.behandelaar = userConverter.convertUserId(behandelaarId);
         restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);

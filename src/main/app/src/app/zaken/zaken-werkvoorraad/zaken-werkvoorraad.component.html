@@ -27,7 +27,7 @@
                     <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
-                        {{groep.naam | translate}}
+                        {{groep.naam}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -89,7 +89,7 @@
                 {{ 'status' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.status | translate | empty }}
+                {{ row.status | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="zaaktype">
@@ -97,7 +97,7 @@
                 {{ 'zaaktype' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.zaaktype | translate | empty }}
+                {{ row.zaaktype | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="omschrijving">
@@ -105,7 +105,7 @@
                 {{ 'omschrijving' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.omschrijving | translate | empty }}
+                {{ row.omschrijving | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="groep">
@@ -168,7 +168,7 @@
                 {{ 'toelichting' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
-                {{ row.toelichting | translate | empty }}
+                {{ row.toelichting | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="openstaandeTaken">

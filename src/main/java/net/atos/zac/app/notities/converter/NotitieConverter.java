@@ -7,24 +7,22 @@ package net.atos.zac.app.notities.converter;
 
 import java.time.ZonedDateTime;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.flowable.idm.api.User;
-
 import net.atos.zac.app.notities.model.RESTNotitie;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.notities.model.Notitie;
 
 public class NotitieConverter {
 
     @Inject
-    private FlowableService flowableService;
+    private IdentityService identityService;
 
     @Inject
-    @IngelogdeMedewerker
-    private Medewerker ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public RESTNotitie convertToRESTNotitie(final Notitie notitie) {
         final RESTNotitie restNotitie = new RESTNotitie();
@@ -35,12 +33,10 @@ public class NotitieConverter {
         restNotitie.tijdstipLaatsteWijziging = notitie.getTijdstipLaatsteWijziging();
         restNotitie.gebruikersnaamMedewerker = notitie.getGebruikersnaamMedewerker();
 
-        final User medewerker = flowableService.readUser(notitie.getGebruikersnaamMedewerker());
-        restNotitie.voornaamAchternaamMedewerker = String.format("%s %s", medewerker.getFirstName(),
-                                                                 medewerker.getLastName());
+        final User medewerker = identityService.readUser(notitie.getGebruikersnaamMedewerker());
+        restNotitie.voornaamAchternaamMedewerker = String.format("%s %s", medewerker.getFirstName(), medewerker.getLastName());
 
-        restNotitie.bewerkenToegestaan =
-                ingelogdeMedewerker.getGebruikersnaam().equals(notitie.getGebruikersnaamMedewerker());
+        restNotitie.bewerkenToegestaan = loggedInUserInstance.get().getId().equals(notitie.getGebruikersnaamMedewerker());
 
         return restNotitie;
     }

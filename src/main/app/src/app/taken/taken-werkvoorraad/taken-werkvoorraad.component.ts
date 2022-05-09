@@ -18,7 +18,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 import {IdentityService} from '../../identity/identity.service';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -39,7 +39,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     dataSource: TakenWerkvoorraadDatasource;
     expandedRow: Taak | null;
     selection = new SelectionModel<Taak>(true, []);
-    private ingelogdeMedewerker: Medewerker;
+    private ingelogdeMedewerker: User;
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
@@ -85,13 +85,13 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
 
     showAssignToMe(taak: Taak): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
     assignToMe(taak: Taak, event) {

@@ -24,7 +24,7 @@ import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-co
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {ConfiguratieService} from '../../configuratie/configuratie.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
@@ -46,7 +46,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     fields: Array<AbstractFormField[]>;
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
-    ingelogdeMedewerker: Medewerker;
+    ingelogdeMedewerker: User;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -198,7 +198,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }

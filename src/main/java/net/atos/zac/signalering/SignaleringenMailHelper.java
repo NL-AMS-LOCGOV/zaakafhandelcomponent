@@ -13,7 +13,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -22,10 +21,11 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringSubject;
@@ -50,20 +50,19 @@ public class SignaleringenMailHelper {
     private FlowableService flowableService;
 
     @Inject
-    private FlowableHelper flowableHelper;
+    private IdentityService identityService;
 
     public SignaleringTarget.Mail getTargetMail(final Signalering signalering) {
         switch (signalering.getTargettype()) {
-            case GROEP -> {
-                final Group group = flowableService.readGroup(signalering.getTarget());
+            case GROUP -> {
+                final Group group = identityService.readGroup(signalering.getTarget());
                 // TODO return group name and E-Mail address when and if available
                 return null;
             }
-            case MEDEWERKER -> {
-                final Medewerker medewerker = flowableHelper.createMedewerker(signalering.getTarget());
-                if (medewerker.getEmail() != null) {
-                    return new SignaleringTarget.Mail(medewerker.getNaam() != null ? medewerker.getNaam() : medewerker.getGebruikersnaam(),
-                                                      medewerker.getEmail());
+            case USER -> {
+                final User user = identityService.readUser(signalering.getTarget());
+                if (user.getEmail() != null) {
+                    return new SignaleringTarget.Mail(user.getFullName(), user.getEmail());
                 }
             }
         }
@@ -101,7 +100,7 @@ public class SignaleringenMailHelper {
     }
 
     public Ontvanger formatTo(final SignaleringTarget.Mail mail) {
-        return new Ontvanger(mail.adres, mail.naam);
+        return new Ontvanger(mail.emailadres, mail.naam);
     }
 
     public String formatSubject(final SignaleringType.Type signaleringType, final SignaleringSubject.Link link) {

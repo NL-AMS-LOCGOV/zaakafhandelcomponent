@@ -5,9 +5,9 @@
 
 package net.atos.zac.app.identity.model;
 
-public class RESTMedewerker {
+public class RESTGroup {
 
-    public String gebruikersnaam;
+    public String id;
 
     public String naam;
 }

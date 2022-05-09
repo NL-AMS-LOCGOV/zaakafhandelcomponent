@@ -38,7 +38,7 @@ export class TakenVerdelenDialogComponent implements OnInit {
     ngOnInit(): void {
         this.medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
                                                                      .optionLabel('naam')
-                                                                     .options(this.identityService.listMedewerkers())
+                                                                     .options(this.identityService.listUsers())
                                                                      .validators(Validators.required).build();
 
     }

@@ -28,8 +28,7 @@ import net.atos.zac.app.configuratie.model.RESTTaal;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.UriUtil;
 
@@ -45,8 +44,7 @@ public class RESTInformatieobjectConverter {
     private RESTTaalConverter restTaalConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTEnkelvoudigInformatieobject restObject = convert(zaakInformatieObject.getInformatieobject());
@@ -126,7 +124,7 @@ public class RESTInformatieobjectConverter {
                 ConfiguratieService.BRON_ORGANISATIE,
                 LocalDate.now(),
                 documentData.documentTitel,
-                ingelogdeMedewerker.get().getNaam(),
+                loggedInUserInstance.get().getFullName(),
                 ConfiguratieService.TAAL_NEDERLANDS,
                 documentData.documentType.url,
                 Base64.getEncoder().encodeToString(bestand.file)

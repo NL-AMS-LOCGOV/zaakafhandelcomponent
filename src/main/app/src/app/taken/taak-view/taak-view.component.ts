@@ -23,7 +23,7 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -50,7 +50,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     formConfig: FormConfig;
     posts: number = 0;
     private taakListener: WebsocketListener;
-    private ingelogdeMedewerker: Medewerker;
+    private ingelogdeMedewerker: User;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
@@ -107,13 +107,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
             new AutocompleteFormFieldBuilder().id('behandelaar')
                                               .label('behandelaar')
                                               .value(this.taak.behandelaar).optionLabel('naam')
-                                              .options(this.identityService.listMedewerkers())
+                                              .options(this.identityService.listUsers())
                                               .build());
         this.editFormFields.set('groep',
             new AutocompleteFormFieldBuilder().id('groep')
                                               .label('groep')
                                               .value(this.taak.groep).optionLabel('naam')
-                                              .options(this.identityService.listGroepen())
+                                              .options(this.identityService.listGroups())
                                               .build());
         this.editFormFields.set('toelichting',
             new TextareaFormFieldBuilder().id('toelichting')
@@ -204,13 +204,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
 
     showAssignToMe(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== this.taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.id !== this.taak.behandelaar?.id;
     }
 
     assignToMe(): void {
