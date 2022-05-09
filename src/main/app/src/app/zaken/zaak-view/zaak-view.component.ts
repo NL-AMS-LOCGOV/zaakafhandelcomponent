@@ -59,6 +59,7 @@ import {UserEventListenerData} from '../../plan-items/model/user-event-listener-
 import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
 import {map} from 'rxjs/operators';
+import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {Observable, share} from 'rxjs';
 
 @Component({
@@ -670,11 +671,3 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 }
 
-export class ExpandableTableData<T> {
-    data: T;
-    expanded: boolean;
-
-    constructor(data: T) {
-        this.data = data;
-    }
-}

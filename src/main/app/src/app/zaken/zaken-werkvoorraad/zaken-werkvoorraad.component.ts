@@ -23,7 +23,7 @@ import {Medewerker} from '../../identity/model/medewerker';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijst-data';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
