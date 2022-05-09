@@ -28,6 +28,12 @@ export class Advies extends AbstractFormulier {
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
+    taakinformatieMapping = {
+        uitkomst: this.fields.ADVIES,
+        opmerking: this.fields.TOELICHTING,
+        bijlage: this.fields.BIJLAGE
+    };
+
     constructor(
         translate: TranslateService,
         public takenService: TakenService,

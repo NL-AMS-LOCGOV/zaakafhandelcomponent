@@ -76,6 +76,8 @@ public class FlowableService {
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
+    public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
+
     public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
 
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
@@ -302,21 +304,45 @@ public class FlowableService {
 
 
     public Map<String, String> readTaakdataForOpenTask(final String taskId) {
-        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, VAR_TASK_TAAKDATA);
+        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
+        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> readTaakVariableForOpenTask(final String taskId, final String variableName) {
+        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, variableName);
         return taakdata != null ? taakdata : Collections.emptyMap();
     }
 
     public Map<String, String> readTaakdataForClosedTask(final String taskId) {
+        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
+        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> readTaakVariableForClosedTask(final String taskId, final String variableName) {
         final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
                 .taskId(taskId)
-                .variableName(VAR_TASK_TAAKDATA)
+                .variableName(variableName)
                 .singleResult();
         return historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : Collections.emptyMap();
     }
 
     public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
-        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDATA, taakdata);
-        return taakdata;
+        return updateTaakVariable(taskId, taakdata, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
+        return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {
+        cmmnTaskService.setVariableLocal(taskId, variableName, value);
+        return value;
     }
 
     public List<CaseDefinition> listCaseDefinitions() {

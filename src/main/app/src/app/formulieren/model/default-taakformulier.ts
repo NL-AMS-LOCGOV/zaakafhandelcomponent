@@ -16,6 +16,10 @@ export class DefaultTaakformulier extends AbstractFormulier {
         AFHANDELING: 'afhandeling'
     };
 
+    taakinformatieMapping = {
+        uitkomst: this.fields.AFHANDELING
+    };
+
     constructor(translate: TranslateService) {
         super(translate);
     }

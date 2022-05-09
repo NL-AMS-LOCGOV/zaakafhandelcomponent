@@ -12,7 +12,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
@@ -160,6 +159,7 @@ public class TakenRESTService {
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
         flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
     }
 
@@ -219,7 +219,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        final Map<String, String> taakdata = flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));

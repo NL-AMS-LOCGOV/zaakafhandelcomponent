@@ -266,56 +266,83 @@
                 </mat-card-header>
                 <mat-card-content>
                     <div class="table-wrapper">
-                        <table mat-table [dataSource]="takenDataSource" matSort>
+                        <table mat-table [dataSource]="takenDataSource" matSort multiTemplateDataRows>
+                            <ng-container matColumnDef="collapse">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    <mat-icon *ngIf="!allTakenExpanded" (click)="expandTaken(true)">expand_more</mat-icon>
+                                    <mat-icon *ngIf="allTakenExpanded" (click)="expandTaken(false)">expand_less</mat-icon>
+                                </th>
+                            </ng-container>
                             <ng-container matColumnDef="naam">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'naam' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.naam | empty}} </td>
+                                <td mat-cell *matCellDef="let taak" colspan="2"> {{taak.data.naam | empty}} </td>
                             </ng-container>
                             <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'status' | translate}} </th>
                                 <td mat-cell *matCellDef="let taak">
-                                    <zac-status-label [taakStatus]="taak.status"></zac-status-label>
+                                    <zac-status-label [taakStatus]="taak.data.status"></zac-status-label>
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="creatiedatumTijd">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'creatiedatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.creatiedatumTijd | datum | empty}} </td>
+                                <td mat-cell *matCellDef="let taak"> {{taak.data.creatiedatumTijd | datum | empty}} </td>
                             </ng-container>
                             <ng-container matColumnDef="toekenningsdatumTijd">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'toekenningsdatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.toekenningsdatumTijd | datum | empty}} </td>
+                                <td mat-cell *matCellDef="let taak"> {{taak.data.toekenningsdatumTijd | datum | empty}} </td>
                             </ng-container>
                             <ng-container matColumnDef="streefdatum">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'streefdatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.streefdatum | datum | empty}} </td>
+                                <td mat-cell *matCellDef="let taak"> {{taak.data.streefdatum | datum | empty}} </td>
                             </ng-container>
                             <ng-container matColumnDef="groep">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'groep' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.groep |empty:'naam'}} </td>
+                                <td mat-cell *matCellDef="let taak"> {{taak.data.groep |empty:'naam'}} </td>
                             </ng-container>
                             <ng-container matColumnDef="behandelaar">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'behandelaar' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.behandelaar | empty:'naam'}} </td>
+                                <td mat-cell *matCellDef="let taak"> {{taak.data.behandelaar | empty:'naam'}} </td>
                             </ng-container>
                             <ng-container matColumnDef="id" stickyEnd id="taakButtons">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let taak">
-                                    <button mat-flat-button [routerLink]="['/taken', taak.id]"
-                                            [id]="'taakBekijken_' + taak.id +'_button'"
+                                    <button mat-flat-button [routerLink]="['/taken', taak.data.id]"
+                                            (click)="$event.stopPropagation()"
+                                            [id]="'taakBekijken_' + taak.data.id +'_button'"
                                             title="{{ 'actie.taak.bekijken' | translate }}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
-                                            [id]="'kenTaakAanMijToe_' + taak.id +'_button'"
-                                            (click)="assignTaskToMe(taak)" *ngIf="showAssignToMe(taak)">
+                                            [id]="'kenTaakAanMijToe_' + taak.data.id +'_button'"
+                                            (click)="assignTaskToMe(taak.data, $event)" *ngIf="showAssignToMe(taak.data)">
                                         <mat-icon>person_add_alt_1</mat-icon>
                                     </button>
                                 </td>
                             </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="takenColumnsToDisplay"></tr>
-                            <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"></tr>
+
+                            <ng-container matColumnDef="expandedTaakDetail">
+                                <td mat-cell *matCellDef="let row" colspan="9">
+                                    <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
+                                        <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
+                                            <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
+                                                             [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
+                                            <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlage"
+                                                             [value]="row.data.taakinformatie?.bijlage"></zac-static-text>
+                                            <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
+                                                             [value]="row.data.taakinformatie?.opmerking"></zac-static-text>
+                                        </div>
+                                    </div>
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="['collapse'].concat(takenColumnsToDisplay)"></tr>
+                            <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"
+                                class="row"
+                                [class.expanded-row]="row.expanded"
+                                (click)="expandTaak(row)"></tr>
+                            <tr mat-row *matRowDef="let row; columns: ['expandedTaakDetail']"
+                                class="collapsed-row"></tr>
                             <tr class="mat-row" *matNoDataRow>
-                                <td class="mat-cell" colspan="7">
+                                <td class="mat-cell" colspan="9">
                                     <zac-skeleton-loader [loading$]="taken$" [options]="{layout:'table'}">
                                         <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                                     </zac-skeleton-loader>

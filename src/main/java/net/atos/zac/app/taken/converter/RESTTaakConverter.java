@@ -94,6 +94,8 @@ public class RESTTaakConverter {
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForOpenTask(task.getId());
         }
+        restTaak.taakinformatie = flowableService.readTaakinformatieForOpenTask(task.getId());
+
         return restTaak;
     }
 
@@ -103,6 +105,8 @@ public class RESTTaakConverter {
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
         }
+        restTaak.taakinformatie = flowableService.readTaakinformatieForClosedTask(task.getId());
+
         return restTaak;
     }
 

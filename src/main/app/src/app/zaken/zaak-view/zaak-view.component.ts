@@ -57,11 +57,15 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {ZaakResultaat} from '../model/zaak-resultaat';
+import {detailExpand} from '../../shared/animations/animations';
+import {map} from 'rxjs/operators';
+import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {Observable, share} from 'rxjs';
 
 @Component({
     templateUrl: './zaak-view.component.html',
-    styleUrls: ['./zaak-view.component.less']
+    styleUrls: ['./zaak-view.component.less'],
+    animations: [detailExpand]
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -69,12 +73,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     zaakLocatie: AddressResult;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
-    taken$: Observable<Taak[]>;
-    takenDataSource: MatTableDataSource<Taak> = new MatTableDataSource<Taak>();
-    toonAfgerondeTaken = false;
     action: string;
+
+    taken$: Observable<ExpandableTableData<Taak>[]>;
+    takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
+    allTakenExpanded: boolean = false;
+    toonAfgerondeTaken = false;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
+
     toegevoegdDocument: EnkelvoudigInformatieobject;
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
@@ -131,8 +138,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.loadTaken();
         }));
 
-        this.takenDataSource.filterPredicate = (data: Taak, filter: string): boolean => {
-            return (!this.toonAfgerondeTaken ? data.status !== filter['status'] : true);
+        this.takenDataSource.filterPredicate = (data: ExpandableTableData<Taak>, filter: string): boolean => {
+            return (!this.toonAfgerondeTaken ? data.data.status !== filter['status'] : true);
         };
 
         this.toonAfgerondeTaken = SessionStorageUtil.getItem('toonAfgerondeTaken');
@@ -159,11 +166,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.takenDataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'groep':
-                    return item.groep.naam;
+                    return item.data.groep.naam;
                 case 'behandelaar' :
-                    return item.behandelaar.naam;
+                    return item.data.behandelaar.naam;
                 default:
-                    return item[property];
+                    return item.data[property];
             }
         };
 
@@ -524,18 +531,37 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (event) {
             console.log('callback loadTaken: ' + event.key);
         }
-        this.utilService.setLoading(true);
         // TODO #315
         this.websocketService.suspendListener(this.zaakTakenListener);
-        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid).pipe(share());
 
+        this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid)
+                          .pipe(
+                              share(),
+                              map(values => values.map(value => new ExpandableTableData(value)))
+                          );
         this.taken$.subscribe(taken => {
-            taken = taken.sort((a, b) => a.streefdatum?.localeCompare(b.streefdatum) ||
-                a.creatiedatumTijd?.localeCompare(b.creatiedatumTijd));
+            taken = taken.sort((a, b) => a.data.streefdatum?.localeCompare(b.data.streefdatum) ||
+                a.data.creatiedatumTijd?.localeCompare(b.data.creatiedatumTijd));
             this.takenDataSource.data = taken;
             this.filterTakenOpStatus();
-            this.utilService.setLoading(false);
         });
+    }
+
+    expandTaken(expand: boolean): void {
+        this.takenDataSource.data.forEach(value => value.expanded = expand);
+        this.checkAllTakenExpanded();
+    }
+
+    expandTaak(taak: ExpandableTableData<Taak>): void {
+        taak.expanded = !taak.expanded;
+        this.checkAllTakenExpanded();
+    }
+
+    checkAllTakenExpanded(): void {
+        const filter: ExpandableTableData<Taak>[] = this.toonAfgerondeTaken ? this.takenDataSource.data.filter(value => !value.expanded) :
+            this.takenDataSource.data.filter(value => value.data.status !== 'AFGEROND' && !value.expanded);
+
+        this.allTakenExpanded = filter.length === 0;
     }
 
     showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
@@ -593,7 +619,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     }
 
-    assignTaskToMe(taak: Taak) {
+    assignTaskToMe(taak: Taak, $event) {
+        $event.stopPropagation();
+
         this.websocketService.suspendListener(this.zaakTakenListener);
         this.takenService.assignToLoggedOnUser(taak).subscribe(returnTaak => {
             taak.behandelaar = returnTaak.behandelaar;
@@ -642,3 +670,4 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.toegevoegdDocument = informatieobject;
     }
 }
+
