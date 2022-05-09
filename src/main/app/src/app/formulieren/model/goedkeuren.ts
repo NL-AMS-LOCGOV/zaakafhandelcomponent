@@ -28,6 +28,12 @@ export class Goedkeuren extends AbstractFormulier {
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
+    taakinformatieMapping = {
+        uitkomst: this.fields.GOEDKEUREN,
+        opmerking: this.fields.TOELICHTING,
+        bijlage: this.fields.BIJLAGE
+    };
+
     constructor(translate: TranslateService,
                 public takenService: TakenService,
                 public informatieObjectenService: InformatieObjectenService) {

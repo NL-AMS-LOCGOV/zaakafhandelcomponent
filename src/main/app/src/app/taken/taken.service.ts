@@ -12,8 +12,9 @@ import {Taak} from './model/taak';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
 import {TableResponse} from '../shared/dynamic-table/datasource/table-response';
 import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
-import {Medewerker} from '../identity/model/medewerker';
+import {User} from '../identity/model/user';
 import {TaakVerdelenGegevens} from './model/taak-verdelen-gegevens';
+import {TaakHistorieRegel} from '../shared/historie/model/taak-historie-regel';
 
 @Injectable({
     providedIn: 'root'
@@ -58,6 +59,12 @@ export class TakenService {
         );
     }
 
+    listHistorieVoorTaak(id: string): Observable<TaakHistorieRegel[]> {
+        return this.http.get<TaakHistorieRegel[]>(`${this.basepath}/${id}/historie`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     assign(taak: Taak): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/assign`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
@@ -97,10 +104,10 @@ export class TakenService {
         );
     }
 
-    verdelen(taken: Taak[], medewerker: Medewerker): Observable<void> {
+    verdelen(taken: Taak[], medewerker: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
         taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUUID}));
-        taakBody.behandelaarGebruikersnaam = medewerker.gebruikersnaam;
+        taakBody.behandelaarGebruikersnaam = medewerker.id;
         return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

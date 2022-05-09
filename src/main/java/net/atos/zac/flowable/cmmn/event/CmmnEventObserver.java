@@ -11,9 +11,6 @@ import javax.annotation.ManagedBean;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
-
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Medewerker;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
@@ -26,6 +23,9 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -45,6 +45,9 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private IdentityService identityService;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
@@ -79,7 +82,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     }
 
     private RolOrganisatorischeEenheid creeerRolGroep(final String groepID, final Zaak zaak) {
-        final Group group = flowableService.readGroup(groepID);
+        final Group group = identityService.readGroup(groepID);
         final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
         groep.setIdentificatie(group.getId());
         groep.setNaam(group.getName());
@@ -88,7 +91,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     }
 
     private RolMedewerker creeerRolMedewerker(final String behandelaarGebruikersnaam, final Zaak zaak) {
-        final User user = flowableService.readUser(behandelaarGebruikersnaam);
+        final User user = identityService.readUser(behandelaarGebruikersnaam);
         final Medewerker medewerker = new Medewerker();
         medewerker.setIdentificatie(user.getId());
         medewerker.setVoorletters(user.getFirstName());

@@ -29,6 +29,7 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
 import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
@@ -49,6 +50,9 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private IdentityService identityService;
 
     @Inject
     private FlowableHelper flowableHelper;
@@ -127,11 +131,11 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         switch (rol.getBetrokkeneType()) {
             case MEDEWERKER -> {
                 final RolMedewerker rolMedewerker = (RolMedewerker) rol;
-                return addTargetMedewerker(signalering, rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie());
+                return addTargetUser(signalering, rolMedewerker.getBetrokkeneIdentificatie().getIdentificatie());
             }
             case ORGANISATORISCHE_EENHEID -> {
                 final RolOrganisatorischeEenheid rolGroep = (RolOrganisatorischeEenheid) rol;
-                return addTargetGroep(signalering, rolGroep.getBetrokkeneIdentificatie().getIdentificatie());
+                return addTargetGroup(signalering, rolGroep.getBetrokkeneIdentificatie().getIdentificatie());
             }
             default -> LOG.warning(String.format("unexpected BetrokkeneType %s", rol.getBetrokkeneType()));
         }
@@ -139,16 +143,16 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     }
 
     private Signalering addTarget(final Signalering signalering, final TaskInfo taskInfo) {
-        return addTargetMedewerker(signalering, taskInfo.getAssignee());
+        return addTargetUser(signalering, taskInfo.getAssignee());
     }
 
-    private Signalering addTargetMedewerker(final Signalering signalering, final String gebruikersnaam) {
-        signalering.setTarget(flowableHelper.createMedewerker(gebruikersnaam));
+    private Signalering addTargetUser(final Signalering signalering, final String userId) {
+        signalering.setTarget(identityService.readUser(userId));
         return signalering;
     }
 
-    private Signalering addTargetGroep(final Signalering signalering, final String groupId) {
-        signalering.setTarget(flowableService.readGroup(groupId));
+    private Signalering addTargetGroup(final Signalering signalering, final String groupId) {
+        signalering.setTarget(identityService.readGroup(groupId));
         return signalering;
     }
 }

@@ -27,6 +27,11 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
         BIJLAGE: 'bijlage'
     };
 
+    taakinformatieMapping = {
+        uitkomst: this.fields.EXTERNADVIES,
+        bijlage: this.fields.BIJLAGE
+    };
+
     constructor(
         translate: TranslateService,
         public takenService: TakenService,

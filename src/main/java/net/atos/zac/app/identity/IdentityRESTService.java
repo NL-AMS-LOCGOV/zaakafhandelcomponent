@@ -17,18 +17,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
-
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
-import net.atos.zac.app.identity.converter.RESTIngelogdeMedewerkerConverter;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTIngelogdeMedewerker;
-import net.atos.zac.app.identity.model.RESTMedewerker;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 
 @Singleton
 @Path("identity")
@@ -37,45 +33,41 @@ import net.atos.zac.flowable.FlowableService;
 public class IdentityRESTService {
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groupConverter;
 
     @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private RESTUserConverter userConverter;
 
     @Inject
-    private RESTIngelogdeMedewerkerConverter ingelogdeMedewerkerConverter;
+    private IdentityService identityService;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
-
-    @Inject
-    private FlowableService flowableService;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     @GET
-    @Path("groepen")
-    public List<RESTGroep> listGroepen() {
-        final List<Group> groups = flowableService.listGroups();
-        return groepConverter.convertGroups(groups);
+    @Path("groups")
+    public List<RESTGroup> listGroups() {
+        final List<Group> groups = identityService.listGroups();
+        return groupConverter.convertGroups(groups);
     }
 
     @GET
-    @Path("groepen/{groepId}/medewerkers")
-    public List<RESTMedewerker> listMedewerkersInGroep(@PathParam("groepId") final String groepId) {
-        final List<User> users = flowableService.listUsersInGroup(groepId);
-        return medewerkerConverter.convertUsers(users);
+    @Path("groups/{groupId}/users")
+    public List<RESTUser> listUsersInGroup(@PathParam("groupId") final String groupId) {
+        final List<User> users = identityService.listUsersInGroup(groupId);
+        return userConverter.convertUsers(users);
     }
 
     @GET
-    @Path("medewerkers")
-    public List<RESTMedewerker> listMedewerkers() {
-        final List<User> users = flowableService.listUsers();
-        return medewerkerConverter.convertUsers(users);
+    @Path("users")
+    public List<RESTUser> listUsers() {
+        final List<User> users = identityService.listUsers();
+        return userConverter.convertUsers(users);
     }
 
     @GET
-    @Path("ingelogdemedewerker")
-    public RESTIngelogdeMedewerker readIngelogdeMedewerker() {
-        return ingelogdeMedewerkerConverter.convertIngelogdeMedewerker(ingelogdeMedewerker.get());
+    @Path("loggedInUser")
+    public RESTUser readLoggedInUser() {
+        return userConverter.convertUser(loggedInUserInstance.get());
     }
 }

@@ -4,8 +4,9 @@
  */
 
 import {TaakStatus} from './taak-status.enum';
-import {Groep} from '../../identity/model/groep';
-import {Medewerker} from '../../identity/model/medewerker';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
+import {Taakinformatie} from './taakinformatie';
 
 export class Taak {
     id: string;
@@ -14,12 +15,13 @@ export class Taak {
     creatiedatumTijd: string;
     toekenningsdatumTijd: string;
     streefdatum: string;
-    behandelaar: Medewerker;
-    groep: Groep;
+    behandelaar: User;
+    groep: Group;
     zaakUUID: string;
     zaakIdentificatie: string;
     zaaktypeOmschrijving: string;
     status: TaakStatus;
     formulierDefinitie: string;
     taakdata: {};
+    taakinformatie: Taakinformatie;
 }

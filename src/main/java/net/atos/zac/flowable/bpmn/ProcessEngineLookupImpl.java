@@ -39,6 +39,7 @@ public class ProcessEngineLookupImpl implements ProcessEngineLookup {
         processEngineConfiguration.setHistoryLevel(AUDIT);
         processEngineConfiguration.setEnableSafeBpmnXml(true);
         processEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);
+        processEngineConfiguration.setDisableIdmEngine(true);
 
         return processEngineConfiguration.buildProcessEngine();
     }

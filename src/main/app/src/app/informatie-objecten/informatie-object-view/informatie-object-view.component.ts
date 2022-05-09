@@ -37,6 +37,23 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    fileIconList = [
+        { type: 'xlsx', icon: 'fa-file-excel', color: 'green' },
+        { type: 'xls', icon: 'fa-file-excel', color: 'green' },
+        { type: 'pdf', icon: 'fa-file-pdf', color: 'red' },
+        { type: 'jpg', icon: 'fa-file-image' },
+        { type: 'png', icon: 'fa-file-image' },
+        { type: 'jpeg', icon: 'fa-file-image' },
+        { type: 'gif', icon: 'fa-file-image' },
+        { type: 'rtf', icon: 'fa-file-image' },
+        { type: 'vsd', icon: 'fa-file-image' },
+        { type: 'bmp', icon: 'fa-file-image' },
+        { type: 'doc', icon: 'fa-file-word', color: 'blue' },
+        { type: 'docx', icon: 'fa-file-word', color: 'blue' },
+        { type: 'odt', icon: 'fa-file-word', color: 'blue' },
+        { type: 'pptx', icon: 'fa-file-powerpoint', color: 'red' },
+        { type: 'txt', icon: 'fa-file-lines' }
+    ];
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
@@ -111,6 +128,20 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
             });
+    }
+
+    getFileIcon(filename) {
+        const extension = filename.split('.').pop();
+        const obj = this.fileIconList.filter(row => {
+            if (row.type === extension) {
+                return true;
+            }
+        });
+        if (obj.length > 0) {
+            return obj[0];
+        } else {
+            return { type: 'unknown', icon: 'fa-file-circle-question' };
+        }
     }
 
 }

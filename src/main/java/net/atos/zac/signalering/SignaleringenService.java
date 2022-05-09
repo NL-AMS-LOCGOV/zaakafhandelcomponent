@@ -26,10 +26,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.flowable.idm.api.Group;
-
-import net.atos.zac.authentication.Medewerker;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
@@ -89,7 +88,7 @@ public class SignaleringenService {
     }
 
     /**
-     * Business logic for deciding if signalling is necessary. Groep-targets will always get signalled but Medewerker-targets only when they are not themselves
+     * Business logic for deciding if signalling is necessary. Groep-targets will always get signalled but user-targets only when they are not themselves
      * the actor that caused the event (or when the actor is unknown).
      *
      * @param signalering the signalering (should have the target set)
@@ -97,7 +96,7 @@ public class SignaleringenService {
      * @return true if signalling is necessary
      */
     public boolean isNecessary(final Signalering signalering, final String actor) {
-        return signalering.getTargettype() != SignaleringTarget.MEDEWERKER || !signalering.getTarget().equals(actor);
+        return signalering.getTargettype() != SignaleringTarget.USER || !signalering.getTarget().equals(actor);
     }
 
     public Signalering createSignalering(final Signalering signalering) {
@@ -194,9 +193,9 @@ public class SignaleringenService {
         return readInstellingen(signalering);
     }
 
-    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final Medewerker medewerker) {
+    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final User user) {
         final Signalering signalering = signaleringInstance(type);
-        signalering.setTarget(medewerker);
+        signalering.setTarget(user);
         return readInstellingen(signalering);
     }
 
@@ -223,10 +222,10 @@ public class SignaleringenService {
         final List<Predicate> where = new ArrayList<>();
         if (parameters.getOwner() != null) {
             switch (parameters.getOwnertype()) {
-                case GROEP -> {
+                case GROUP -> {
                     where.add(builder.equal(root.get("groep"), parameters.getOwner()));
                 }
-                case MEDEWERKER -> {
+                case USER -> {
                     where.add(builder.equal(root.get("medewerker"), parameters.getOwner()));
                 }
             }

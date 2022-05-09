@@ -27,8 +27,8 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
 
-import net.atos.zac.app.identity.converter.RESTGroepConverter;
-import net.atos.zac.app.identity.converter.RESTMedewerkerConverter;
+import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
@@ -42,10 +42,10 @@ public class RESTTaakConverter {
     private FlowableService flowableService;
 
     @Inject
-    private RESTGroepConverter groepConverter;
+    private RESTGroupConverter groepConverter;
 
     @Inject
-    private RESTMedewerkerConverter medewerkerConverter;
+    private RESTUserConverter medewerkerConverter;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
@@ -94,6 +94,8 @@ public class RESTTaakConverter {
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForOpenTask(task.getId());
         }
+        restTaak.taakinformatie = flowableService.readTaakinformatieForOpenTask(task.getId());
+
         return restTaak;
     }
 
@@ -103,6 +105,8 @@ public class RESTTaakConverter {
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
         }
+        restTaak.taakinformatie = flowableService.readTaakinformatieForClosedTask(task.getId());
+
         return restTaak;
     }
 
@@ -132,7 +136,7 @@ public class RESTTaakConverter {
         restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());
         restTaak.toekenningsdatumTijd = convertToZonedDateTime(taskInfo.getClaimTime());
         restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
-        restTaak.behandelaar = medewerkerConverter.convertGebruikersnaam(taskInfo.getAssignee());
+        restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
         restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
         restTaak.formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(zaaktypeUUID, taskInfo.getTaskDefinitionKey());
         return restTaak;

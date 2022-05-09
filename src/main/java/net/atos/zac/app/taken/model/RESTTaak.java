@@ -10,8 +10,8 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-import net.atos.zac.app.identity.model.RESTGroep;
-import net.atos.zac.app.identity.model.RESTMedewerker;
+import net.atos.zac.app.identity.model.RESTGroup;
+import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
@@ -32,9 +32,9 @@ public class RESTTaak {
 
     public LocalDate streefdatum;
 
-    public RESTMedewerker behandelaar;
+    public RESTUser behandelaar;
 
-    public RESTGroep groep;
+    public RESTGroup groep;
 
     public UUID zaakUUID;
 
@@ -47,4 +47,6 @@ public class RESTTaak {
     public FormulierDefinitie formulierDefinitie;
 
     public Map<String, String> taakdata;
+
+    public Map<String, String> taakinformatie;
 }

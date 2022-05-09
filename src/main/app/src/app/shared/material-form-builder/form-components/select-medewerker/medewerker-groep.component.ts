@@ -9,8 +9,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
 import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {Groep} from '../../../../identity/model/groep';
-import {Medewerker} from '../../../../identity/model/medewerker';
+import {Group} from '../../../../identity/model/group';
+import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 import {AutocompleteValidators} from '../autocomplete/autocomplete-validators';
 import {map, startWith} from 'rxjs/operators';
@@ -24,10 +24,10 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
     formGroup: FormGroup;
     groepControl = new FormControl();
     medewerkerControl = new FormControl();
-    groepen: Groep[];
-    filteredGroepen: Observable<Groep[]>;
-    medewerkers: Medewerker[];
-    filteredMedewerkers: Observable<Medewerker[]>;
+    groepen: Group[];
+    filteredGroepen: Observable<Group[]>;
+    medewerkers: User[];
+    filteredMedewerkers: Observable<User[]>;
     inGroep: boolean = true;
 
     constructor(public translate: TranslateService, public identityService: IdentityService, private formBuilder: FormBuilder) {
@@ -65,7 +65,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
     }
 
     initGroepen(): void {
-        this.identityService.listGroepen().subscribe(groepen => {
+        this.identityService.listGroups().subscribe(groepen => {
             this.groepen = groepen;
             const validators: ValidatorFn[] = [];
             validators.push(AutocompleteValidators.optionInList(groepen));
@@ -89,11 +89,11 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
 
     private getMedewerkers() {
         this.medewerkers = [];
-        let observable: Observable<Medewerker[]>;
+        let observable: Observable<User[]>;
         if (this.inGroep && this.groepControl.value) {
-            observable = this.identityService.listMedewerkersInGroep(this.groepControl.value.id);
+            observable = this.identityService.listUsersInGroup(this.groepControl.value.id);
         } else {
-            observable = this.identityService.listMedewerkers();
+            observable = this.identityService.listUsers();
         }
         observable.subscribe(medewerkers => {
             this.medewerkers = medewerkers;
@@ -105,11 +105,11 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
         });
     }
 
-    displayFn(obj: Medewerker | Groep): string {
+    displayFn(obj: User | Group): string {
         return obj && obj.naam ? obj.naam : '';
     }
 
-    private _filterGroepen(value: string | Groep): Groep[] {
+    private _filterGroepen(value: string | Group): Group[] {
         if (typeof value === 'object') {
             return [value];
         }
@@ -117,7 +117,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
         return this.groepen.filter(groep => groep.naam.toLowerCase().includes(filterValue));
     }
 
-    private _filterMedewerkers(value: string | Medewerker): Medewerker[] {
+    private _filterMedewerkers(value: string | User): User[] {
         if (typeof value === 'object') {
             return [value];
         }

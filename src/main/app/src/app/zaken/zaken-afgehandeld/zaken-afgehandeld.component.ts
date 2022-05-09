@@ -13,12 +13,12 @@ import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {IdentityService} from '../../identity/identity.service';
-import {Groep} from '../../identity/model/groep';
+import {Group} from '../../identity/model/group';
 import {detailExpand} from '../../shared/animations/animations';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {WerklijstData} from '../../shared/dynamic-table/model/werklijstdata';
+import {WerklijstData} from '../../shared/dynamic-table/model/werklijst-data';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
@@ -33,7 +33,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
     dataSource: ZakenAfgehandeldDatasource;
     expandedRow: ZaakOverzicht | null;
-    groepen: Groep[] = [];
+    groepen: Group[] = [];
     zaakTypes: Zaaktype[] = [];
 
     werklijstData: WerklijstData;
@@ -91,7 +91,7 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     private groepenOphalen() {
-        this.identityService.listGroepen().subscribe(groepen => {
+        this.identityService.listGroups().subscribe(groepen => {
             this.groepen = groepen;
         });
     }

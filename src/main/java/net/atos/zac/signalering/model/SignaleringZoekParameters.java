@@ -8,8 +8,7 @@ package net.atos.zac.signalering.model;
 import static net.atos.zac.signalering.model.SignaleringSubject.INFORMATIEOBJECT;
 import static net.atos.zac.signalering.model.SignaleringSubject.TAAK;
 import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
-import static net.atos.zac.signalering.model.SignaleringTarget.GROEP;
-import static net.atos.zac.signalering.model.SignaleringTarget.MEDEWERKER;
+import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,13 +16,12 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.flowable.idm.api.Group;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.identity.model.User;
 
 public class SignaleringZoekParameters {
     private final SignaleringTarget targettype;
@@ -36,14 +34,9 @@ public class SignaleringZoekParameters {
 
     private String subject;
 
-    public SignaleringZoekParameters(final Group target) {
-        this.targettype = GROEP;
+    public SignaleringZoekParameters(final User target) {
+        this.targettype = USER;
         this.target = target.getId();
-    }
-
-    public SignaleringZoekParameters(final Medewerker target) {
-        this.targettype = MEDEWERKER;
-        this.target = target.getGebruikersnaam();
     }
 
     public SignaleringTarget getTargettype() {

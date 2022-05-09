@@ -37,8 +37,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
@@ -65,8 +64,7 @@ public class MailService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
 
@@ -107,13 +105,12 @@ public class MailService {
             final String onderwerp, final String body) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
-                ConfiguratieService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, ingelogdeMedewerker.get().getNaam(),
+                ConfiguratieService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, loggedInUserInstance.get().getFullName(),
                 ConfiguratieService.TAAL_NEDERLANDS, eMailObjectType.getUrl(), Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         data.setFormaat("text/plain");
         data.setBestandsnaam(String.format("%s.txt", onderwerp));
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
 
         return data;

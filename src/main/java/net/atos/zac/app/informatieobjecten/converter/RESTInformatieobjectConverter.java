@@ -28,8 +28,7 @@ import net.atos.zac.app.configuratie.model.RESTTaal;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.util.UriUtil;
 
@@ -45,8 +44,7 @@ public class RESTInformatieobjectConverter {
     private RESTTaalConverter restTaalConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTEnkelvoudigInformatieobject restObject = convert(zaakInformatieObject.getInformatieobject());
@@ -68,7 +66,8 @@ public class RESTInformatieobjectConverter {
         restObject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
         restObject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restObject.titel = enkelvoudigInformatieObject.getTitel();
-        restObject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie();
+        restObject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
+                .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
         restObject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
         if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
             restObject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
@@ -91,7 +90,6 @@ public class RESTInformatieobjectConverter {
         restObject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
         restObject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
         restObject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
-        restObject.indicatieGebruiksrecht = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getIndicatieGebruiksrecht());
         restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
         restObject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
@@ -117,7 +115,6 @@ public class RESTInformatieobjectConverter {
         data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
         data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
         return data;
     }
@@ -127,7 +124,7 @@ public class RESTInformatieobjectConverter {
                 ConfiguratieService.BRON_ORGANISATIE,
                 LocalDate.now(),
                 documentData.documentTitel,
-                ingelogdeMedewerker.get().getNaam(),
+                loggedInUserInstance.get().getFullName(),
                 ConfiguratieService.TAAL_NEDERLANDS,
                 documentData.documentType.url,
                 Base64.getEncoder().encodeToString(bestand.file)
@@ -135,7 +132,6 @@ public class RESTInformatieobjectConverter {
         data.setFormaat(bestand.type);
         data.setBestandsnaam(bestand.filename);
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
-        data.setIndicatieGebruiksrecht(false);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(documentData.documentType.vertrouwelijkheidaanduiding));
         return data;
     }

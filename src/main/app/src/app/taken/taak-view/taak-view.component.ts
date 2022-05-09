@@ -23,13 +23,16 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
+import {TaakHistorieRegel} from '../../shared/historie/model/taak-historie-regel';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -39,9 +42,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
+    @ViewChild('historieSort') historieSort: MatSort;
 
     taak: Taak;
     menu: MenuItem[] = [];
+
+    historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
+    historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
 
     editFormFields: Map<string, any> = new Map<string, any>();
     streefdatumIcon: TextIcon;
@@ -50,7 +57,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     formConfig: FormConfig;
     posts: number = 0;
     private taakListener: WebsocketListener;
-    private ingelogdeMedewerker: Medewerker;
+    private ingelogdeMedewerker: User;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
@@ -69,6 +76,17 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
         super.ngAfterViewInit();
         this.taakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
             (event) => this.ophalenTaak(event));
+
+        this.historieSrc.sortingDataAccessor = (item, property) => {
+            switch (property) {
+                case 'datum':
+                    return item.datumTijd;
+                default:
+                    return item[property];
+            }
+        };
+
+        this.historieSrc.sort = this.historieSort;
     }
 
     ngOnDestroy() {
@@ -79,6 +97,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     initTaakGegevens(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
+        this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
     }
@@ -107,13 +126,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
             new AutocompleteFormFieldBuilder().id('behandelaar')
                                               .label('behandelaar')
                                               .value(this.taak.behandelaar).optionLabel('naam')
-                                              .options(this.identityService.listMedewerkers())
+                                              .options(this.identityService.listUsers())
                                               .build());
         this.editFormFields.set('groep',
             new AutocompleteFormFieldBuilder().id('groep')
                                               .label('groep')
                                               .value(this.taak.groep).optionLabel('naam')
-                                              .options(this.identityService.listGroepen())
+                                              .options(this.identityService.listGroups())
                                               .build());
         this.editFormFields.set('toelichting',
             new TextareaFormFieldBuilder().id('toelichting')
@@ -125,6 +144,12 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
+    }
+
+    private loadHistorie(): void {
+        this.takenService.listHistorieVoorTaak(this.taak.id).subscribe(historie => {
+            this.historieSrc.data = historie;
+        });
     }
 
     onFormPartial(formGroup: FormGroup): void {
@@ -204,13 +229,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     }
 
     private getIngelogdeMedewerker() {
-        this.identityService.readIngelogdeMedewerker().subscribe(ingelogdeMedewerker => {
+        this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
         });
     }
 
     showAssignToMe(): boolean {
-        return this.ingelogdeMedewerker.gebruikersnaam !== this.taak.behandelaar?.gebruikersnaam;
+        return this.ingelogdeMedewerker.id !== this.taak.behandelaar?.id;
     }
 
     assignToMe(): void {

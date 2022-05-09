@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Medewerker} from '../../identity/model/medewerker';
+import {User} from '../../identity/model/user';
 
 export class OntkoppeldDocument {
     id: number;
@@ -13,7 +13,7 @@ export class OntkoppeldDocument {
     creatiedatum: string;
     titel: string;
     bestandsnaam: string;
-    ontkoppeldDoor: Medewerker;
+    ontkoppeldDoor: User;
     ontkoppeldOp: string;
     reden: string;
 }

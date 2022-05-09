@@ -31,8 +31,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.User;
 import org.joda.time.IllegalInstantException;
 
 import net.atos.client.vrl.VRLClientService;
@@ -76,13 +74,15 @@ import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -122,14 +122,16 @@ public class ZakenRESTService {
     private FlowableService flowableService;
 
     @Inject
+    private IdentityService identityService;
+
+    @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
 
     @Inject
     private RESTHistorieRegelConverter auditTrailConverter;
 
     @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     @Inject
     private ConfiguratieService configuratieService;
@@ -266,8 +268,7 @@ public class ZakenRESTService {
     public TableResponse<RESTZaakOverzicht> listZakenMijn(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
         final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(
-                ingelogdeMedewerker.get().getGebruikersnaam());
+        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(loggedInUserInstance.get().getId());
         final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
         final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults,
                                                                                                   tableState.getPagination());
@@ -301,7 +302,7 @@ public class ZakenRESTService {
 
         if (!StringUtils.isEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
             // Toekennen of overdragen
-            final User user = flowableService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+            final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
             zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         } else {
             // Vrijgeven
@@ -314,9 +315,9 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? flowableService.readGroup(verdeelGegevens.groepId) : null;
+        final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? identityService.readGroup(verdeelGegevens.groepId) : null;
         final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
-                flowableService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
+                identityService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             if (group != null) {
@@ -369,7 +370,7 @@ public class ZakenRESTService {
     public RESTZaak groepToekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
 
-        final Group group = flowableService.readGroup(toekennenGegevens.groepId);
+        final Group group = identityService.readGroup(toekennenGegevens.groepId);
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolGroep(group, zaak), toekennenGegevens.reden);
 
         return zaakConverter.convert(zaak);
@@ -393,7 +394,7 @@ public class ZakenRESTService {
             final boolean getOpenZaken) {
         final TableRequest tableState = TableRequest.getTableState(request);
 
-        if (ingelogdeMedewerker.get().isInAnyGroup()) {
+        if (loggedInUserInstance.get().isInAnyGroup()) {
             final Results<Zaak> zaakResults;
             if (getOpenZaken) {
                 zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
@@ -409,7 +410,7 @@ public class ZakenRESTService {
 
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        final User user = flowableService.readUser(ingelogdeMedewerker.get().getGebruikersnaam());
+        final User user = identityService.readUser(loggedInUserInstance.get().getId());
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         return zaak;
     }
@@ -452,7 +453,7 @@ public class ZakenRESTService {
 
     private void deleteSignaleringen(final Zaak zaak) {
         signaleringenService.deleteSignaleringen(
-                new SignaleringZoekParameters(ingelogdeMedewerker.get())
+                new SignaleringZoekParameters(loggedInUserInstance.get())
                         .types(SignaleringType.Type.ZAAK_OP_NAAM,
                                SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
                         .subject(zaak));

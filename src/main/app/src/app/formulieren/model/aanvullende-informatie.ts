@@ -47,6 +47,12 @@ export class AanvullendeInformatie extends AbstractFormulier {
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie'
     };
 
+    taakinformatieMapping = {
+        uitkomst: this.fields.AANVULLENDE_INFORMATIE,
+        opmerking: this.fields.OPMERKINGEN,
+        bijlage: this.fields.BIJLAGE
+    };
+
     constructor(translate: TranslateService, public takenService: TakenService,
                 public informatieObjectenService: InformatieObjectenService) {
         super(translate);
@@ -67,6 +73,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
     }
 
     _initBehandelForm() {
+        this.doDisablePartialSave();
         const fields = this.fields;
         const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(

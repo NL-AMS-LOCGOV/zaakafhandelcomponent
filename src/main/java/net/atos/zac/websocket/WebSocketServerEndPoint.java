@@ -6,7 +6,7 @@
 package net.atos.zac.websocket;
 
 import static javax.websocket.CloseReason.CloseCodes.VIOLATED_POLICY;
-import static net.atos.zac.authentication.SecurityUtil.INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE;
+import static net.atos.zac.authentication.SecurityUtil.LOGGED_IN_USER_SESSION_ATTRIBUTE;
 import static net.atos.zac.websocket.SubscriptionType.DELETE_ALL;
 import static net.atos.zac.websocket.WebsocketHandshakeInterceptor.HTTP_SESSION;
 
@@ -25,7 +25,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 
 @ServerEndpoint(value = "/websocket", configurator = WebsocketHandshakeInterceptor.class, decoders = {WebSocketSubscriptionMessageDecoder.class})
 public class WebSocketServerEndPoint {
@@ -39,11 +39,11 @@ public class WebSocketServerEndPoint {
     public void open(final Session session, final EndpointConfig conf) {
         // Check that there is a logged in employee (and that authentication has taken place).
         final HttpSession httpSession = (HttpSession) conf.getUserProperties().get(HTTP_SESSION);
-        final Medewerker loggedOnUser = (Medewerker) httpSession.getAttribute(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE);
-        if (loggedOnUser == null) {
+        final LoggedInUser loggedInUser = (LoggedInUser) httpSession.getAttribute(LOGGED_IN_USER_SESSION_ATTRIBUTE);
+        if (loggedInUser == null) {
             denyAccess(session, "no logged in user");
         } else {
-            session.getUserProperties().put(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE, loggedOnUser.getGebruikersnaam());
+            session.getUserProperties().put(LOGGED_IN_USER_SESSION_ATTRIBUTE, loggedInUser.getId());
             LOG.fine(() -> String.format("WebSocket open for %s", user(session)));
         }
     }
@@ -80,7 +80,7 @@ public class WebSocketServerEndPoint {
     }
 
     private String user(final Session session) {
-        final String medewerker = (String) session.getUserProperties().get(INGELOGDE_MEDEWERKER_SESSION_ATTRIBUTE);
+        final String medewerker = (String) session.getUserProperties().get(LOGGED_IN_USER_SESSION_ATTRIBUTE);
         return medewerker != null ? "user " + medewerker : "session " + session.getId();
     }
 }

@@ -1,0 +1,36 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+package net.atos.zac.identity.model;
+
+public class Group {
+
+    private final String id;
+
+    private final String name;
+
+    /**
+     * Constructor for creating an unknown Group, a group with a given group id which is not known in the identity system.
+     *
+     * @param id Id of the group which is unknown
+     */
+    public Group(final String id) {
+        this.id = id;
+        this.name = id;
+    }
+
+    public Group(final String id, final String name) {
+        this.id = id;
+        this.name = name != null ? name : id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+}

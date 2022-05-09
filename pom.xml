@@ -27,7 +27,6 @@
         <!-- Begin Dependecies on WildFly -->
         <wildfly.version>26.0.1.Final</wildfly.version>
         <infinispan.version>12.1.7.Final</infinispan.version>
-        <resteasy-multipart-provider.version>4.7.4.Final</resteasy-multipart-provider.version>
         <!-- End Dependecies on WildFly -->
     </properties>
 
@@ -38,6 +37,8 @@
             <version>8.0.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Begin Dependecies on WildFly -->
         <dependency>
             <groupId>org.eclipse.microprofile.rest.client</groupId>
             <artifactId>microprofile-rest-client-api</artifactId>
@@ -65,9 +66,28 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
-            <version>${resteasy-multipart-provider.version}</version>
+            <version>4.7.4.Final</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron-http-oidc</artifactId>
+            <version>1.18.3.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-jcache</artifactId>
+            <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cdi-embedded</artifactId>
+            <version>${infinispan.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- End Dependecies on WildFly -->
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -117,17 +137,6 @@
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
             <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-jcache</artifactId>
-            <version>${infinispan.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-cdi-embedded</artifactId>
-            <version>${infinispan.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

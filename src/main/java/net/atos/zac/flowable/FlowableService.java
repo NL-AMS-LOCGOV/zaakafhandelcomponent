@@ -40,12 +40,8 @@ import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.HumanTask;
 import org.flowable.cmmn.model.UserEventListener;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
-import org.flowable.engine.HistoryService;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
-import org.flowable.idm.api.Group;
-import org.flowable.idm.api.IdmIdentityService;
-import org.flowable.idm.api.User;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.TaskQuery;
@@ -56,8 +52,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
-import net.atos.zac.authentication.IngelogdeMedewerker;
-import net.atos.zac.authentication.Medewerker;
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
 
 /**
@@ -81,6 +76,8 @@ public class FlowableService {
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
+    public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
+
     public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
 
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
@@ -98,17 +95,10 @@ public class FlowableService {
     private CmmnRepositoryService cmmnRepositoryService;
 
     @Inject
-    private IdmIdentityService idmIdentityService;
-
-    @Inject
     private MailService mailService;
 
     @Inject
-    private HistoryService historyService;
-
-    @Inject
-    @IngelogdeMedewerker
-    private Instance<Medewerker> ingelogdeMedewerker;
+    private Instance<LoggedInUser> loggedInUserInstance;
 
     public static class TaskDescriptionChangedData {
 
@@ -220,7 +210,7 @@ public class FlowableService {
         }
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
-                .transientVariable(VAR_TASK_OWNER, ingelogdeMedewerker.get().getGebruikersnaam())
+                .transientVariable(VAR_TASK_OWNER, loggedInUserInstance.get().getId())
                 .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
                 .transientVariable(VAR_TASK_ASSIGNEE, assignee)
                 .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
@@ -312,67 +302,47 @@ public class FlowableService {
         }
     }
 
-    public List<Group> listGroups() {
-        return idmIdentityService.createGroupQuery()
-                .orderByGroupName()
-                .asc()
-                .list();
-    }
-
-    public Group readGroup(final String groupId) {
-        final Group group = idmIdentityService.createGroupQuery()
-                .groupId(groupId)
-                .singleResult();
-        if (group != null) {
-            return group;
-        } else {
-            throw new RuntimeException(String.format("No group found with group id '%s'", groupId));
-        }
-    }
-
-    public User readUser(final String userId) {
-        final User user = idmIdentityService.createUserQuery()
-                .userId(userId)
-                .singleResult();
-        if (user != null) {
-            return user;
-        } else {
-            throw new RuntimeException(String.format("No user found with user id '%s'", userId));
-        }
-    }
-
-    public List<Group> listGroupsForUser(final String userId) {
-        return idmIdentityService.createGroupQuery()
-                .groupMember(userId)
-                .list();
-    }
-
-    public List<User> listUsersInGroup(final String groepId) {
-        return idmIdentityService.createUserQuery()
-                .memberOfGroup(groepId)
-                .list();
-    }
-
-    public List<User> listUsers() {
-        return idmIdentityService.createUserQuery().list();
-    }
 
     public Map<String, String> readTaakdataForOpenTask(final String taskId) {
-        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, VAR_TASK_TAAKDATA);
+        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
+        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> readTaakVariableForOpenTask(final String taskId, final String variableName) {
+        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, variableName);
         return taakdata != null ? taakdata : Collections.emptyMap();
     }
 
     public Map<String, String> readTaakdataForClosedTask(final String taskId) {
+        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
+        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> readTaakVariableForClosedTask(final String taskId, final String variableName) {
         final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
                 .taskId(taskId)
-                .variableName(VAR_TASK_TAAKDATA)
+                .variableName(variableName)
                 .singleResult();
         return historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : Collections.emptyMap();
     }
 
     public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
-        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDATA, taakdata);
-        return taakdata;
+        return updateTaakVariable(taskId, taakdata, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
+        return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {
+        cmmnTaskService.setVariableLocal(taskId, variableName, value);
+        return value;
     }
 
     public List<CaseDefinition> listCaseDefinitions() {
