@@ -91,7 +91,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFields: Map<string, any> = new Map<string, any>();
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
     viewInitialized = false;
-    toolTipIcon = new TextIcon(Conditionals.always, 'help_outline', 'toolTip_icon', '', 'pointer');
+    toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
 
     private zaakListener: WebsocketListener;
