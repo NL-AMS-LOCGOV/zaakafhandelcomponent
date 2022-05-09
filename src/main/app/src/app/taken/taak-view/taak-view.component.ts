@@ -30,6 +30,9 @@ import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
+import {TaakHistorieRegel} from '../../shared/historie/model/taak-historie-regel';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -39,9 +42,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
+    @ViewChild('historieSort') historieSort: MatSort;
 
     taak: Taak;
     menu: MenuItem[] = [];
+
+    historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
+    historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
 
     editFormFields: Map<string, any> = new Map<string, any>();
     streefdatumIcon: TextIcon;
@@ -69,6 +76,17 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
         super.ngAfterViewInit();
         this.taakListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.TAAK, this.taak.id,
             (event) => this.ophalenTaak(event));
+
+        this.historieSrc.sortingDataAccessor = (item, property) => {
+            switch (property) {
+                case 'datum':
+                    return item.datumTijd;
+                default:
+                    return item[property];
+            }
+        };
+
+        this.historieSrc.sort = this.historieSort;
     }
 
     ngOnDestroy() {
@@ -79,6 +97,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
     initTaakGegevens(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
+        this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
     }
@@ -125,6 +144,12 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
+    }
+
+    private loadHistorie(): void {
+        this.takenService.listHistorieVoorTaak(this.taak.id).subscribe(historie => {
+            this.historieSrc.data = historie;
+        });
     }
 
     onFormPartial(formGroup: FormGroup): void {

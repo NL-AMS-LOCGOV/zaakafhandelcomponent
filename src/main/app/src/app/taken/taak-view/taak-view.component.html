@@ -26,40 +26,82 @@
                         <mat-card-title>{{'taak' | translate}}</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                            <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
-                                <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
-                            </div>
+                        <mat-tab-group>
+                            <mat-tab label="{{'gegevens.algemeen' | translate}}">
+                                <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                        <zac-static-text [label]="'naam' | translate" [value]="taak.naam"></zac-static-text>
+                                        <zac-static-text [label]="'taak.status' | translate" [value]="'taak.status.'+taak.status | translate"></zac-static-text>
+                                    </div>
 
-                            <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                <zac-edit-groep [readonly]="isAfgerond()"
-                                                [formField]="editFormFields.get('groep')"
-                                                (onSave)="editGroep($event)"></zac-edit-groep>
-                                <zac-edit-behandelaar [readonly]="isAfgerond()"
-                                                      [formField]="editFormFields.get('behandelaar')"
-                                                      (onSave)="editBehandelaar($event)"
-                                                      [showAssignToMe]="showAssignToMe()"
-                                                      (onAssignToMe)="assignToMe()">
-                                </zac-edit-behandelaar>
-                            </div>
+                                    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+                                        <zac-edit-groep [readonly]="isAfgerond()"
+                                                        [formField]="editFormFields.get('groep')"
+                                                        (onSave)="editGroep($event)"></zac-edit-groep>
+                                        <zac-edit-behandelaar [readonly]="isAfgerond()"
+                                                              [formField]="editFormFields.get('behandelaar')"
+                                                              (onSave)="editBehandelaar($event)"
+                                                              [showAssignToMe]="showAssignToMe()"
+                                                              (onAssignToMe)="assignToMe()">
+                                        </zac-edit-behandelaar>
+                                    </div>
 
-                            <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
-                                <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                                    <mat-divider></mat-divider>
+                                    <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
+                                        <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
+                                            <mat-divider></mat-divider>
+                                        </div>
+                                        <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate"
+                                                         [value]="taak.creatiedatumTijd | datum"></zac-static-text>
+                                        <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate" [value]="taak.streefdatum | datum"
+                                                         [icon]="streefdatumIcon"></zac-static-text>
+                                    </div>
+
+                                    <div fxFlex="100">
+                                        <zac-edit-tekst [readonly]="isAfgerond()"
+                                                        [formField]="editFormFields.get('toelichting')"
+                                                        (onSave)="partialEditTaak($event, 'toelichting')">
+                                        </zac-edit-tekst>
+                                    </div>
                                 </div>
-                                <zac-static-text fxFlex.sm="50" [label]="'creatiedatum' | translate" [value]="taak.creatiedatumTijd | datum"></zac-static-text>
-                                <zac-static-text fxFlex.sm="50" [label]="'streefdatum' | translate" [value]="taak.streefdatum | datum"
-                                                 [icon]="streefdatumIcon"></zac-static-text>
-                            </div>
-
-                            <div fxFlex="100">
-                                <zac-edit-tekst [readonly]="isAfgerond()"
-                                                [formField]="editFormFields.get('toelichting')"
-                                                (onSave)="partialEditTaak($event, 'toelichting')">
-                                </zac-edit-tekst>
-                            </div>
-                        </div>
+                            </mat-tab>
+                            <mat-tab label="{{'historie' | translate}}">
+                                <div id="historie_tab" class="table-wrapper historie-table">
+                                    <table mat-table [dataSource]="historieSrc" matSort #historieSort="matSort" matSortActive="datum" matSortDirection="desc">
+                                        <ng-container matColumnDef="datum">
+                                            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'datum' | translate}} </th>
+                                            <td *matCellDef="let regel" mat-cell>
+                                                <div matTooltip="{{regel.datumTijd | datum:'short'}}">
+                                                    {{regel.datumTijd | datum | empty}}
+                                                </div>
+                                            </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="wijziging">
+                                            <th mat-header-cell *matHeaderCellDef> {{'wijziging' | translate}} </th>
+                                            <td mat-cell *matCellDef="let regel">
+                                                <read-more [text]="regel.attribuutLabel | translate" [maxLength]="20"></read-more>
+                                            </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="oudeWaarde">
+                                            <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
+                                            <td mat-cell *matCellDef="let regel">
+                                                <read-more [text]="regel.oudeWaarde | datum | empty"
+                                                           [maxLength]="20"></read-more>
+                                            </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="nieuweWaarde">
+                                            <th mat-header-cell *matHeaderCellDef> {{'waarde.nieuw' | translate}} </th>
+                                            <td mat-cell *matCellDef="let regel">
+                                                <read-more [text]="regel.nieuweWaarde | datum | empty"
+                                                           [maxLength]="20"></read-more>
+                                            </td>
+                                        </ng-container>
+                                        <tr mat-header-row *matHeaderRowDef="historieColumns; sticky: true"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: historieColumns;"></tr>
+                                    </table>
+                                    <p *ngIf="historieSrc.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
                     </mat-card-content>
                 </mat-card>
 
