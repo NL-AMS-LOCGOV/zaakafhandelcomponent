@@ -199,6 +199,11 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
 
         this.dialog.open(DialogComponent, {
             data: dialogData
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.streefDatum = this.streefDatumField.formControl.value;
+                this.fataleDatum = this.fataleDatumField.formControl.value;
+            }
         });
     }
 
