@@ -94,16 +94,16 @@ public class IdentityService {
     public User readUser(final String userId) {
         final String filter = String.format("(&(objectClass=%s)(cn=%s))", USER_OBJECT_CLASS, userId);
         return search(usersDN, filter, USER_ATTRIBUTES).stream()
-                .map(this::convertToUser)
                 .findAny()
+                .map(this::convertToUser)
                 .orElse(new User(userId));
     }
 
     public Group readGroup(final String groupId) {
         final String filter = String.format("(&(objectClass=%s)(cn=%s))", GROUP_OBJECT_CLASS, groupId);
         return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
-                .map(this::convertToGroup)
                 .findAny()
+                .map(this::convertToGroup)
                 .orElse(new Group(groupId));
 
     }
@@ -116,9 +116,18 @@ public class IdentityService {
     public List<User> listUsersInGroup(final String groupId) {
         final String filter = String.format("(&(objectClass=%s)(cn=%s))", GROUP_OBJECT_CLASS, groupId);
         return search(groupsDN, filter, GROUP_MEMBERSHIP_ATTRIBUTES).stream()
-                .flatMap(this::convertToMembers)
-                .map(this::readUser)
+                .map(this::convertToMembers)
+                .flatMap(this::readUsers)
                 .toList();
+    }
+
+    private Stream<User> readUsers(final List<String> userIds) {
+        final StringBuilder filter = new StringBuilder();
+        filter.append(String.format("(&(objectClass=%s)(|", USER_OBJECT_CLASS));
+        userIds.forEach(userId -> filter.append(String.format("(cn=%s)", userId)));
+        filter.append("))");
+        return search(usersDN, filter.toString(), USER_ATTRIBUTES).stream()
+                .map(this::convertToUser);
     }
 
     private User convertToUser(final Attributes attributes) {
@@ -133,10 +142,11 @@ public class IdentityService {
                          readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE));
     }
 
-    private Stream<String> convertToMembers(final Attributes attributes) {
+    private List<String> convertToMembers(final Attributes attributes) {
         return readAttributeToListOfStrings(attributes, GROUP_MEMBER_ATTRIBUTE).stream()
                 .map(member -> substringBetween(member, "cn=", ","))
-                .filter(Objects::nonNull);
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private List<Attributes> search(final String root, final String filter, final String[] attributesToReturn) {
