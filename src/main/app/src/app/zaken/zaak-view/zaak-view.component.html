@@ -92,6 +92,7 @@
                                                      [value]="zaakLocatie?.weergavenaam" [icon]="locatieIcon"
                                                      (iconClicked)="editZaakLocatie()"></zac-static-text>
                                 </div>
+
                                 <div fxFlex="100" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>
@@ -102,28 +103,33 @@
                                                           [streefDatumIcon]="editFormFieldIcons.get('einddatumGepland')"
                                                           [fataleDatumIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
                                                           [reasonField]="editFormFields.get('reden')"
-                                                          (onSave)="editDatumGroep($event)"></zac-edit-datum-groep>
+                                                          (onSave)="editDatumGroep($event)"
+                                                          [opgeschort]="zaak.rechten.opgeschort"
+                                                          [opschortReden]="zaak.redenOpschorting"
+                                                          [opschortDuur]="zaakOpschorting?.duurDagen"
+                                                          [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
+                                                          (doOpschorting)="editOpschorting($event)"></zac-edit-datum-groep>
+                                </div>
+                                <div fxFlex="100" class="mat-divider-wrapper">
+                                    <mat-divider></mat-divider>
+                                </div>
+
+                                <div fxFlex="100" *ngIf="zaak.indicatieOpschorting">
+                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieOpschorting' | translate"
+                                                     [value]="'duurDagenVerwacht' | translate:{dagen: zaakOpschorting?.duurDagen}"></zac-static-text>
+                                    <zac-static-text [fxFlex]="100*2/3" [label]="'reden' | translate"
+                                                     [value]="zaak.redenOpschorting"></zac-static-text>
+                                </div>
+                                <div fxFlex="100" *ngIf="zaak.indicatieVerlenging">
+                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieLenging' | translate"
+                                                     [value]="'duurDagen' | translate:{dagen: zaak.duurVerlenging}"></zac-static-text>
+                                    <zac-static-text [fxFlex]="100*2/3" [label]="'reden' | translate"
+                                                     [value]="zaak.redenVerlenging"></zac-static-text>
                                 </div>
                                 <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>
-                                <div fxFlex="100" *ngIf="zaak.indicatieOpschorting">
-                                    <zac-static-text [fxFlex]="100/3" [label]="'indicatieOpschorting' | translate"
-                                                     [value]="zaak.indicatieOpschorting ? 'Ja' : 'Nee'"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100/3*2" [label]="'reden' | translate"
-                                                     [value]="zaak.redenOpschorting"></zac-static-text>
-                                </div>
 
-                                <div fxFlex="100" *ngIf="zaak.indicatieVerlenging">
-                                    <zac-static-text [fxFlex]="100/3" [label]="'duurVerlenging' | translate"
-                                                     [value]="zaak.duurVerlenging ? 'Ja' : 'Nee'"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100/3*2" [label]="'reden' | translate"
-                                                     [value]="zaak.redenVerlenging"></zac-static-text>
-                                </div>
-
-                                <div fxFlex="100" class="mat-divider-wrapper">
-                                    <mat-divider></mat-divider>
-                                </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     [reasonField]="editFormFields.get('reden')"

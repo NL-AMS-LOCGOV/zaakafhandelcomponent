@@ -3,18 +3,20 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="static-text" (click)="edit(true)" [class.readonly]="readonly">
-    <div *ngIf="!editing" class="datum-groep-wrapper" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+<div *ngIf="!editing">
+    <div class="datum-groep-wrapper static-text" (click)="edit(true)" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+        <div [fxFlex]="100/3 + 1.5" fxLayout.sm="row">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
-                {{startDatum | datum | empty}}
+                <div>
+                    {{startDatum | datum}}
+                </div>
             </div>
         </div>
-        <div [fxFlex]="100/3" fxFlex.lt-md="50">
+        <div [fxFlex]="100/3 + 0.75" fxLayout.sm="row">
             <label class="static-text-label">
                 {{streefDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
@@ -31,14 +33,14 @@
                 </div>
             </div>
         </div>
-        <div [fxFlex]="100/3 - 2.5" fxFlex.lt-md="100" fxLayout.sm="row">
+        <div [fxFlex]="100/3 - 2.25" fxLayout.sm="row">
             <label class="static-text-label">
                 {{fataleDatumField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
-                    {{fataleDatum | datum | empty}}
+                    {{fataleDatum | datum}}
                     <mat-icon class="label-icon"
                               [ngClass]="fataleDatumIcon.styleClass"
                               *ngIf="showFataleDatumIcon"
@@ -50,6 +52,20 @@
                     <mat-icon>edit</mat-icon>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="play-control-wrapper">
+        <div *ngIf="!opgeschort" class="play-control">
+            <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
+                <mat-icon class="play-icon">play_arrow</mat-icon>
+                <mat-icon class="play-button">pause_circle_filled</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="opgeschort" class="play-control">
+            <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
+                <mat-icon class="play-icon">pause</mat-icon>
+                <mat-icon class="play-button">play_circle_filled</mat-icon>
+            </button>
         </div>
     </div>
 </div>

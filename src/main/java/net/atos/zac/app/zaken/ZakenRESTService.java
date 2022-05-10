@@ -7,6 +7,7 @@ package net.atos.zac.app.zaken;
 
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,8 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
@@ -216,6 +219,30 @@ public class ZakenRESTService {
     public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID uuid, final RESTZaak restZaak) {
         final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(uuid, restGeometryConverter.convert(restZaak.zaakgeometrie));
         return zaakConverter.convert(updatedZaak);
+    }
+
+    @PATCH
+    @Path("zaak/{uuid}/opschorting")
+    public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens.zaak),
+                                                                      restZaakOpschortGegevens.zaak.indicatieOpschorting ? "Opschorting" : "Hervatting");
+        if (restZaakOpschortGegevens.zaak.indicatieOpschorting) {
+            flowableService.createVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
+            flowableService.createVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
+        } else {
+            flowableService.removeVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
+            flowableService.removeVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+        }
+        return zaakConverter.convert(updatedZaak);
+    }
+
+    @GET
+    @Path("zaak/{uuid}/opschorting")
+    public RESTZaakOpschorting getZaakOpschorting(@PathParam("uuid") final UUID zaakUUID) {
+        final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
+        zaakOpschorting.vanafDatumTijd = (ZonedDateTime) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
+        zaakOpschorting.duurDagen = (Integer) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+        return zaakOpschorting;
     }
 
     @PUT
