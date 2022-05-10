@@ -321,13 +321,15 @@ public class ZGWApiService implements Caching {
     }
 
     private void berekenArchiveringsparameters(final UUID zaakUUID) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID); // refetch to get the einddatum (the archiefNominatie has also been set)
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID); // refetch to get the einddatum (the archiefnominatie has also been set)
         final Resultaattype resultaattype = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype());
-        final LocalDate brondatum = bepaalBrondatum(resultaattype, zaak);
-        if (brondatum != null) {
-            final Zaak zaakPatch = new Zaak();
-            zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
-            zrcClientService.updateZaakPartially(zaakUUID, zaakPatch);
+        if (resultaattype.getArchiefactietermijn() != null) { // no idea what it means when there is no archiefactietermijn
+            final LocalDate brondatum = bepaalBrondatum(resultaattype, zaak);
+            if (brondatum != null) {
+                final Zaak zaakPatch = new Zaak();
+                zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
+                zrcClientService.updateZaakPartially(zaakUUID, zaakPatch);
+            }
         }
     }
 
