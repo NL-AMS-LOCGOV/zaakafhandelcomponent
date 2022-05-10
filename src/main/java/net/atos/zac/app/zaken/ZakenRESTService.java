@@ -5,7 +5,11 @@
 
 package net.atos.zac.app.zaken;
 
+import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
+import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
+import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -75,6 +79,7 @@ import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.app.zaken.model.RESTZaakToekennenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
@@ -82,6 +87,7 @@ import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
+import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -106,6 +112,12 @@ public class ZakenRESTService {
 
     public static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
 
+    public static final String OPSCHORTING = "Opschorting";
+
+    public static final String HERVATTING = "Hervatting";
+
+    public static final String VERLENGING = "Verlenging";
+
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -123,6 +135,9 @@ public class ZakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private EventingService eventingService;
 
     @Inject
     private IdentityService identityService;
@@ -225,13 +240,13 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/opschorting")
     public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens.zaak),
-                                                                      restZaakOpschortGegevens.zaak.indicatieOpschorting ? "Opschorting" : "Hervatting");
+                                                                      restZaakOpschortGegevens.zaak.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.zaak.indicatieOpschorting) {
-            flowableService.createVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
-            flowableService.createVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
+            flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
+            flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
         } else {
-            flowableService.removeVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
-            flowableService.removeVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+            flowableService.removeVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
+            flowableService.removeVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
         }
         return zaakConverter.convert(updatedZaak);
     }
@@ -243,6 +258,28 @@ public class ZakenRESTService {
         zaakOpschorting.vanafDatumTijd = (ZonedDateTime) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
         zaakOpschorting.duurDagen = (Integer) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
         return zaakOpschorting;
+    }
+
+    @PATCH
+    @Path("zaak/{uuid}/verlenging")
+    public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakVerlengGegevens, zaakUUID),
+                                                                      VERLENGING);
+        if (restZaakVerlengGegevens.takenVerlengen) {
+            final int[] count = new int[1];
+            flowableService.listOpenTasksforCase(zaakUUID).stream()
+                    .filter(task -> task.getDueDate() != null)
+                    .forEach(task -> {
+                        task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(restZaakVerlengGegevens.duurDagen)));
+                        flowableService.updateTask(task);
+                        eventingService.send(TAAK.updated(task));
+                        count[0]++;
+                    });
+            if (0 < count[0]) {
+                eventingService.send(ZAAK_TAKEN.updated(updatedZaak));
+            }
+        }
+        return zaakConverter.convert(updatedZaak);
     }
 
     @PUT
