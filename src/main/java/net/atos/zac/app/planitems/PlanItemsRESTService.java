@@ -75,7 +75,7 @@ public class PlanItemsRESTService {
     public void doHumanTask(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
-        final Date streefdatum = DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd());
+        final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         flowableService.startHumanTaskPlanItem(planItem, humanTaskData.groep.id,
                                                humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
                                                humanTaskData.taakdata, humanTaskData.taakStuurGegevens.sendMail,
