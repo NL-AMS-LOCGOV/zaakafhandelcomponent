@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {FileFormat} from './file-format';
+
 export class EnkelvoudigInformatieobject {
     uuid: string;
     titel: string;
@@ -13,7 +15,7 @@ export class EnkelvoudigInformatieobject {
     vertrouwelijkheidaanduiding: string;
     auteur: string;
     status: string;
-    formaat: string;
+    formaat: FileFormat;
     taal: string;
     versie: number;
     informatieobjectType: string;
