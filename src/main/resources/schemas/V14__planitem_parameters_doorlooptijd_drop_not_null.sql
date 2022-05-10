@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-alter table ${schema}.planitem_parameters
+alter table ${schema}.humantask_parameters
     alter column doorlooptijd DROP NOT NULL;
