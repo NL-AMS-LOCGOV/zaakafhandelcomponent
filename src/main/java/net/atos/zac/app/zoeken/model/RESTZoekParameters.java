@@ -11,4 +11,10 @@ public class RESTZoekParameters {
 
     @QueryParam("tekst")
     public String tekst;
+
+    @QueryParam("rows")
+    public int rows;
+
+    @QueryParam("start")
+    public int start;
 }
