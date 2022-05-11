@@ -19,6 +19,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
+
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
@@ -84,16 +86,24 @@ public class DRCClientService {
         return createInvocationBuilder(enkelvoudigInformatieobjectURI).get(EnkelvoudigInformatieobject.class);
     }
 
+    public EnkelvoudigInformatieobjectWithLockAndInhoud partialUpdateEnkelvoudigInformatieobject(final UUID uuid,
+            final String toelichting,
+            final EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieObjectWithLockAndInhoud) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+        return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieObjectWithLockAndInhoud);
+    }
+
     /**
      * Lock a {@link EnkelvoudigInformatieobject}.
      *
      * @param enkelvoudigInformatieobjectUUID {@link EnkelvoudigInformatieobject}
      * @param lockOwner                       Owner of the lock
      */
-    public void lockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, String lockOwner) {
+    public String lockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, String lockOwner) {
         // If the EnkelvoudigInformatieobject is already locked a ValidationException is thrown.
         final String lock = drcClient.enkelvoudigInformatieobjectLock(enkelvoudigInformatieobjectUUID, new Lock()).getLock();
         LOCKS.put(generateLockId(enkelvoudigInformatieobjectUUID, lockOwner), lock);
+        return lock;
     }
 
     /**

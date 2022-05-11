@@ -73,6 +73,6 @@ public class AuditEnkelvoudigInformatieobjectConverter extends AbstractAuditWijz
     }
 
     private String toWaarde(final Ondertekening ondertekening) {
-        return ondertekening != null ? ondertekening.getDatum().toString() : null;
+        return ondertekening != null && ondertekening.getDatum() != null ? ondertekening.getDatum().toString() : null;
     }
 }
