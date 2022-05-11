@@ -55,6 +55,12 @@ public class ZaakafhandelParameters {
     @Column(name = "gebruikersnaam_behandelaar")
     private String gebruikersnaamMedewerker;
 
+    @Column(name = "eindatum_gepland_waarschuwing")
+    private Integer einddatumGeplandWaarschuwing;
+
+    @Column(name = "uiterlijke_einddatum_afdoening_waarschuwing")
+    private Integer uiterlijkeEinddatumAfdoeningWaarschuwing;
+
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<HumanTaskParameters> humanTaskParametersCollection;
@@ -105,6 +111,22 @@ public class ZaakafhandelParameters {
 
     public void setGebruikersnaamMedewerker(final String gebruikersnaamMedewerker) {
         this.gebruikersnaamMedewerker = gebruikersnaamMedewerker;
+    }
+
+    public Integer getEinddatumGeplandWaarschuwing() {
+        return einddatumGeplandWaarschuwing;
+    }
+
+    public void setEinddatumGeplandWaarschuwing(final Integer streefdatumWaarschuwing) {
+        this.einddatumGeplandWaarschuwing = streefdatumWaarschuwing;
+    }
+
+    public Integer getUiterlijkeEinddatumAfdoeningWaarschuwing() {
+        return uiterlijkeEinddatumAfdoeningWaarschuwing;
+    }
+
+    public void setUiterlijkeEinddatumAfdoeningWaarschuwing(final Integer fataledatumWaarschuwing) {
+        this.uiterlijkeEinddatumAfdoeningWaarschuwing = fataledatumWaarschuwing;
     }
 
     public Collection<HumanTaskParameters> getHumanTaskParametersCollection() {
