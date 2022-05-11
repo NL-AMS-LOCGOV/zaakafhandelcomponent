@@ -138,6 +138,7 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
             new TextareaFormFieldBuilder().id('toelichting')
                                           .label('toelichting')
                                           .value(this.taak.toelichting)
+                                          .maxlength(1000)
                                           .build());
         this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }

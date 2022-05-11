@@ -210,10 +210,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                                  .optionLabel('naam')
                                                                                  .options(
                                                                                      this.identityService.listUsers())
+                                                                                 .maxlength(50)
                                                                                  .build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroups())
+                                                                           .maxlength(50)
                                                                            .build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving)
@@ -234,11 +236,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
+            new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).maxlength(10)
+                                      .build());
 
         this.editFormFields.set('einddatumGepland',
             new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
-                                      .value(this.zaak.einddatumGepland).build());
+                                      .value(this.zaak.einddatumGepland).maxlength(10).build());
         this.editFormFieldIcons.set('einddatumGepland',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
@@ -246,6 +249,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
             new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
                                       .value(this.zaak.uiterlijkeEinddatumAfdoening)
+                                      .maxlength(10)
                                       .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
@@ -400,6 +404,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                 .build(),
                     new InputFormFieldBuilder().id('toelichting')
                                                .label('toelichting')
+                                               .maxlength(80)
                                                .build()],
                 (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
                 melding,

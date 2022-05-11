@@ -5,19 +5,23 @@
 
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{'actie.taak.toekennen.groep' | translate}}</mat-label>
-    <input placeholder="{{'groep.-kies-' | translate}}" [formControl]="groepControl" (blur)="groepBlur()" [matAutocomplete]="groepAC" matInput type="text">
+    <input placeholder="{{'groep.-kies-' | translate}}" [formControl]="groepControl" (blur)="groepBlur()"
+           [matAutocomplete]="groepAC" matInput type="text" [maxlength]="data.maxlength">
     <mat-autocomplete #groepAC="matAutocomplete" [displayWith]="displayFn">
         <mat-option *ngFor="let groep of filteredGroepen | async" [value]="groep">{{ groep.naam }}</mat-option>
     </mat-autocomplete>
 </mat-form-field>
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{'actie.taak.toekennen.medewerker' | translate}}</mat-label>
-    <input placeholder="{{'behandelaar.-kies-' | translate}}" [formControl]="medewerkerControl" (blur)="medewerkerBlur()" [matAutocomplete]="medewerkerAC"
-           matInput type="text">
+    <input placeholder="{{'behandelaar.-kies-' | translate}}" [formControl]="medewerkerControl"
+           (blur)="medewerkerBlur()" [matAutocomplete]="medewerkerAC"
+           matInput type="text" [maxlength]="data.maxlength">
     <mat-autocomplete #medewerkerAC="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
+        <mat-option *ngFor="let medewerker of filteredMedewerkers | async"
+                    [value]="medewerker">{{ medewerker.naam }}</mat-option>
     </mat-autocomplete>
-    <button mat-icon-button [title]="'filter.groep' | translate" type="button" matSuffix (click)="inGroepChanged($event)">
+    <button mat-icon-button [title]="'filter.groep' | translate" type="button" matSuffix
+            (click)="inGroepChanged($event)">
         <mat-icon [color]="inGroep ? 'primary' : 'warn'">{{inGroep ? 'group' : 'group_off'}}</mat-icon>
     </button>
 </mat-form-field>

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -14,6 +14,7 @@ export class MedewerkerGroepFormField extends AbstractFormField {
     defaultGroep: Group;
     defaultMedewerker: User;
     groepOptioneel = false;
+    maxlength: number;
 
     constructor() {
         super();

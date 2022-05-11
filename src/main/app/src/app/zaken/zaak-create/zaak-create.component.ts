@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -70,29 +70,39 @@ export class ZaakCreateComponent implements OnInit {
 
         const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
                                                      .validators(Validators.required)
-                                                     .optionLabel('omschrijving').options(this.zakenService.listZaaktypes())
+                                                     .optionLabel('omschrijving')
+                                                     .options(this.zakenService.listZaaktypes())
                                                      .build();
 
         const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                                     .value(moment()).validators(Validators.required).build();
+                                                     .value(moment()).validators(Validators.required).maxlength(10)
+                                                     .build();
 
-        const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum').value(moment()).build();
+        const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum')
+                                                           .value(moment()).maxlength(10).build();
 
-        this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie').icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])
+        this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
+                                                         .icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])
                                                          .label('initiator')
-                                                         .validators(CustomValidators.bsnOrVesPrefixed).build();
+                                                         .validators(CustomValidators.bsnOrVesPrefixed).maxlength(70)
+                                                         .build();
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                .optionLabel('naam').options(communicatiekanalen)
                                                                .build();
 
-        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                                                        .optionLabel('label').options(vertrouwelijkheidaanduidingen).build();
+        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
+                                                                        .label('vertrouwelijkheidaanduiding')
+                                                                        .optionLabel('label')
+                                                                        .options(vertrouwelijkheidaanduidingen).build();
 
-        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').build();
-        const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').build();
+        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(100)
+                                                        .build();
+        const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)
+                                                          .build();
 
-        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie').icon(this.locatieToevoegenIcon).label('locatie').build();
+        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie').icon(this.locatieToevoegenIcon)
+                                                       .label('locatie').maxlength(100).build();
 
         this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum, this.locatieField], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];

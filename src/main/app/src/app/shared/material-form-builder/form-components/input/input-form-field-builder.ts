@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -26,8 +26,9 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    maxlength(maxlength: number): this {
+    maxlength(maxlength: number, showCount?: boolean): this {
         this.formField.maxlength = maxlength;
+        this.formField.showCount = showCount;
         return this;
     }
 

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -12,5 +12,10 @@ export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
     constructor() {
         super();
         this.formField = new DateFormField();
+    }
+
+    maxlength(maxlength: number): this {
+        this.formField.maxlength = maxlength;
+        return this;
     }
 }

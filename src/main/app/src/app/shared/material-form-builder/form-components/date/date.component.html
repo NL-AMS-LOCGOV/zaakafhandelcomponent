@@ -1,5 +1,5 @@
 <!--
-  ~ SPDX-FileCopyrightText: 2021 Atos
+  ~ SPDX-FileCopyrightText: 2021 - 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
@@ -7,7 +7,7 @@
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_datefield'" [matDatepicker]="picker"
            [required]="data.required"
-           matInput/>
+           matInput [maxlength]="data.maxlength"/>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021-2022 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -37,14 +37,21 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.bsnFormField = new InputFormFieldBuilder().id('bsn').label('bsn').validators(CustomValidators.bsn).build();
-        this.geslachtsnaamFormField = new InputFormFieldBuilder().id('geslachtsnaam').label('geslachtsnaam').value('Me*').build();
-        this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum').build();
+        this.bsnFormField = new InputFormFieldBuilder().id('bsn').label('bsn').validators(CustomValidators.bsn)
+                                                       .maxlength(9).build();
+        this.geslachtsnaamFormField = new InputFormFieldBuilder().id('geslachtsnaam').label('geslachtsnaam')
+                                                                 .value('Me*').maxlength(50).build();
+        this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum')
+                                                                .maxlength(10).build();
         this.gemeenteCodeFormField = new InputFormFieldBuilder().id('gemeenteCode').label('gemeenteCode')
-                                                                .value('0599').validators(Validators.min(1), Validators.max(9999)).build();
-        this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode').validators(CustomValidators.postcode).build();
+                                                                .value('0599')
+                                                                .validators(Validators.min(1), Validators.max(9999))
+                                                                .maxlength(4).build();
+        this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
+                                                            .validators(CustomValidators.postcode).maxlength(7).build();
         this.huisnummerFormField = new InputFormFieldBuilder().id('huisnummer').label('huisnummer')
-                                                              .validators(Validators.min(1), Validators.max(99999)).build();
+                                                              .validators(Validators.min(1), Validators.max(99999))
+                                                              .maxlength(5).build();
 
         this.formGroup = this.formBuilder.group({
             bsn: this.bsnFormField.formControl,

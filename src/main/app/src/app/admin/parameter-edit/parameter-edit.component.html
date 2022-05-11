@@ -144,7 +144,8 @@
                                                     floatLabel="always">
                                         <mat-label>{{'toelichting' | translate}}</mat-label>
                                         <textarea matInput class="toelichting"
-                                               [formControl]="getActieControl(actieParameter, 'toelichting')"></textarea>
+                                                  [formControl]="getActieControl(actieParameter, 'toelichting')"
+                                                  maxlength="1000"></textarea>
                                     </mat-form-field>
                                 </div>
                             </mat-expansion-panel>
