@@ -247,7 +247,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
-        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').build());
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').maxlength(80).build());
     }
 
     private createMenuItem(planItem: PlanItem): MenuItem {
@@ -255,6 +255,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             case PlanItemType.HumanTask:
                 return new ButtonMenuItem(planItem.naam, () => {
                     if (!this.actiefPlanItem || this.actiefPlanItem.id !== planItem.id) {
+                        ``;
                         this.action = null;
                         this.planItemsService.readHumanTask(planItem.id).subscribe(data => {
                             this.actiefPlanItem = data;
