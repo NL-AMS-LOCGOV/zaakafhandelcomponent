@@ -20,6 +20,7 @@ import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column
 import {TextIcon} from '../../shared/edit/text-icon';
 import {WerklijstData} from '../../shared/dynamic-table/model/werklijst-data';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -38,8 +39,12 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
 
     werklijstData: WerklijstData;
 
+    selectZaaktypePlaceholder: string;
+    selectGroepPlaceholder: string;
+
     constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService, private cd: ChangeDetectorRef) { }
+                private identityService: IdentityService, private cd: ChangeDetectorRef,
+                private translate: TranslateService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
@@ -56,6 +61,9 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         }
 
         this.setColumns();
+
+        this.selectGroepPlaceholder = this.translate.instant('groep.-kies-');
+        this.selectZaaktypePlaceholder = this.translate.instant('zaaktype.-kies-');
     }
 
     ngAfterViewInit(): void {
@@ -104,6 +112,11 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     searchAndGoToFirstPage() {
+        if (this.dataSource.zoekParameters.selectie === 'groep') {
+            this.selectGroepPlaceholder = this.translate.instant('groep');
+        } else {
+            this.selectZaaktypePlaceholder = this.translate.instant('zaaktype');
+        }
         this.searchCases();
         this.paginator.firstPage();
     }

@@ -3,30 +3,30 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="form">
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
+<div class="form" [class.loading]="utilService.loading$ | async">
+    <div sticky-top fxLayout="row" fxLayoutGap="10px" fxFlexFill>
         <div fxFlex="100">
-            <mfb-form-field [field]="zoekFormField"></mfb-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>{{'trefwoorden' | translate}}</mat-label>
+                <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()">
+                <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
+            </mat-form-field>
         </div>
     </div>
 
-    <button mat-flat-button color="primary" [disabled]="loading" (click)="zoeken()">Zoek
-        <mat-icon class="spinner" *ngIf="loading">
-            <mat-progress-spinner color="warn" diameter="20" mode="indeterminate"></mat-progress-spinner>
-        </mat-icon>
-    </button>
-</div>
-
-<div *ngIf="zoekResultaat">
     <ng-container *ngFor="let item of zoekResultaat.resultaten">
         <ng-container [ngSwitch]="item.type">
-            <zac-zaak-zoek-object [zaak]="item" *ngSwitchCase="'ZAAK'"></zac-zaak-zoek-object>
-            <mat-card *ngSwitchCase="'DOCUMENT'">
-                Document {{item.identificatie}}
-            </mat-card>
+            <zac-zaak-zoek-object *ngSwitchCase="'ZAAK'" [sideNav]="sideNav" [zaak]="getZaak(item)"></zac-zaak-zoek-object>
+            <zac-document-zoek-object *ngSwitchCase="'DOCUMENT'" [sideNav]="sideNav" [infoObject]="item"></zac-document-zoek-object>
         </ng-container>
         <mat-divider></mat-divider>
     </ng-container>
-    <p *ngIf="zoekResultaat.totaal == 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
-    <p *ngIf="loading ">{{'msg.loading' | translate}}</p>
+
+    <p *ngIf="zoekResultaat.totaal == 0 && !isLoadingResults">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+    <mat-paginator #paginator
+                   [pageIndex]="0"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[10, 25, 50, 100]"
+                   sticky>
+    </mat-paginator>
 </div>

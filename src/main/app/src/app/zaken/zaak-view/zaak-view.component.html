@@ -108,7 +108,10 @@
                                                           [opschortReden]="zaak.redenOpschorting"
                                                           [opschortDuur]="zaakOpschorting?.duurDagen"
                                                           [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
-                                                          (doOpschorting)="editOpschorting($event)"></zac-edit-datum-groep>
+                                                          (doOpschorting)="editOpschorting($event)"
+                                                          [verlengReden]="zaak.redenVerlenging"
+                                                          [verlengDuur]="zaak.duurVerlenging"
+                                                          (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
@@ -121,8 +124,8 @@
                                                      [value]="zaak.redenOpschorting"></zac-static-text>
                                 </div>
                                 <div fxFlex="100" *ngIf="zaak.indicatieVerlenging">
-                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieLenging' | translate"
-                                                     [value]="'duurDagen' | translate:{dagen: zaak.duurVerlenging}"></zac-static-text>
+                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieVerlenging' | translate"
+                                                     [value]="zaak.duurVerlenging"></zac-static-text>
                                     <zac-static-text [fxFlex]="100*2/3" [label]="'reden' | translate"
                                                      [value]="zaak.redenVerlenging"></zac-static-text>
                                 </div>

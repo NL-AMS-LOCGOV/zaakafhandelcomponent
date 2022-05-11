@@ -3,13 +3,37 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-card>
-    <div [fxFlex]="100/3" fxFlex.lt-md="50">
+<div fxLayout="row wrap" class="zaak-wrapper">
+    <div [fxFlex]="100/3">
         <zac-static-text [label]="'zaak.identificatie' | translate"
+                         [icon]="viewIcon"
+                         (iconClicked)="open(zaak)"
                          [value]="zaak.identificatie"></zac-static-text>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
-        <zac-static-text [label]="'communicatiekanaal' | translate"
-                         [value]="zaak.communicatiekanaal"></zac-static-text>
+        <zac-static-text [label]="'status' | translate"
+                         [value]="zaak.statustypeOmschrijving"></zac-static-text>
     </div>
-</mat-card>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'initiator' | translate"
+                         [value]="zaak.initiatorIdentificatie"></zac-static-text>
+        <zac-static-text [label]="'behandelaar' | translate"
+                         [value]="zaak.behandelaarNaam"></zac-static-text>
+        <zac-static-text [label]="'resultaat' | translate"
+                         [value]="zaak.resultaattypeOmschrijving"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'startdatum' | translate"
+                         [value]="zaak.startdatum"></zac-static-text>
+        <zac-static-text [label]="'einddatumGepland' | translate"
+                         [value]="zaak.einddatumGepland"></zac-static-text>
+        <zac-static-text [label]="'uiterlijkeEinddatumAfdoening' | translate"
+                         [value]="zaak.uiterlijkeEinddatumAfdoening"></zac-static-text>
+    </div>
+    <div [fxFlex]="100" class="toelichting">
+        <zac-static-text [label]="'omschrijving' | translate"
+                         [value]="zaak.omschrijving"></zac-static-text>
+        <zac-static-text [label]="'toelichting' | translate"
+                         [value]="zaak.toelichting"></zac-static-text>
+    </div>
+</div>

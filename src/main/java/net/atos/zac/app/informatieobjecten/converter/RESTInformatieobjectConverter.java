@@ -14,6 +14,10 @@ import java.util.Base64;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
+
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
+
 import org.apache.commons.lang3.BooleanUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -97,6 +101,7 @@ public class RESTInformatieobjectConverter {
         if (enkelvoudigInformatieObject.getOndertekening() != null) {
             restObject.ondertekening = enkelvoudigInformatieObject.getOndertekening().getDatum();
         }
+        restObject.informatieobjectType = enkelvoudigInformatieObject.getInformatieobjecttype().toString();
 
         return restObject;
     }
@@ -136,4 +141,95 @@ public class RESTInformatieobjectConverter {
         return data;
     }
 
+    public RESTEnkelvoudigInformatieobject convert(final EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieobjectWithLockAndInhoud) {
+        final RESTEnkelvoudigInformatieobject restObject = new RESTEnkelvoudigInformatieobject();
+        restObject.url = enkelvoudigInformatieobjectWithLockAndInhoud.getUrl().toString();
+        restObject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieobjectWithLockAndInhoud.getUrl()).toString();
+        restObject.identificatie = enkelvoudigInformatieobjectWithLockAndInhoud.getIdentificatie();
+        restObject.titel = enkelvoudigInformatieobjectWithLockAndInhoud.getTitel();
+        restObject.bronorganisatie = enkelvoudigInformatieobjectWithLockAndInhoud.getBronorganisatie()
+                .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieobjectWithLockAndInhoud.getBronorganisatie();
+        restObject.creatiedatum = enkelvoudigInformatieobjectWithLockAndInhoud.getCreatiedatum();
+        if (enkelvoudigInformatieobjectWithLockAndInhoud.getVertrouwelijkheidaanduiding() != null) {
+            restObject.vertrouwelijkheidaanduiding = enkelvoudigInformatieobjectWithLockAndInhoud.getVertrouwelijkheidaanduiding().toString();
+        }
+        restObject.auteur = enkelvoudigInformatieobjectWithLockAndInhoud.getAuteur();
+        if (enkelvoudigInformatieobjectWithLockAndInhoud.getStatus() != null) {
+            restObject.status = enkelvoudigInformatieobjectWithLockAndInhoud.getStatus().toString();
+        }
+        restObject.formaat = enkelvoudigInformatieobjectWithLockAndInhoud.getFormaat();
+        final RESTTaal taal = restTaalConverter.convert(enkelvoudigInformatieobjectWithLockAndInhoud.getTaal());
+        if (taal != null) {
+            restObject.taal = taal.naam;
+        }
+        restObject.versie = enkelvoudigInformatieobjectWithLockAndInhoud.getVersie();
+        restObject.registratiedatumTijd = enkelvoudigInformatieobjectWithLockAndInhoud.getBeginRegistratie();
+        restObject.bestandsnaam = enkelvoudigInformatieobjectWithLockAndInhoud.getBestandsnaam();
+        if (enkelvoudigInformatieobjectWithLockAndInhoud.getLink() != null) {
+            restObject.link = enkelvoudigInformatieobjectWithLockAndInhoud.getLink().toString();
+        }
+        restObject.beschrijving = enkelvoudigInformatieobjectWithLockAndInhoud.getBeschrijving();
+        restObject.ontvangstdatum = enkelvoudigInformatieobjectWithLockAndInhoud.getOntvangstdatum();
+        restObject.verzenddatum = enkelvoudigInformatieobjectWithLockAndInhoud.getVerzenddatum();
+        restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieobjectWithLockAndInhoud.getLocked());
+        restObject.bestandsomvang = enkelvoudigInformatieobjectWithLockAndInhoud.getBestandsomvang();
+        restObject.inhoudUrl = enkelvoudigInformatieobjectWithLockAndInhoud.getInhoud();
+        restObject.documentType = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieobjectWithLockAndInhoud.getInformatieobjecttype()).getOmschrijving();
+        if (enkelvoudigInformatieobjectWithLockAndInhoud.getOndertekening() != null) {
+            restObject.ondertekening = enkelvoudigInformatieobjectWithLockAndInhoud.getOndertekening().getDatum();
+        }
+
+        return restObject;
+    }
+
+    public RESTEnkelvoudigInformatieObjectVersieGegevens convertHuidigeVersie(final EnkelvoudigInformatieobject informatieobject) {
+        final RESTEnkelvoudigInformatieObjectVersieGegevens data = new RESTEnkelvoudigInformatieObjectVersieGegevens();
+
+        data.uuid = UriUtil.uuidFromURI(informatieobject.getUrl()).toString();
+
+        if (informatieobject.getStatus() != null) {
+            data.status = informatieobject.getStatus().toValue();
+        }
+        if (informatieobject.getVertrouwelijkheidaanduiding() != null) {
+            data.vertrouwelijkheidaanduiding = informatieobject.getVertrouwelijkheidaanduiding().toValue();
+        }
+
+        data.beschrijving = informatieobject.getBeschrijving();
+        data.verzenddatum = informatieobject.getVerzenddatum();
+        data.titel = informatieobject.getTitel();
+        data.auteur = informatieobject.getAuteur();
+        data.taal = restTaalConverter.convert(informatieobject.getTaal());
+
+        return data;
+    }
+
+    public EnkelvoudigInformatieobjectWithLockAndInhoud convert(final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens,
+            final String lock) {
+        final EnkelvoudigInformatieobjectWithLockAndInhoud data = new EnkelvoudigInformatieobjectWithLockAndInhoud(lock);
+
+        if (restEnkelvoudigInformatieObjectVersieGegevens.status != null) {
+            data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieObjectVersieGegevens.status));
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding != null) {
+            data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(
+                    restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding));
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.beschrijving != null) {
+            data.setBeschrijving(restEnkelvoudigInformatieObjectVersieGegevens.beschrijving);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum != null) {
+            data.setVerzenddatum(restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.titel != null) {
+            data.setTitel(restEnkelvoudigInformatieObjectVersieGegevens.titel);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.taal != null) {
+            data.setTaal(restEnkelvoudigInformatieObjectVersieGegevens.taal.code);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.auteur != null) {
+            data.setAuteur(restEnkelvoudigInformatieObjectVersieGegevens.auteur);
+        }
+
+        return data;
+    }
 }

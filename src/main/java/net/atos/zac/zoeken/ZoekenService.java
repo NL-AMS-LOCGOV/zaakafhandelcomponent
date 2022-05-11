@@ -40,14 +40,16 @@ public class ZoekenService {
     }
 
     public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
-        if (StringUtils.isBlank(zoekZaakParameters.getTekst())) {
-            zoekZaakParameters.setTekst("*");
+        final SolrQuery query = new SolrQuery("*:*");
+        if (StringUtils.isNotBlank(zoekZaakParameters.getTekst())) {
+            query.setQuery("text:(%s)".formatted(zoekZaakParameters.getTekst()));
         }
-        final SolrQuery query = new SolrQuery("text:%s".formatted(zoekZaakParameters.getTekst()));
+        query.setRows(zoekZaakParameters.getRows());
+        query.setStart(zoekZaakParameters.getStart());
+        query.addSort("identificatie", SolrQuery.ORDER.desc);
         try {
             final QueryResponse response = solrClient.query(query);
             return new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class), response.getResults().getNumFound());
-
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }

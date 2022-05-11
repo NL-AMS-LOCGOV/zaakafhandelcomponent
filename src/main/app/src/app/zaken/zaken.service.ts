@@ -25,6 +25,7 @@ import {ZaakAfbrekenGegevens} from './model/zaak-afbreken-gegevens';
 import {DocumentOntkoppelGegevens} from './model/document-ontkoppel-gegevens';
 import {ZaakOpschortGegevens} from './model/zaak-opschort-gegevens';
 import {ZaakOpschorting} from './model/zaak-opschorting';
+import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -78,6 +79,16 @@ export class ZakenService {
         zaakOpschortGegevens.zaak = zaak;
         zaakOpschortGegevens.duurDagen = duurDagen;
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/opschorting`, zaakOpschortGegevens).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    updateVerlengingZaak(uuid: string, zaak: Zaak, duurDagen: number, takenVerlengen: boolean): Observable<Zaak> {
+        const zaakVerlengGegevens: ZaakVerlengGegevens = new ZaakVerlengGegevens();
+        zaakVerlengGegevens.zaak = zaak;
+        zaakVerlengGegevens.duurDagen = duurDagen;
+        zaakVerlengGegevens.takenVerlengen = takenVerlengen;
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/verlenging`, zaakVerlengGegevens).pipe(
             catchError(this.handleError)
         );
     }

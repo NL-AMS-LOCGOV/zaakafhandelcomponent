@@ -20,6 +20,8 @@ import {ZakenService} from '../../../zaken/zaken.service';
 import {InputFormFieldBuilder} from '../../material-form-builder/form-components/input/input-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, of, Subscription} from 'rxjs';
+import {CheckboxFormFieldBuilder} from '../../material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {CheckboxFormField} from '../../material-form-builder/form-components/checkbox/checkbox-form-field';
 
 @Component({
     selector: 'zac-edit-datum-groep',
@@ -40,6 +42,9 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     @Input() opschortDuur: number;
     @Input() opschortDatumTijd: string;
     @Output() doOpschorting: EventEmitter<any> = new EventEmitter<any>();
+    @Input() verlengReden: string;
+    @Input() verlengDuur: string;
+    @Output() doVerlenging: EventEmitter<any> = new EventEmitter<any>();
 
     showStreefDatumIcon: boolean;
     showFataleDatumIcon: boolean;
@@ -50,8 +55,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     streefDatum: string;
     fataleDatum: string;
 
-    opschortDuurField: InputFormField;
-    opschortRedenField: InputFormField;
+    duurField: InputFormField;
     werkelijkeOpschortDuur: number;
 
     editFormFieldIcons: Map<string, TextIcon> = new Map<string, TextIcon>();
@@ -128,54 +132,49 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
         this.editing = false;
     }
 
-    private maakOpschortDuurField(): InputFormField {
-        this.opschortDuurField = new InputFormFieldBuilder()
+    private maakDuurField(label: string): InputFormField {
+        this.duurField = new InputFormFieldBuilder()
         .id('duurDagen')
-        .label('opschortduur')
+        .label(label)
         .validators(Validators.required, Validators.min(1))
         .build();
-        return this.opschortDuurField;
+        return this.duurField;
     }
 
-    private maakOpschortRedenField(): InputFormField {
-        this.opschortRedenField = new InputFormFieldBuilder()
+    private maakRedenField(reden: string): InputFormField {
+        return new InputFormFieldBuilder()
         .id('reden')
         .label('reden')
-        .value(this.opschortReden)
+        .value(reden)
         .validators(Validators.required)
         .build();
-        return this.opschortRedenField;
+    }
+
+    private maakTakenField(label: string): CheckboxFormField {
+        return new CheckboxFormFieldBuilder()
+        .id('takenVerlengen')
+        .label(label)
+        .build();
     }
 
     opschorten() {
         const dialogData = new DialogData([
-                this.maakOpschortDuurField(),
+                this.maakDuurField('opschortduur'),
                 this.streefDatumField,
                 this.fataleDatumField,
-                this.maakOpschortRedenField()
+                this.maakRedenField(this.opschortReden)
             ],
             (results: any[]) => this.saveOpschorting(results),
             this.translate.instant('msg.zaak.opschorten'));
 
         const vorigeStreefDatum: Moment = moment(this.streefDatumField.formControl.value);
         const vorigeFataleDatum: Moment = moment(this.fataleDatumField.formControl.value);
-        const subscriptions: Subscription[] = [];
-        subscriptions.push(this.opschortDuurField.formControl.valueChanges.subscribe(value => {
-            this.duurChanged(value, vorigeStreefDatum, vorigeFataleDatum);
-        }));
-        subscriptions.push(this.streefDatumField.formControl.valueChanges.subscribe(value => {
-            this.streefChanged(value, vorigeStreefDatum, vorigeFataleDatum);
-        }));
-        subscriptions.push(this.fataleDatumField.formControl.valueChanges.subscribe(value => {
-            this.fataleChanged(value, vorigeStreefDatum, vorigeFataleDatum);
-        }));
+        const subscriptions = this.subscribe(vorigeStreefDatum, vorigeFataleDatum);
 
         this.dialog.open(DialogComponent, {
             data: dialogData
         }).afterClosed().subscribe(result => {
-            for (const subscription of subscriptions) {
-                subscription.unsubscribe();
-            }
+            this.unsubscribe(subscriptions);
             if (!result) {
                 this.resetDatums(vorigeStreefDatum, vorigeFataleDatum);
             }
@@ -191,7 +190,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     hervatten() {
         this.werkelijkeOpschortDuur = moment().diff(moment(this.opschortDatumTijd), 'days');
         const dialogData = new DialogData([
-                this.maakOpschortRedenField()
+                this.maakRedenField(this.opschortReden)
             ],
             (results: any[]) => this.saveHervatting(results),
             this.translate.instant('msg.zaak.hervatten', {duur: this.werkelijkeOpschortDuur, verwachteDuur: this.opschortDuur}));
@@ -202,14 +201,65 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     saveHervatting(results: any[]): Observable<void> {
-        const verschil: number = this.werkelijkeOpschortDuur - this.opschortDuur;
-        this.streefDatumField.formControl.setValue(moment(this.streefDatumField.formControl.value).add(verschil, 'days'));
-        this.fataleDatumField.formControl.setValue(moment(this.fataleDatumField.formControl.value).add(verschil, 'days'));
+        const duurVerschil: number = this.werkelijkeOpschortDuur - this.opschortDuur;
+        this.streefDatumField.formControl.setValue(moment(this.streefDatumField.formControl.value).add(duurVerschil, 'days'));
+        this.fataleDatumField.formControl.setValue(moment(this.fataleDatumField.formControl.value).add(duurVerschil, 'days'));
         this.updateGroep();
         results['duurDagen'] = this.werkelijkeOpschortDuur;
         results['einddatumGepland'] = this.streefDatumField.formControl.value;
         results['uiterlijkeEinddatumAfdoening'] = this.fataleDatumField.formControl.value;
         return this.saveOpschorting(results);
+    }
+
+    verlengen() {
+        const dialogData = new DialogData([
+                this.maakDuurField('verlengduur'),
+                this.streefDatumField,
+                this.fataleDatumField,
+                this.maakRedenField(this.verlengReden),
+                this.maakTakenField('taken.verlengen')
+            ],
+            (results: any[]) => this.saveVerlenging(results),
+            this.translate.instant(this.verlengDuur ? 'msg.zaak.verlengen.meer' : 'msg.zaak.verlengen', {eerdereDuur: this.verlengDuur}));
+
+        const vorigeStreefDatum: Moment = moment(this.streefDatumField.formControl.value);
+        const vorigeFataleDatum: Moment = moment(this.fataleDatumField.formControl.value);
+        const subscriptions = this.subscribe(vorigeStreefDatum, vorigeFataleDatum);
+
+        this.dialog.open(DialogComponent, {
+            data: dialogData
+        }).afterClosed().subscribe(result => {
+            this.unsubscribe(subscriptions);
+            if (!result) {
+                this.resetDatums(vorigeStreefDatum, vorigeFataleDatum);
+            }
+            this.updateGroep();
+        });
+    }
+
+    saveVerlenging(results: any[]): Observable<void> {
+        this.doVerlenging.emit(results);
+        return of(null);
+    }
+
+    private subscribe(vorigeStreefDatum: Moment, vorigeFataleDatum: Moment): Subscription[] {
+        const subscriptions: Subscription[] = [];
+        subscriptions.push(this.duurField.formControl.valueChanges.subscribe(value => {
+            this.duurChanged(value, vorigeStreefDatum, vorigeFataleDatum);
+        }));
+        subscriptions.push(this.streefDatumField.formControl.valueChanges.subscribe(value => {
+            this.streefChanged(value, vorigeStreefDatum, vorigeFataleDatum);
+        }));
+        subscriptions.push(this.fataleDatumField.formControl.valueChanges.subscribe(value => {
+            this.fataleChanged(value, vorigeStreefDatum, vorigeFataleDatum);
+        }));
+        return subscriptions;
+    }
+
+    private unsubscribe(subscriptions: Subscription[]): void {
+        for (const subscription of subscriptions) {
+            subscription.unsubscribe();
+        }
     }
 
     duurChanged(value: string, vorigeStreefDatum: Moment, vorigeFataleDatum: Moment) {
@@ -234,7 +284,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
 
     private updateDatums(duur: number, vorigeStreefDatum: Moment, vorigeFataleDatum: Moment) {
         if (0 < duur) {
-            this.opschortDuurField.formControl.setValue(duur, {emitEvent: false});
+            this.duurField.formControl.setValue(duur, {emitEvent: false});
             this.streefDatumField.formControl.setValue(moment(vorigeStreefDatum).add(duur, 'days'), {emitEvent: false});
             this.fataleDatumField.formControl.setValue(moment(vorigeFataleDatum).add(duur, 'days'), {emitEvent: false});
         } else {
@@ -243,7 +293,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     private resetDatums(vorigeStreefDatum: Moment, vorigeFataleDatum: Moment) {
-        this.opschortDuurField.formControl.setValue(null, {emitEvent: false});
+        this.duurField.formControl.setValue(null, {emitEvent: false});
         this.streefDatumField.formControl.setValue(vorigeStreefDatum, {emitEvent: false});
         this.fataleDatumField.formControl.setValue(vorigeFataleDatum, {emitEvent: false});
     }

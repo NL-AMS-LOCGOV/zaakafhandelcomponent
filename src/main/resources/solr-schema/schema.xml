@@ -128,8 +128,8 @@
     <field name="zaak_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_afgehandeld" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_groepId" type="string" indexed="true" stored="true"/>
-<field name="zaak_groepNaam" type="string" indexed="true" stored="true" docValues="true"/>
-<field name="zaak_behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_groepNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_behandelaarGebruikersnaam" type="string" indexed="true" stored="true"/>
     <field name="zaak_initiatorIdentificatie" type="string" indexed="true" stored="true"/>
     <field name="zaak_locatie" type="location" indexed="true" stored="true"/>
@@ -158,8 +158,8 @@
     <field name="informatieobject_formaat" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_versie" type="pint" indexed="true" stored="true"/>
     <field name="informatieobject_registratiedatum" type="pdate" indexed="true" stored="true"/>
-<field name="informatieobject_bestandsnaam" type="string" indexed="true" stored="true"/>
-<field name="informatieobject_bestandsomvang" type="plong" indexed="true" stored="true"/>
+    <field name="informatieobject_bestandsnaam" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_bestandsomvang" type="plong" indexed="true" stored="true"/>
     <field name="informatieobject_documentType" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_vezenddatum" type="pdate" indexed="true" stored="true"/>

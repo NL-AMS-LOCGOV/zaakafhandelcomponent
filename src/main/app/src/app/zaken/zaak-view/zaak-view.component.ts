@@ -460,6 +460,18 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    editVerlenging(event: any): void {
+        const zaak: Zaak = new Zaak();
+        zaak.indicatieVerlenging = true;
+        zaak.einddatumGepland = event.einddatumGepland;
+        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+        zaak.redenVerlenging = event.reden;
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.updateVerlengingZaak(this.zaak.uuid, zaak, event.duurDagen, event.takenVerlengen).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
+    }
+
     private loadOpschorting(): void {
         if (this.zaak.indicatieOpschorting) {
             this.zakenService.readOpschortingZaak(this.zaak.uuid).subscribe(objectData => {
