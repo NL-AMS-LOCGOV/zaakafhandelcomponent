@@ -134,7 +134,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
                 new FormControl(parameter.formulierDefinitie, [Validators.required]));
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
-                new FormControl(parameter.doorlooptijd, [Validators.required, Validators.min(0)]));
+                new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
         });
     }
 

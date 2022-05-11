@@ -74,6 +74,10 @@ public class FlowableService {
 
     public static final String VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
+    public static final String VAR_CASE_DATUMTIJD_OPGESCHORT = "datumTijdOpgeschort";
+
+    public static final String VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
+
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
     public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
@@ -410,6 +414,15 @@ public class FlowableService {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
+        } else {
+            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
+        }
+    }
+
+    public void removeVariableForCase(final UUID zaakUUID, final String variableName) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            cmmnRuntimeService.removeVariable(caseInstance.getId(), variableName);
         } else {
             throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
         }

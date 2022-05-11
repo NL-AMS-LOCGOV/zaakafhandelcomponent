@@ -18,3 +18,31 @@
   justify-content: space-between;
   white-space: pre-line;
 }
+
+.play-control-wrapper {
+  width: 100%;
+}
+
+.play-control {
+  &:hover {
+    .play-icon {
+      visibility: hidden;
+    }
+
+    .play-button {
+      visibility: visible;
+    }
+  }
+
+  .play-icon {
+    visibility: visible;
+    color: black;
+  }
+
+  .play-button {
+    visibility: hidden;
+    margin-left: -24px;
+  }
+
+  float: right;
+}

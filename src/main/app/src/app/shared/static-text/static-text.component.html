@@ -6,10 +6,10 @@
 <div class="static-text">
     <label class="static-text-label">{{label}}</label>
     <div class="static-text-content">
-        <i *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></i>  {{value | empty}}
+        <span *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></span>  {{value | empty}}
         <mat-icon class="label-icon"
                   [ngClass]="icon.styleClass"
-                  *ngIf="icon"
+                  *ngIf="hasIcon"
                   (click)="iconClicked.emit()"
                   title="{{ icon.title | translate}}">
             {{icon.icon}}

@@ -23,6 +23,8 @@ import {ZaakBetrokkeneGegevens} from './model/zaak-betrokkene-gegevens';
 import {ZaakbeeindigReden} from '../admin/model/zaakbeeindig-reden';
 import {ZaakAfbrekenGegevens} from './model/zaak-afbreken-gegevens';
 import {DocumentOntkoppelGegevens} from './model/document-ontkoppel-gegevens';
+import {ZaakOpschortGegevens} from './model/zaak-opschort-gegevens';
+import {ZaakOpschorting} from './model/zaak-opschorting';
 
 @Injectable({
     providedIn: 'root'
@@ -61,6 +63,21 @@ export class ZakenService {
         zaakEditMetRedenGegevens.zaak = zaak;
         zaakEditMetRedenGegevens.reden = reden;
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaakEditMetRedenGegevens).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    readOpschortingZaak(uuid: string): Observable<ZaakOpschorting> {
+        return this.http.get<ZaakOpschorting>(`${this.basepath}/zaak/${uuid}/opschorting`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    updateOpschortingZaak(uuid: string, zaak: Zaak, duurDagen: number): Observable<Zaak> {
+        const zaakOpschortGegevens: ZaakOpschortGegevens = new ZaakOpschortGegevens();
+        zaakOpschortGegevens.zaak = zaak;
+        zaakOpschortGegevens.duurDagen = duurDagen;
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/opschorting`, zaakOpschortGegevens).pipe(
             catchError(this.handleError)
         );
     }

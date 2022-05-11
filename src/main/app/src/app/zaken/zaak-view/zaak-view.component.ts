@@ -61,6 +61,7 @@ import {detailExpand} from '../../shared/animations/animations';
 import {map} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {Observable, share} from 'rxjs';
+import {ZaakOpschorting} from '../model/zaak-opschorting';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -71,6 +72,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     zaak: Zaak;
     zaakLocatie: AddressResult;
+    zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
     action: string;
@@ -93,6 +95,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     viewInitialized = false;
     toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
+    indicatieIcon = new TextIcon(Conditionals.always, 'notifications', 'indicatie_icon', '', 'warning');
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -152,6 +155,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setEditableFormFields();
         this.setupMenu();
         this.loadLocatie();
+        this.loadOpschorting();
     }
 
     private getIngelogdeMedewerker() {
@@ -435,15 +439,33 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editDatumGroep(event: any): void {
         const zaak: Zaak = new Zaak();
-
         zaak.startdatum = event.startdatum;
         zaak.einddatumGepland = event.einddatumGepland;
         zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
-
         this.websocketService.suspendListener(this.zaakListener);
         this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
+    }
+
+    editOpschorting(event: any): void {
+        const zaak: Zaak = new Zaak();
+        zaak.indicatieOpschorting = !this.zaak.indicatieOpschorting;
+        zaak.einddatumGepland = event.einddatumGepland;
+        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+        zaak.redenOpschorting = event.reden;
+        this.websocketService.suspendListener(this.zaakListener);
+        this.zakenService.updateOpschortingZaak(this.zaak.uuid, zaak, event.duurDagen).subscribe(updatedZaak => {
+            this.init(updatedZaak);
+        });
+    }
+
+    private loadOpschorting(): void {
+        if (this.zaak.indicatieOpschorting) {
+            this.zakenService.readOpschortingZaak(this.zaak.uuid).subscribe(objectData => {
+                this.zaakOpschorting = objectData;
+            });
+        }
     }
 
     editGroep(event: any): void {
