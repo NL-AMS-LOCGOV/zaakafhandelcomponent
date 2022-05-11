@@ -21,10 +21,9 @@
         <label fxFlex="15" fxFlex.lt-md="25"></label>
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
             <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
-                <mat-label>{{'groep' | translate}}</mat-label>
+                <mat-label>{{ selectGroepPlaceholder }}</mat-label>
                 <mat-select (selectionChange)="searchAndGoToFirstPage()" [(ngModel)]="dataSource.zoekParameters.groep"
                             id="groep_filter">
-                    <mat-option>{{'groep.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let groep of groepen"
                                 [value]="groep.id">
                         {{groep.naam}}
@@ -35,11 +34,10 @@
 
         <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
             <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
-                <mat-label>{{'zaaktype' | translate}}</mat-label>
+                <mat-label>{{ selectZaaktypePlaceholder }}</mat-label>
                 <mat-select (selectionChange)="searchAndGoToFirstPage()"
                             [(ngModel)]="dataSource.zoekParameters.zaaktype"
                             id="zaaktype_filter">
-                    <mat-option>{{'zaaktype.-kies-' | translate}}</mat-option>
                     <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
                         {{zaakType.omschrijving}}
                     </mat-option>
