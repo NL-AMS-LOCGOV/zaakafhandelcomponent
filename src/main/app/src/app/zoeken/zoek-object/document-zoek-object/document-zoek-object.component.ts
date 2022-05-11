@@ -4,27 +4,26 @@
  */
 
 import {Component, Input} from '@angular/core';
-import {TextIcon} from '../../../shared/edit/text-icon';
-import {Conditionals} from '../../../shared/edit/conditional-fn';
 import {Router} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ZoekObject} from '../../model/zoek-object';
+import {ZoekObjectComponent} from '../zoek-object/zoek-object-component';
 
 @Component({
     selector: 'zac-document-zoek-object',
     templateUrl: './document-zoek-object.component.html'
 })
-export class DocumentZoekObjectComponent {
+export class DocumentZoekObjectComponent extends ZoekObjectComponent {
 
     @Input() infoObject: ZoekObject;
     @Input() sideNav: MatSidenav;
 
-    viewIcon = new TextIcon(Conditionals.always, 'visibility', 'visibility_icon', '', 'pointer');
-
-    constructor(private router: Router) {}
+    constructor(private router: Router) {
+        super();
+    }
 
     openInfoObject(): void {
-        this.sideNav.close();
+        super._open();
         this.router.navigate(['/informatie-objecten/', this.infoObject.uuid]);
     }
 }

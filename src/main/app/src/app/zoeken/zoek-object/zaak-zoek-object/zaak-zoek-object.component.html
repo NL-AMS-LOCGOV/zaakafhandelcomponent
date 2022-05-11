@@ -7,7 +7,7 @@
     <div [fxFlex]="100/3">
         <zac-static-text [label]="'zaak.identificatie' | translate"
                          [icon]="viewIcon"
-                         (iconClicked)="openZaak(zaak)"
+                         (iconClicked)="open(zaak)"
                          [value]="zaak.identificatie"></zac-static-text>
         <zac-static-text [label]="'zaaktype' | translate"
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>

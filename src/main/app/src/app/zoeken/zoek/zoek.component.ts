@@ -29,13 +29,20 @@ export class ZoekComponent implements AfterViewInit {
     zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
     isLoadingResults = true;
     slow = false;
-    public zoekenControl = new FormControl('');
+    zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
+    once = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
 
     ngAfterViewInit(): void {
+        this.sideNav.openedChange.subscribe(() => {
+            if (!this.once) {
+                this.once = true;
+                this.zoek.emit();
+            }
+        });
 
         this.zoek.subscribe(() => {
             this.paginator.pageIndex = 0;
