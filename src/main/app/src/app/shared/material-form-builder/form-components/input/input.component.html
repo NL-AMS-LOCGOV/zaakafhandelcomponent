@@ -5,13 +5,14 @@
 
 <mat-form-field appearance="fill" class="full-width">
 
-    <button *ngFor="let icon of data.icons" mat-icon-button type="button" matSuffix (click)="icon.iconClicked.next()">
+    <button *ngFor="let icon of data.icons" mat-icon-button type="button" matSuffix (click)="icon.iconClicked.next(null)">
         <mat-icon>{{icon.icon}}</mat-icon>
     </button>
 
     <mat-label>{{data.label | translate}}</mat-label>
-    <input [formControl]="data.formControl" [id]="data.id + '_tekstfield'" [required]="data.required" matInput>
+    <input [formControl]="data.formControl" [id]="data.id + '_tekstfield'" [required]="data.required" matInput [maxlength]="data.maxlength">
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
+    <mat-hint *ngIf="data.maxlength">{{data.formControl.value?.length || 0}}/{{data.maxlength}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{getErrorMessage()}}</mat-error>
 
 </mat-form-field>

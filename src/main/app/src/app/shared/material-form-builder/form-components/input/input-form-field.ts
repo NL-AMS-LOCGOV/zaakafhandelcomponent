@@ -10,6 +10,7 @@ import {ActionIcon} from '../../../edit/action-icon';
 export class InputFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.INPUT;
     icons: ActionIcon[];
+    maxlength: number;
 
     constructor() {
         super();
