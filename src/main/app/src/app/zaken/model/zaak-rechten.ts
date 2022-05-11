@@ -6,4 +6,5 @@
 export class ZaakRechten {
     afbreekbaar: boolean;
     open: boolean;
+    opgeschort: boolean;
 }

@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zoeken;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BeanParam;
@@ -16,12 +14,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.zoeken.converter.RESTZoekZaakParametersConverter;
-import net.atos.zac.app.zoeken.converter.RESTZoekZaakResultaatConverter;
-import net.atos.zac.app.zoeken.model.RESTZoekZaakParameters;
-import net.atos.zac.app.zoeken.model.RESTZoekZaakResultaat;
+import net.atos.zac.app.shared.RESTResultaat;
+import net.atos.zac.app.zoeken.converter.RESTZoekParametersConverter;
+import net.atos.zac.app.zoeken.converter.RESTZoekResultaatConverter;
+import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
+import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.zoeken.ZoekenService;
-import net.atos.zac.zoeken.model.ZoekZaakResultaat;
+import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.ZoekResultaat;
 
 @Path("zoeken")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,15 +33,15 @@ public class ZoekenRESTService {
     private ZoekenService zoekenService;
 
     @Inject
-    private RESTZoekZaakParametersConverter zoekZaakParametersConverter;
+    private RESTZoekParametersConverter zoekZaakParametersConverter;
 
     @Inject
-    private RESTZoekZaakResultaatConverter zoekZaakResultaatConverter;
+    private RESTZoekResultaatConverter solrZoekResultaatConverter;
 
     @GET
-    @Path("zaken")
-    public List<RESTZoekZaakResultaat> zoekZaken(@BeanParam final RESTZoekZaakParameters zoekZaakParameters) {
-        final List<ZoekZaakResultaat> zoekZaakResultaten = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
-        return zoekZaakResultaatConverter.convert(zoekZaakResultaten);
+    @Path("list")
+    public RESTResultaat<RESTZaakZoekObject> listZoekResultaat(@BeanParam final RESTZoekParameters zoekZaakParameters) {
+        final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
+        return solrZoekResultaatConverter.convert(zoekResultaat);
     }
 }

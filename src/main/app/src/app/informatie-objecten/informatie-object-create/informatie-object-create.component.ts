@@ -28,7 +28,7 @@ import {User} from '../../identity/model/user';
 import {IdentityService} from '../../identity/identity.service';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
-import {MatSidenav} from '@angular/material/sidenav';
+import {MatDrawer} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-informatie-object-create',
@@ -38,7 +38,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 export class InformatieObjectCreateComponent implements OnInit {
 
     @Input() zaak: Zaak;
-    @Input() sideNav: MatSidenav;
+    @Input() sideNav: MatDrawer;
     @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
 
     @ViewChild(FormComponent) form: FormComponent;

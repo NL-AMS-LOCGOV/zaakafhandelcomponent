@@ -10,4 +10,6 @@ public class RESTZaakRechten {
     public boolean afbreekbaar;
 
     public boolean open;
+
+    public boolean opgeschort;
 }

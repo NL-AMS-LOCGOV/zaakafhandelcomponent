@@ -3,9 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="container">
-    <zac-toolbar></zac-toolbar>
-    <zac-loading></zac-loading>
-    <zac-action-bar></zac-action-bar>
-    <router-outlet></router-outlet>
-</div>
+
+<mat-sidenav-container class="container" autosize>
+    <mat-sidenav #drawer position="end" mode="over">
+        <zac-zoeken></zac-zoeken>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <zac-toolbar (zoekenClicked)="drawer.open()"></zac-toolbar>
+        <zac-loading></zac-loading>
+        <zac-action-bar></zac-action-bar>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -16,9 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Entity
 @Table(schema = SCHEMA, name = "humantask_parameters")
@@ -47,8 +47,8 @@ public class HumanTaskParameters {
     @Column(name = "id_groep", nullable = false)
     private String groepID;
 
-    @Positive
-    @Column(name = "doorlooptijd", nullable = false)
+    @Min(value = 0)
+    @Column(name = "doorlooptijd")
     private Integer doorlooptijd;
 
     public Long getId() {

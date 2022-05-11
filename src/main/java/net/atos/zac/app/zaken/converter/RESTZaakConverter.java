@@ -19,6 +19,7 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.zrc.model.Opschorting;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -99,16 +100,17 @@ public class RESTZaakConverter {
         restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);
         restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
-        if (zaak.getOpschorting() != null) {
-            restZaak.indicatieOpschorting = zaak.getOpschorting().getIndicatie();
-            restZaak.redenOpschorting = zaak.getOpschorting().getReden();
-        }
 
+        if (zaak.getOpschorting() != null) {
+            restZaak.redenOpschorting = zaak.getOpschorting().getReden();
+            restZaak.indicatieOpschorting = zaak.getOpschorting().getIndicatie();
+        }
         if (zaak.getVerlenging() != null) {
             restZaak.redenVerlenging = zaak.getVerlenging().getReden();
             restZaak.duurVerlenging = PeriodUtil.format(zaak.getVerlenging().getDuur());
             restZaak.indicatieVerlenging = restZaak.duurVerlenging != null;
         }
+
         restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
         restZaak.gerelateerdeZaken = gerelateerdeZaakConverter.getGerelateerdeZaken(zaak);
         restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
@@ -186,6 +188,9 @@ public class RESTZaakConverter {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
         zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
+        if (restZaak.redenOpschorting != null) {
+            zaak.setOpschorting(new Opschorting(restZaak.indicatieOpschorting, restZaak.redenOpschorting));
+        }
         return zaak;
     }
 

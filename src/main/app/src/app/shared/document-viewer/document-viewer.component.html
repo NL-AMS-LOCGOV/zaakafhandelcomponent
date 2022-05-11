@@ -1,3 +1,5 @@
-<div *ngIf="showDocumentViewer" class="document-viewer-wrapper">
-    <ng2-pdfjs-viewer #pdfViewer></ng2-pdfjs-viewer>
+<div *ngIf="showDocumentViewer " class="document-viewer-wrapper" [ngClass]="{'pdf': isPDF(),'img':isImage()}">
+    <ng2-pdfjs-viewer #pdfViewer *ngIf="isPDF()"></ng2-pdfjs-viewer>
+
+    <img *ngIf="isImage()" [src]="img" [title]="document.bestandsnaam"/>
 </div>

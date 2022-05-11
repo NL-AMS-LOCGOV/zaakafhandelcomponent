@@ -504,4 +504,9 @@ public class Zaak {
     public boolean isOpen() {
         return archiefnominatie == null;
     }
+
+    @JsonbTransient
+    public boolean isOpgeschort() {
+        return opschorting != null && opschorting.getIndicatie();
+    }
 }
