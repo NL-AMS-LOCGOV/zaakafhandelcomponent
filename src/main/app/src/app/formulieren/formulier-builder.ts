@@ -8,6 +8,7 @@ import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
 import {TaakStatus} from '../taken/model/taak-status.enum';
 import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {DividerFormFieldBuilder} from '../shared/material-form-builder/form-components/divider/divider-form-field-builder';
 
 export class FormulierBuilder {
 
@@ -22,7 +23,11 @@ export class FormulierBuilder {
         this._formulier.dataElementen = planItem.taakdata;
         this._formulier.initStartForm();
         this._formulier.form.push(
+            [new DividerFormFieldBuilder().build()],
             [new MedewerkerGroepFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
+                                              .label('actie.taak.toewijzing')
+                                              .groepLabel('actie.taak.toekennen.groep')
+                                              .medewerkerLabel('actie.taak.toekennen.medewerker')
                                               .defaultMedewerker(planItem.medewerker)
                                               .defaultGroep(planItem.groep)
                                               .build()]);

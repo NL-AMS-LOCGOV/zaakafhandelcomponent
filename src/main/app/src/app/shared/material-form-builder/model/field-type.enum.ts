@@ -11,6 +11,7 @@ export enum FieldType {
     PARAGRAPH = 'PARAGRAPH',
     TEXTAREA = 'TEXTAREA',
     DATE = 'DATE',
+    DIVIDER = 'DIVIDER',
     SELECT = 'SELECT',
     MEDEWERKER_GROEP = 'MEDEWERKER_GROEP',
     RADIO = 'RADIO',

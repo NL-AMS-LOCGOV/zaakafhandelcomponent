@@ -12,7 +12,9 @@ export class MedewerkerGroepFormField extends AbstractFormField {
 
     fieldType = FieldType.MEDEWERKER_GROEP;
     defaultGroep: Group;
+    groepLabel: string;
     defaultMedewerker: User;
+    medewerkerLabel: string;
     groepOptioneel = false;
 
     constructor() {
