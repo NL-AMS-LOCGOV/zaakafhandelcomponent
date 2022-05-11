@@ -28,6 +28,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
+
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
+
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -206,20 +210,46 @@ public class InformatieObjectenRESTService {
         }
     }
 
+    @GET
+    @Path("informatieobject/{uuid}/huidigeversie")
+    public RESTEnkelvoudigInformatieObjectVersieGegevens readHuidigeVersieInformatieObject(@PathParam("uuid") final UUID uuid) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        return restInformatieobjectConverter.convertHuidigeVersie(enkelvoudigInformatieObject);
+    }
+
+    @POST
+    @Path("/informatieobject/partialupdate")
+    public RESTEnkelvoudigInformatieobject partialUpdateEnkelvoudigInformatieObject(
+            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens) {
+        try {
+            final String lock = drcClientService.lockEnkelvoudigInformatieobject(
+                    UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid), lockEigenaar());
+
+            final EnkelvoudigInformatieobjectWithLockAndInhoud returnObject =
+                    drcClientService.partialUpdateEnkelvoudigInformatieobject(
+                            UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid),
+                            restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
+                            restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens, lock));
+
+            return restInformatieobjectConverter.convert(returnObject);
+        } finally {
+            drcClientService.unlockEnkelvoudigInformatieobject(UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid),
+                                                               lockEigenaar());
+        }
+    }
+
     @POST
     @Path("/informatieobject/{uuid}/lock")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.lockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @POST
     @Path("/informatieobject/{uuid}/unlock")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
         drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @GET

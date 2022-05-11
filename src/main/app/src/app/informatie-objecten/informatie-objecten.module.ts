@@ -9,9 +9,10 @@ import {InformatieObjectenRoutingModule} from './informatie-objecten-routing.mod
 import {InformatieObjectViewComponent} from './informatie-object-view/informatie-object-view.component';
 import {SharedModule} from '../shared/shared.module';
 import {InformatieObjectCreateComponent} from './informatie-object-create/informatie-object-create.component';
+import {InformatieObjectEditComponent} from './informatie-object-edit/informatie-object-edit.component';
 
 @NgModule({
-    declarations: [InformatieObjectViewComponent, InformatieObjectCreateComponent],
+    declarations: [InformatieObjectViewComponent, InformatieObjectEditComponent, InformatieObjectCreateComponent],
     exports: [
         InformatieObjectCreateComponent
     ],

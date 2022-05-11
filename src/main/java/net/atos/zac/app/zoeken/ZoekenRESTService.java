@@ -41,7 +41,11 @@ public class ZoekenRESTService {
     @GET
     @Path("list")
     public RESTResultaat<RESTZaakZoekObject> listZoekResultaat(@BeanParam final RESTZoekParameters zoekZaakParameters) {
-        final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
-        return solrZoekResultaatConverter.convert(zoekResultaat);
+        try {
+            final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoekZaak(zoekZaakParametersConverter.convert(zoekZaakParameters));
+            return solrZoekResultaatConverter.convert(zoekResultaat);
+        } catch (final RuntimeException e) {
+            return new RESTResultaat<>(e.getMessage());
+        }
     }
 }

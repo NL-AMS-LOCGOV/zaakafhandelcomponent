@@ -19,6 +19,7 @@ import {Router} from '@angular/router';
 import {ActionIcon} from '../shared/edit/action-icon';
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
+import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -54,6 +55,18 @@ export class InformatieObjectenService {
         );
     }
 
+    readHuidigeVersieEnkelvoudigInformatieObject(uuid: string): Observable<EnkelvoudigInformatieObjectVersieGegevens> {
+        return this.http.get<EnkelvoudigInformatieObjectVersieGegevens>(`${this.basepath}/informatieobject/${uuid}/huidigeversie`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    partialUpdateEnkelvoudigInformatieobject(documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens): Observable<EnkelvoudigInformatieobject> {
+        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/partialupdate`, documentNieuweVersieGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     listEnkelvoudigInformatieobjecten(zoekParameters: EnkelvoudigInformatieObjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
@@ -68,6 +81,18 @@ export class InformatieObjectenService {
 
     listHistorie(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/informatieobject/${uuid}/historie`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    lockInformatieObject(uuid: string) {
+        return this.http.post<void>(`${this.basepath}/informatieobject/${uuid}/lock`, null).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    unlockInformatieObject(uuid: string) {
+        return this.http.post<void>(`${this.basepath}/informatieobject/${uuid}/unlock`, null).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
