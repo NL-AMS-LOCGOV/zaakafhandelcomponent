@@ -7,6 +7,7 @@ package net.atos.zac.app.informatieobjecten.model;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 /**
  *
@@ -46,9 +47,9 @@ public class RESTEnkelvoudigInformatieobject {
 
     public String link;
 
-    public String informatieobjectType;
+    public UUID informatieobjectTypeUUID;
 
-    public String documentType;
+    public String informatieobjectTypeOmschrijving;
 
     public String beschrijving;
 
@@ -60,7 +61,6 @@ public class RESTEnkelvoudigInformatieobject {
 
     public LocalDate ondertekening;
 
-    //public URI informatieobjecttype;
     public boolean locked;
 
     public boolean startformulier;

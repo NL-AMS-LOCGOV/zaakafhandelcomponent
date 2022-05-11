@@ -170,7 +170,7 @@ export class TaakDocumentUploadComponent extends FormComponent implements OnInit
 
     compareInfoObjectType(object1: Informatieobjecttype, object2: Informatieobjecttype): boolean {
         if (object1 && object2) {
-            return object1.url === object2.url;
+            return object1.uuid === object2.uuid;
         }
         return false;
     }

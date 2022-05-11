@@ -95,7 +95,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                    .optionLabel('label').options(informatieobjectStatussen)
                                                    .build();
 
-        const documentType = new SelectFormFieldBuilder().id('informatieobjectType')
+        const documentType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
                                                          .label('informatieobjectType')
                                                          .options(
                                                              this.informatieObjectenService.listInformatieobjecttypes(
@@ -149,8 +149,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                 const value = control.value;
                 if (value instanceof moment) {
                     infoObject[key] = value; // conversie niet nodig, ISO-8601 in UTC gaat goed met java ZonedDateTime.parse
-                } else if (key === 'informatieobjectType') {
-                    infoObject[key] = value.url;
+                } else if (key === 'informatieobjectTypeUUID') {
+                    infoObject[key] = value.uuid;
                 } else if (key === 'taal') {
                     infoObject[key] = value.code;
                 } else if (key === 'status' || key === 'vertrouwelijkheidaanduiding') {
@@ -192,8 +192,8 @@ export class InformatieObjectCreateComponent implements OnInit {
         formGroup.get('status').setErrors(null);
         formGroup.get('vertrouwelijkheidaanduiding').reset();
         formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
-        formGroup.get('informatieobjectType').reset();
-        formGroup.get('informatieobjectType').setErrors(null);
+        formGroup.get('informatieobjectTypeUUID').reset();
+        formGroup.get('informatieobjectTypeUUID').setErrors(null);
         this.resetForm(formGroup);
     }
 

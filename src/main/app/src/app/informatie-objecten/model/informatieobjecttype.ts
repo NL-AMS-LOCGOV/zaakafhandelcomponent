@@ -4,7 +4,7 @@
  */
 
 export class Informatieobjecttype {
-    url: string;
+    uuid: string;
     omschrijving: string;
     vertrouwelijkheidaanduiding: string;
     concept: boolean;
