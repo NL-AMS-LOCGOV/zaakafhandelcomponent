@@ -14,7 +14,7 @@ export class DagenPipe implements PipeTransform {
 
     transform(value: any): string {
         if (value) {
-            const vandaag = moment(new Date()).startOf('day');
+            const vandaag = moment().startOf('day');
             const vergelijkDatum = moment(value).startOf('day');
             const aantalDagen = vergelijkDatum.diff(vandaag, 'days');
 
