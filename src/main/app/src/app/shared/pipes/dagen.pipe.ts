@@ -21,11 +21,7 @@ export class DagenPipe implements PipeTransform {
             let result;
             if (aantalDagen === 0) {
                 result = this.translate.instant('verloopt.vandaag');
-            } else if (aantalDagen <= -1) {
-                const dagen = vandaag.diff(vergelijkDatum, 'days');
-                result = aantalDagen === -1 ? this.translate.instant('verlopen.dag', {dagen: dagen}) :
-                    this.translate.instant('verlopen.dagen', {dagen: dagen});
-            } else {
+            } else if (aantalDagen >= 1) {
                 result = aantalDagen === 1 ? this.translate.instant('verloopt.over.dag', {dagen: aantalDagen}) :
                     this.translate.instant('verloopt.over.dagen', {dagen: aantalDagen});
             }
