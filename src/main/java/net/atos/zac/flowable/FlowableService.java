@@ -410,7 +410,7 @@ public class FlowableService {
         }
     }
 
-    public void createVariableForCase(final UUID zaakUUID, final String variableName, final Object value) {
+    public void createVariableForOpenCase(final UUID zaakUUID, final String variableName, final Object value) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
@@ -419,7 +419,7 @@ public class FlowableService {
         }
     }
 
-    public void removeVariableForCase(final UUID zaakUUID, final String variableName) {
+    public void removeVariableForOpenCase(final UUID zaakUUID, final String variableName) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.removeVariable(caseInstance.getId(), variableName);

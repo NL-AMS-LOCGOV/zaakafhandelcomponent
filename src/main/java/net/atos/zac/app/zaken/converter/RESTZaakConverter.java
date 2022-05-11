@@ -9,6 +9,7 @@ import static net.atos.zac.flowable.FlowableService.VAR_CASE_ONTVANGSTBEVESTIGIN
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.net.URI;
+import java.time.Period;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Opschorting;
+import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -27,6 +30,7 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
+import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.FlowableService;
@@ -37,6 +41,9 @@ public class RESTZaakConverter {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -102,13 +109,13 @@ public class RESTZaakConverter {
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         if (zaak.getOpschorting() != null) {
-            restZaak.redenOpschorting = zaak.getOpschorting().getReden();
             restZaak.indicatieOpschorting = zaak.getOpschorting().getIndicatie();
+            restZaak.redenOpschorting = zaak.getOpschorting().getReden();
         }
         if (zaak.getVerlenging() != null) {
-            restZaak.redenVerlenging = zaak.getVerlenging().getReden();
+            restZaak.indicatieVerlenging = zaak.getVerlenging().getDuur() != null;
             restZaak.duurVerlenging = PeriodUtil.format(zaak.getVerlenging().getDuur());
-            restZaak.indicatieVerlenging = restZaak.duurVerlenging != null;
+            restZaak.redenVerlenging = zaak.getVerlenging().getReden();
         }
 
         restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
@@ -191,6 +198,15 @@ public class RESTZaakConverter {
         if (restZaak.redenOpschorting != null) {
             zaak.setOpschorting(new Opschorting(restZaak.indicatieOpschorting, restZaak.redenOpschorting));
         }
+        return zaak;
+    }
+
+    public Zaak convertToPatch(final RESTZaakVerlengGegevens verlengGegevens, final UUID zaakUUID) {
+        final Zaak zaak = convertToPatch(verlengGegevens.zaak);
+        final Verlenging verlenging = zrcClientService.readZaak(zaakUUID).getVerlenging();
+        zaak.setVerlenging(verlenging != null && verlenging.getDuur() != null
+                                   ? new Verlenging(verlengGegevens.zaak.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
+                                   : new Verlenging(verlengGegevens.zaak.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
         return zaak;
     }
 
