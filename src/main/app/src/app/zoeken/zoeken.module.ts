@@ -9,11 +9,13 @@ import {SharedModule} from '../shared/shared.module';
 
 import {ZoekComponent} from './zoek/zoek.component';
 import {ZaakZoekObjectComponent} from './zoek-object/zaak-zoek-object/zaak-zoek-object.component';
+import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
 
 @NgModule({
     declarations: [
         ZoekComponent,
-        ZaakZoekObjectComponent
+        ZaakZoekObjectComponent,
+        DocumentZoekObjectComponent
     ],
     exports: [
         ZoekComponent

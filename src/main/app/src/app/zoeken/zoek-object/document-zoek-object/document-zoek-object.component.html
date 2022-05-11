@@ -1,0 +1,22 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div fxLayout>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'document.identificatie' | translate"
+                         [icon]="viewIcon"
+                         (iconClicked)="openInfoObject()"
+                         [value]="infoObject.identificatie"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'uuid' | translate"
+                         [value]="infoObject.uuid"></zac-static-text>
+
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'type' | translate"
+                         [value]="infoObject.type"></zac-static-text>
+    </div>
+</div>

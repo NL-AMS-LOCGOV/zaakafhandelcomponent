@@ -5,4 +5,6 @@
 
 export class ZoekParameters {
     tekst: string;
+    rows: number;
+    start: number;
 }

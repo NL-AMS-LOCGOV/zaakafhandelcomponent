@@ -13,6 +13,8 @@ public class RESTZoekParametersConverter {
     public ZoekParameters convert(final RESTZoekParameters restZoekParameters) {
         final ZoekParameters zoekParameters = new ZoekParameters();
         zoekParameters.setTekst(restZoekParameters.tekst);
+        zoekParameters.setStart(restZoekParameters.start);
+        zoekParameters.setRows(restZoekParameters.rows);
         return zoekParameters;
     }
 }

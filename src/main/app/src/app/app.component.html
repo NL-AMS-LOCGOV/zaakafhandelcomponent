@@ -5,11 +5,11 @@
 
 
 <mat-sidenav-container class="container" autosize>
-    <mat-sidenav #drawer position="end" mode="over">
-        <zac-zoeken></zac-zoeken>
+    <mat-sidenav #sideNav position="end" mode="over">
+        <zac-zoeken [sideNav]="sideNav"></zac-zoeken>
     </mat-sidenav>
     <mat-sidenav-content>
-        <zac-toolbar (zoekenClicked)="drawer.open()"></zac-toolbar>
+        <zac-toolbar (zoekenClicked)="sideNav.open()"></zac-toolbar>
         <zac-loading></zac-loading>
         <zac-action-bar></zac-action-bar>
         <router-outlet></router-outlet>
