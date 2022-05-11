@@ -48,6 +48,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
 import {DividerComponent} from './form-components/divider/divider.component';
 import {MatDividerModule} from '@angular/material/divider';
+import {HiddenComponent} from './form-components/hidden/hidden.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +70,8 @@ import {MatDividerModule} from '@angular/material/divider';
         TaakDocumentUploadComponent,
         RadioComponent,
         ParagraphComponent,
-        DividerComponent
+        DividerComponent,
+        HiddenComponent
     ],
     imports: [
         CommonModule,

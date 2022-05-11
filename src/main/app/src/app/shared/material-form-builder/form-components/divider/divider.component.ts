@@ -9,7 +9,6 @@ import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
-  selector: 'zac-divider',
   templateUrl: './divider.component.html',
   styleUrls: ['./divider.component.less']
 })

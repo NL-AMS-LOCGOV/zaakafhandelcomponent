@@ -8,6 +8,7 @@ export enum FieldType {
     INPUT = 'INPUT',
     FILE = 'FILE',
     HEADING = 'HEADING',
+    HIDDEN = 'HIDDEN',
     PARAGRAPH = 'PARAGRAPH',
     TEXTAREA = 'TEXTAREA',
     DATE = 'DATE',
