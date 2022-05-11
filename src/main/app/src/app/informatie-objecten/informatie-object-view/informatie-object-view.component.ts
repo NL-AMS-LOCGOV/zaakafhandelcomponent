@@ -22,21 +22,27 @@ import {MatTableDataSource} from '@angular/material/table';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {MatSort} from '@angular/material/sort';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {ViewComponent} from '../../shared/abstract-view/view-component';
 import {FileFormatUtil} from '../model/file-format';
+import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
+import {SideNavAction} from '../../shared/side-nav/side-nav-action';
+import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
+import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
+import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
-export class InformatieObjectViewComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InformatieObjectViewComponent  extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
+    documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
+    action: string;
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
-    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
+    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     fileIconList = [
         {type: 'xlsx', icon: 'fa-file-excel', color: 'green'},
         {type: 'xls', icon: 'fa-file-excel', color: 'green'},
@@ -54,6 +60,8 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
         {type: 'pptx', icon: 'fa-file-powerpoint', color: 'red'},
         {type: 'txt', icon: 'fa-file-lines'}
     ];
+
+    @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
@@ -104,8 +112,19 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
     private setupMenu(): void {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
-            new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid), 'save_alt')
+            new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid),
+                'save_alt'),
         ];
+
+        if (this.infoObject.status !== InformatieobjectStatus.DEFINITIEF) {
+            this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
+                this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
+                    this.documentNieuweVersieGegevens = nieuweVersie;
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
+                });
+            }, 'edit'));
+        }
     }
 
     private loadZaken(): void {
@@ -144,4 +163,8 @@ export class InformatieObjectViewComponent extends ViewComponent implements OnIn
         }
     }
 
+    documentVersieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.infoObject = informatieobject;
+        this.loadHistorie();
+    }
 }
