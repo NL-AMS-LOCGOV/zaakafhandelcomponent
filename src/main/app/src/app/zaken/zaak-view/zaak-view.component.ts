@@ -236,12 +236,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).maxlength(10)
-                                      .build());
+            new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
 
         this.editFormFields.set('einddatumGepland',
             new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
-                                      .value(this.zaak.einddatumGepland).maxlength(10).build());
+                                      .value(this.zaak.einddatumGepland).build());
         this.editFormFieldIcons.set('einddatumGepland',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
@@ -249,7 +248,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
             new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
                                       .value(this.zaak.uiterlijkeEinddatumAfdoening)
-                                      .maxlength(10)
                                       .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',

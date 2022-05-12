@@ -84,7 +84,6 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                            .label('creatiedatum')
                                                            .value(moment())
                                                            .validators(Validators.required)
-                                                           .maxlength(10)
                                                            .build();
 
         const taal = new SelectFormFieldBuilder().id('taal').label('taal')

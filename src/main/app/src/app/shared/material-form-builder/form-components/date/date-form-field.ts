@@ -9,7 +9,6 @@ import {FieldType} from '../../model/field-type.enum';
 export class DateFormField extends AbstractFormField {
 
     fieldType = FieldType.DATE;
-    maxlength: number;
 
     constructor() {
         super();

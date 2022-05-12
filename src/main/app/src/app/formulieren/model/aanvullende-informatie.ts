@@ -68,7 +68,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
             [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
                                            .validators(Validators.required).maxlength(1000).build()],
             [new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
-                                       .readonly(true).maxlength(10).build()]
+                                       .readonly(true).build()]
         );
     }
 
@@ -97,13 +97,11 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                           .label(fields.DATUMGEVRAAGD)
                                           .value(this.getDataElement(fields.DATUMGEVRAAGD))
                                           .readonly(true)
-                                          .maxlength(10)
                                           .build(),
                 new DateFormFieldBuilder().id(fields.DATUMGELEVERD)
                                           .label(fields.DATUMGELEVERD)
                                           .value(this.getDataElement(fields.DATUMGELEVERD))
                                           .readonly(this.isAfgerond())
-                                          .maxlength(10)
                                           .build()
             ],
             [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)

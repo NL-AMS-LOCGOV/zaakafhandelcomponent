@@ -75,11 +75,11 @@ export class ZaakCreateComponent implements OnInit {
                                                      .build();
 
         const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                                     .value(moment()).validators(Validators.required).maxlength(10)
+                                                     .value(moment()).validators(Validators.required)
                                                      .build();
 
         const registratiedatum = new DateFormFieldBuilder().id('registratiedatum').label('registratiedatum')
-                                                           .value(moment()).maxlength(10).build();
+                                                           .value(moment()).build();
 
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
                                                          .icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])

@@ -41,8 +41,7 @@ export class PersoonZoekComponent implements OnInit {
                                                        .maxlength(9).build();
         this.geslachtsnaamFormField = new InputFormFieldBuilder().id('geslachtsnaam').label('geslachtsnaam')
                                                                  .value('Me*').maxlength(50).build();
-        this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum')
-                                                                .maxlength(10).build();
+        this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum').build();
         this.gemeenteCodeFormField = new InputFormFieldBuilder().id('gemeenteCode').label('gemeenteCode')
                                                                 .value('0599')
                                                                 .validators(Validators.min(1), Validators.max(9999))

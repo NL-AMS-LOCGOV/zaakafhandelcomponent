@@ -13,9 +13,4 @@ export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
         super();
         this.formField = new DateFormField();
     }
-
-    maxlength(maxlength: number): this {
-        this.formField.maxlength = maxlength;
-        return this;
-    }
 }
