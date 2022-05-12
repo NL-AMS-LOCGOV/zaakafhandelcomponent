@@ -12,6 +12,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
@@ -112,7 +113,7 @@ public class TakenRESTService {
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
-        final List<String> loggedInUserGroupIds = loggedInUserInstance.get().getGroupIds();
+        final Set<String> loggedInUserGroupIds = loggedInUserInstance.get().getGroupIds();
         final List<Task> tasks = flowableService.listOpenTasksAssignedToGroups(loggedInUserGroupIds,
                                                                                TaakSortering.fromValue(tableState.getSort().getPredicate()),
                                                                                tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
