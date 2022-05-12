@@ -43,6 +43,11 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    maxlength(maxlength: number): this {
+        this.formField.maxlength = maxlength;
+        return this;
+    }
+
     build() {
         return this.formField;
     }

@@ -16,4 +16,6 @@ public class RESTZaaktype {
     public String omschrijving;
 
     public String referentieproces;
+
+    public boolean servicenorm;
 }

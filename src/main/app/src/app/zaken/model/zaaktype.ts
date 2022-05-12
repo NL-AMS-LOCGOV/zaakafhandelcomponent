@@ -9,4 +9,5 @@ export class Zaaktype {
     doel: string;
     omschrijving: string;
     referentieproces: string;
+    servicenorm: boolean;
 }

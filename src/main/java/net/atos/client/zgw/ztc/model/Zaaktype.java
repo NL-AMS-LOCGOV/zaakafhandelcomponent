@@ -419,6 +419,10 @@ public class Zaaktype {
         this.servicenorm = servicenorm;
     }
 
+    public boolean isServicenormBeschikbaar() {
+        return this.servicenorm != null && !this.servicenorm.normalized().isZero();
+    }
+
     public Boolean getOpschortingEnAanhoudingMogelijk() {
         return opschortingEnAanhoudingMogelijk;
     }

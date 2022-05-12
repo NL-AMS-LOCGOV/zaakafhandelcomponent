@@ -42,9 +42,12 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
     _initStartForm() {
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required).build()],
-            [new TextareaFormFieldBuilder().id(fields.ADVISEUR).label(fields.ADVISEUR).validators(Validators.required).build()],
-            [new TextareaFormFieldBuilder().id(fields.BRON).label(fields.BRON).validators(Validators.required).build()]
+            [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
+                                           .maxlength(1000).build()],
+            [new TextareaFormFieldBuilder().id(fields.ADVISEUR).label(fields.ADVISEUR).validators(Validators.required)
+                                           .maxlength(1000).build()],
+            [new TextareaFormFieldBuilder().id(fields.BRON).label(fields.BRON).validators(Validators.required)
+                                           .maxlength(1000).build()]
         );
     }
 
@@ -69,7 +72,8 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
                                            .label(fields.EXTERNADVIES)
                                            .value(this.getDataElement(fields.EXTERNADVIES))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond()).build()]
+                                           .readonly(this.isAfgerond())
+                                           .maxlength(1000).build()]
         );
         if (this.isAfgerond()) {
             this.form.push(

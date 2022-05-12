@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -39,8 +39,8 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     ngOnInit(): void {
         this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('toekenning')
                                                                          .groepLabel('actie.zaak.toekennen.groep').groepOptioneel()
-                                                                         .medewerkerLabel('actie.zaak.toekennen.medewerker').build();
-        this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').build();
+                                                                         .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50).build();
+        this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').maxlength(100).build();
     }
 
     verdeel(): void {
