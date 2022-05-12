@@ -13,7 +13,7 @@
             <mat-label>{{'filter' | translate}}</mat-label>
             <input matInput (keyup)="applyFilter($event)">
         </mat-form-field>
-        <div class="table-wrapper mat-elevation-z2">
+        <div class="table-wrapper mat-elevation-z1">
             <table mat-table [dataSource]="dataSource">
                 <ng-container matColumnDef="select">
                     <th mat-header-cell *matHeaderCellDef></th>

@@ -20,6 +20,7 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {TakenService} from '../../taken/taken.service';
 import * as moment from 'moment/moment';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
+import {HiddenFormFieldBuilder} from '../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
@@ -67,8 +68,8 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                         .validators(Validators.required, CustomValidators.emails).build()],
             [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
                                            .validators(Validators.required).maxlength(1000).build()],
-            [new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
-                                       .readonly(true).build()]
+            [new HiddenFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
+                                         .build()]
         );
     }
 
