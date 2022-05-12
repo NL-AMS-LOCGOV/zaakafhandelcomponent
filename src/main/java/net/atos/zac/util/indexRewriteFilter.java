@@ -38,7 +38,7 @@ public class indexRewriteFilter implements Filter {
                 chain.doFilter(request, response);
             } else if (path.equals("/logout")) {
                 logout(httpRequest, (HttpServletResponse) response);
-            } else if (path.equals("/start")) {
+            } else if (path.startsWith("/start")) {
                 httpRequest.getRequestDispatcher("/startformulieren.html").forward(request, response);
             } else {
                 httpRequest.getRequestDispatcher("/index.html").forward(request, response);

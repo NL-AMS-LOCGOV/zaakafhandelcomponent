@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -159,7 +160,7 @@ public class FlowableService {
                 .listPage(firstResult, maxResults);
     }
 
-    public List<Task> listOpenTasksAssignedToGroups(final List<String> groupIds, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final String direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskCandidateGroupIn(groupIds)
@@ -171,7 +172,7 @@ public class FlowableService {
         return (int) cmmnTaskService.createTaskQuery().taskAssignee(userId).count();
     }
 
-    public int countOpenTasksAssignedToGroups(final List<String> groupIds) {
+    public int countOpenTasksAssignedToGroups(final Set<String> groupIds) {
         return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
     }
 
