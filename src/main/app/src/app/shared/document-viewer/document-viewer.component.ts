@@ -4,6 +4,7 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {FileFormat, FileFormatUtil} from '../../informatie-objecten/model/file-format';
 import {PdfJsViewerComponent} from 'ng2-pdfjs-viewer';
 import {DomSanitizer} from '@angular/platform-browser';
+import {InformatieObjectNieuweVersieSignaler} from '../../informatie-objecten/informatie-object-nieuwe-versie-signaler';
 
 @Component({
     selector: 'zac-document-viewer',
@@ -18,7 +19,14 @@ export class DocumentViewerComponent implements OnInit {
     img: any;
     showDocumentViewer: boolean = false;
 
-    constructor(private informatieObjectenService: InformatieObjectenService, private sanitizer: DomSanitizer) { }
+    constructor(private informatieObjectenService: InformatieObjectenService, private sanitizer: DomSanitizer,
+                private informatieObjectNieuweVersieSignaler: InformatieObjectNieuweVersieSignaler) {
+        this.informatieObjectNieuweVersieSignaler.isNieuweVersieBeschikbaar.subscribe(isNewVersieBeschikbaar => {
+            if (isNewVersieBeschikbaar) {
+                this.ngOnInit();
+            }
+        });
+    }
 
     ngOnInit(): void {
         if (FileFormatUtil.isPreviewAvailable(this.document.formaat)) {

@@ -26,6 +26,7 @@ import {OntkoppeldeDocumentenModule} from './ontkoppelde-documenten/ontkoppelde-
 import {ActionBarComponent} from './core/actionbar/action-bar.component';
 import {SignaleringenModule} from './signaleringen/signaleringen.module';
 import {ZoekenModule} from './zoeken/zoeken.module';
+import {InformatieObjectNieuweVersieSignaler} from './informatie-objecten/informatie-object-nieuwe-versie-signaler';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -64,7 +65,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
     ],
     providers: [
         {provide: APP_BASE_HREF, useValue: '/'},
-        {provide: LocationStrategy, useClass: PathLocationStrategy}
+        {provide: LocationStrategy, useClass: PathLocationStrategy},
+        {provide: InformatieObjectNieuweVersieSignaler}
     ],
     bootstrap: [AppComponent]
 })

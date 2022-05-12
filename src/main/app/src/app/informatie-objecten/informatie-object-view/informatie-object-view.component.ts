@@ -28,6 +28,7 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
+import {InformatieObjectNieuweVersieSignaler} from '../informatie-object-nieuwe-versie-signaler';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -71,7 +72,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
-                private websocketService: WebsocketService) {
+                private websocketService: WebsocketService,
+                private informatieObjectNieuweVersieSignaler: InformatieObjectNieuweVersieSignaler) {
         super();
     }
 
@@ -165,6 +167,9 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
 
     documentVersieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.infoObject = informatieobject;
+        if (this.documentPreviewBeschikbaar) {
+            this.informatieObjectNieuweVersieSignaler.isNieuweVersieBeschikbaar.next(true);
+        }
         this.loadHistorie();
     }
 }
