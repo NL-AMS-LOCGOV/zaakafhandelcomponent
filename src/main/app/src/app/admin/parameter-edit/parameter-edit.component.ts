@@ -52,6 +52,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     caseDefinitionControl = new FormControl(null, [Validators.required]);
     groepControl = new FormControl(null, [Validators.required]);
     behandelaarControl = new FormControl();
+    einddatumGeplandWaarschuwingControl = new FormControl();
+    uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
 
     caseDefinitions: Observable<CaseDefinition[]>;
     formulierDefinities: Observable<string[]>;
@@ -70,6 +72,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
             this.groepControl.setValue(this.parameters.defaultGroep);
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
+            this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
+            this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
             this.zaakResultaten = adminService.listZaakResultaten(this.parameters.zaaktype.uuid);
             adminService.listZaakbeeindigRedenen().subscribe(redenen => {
                 this.readZaakbeeindigRedenen(redenen);
@@ -120,7 +124,9 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.algemeenFormGroup = this.formBuilder.group({
             caseDefinitionControl: this.caseDefinitionControl,
             groepControl: this.groepControl,
-            behandelaarControl: this.behandelaarControl
+            behandelaarControl: this.behandelaarControl,
+            einddatumGeplandWaarschuwingControl: this.einddatumGeplandWaarschuwingControl,
+            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl
         });
         this.updateHumanTaskForm();
         this.updateUserEventListenerForm();
@@ -215,6 +221,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.parameters.caseDefinition = this.caseDefinitionControl.value;
         this.parameters.defaultGroep = this.groepControl.value;
         this.parameters.defaultBehandelaar = this.behandelaarControl.value;
+        this.parameters.einddatumGeplandWaarschuwing = this.einddatumGeplandWaarschuwingControl.value;
+        this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
 
         this.humanTaskParameters.forEach(param => {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
@@ -224,7 +232,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.parameters.humanTaskParameters = this.humanTaskParameters;
 
         this.userEventListenerParameters.forEach(param => {
-           param.toelichting = this.getActieControl(param, 'toelichting').value;
+            param.toelichting = this.getActieControl(param, 'toelichting').value;
         });
         this.parameters.userEventListenerParameters = this.userEventListenerParameters;
 
