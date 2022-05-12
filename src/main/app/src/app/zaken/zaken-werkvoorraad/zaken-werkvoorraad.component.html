@@ -142,6 +142,14 @@
                 </mat-icon>
             </td>
         </ng-container>
+        <ng-container matColumnDef="dagenTotStreefdatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'dagenTotStreefdatum' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.einddatumGepland | dagen | empty }}
+            </td>
+        </ng-container>
         <ng-container matColumnDef="behandelaar">
             <th mat-header-cell cdkDrag *matHeaderCellDef>
                 {{ 'behandelaar' | translate }}
@@ -159,6 +167,14 @@
                 <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
                           *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning
                 </mat-icon>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="dagenTotFataledatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>
+                {{ 'dagenTotFataledatum' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.uiterlijkeEinddatumAfdoening | dagen | empty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="toelichting">
