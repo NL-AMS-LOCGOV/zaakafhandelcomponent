@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -66,7 +66,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
             [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
                                         .validators(Validators.required, CustomValidators.emails).build()],
             [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
-                                           .validators(Validators.required).build()],
+                                           .validators(Validators.required).maxlength(1000).build()],
             [new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
                                        .readonly(true).build()]
         );
@@ -90,6 +90,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                            .value(this.getDataElement(fields.OPMERKINGEN))
                                            .validators(Validators.required)
                                            .readonly(this.isAfgerond())
+                                           .maxlength(1000)
                                            .build()],
             [
                 new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD)

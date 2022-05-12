@@ -8,7 +8,7 @@
         <div fxFlex="100">
             <mat-form-field appearance="fill" class="full-width">
                 <mat-label>{{'trefwoorden' | translate}}</mat-label>
-                <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()">
+                <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()" maxlength="100">
                 <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
             </mat-form-field>
         </div>

@@ -27,18 +27,22 @@ export class DefaultTaakformulier extends AbstractFormulier {
     _initStartForm() {
         const fields = this.fields;
         this.form.push(
-            [new TextareaFormFieldBuilder().id(fields.REDEN_START).label(fields.REDEN_START).value(this.getDataElement(fields.REDEN_START))
-                                           .validators(Validators.required).build()]
+            [new TextareaFormFieldBuilder().id(fields.REDEN_START).label(fields.REDEN_START)
+                                           .value(this.getDataElement(fields.REDEN_START))
+                                           .validators(Validators.required).maxlength(1000).build()]
         );
     }
 
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.REDEN_START).label(fields.REDEN_START).value(this.getDataElement(fields.REDEN_START))
+            [new ReadonlyFormFieldBuilder().id(fields.REDEN_START).label(fields.REDEN_START)
+                                           .value(this.getDataElement(fields.REDEN_START))
                                            .build()],
-            [new TextareaFormFieldBuilder().id(fields.AFHANDELING).label(fields.AFHANDELING).value(this.getDataElement(fields.AFHANDELING))
-                                           .validators(Validators.required).readonly(this.isAfgerond()).build()]
+            [new TextareaFormFieldBuilder().id(fields.AFHANDELING).label(fields.AFHANDELING)
+                                           .value(this.getDataElement(fields.AFHANDELING))
+                                           .validators(Validators.required).readonly(this.isAfgerond()).maxlength(1000)
+                                           .build()]
         );
     }
 }
