@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -39,7 +39,8 @@ export class TakenVerdelenDialogComponent implements OnInit {
         this.medewerkerFormField = new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
                                                                      .optionLabel('naam')
                                                                      .options(this.identityService.listUsers())
-                                                                     .validators(Validators.required).build();
+                                                                     .validators(Validators.required).maxlength(50)
+                                                                     .build();
 
     }
 

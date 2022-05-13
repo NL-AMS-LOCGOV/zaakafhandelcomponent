@@ -1,14 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2021 - 2022 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
 
-export class DateFormField extends AbstractFormField {
-
-    fieldType = FieldType.DATE;
+export class DividerFormField extends AbstractFormField {
+    fieldType: FieldType = FieldType.DIVIDER;
 
     constructor() {
         super();

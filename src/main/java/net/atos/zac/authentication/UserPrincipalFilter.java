@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.wildfly.security.http.oidc.IDToken;
 import org.wildfly.security.http.oidc.OidcPrincipal;
+import org.wildfly.security.http.oidc.OidcSecurityContext;
 
 @WebFilter(filterName = "UserPrincipalFilter")
 public class UserPrincipalFilter implements Filter {
@@ -53,10 +54,9 @@ public class UserPrincipalFilter implements Filter {
                 }
 
                 if (loggedInUser == null) {
-                    loggedInUser = createLoggedInUser(principal.getOidcSecurityContext().getIDToken());
+                    loggedInUser = createLoggedInUser(principal.getOidcSecurityContext());
                     SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
-                    LOG.info(String.format("User '%s' logged in on context path %s", loggedInUser.getId(),
-                                           httpServletRequest.getServletContext().getContextPath()));
+                    LOG.info(String.format("User logged in: '%s' with roles: %s", loggedInUser.getId(), loggedInUser.getRoles()));
                 }
             }
         }
@@ -69,12 +69,14 @@ public class UserPrincipalFilter implements Filter {
         Filter.super.destroy();
     }
 
-    private LoggedInUser createLoggedInUser(final IDToken idToken) {
+    private LoggedInUser createLoggedInUser(final OidcSecurityContext context) {
+        final IDToken idToken = context.getIDToken();
         return new LoggedInUser(idToken.getPreferredUsername(),
                                 idToken.getGivenName(),
                                 idToken.getFamilyName(),
                                 idToken.getName(),
                                 idToken.getEmail(),
-                                idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME));
+                                idToken.getStringListClaimValue(GROUP_MEMBERSHIP_CLAIM_NAME),
+                                context.getToken().getRealmAccessClaim().getRoles());
     }
 }

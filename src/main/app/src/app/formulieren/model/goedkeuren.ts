@@ -47,6 +47,7 @@ export class Goedkeuren extends AbstractFormulier {
         const fields = this.fields;
         this.form.push(
             [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
+                                           .maxlength(1000)
                                            .build()],
             [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN).label(fields.RELEVANTE_DOCUMENTEN)
                                               .documenten(documenten).build()]
@@ -83,6 +84,7 @@ export class Goedkeuren extends AbstractFormulier {
                                            .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
                                            .readonly(this.isAfgerond())
+                                           .maxlength(1000)
                                            .build()]
         );
         if (this.isAfgerond()) {
