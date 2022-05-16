@@ -30,7 +30,8 @@
                    placeholder="Zoek een adres"
                    matInput
                    [formControl]="searchControl"
-                   [matAutocomplete]="auto">
+                   [matAutocomplete]="auto"
+                   maxlength="100">
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectionChanged($event)" [displayWith]="resultDisplay">
                 <mat-option *ngFor="let result of results" [value]="result">
                     <mat-icon mat-list-icon *ngIf="result.type === 'weg'">add_road</mat-icon>

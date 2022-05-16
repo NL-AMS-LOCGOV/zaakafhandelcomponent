@@ -23,13 +23,28 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    groepLabel(groepLabel: string): this {
+        this.formField.groepLabel = groepLabel;
+        return this;
+    }
+
     defaultGroep(groep: Group): this {
         this.formField.defaultGroep = groep;
         return this;
     }
 
+    medewerkerLabel(medewerkerLabel: string): this {
+        this.formField.medewerkerLabel = medewerkerLabel;
+        return this;
+    }
+
     defaultMedewerker(medewerker: User): this {
         this.formField.defaultMedewerker = medewerker;
+        return this;
+    }
+
+    maxlength(maxlength: number): this {
+        this.formField.maxlength = maxlength;
         return this;
     }
 

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -14,4 +14,10 @@ export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilde
         super();
         this.formField = new AutocompleteFormField();
     }
+
+    maxlength(maxlength: number): this {
+        this.formField.maxlength = maxlength;
+        return this;
+    }
+
 }

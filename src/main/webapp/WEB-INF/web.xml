@@ -73,6 +73,14 @@
         </web-resource-collection>
     </security-constraint>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>start</web-resource-name>
+            <description>For allowing starting a form</description>
+            <url-pattern>/start/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
     <login-config>
         <auth-method>OIDC</auth-method>
     </login-config>

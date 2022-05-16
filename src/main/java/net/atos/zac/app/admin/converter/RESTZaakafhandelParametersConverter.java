@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
@@ -52,6 +53,8 @@ public class RESTZaakafhandelParametersConverter {
         restParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(parameters.getZaakTypeUUID()));
         restParameters.defaultGroep = groupConverter.convertGroupId(parameters.getGroepID());
         restParameters.defaultBehandelaar = userConverter.convertUserId(parameters.getGebruikersnaamMedewerker());
+        restParameters.einddatumGeplandWaarschuwing = parameters.getEinddatumGeplandWaarschuwing();
+        restParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
         restParameters.caseDefinition = caseDefinitionConverter.convertToRest(parameters.getCaseDefinitionID());
         if (inclusiefPlanitems && restParameters.caseDefinition != null) {
             final List<RESTHumanTaskParameters> list = new ArrayList<>();
@@ -97,11 +100,16 @@ public class RESTZaakafhandelParametersConverter {
         final ZaakafhandelParameters parameters = new ZaakafhandelParameters();
         parameters.setId(restParameters.id);
         parameters.setZaakTypeUUID(UUID.fromString(restParameters.zaaktype.uuid));
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(parameters.getZaakTypeUUID());
         parameters.setCaseDefinitionID(restParameters.caseDefinition.key);
         if (restParameters.defaultBehandelaar != null) {
             parameters.setGebruikersnaamMedewerker(restParameters.defaultBehandelaar.id);
         }
         parameters.setGroepID(restParameters.defaultGroep.id);
+        if (zaaktype.isServicenormBeschikbaar()) {
+            parameters.setEinddatumGeplandWaarschuwing(restParameters.einddatumGeplandWaarschuwing);
+        }
+        parameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
         final List<HumanTaskParameters> list = new ArrayList<>();
         restParameters.humanTaskParameters.forEach(restHumanTaskParameters -> {
             HumanTaskParameters humanTaskParameters = new HumanTaskParameters();

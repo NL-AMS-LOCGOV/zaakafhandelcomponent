@@ -19,4 +19,6 @@ export class ZaakafhandelParameters {
     zaakbeeindigParameters: ZaakbeeindigParameter[];
     defaultGroep: Group;
     defaultBehandelaar: User;
+    einddatumGeplandWaarschuwing: number;
+    uiterlijkeEinddatumAfdoeningWaarschuwing: number;
 }

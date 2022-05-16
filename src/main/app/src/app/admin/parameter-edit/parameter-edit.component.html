@@ -26,6 +26,17 @@
                     </div>
                     <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
                         <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'caseDefinition' | translate}}</mat-label>
+                            <mat-select placeholder="{{'model.-kies-' | translate}}"
+                                        (selectionChange)="readHumanTaskParameters($event)"
+                                        [formControl]="caseDefinitionControl" [compareWith]="compareObject">
+                                <mat-option *ngFor="let cd of caseDefinitions | async"
+                                            [value]="cd">{{ cd.naam }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                        <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                             <mat-label>{{'groep' | translate}}</mat-label>
                             <mat-select placeholder="{{'groep.-kies-' | translate}}" [formControl]="groepControl"
                                         [compareWith]="compareObject">
@@ -43,14 +54,17 @@
                         </mat-form-field>
                     </div>
                     <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                        <mat-form-field *ngIf="parameters.zaaktype.servicenorm" fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'einddatumGeplandWaarschuwing' | translate}}</mat-label>
+                            <input matInput type="number" min="0" max="31"
+                                   [formControl]="einddatumGeplandWaarschuwingControl">
+                            <span matSuffix>{{'kalenderdagen' | translate}}</span>
+                        </mat-form-field>
                         <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
-                            <mat-label>{{'caseDefinition' | translate}}</mat-label>
-                            <mat-select placeholder="{{'model.-kies-' | translate}}"
-                                        (selectionChange)="readHumanTaskParameters($event)"
-                                        [formControl]="caseDefinitionControl" [compareWith]="compareObject">
-                                <mat-option *ngFor="let cd of caseDefinitions | async"
-                                            [value]="cd">{{ cd.naam }}</mat-option>
-                            </mat-select>
+                            <mat-label>{{'uiterlijkeEinddatumAfdoeningWaarschuwing' | translate}}</mat-label>
+                            <input matInput type="number" min="0" max="31"
+                                   [formControl]="uiterlijkeEinddatumAfdoeningWaarschuwingControl">
+                            <span matSuffix>{{'kalenderdagen' | translate}}</span>
                         </mat-form-field>
                     </div>
 
@@ -112,7 +126,7 @@
                                                [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')"
                                                min="0"
                                                max="2147483647">
-                                        <span matSuffix>{{'dagen' | translate}}</span>
+                                        <span matSuffix>{{'kalenderdagen' | translate}}</span>
                                     </mat-form-field>
                                 </div>
                             </mat-expansion-panel>
@@ -144,7 +158,8 @@
                                                     floatLabel="always">
                                         <mat-label>{{'toelichting' | translate}}</mat-label>
                                         <textarea matInput class="toelichting"
-                                               [formControl]="getActieControl(actieParameter, 'toelichting')"></textarea>
+                                                  [formControl]="getActieControl(actieParameter, 'toelichting')"
+                                                  maxlength="1000"></textarea>
                                     </mat-form-field>
                                 </div>
                             </mat-expansion-panel>

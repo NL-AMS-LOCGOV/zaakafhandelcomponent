@@ -55,9 +55,12 @@ export class MailCreateComponent implements OnInit {
             this.ingelogdeMedewerker = medewerker;
         });
         const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
-                                                     .validators(Validators.required, CustomValidators.emails).build();
-        const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required).build();
-        const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required).build();
+                                                     .validators(Validators.required, CustomValidators.emails)
+                                                     .maxlength(200).build();
+        const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required)
+                                                     .maxlength(100).build();
+        const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required)
+                                                   .maxlength(1000).build();
         this.fields = [[ontvanger], [onderwerp], [body]];
     }
 

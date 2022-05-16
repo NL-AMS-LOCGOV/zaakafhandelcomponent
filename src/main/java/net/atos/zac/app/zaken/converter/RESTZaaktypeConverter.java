@@ -17,6 +17,7 @@ public class RESTZaaktypeConverter {
         restZaaktype.identificatie = zaaktype.getIdentificatie();
         restZaaktype.doel = zaaktype.getDoel();
         restZaaktype.omschrijving = zaaktype.getOmschrijving();
+        restZaaktype.servicenorm = zaaktype.isServicenormBeschikbaar();
         if (zaaktype.getReferentieproces() != null) {
             restZaaktype.referentieproces = zaaktype.getReferentieproces().getNaam();
         }
