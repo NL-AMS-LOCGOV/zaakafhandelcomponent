@@ -6,10 +6,8 @@
 package net.atos.zac.zoeken;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -19,7 +17,6 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import net.atos.zac.zoeken.converter.ZaakZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
@@ -28,9 +25,6 @@ import net.atos.zac.zoeken.model.ZoekResultaat;
 public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
-
-    @Inject
-    private ZaakZoekObjectConverter zaakZoekObjectConverter;
 
     private SolrClient solrClient;
 
@@ -55,22 +49,4 @@ public class ZoekenService {
         }
     }
 
-    public void addZaak(final UUID zaakUUID) {
-        final ZaakZoekObject zaak = zaakZoekObjectConverter.convert(zaakUUID);
-        try {
-            solrClient.addBean(zaak);
-            solrClient.commit();
-        } catch (final IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void removeZaak(final UUID zaakUUID) {
-        try {
-            solrClient.deleteById(zaakUUID.toString());
-            solrClient.commit();
-        } catch (final IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
