@@ -1,31 +1,32 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {FileFormat, FileFormatUtil} from '../../informatie-objecten/model/file-format';
 import {PdfJsViewerComponent} from 'ng2-pdfjs-viewer';
 import {DomSanitizer} from '@angular/platform-browser';
-import {InformatieObjectNieuweVersieSignaler} from '../../informatie-objecten/informatie-object-nieuwe-versie-signaler';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {Opcode} from '../../core/websocket/model/opcode';
+import {ObjectType} from '../../core/websocket/model/object-type';
+import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
 
 @Component({
     selector: 'zac-document-viewer',
     templateUrl: './document-viewer.component.html',
     styleUrls: ['./document-viewer.component.less']
 })
-export class DocumentViewerComponent implements OnInit {
+export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     @Input() document: EnkelvoudigInformatieobject;
     @ViewChild('pdfViewer') private pdfViewer: PdfJsViewerComponent;
 
     img: any;
     showDocumentViewer: boolean = false;
+    private documentListener: WebsocketListener;
 
     constructor(private informatieObjectenService: InformatieObjectenService, private sanitizer: DomSanitizer,
-                private informatieObjectNieuweVersieSignaler: InformatieObjectNieuweVersieSignaler) {
-        this.informatieObjectNieuweVersieSignaler.isNieuweVersieBeschikbaar.subscribe(isNewVersieBeschikbaar => {
-            if (isNewVersieBeschikbaar) {
-                this.ngOnInit();
-            }
-        });
+                private websocketService: WebsocketService) {
+
     }
 
     ngOnInit(): void {
@@ -33,6 +34,20 @@ export class DocumentViewerComponent implements OnInit {
             this.showDocumentViewer = true;
             this.loadDocument();
         }
+
+        this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
+            (event) => {
+            this.loadInformatieObject(event);
+
+            if (FileFormatUtil.isPreviewAvailable(this.document.formaat)) {
+                this.showDocumentViewer = true;
+                this.loadDocument();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.websocketService.removeListener(this.documentListener);
     }
 
     private loadDocument(): void {
@@ -52,6 +67,16 @@ export class DocumentViewerComponent implements OnInit {
                 this.img = this.sanitizer.bypassSecurityTrustUrl(imageUrl);
             }
         });
+    }
+
+    private loadInformatieObject(event?: ScreenEvent) {
+        if (event) {
+            console.log('callback loadInformatieObject: ' + event.key);
+        }
+        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.document.uuid)
+            .subscribe(informatieObject => {
+                this.document = informatieObject;
+            });
     }
 
     isImage(): boolean {

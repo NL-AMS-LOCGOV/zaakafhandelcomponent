@@ -230,6 +230,9 @@ public class RESTInformatieobjectConverter {
         if (restEnkelvoudigInformatieObjectVersieGegevens.auteur != null) {
             data.setAuteur(restEnkelvoudigInformatieObjectVersieGegevens.auteur);
         }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.bestandsnaam != null) {
+            data.setBestandsnaam((restEnkelvoudigInformatieObjectVersieGegevens.bestandsnaam));
+        }
         if (file != null && file.file != null) {
             data.setInhoud(Base64.getEncoder().encodeToString(file.file));
         }

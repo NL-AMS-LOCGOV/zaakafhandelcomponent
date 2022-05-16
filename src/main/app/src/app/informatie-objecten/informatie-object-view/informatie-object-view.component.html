@@ -9,8 +9,8 @@
     </mat-sidenav>
     <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-informatie-object-edit *ngSwitchCase="'DOCUMENT_VERSIE_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                    [infoObject]="documentNieuweVersieGegevens" [zaken]="zaken"
-                                    (document)="documentVersieToegevoegd($event)"></zac-informatie-object-edit>
+                                    [infoObject]="documentNieuweVersieGegevens" [zaken]="zaken">
+        </zac-informatie-object-edit>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
