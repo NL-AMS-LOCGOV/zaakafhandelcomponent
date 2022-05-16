@@ -15,6 +15,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import net.atos.zac.zoeken.model.ZaakZoekObject;
@@ -38,6 +39,7 @@ public class ZoekenService {
         if (StringUtils.isNotBlank(zoekZaakParameters.getTekst())) {
             query.setQuery("text:(%s)".formatted(zoekZaakParameters.getTekst()));
         }
+        query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
         query.addSort("identificatie", SolrQuery.ORDER.desc);
