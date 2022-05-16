@@ -65,6 +65,14 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.merge(zaakafhandelParameters);
     }
 
+    public List<ZaakafhandelParameters> listZaakafhandelParameters() {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
+        final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
+        query.select(root);
+        return entityManager.createQuery(query).getResultList();
+    }
+
     public HumanTaskParameters readHumanTaskParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
