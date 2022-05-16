@@ -8,23 +8,17 @@
 <head>
     <meta charset="utf-8">
     <title>Startformulieren</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-    <meta name="google" content="notranslate">
     <link href="https://open-forms.develop-public-service-platform.net/static/sdk/1.0.2/open-forms-sdk.css" rel="stylesheet"/>
     <script src="https://open-forms.develop-public-service-platform.net/static/sdk/1.0.2/open-forms-sdk.js"></script>
 </head>
 <body>
 <div id="openforms-container"></div>
 <script>
-    const formId = 'melding\u002Dklein\u002Devenement';
-    const baseUrl = 'https://open\u002Dforms.develop\u002Dpublic\u002Dservice\u002Dplatform.net/api/v1/';
-    const targetNode = document.getElementById('openforms\u002Dcontainer');
+    const baseUrl = 'https://open-forms.develop-public-service-platform.net/api/v1/';
+    const formId = 'melding-klein-evenement';
     const basePath = '/start';
-    const form = new OpenForms.OpenForm(
-            targetNode,
-            {baseUrl, formId, basePath}
-    );
+    const targetNode = document.getElementById('openforms-container');
+    const form = new OpenForms.OpenForm(targetNode, {baseUrl, formId, basePath});
     form.init();
 </script>
 </body>
