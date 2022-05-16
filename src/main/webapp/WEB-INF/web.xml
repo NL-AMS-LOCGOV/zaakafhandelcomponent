@@ -77,7 +77,7 @@
         <web-resource-collection>
             <web-resource-name>start</web-resource-name>
             <description>For allowing starting a form</description>
-            <url-pattern>/start/*</url-pattern>
+            <url-pattern>/startformulieren/*</url-pattern>
         </web-resource-collection>
     </security-constraint>
 
