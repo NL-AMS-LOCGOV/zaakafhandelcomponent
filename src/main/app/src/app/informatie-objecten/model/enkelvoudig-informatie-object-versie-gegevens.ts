@@ -7,6 +7,7 @@ import {Taal} from '../../configuratie/model/taal';
 
 export class EnkelvoudigInformatieObjectVersieGegevens {
     uuid: string;
+    zaakUuid: string;
     titel: string;
     beschrijving: string;
     vertrouwelijkheidaanduiding: string;
