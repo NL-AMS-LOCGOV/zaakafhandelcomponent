@@ -81,8 +81,12 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.documentListener = this.websocketService.addListenerWithSnackbar(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
-                (event) => this.loadInformatieObject(event));
+            this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+                (event) => {
+                    this.loadInformatieObject(event);
+                    this.loadHistorie();
+                    this.setupMenu();
+                });
 
             this.setupMenu();
             this.loadZaken();
@@ -161,10 +165,5 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         } else {
             return {type: 'unknown', icon: 'fa-file-circle-question'};
         }
-    }
-
-    documentVersieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
-        this.infoObject = informatieobject;
-        this.loadHistorie();
     }
 }
