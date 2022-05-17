@@ -51,7 +51,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     }
 
     private loadDocument(): void {
-        this.informatieObjectenService.getPreviewDocument(this.document.uuid).subscribe(value => {
+        this.informatieObjectenService.getPreviewDocument(this.document.uuid, this.document.versie).subscribe(value => {
             if (this.isPDF()) {
                 this.pdfViewer.openFile = false;
                 this.pdfViewer.viewBookmark = false;

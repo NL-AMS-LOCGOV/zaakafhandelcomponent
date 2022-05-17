@@ -11,7 +11,8 @@ import {InformatieObjectResolver} from './informatie-object.resolver';
 const routes: Routes = [
     {
         path: 'informatie-objecten', children: [
-            {path: ':uuid', component: InformatieObjectViewComponent, resolve: {informatieObject: InformatieObjectResolver}}
+            {path: ':uuid', component: InformatieObjectViewComponent, resolve: {informatieObject: InformatieObjectResolver}},
+            {path: ':uuid/:versie', component: InformatieObjectViewComponent, resolve: {informatieObject: InformatieObjectResolver}}
         ]
     }
 ];
