@@ -159,6 +159,10 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.router.navigate(['/informatie-objecten/', this.infoObject.uuid, versie]);
     }
 
+    versieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
+        this.haalVersieOp(informatieobject.versie);
+    }
+
     getFileIcon(filename) {
         const extension = filename.split('.').pop();
         const obj = this.fileIconList.filter(row => {
