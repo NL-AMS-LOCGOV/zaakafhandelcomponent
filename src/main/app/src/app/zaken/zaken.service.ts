@@ -109,6 +109,12 @@ export class ZakenService {
         );
     }
 
+    listZaakWaarschuwingen(): Observable<ZaakOverzicht[]> {
+        return this.http.get<ZaakOverzicht[]>(`${this.basepath}/waarschuwing`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     listZakenAfgehandeld(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
         return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/afgehandeld`, {
             params: ZakenService.getTableParams(request)

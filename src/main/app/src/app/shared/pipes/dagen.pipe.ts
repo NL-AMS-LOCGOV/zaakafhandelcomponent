@@ -15,19 +15,20 @@ export class DagenPipe implements PipeTransform {
     transform(value: any): string {
         if (value) {
             const vandaag = moment().startOf('day');
-            const vergelijkDatum = moment(value).startOf('day');
-            const aantalDagen = vergelijkDatum.diff(vandaag, 'days');
-
-            let result;
-            if (aantalDagen === 0) {
-                result = this.translate.instant('verloopt.vandaag');
-            } else if (aantalDagen >= 1) {
-                result = aantalDagen === 1 ? this.translate.instant('verloopt.over.dag', {dagen: aantalDagen}) :
-                    this.translate.instant('verloopt.over.dagen', {dagen: aantalDagen});
+            const verloopt = moment(value).startOf('day');
+            const dagen = verloopt.diff(vandaag, 'days');
+            if (0 <= dagen) {
+                switch (dagen) {
+                    case(0):
+                        return this.translate.instant('verloopt.vandaag');
+                    case(1):
+                        return this.translate.instant('verloopt.over.dag');
+                    default:
+                        return this.translate.instant('verloopt.over.dagen', {dagen: dagen});
+                }
             }
-
-            return result;
         }
+        return null;
     }
 
 }
