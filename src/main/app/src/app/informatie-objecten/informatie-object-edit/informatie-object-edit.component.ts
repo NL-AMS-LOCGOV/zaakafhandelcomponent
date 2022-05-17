@@ -27,6 +27,7 @@ import {User} from '../../identity/model/user';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
+import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 
 @Component({
     selector: 'zac-informatie-object-edit',
@@ -63,7 +64,11 @@ export class InformatieObjectEditComponent implements OnInit {
         const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
 
-        // TODO #358 Upload nieuwe versie document
+        const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
+                                                      .uploadURL(
+                                                          this.informatieObjectenService.getUploadURL(this.zaken[0].zaakUuid))
+                                                      .validators(Validators.required)
+                                                      .build();
 
         const titel = new InputFormFieldBuilder().id('titel').label('titel')
                                                  .validators(Validators.required)
@@ -118,13 +123,21 @@ export class InformatieObjectEditComponent implements OnInit {
 
         const toelichting = new InputFormFieldBuilder().id('toelichting').label('toelichting').build();
 
-        this.fields = [[titel], [beschrijving], [status, vertrouwelijk], [auteur], [verzenddatum, taal], [toelichting]];
+        let vorigeBestandsnaam = null;
+        inhoudField.fileUploaded.subscribe(bestandsnaam => {
+            const titelCtrl = titel.formControl;
+            titelCtrl.setValue(bestandsnaam.replace(/\.[^/.]+$/, ''));
+            vorigeBestandsnaam = '' + titelCtrl.value;
+        });
+
+        this.fields = [[inhoudField], [titel], [beschrijving], [status, vertrouwelijk], [auteur], [verzenddatum, taal], [toelichting]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             const nieuweVersie = new EnkelvoudigInformatieObjectVersieGegevens();
             nieuweVersie.uuid = this.infoObject.uuid;
+            nieuweVersie.zaakUuid = this.zaken[0].zaakUuid;
             Object.keys(formGroup.controls).forEach((key) => {
                 const control = formGroup.controls[key];
                 const value = control.value;
