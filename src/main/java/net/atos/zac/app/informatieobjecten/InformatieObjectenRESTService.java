@@ -211,6 +211,13 @@ public class InformatieObjectenRESTService {
     }
 
     @GET
+    @Path("/informatieobject/{uuid}/download")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response readFile(@PathParam("uuid") final UUID uuid) {
+        return readFile(uuid, null);
+    }
+
+    @GET
     @Path("/informatieobject/{uuid}/{versie}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {

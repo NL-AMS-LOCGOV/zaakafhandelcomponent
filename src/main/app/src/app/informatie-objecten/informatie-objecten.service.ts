@@ -104,7 +104,10 @@ export class InformatieObjectenService {
     }
 
     getDownloadURL(uuid: string, versie?: number): string {
-        return `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
+        if (versie) {
+            return `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
+        }
+        return `${this.basepath}/informatieobject/${uuid}/download`;
     }
 
     getUploadURL(uuid: string): string {
@@ -112,7 +115,11 @@ export class InformatieObjectenService {
     }
 
     getPreviewDocument(uuid: string, versie?: number) {
-        const url = `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
+        let url = `${this.basepath}/informatieobject/${uuid}/download`;
+        if (versie) {
+            url = `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
+        }
+
         return this.http.get(url, {responseType: 'blob'}).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
