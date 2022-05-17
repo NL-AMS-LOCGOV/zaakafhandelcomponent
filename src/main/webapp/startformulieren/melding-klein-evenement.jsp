@@ -23,7 +23,9 @@
     const formId = 'melding-klein-evenement';
     const basePath = '/startformulieren';
     const targetNode = document.getElementById('openforms-container');
-    const form = new OpenForms.OpenForm(targetNode, {baseUrl, formId, basePath});
+    const cspNonce = 'TVWfzjJclhfogAh7QGfuTQ\u003D\u003D';
+    const sentryEnv = 'docker';
+    const form = new OpenForms.OpenForm(targetNode, {baseUrl, formId, basePath, cspNonce, sentryEnv});
     form.init();
 </script>
 </body>
