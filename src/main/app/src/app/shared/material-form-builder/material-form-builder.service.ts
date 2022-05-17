@@ -23,6 +23,8 @@ import {TaakDocumentUploadComponent} from './form-components/taak-document-uploa
 import {RadioComponent} from './form-components/radio/radio.component';
 import {ParagraphComponent} from './form-components/paragraph/paragraph.component';
 import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
+import {DividerComponent} from './form-components/divider/divider.component';
+import {HiddenComponent} from './form-components/hidden/hidden.component';
 
 @Injectable({
     providedIn: 'root'
@@ -46,6 +48,8 @@ export class MaterialFormBuilderService {
                 return AutocompleteComponent;
             case FieldType.READONLY:
                 return ReadonlyComponent;
+            case FieldType.DIVIDER:
+                return DividerComponent;
             case FieldType.DATE:
                 return DateComponent;
             case FieldType.INPUT:
@@ -56,6 +60,8 @@ export class MaterialFormBuilderService {
                 return TextareaComponent;
             case FieldType.HEADING:
                 return HeadingComponent;
+            case FieldType.HIDDEN:
+                return HiddenComponent;
             case FieldType.SELECT:
                 return SelectComponent;
             case FieldType.MEDEWERKER_GROEP:

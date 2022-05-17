@@ -9,8 +9,8 @@
     </mat-sidenav>
     <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-informatie-object-edit *ngSwitchCase="'DOCUMENT_VERSIE_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                    [infoObject]="documentNieuweVersieGegevens" [zaken]="zaken"
-                                    (document)="documentVersieToegevoegd($event)"></zac-informatie-object-edit>
+                                    [infoObject]="documentNieuweVersieGegevens" [zaken]="zaken">
+        </zac-informatie-object-edit>
     </mat-sidenav>
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
@@ -51,7 +51,8 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'informatieobject.status' | translate"
-                                                     [value]="'informatieobject.status.'+infoObject.status | translate"></zac-static-text>
+                                                     [value]="'informatieobject.status.'+infoObject.status | translate"
+                                                     *ngIf="infoObject.status"></zac-static-text>
                                     <zac-static-text [label]="'bronorganisatie' | translate" *ngIf="infoObject.bronorganisatie"
                                                      [value]="infoObject.bronorganisatie"></zac-static-text>
                                     <zac-static-text [label]="'taal' | translate"

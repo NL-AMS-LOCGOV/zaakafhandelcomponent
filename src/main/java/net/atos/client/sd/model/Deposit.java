@@ -9,6 +9,8 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class Deposit {
 
+    // username header!
+
     public Registratie registratie;
 
     public Data data;

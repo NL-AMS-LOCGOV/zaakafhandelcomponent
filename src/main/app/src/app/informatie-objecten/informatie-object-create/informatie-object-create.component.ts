@@ -66,10 +66,12 @@ export class InformatieObjectCreateComponent implements OnInit {
 
         const titel = new InputFormFieldBuilder().id('titel').label('titel')
                                                  .validators(Validators.required)
+                                                 .maxlength(100)
                                                  .build();
 
         const beschrijving = new InputFormFieldBuilder().id('beschrijving')
                                                         .label('beschrijving')
+                                                        .maxlength(100)
                                                         .build();
 
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
@@ -107,6 +109,7 @@ export class InformatieObjectCreateComponent implements OnInit {
         const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
                                                   .validators(Validators.required)
                                                   .value(this.ingelogdeMedewerker.naam)
+                                                  .maxlength(50)
                                                   .build();
 
         const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')

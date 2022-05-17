@@ -11,8 +11,10 @@ import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +47,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
@@ -265,7 +268,7 @@ public class ZakenRESTService {
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakVerlengGegevens, zaakUUID),
                                                                       VERLENGING);
-        if (restZaakVerlengGegevens.takenVerlengen) {
+        if (restZaakVerlengGegevens.takenVerlengen != null && restZaakVerlengGegevens.takenVerlengen) {
             final int[] count = new int[1];
             flowableService.listOpenTasksforCase(zaakUUID).stream()
                     .filter(task -> task.getDueDate() != null)
@@ -337,6 +340,48 @@ public class ZakenRESTService {
         final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults,
                                                                                                   tableState.getPagination());
         return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
+    }
+
+    @GET
+    @Path("waarschuwing")
+    public List<RESTZaakOverzicht> listZaakWaarschuwingen() {
+        final Map<UUID, LocalDate> einddatumGeplandWaarschuwing = new HashMap<>();
+        final Map<UUID, LocalDate> uiterlijkeEinddatumAfdoeningWaarschuwing = new HashMap<>();
+        zaakafhandelParameterBeheerService.listZaakafhandelParameters().forEach(parameters -> {
+            if (parameters.getEinddatumGeplandWaarschuwing() != null) {
+                einddatumGeplandWaarschuwing.put(parameters.getZaakTypeUUID(),
+                                                 datumWaarschuwing(parameters.getEinddatumGeplandWaarschuwing()));
+            }
+            if (parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing() != null) {
+                uiterlijkeEinddatumAfdoeningWaarschuwing.put(parameters.getZaakTypeUUID(),
+                                                             datumWaarschuwing(parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing()));
+            }
+        });
+        final ZaakListParameters zaakListParameters = new ZaakListParameters();
+        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(loggedInUserInstance.get().getId());
+        return zrcClientService.listZaken(zaakListParameters).getResults().stream()
+                .filter(Zaak::isOpen)
+                .filter(zaak -> isWaarschuwing(zaak, einddatumGeplandWaarschuwing, uiterlijkeEinddatumAfdoeningWaarschuwing))
+                .map(zaakOverzichtConverter::convert)
+                .toList();
+    }
+
+    private LocalDate datumWaarschuwing(final int dagen) {
+        return LocalDate.now().plusDays(dagen + 1);
+    }
+
+    private boolean isWaarschuwing(final Zaak zaak,
+            final Map<UUID, LocalDate> einddatumGeplandWaarschuwing,
+            final Map<UUID, LocalDate> uiterlijkeEinddatumAfdoeningWaarschuwing) {
+        final UUID zaaktype = URIUtil.parseUUIDFromResourceURI(zaak.getZaaktype());
+        if (zaak.getEinddatumGepland() != null) {
+            final LocalDate waarschuwing = einddatumGeplandWaarschuwing.get(zaaktype);
+            if (waarschuwing != null && zaak.getEinddatumGepland().isBefore(waarschuwing)) {
+                return true;
+            }
+        }
+        final LocalDate waarschuwing = uiterlijkeEinddatumAfdoeningWaarschuwing.get(zaaktype);
+        return waarschuwing != null && zaak.getUiterlijkeEinddatumAfdoening().isBefore(waarschuwing);
     }
 
     @GET

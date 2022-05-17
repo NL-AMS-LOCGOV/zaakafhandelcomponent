@@ -39,6 +39,7 @@ import {TooltipListPipe} from './dynamic-table/pipes/tooltip-list.pipe';
 import {EditSelectComponent} from './edit/edit-select/edit-select.component';
 import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.component';
+import {DagenPipe} from './pipes/dagen.pipe';
 
 @NgModule({
     declarations: [
@@ -61,7 +62,8 @@ import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.compone
         ColumnPickerComponent,
         TooltipListPipe,
         DocumentViewerComponent,
-        SkeletonLoaderComponent
+        SkeletonLoaderComponent,
+        DagenPipe
     ],
     imports: [
         FormsModule,
@@ -102,7 +104,8 @@ import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.compone
         TooltipListPipe,
         DocumentViewerComponent,
         ColumnPickerComponent,
-        SkeletonLoaderComponent
+        SkeletonLoaderComponent,
+        DagenPipe
     ],
     providers: [
         Title,

@@ -18,19 +18,26 @@ import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 })
 export class DashboardComponent implements OnInit {
 
-    /** Cards will be added to the grid on the dashboard in this order */
-    private cards: Array<DashboardCardData> = [
-        new DashboardCardData('ZAAK', SignaleringType.ZAAK_OP_NAAM, 'dashboard.mijn.nieuwe.zaken'),
-        new DashboardCardData('TAAK', SignaleringType.TAAK_OP_NAAM, 'dashboard.mijn.nieuwe.taken'),
-        new DashboardCardData('ZAAK', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD, 'dashboard.mijn.nieuwe.documenten')
+    /** These cards may be added to the grid on the dashboard in this order */
+    private signaleringCards: Array<DashboardCardData> = [
+        new DashboardCardData('ZAAK', 'dashboard.mijn.zaken.nieuw', SignaleringType.ZAAK_OP_NAAM),
+        new DashboardCardData('TAAK', 'dashboard.mijn.taken.nieuw', SignaleringType.TAAK_OP_NAAM),
+        new DashboardCardData('ZAAK', 'dashboard.mijn.documenten.nieuw', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD)
+    ];
+
+    /** These cards will then be added to the grid on the dashboard in this order */
+    private otherCards: Array<DashboardCardData> = [
+        new DashboardCardData('ZAAK-WAARSCHUWING', 'dashboard.mijn.zaken.waarschuwing')
     ];
 
     width: number; // Maximum number of cards horizontally
+    showHint: boolean = false; // Show hint how to add signalerings cards
 
     /** Based on the screen size, switch from standard to one column per row */
     grid: Array<DashboardCardData[]> = [];
 
-    constructor(private breakpointObserver: BreakpointObserver, private utilService: UtilService,
+    constructor(private breakpointObserver: BreakpointObserver,
+                private utilService: UtilService,
                 private signaleringenService: SignaleringenService) {
     }
 
@@ -45,12 +52,16 @@ export class DashboardComponent implements OnInit {
 
     private addCards(): void {
         this.signaleringenService.listDashboardSignaleringTypen().subscribe(typen => {
-            for (const card of this.cards) {
+            for (const card of this.signaleringCards) {
                 for (const type of typen) {
                     if (card.signaleringType === type) {
                         this.addCard(card);
                     }
                 }
+            }
+            this.showHint = this.grid.length === 0;
+            for (const card of this.otherCards) {
+                this.addCard(card);
             }
         });
     }

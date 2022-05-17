@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -30,6 +30,7 @@ export class ZakenVrijgevenDialogComponent implements OnInit {
     ngOnInit(): void {
         this.redenFormField = new TextareaFormFieldBuilder().id('reden')
                                                             .label('reden')
+                                                            .maxlength(100)
                                                             .build();
     }
 

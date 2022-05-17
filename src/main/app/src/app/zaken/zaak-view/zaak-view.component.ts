@@ -210,10 +210,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                                  .optionLabel('naam')
                                                                                  .options(
                                                                                      this.identityService.listUsers())
+                                                                                 .maxlength(50)
                                                                                  .build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
                                                                            .value(this.zaak.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroups())
+                                                                           .maxlength(50)
                                                                            .build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
                                                                               .value(this.zaak.omschrijving)
@@ -400,6 +402,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                 .build(),
                     new InputFormFieldBuilder().id('toelichting')
                                                .label('toelichting')
+                                               .maxlength(80)
                                                .build()],
                 (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
                 melding,

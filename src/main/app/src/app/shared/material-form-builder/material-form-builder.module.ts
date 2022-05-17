@@ -46,6 +46,9 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
+import {DividerComponent} from './form-components/divider/divider.component';
+import {MatDividerModule} from '@angular/material/divider';
+import {HiddenComponent} from './form-components/hidden/hidden.component';
 
 @NgModule({
     declarations: [
@@ -66,7 +69,9 @@ import {MedewerkerGroepComponent} from './form-components/select-medewerker/mede
         DocumentenLijstComponent,
         TaakDocumentUploadComponent,
         RadioComponent,
-        ParagraphComponent
+        ParagraphComponent,
+        DividerComponent,
+        HiddenComponent
     ],
     imports: [
         CommonModule,
@@ -91,7 +96,8 @@ import {MedewerkerGroepComponent} from './form-components/select-medewerker/mede
         MatTableModule,
         RouterModule,
         FormsModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatDividerModule
     ],
     exports: [
         FormComponent,

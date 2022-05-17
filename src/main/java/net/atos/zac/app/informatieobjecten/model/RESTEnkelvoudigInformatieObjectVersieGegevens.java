@@ -13,7 +13,10 @@ import java.time.LocalDate;
  *
  */
 public class RESTEnkelvoudigInformatieObjectVersieGegevens {
+
     public String uuid;
+
+    public String zaakUuid;
 
     public String titel;
 

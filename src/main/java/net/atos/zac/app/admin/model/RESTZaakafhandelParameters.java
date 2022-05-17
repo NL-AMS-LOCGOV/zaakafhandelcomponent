@@ -24,6 +24,10 @@ public class RESTZaakafhandelParameters {
 
     public RESTGroup defaultGroep;
 
+    public Integer einddatumGeplandWaarschuwing;
+
+    public Integer uiterlijkeEinddatumAfdoeningWaarschuwing;
+
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
 
     public List<RESTUserEventListenerParameter> userEventListenerParameters = new ArrayList<>();

@@ -200,12 +200,13 @@ public class RESTInformatieobjectConverter {
         data.titel = informatieobject.getTitel();
         data.auteur = informatieobject.getAuteur();
         data.taal = restTaalConverter.convert(informatieobject.getTaal());
+        data.bestandsnaam = informatieobject.getInhoud().toString();
 
         return data;
     }
 
     public EnkelvoudigInformatieobjectWithLockAndInhoud convert(final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens,
-            final String lock) {
+            final String lock, final RESTFileUpload file) {
         final EnkelvoudigInformatieobjectWithLockAndInhoud data = new EnkelvoudigInformatieobjectWithLockAndInhoud(lock);
 
         if (restEnkelvoudigInformatieObjectVersieGegevens.status != null) {
@@ -229,6 +230,12 @@ public class RESTInformatieobjectConverter {
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.auteur != null) {
             data.setAuteur(restEnkelvoudigInformatieObjectVersieGegevens.auteur);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.bestandsnaam != null) {
+            data.setBestandsnaam((restEnkelvoudigInformatieObjectVersieGegevens.bestandsnaam));
+        }
+        if (file != null && file.file != null) {
+            data.setInhoud(Base64.getEncoder().encodeToString(file.file));
         }
 
         return data;
