@@ -69,6 +69,12 @@ public interface DRCClient {
     @Path("enkelvoudiginformatieobjecten/{uuid}")
     EnkelvoudigInformatieobject enkelvoudigInformatieobjectRead(@PathParam("uuid") final UUID uuid);
 
+
+    @GET
+    @Path("enkelvoudiginformatieobjecten/{uuid}")
+    EnkelvoudigInformatieobject enkelvoudigInformatieobjectReadVersie(@PathParam("uuid") final UUID uuid,
+            @QueryParam("versie") final Integer versie);
+
     @GET
     @Produces(APPLICATION_OCTET_STREAM)
     @Path("enkelvoudiginformatieobjecten/{uuid}/download")

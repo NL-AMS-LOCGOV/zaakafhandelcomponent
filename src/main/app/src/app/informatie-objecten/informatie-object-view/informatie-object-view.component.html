@@ -43,8 +43,16 @@
                                     </div>
                                     <zac-static-text [label]="'documentType' | translate" [value]="infoObject.documentType"></zac-static-text>
                                     <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
-                                    <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie"></zac-static-text>
                                     <zac-static-text [label]="'beschrijving' | translate" [value]="infoObject.beschrijving"></zac-static-text>
+                                    <div fxLayout="row wrap">
+                                        <button [disabled]="infoObject.versie === 1" mat-icon-button (click)="haalVersieOp(infoObject.versie - 1)">
+                                            <mat-icon>chevron_left</mat-icon>
+                                        </button>
+                                        <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie"></zac-static-text>
+                                        <button mat-icon-button (click)="haalVersieOp(infoObject.versie + 1);">
+                                            <mat-icon>chevron_right</mat-icon>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="50">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

@@ -37,6 +37,12 @@ export class InformatieObjectenService {
         );
     }
 
+    readEnkelvoudigInformatieobjectVersie(uuid: string, versie: number): Observable<EnkelvoudigInformatieobject> {
+        return this.http.get<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/versie/${uuid}/${versie}`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     listInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/${zaakTypeID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
@@ -97,16 +103,16 @@ export class InformatieObjectenService {
         );
     }
 
-    getDownloadURL(uuid: string): string {
-        return `${this.basepath}/informatieobject/${uuid}/download`;
+    getDownloadURL(uuid: string, versie?: number): string {
+        return `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
     }
 
     getUploadURL(uuid: string): string {
         return `${this.basepath}/informatieobject/upload/${uuid}`;
     }
 
-    getPreviewDocument(uuid: string) {
-        const url = `${this.basepath}/informatieobject/${uuid}/download`;
+    getPreviewDocument(uuid: string, versie?: number) {
+        const url = `${this.basepath}/informatieobject/${uuid}/${versie}/download`;
         return this.http.get(url, {responseType: 'blob'}).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

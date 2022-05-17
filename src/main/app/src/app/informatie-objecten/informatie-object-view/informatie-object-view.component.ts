@@ -8,7 +8,7 @@ import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {UtilService} from '../../core/service/util.service';
 import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {HrefMenuItem} from '../../shared/side-nav/menu-item/href-menu-item';
@@ -71,7 +71,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
-                private websocketService: WebsocketService) {
+                private websocketService: WebsocketService,
+                private router: Router) {
         super();
     }
 
@@ -151,6 +152,11 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
             });
+    }
+
+    haalVersieOp(versie: number) {
+        this.websocketService.removeListener(this.documentListener);
+        this.router.navigate(['/informatie-objecten/', this.infoObject.uuid, versie]);
     }
 
     getFileIcon(filename) {
