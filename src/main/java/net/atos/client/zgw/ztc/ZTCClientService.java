@@ -250,6 +250,18 @@ public class ZTCClientService implements Caching {
         return createInvocationBuilder(informatieobjecttypeURI).get(Informatieobjecttype.class);
     }
 
+
+    /**
+     * Read {@link Informatieobjecttype} via its UUID.
+     * Throws a RuntimeException if the {@link Informatieobjecttype} can not be read.
+     *
+     * @param informatieobjecttypeUUID UUID of {@link Informatieobjecttype}.
+     * @return {@link Informatieobjecttype}.
+     */
+    public Informatieobjecttype readInformatieobjecttype(final UUID informatieobjecttypeUUID) {
+        return ztcClient.informatieObjectTypeRead(informatieobjecttypeUUID);
+    }
+
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE)
     public String clearZaaktypeCache() {
         return cleared(ZTC_ZAAKTYPE);

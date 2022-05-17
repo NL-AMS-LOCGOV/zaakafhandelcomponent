@@ -5,10 +5,10 @@
 
 package net.atos.zac.app.informatieobjecten.model;
 
-import java.net.URI;
+import java.util.UUID;
 
 public class RESTInformatieobjecttype {
-    public URI url;
+    public UUID uuid;
 
     public String omschrijving;
 

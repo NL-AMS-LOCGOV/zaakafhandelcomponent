@@ -97,11 +97,11 @@ public class RESTInformatieobjectConverter {
         restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
         restObject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
-        restObject.documentType = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
+        restObject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
         if (enkelvoudigInformatieObject.getOndertekening() != null) {
             restObject.ondertekening = enkelvoudigInformatieObject.getOndertekening().getDatum();
         }
-        restObject.informatieobjectType = enkelvoudigInformatieObject.getInformatieobjecttype().toString();
+        restObject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getUUID();
 
         return restObject;
     }
@@ -113,7 +113,7 @@ public class RESTInformatieobjectConverter {
                 restEnkelvoudigInformatieobject.titel,
                 restEnkelvoudigInformatieobject.auteur,
                 restEnkelvoudigInformatieobject.taal,
-                URI.create(restEnkelvoudigInformatieobject.informatieobjectType),
+                ztcClientService.readInformatieobjecttype(restEnkelvoudigInformatieobject.informatieobjectTypeUUID).getUrl(),
                 Base64.getEncoder().encodeToString(bestand.file)
         );
         data.setFormaat(bestand.type);
@@ -131,7 +131,7 @@ public class RESTInformatieobjectConverter {
                 documentData.documentTitel,
                 loggedInUserInstance.get().getFullName(),
                 ConfiguratieService.TAAL_NEDERLANDS,
-                documentData.documentType.url,
+                ztcClientService.readInformatieobjecttype(documentData.documentType.uuid).getUrl(),
                 Base64.getEncoder().encodeToString(bestand.file)
         );
         data.setFormaat(bestand.type);
@@ -174,7 +174,7 @@ public class RESTInformatieobjectConverter {
         restObject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieobjectWithLockAndInhoud.getLocked());
         restObject.bestandsomvang = enkelvoudigInformatieobjectWithLockAndInhoud.getBestandsomvang();
         restObject.inhoudUrl = enkelvoudigInformatieobjectWithLockAndInhoud.getInhoud();
-        restObject.documentType = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieobjectWithLockAndInhoud.getInformatieobjecttype()).getOmschrijving();
+        restObject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(enkelvoudigInformatieobjectWithLockAndInhoud.getInformatieobjecttype()).getOmschrijving();
         if (enkelvoudigInformatieobjectWithLockAndInhoud.getOndertekening() != null) {
             restObject.ondertekening = enkelvoudigInformatieobjectWithLockAndInhoud.getOndertekening().getDatum();
         }

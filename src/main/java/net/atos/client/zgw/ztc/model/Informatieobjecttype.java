@@ -7,11 +7,14 @@ package net.atos.client.zgw.ztc.model;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.shared.util.URIUtil;
 
 /**
  *
@@ -130,5 +133,10 @@ public class Informatieobjecttype {
 
     public Boolean getConcept() {
         return concept;
+    }
+
+    @JsonbTransient
+    public UUID getUUID() {
+        return URIUtil.parseUUIDFromResourceURI(getUrl());
     }
 }

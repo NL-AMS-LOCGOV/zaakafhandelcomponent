@@ -23,7 +23,7 @@ public class RESTInformatieobjecttypeConverter {
 
     public RESTInformatieobjecttype convert(final Informatieobjecttype type) {
         final RESTInformatieobjecttype restType = new RESTInformatieobjecttype();
-        restType.url = type.getUrl();
+        restType.uuid = type.getUUID();
         restType.concept = type.getConcept();
         restType.omschrijving = type.getOmschrijving();
         restType.vertrouwelijkheidaanduiding = type.getVertrouwelijkheidaanduiding().toValue();

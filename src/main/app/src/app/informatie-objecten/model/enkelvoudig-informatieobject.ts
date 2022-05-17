@@ -18,8 +18,8 @@ export class EnkelvoudigInformatieobject {
     formaat: FileFormat;
     taal: string;
     versie: number;
-    informatieobjectType: string;
-    documentType: string;
+    informatieobjectTypeUUID: string;
+    informatieobjectTypeOmschrijving: string;
     registratiedatumTijd: string;
     bestandsnaam: string;
     bestandsomvang: number;
