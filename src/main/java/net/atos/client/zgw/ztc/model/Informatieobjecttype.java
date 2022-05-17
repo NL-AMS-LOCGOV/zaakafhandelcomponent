@@ -14,7 +14,7 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
-import net.atos.zac.util.UriUtil;
+import net.atos.client.zgw.shared.util.URIUtil;
 
 /**
  *
@@ -137,6 +137,6 @@ public class Informatieobjecttype {
 
     @JsonbTransient
     public UUID getUUID() {
-        return UriUtil.uuidFromURI(getUrl());
+        return URIUtil.parseUUIDFromResourceURI(getUrl());
     }
 }

@@ -16,7 +16,7 @@ import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
-import net.atos.zac.util.UriUtil;
+import net.atos.client.zgw.shared.util.URIUtil;
 
 /**
  *
@@ -374,6 +374,6 @@ public abstract class AbstractEnkelvoudigInformatieobject {
 
     @JsonbTransient
     public UUID getUUID() {
-        return UriUtil.uuidFromURI(getInformatieobjecttype());
+        return URIUtil.parseUUIDFromResourceURI(getInformatieobjecttype());
     }
 }

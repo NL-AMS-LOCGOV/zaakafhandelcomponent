@@ -101,8 +101,7 @@ public class RESTInformatieobjectConverter {
         if (enkelvoudigInformatieObject.getOndertekening() != null) {
             restObject.ondertekening = enkelvoudigInformatieObject.getOndertekening().getDatum();
         }
-        restObject.informatieobjectTypeUUID =
-                UriUtil.uuidFromURI(enkelvoudigInformatieObject.getInformatieobjecttype());
+        restObject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getUUID();
 
         return restObject;
     }

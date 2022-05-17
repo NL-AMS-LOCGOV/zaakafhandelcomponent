@@ -97,7 +97,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                    .optionLabel('label').options(informatieobjectStatussen)
                                                    .build();
 
-        const documentType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
+        const informatieobjectType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
                                                          .label('informatieobjectType')
                                                          .options(
                                                              this.informatieObjectenService.listInformatieobjecttypes(
@@ -125,7 +125,7 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                        .build();
 
         this.fields =
-            [[inhoudField], [titel], [beschrijving], [documentType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
+            [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
 
         let vorigeBestandsnaam = null;
         inhoudField.fileUploaded.subscribe(bestandsnaam => {
@@ -136,7 +136,7 @@ export class InformatieObjectCreateComponent implements OnInit {
             }
         });
 
-        documentType.formControl.valueChanges.subscribe(value => {
+        informatieobjectType.formControl.valueChanges.subscribe(value => {
             if (value) {
                 vertrouwelijk.formControl.setValue(vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
             }
