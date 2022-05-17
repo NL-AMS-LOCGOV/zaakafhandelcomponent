@@ -33,7 +33,7 @@ import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
-import net.atos.zac.zoeken.ZoekenService;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  *
@@ -59,7 +59,7 @@ public class NotificatieReceiver {
     private ConfiguratieService configuratieService;
 
     @Inject
-    private ZoekenService zoekenService;
+    private IndexeerService indexeerService;
 
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
@@ -115,12 +115,12 @@ public class NotificatieReceiver {
         if (notificatie.getChannel() == Channel.ZAKEN) {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 } else if (notificatie.getAction() == DELETE) {
-                    zoekenService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                zoekenService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
+                indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
             }
         }
     }

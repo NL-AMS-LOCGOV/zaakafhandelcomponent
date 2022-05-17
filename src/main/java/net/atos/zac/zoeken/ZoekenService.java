@@ -6,10 +6,8 @@
 package net.atos.zac.zoeken;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -17,9 +15,9 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import net.atos.zac.zoeken.converter.ZaakZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
@@ -28,9 +26,6 @@ import net.atos.zac.zoeken.model.ZoekResultaat;
 public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
-
-    @Inject
-    private ZaakZoekObjectConverter zaakZoekObjectConverter;
 
     private SolrClient solrClient;
 
@@ -44,6 +39,7 @@ public class ZoekenService {
         if (StringUtils.isNotBlank(zoekZaakParameters.getTekst())) {
             query.setQuery("text:(%s)".formatted(zoekZaakParameters.getTekst()));
         }
+        query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
         query.addSort("identificatie", SolrQuery.ORDER.desc);
@@ -55,22 +51,4 @@ public class ZoekenService {
         }
     }
 
-    public void addZaak(final UUID zaakUUID) {
-        final ZaakZoekObject zaak = zaakZoekObjectConverter.convert(zaakUUID);
-        try {
-            solrClient.addBean(zaak);
-            solrClient.commit();
-        } catch (final IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void removeZaak(final UUID zaakUUID) {
-        try {
-            solrClient.deleteById(zaakUUID.toString());
-            solrClient.commit();
-        } catch (final IOException | SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
