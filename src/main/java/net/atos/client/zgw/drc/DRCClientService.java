@@ -66,6 +66,19 @@ public class DRCClientService {
 
 
     /**
+     * Read {@link EnkelvoudigInformatieobject} via its UUID and version.
+     * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be read.
+     *
+     * @param uuid UUID of the {@link EnkelvoudigInformatieobject}.
+     * @param versie Required version
+     * @return {@link EnkelvoudigInformatieobject}. Never 'null'!
+     */
+    public EnkelvoudigInformatieobject readEnkelvoudigInformatieobjectVersie(final UUID uuid, final int versie) {
+        return drcClient.enkelvoudigInformatieobjectReadVersie(uuid, versie);
+    }
+
+
+    /**
      * DELETE {@link EnkelvoudigInformatieobject} via its UUID.
      * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be deleted.
      *

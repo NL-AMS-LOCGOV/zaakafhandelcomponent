@@ -108,6 +108,20 @@ public class InformatieObjectenRESTService {
         return restInformatieobjectConverter.convert(enkelvoudigInformatieObject);
     }
 
+    @GET
+    @Path("informatieobject/versie/{uuid}/{versie}")
+    public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid,
+            @PathParam("versie") final int versie) {
+        final EnkelvoudigInformatieobject huidigeVersie = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        if (versie < huidigeVersie.getVersie()) {
+            final EnkelvoudigInformatieobject enkelvoudigInformatieObject =
+                    drcClientService.readEnkelvoudigInformatieobjectVersie(uuid, versie);
+            return restInformatieobjectConverter.convert(enkelvoudigInformatieObject);
+        } else {
+            return restInformatieobjectConverter.convert(huidigeVersie);
+        }
+    }
+
     @PUT
     @Path("informatieobjectenList")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
@@ -200,8 +214,17 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid) {
+        return readFile(uuid, null);
+    }
+
+    @GET
+    @Path("/informatieobject/{uuid}/{versie}/download")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        try (final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid, enkelvoudigInformatieObject.getVersie())) {
+        try (final ByteArrayInputStream inhoud =
+                     drcClientService.downloadEnkelvoudigInformatieobject(uuid, versie != null ? versie :
+                             enkelvoudigInformatieObject.getVersie())) {
             return Response.ok(inhoud)
                     .header("Content-Disposition", "attachment; filename=\"" + enkelvoudigInformatieObject.getBestandsnaam() + "\"")
                     .build();
