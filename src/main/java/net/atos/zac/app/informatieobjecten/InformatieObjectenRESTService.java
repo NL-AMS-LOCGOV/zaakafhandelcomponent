@@ -224,12 +224,15 @@ public class InformatieObjectenRESTService {
         try {
             final String lock = drcClientService.lockEnkelvoudigInformatieobject(
                     UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid), lockEigenaar());
+            final RESTFileUpload file = (RESTFileUpload) httpSession.get()
+                    .getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
 
             final EnkelvoudigInformatieobjectWithLockAndInhoud returnObject =
                     drcClientService.partialUpdateEnkelvoudigInformatieobject(
                             UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid),
                             restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
-                            restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens, lock));
+                            restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
+                                                                  lock, file));
 
             return restInformatieobjectConverter.convert(returnObject);
         } finally {
