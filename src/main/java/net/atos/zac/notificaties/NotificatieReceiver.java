@@ -74,7 +74,6 @@ public class NotificatieReceiver {
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
-        handleInboxDocumenten(notificatie);
         if (!configuratieService.isLocalDevelopment()) {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
