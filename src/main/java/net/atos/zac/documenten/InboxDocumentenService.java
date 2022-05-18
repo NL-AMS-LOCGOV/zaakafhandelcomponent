@@ -114,7 +114,7 @@ public class InboxDocumentenService {
     }
 
     public void delete(final Long id) {
-        final InboxDocument inboxDocument = entityManager.find(InboxDocument.class, id);
+        final InboxDocument inboxDocument = find(id);
         if (inboxDocument != null) {
             entityManager.remove(inboxDocument);
         }
