@@ -28,15 +28,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
-
-import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -51,6 +48,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConvert
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTInformatieObjectZoekParameters;
@@ -58,7 +56,9 @@ import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
+import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 
 @Singleton
@@ -81,6 +81,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
+
+    @Inject
+    private InboxDocumentenService inboxDocumentenService;
 
     @Inject
     private RESTZaakInformatieobjectConverter restZaakInformatieobjectConverter;
@@ -161,10 +164,15 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
         if ("ontkoppelde-documenten".equals(documentVerplaatsGegevens.zaakID)) {
-            OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.readByDocumentUUID(documentUUID);
+            final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.readByDocumentUUID(documentUUID);
             String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
+        } else if ("inbox-documenten".equals(documentVerplaatsGegevens.zaakID)) {
+            final InboxDocument inboxDocument = inboxDocumentenService.findByEnkelvoudiginformatieobjectUUID(documentUUID);
+            String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
+            zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
+            inboxDocumentenService.delete(inboxDocument.getId());
         } else {
             final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.zaakID);
             zrcClientService.verplaatsInformatieobject(informatieobject, oudeZaak, nieuweZaak);

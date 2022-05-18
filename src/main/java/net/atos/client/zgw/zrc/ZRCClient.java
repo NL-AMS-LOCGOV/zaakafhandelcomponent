@@ -156,4 +156,8 @@ public interface ZRCClient {
     @GET
     @Path("zaken/{zaak_uuid}/audittrail")
     List<AuditTrailRegel> listAuditTrail(@PathParam("zaak_uuid") final UUID zaakUUID);
+
+    @GET
+    @Path("zaakinformatieobjecten/{uuid}")
+    ZaakInformatieobject zaakinformatieobjectRead(@PathParam("uuid") UUID zaakinformatieobjectUUID);
 }

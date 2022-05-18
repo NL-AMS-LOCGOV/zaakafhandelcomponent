@@ -156,6 +156,18 @@ public class ZRCClientService implements Caching {
         return createInvocationBuilder(zaakURI).get(Zaak.class);
     }
 
+
+    /**
+     * Read {@link ZaakInformatieobject} via its UUID.
+     * Throws a RuntimeException if the {@link ZaakInformatieobject} can not be read.
+     *
+     * @param zaakinformatieobjectUUID UUID of {@link ZaakInformatieobject}.
+     * @return {@link ZaakInformatieobject}. Never NULL!
+     */
+    public ZaakInformatieobject readZaakinformatieobject(final UUID zaakinformatieobjectUUID) {
+        return zrcClient.zaakinformatieobjectRead(zaakinformatieobjectUUID);
+    }
+
     /**
      * Update all instances of {@link Rol} for {@link Zaak}.
      * Replaces all current instances of {@link Rol} with the suplied instances.
