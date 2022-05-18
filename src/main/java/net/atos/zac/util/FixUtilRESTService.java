@@ -29,10 +29,6 @@ import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
 
-import net.atos.zac.zoeken.IndexeerService;
-import net.atos.zac.zoeken.model.index.HerindexeerInfo;
-import net.atos.zac.zoeken.model.index.ZoekObjectType;
-
 @Path("fixutil")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.TEXT_HTML)
@@ -49,9 +45,6 @@ public class FixUtilRESTService {
     @Inject
     private RuntimeService runtimeService;
 
-    @Inject
-    private IndexeerService indexeerService;
-
     @GET
     @Path("countmissing")
     @Produces(MediaType.APPLICATION_JSON)
@@ -61,32 +54,6 @@ public class FixUtilRESTService {
         countMissingVariable(VAR_CASE_ZAAKTYPE_UUUID);
         countMissingVariable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
         return Response.noContent().build();
-    }
-
-    @GET
-    @Path("herindexeren/{type}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public HerindexeerInfo herindexeer(@PathParam("type") ZoekObjectType type) {
-        return indexeerService.herindexeren(type);
-    }
-
-    /**
-     * TODO: #993 - Indexeren extern aanroepen dmv Cron/Curl
-     *
-     * @param type   ZAAK is momenteel geimplementeerd
-     * @param aantal 100 is een mooi aantal
-     * @return het aantal resterende items na het uitvoeren van deze call
-     */
-    @GET
-    @Path("indexeren/{type}/{aantal}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String indexeer(@PathParam("type") ZoekObjectType type, @PathParam("aantal") int aantal) {
-        if (type == ZoekObjectType.ZAAK) {
-            int aantalResterend = indexeerService.indexeerZaken(aantal);
-            return "\"Aantal resterende zaken: %d\"".formatted(aantalResterend);
-        } else {
-            throw new RuntimeException("indexeren: " + type + "nog niet geïmplementeerd");
-        }
     }
 
     @GET
