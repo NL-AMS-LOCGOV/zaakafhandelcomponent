@@ -9,11 +9,13 @@ import static javax.ws.rs.core.Response.noContent;
 import static net.atos.zac.notificaties.Action.CREATE;
 import static net.atos.zac.notificaties.Action.DELETE;
 import static net.atos.zac.notificaties.Action.UPDATE;
+import static net.atos.zac.notificaties.Resource.INFORMATIEOBJECT;
 import static net.atos.zac.notificaties.Resource.OBJECT;
 import static net.atos.zac.notificaties.Resource.RESULTAAT;
 import static net.atos.zac.notificaties.Resource.ROL;
 import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
+import static net.atos.zac.notificaties.Resource.ZAAKINFORMATIEOBJECT;
 
 import java.util.logging.Logger;
 
@@ -28,6 +30,7 @@ import javax.ws.rs.core.Response;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
@@ -61,6 +64,9 @@ public class NotificatieReceiver {
     @Inject
     private IndexeerService indexeerService;
 
+    @Inject
+    private InboxDocumentenService inboxDocumentenService;
+
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
@@ -68,11 +74,13 @@ public class NotificatieReceiver {
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
+        handleInboxDocumenten(notificatie);
         if (!configuratieService.isLocalDevelopment()) {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
             handleProductAanvraag(notificatie);
             handleIndexering(notificatie);
+            handleInboxDocumenten(notificatie);
         }
         return noContent().build();
     }
@@ -121,6 +129,17 @@ public class NotificatieReceiver {
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
                 indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
+            }
+        }
+    }
+
+    private void handleInboxDocumenten(final Notificatie notificatie) {
+        if (notificatie.getAction() == CREATE) {
+            if (notificatie.getResource() == INFORMATIEOBJECT) {
+                inboxDocumentenService.create(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+            }
+            if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
+                inboxDocumentenService.delete(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
             }
         }
     }

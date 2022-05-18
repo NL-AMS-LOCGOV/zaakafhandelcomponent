@@ -82,12 +82,18 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #documentenMenu="matMenu">
-                <button routerLink="/ontkoppelde-documenten" id="ontkoppeldeDocumenten_button" mat-menu-item
+                <button routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
                         routerLinkActive="active">
                     <mat-icon mat-list-icon>inbox</mat-icon>
                     <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
                 </button>
+                <button routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
+                        routerLinkActive="active">
+                    <mat-icon mat-list-icon>drive_file_move_outline</mat-icon>
+                    <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
+                </button>
             </mat-menu>
+
         </div>
         <div class="title" fxHide.lt-md fxFlex fxLayoutAlign="center center">{{headerTitle$ | async | translate}}</div>
 

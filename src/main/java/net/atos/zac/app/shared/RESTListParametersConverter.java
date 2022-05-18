@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.ontkoppeldedocumenten.converter;
+package net.atos.zac.app.shared;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.atos.zac.app.shared.RESTListParameters;
 import net.atos.zac.shared.model.ListParameters;
 import net.atos.zac.shared.model.Paging;
 import net.atos.zac.shared.model.SortDirection;

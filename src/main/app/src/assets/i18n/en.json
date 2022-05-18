@@ -5,6 +5,7 @@
   "title.document": "Document | {{document}}",
   "title.document.aanmaken": "Add document | {{zaak}}",
   "title.documenten.ontkoppeldeDocumenten": "Unlinked documents",
+  "title.documenten.inboxDocumenten": "Inbox documents",
   "title.mail.versturen": "Send mail | {{zaak}}",
   "title.ontvangstbevestiging.versturen": "Send aknowledgment of receipt | {{zaak}}",
   "title.parameters": "Case handling parameters",
