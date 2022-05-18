@@ -302,6 +302,7 @@
   "actie.zaak.toekennen.groep": "Assign case to group",
   "actie.zaak.toekennen.medewerker": "Assign case to employee",
   "actie.zaak.verlengen": "Extend",
+  "actie.zoeken": "Search",
   "actie.ja": "Yes",
   "actie.nee": "No",
   "actie.planitem.uitvoeren.bevestigen": "Execute \"<i>{{planitem}}\"</i>?",

@@ -302,6 +302,7 @@
   "actie.zaak.toekennen.groep": "Zaak toekennen aan groep",
   "actie.zaak.toekennen.medewerker": "Zaak toekennen aan medewerker",
   "actie.zaak.verlengen": "Zaak verlengen",
+  "actie.zoeken": "Zoeken",
   "actie.ja": "Ja",
   "actie.nee": "Nee",
   "actie.planitem.uitvoeren.bevestigen": "Actie \"<i>{{planitem}}\"</i> uitvoeren?",
