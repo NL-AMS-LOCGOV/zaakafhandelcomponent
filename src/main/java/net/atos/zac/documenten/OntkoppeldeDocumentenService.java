@@ -89,7 +89,7 @@ public class OntkoppeldeDocumentenService {
         return entityManager.createQuery(query).getSingleResult();
     }
 
-    public OntkoppeldDocument read(final long id) {
+    public OntkoppeldDocument find(final long id) {
         return entityManager.find(OntkoppeldDocument.class, id);
     }
 
@@ -111,7 +111,7 @@ public class OntkoppeldeDocumentenService {
     }
 
     public void delete(final Long id) {
-        final OntkoppeldDocument ontkoppeldDocument = entityManager.find(OntkoppeldDocument.class, id);
+        final OntkoppeldDocument ontkoppeldDocument = find(id);
         if (ontkoppeldDocument != null) {
             entityManager.remove(ontkoppeldDocument);
         }

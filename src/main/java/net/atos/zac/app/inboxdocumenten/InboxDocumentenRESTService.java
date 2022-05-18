@@ -63,6 +63,9 @@ public class InboxDocumentenRESTService {
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
         final InboxDocument inboxDocument = service.find(id);
+        if (inboxDocument == null) {
+            return; // reeds verwijderd
+        }
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
                 drcClientService.readEnkelvoudigInformatieobject(inboxDocument.getEnkelvoudiginformatieobjectUUID());
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);

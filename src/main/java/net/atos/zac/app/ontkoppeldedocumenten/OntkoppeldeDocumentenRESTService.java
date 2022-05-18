@@ -59,7 +59,10 @@ public class OntkoppeldeDocumentenRESTService {
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
-        final OntkoppeldDocument ontkoppeldDocument = service.read(id);
+        final OntkoppeldDocument ontkoppeldDocument = service.find(id);
+        if (ontkoppeldDocument == null) {
+            return; // reeds verwijderd
+        }
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
