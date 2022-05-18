@@ -22,7 +22,6 @@ export class FormulierBuilder {
     startForm(planItem: PlanItem): FormulierBuilder {
         this._formulier.zaakUuid = planItem.zaakUuid;
         this._formulier.taakNaam = planItem.naam;
-        this._formulier.dataElementen = planItem.taakdata;
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
         this._formulier.initStartForm();
@@ -32,7 +31,6 @@ export class FormulierBuilder {
                                               .label('actie.taak.toewijzing')
                                               .groepLabel('actie.taak.toekennen.groep')
                                               .medewerkerLabel('actie.taak.toekennen.medewerker')
-                                              .defaultMedewerker(planItem.medewerker)
                                               .defaultGroep(planItem.groep)
                                               .build()]);
         return this;
