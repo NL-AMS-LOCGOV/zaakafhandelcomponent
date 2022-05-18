@@ -66,6 +66,14 @@
 
     <security-constraint>
         <web-resource-collection>
+            <web-resource-name>indexeren</web-resource-name>
+            <url-pattern>/rest/indexeren/*</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
             <web-resource-name>websocket</web-resource-name>
             <description>The authentication check happens in WebSocketServerEndPoint</description>
             <url-pattern>/websocket</url-pattern>
