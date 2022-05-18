@@ -26,7 +26,7 @@ public class IndexerenRESTService {
     private IndexeerService indexeerService;
 
     @GET
-    @Path("{type}")
+    @Path("herindexeren/{type}")
     public HerindexeerInfo herindexeer(@PathParam("type") ZoekObjectType type) {
         return indexeerService.herindexeren(type);
     }
