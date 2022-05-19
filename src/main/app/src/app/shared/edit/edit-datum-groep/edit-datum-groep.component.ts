@@ -22,6 +22,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {Observable, of, Subscription} from 'rxjs';
 import {CheckboxFormFieldBuilder} from '../../material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {CheckboxFormField} from '../../material-form-builder/form-components/checkbox/checkbox-form-field';
+import {HiddenFormFieldBuilder} from '../../material-form-builder/form-components/hidden/hidden-form-field-builder';
+import {HiddenFormField} from '../../material-form-builder/form-components/hidden/hidden-form-field';
+import {AbstractFormField} from '../../material-form-builder/model/abstract-form-field';
 
 @Component({
     selector: 'zac-edit-datum-groep',
@@ -100,16 +103,22 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
 
     validate(): void {
         const start: Moment = moment(this.startDatumField.formControl.value);
-        const streef: Moment = moment(this.streefDatumField.formControl.value);
         const fatale: Moment = moment(this.fataleDatumField.formControl.value);
-        this.showStreefError = streef.isBefore(start);
-        this.showFataleError = fatale.isBefore(streef);
+        if (this.streefDatumField.formControl.value) {
+            const streef: Moment = moment(this.streefDatumField.formControl.value);
+            this.showStreefError = streef.isBefore(start);
+            this.showFataleError = fatale.isBefore(streef);
+        } else {
+            this.showFataleError = fatale.isBefore(start);
+        }
         this.dirty = true;
     }
 
     hasError(): boolean {
-        return this.showStreefError || this.showFataleError || this.startDatumField.formControl.invalid ||
-            this.streefDatumField.formControl.invalid || this.fataleDatumField.formControl.invalid;
+        return this.showStreefError || this.showFataleError ||
+            this.startDatumField.formControl.invalid ||
+            this.streefDatumField.formControl.invalid ||
+            this.fataleDatumField.formControl.invalid;
     }
 
     edit(editing: boolean): void {
@@ -141,6 +150,14 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
         return this.duurField;
     }
 
+    private maakHiddenField(field: AbstractFormField): HiddenFormField {
+        return new HiddenFormFieldBuilder()
+        .id(field.id)
+        .label(field.label)
+        .value(field.formControl.value)
+        .build();
+    }
+
     private maakRedenField(reden: string): InputFormField {
         return new InputFormFieldBuilder()
         .id('reden')
@@ -158,16 +175,17 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     opschorten() {
+        const heeftStreefDatum: boolean = this.streefDatumField.formControl.value;
         const dialogData = new DialogData([
                 this.maakDuurField('opschortduur'),
-                this.streefDatumField,
+                heeftStreefDatum ? this.streefDatumField : this.maakHiddenField(this.streefDatumField),
                 this.fataleDatumField,
                 this.maakRedenField(this.opschortReden)
             ],
             (results: any[]) => this.saveOpschorting(results),
             this.translate.instant('msg.zaak.opschorten'));
 
-        const vorigeStreefDatum: Moment = moment(this.streefDatumField.formControl.value);
+        const vorigeStreefDatum: Moment = heeftStreefDatum ? moment(this.streefDatumField.formControl.value) : null;
         const vorigeFataleDatum: Moment = moment(this.fataleDatumField.formControl.value);
         const subscriptions = this.subscribe(vorigeStreefDatum, vorigeFataleDatum);
 
@@ -201,8 +219,11 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     saveHervatting(results: any[]): Observable<void> {
+        const heeftStreefDatum: boolean = this.streefDatumField.formControl.value;
         const duurVerschil: number = this.werkelijkeOpschortDuur - this.opschortDuur;
-        this.streefDatumField.formControl.setValue(moment(this.streefDatumField.formControl.value).add(duurVerschil, 'days'));
+        if (heeftStreefDatum) {
+            this.streefDatumField.formControl.setValue(moment(this.streefDatumField.formControl.value).add(duurVerschil, 'days'));
+        }
         this.fataleDatumField.formControl.setValue(moment(this.fataleDatumField.formControl.value).add(duurVerschil, 'days'));
         this.updateGroep();
         results['duurDagen'] = this.werkelijkeOpschortDuur;
@@ -212,9 +233,10 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     verlengen() {
+        const heeftStreefDatum: boolean = this.streefDatumField.formControl.value;
         const dialogData = new DialogData([
                 this.maakDuurField('verlengduur'),
-                this.streefDatumField,
+                heeftStreefDatum ? this.streefDatumField : this.maakHiddenField(this.streefDatumField),
                 this.fataleDatumField,
                 this.maakRedenField(this.verlengReden),
                 this.maakTakenField('taken.verlengen')
@@ -222,7 +244,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
             (results: any[]) => this.saveVerlenging(results),
             this.translate.instant(this.verlengDuur ? 'msg.zaak.verlengen.meer' : 'msg.zaak.verlengen', {eerdereDuur: this.verlengDuur}));
 
-        const vorigeStreefDatum: Moment = moment(this.streefDatumField.formControl.value);
+        const vorigeStreefDatum: Moment = heeftStreefDatum ? moment(this.streefDatumField.formControl.value) : null;
         const vorigeFataleDatum: Moment = moment(this.fataleDatumField.formControl.value);
         const subscriptions = this.subscribe(vorigeStreefDatum, vorigeFataleDatum);
 
@@ -285,7 +307,9 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     private updateDatums(duur: number, vorigeStreefDatum: Moment, vorigeFataleDatum: Moment) {
         if (0 < duur) {
             this.duurField.formControl.setValue(duur, {emitEvent: false});
-            this.streefDatumField.formControl.setValue(moment(vorigeStreefDatum).add(duur, 'days'), {emitEvent: false});
+            if (vorigeStreefDatum != null) {
+                this.streefDatumField.formControl.setValue(moment(vorigeStreefDatum).add(duur, 'days'), {emitEvent: false});
+            }
             this.fataleDatumField.formControl.setValue(moment(vorigeFataleDatum).add(duur, 'days'), {emitEvent: false});
         } else {
             this.resetDatums(vorigeStreefDatum, vorigeFataleDatum);
