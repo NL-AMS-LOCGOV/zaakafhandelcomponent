@@ -13,6 +13,10 @@ export class DatumPipe implements PipeTransform {
     }
 
     transform(value: Date | moment.Moment | string, dateFormat?: string): any {
+        if (value && value.toString().includes('[UTC]')) {
+            value = value.toString().replace('[UTC]', '');
+        }
+
         if (value) {
             const m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
             if (m.isValid()) {
