@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten;
 
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -149,8 +147,7 @@ public class InformatieObjectenRESTService {
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
         final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
         final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
-                                                                                                          restEnkelvoudigInformatieobject.beschrijving,
-                                                                                                          OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                                                                          restEnkelvoudigInformatieobject.beschrijving);
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
 
