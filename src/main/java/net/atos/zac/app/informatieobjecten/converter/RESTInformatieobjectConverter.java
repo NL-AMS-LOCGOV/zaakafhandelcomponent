@@ -235,6 +235,7 @@ public class RESTInformatieobjectConverter {
         }
         if (file != null && file.file != null) {
             data.setInhoud(Base64.getEncoder().encodeToString(file.file));
+            data.setFormaat(file.type);
         }
 
         return data;
