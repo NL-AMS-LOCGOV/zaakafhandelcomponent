@@ -160,18 +160,17 @@ public class InformatieObjectenRESTService {
         final UUID documentUUID = UUID.fromString(documentVerplaatsGegevens.documentUUID);
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        if ("ontkoppelde-documenten".equals(documentVerplaatsGegevens.zaakID)) {
-            final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.readByDocumentUUID(documentUUID);
-            String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
+        final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron, nieuweZaak.getIdentificatie());
+        if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
+            final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(documentUUID);
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
-        } else if ("inbox-documenten".equals(documentVerplaatsGegevens.zaakID)) {
-            final InboxDocument inboxDocument = inboxDocumentenService.findByEnkelvoudiginformatieobjectUUID(documentUUID);
-            String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.zaakID, nieuweZaak.getIdentificatie());
+        } else if (documentVerplaatsGegevens.vanuitInboxDocumenten()) {
+            final InboxDocument inboxDocument = inboxDocumentenService.find(documentUUID);
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             inboxDocumentenService.delete(inboxDocument.getId());
         } else {
-            final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.zaakID);
+            final Zaak oudeZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.bron);
             zrcClientService.verplaatsInformatieobject(informatieobject, oudeZaak, nieuweZaak);
         }
     }

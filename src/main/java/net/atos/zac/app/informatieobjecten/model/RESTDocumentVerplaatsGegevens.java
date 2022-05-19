@@ -6,11 +6,25 @@
 package net.atos.zac.app.informatieobjecten.model;
 
 public class RESTDocumentVerplaatsGegevens {
+
+    public final String INBOX_DOCUMENTEN = "inbox-documenten";
+
+    public final String ONTKOPPELDE_DOCUMENTEN = "ontkoppelde-documenten";
+
     public String documentUUID;
 
     public String documentTitel;
 
-    public String zaakID;
+    public String bron;
 
     public String nieuweZaakID;
+
+    public boolean vanuitInboxDocumenten() {
+        return INBOX_DOCUMENTEN.equals(bron);
+    }
+
+    public boolean vanuitOntkoppeldeDocumenten() {
+        return ONTKOPPELDE_DOCUMENTEN.equals(bron);
+    }
+
 }

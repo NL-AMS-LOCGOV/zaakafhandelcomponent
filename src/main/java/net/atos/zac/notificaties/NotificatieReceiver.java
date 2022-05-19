@@ -136,8 +136,7 @@ public class NotificatieReceiver {
         if (notificatie.getAction() == CREATE) {
             if (notificatie.getResource() == INFORMATIEOBJECT) {
                 inboxDocumentenService.create(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
-            }
-            if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
+            } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
                 inboxDocumentenService.delete(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
             }
         }

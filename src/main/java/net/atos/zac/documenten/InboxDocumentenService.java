@@ -5,8 +5,6 @@
 
 package net.atos.zac.documenten;
 
-import static net.atos.zac.util.ValidationUtil.valideerObject;
-
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
@@ -43,15 +41,6 @@ public class InboxDocumentenService {
     @Inject
     private DRCClientService drcClientService;
 
-    public void delete(final UUID zaakinformatieobjectUUID) {
-        final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(zaakinformatieobjectUUID);
-        final UUID enkelvoudiginformatieobjectUUID = URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject());
-        final InboxDocument inboxDocument = findByEnkelvoudiginformatieobjectUUID(enkelvoudiginformatieobjectUUID);
-        if (inboxDocument != null) {
-            entityManager.remove(inboxDocument);
-        }
-    }
-
     public InboxDocument create(final UUID enkelvoudiginformatieobejctUUID) {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudiginformatieobejctUUID);
         final InboxDocument inboxDocument = new InboxDocument();
@@ -83,17 +72,17 @@ public class InboxDocumentenService {
         return emQuery.getResultList();
     }
 
-    public InboxDocument findByEnkelvoudiginformatieobjectUUID(final UUID enkelvoudiginformatieobjectUUID) {
+    public InboxDocument find(final long id) {
+        return entityManager.find(InboxDocument.class, id);
+    }
+
+    public InboxDocument find(final UUID enkelvoudiginformatieobjectUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InboxDocument> query = builder.createQuery(InboxDocument.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
         query.select(root).where(builder.equal(root.get("enkelvoudiginformatieobjectUUID"), enkelvoudiginformatieobjectUUID));
         final List<InboxDocument> resultList = entityManager.createQuery(query).getResultList();
         return resultList.isEmpty() ? null : resultList.get(0);
-    }
-
-    public InboxDocument find(final long id) {
-        return entityManager.find(InboxDocument.class, id);
     }
 
     public int count() {
@@ -108,13 +97,17 @@ public class InboxDocumentenService {
         return result.intValue();
     }
 
-    public InboxDocument update(final InboxDocument inboxDocument) {
-        valideerObject(inboxDocument);
-        return entityManager.merge(inboxDocument);
-    }
-
     public void delete(final Long id) {
         final InboxDocument inboxDocument = find(id);
+        if (inboxDocument != null) {
+            entityManager.remove(inboxDocument);
+        }
+    }
+
+    public void delete(final UUID zaakinformatieobjectUUID) {
+        final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(zaakinformatieobjectUUID);
+        final UUID enkelvoudiginformatieobjectUUID = URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject());
+        final InboxDocument inboxDocument = find(enkelvoudiginformatieobjectUUID);
         if (inboxDocument != null) {
             entityManager.remove(inboxDocument);
         }

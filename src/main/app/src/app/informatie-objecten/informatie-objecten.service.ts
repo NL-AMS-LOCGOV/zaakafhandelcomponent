@@ -132,9 +132,9 @@ export class InformatieObjectenService {
         );
     }
 
-    addTeVerplaatsenDocument(informatieobject: EnkelvoudigInformatieobject, zaakIdentificatie: string): void {
+    addTeVerplaatsenDocument(informatieobject: EnkelvoudigInformatieobject, bron: string): void {
         if (!this.isReedsTeVerplaatsen(informatieobject)) {
-            this._verplaatsenDocument(new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, zaakIdentificatie));
+            this._verplaatsenDocument(new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, bron));
         }
     }
 
@@ -168,7 +168,7 @@ export class InformatieObjectenService {
         if (!onInit) {
             SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
         }
-        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.zaakID,
+        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.bron,
             new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document));
         this.utilService.addAction(action);
     }
@@ -187,6 +187,6 @@ export class InformatieObjectenService {
     }
 
     private isVerplaatsenToegestaan(gegevens: DocumentVerplaatsGegevens): boolean {
-        return this.isZaakTonen() && !this.pathContains(`zaken/${gegevens.zaakID}`);
+        return this.isZaakTonen() && !this.pathContains(`zaken/${gegevens.bron}`);
     }
 }
