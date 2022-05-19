@@ -67,7 +67,6 @@ export class InformatieObjectEditComponent implements OnInit {
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
                                                       .uploadURL(
                                                           this.informatieObjectenService.getUploadURL(this.zaken[0].zaakUuid))
-                                                      .validators(Validators.required)
                                                       .build();
 
         const titel = new InputFormFieldBuilder().id('titel').label('titel')

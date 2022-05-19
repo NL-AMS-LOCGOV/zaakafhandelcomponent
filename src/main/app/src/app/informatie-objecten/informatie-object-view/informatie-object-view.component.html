@@ -49,8 +49,8 @@
                                         <button [disabled]="infoObject.versie === 1" mat-icon-button (click)="haalVersieOp(infoObject.versie - 1)">
                                             <mat-icon>chevron_left</mat-icon>
                                         </button>
-                                        <zac-static-text [label]="'versie' | translate" [value]="infoObject.versie"></zac-static-text>
-                                        <button mat-icon-button (click)="haalVersieOp(infoObject.versie + 1);">
+                                        <zac-static-text [value]="versieInformatie"></zac-static-text>
+                                        <button [disabled]="laatsteVersieInfoObject && infoObject.versie === laatsteVersieInfoObject.versie" mat-icon-button (click)="haalVersieOp(infoObject.versie + 1);">
                                             <mat-icon>chevron_right</mat-icon>
                                         </button>
                                     </div>
