@@ -236,11 +236,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder().id('startdatum').label('startdatum').value(this.zaak.startdatum).build());
+            new DateFormFieldBuilder().id('startdatum').label('startdatum')
+                                      .value(this.zaak.startdatum)
+                                      .validators(Validators.required).build());
 
         this.editFormFields.set('einddatumGepland',
             new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
-                                      .value(this.zaak.einddatumGepland).build());
+                                      .value(this.zaak.einddatumGepland)
+                                      .readonly(!this.zaak.einddatumGepland)
+                                      .validators(this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator).build());
         this.editFormFieldIcons.set('einddatumGepland',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
@@ -248,6 +252,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
             new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
                                       .value(this.zaak.uiterlijkeEinddatumAfdoening)
+                                      .validators(Validators.required)
                                       .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
