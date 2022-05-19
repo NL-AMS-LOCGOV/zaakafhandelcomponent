@@ -18,34 +18,34 @@
         </div>
         <div [fxFlex]="100/3 + 0.75" fxLayout.sm="row">
             <label class="static-text-label">
-                {{streefDatumField.label | translate}}
+                {{einddatumGeplandField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
-                    {{streefDatum | datum | empty}}
+                    {{einddatumGeplandDatum | datum | empty}}
                     <mat-icon class="label-icon"
-                              [ngClass]="streefDatumIcon.styleClass"
-                              *ngIf="showStreefDatumIcon"
-                              title="{{ streefDatumIcon.title | translate}}">
-                        {{streefDatumIcon.icon}}
+                              [ngClass]="einddatumGeplandIcon.styleClass"
+                              *ngIf="showEinddatumGeplandIcon"
+                              title="{{ einddatumGeplandIcon.title | translate}}">
+                        {{einddatumGeplandIcon.icon}}
                     </mat-icon>
                 </div>
             </div>
         </div>
         <div [fxFlex]="100/3 - 2.25" fxLayout.sm="row">
             <label class="static-text-label">
-                {{fataleDatumField.label | translate}}
+                {{uiterlijkeEinddatumAfdoeningField.label | translate}}
                 <mat-icon>edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
-                    {{fataleDatum | datum}}
+                    {{uiterlijkeEinddatumAfdoeningDatum | datum}}
                     <mat-icon class="label-icon"
-                              [ngClass]="fataleDatumIcon.styleClass"
-                              *ngIf="showFataleDatumIcon"
-                              title="{{ fataleDatumIcon.title | translate}}">
-                        {{fataleDatumIcon.icon}}
+                              [ngClass]="uiterlijkeEinddatumAfdoeningIcon.styleClass"
+                              *ngIf="showUiterlijkeEinddatumAfdoeningIcon"
+                              title="{{ uiterlijkeEinddatumAfdoeningIcon.title | translate}}">
+                        {{uiterlijkeEinddatumAfdoeningIcon.icon}}
                     </mat-icon>
                 </div>
                 <div class="edit-icon">
@@ -81,12 +81,14 @@
             <mfb-form-field [field]="startDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
         </div>
         <div class="datum-field" [fxFlex]="100/3" fxFlex.lt-md="50">
-            <mfb-form-field [field]="streefDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
-            <mat-error class="error-text" *ngIf="showStreefError">{{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
+            <mfb-form-field [field]="einddatumGeplandField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
+            <mat-error class="error-text" *ngIf="showEinddatumGeplandError">
+                {{ 'msg.error.date.invalid.streef' | translate}}</mat-error>
         </div>
         <div [fxFlex]="100/3" fxFlex.lt-md="100">
-            <mfb-form-field [field]="fataleDatumField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
-            <mat-error class="error-text" *ngIf="showFataleError">{{ 'msg.error.date.invalid.fatale' | translate}}</mat-error>
+            <mfb-form-field [field]="uiterlijkeEinddatumAfdoeningField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
+            <mat-error class="error-text" *ngIf="showUiterlijkeEinddatumAfdoeningError">
+                {{ 'msg.error.date.invalid.fatale' + (einddatumGeplandDatum ? '1' : '2') | translate}}</mat-error>
         </div>
     </div>
     <div>
