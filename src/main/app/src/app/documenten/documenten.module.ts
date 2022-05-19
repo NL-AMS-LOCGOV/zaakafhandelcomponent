@@ -6,15 +6,16 @@
 import {NgModule} from '@angular/core';
 
 import {SharedModule} from '../shared/shared.module';
-import {OntkoppeldeDocumentenRoutingModule} from './ontkoppelde-documenten-routing.module';
+import {DocumentenRoutingModule} from './documenten-routing.module';
 import {OntkoppeldeDocumentenListComponent} from './ontkoppelde-documenten-list/ontkoppelde-documenten-list.component';
+import {InboxDocumentenListComponent} from './inbox-documenten-list/inbox-documenten-list.component';
 
 @NgModule({
-    declarations: [OntkoppeldeDocumentenListComponent],
+    declarations: [OntkoppeldeDocumentenListComponent, InboxDocumentenListComponent],
     imports: [
         SharedModule,
-        OntkoppeldeDocumentenRoutingModule
+        DocumentenRoutingModule
     ]
 })
-export class OntkoppeldeDocumentenModule {
+export class DocumentenModule {
 }

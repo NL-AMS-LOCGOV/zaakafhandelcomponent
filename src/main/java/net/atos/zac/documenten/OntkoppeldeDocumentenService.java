@@ -42,12 +42,6 @@ public class OntkoppeldeDocumentenService {
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
-    public OntkoppeldDocument create(final OntkoppeldDocument document) {
-        valideerObject(document);
-        entityManager.persist(document);
-        return document;
-    }
-
     public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject, final Zaak zaak, final String reden) {
         final OntkoppeldDocument ontkoppeldDocument = new OntkoppeldDocument();
         ontkoppeldDocument.setDocumentID(informatieobject.getIdentificatie());
@@ -59,7 +53,9 @@ public class OntkoppeldeDocumentenService {
         ontkoppeldDocument.setOntkoppeldDoor(loggedInUserInstance.get().getId());
         ontkoppeldDocument.setZaakID(zaak.getIdentificatie());
         ontkoppeldDocument.setReden(reden);
-        return create(ontkoppeldDocument);
+        valideerObject(ontkoppeldDocument);
+        entityManager.persist(ontkoppeldDocument);
+        return ontkoppeldDocument;
     }
 
     public List<OntkoppeldDocument> list(final ListParameters listParameters) {
@@ -81,15 +77,15 @@ public class OntkoppeldeDocumentenService {
         return emQuery.getResultList();
     }
 
-    public OntkoppeldDocument readByDocumentUUID(final UUID documentUUID) {
+    public OntkoppeldDocument read(final UUID enkelvoudiginformatieobjectUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
-        query.select(root).where(builder.equal(root.get("documentUUID"), documentUUID));
+        query.select(root).where(builder.equal(root.get("documentUUID"), enkelvoudiginformatieobjectUUID));
         return entityManager.createQuery(query).getSingleResult();
     }
 
-    public OntkoppeldDocument read(final long id) {
+    public OntkoppeldDocument find(final long id) {
         return entityManager.find(OntkoppeldDocument.class, id);
     }
 
@@ -105,13 +101,8 @@ public class OntkoppeldeDocumentenService {
         return result.intValue();
     }
 
-    public OntkoppeldDocument update(final OntkoppeldDocument ontkoppeldDocument) {
-        valideerObject(ontkoppeldDocument);
-        return entityManager.merge(ontkoppeldDocument);
-    }
-
     public void delete(final Long id) {
-        final OntkoppeldDocument ontkoppeldDocument = entityManager.find(OntkoppeldDocument.class, id);
+        final OntkoppeldDocument ontkoppeldDocument = find(id);
         if (ontkoppeldDocument != null) {
             entityManager.remove(ontkoppeldDocument);
         }
