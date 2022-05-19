@@ -98,10 +98,10 @@
                                 </div>
                                 <div fxFlex="100" fxLayout.sm="row">
                                     <zac-edit-datum-groep [startDatumField]="editFormFields.get('startdatum')"
-                                                          [streefDatumField]="editFormFields.get('einddatumGepland')"
-                                                          [fataleDatumField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
-                                                          [streefDatumIcon]="editFormFieldIcons.get('einddatumGepland')"
-                                                          [fataleDatumIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
+                                                          [einddatumGeplandField]="editFormFields.get('einddatumGepland')"
+                                                          [uiterlijkeEinddatumAfdoeningField]="editFormFields.get('uiterlijkeEinddatumAfdoening')"
+                                                          [einddatumGeplandIcon]="editFormFieldIcons.get('einddatumGepland')"
+                                                          [uiterlijkeEinddatumAfdoeningIcon]="editFormFieldIcons.get('uiterlijkeEinddatumAfdoening')"
                                                           [reasonField]="editFormFields.get('reden')"
                                                           (onSave)="editDatumGroep($event)"
                                                           [opgeschort]="zaak.rechten.opgeschort"
