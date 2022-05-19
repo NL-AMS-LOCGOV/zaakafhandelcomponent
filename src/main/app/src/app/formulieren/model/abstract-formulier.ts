@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {PlanItem} from '../../plan-items/model/plan-item';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {FormGroup} from '@angular/forms';
 import {Taak} from '../../taken/model/taak';
@@ -13,12 +12,15 @@ import {TranslateService} from '@ngx-translate/core';
 import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
 import {User} from '../../identity/model/user';
 import {Taakinformatie} from '../../taken/model/taakinformatie';
+import {HumanTaskData} from '../../plan-items/model/human-task-data';
 
 export abstract class AbstractFormulier {
 
     public static TOEKENNING_FIELD: string = 'toekenning-field';
 
-    planItem: PlanItem;
+    zaakUuid: string;
+    taakNaam: string;
+    humanTaskData: HumanTaskData;
     taak: Taak;
     abstract taakinformatieMapping: { uitkomst: string, bijlage?: string, opmerking?: string };
     dataElementen: {};
@@ -29,7 +31,7 @@ export abstract class AbstractFormulier {
     protected constructor(protected translate: TranslateService) {}
 
     initStartForm() {
-        this.planItem.taakStuurGegevens = new TaakStuurGegevens();
+        this.humanTaskData.taakStuurGegevens = new TaakStuurGegevens();
         this.form = [];
         this.form.push(
             [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level('2').build()]);
@@ -47,7 +49,7 @@ export abstract class AbstractFormulier {
     abstract _initBehandelForm();
 
     getStartTitel(): string {
-        return this.translate.instant(`title.taak.starten`, {taak: this.planItem.naam});
+        return this.translate.instant(`title.taak.starten`, {taak: this.taakNaam});
     }
 
     getBehandelTitel(): string {
@@ -58,12 +60,12 @@ export abstract class AbstractFormulier {
         }
     }
 
-    getPlanItem(formGroup: FormGroup): PlanItem {
+    getHumanTaskData(formGroup: FormGroup): HumanTaskData {
         const toekenning: { groep: Group, medewerker?: User } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
-        this.planItem.medewerker = toekenning.medewerker;
-        this.planItem.groep = toekenning.groep;
-        this.planItem.taakdata = this.getDataElementen(formGroup);
-        return this.planItem;
+        this.humanTaskData.medewerker = toekenning.medewerker;
+        this.humanTaskData.groep = toekenning.groep;
+        this.humanTaskData.taakdata = this.getDataElementen(formGroup);
+        return this.humanTaskData;
     }
 
     getTaak(formGroup: FormGroup): Taak {
