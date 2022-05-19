@@ -7,7 +7,6 @@ package net.atos.zac.app.planitems.model;
 
 public enum UserEventListenerActie {
 
-    ONTVANKELIJK,
-    NIET_ONTVANKELIJK,
-    AFHANDELEN;
+    INTAKE_AFRONDEN,
+    ZAAK_AFHANDELEN;
 }

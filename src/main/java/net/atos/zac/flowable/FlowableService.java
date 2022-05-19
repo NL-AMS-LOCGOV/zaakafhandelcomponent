@@ -79,6 +79,8 @@ public class FlowableService {
 
     public static final String VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
 
+    public static final String VAR_CASE_ONTVANKELIJK = "ontvankelijk";
+
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
     public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
@@ -227,7 +229,10 @@ public class FlowableService {
     public void startUserEventListenerPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
         final PlanItemInstance planItem = readOpenPlanItem(planItemInstanceId);
         if (StringUtils.isNotEmpty(resultaatToelichting)) {
+            cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_ONTVANKELIJK, Boolean.FALSE);
             cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
+        } else {
+            cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_ONTVANKELIJK, Boolean.TRUE);
         }
         cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
     }
