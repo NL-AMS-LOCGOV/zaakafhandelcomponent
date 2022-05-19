@@ -5,7 +5,6 @@
 
 package net.atos.client.zgw.shared;
 
-import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
@@ -28,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
-import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -252,8 +250,8 @@ public class ZGWApiService implements Caching {
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
-        // Subtract one second from now() in order to prevent 'date in future' exception.
-        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now().minusSeconds(1));
+        // In case of a 'date in future' exception during local development: subtract 10 seconds from now().
+        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
         final Status created = zrcClientService.createStatus(status);
         // This event will also happen via open-notificaties

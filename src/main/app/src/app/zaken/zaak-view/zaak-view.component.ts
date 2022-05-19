@@ -346,51 +346,37 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     createUserEventListenerDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         switch (planItem.userEventListenerActie) {
-            case UserEventListenerActie.Ontvankelijk:
-                return this.createUserEventListenerOntvankelijkDialog(planItem, melding);
-            case UserEventListenerActie.NietOntvankelijk:
-                return this.createUserEventListenerNietOntvankelijkDialog(planItem, melding);
-            case UserEventListenerActie.Afhandelen:
-                return this.createUserEventListenerAfhandelenDialog(planItem, melding);
+            case UserEventListenerActie.IntakeAfronden:
+                return this.createUserEventListenerIntakeAfrondenDialog(planItem, melding);
+            case UserEventListenerActie.ZaakAfhandelen:
+                return this.createUserEventListenerZaakAfhandelenDialog(planItem, melding);
             default:
                 throw new Error(`Niet bestaande UserEventListenerActie: ${planItem.userEventListenerActie}`);
         }
     }
 
-    createUserEventListenerOntvankelijkDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
-        return {
-            dialogComponent: ConfirmDialogComponent,
-            dialogData: new ConfirmDialogData(melding, this.doUserEventListenerOntvankelijk(planItem.id), planItem.toelichting)
-        };
-    }
-
-    private doUserEventListenerOntvankelijk(planItemId: string): Observable<void> {
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.Ontvankelijk, planItemId, this.zaak.uuid);
-        return this.planItemsService.doUserEventListener(userEventListenerData);
-    }
-
-    createUserEventListenerNietOntvankelijkDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+        // ToDo Zie user story #989
         return {
             dialogComponent: DialogComponent,
             dialogData: new DialogData([
                     new TextareaFormFieldBuilder().id('reden')
                                                   .label('reden')
-                                                  .validators(Validators.required)
                                                   .maxlength(100)
                                                   .build()],
-                (results: any[]) => this.doUserEventListenerNietOntvankelijk(planItem.id, results['reden']),
+                (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['reden']),
                 melding,
                 planItem.toelichting)
         };
     }
 
-    private doUserEventListenerNietOntvankelijk(planItemId: string, resultaatToelichting: string): Observable<void> {
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.NietOntvankelijk, planItemId, this.zaak.uuid);
+    private doUserEventListenerIntakeAfronden(planItemId: string, resultaatToelichting: string): Observable<void> {
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
         userEventListenerData.resultaatToelichting = resultaatToelichting;
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
-    createUserEventListenerAfhandelenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: DialogComponent,
             dialogData: new DialogData([
@@ -411,7 +397,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private doUserEventListenerAfhandelen(planItemId: string, resultaattype: ZaakResultaat, resultaatToelichting: string): Observable<void> {
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.Afhandelen, planItemId, this.zaak.uuid);
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, planItemId, this.zaak.uuid);
         userEventListenerData.resultaattypeUuid = resultaattype.id;
         userEventListenerData.resultaatToelichting = resultaatToelichting;
         return this.planItemsService.doUserEventListener(userEventListenerData);
