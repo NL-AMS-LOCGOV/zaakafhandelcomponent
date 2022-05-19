@@ -6,14 +6,11 @@
 package net.atos.zac.flowable.cmmn;
 
 import static java.lang.String.format;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_RESULTAAT_TOELICHTING;
 import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
-import static org.apache.commons.lang3.StringUtils.substringBetween;
 
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.delegate.DelegatePlanItemInstance;
 import org.flowable.cmmn.api.listener.PlanItemInstanceLifecycleListener;
 import org.flowable.common.engine.api.delegate.Expression;
@@ -30,44 +27,14 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
 
     private static final String STATUS_TOELICHTING = "Status gewijzigd vanuit Case";
 
-    private static final String RESULTAAT_TOELICHTING = "Resultaat gewijzigd vanuit Case";
-
-    private static final String NAAM_STATUS_OPEN = "[";
-
-    private static final String NAAM_STATUS_CLOSE = "]";
-
-    private static final String NAAM_RESULTAAT_OPEN = "{";
-
-    private static final String NAAM_RESULTAAT_CLOSE = "}";
-
     private String sourceState;
 
     private String targetState;
 
     private Expression statusExpression;
 
-    private Expression resultaatExpression;
-
-    /**
-     * Default constructor used when explicitly added to a PlanItem in the Case diagram
-     */
-    public UpdateZaakLifecycleListener() {
-    }
-
-    /**
-     * Constructor used when implicitly called when added to CMMN Engine Configuration
-     */
-    public UpdateZaakLifecycleListener(final String sourceState, final String targetState) {
-        this.sourceState = sourceState;
-        this.targetState = targetState;
-    }
-
     public void setStatus(final Expression status) {
         statusExpression = status;
-    }
-
-    public void setResultaat(final Expression resultaat) {
-        resultaatExpression = resultaat;
     }
 
     @Override
@@ -82,37 +49,15 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
 
     @Override
     public void stateChanged(final DelegatePlanItemInstance planItemInstance, final String oldState, final String newState) {
-        final String status = statusExpression != null ? statusExpression.getValue(planItemInstance).toString() : extractStatusFromName(
-                planItemInstance.getName());
-        final String resultaat = resultaatExpression != null ? resultaatExpression.getValue(planItemInstance).toString() : extractResultaatFromName(
-                planItemInstance.getName());
-        if (status != null || resultaat != null) {
-            updateZaak(planItemInstance.getCaseInstanceId(), status, resultaat);
+        if (statusExpression != null) {
+            updateZaak(planItemInstance.getCaseInstanceId(), statusExpression.getValue(planItemInstance).toString());
         }
     }
 
-    private String extractStatusFromName(final String name) {
-        return substringBetween(name, NAAM_STATUS_OPEN, NAAM_STATUS_CLOSE);
-    }
-
-    private String extractResultaatFromName(final String name) {
-        return substringBetween(name, NAAM_RESULTAAT_OPEN, NAAM_RESULTAAT_CLOSE);
-    }
-
-    private void updateZaak(final String caseInstanceId, final String statustypeOmschrijving, final String resultaattypeOmschrijving) {
+    private void updateZaak(final String caseInstanceId, final String statustypeOmschrijving) {
         final UUID zaakUUID = (UUID) FlowableHelper.getInstance().getFlowableService().readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
         final Zaak zaak = FlowableHelper.getInstance().getZrcClientService().readZaak(zaakUUID);
-        if (statustypeOmschrijving != null) {
-            LOG.info(format("Zaak %s: Change Status to '%s'", zaakUUID, statustypeOmschrijving));
-            FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
-        }
-        if (resultaattypeOmschrijving != null) {
-            final String resultaatToelichting = (String) FlowableHelper.getInstance().getFlowableService()
-                    .findOpenCaseVariable(caseInstanceId, VAR_CASE_RESULTAAT_TOELICHTING);
-            LOG.info(format("Zaak %s: Change Resultaat to '%s'", zaakUUID, resultaattypeOmschrijving));
-            FlowableHelper.getInstance().getZgwApiService()
-                    .createResultaatForZaak(zaak, resultaattypeOmschrijving,
-                                            StringUtils.isNotEmpty(resultaatToelichting) ? resultaatToelichting : RESULTAAT_TOELICHTING);
-        }
+        LOG.info(format("Zaak %s: Change Status to '%s'", zaakUUID, statustypeOmschrijving));
+        FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);
     }
 }
