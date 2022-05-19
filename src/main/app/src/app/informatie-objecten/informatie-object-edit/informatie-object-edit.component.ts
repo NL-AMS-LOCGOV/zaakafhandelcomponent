@@ -89,14 +89,14 @@ export class InformatieObjectEditComponent implements OnInit {
                                                  .build();
 
         const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                   .validators(Validators.required)
-                                                   .optionLabel('label').options(informatieobjectStatussen)
-                                                   .value({
-                                                       label: this.translateService.instant(
-                                                           'informatieobject.status.' + this.infoObject.status.toUpperCase()),
-                                                       value: this.infoObject.status.toUpperCase()
-                                                   })
-                                                   .build();
+                                                 .validators(Validators.required)
+                                                 .optionLabel('label').options(informatieobjectStatussen)
+                                                 .value(this.infoObject.status ? {
+                                                     label: this.translateService.instant(
+                                                         'informatieobject.status.' + this.infoObject.status.toUpperCase()),
+                                                     value: this.infoObject.status.toUpperCase()
+                                                 } : null)
+                                                 .build();
 
         const verzenddatum = new DateFormFieldBuilder().id('verzenddatum')
                                                        .label('verzenddatum')
