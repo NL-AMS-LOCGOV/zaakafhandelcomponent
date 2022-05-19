@@ -1,9 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2021 - 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {TextIcon} from '../edit/text-icon';
 import {FormControl} from '@angular/forms';
 
@@ -12,7 +12,7 @@ import {FormControl} from '@angular/forms';
     templateUrl: './static-text.component.html',
     styleUrls: ['./static-text.component.less']
 })
-export class StaticTextComponent implements OnInit {
+export class StaticTextComponent implements OnInit, OnChanges {
 
     @Input() label: string;
     @Input() value: any;
@@ -26,10 +26,19 @@ export class StaticTextComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.showIcon = this.icon?.showIcon(new FormControl(this.value));
+        this.setIcon();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.setIcon();
     }
 
     get hasIcon(): boolean {
         return this.showIcon;
     }
+
+    setIcon(): void {
+        this.showIcon = this.icon?.showIcon(new FormControl(this.value));
+    }
+
 }

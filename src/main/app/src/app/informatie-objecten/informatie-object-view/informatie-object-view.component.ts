@@ -28,6 +28,7 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -36,10 +37,12 @@ import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-in
 export class InformatieObjectViewComponent  extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
+    laatsteVersieInfoObject: EnkelvoudigInformatieobject;
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
     action: string;
+    versieInformatie: string;
     zaken: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -72,13 +75,22 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 private websocketService: WebsocketService,
-                private router: Router) {
+                private router: Router,
+                private translate: TranslateService) {
         super();
     }
 
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
+            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(eiObject => {
+                this.laatsteVersieInfoObject = eiObject;
+                this.toevoegenNieuweVersieActie();
+                this.versieInformatie = this.translate.instant('versie.x.van', {
+                    versie: this.infoObject.versie,
+                    laatsteVersie: this.laatsteVersieInfoObject.versie,
+                });
+            });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
@@ -120,8 +132,10 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid),
                 'save_alt'),
         ];
+    }
 
-        if (this.infoObject.status !== InformatieobjectStatus.DEFINITIEF) {
+    private toevoegenNieuweVersieActie() {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;

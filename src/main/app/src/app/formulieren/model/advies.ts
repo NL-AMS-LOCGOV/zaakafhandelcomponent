@@ -43,7 +43,7 @@ export class Advies extends AbstractFormulier {
 
     _initStartForm() {
         const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
-        zoekparameters.zaakUUID = this.planItem.zaakUuid;
+        zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(

@@ -182,15 +182,11 @@ public class ZGWApiService implements Caching {
      * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
      * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
      * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.
-     * @param omschrijvingVoorwaardenGebruiksrechten Used to create the {@link Gebruiksrechten} for the to be created {@link EnkelvoudigInformatieobjectWithInhoud}
      * @return Created {@link ZaakInformatieobject}.
      */
     public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
-            final String titel, final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
+            final String titel, final String beschrijving) {
         final EnkelvoudigInformatieobjectWithInhoud newInformatieobject = drcClientService.createEnkelvoudigInformatieobject(informatieobject);
-        drcClientService.createGebruiksrechten(new Gebruiksrechten(newInformatieobject.getUrl(), convertToDateTime(newInformatieobject.getCreatiedatum()),
-                                                                   omschrijvingVoorwaardenGebruiksrechten));
-
         final ZaakInformatieobject zaakInformatieObject = new ZaakInformatieobject();
         zaakInformatieObject.setZaak(zaak.getUrl());
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
