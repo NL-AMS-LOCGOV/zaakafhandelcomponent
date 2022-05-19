@@ -27,10 +27,6 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
 
     private static final String STATUS_TOELICHTING = "Status gewijzigd vanuit Case";
 
-    private String sourceState;
-
-    private String targetState;
-
     private Expression statusExpression;
 
     public void setStatus(final Expression status) {
@@ -39,12 +35,12 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
 
     @Override
     public String getSourceState() {
-        return sourceState;
+        return null;
     }
 
     @Override
     public String getTargetState() {
-        return targetState;
+        return null;
     }
 
     @Override
