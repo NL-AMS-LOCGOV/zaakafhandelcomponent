@@ -9,12 +9,14 @@ import * as moment from 'moment';
 @Pipe({name: 'datum'})
 export class DatumPipe implements PipeTransform {
 
+    private static UTC: string = '[UTC]';
+
     constructor(@Inject(LOCALE_ID) public locale: string) {
     }
 
     transform(value: Date | moment.Moment | string, dateFormat?: string): any {
-        if (value && value.toString().includes('[UTC]')) {
-            value = value.toString().replace('[UTC]', '');
+        if (value && value.toString().includes(DatumPipe.UTC)) {
+            value = value.toString().replace(DatumPipe.UTC, '');
         }
 
         if (value) {
