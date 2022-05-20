@@ -9,10 +9,16 @@ import * as moment from 'moment';
 @Pipe({name: 'datum'})
 export class DatumPipe implements PipeTransform {
 
+    private static UTC: string = '[UTC]';
+
     constructor(@Inject(LOCALE_ID) public locale: string) {
     }
 
     transform(value: Date | moment.Moment | string, dateFormat?: string): any {
+        if (value && value.toString().includes(DatumPipe.UTC)) {
+            value = value.toString().replace(DatumPipe.UTC, '');
+        }
+
         if (value) {
             const m: moment.Moment = moment(value, moment.ISO_8601).locale(this.locale);
             if (m.isValid()) {
