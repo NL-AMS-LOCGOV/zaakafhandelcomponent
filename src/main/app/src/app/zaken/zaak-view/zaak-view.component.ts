@@ -60,8 +60,9 @@ import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
 import {map} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {Observable, share} from 'rxjs';
+import {Observable, of, share} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
+import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -361,14 +362,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
-        // ToDo Zie user story #989
+        const radio = new RadioFormFieldBuilder().id('ontvankelijk')
+                                                 .label('zaakOntvankelijk')
+                                                 .options(of(['ja', 'nee']))
+                                                 .validators(Validators.required)
+                                                 .build();
+        const reden = new TextareaFormFieldBuilder().id('reden')
+                                                    .label('redenNietOntvankelijk')
+                                                    .maxlength(100)
+                                                    .validators(Validators.required)
+                                                    .build();
         return {
             dialogComponent: DialogComponent,
-            dialogData: new DialogData([
-                    new TextareaFormFieldBuilder().id('reden')
-                                                  .label('reden')
-                                                  .maxlength(100)
-                                                  .build()],
+            dialogData: new DialogData(
+                [radio, reden],
                 (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['reden']),
                 melding,
                 planItem.toelichting)

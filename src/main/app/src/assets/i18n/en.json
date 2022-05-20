@@ -122,6 +122,8 @@
   "trefwoorden": "Keywords",
   "bijlage": "Attachment",
   "redenStart": "Reason start",
+  "redenNietOntvankelijk": "Reason not admissible",
+  "zaakOntvankelijk": "Is case admissible?",
   "afhandeling": "Handling",
   "toolbar.profiel": "Profile",
   "toonAfgerondeTaken": "Show finished tasks",
