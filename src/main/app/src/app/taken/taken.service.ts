@@ -98,6 +98,12 @@ export class TakenService {
         );
     }
 
+    updateTaakdocumenten(taak: Taak): Observable<Taak> {
+        return this.http.put<Taak>(`${this.basepath}/taakdocumenten`, taak).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     complete(taak: Taak): Observable<Taak> {
         return this.http.patch<Taak>(`${this.basepath}/complete`, taak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))

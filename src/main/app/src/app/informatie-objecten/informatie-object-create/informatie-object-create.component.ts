@@ -29,6 +29,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {MatDrawer} from '@angular/material/sidenav';
+import {Taak} from '../../taken/model/taak';
 
 @Component({
     selector: 'zac-informatie-object-create',
@@ -38,6 +39,7 @@ import {MatDrawer} from '@angular/material/sidenav';
 export class InformatieObjectCreateComponent implements OnInit {
 
     @Input() zaak: Zaak;
+    @Input() taak: Taak;
     @Input() sideNav: MatDrawer;
     @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
 
@@ -75,8 +77,9 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                         .build();
 
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                      .uploadURL(
-                                                          this.informatieObjectenService.getUploadURL(this.zaak.uuid))
+                                                      .uploadURL(this.zaak ?
+                                                          this.informatieObjectenService.getUploadURL(this.zaak.uuid) :
+                                                      this.informatieObjectenService.getUploadURL(this.taak.id))
                                                       .validators(Validators.required)
                                                       .build();
 
@@ -99,9 +102,9 @@ export class InformatieObjectCreateComponent implements OnInit {
 
         const informatieobjectType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
                                                          .label('informatieobjectType')
-                                                         .options(
-                                                             this.informatieObjectenService.listInformatieobjecttypes(
-                                                                 this.zaak.zaaktype.uuid))
+                                                         .options( this.zaak ?
+                                                             this.informatieObjectenService.listInformatieobjecttypesForZaak(this.zaak.uuid) :
+                                                             this.informatieObjectenService.listInformatieobjecttypesForZaak(this.taak.zaakUUID))
                                                          .optionLabel('omschrijving')
                                                          .validators(Validators.required)
                                                          .build();
@@ -124,8 +127,13 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                            'actie.document.aanmaken.nogmaals'))
                                                        .build();
 
-        this.fields =
-            [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
+        if (this.zaak) {
+            this.fields =
+                [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
+        } else if (this.taak) {
+            this.fields = [[inhoudField], [titel], [informatieobjectType], [nogmaals]];
+        }
+
 
         let vorigeBestandsnaam = null;
         inhoudField.fileUploaded.subscribe(bestandsnaam => {
@@ -163,7 +171,12 @@ export class InformatieObjectCreateComponent implements OnInit {
                 }
             });
 
-            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak.uuid, infoObject)
+            if (this.taak) {
+                infoObject.taakObject = true;
+            }
+
+            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak ? this.zaak.uuid : this.taak.zaakUUID,
+                this.zaak ? this.zaak.uuid : this.taak.id, infoObject)
                 .subscribe((document) => {
                     this.document.emit(document);
                     this.utilService.openSnackbar('msg.document.toegevoegd.aan.zaak');
@@ -180,21 +193,25 @@ export class InformatieObjectCreateComponent implements OnInit {
     }
 
     resetForm(formGroup: FormGroup) {
+        if (this.zaak) {
+            formGroup.get('beschrijving').reset();
+        }
         formGroup.get('bestandsnaam').reset();
         formGroup.get('bestandsnaam').setErrors(null);
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
-        formGroup.get('beschrijving').reset();
         formGroup.get('nogmaals').setValue(false);
         this.form.reset();
         formGroup.setErrors({invalid: true});
     }
 
     clearForm(formGroup: FormGroup) {
-        formGroup.get('status').reset();
-        formGroup.get('status').setErrors(null);
-        formGroup.get('vertrouwelijkheidaanduiding').reset();
-        formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
+        if (this.zaak) {
+            formGroup.get('status').reset();
+            formGroup.get('status').setErrors(null);
+            formGroup.get('vertrouwelijkheidaanduiding').reset();
+            formGroup.get('vertrouwelijkheidaanduiding').setErrors(null);
+        }
         formGroup.get('informatieobjectTypeUUID').reset();
         formGroup.get('informatieobjectTypeUUID').setErrors(null);
         this.resetForm(formGroup);

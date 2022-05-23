@@ -37,7 +37,7 @@ export class TaakFormulierenService {
                 return new FormulierBuilder(
                     new Goedkeuren(this.translate, this.takenService, this.informatieObjectenService));
             case 'DEFAULT_TAAKFORMULIER':
-                return new FormulierBuilder(new DefaultTaakformulier(this.translate));
+                return new FormulierBuilder(new DefaultTaakformulier(this.translate, this.informatieObjectenService));
             default:
                 throw new Error(`Onbekend formulier: ${formulierNaam}`);
         }

@@ -84,6 +84,7 @@ public class RESTTaakConverter {
         restTaak.status = AFGEROND;
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
+            restTaak.taakdocumenten = flowableService.readTaakdocumentenForClosedTask(task.getId());
         }
         return restTaak;
     }
@@ -93,6 +94,7 @@ public class RESTTaakConverter {
         restTaak.status = task.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND;
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForOpenTask(task.getId());
+            restTaak.taakdocumenten = flowableService.readTaakdocumentenForOpenTask(task.getId());
         }
         restTaak.taakinformatie = flowableService.readTaakinformatieForOpenTask(task.getId());
 
@@ -104,6 +106,7 @@ public class RESTTaakConverter {
         restTaak.status = AFGEROND;
         if (withTaakdata) {
             restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
+            restTaak.taakdocumenten = flowableService.readTaakdocumentenForClosedTask(task.getId());
         }
         restTaak.taakinformatie = flowableService.readTaakinformatieForClosedTask(task.getId());
 
