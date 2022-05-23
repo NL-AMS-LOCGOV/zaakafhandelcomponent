@@ -8,6 +8,7 @@ import {Validators} from '@angular/forms';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 
 export class DefaultTaakformulier extends AbstractFormulier {
 
@@ -20,8 +21,8 @@ export class DefaultTaakformulier extends AbstractFormulier {
         uitkomst: this.fields.AFHANDELING
     };
 
-    constructor(translate: TranslateService) {
-        super(translate);
+    constructor(translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
+        super(translate, informatieObjectenService);
     }
 
     _initStartForm() {

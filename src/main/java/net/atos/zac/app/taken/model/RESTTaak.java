@@ -49,4 +49,6 @@ public class RESTTaak {
     public Map<String, String> taakdata;
 
     public Map<String, String> taakinformatie;
+
+    public Map<String, String> taakdocumenten;
 }

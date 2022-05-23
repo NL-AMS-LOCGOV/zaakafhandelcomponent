@@ -29,23 +29,28 @@ import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
-import {ViewComponent} from '../../shared/abstract-view/view-component';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {TaakHistorieRegel} from '../../shared/historie/model/taak-historie-regel';
+import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
+import {SideNavAction} from '../../shared/side-nav/side-nav-action';
+import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Component({
     templateUrl: './taak-view.component.html',
     styleUrls: ['./taak-view.component.less']
 })
-export class TaakViewComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
+    @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('historieSort') historieSort: MatSort;
 
     taak: Taak;
     menu: MenuItem[] = [];
+    action: string;
 
     historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
     historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
@@ -145,6 +150,13 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
+
+        if (!this.isAfgerond()) {
+            this.menu.push(new ButtonMenuItem('actie.document.aanmaken', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+            }, 'upload_file'));
+        }
     }
 
     private loadHistorie(): void {
@@ -254,5 +266,10 @@ export class TaakViewComponent extends ViewComponent implements OnInit, AfterVie
 
     updateMargins(): void {
         setTimeout(() => this.sideNavContainer.updateContentMargins(), 250);
+    }
+
+    updateTaakdocumenten(informatieobject: EnkelvoudigInformatieobject) {
+        this.taak.taakdocumenten[informatieobject.uuid] = informatieobject.titel;
+        this.takenService.updateTaakdocumenten(this.taak).subscribe(() => this.formulier.refreshTaakdocumenten());
     }
 }

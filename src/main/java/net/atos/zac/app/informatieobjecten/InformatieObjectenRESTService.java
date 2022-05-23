@@ -143,14 +143,20 @@ public class InformatieObjectenRESTService {
     }
 
     @POST
-    @Path("informatieobject/{zaakUuid}")
+    @Path("informatieobject/{zaakUuid}/{documentReferentieUuid}")
     public RESTEnkelvoudigInformatieobject createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
+            @PathParam("documentReferentieUuid") final UUID documentReferentieUuid,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
-        final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
-        final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
-                                                                                                          restEnkelvoudigInformatieobject.beschrijving);
+        final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieUuid);
+        final EnkelvoudigInformatieobjectWithInhoud data =
+                restEnkelvoudigInformatieobject.taakObject ?
+                        restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject.titel,
+                                                              restEnkelvoudigInformatieobject.informatieobjectTypeUUID,
+                                                              file) :
+                        restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
+        final ZaakInformatieobject zaakInformatieobject =
+                zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving());
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
 

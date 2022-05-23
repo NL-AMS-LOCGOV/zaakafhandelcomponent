@@ -83,6 +83,8 @@ public class FlowableService {
 
     public static final String VAR_TASK_TAAKDATA = "taakdata";
 
+    public static final String VAR_TASK_TAAKDOCUMENTEN = "taakdocumenten";
+
     public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
 
     public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
@@ -317,6 +319,10 @@ public class FlowableService {
         return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
     }
 
+    public Map<String, String> readTaakdocumentenForOpenTask(final String taskId) {
+        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDOCUMENTEN);
+    }
+
     public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
         return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKINFORMATIE);
     }
@@ -328,6 +334,10 @@ public class FlowableService {
 
     public Map<String, String> readTaakdataForClosedTask(final String taskId) {
         return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public Map<String, String> readTaakdocumentenForClosedTask(final String taskId) {
+        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDOCUMENTEN);
     }
 
     public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
@@ -348,6 +358,10 @@ public class FlowableService {
 
     public Map<String, String> updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
         return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    public Map<String, String> updateTaakdocumenten(final String taskId, final Map<String, String> taakdocumenten) {
+        return updateTaakVariable(taskId, taakdocumenten, VAR_TASK_TAAKDOCUMENTEN);
     }
 
     private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {
