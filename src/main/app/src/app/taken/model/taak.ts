@@ -24,5 +24,5 @@ export class Taak {
     formulierDefinitie: string;
     taakdata: {};
     taakinformatie: Taakinformatie;
-    taakdocumenten: {};
+    taakdocumenten: string[];
 }

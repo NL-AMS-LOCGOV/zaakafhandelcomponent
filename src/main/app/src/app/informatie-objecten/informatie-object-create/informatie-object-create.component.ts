@@ -171,12 +171,8 @@ export class InformatieObjectCreateComponent implements OnInit {
                 }
             });
 
-            if (this.taak) {
-                infoObject.taakObject = true;
-            }
-
             this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak ? this.zaak.uuid : this.taak.zaakUUID,
-                this.zaak ? this.zaak.uuid : this.taak.id, infoObject)
+                this.zaak ? this.zaak.uuid : this.taak.id, infoObject, !!this.taak)
                 .subscribe((document) => {
                     this.document.emit(document);
                     this.utilService.openSnackbar('msg.document.toegevoegd.aan.zaak');

@@ -55,8 +55,14 @@ export class InformatieObjectenService {
         );
     }
 
-    createEnkelvoudigInformatieobject(zaakUuid: string, documentReferentieUuid: string, infoObject: EnkelvoudigInformatieobject): Observable<EnkelvoudigInformatieobject> {
-        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/${zaakUuid}/${documentReferentieUuid}`, infoObject).pipe(
+    createEnkelvoudigInformatieobject(zaakUuid: string, documentReferentieId: string,
+                                      infoObject: EnkelvoudigInformatieobject,
+                                      taakObject: boolean): Observable<EnkelvoudigInformatieobject> {
+        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/${zaakUuid}/${documentReferentieId}`, infoObject, {
+            params: {
+                taakObject: taakObject
+            }
+        }).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

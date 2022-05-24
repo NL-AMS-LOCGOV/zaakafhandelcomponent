@@ -269,7 +269,11 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     updateTaakdocumenten(informatieobject: EnkelvoudigInformatieobject) {
-        this.taak.taakdocumenten[informatieobject.uuid] = informatieobject.titel;
-        this.takenService.updateTaakdocumenten(this.taak).subscribe(() => this.formulier.refreshTaakdocumenten());
+        if (!this.taak.taakdocumenten) {
+            this.taak.taakdocumenten = [];
+        }
+
+        this.taak.taakdocumenten.push(informatieobject.uuid);
+        this.formulier.refreshTaakdocumenten();
     }
 }

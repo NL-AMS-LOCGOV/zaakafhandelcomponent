@@ -30,5 +30,4 @@ export class EnkelvoudigInformatieobject {
     ondertekening: string;
     locked: boolean;
     inhoudUrl: string;
-    taakObject: boolean;
 }

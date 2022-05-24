@@ -335,8 +335,8 @@
                                         <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
                                             <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
                                                              [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
-                                            <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlage"
-                                                             [value]="row.data.taakinformatie?.bijlage"></zac-static-text>
+                                            <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlagen"
+                                                             [value]="row.data.taakinformatie?.bijlagen"></zac-static-text>
                                             <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
                                                              [value]="row.data.taakinformatie?.opmerking"></zac-static-text>
                                         </div>

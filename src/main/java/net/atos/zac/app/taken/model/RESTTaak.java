@@ -7,6 +7,7 @@ package net.atos.zac.app.taken.model;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,5 +51,5 @@ public class RESTTaak {
 
     public Map<String, String> taakinformatie;
 
-    public Map<String, String> taakdocumenten;
+    public List<UUID> taakdocumenten;
 }

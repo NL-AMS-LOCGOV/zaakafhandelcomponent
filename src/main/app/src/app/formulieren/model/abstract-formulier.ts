@@ -33,6 +33,7 @@ export abstract class AbstractFormulier {
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
     disablePartialSave: boolean = false;
+    taakDocumenten: EnkelvoudigInformatieobject[];
 
     protected constructor(protected translate: TranslateService,
                           public informatieObjectenService: InformatieObjectenService) {}
@@ -104,15 +105,19 @@ export abstract class AbstractFormulier {
                                               .documenten(this.getTaakdocumenten())
                                               .readonly(true)
                                               .build()]);
+
+        this.getTaakdocumenten().subscribe(taakDocumenten => {
+            this.taakDocumenten = taakDocumenten;
+        });
     }
 
     private getTaakdocumenten(): Observable<EnkelvoudigInformatieobject[]> {
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekParameters.UUIDs = [];
 
-        if (this.taak && this.taak.taakdocumenten) {
-            Object.keys(this.taak.taakdocumenten).forEach((key) => {
-                zoekParameters.UUIDs.push(key);
+        if (this.taak?.taakdocumenten) {
+            this.taak.taakdocumenten.forEach((uuid) => {
+                zoekParameters.UUIDs.push(uuid);
             });
         }
 
@@ -120,13 +125,14 @@ export abstract class AbstractFormulier {
     }
 
     private getDocumentInformatie() {
-        let documentNamen: string;
+        const documentNamen: string[] = [];
 
-        if (this.taak && this.taak.taakdocumenten) {
-            documentNamen = Object.values(this.taak.taakdocumenten).join(', ');
-        }
+        this.taakDocumenten.forEach(taakDocument => {
+            documentNamen.push(taakDocument.titel);
+            console.log(documentNamen);
+        });
 
-        return documentNamen;
+        return documentNamen.join(', ');
     }
 
     private getDataElementen(formGroup: FormGroup): {} {

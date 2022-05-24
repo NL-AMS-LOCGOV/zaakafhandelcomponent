@@ -319,8 +319,10 @@ public class FlowableService {
         return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
     }
 
-    public Map<String, String> readTaakdocumentenForOpenTask(final String taskId) {
-        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDOCUMENTEN);
+    public List<UUID> readTaakdocumentenForOpenTask(final String taskId) {
+        final List<UUID> taakdocumenten = (List<UUID>) cmmnTaskService.getVariableLocal(taskId,
+                                                                                        VAR_TASK_TAAKDOCUMENTEN);
+        return taakdocumenten != null ? taakdocumenten : new ArrayList<>();
     }
 
     public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
@@ -336,8 +338,13 @@ public class FlowableService {
         return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
     }
 
-    public Map<String, String> readTaakdocumentenForClosedTask(final String taskId) {
-        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDOCUMENTEN);
+    public List<UUID> readTaakdocumentenForClosedTask(final String taskId) {
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .taskId(taskId)
+                .variableName(VAR_TASK_TAAKDOCUMENTEN)
+                .singleResult();
+        return historicVariableInstance != null ? (List<UUID>) historicVariableInstance.getValue() :
+                Collections.emptyList();
     }
 
     public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
@@ -360,8 +367,15 @@ public class FlowableService {
         return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
     }
 
-    public Map<String, String> updateTaakdocumenten(final String taskId, final Map<String, String> taakdocumenten) {
-        return updateTaakVariable(taskId, taakdocumenten, VAR_TASK_TAAKDOCUMENTEN);
+    public void updateTaakdocumenten(final String taskId, final UUID taakdocument) {
+        final List<UUID> taakdocumenten = readTaakdocumentenForOpenTask(taskId);
+        taakdocumenten.add(taakdocument);
+        updateTaakdocumenten(taskId, taakdocumenten);
+    }
+
+    private List<UUID> updateTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
+        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+        return taakdocumenten;
     }
 
     private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {

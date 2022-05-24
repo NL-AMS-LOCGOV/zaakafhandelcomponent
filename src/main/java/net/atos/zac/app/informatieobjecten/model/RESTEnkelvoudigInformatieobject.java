@@ -66,6 +66,4 @@ public class RESTEnkelvoudigInformatieobject {
     public boolean startformulier;
 
     public String inhoudUrl;
-
-    public boolean taakObject;
 }
