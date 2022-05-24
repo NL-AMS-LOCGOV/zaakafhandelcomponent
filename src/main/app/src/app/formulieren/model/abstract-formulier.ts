@@ -22,6 +22,7 @@ import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/fo
 export abstract class AbstractFormulier {
 
     public static TOEKENNING_FIELD: string = 'toekenning-field';
+    public static BIJLAGEN_FIELD: string = 'bijlagen';
 
     zaakUuid: string;
     taakNaam: string;
@@ -91,15 +92,15 @@ export abstract class AbstractFormulier {
     refreshTaakdocumenten() {
         this.form.forEach((value, index) => {
            value.forEach(field => {
-               if (field.id === 'bijlagen') {
+               if (field.id === AbstractFormulier.BIJLAGEN_FIELD) {
                    this.form.splice(index, 1);
                }
            });
         });
 
         this.form.push(
-            [new DocumentenLijstFieldBuilder().id('bijlagen')
-                                              .label('bijlagen')
+            [new DocumentenLijstFieldBuilder().id(AbstractFormulier.BIJLAGEN_FIELD)
+                                              .label(AbstractFormulier.BIJLAGEN_FIELD)
                                               .documenten(this.getTaakdocumenten())
                                               .readonly(true)
                                               .build()]);
