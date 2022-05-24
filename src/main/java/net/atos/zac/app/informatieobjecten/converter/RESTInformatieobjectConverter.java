@@ -108,7 +108,7 @@ public class RESTInformatieobjectConverter {
         return restObject;
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
+    public EnkelvoudigInformatieobjectWithInhoud convertZaakObject(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfiguratieService.BRON_ORGANISATIE,
                 restEnkelvoudigInformatieobject.creatiedatum,
@@ -126,7 +126,7 @@ public class RESTInformatieobjectConverter {
         return data;
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud convert(final String titel,
+    public EnkelvoudigInformatieobjectWithInhoud convertTaakObject(final String titel,
             final UUID informatieObjectTypeUuid, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfiguratieService.BRON_ORGANISATIE,
