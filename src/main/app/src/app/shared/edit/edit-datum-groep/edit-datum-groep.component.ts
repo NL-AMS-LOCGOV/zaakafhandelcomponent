@@ -188,6 +188,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
             ],
             (results: any[]) => this.saveOpschorting(results),
             this.translate.instant('msg.zaak.opschorten'));
+        dialogData.confirmButtonActionKey = 'actie.zaak.opschorten';
 
         const vorigeEinddatumGepland: Moment = heeftEinddatumGepland ? moment(this.einddatumGeplandField.formControl.value) : null;
         const vorigeUiterlijkeEinddatumAfdoening: Moment = moment(this.uiterlijkeEinddatumAfdoeningField.formControl.value);
@@ -216,6 +217,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
             ],
             (results: any[]) => this.saveHervatting(results),
             this.translate.instant('msg.zaak.hervatten', {duur: this.werkelijkeOpschortDuur, verwachteDuur: this.opschortDuur}));
+        dialogData.confirmButtonActionKey = 'actie.zaak.hervatten';
 
         this.dialog.open(DialogComponent, {
             data: dialogData
@@ -247,6 +249,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
             ],
             (results: any[]) => this.saveVerlenging(results),
             this.translate.instant(this.verlengDuur ? 'msg.zaak.verlengen.meer' : 'msg.zaak.verlengen', {eerdereDuur: this.verlengDuur}));
+        dialogData.confirmButtonActionKey = 'actie.zaak.verlengen';
 
         const vorigeEinddatumGepland: Moment = heeftEinddatumGepland ? moment(this.einddatumGeplandField.formControl.value) : null;
         const vorigeUiterlijkeEinddatumAfdoening: Moment = moment(this.uiterlijkeEinddatumAfdoeningField.formControl.value);

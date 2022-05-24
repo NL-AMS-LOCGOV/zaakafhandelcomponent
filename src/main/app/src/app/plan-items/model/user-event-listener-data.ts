@@ -9,6 +9,7 @@ export class UserEventListenerData {
     zaakUuid: string;
     planItemInstanceId: string;
     actie: UserEventListenerActie;
+    zaakOntvankelijk: boolean;
     resultaatToelichting: string;
     resultaattypeUuid: string;
 
