@@ -48,4 +48,5 @@ public class ZoekenRESTService {
             return new RESTResultaat<>(e.getMessage());
         }
     }
+
 }
