@@ -60,7 +60,7 @@ import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
 import {map} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {Observable, of, share} from 'rxjs';
+import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 
@@ -102,6 +102,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
     private ingelogdeMedewerker: User;
+    private dialogSubscriptions: Subscription[] = [];
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -280,11 +281,22 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'assignment');
 
             case PlanItemType.UserEventListener:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'fact_check');
+                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), this.getIcon(planItem));
             case PlanItemType.ProcessTask:
                 return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'launch');
         }
         throw new Error(`Onbekend type: ${planItem.type}`);
+    }
+
+    private getIcon(planItem: PlanItem): string {
+        switch (planItem.userEventListenerActie) {
+            case UserEventListenerActie.IntakeAfronden:
+                return 'thumbs_up_down';
+            case UserEventListenerActie.ZaakAfhandelen:
+                return 'thumb_up_alt';
+            default:
+                return 'fact_check';
+        }
     }
 
     private setupMenu(): void {
@@ -308,30 +320,33 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'exit_to_app'));
+            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
         }
 
+        const tail: MenuItem[] = [];
+
         if (!this.zaak.initiatorIdentificatie) {
-            this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
-            this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
+            tail.push(new HeaderMenuItem('initiator.toevoegen'));
+            tail.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ZOEK_PERSOON;
             }, 'emoji_people'));
-            this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
+            tail.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ZOEK_BEDRIJF;
             }, 'business'));
         }
+
         this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
             const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
             const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
+            if (actieItems.length > 0) {
+                this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
+            }
+            this.menu = this.menu.concat(tail);
             if (humanTaskItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
-            }
-            if (actieItems.length > 0) {
-                this.menu.push(new HeaderMenuItem('actie.zaak.acties'));
-                this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
             }
         });
     }
@@ -343,6 +358,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.dialog.open(userEventListenerDialog.dialogComponent, {
             data: userEventListenerDialog.dialogData
         }).afterClosed().subscribe(result => {
+            for (const subscription of this.dialogSubscriptions) {
+                subscription.unsubscribe();
+            }
+            this.dialogSubscriptions.length = 0;
             if (result) {
                 this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
                 this.updateZaak();
@@ -364,27 +383,36 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
         const radio = new RadioFormFieldBuilder().id('ontvankelijk')
                                                  .label('zaakOntvankelijk')
-                                                 .options(of(['ja', 'nee']))
+                                                 .options(of(['actie.ja', 'actie.nee']))
                                                  .validators(Validators.required)
                                                  .build();
         const reden = new TextareaFormFieldBuilder().id('reden')
                                                     .label('redenNietOntvankelijk')
-                                                    .maxlength(100)
                                                     .validators(Validators.required)
+                                                    .maxlength(100)
                                                     .build();
+
+        const dialogData: DialogData = new DialogData(
+            [radio, reden],
+            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'] === 'actie.ja', results['reden']),
+            null,
+            planItem.toelichting);
+        dialogData.confirmButtonActionKey = 'actie.intake.afronden';
+
+        this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
+            dialogData.formFields = value === 'actie.nee' ? [radio, reden] : [radio];
+        }));
+
         return {
             dialogComponent: DialogComponent,
-            dialogData: new DialogData(
-                [radio, reden],
-                (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['reden']),
-                melding,
-                planItem.toelichting)
+            dialogData: dialogData
         };
     }
 
-    private doUserEventListenerIntakeAfronden(planItemId: string, resultaatToelichting: string): Observable<void> {
+    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string): Observable<void> {
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
-        userEventListenerData.resultaatToelichting = resultaatToelichting;
+        userEventListenerData.zaakOntvankelijk = ontvankelijk;
+        userEventListenerData.resultaatToelichting = toelichting;
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 

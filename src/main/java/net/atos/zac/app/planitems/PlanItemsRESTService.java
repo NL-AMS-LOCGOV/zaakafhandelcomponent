@@ -87,7 +87,7 @@ public class PlanItemsRESTService {
     public void doUserEventListener(final RESTUserEventListenerData userEventListenerData) {
         switch (userEventListenerData.actie) {
             case INTAKE_AFRONDEN -> {
-                if (userEventListenerData.resultaatToelichting != null) {
+                if (!userEventListenerData.zaakOntvankelijk) {
                     // ToDo: UUID van resultaattype moet opgehaald worden uit zaakafhandelparameters. Zie User Story #990
                     zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, UUID.fromString("981b6fa3-e056-46da-8f1d-736c12ab287e"),
                                                          userEventListenerData.resultaatToelichting);

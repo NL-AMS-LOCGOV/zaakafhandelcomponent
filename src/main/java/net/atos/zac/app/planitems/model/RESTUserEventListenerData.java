@@ -15,7 +15,9 @@ public class RESTUserEventListenerData {
 
     public UserEventListenerActie actie;
 
-    public UUID resultaattypeUuid;
+    public Boolean zaakOntvankelijk;
 
     public String resultaatToelichting;
+
+    public UUID resultaattypeUuid;
 }
