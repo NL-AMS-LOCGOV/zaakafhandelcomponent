@@ -6,6 +6,7 @@
 package net.atos.zac.zoeken;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -14,10 +15,13 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
+import net.atos.zac.shared.model.SortDirection;
+import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
@@ -36,19 +40,40 @@ public class ZoekenService {
 
     public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
         final SolrQuery query = new SolrQuery("*:*");
-        if (StringUtils.isNotBlank(zoekZaakParameters.getTekst())) {
-            query.setQuery("text:(%s)".formatted(zoekZaakParameters.getTekst()));
+        final StringBuilder queryBuilder = new StringBuilder();
+        zoekZaakParameters.getZoekVelden().forEach((zoekVeld, tekst) -> {
+            if (StringUtils.isNotBlank(tekst)) {
+                queryBuilder.append(String.format("%s:(%s) ", zoekVeld.getVeld(), tekst));
+            }
+        });
+        if (StringUtils.isNotBlank(queryBuilder.toString())) {
+            query.setQuery(queryBuilder.toString());
         }
+        zoekZaakParameters.getBeschikbareFilters().forEach(facetVeld -> {
+            query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld()));
+        });
+
+        zoekZaakParameters.getFilters().forEach((filter, waarde) -> {
+            query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+        });
+
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
-        query.addSort("identificatie", SolrQuery.ORDER.desc);
+        query.addSort(zoekZaakParameters.getSortering().getSorteerVeld().getVeld(),
+                      zoekZaakParameters.getSortering().getRichting() == SortDirection.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
         try {
             final QueryResponse response = solrClient.query(query);
-            return new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class), response.getResults().getNumFound());
+            final ZoekResultaat<ZaakZoekObject> zoekResultaat = new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class),
+                                                                                    response.getResults().getNumFound());
+            response.getFacetFields().forEach(facetField -> {
+                FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
+                final List<String> waardes = facetField.getValues().stream().map(FacetField.Count::getName).toList();
+                zoekResultaat.addFilter(facetVeld, waardes);
+            });
+            return zoekResultaat;
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
