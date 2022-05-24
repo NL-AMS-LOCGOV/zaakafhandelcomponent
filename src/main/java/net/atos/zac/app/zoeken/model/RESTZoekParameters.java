@@ -5,16 +5,23 @@
 
 package net.atos.zac.app.zoeken.model;
 
-import javax.ws.rs.QueryParam;
+import java.util.Map;
+
+import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.model.FilterVeld;
+import net.atos.zac.zoeken.model.SorteerVeld;
+import net.atos.zac.zoeken.model.ZoekVeld;
 
 public class RESTZoekParameters {
+    public Map<ZoekVeld, String> zoeken;
 
-    @QueryParam("tekst")
-    public String tekst;
+    public Map<FilterVeld, String> filters;
 
-    @QueryParam("rows")
+    public SorteerVeld sorteerVeld;
+
+    public SorteerRichting sorteerRichting;
+
     public int rows;
 
-    @QueryParam("start")
     public int start;
 }

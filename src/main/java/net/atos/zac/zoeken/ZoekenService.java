@@ -20,7 +20,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import net.atos.zac.shared.model.SortDirection;
+import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
@@ -41,7 +41,7 @@ public class ZoekenService {
     public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
         final SolrQuery query = new SolrQuery("*:*");
         final StringBuilder queryBuilder = new StringBuilder();
-        zoekZaakParameters.getZoekVelden().forEach((zoekVeld, tekst) -> {
+        zoekZaakParameters.getZoeken().forEach((zoekVeld, tekst) -> {
             if (StringUtils.isNotBlank(tekst)) {
                 queryBuilder.append(String.format("%s:(%s) ", zoekVeld.getVeld(), tekst));
             }
@@ -49,19 +49,17 @@ public class ZoekenService {
         if (StringUtils.isNotBlank(queryBuilder.toString())) {
             query.setQuery(queryBuilder.toString());
         }
-        zoekZaakParameters.getBeschikbareFilters().forEach(facetVeld -> {
-            query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld()));
-        });
+        zoekZaakParameters.getBeschikbareFilters()
+                .forEach(facetVeld -> query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
-        zoekZaakParameters.getFilters().forEach((filter, waarde) -> {
-            query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
-        });
+        zoekZaakParameters.getFilters()
+                .forEach((filter, waarde) -> query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde)));
 
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
-        query.addSort(zoekZaakParameters.getSortering().getSorteerVeld().getVeld(),
-                      zoekZaakParameters.getSortering().getRichting() == SortDirection.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+        query.addSort(zoekZaakParameters.getSorteren().getSorteerVeld().getVeld(),
+                      zoekZaakParameters.getSorteren().getRichting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
         try {
             final QueryResponse response = solrClient.query(query);
             final ZoekResultaat<ZaakZoekObject> zoekResultaat = new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class),

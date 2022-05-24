@@ -7,16 +7,19 @@ package net.atos.zac.app.zoeken.converter;
 
 import java.util.UUID;
 
-import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
+import net.atos.zac.app.zoeken.model.RESTZoekResultaat;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 
 public class RESTZoekResultaatConverter {
 
-    public RESTResultaat<RESTZaakZoekObject> convert(final ZoekResultaat<ZaakZoekObject> zoekResultaat) {
-        return new RESTResultaat<>(zoekResultaat.getItems().stream().map(this::convert).toList(), zoekResultaat.getCount());
+    public RESTZoekResultaat<RESTZaakZoekObject> convert(final ZoekResultaat<ZaakZoekObject> zoekResultaat) {
+        RESTZoekResultaat<RESTZaakZoekObject> restZoekResultaat = new RESTZoekResultaat<>(
+                zoekResultaat.getItems().stream().map(this::convert).toList(), zoekResultaat.getCount());
+        restZoekResultaat.filters.putAll(zoekResultaat.getFilters());
+        return restZoekResultaat;
     }
 
     private RESTZaakZoekObject convert(final ZaakZoekObject zoekItem) {

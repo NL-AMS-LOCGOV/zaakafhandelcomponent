@@ -26,7 +26,7 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.shared.model.ListParameters;
-import net.atos.zac.shared.model.SortDirection;
+import net.atos.zac.shared.model.SorteerRichting;
 
 @ApplicationScoped
 @Transactional
@@ -58,7 +58,7 @@ public class InboxDocumentenService {
         final CriteriaQuery<InboxDocument> query = builder.createQuery(InboxDocument.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
         if (listParameters.getSorting() != null) {
-            if (listParameters.getSorting().getDirection() == SortDirection.ASCENDING) {
+            if (listParameters.getSorting().getDirection() == SorteerRichting.ASCENDING) {
                 query.orderBy(builder.asc(root.get(listParameters.getSorting().getField())));
             } else {
                 query.orderBy(builder.desc(root.get(listParameters.getSorting().getField())));

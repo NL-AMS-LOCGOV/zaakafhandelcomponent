@@ -4,7 +4,8 @@
  */
 
 export class ZoekParameters {
-    tekst: string;
+    zoeken: { [key: string]: string } = {};
+    filters: { [key: string]: string } = {};
     rows: number;
     start: number;
 }

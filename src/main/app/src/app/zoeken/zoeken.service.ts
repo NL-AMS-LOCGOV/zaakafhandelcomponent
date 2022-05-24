@@ -22,10 +22,9 @@ export class ZoekenService {
 
     private basepath = '/rest/zoeken';
 
+
     list(zoekParameters: ZoekParameters): Observable<Resultaat<ZoekObject>> {
-        return this.http.get<Resultaat<ZoekObject>>(`${this.basepath}/list`, {
-            params: zoekParameters as any
-        }).pipe(
+        return this.http.put<Resultaat<ZoekObject>>(`${this.basepath}/list`, zoekParameters).pipe(
             catchError(this.handleError)
         );
     }
