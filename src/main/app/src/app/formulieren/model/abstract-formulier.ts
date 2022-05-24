@@ -129,7 +129,6 @@ export abstract class AbstractFormulier {
 
         this.taakDocumenten.forEach(taakDocument => {
             documentNamen.push(taakDocument.titel);
-            console.log(documentNamen);
         });
 
         return documentNamen.join(', ');
