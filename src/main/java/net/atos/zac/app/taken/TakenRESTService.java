@@ -164,6 +164,13 @@ public class TakenRESTService {
     }
 
     @PUT
+    @Path("taakdocumenten")
+    public RESTTaak updateTaakdocumenten(final RESTTaak restTaak) {
+        flowableService.updateTaakdocumenten(restTaak.id, restTaak.taakdocumenten);
+        return restTaak;
+    }
+
+    @PUT
     @Path("verdelen")
     public void allocateTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
