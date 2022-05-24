@@ -5,6 +5,6 @@
 
 export class Taakinformatie {
     uitkomst: string;
-    bijlage: string;
+    bijlagen: string;
     opmerking: string;
 }

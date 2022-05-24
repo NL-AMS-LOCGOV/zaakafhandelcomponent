@@ -13,22 +13,30 @@ import {TaakStuurGegevens} from '../../plan-items/model/taak-stuur-gegevens';
 import {User} from '../../identity/model/user';
 import {Taakinformatie} from '../../taken/model/taakinformatie';
 import {HumanTaskData} from '../../plan-items/model/human-task-data';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {Observable} from 'rxjs';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 export abstract class AbstractFormulier {
 
     public static TOEKENNING_FIELD: string = 'toekenning-field';
+    public static BIJLAGEN_FIELD: string = 'bijlagen';
 
     zaakUuid: string;
     taakNaam: string;
     humanTaskData: HumanTaskData;
     taak: Taak;
-    abstract taakinformatieMapping: { uitkomst: string, bijlage?: string, opmerking?: string };
+    abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
     dataElementen: {};
     afgerond: boolean;
     form: Array<AbstractFormField[]>;
     disablePartialSave: boolean = false;
+    taakDocumenten: EnkelvoudigInformatieobject[];
 
-    protected constructor(protected translate: TranslateService) {}
+    protected constructor(protected translate: TranslateService,
+                          public informatieObjectenService: InformatieObjectenService) {}
 
     initStartForm() {
         this.humanTaskData.taakStuurGegevens = new TaakStuurGegevens();
@@ -42,6 +50,7 @@ export abstract class AbstractFormulier {
         this.form = [];
         this.afgerond = afgerond;
         this._initBehandelForm();
+        this.refreshTaakdocumenten();
     }
 
     abstract _initStartForm();
@@ -81,6 +90,50 @@ export abstract class AbstractFormulier {
         return null;
     }
 
+    refreshTaakdocumenten() {
+        this.form.forEach((value, index) => {
+           value.forEach(field => {
+               if (field.id === AbstractFormulier.BIJLAGEN_FIELD) {
+                   this.form.splice(index, 1);
+               }
+           });
+        });
+
+        this.form.push(
+            [new DocumentenLijstFieldBuilder().id(AbstractFormulier.BIJLAGEN_FIELD)
+                                              .label(AbstractFormulier.BIJLAGEN_FIELD)
+                                              .documenten(this.getTaakdocumenten())
+                                              .readonly(true)
+                                              .build()]);
+
+        this.getTaakdocumenten().subscribe(taakDocumenten => {
+            this.taakDocumenten = taakDocumenten;
+        });
+    }
+
+    private getTaakdocumenten(): Observable<EnkelvoudigInformatieobject[]> {
+        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekParameters.UUIDs = [];
+
+        if (this.taak?.taakdocumenten) {
+            this.taak.taakdocumenten.forEach((uuid) => {
+                zoekParameters.UUIDs.push(uuid);
+            });
+        }
+
+        return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+    }
+
+    private getDocumentInformatie() {
+        const documentNamen: string[] = [];
+
+        this.taakDocumenten.forEach(taakDocument => {
+            documentNamen.push(taakDocument.titel);
+        });
+
+        return documentNamen.join(', ');
+    }
+
     private getDataElementen(formGroup: FormGroup): {} {
         const dataElementen: {} = {};
         Object.keys(formGroup.controls).forEach((key) => {
@@ -92,14 +145,10 @@ export abstract class AbstractFormulier {
     }
 
     private getTaakinformatie(formGroup: FormGroup): Taakinformatie {
-        let bijlage = formGroup.controls[this.taakinformatieMapping.bijlage]?.value;
-        if (bijlage) {
-            bijlage = JSON.parse(bijlage).documentTitel;
-        }
         return {
             uitkomst: formGroup.controls[this.taakinformatieMapping.uitkomst]?.value,
             opmerking: formGroup.controls[this.taakinformatieMapping.opmerking]?.value,
-            bijlage: bijlage
+            bijlagen: this.getDocumentInformatie()
         };
     }
 
