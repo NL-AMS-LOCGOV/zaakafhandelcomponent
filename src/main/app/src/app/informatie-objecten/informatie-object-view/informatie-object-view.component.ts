@@ -135,7 +135,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     }
 
     private toevoegenNieuweVersieActie() {
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF) {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaken?.length > 0) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
