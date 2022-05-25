@@ -135,6 +135,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     }
 
     private toevoegenNieuweVersieActie() {
+        // Nieuwe versie niet toegestaan indien de status definitief is en wanneer er geen zaak gekoppeld is
+        // bij bijvoorbeeld ontkoppelde en inbox documenten.
         if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaken?.length > 0) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
