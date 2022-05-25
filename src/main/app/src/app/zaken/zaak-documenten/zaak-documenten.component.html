@@ -27,7 +27,7 @@
                         <th mat-sort-header mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
                         <td mat-cell *matCellDef="let row">
                             <ng-container *ngIf="column == 'informatieobjectTypeOmschrijving'">{{row[column]|translate | empty}}</ng-container>
-                            <ng-container *ngIf="column == 'status'">{{row[column]|translate | empty}}</ng-container>
+                            <ng-container *ngIf="column == 'status'">{{(row[column] ? 'informatieobject.status.' + row[column] : '')|translate | empty}}</ng-container>
                             <ng-container
                                     *ngIf="column == 'vertrouwelijkheidaanduiding'">{{'vertrouwelijkheidaanduiding.' + row[column]|translate | empty}}</ng-container>
                             <ng-container *ngIf="column == 'creatiedatum'">{{row[column] | datum | empty}}</ng-container>
