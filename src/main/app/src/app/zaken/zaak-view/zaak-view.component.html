@@ -24,10 +24,18 @@
                               (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
-                <mat-card-header>
-                    <mat-card-title>
+                <mat-card-header fxLayout="row">
+                    <mat-card-title fxLayout="row">
                         {{'zaak' | translate}}
                     </mat-card-title>
+                    <mat-chip-list selectable="false" fxLayout="row">
+                        <ng-container *ngFor="let indicatie of indicaties">
+                            <mat-chip [color]="indicatie.color" selected [matTooltip]="indicatie.info">
+                                {{indicatie.naam | translate}}
+                                <mat-icon *ngIf="indicatie.info">info_outline</mat-icon>
+                            </mat-chip>
+                        </ng-container>
+                    </mat-chip-list>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
@@ -114,22 +122,6 @@
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
-                                    <mat-divider></mat-divider>
-                                </div>
-
-                                <div fxFlex="100" *ngIf="zaak.indicatieOpschorting">
-                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieOpschorting' | translate"
-                                                     [value]="'duurDagenVerwacht' | translate:{dagen: zaakOpschorting?.duurDagen}"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100*2/3" [label]="'reden' | translate"
-                                                     [value]="zaak.redenOpschorting"></zac-static-text>
-                                </div>
-                                <div fxFlex="100" *ngIf="zaak.indicatieVerlenging">
-                                    <zac-static-text [fxFlex]="100/3" [icon]="indicatieIcon" [label]="'indicatieVerlenging' | translate"
-                                                     [value]="zaak.duurVerlenging"></zac-static-text>
-                                    <zac-static-text [fxFlex]="100*2/3" [label]="'reden' | translate"
-                                                     [value]="zaak.redenVerlenging"></zac-static-text>
-                                </div>
-                                <div fxFlex="100" *ngIf="zaak.indicatieOpschorting || zaak.indicatieVerlenging" class="mat-divider-wrapper">
                                     <mat-divider></mat-divider>
                                 </div>
 
@@ -268,7 +260,7 @@
 
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
-                    <mat-card-title fxLayout="row">{{'taken'| translate}}                    </mat-card-title>
+                    <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>
                     <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" fxLayout="row"
                                       id="takenAfgerondeToon_toggle"
                                       (change)="filterTakenOpStatus()">{{ 'toonAfgerondeTaken' | translate }}</mat-slide-toggle>
