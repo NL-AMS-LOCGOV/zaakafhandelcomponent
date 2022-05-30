@@ -39,6 +39,9 @@ public class RESTZaakafhandelParametersConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
+    RESTZaakResultaattypeConverter restZaakResultaattypeConverter;
+
+    @Inject
     private RESTZaakbeeindigParameterConverter zaakbeeindigParameterConverter;
 
     @Inject
@@ -55,6 +58,10 @@ public class RESTZaakafhandelParametersConverter {
         restParameters.defaultBehandelaar = userConverter.convertUserId(parameters.getGebruikersnaamMedewerker());
         restParameters.einddatumGeplandWaarschuwing = parameters.getEinddatumGeplandWaarschuwing();
         restParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
+        if (parameters.getNietOntvankelijkResultaattype() != null) {
+            restParameters.zaakNietOntvankelijkResultaat = restZaakResultaattypeConverter.convertToRest(
+                    ztcClientService.readResultaattype(parameters.getNietOntvankelijkResultaattype()));
+        }
         restParameters.caseDefinition = caseDefinitionConverter.convertToRest(parameters.getCaseDefinitionID());
         if (inclusiefPlanitems && restParameters.caseDefinition != null) {
             final List<RESTHumanTaskParameters> list = new ArrayList<>();
@@ -110,6 +117,7 @@ public class RESTZaakafhandelParametersConverter {
             parameters.setEinddatumGeplandWaarschuwing(restParameters.einddatumGeplandWaarschuwing);
         }
         parameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
+        parameters.setNietOntvankelijkResultaattype(restParameters.zaakNietOntvankelijkResultaat.id);
         final List<HumanTaskParameters> list = new ArrayList<>();
         restParameters.humanTaskParameters.forEach(restHumanTaskParameters -> {
             HumanTaskParameters humanTaskParameters = new HumanTaskParameters();
