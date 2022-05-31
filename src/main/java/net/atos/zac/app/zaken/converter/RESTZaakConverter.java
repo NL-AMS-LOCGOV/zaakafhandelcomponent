@@ -154,7 +154,7 @@ public class RESTZaakConverter {
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 
-        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);
+        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));
         return restZaak;
     }
@@ -167,7 +167,6 @@ public class RESTZaakConverter {
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);
 
-        zaak.setEinddatumGepland(restZaak.startdatum);
         zaak.setRegistratiedatum(restZaak.registratiedatum);
 
         if (restZaak.communicatiekanaal != null) {

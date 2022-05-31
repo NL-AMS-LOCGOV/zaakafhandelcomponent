@@ -122,25 +122,29 @@ public class RESTInformatieobjectConverter {
         data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
         data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
+        data.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
+        data.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
         return data;
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud convertTaakObject(final String titel,
-            final UUID informatieObjectTypeUuid, final RESTFileUpload bestand) {
+    public EnkelvoudigInformatieobjectWithInhoud convertTaakObject(
+            final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfiguratieService.BRON_ORGANISATIE,
                 LocalDate.now(),
-                titel,
+                restEnkelvoudigInformatieobject.titel,
                 loggedInUserInstance.get().getFullName(),
                 ConfiguratieService.TAAL_NEDERLANDS,
-                ztcClientService.readInformatieobjecttype(informatieObjectTypeUuid).getUrl(),
+                ztcClientService.readInformatieobjecttype(restEnkelvoudigInformatieobject.informatieobjectTypeUUID).getUrl(),
                 Base64.getEncoder().encodeToString(bestand.file)
         );
         data.setFormaat(bestand.type);
         data.setBestandsnaam(bestand.filename);
         data.setBeschrijving(OMSCHRIJVING_TAAK_DOCUMENT);
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
+        data.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
+        data.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         return data;
     }
@@ -241,6 +245,9 @@ public class RESTInformatieobjectConverter {
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum != null) {
             data.setVerzenddatum(restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum);
+        }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.ontvangstdatum != null) {
+            data.setOntvangstdatum(restEnkelvoudigInformatieObjectVersieGegevens.ontvangstdatum);
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.titel != null) {
             data.setTitel(restEnkelvoudigInformatieObjectVersieGegevens.titel);

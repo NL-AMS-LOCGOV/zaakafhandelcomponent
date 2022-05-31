@@ -16,6 +16,7 @@ import {UtilService} from '../../core/service/util.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
+import {ZoekVeld} from '../model/zoek-veld';
 
 @Component({
     selector: 'zac-zoeken',
@@ -72,7 +73,7 @@ export class ZoekComponent implements AfterViewInit {
 
     getZoekParameters(): ZoekParameters {
         const zoekParameters: ZoekParameters = new ZoekParameters();
-        zoekParameters.tekst = this.zoekenControl.value;
+        zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
         zoekParameters.start = this.paginator.pageIndex * this.paginator.pageSize;
         zoekParameters.rows = this.paginator.pageSize;
         return zoekParameters;

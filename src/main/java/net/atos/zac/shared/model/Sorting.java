@@ -3,14 +3,14 @@ package net.atos.zac.shared.model;
 public class Sorting {
     private final String field;
 
-    private final SortDirection direction;
+    private final SorteerRichting direction;
 
     public Sorting(final String field) {
         this.field = field;
-        this.direction = SortDirection.DESCENDING;
+        this.direction = SorteerRichting.DESCENDING;
     }
 
-    public Sorting(final String field, final SortDirection direction) {
+    public Sorting(final String field, final SorteerRichting direction) {
         this.field = field;
         this.direction = direction;
     }
@@ -19,7 +19,7 @@ public class Sorting {
         return field;
     }
 
-    public SortDirection getDirection() {
+    public SorteerRichting getDirection() {
         return direction;
     }
 }

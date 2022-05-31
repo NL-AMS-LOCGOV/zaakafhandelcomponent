@@ -9,7 +9,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECT
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -242,17 +241,12 @@ public class ZGWApiService implements Caching {
 
     private void calculateDoorlooptijden(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Period streefDatum = zaaktype.getServicenorm();
-        final Period fataleDatum = zaaktype.getDoorlooptijd();
 
-        if (streefDatum != null) {
-            final LocalDate eindDatumGepland = zaak.getStartdatum().plus(streefDatum);
-            zaak.setEinddatumGepland(eindDatumGepland);
+        if (zaaktype.getServicenorm() != null) {
+            zaak.setEinddatumGepland(zaak.getStartdatum().plus(zaaktype.getServicenorm()));
         }
-        if (fataleDatum != null) {
-            final LocalDate uiterlijkeEindDatumAfdoening = zaak.getStartdatum().plus(fataleDatum);
-            zaak.setUiterlijkeEinddatumAfdoening(uiterlijkeEindDatumAfdoening);
-        }
+
+        zaak.setUiterlijkeEinddatumAfdoening(zaak.getStartdatum().plus(zaaktype.getDoorlooptijd()));
     }
 
     @CacheRemoveAll(cacheName = ZGW_ZAAK_GROEP_MANAGED)

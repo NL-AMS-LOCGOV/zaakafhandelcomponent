@@ -11,5 +11,5 @@ public class RESTZaakVerlengGegevens {
 
     public int duurDagen;
 
-    public Boolean takenVerlengen;
+    public boolean takenVerlengen;
 }

@@ -10,7 +10,6 @@ import {ZaakViewComponent} from './zaak-view/zaak-view.component';
 import {ZaakVerkortComponent} from './zaak-verkort/zaak-verkort.component';
 import {SharedModule} from '../shared/shared.module';
 import {ZaakCreateComponent} from './zaak-create/zaak-create.component';
-import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
 import {ZakenVerdelenDialogComponent} from './zaken-verdelen-dialog/zaken-verdelen-dialog.component';
@@ -22,6 +21,7 @@ import {InformatieObjectenModule} from '../informatie-objecten/informatie-object
 import {PlanItemsModule} from '../plan-items/plan-items.module';
 import {MailModule} from '../mail/mail.module';
 import {ZaakDocumentenComponent} from './zaak-documenten/zaak-documenten.component';
+import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 
 @NgModule({
     declarations: [

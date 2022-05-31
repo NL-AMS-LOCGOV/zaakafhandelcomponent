@@ -101,6 +101,8 @@ import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.OpenZaakPaginationUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
+import net.atos.zac.zoeken.IndexeerService;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 /**
  *
@@ -177,6 +179,9 @@ public class ZakenRESTService {
 
     @Inject
     private RESTGeometryConverter restGeometryConverter;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -264,7 +269,7 @@ public class ZakenRESTService {
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakVerlengGegevens, zaakUUID),
                                                                       VERLENGING);
-        if (restZaakVerlengGegevens.takenVerlengen != null && restZaakVerlengGegevens.takenVerlengen) {
+        if (restZaakVerlengGegevens.takenVerlengen) {
             final int[] count = new int[1];
             flowableService.listOpenTasksforCase(zaakUUID).stream()
                     .filter(task -> task.getDueDate() != null)
@@ -433,6 +438,7 @@ public class ZakenRESTService {
                 zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), verdeelGegevens.reden);
             }
         });
+        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
     }
 
     @PUT
@@ -442,6 +448,7 @@ public class ZakenRESTService {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
         });
+        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
     }
 
     @PUT
@@ -468,6 +475,7 @@ public class ZakenRESTService {
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(
             final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
+        indexeerService.indexeerDirect(zaak.getUuid(), ZoekObjectType.ZAAK);
         return zaakOverzichtConverter.convert(zaak);
     }
 

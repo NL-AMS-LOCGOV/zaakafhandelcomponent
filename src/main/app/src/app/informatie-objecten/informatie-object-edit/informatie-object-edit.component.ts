@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
@@ -28,13 +28,15 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
+import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'zac-informatie-object-edit',
     templateUrl: './informatie-object-edit.component.html',
     styleUrls: ['./informatie-object-edit.component.less']
 })
-export class InformatieObjectEditComponent implements OnInit {
+export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
     @Input() infoObject: EnkelvoudigInformatieObjectVersieGegevens;
     @Input() sideNav: MatSidenav;
@@ -47,6 +49,8 @@ export class InformatieObjectEditComponent implements OnInit {
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
     ingelogdeMedewerker: User;
+
+    private subscriptions$: Subscription[] = [];
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -103,6 +107,12 @@ export class InformatieObjectEditComponent implements OnInit {
                                                        .value(this.infoObject.verzenddatum)
                                                        .build();
 
+        const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
+                                                         .label('ontvangstdatum')
+                                                         .hint(new FormFieldHint(this.translateService.instant(
+                                                             'msg.document.ontvangstdatum.hint')))
+                                                         .build();
+
         const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
                                                   .validators(Validators.required)
                                                   .value(this.ingelogdeMedewerker.naam)
@@ -129,7 +139,38 @@ export class InformatieObjectEditComponent implements OnInit {
             vorigeBestandsnaam = '' + titelCtrl.value;
         });
 
-        this.fields = [[inhoudField], [titel], [beschrijving], [status, vertrouwelijk], [auteur], [verzenddatum, taal], [toelichting]];
+        this.fields = [[inhoudField], [titel], [beschrijving], [status, vertrouwelijk], [auteur, taal],
+            [ontvangstDatum, verzenddatum], [toelichting]];
+
+        this.subscriptions$.push(ontvangstDatum.formControl.valueChanges.subscribe(value => {
+            if (value && verzenddatum.formControl.enabled) {
+                status.formControl.setValue(
+                    informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
+                status.formControl.disable();
+                verzenddatum.formControl.disable();
+            } else if (!value && verzenddatum.formControl.disabled) {
+                status.formControl.enable();
+                verzenddatum.formControl.enable();
+            }
+        }));
+
+        this.subscriptions$.push(verzenddatum.formControl.valueChanges.subscribe(value => {
+            if (value && ontvangstDatum.formControl.enabled) {
+                ontvangstDatum.formControl.disable();
+            } else if (!value && ontvangstDatum.formControl.disabled && !this.infoObject.verzenddatum) {
+                ontvangstDatum.formControl.enable();
+            }
+        }));
+
+        if (verzenddatum.formControl.value || this.infoObject.verzenddatum) {
+            ontvangstDatum.formControl.disable(verzenddatum.formControl.value);
+        }
+    }
+
+    ngOnDestroy(): void {
+        for (const subscription of this.subscriptions$) {
+            subscription.unsubscribe();
+        }
     }
 
     onFormSubmit(formGroup: FormGroup): void {
