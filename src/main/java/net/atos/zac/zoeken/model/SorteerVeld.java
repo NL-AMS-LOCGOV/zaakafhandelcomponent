@@ -5,6 +5,8 @@
 
 package net.atos.zac.zoeken.model;
 
+import java.util.stream.Stream;
+
 public enum SorteerVeld {
     IDENTIFICATIE("identificatie"),
     ZAAK_ZAAKTYPE("zaak_zaaktypeOmschrijving"),
@@ -39,11 +41,9 @@ public enum SorteerVeld {
     }
 
     public static SorteerVeld fromValue(final String veld) {
-        for (final SorteerVeld sv : SorteerVeld.values()) {
-            if (String.valueOf(sv.veld).equals(veld)) {
-                return sv;
-            }
-        }
-        throw new IllegalArgumentException("Onbekend SorteerVeld '" + veld + "'");
+        return Stream.of(SorteerVeld.values())
+                .filter(filter -> String.valueOf(filter.veld).equals(veld))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Onbekend SorteerVeld '%s'", veld)));
     }
 }

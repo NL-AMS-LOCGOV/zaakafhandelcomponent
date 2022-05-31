@@ -28,7 +28,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.shared.model.ListParameters;
-import net.atos.zac.shared.model.SortDirection;
+import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.util.UriUtil;
 
 
@@ -63,7 +63,7 @@ public class OntkoppeldeDocumentenService {
         final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
         if (listParameters.getSorting() != null) {
-            if (listParameters.getSorting().getDirection() == SortDirection.ASCENDING) {
+            if (listParameters.getSorting().getDirection() == SorteerRichting.ASCENDING) {
                 query.orderBy(builder.asc(root.get(listParameters.getSorting().getField())));
             } else {
                 query.orderBy(builder.desc(root.get(listParameters.getSorting().getField())));

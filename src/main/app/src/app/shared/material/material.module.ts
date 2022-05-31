@@ -33,6 +33,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
     exports: [
@@ -64,7 +65,8 @@ import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
         MatTooltipModule,
         MatAutocompleteModule,
         ReactiveFormsModule,
-        MatChipsModule
+        MatChipsModule,
+        MatDatepickerModule
     ],
     providers: [{
         provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
