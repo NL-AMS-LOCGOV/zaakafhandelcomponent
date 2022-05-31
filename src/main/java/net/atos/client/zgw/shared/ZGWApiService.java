@@ -176,10 +176,10 @@ public class ZGWApiService implements Caching {
     /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
-     * @param zaak                                   {@link Zaak}.
-     * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
-     * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
-     * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.
+     * @param zaak             {@link Zaak}.
+     * @param informatieobject {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
+     * @param titel            Titel of the new {@link ZaakInformatieobject}.
+     * @param beschrijving     Beschrijving of the new {@link ZaakInformatieobject}.
      * @return Created {@link ZaakInformatieobject}.
      */
     public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
@@ -204,7 +204,8 @@ public class ZGWApiService implements Caching {
      */
     @CacheResult(cacheName = ZGW_ZAAK_GROEP_MANAGED)
     public Optional<RolOrganisatorischeEenheid> findGroepForZaak(final URI zaakUrl) {
-        return Optional.ofNullable((RolOrganisatorischeEenheid) findRolForZaak(zaakUrl, BetrokkeneType.ORGANISATORISCHE_EENHEID, AardVanRol.BEHANDELAAR));
+        final Zaak zaak = zrcClientService.readZaak(zaakUrl);
+        return Optional.ofNullable((RolOrganisatorischeEenheid) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.ORGANISATORISCHE_EENHEID));
     }
 
     /**
@@ -215,38 +216,18 @@ public class ZGWApiService implements Caching {
      */
     @CacheResult(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
     public Optional<RolMedewerker> findBehandelaarForZaak(final URI zaakUrl) {
-        return Optional.ofNullable((RolMedewerker) findRolForZaak(zaakUrl, BetrokkeneType.MEDEWERKER, AardVanRol.BEHANDELAAR));
+        final Zaak zaak = zrcClientService.readZaak(zaakUrl);
+        return Optional.ofNullable((RolMedewerker) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.MEDEWERKER));
     }
 
-    /**
-     * Find BSN or Vestigingsnummer for {@link Zaak} with initiator {@link AardVanRol}.
-     *
-     * @param zaakUrl {@link URI}
-     * @return bsn, vestigingsnummer or null
-     */
-    public String findInitiatorForZaak(final URI zaakUrl) {
-        final URI zaakType = zrcClientService.readZaak(zaakUrl).getZaaktype();
-        final Roltype roltype = ztcClientService.readRoltype(zaakType, AardVanRol.INITIATOR);
-        final RolListParameters rolListParameters = new RolListParameters();
-        rolListParameters.setZaak(zaakUrl);
-        rolListParameters.setRoltype(roltype.getUrl());
-        Rol<?> rol = zrcClientService.listRollen(rolListParameters).getSingleResult().orElse(null);
-        if (rol != null) {
-            return rol.getIdentificatienummer();
-        }
-        return null;
+    public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
+        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl())).getSingleResult().orElse(null);
     }
 
-    private Rol<?> findRolForZaak(final URI zaakUrl, final BetrokkeneType betrokkeneType, final AardVanRol aardVanRol) {
-        final URI zaakType = zrcClientService.readZaak(zaakUrl).getZaaktype();
-        final Roltype roltype = ztcClientService.readRoltype(zaakType, aardVanRol);
-        final RolListParameters rolListParameters = new RolListParameters();
-        rolListParameters.setZaak(zaakUrl);
-        rolListParameters.setBetrokkeneType(betrokkeneType);
-        rolListParameters.setRoltype(roltype.getUrl());
-        return zrcClientService.listRollen(rolListParameters)
-                .getSingleResult()
-                .orElse(null);
+    public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol, final BetrokkeneType betrokkeneType) {
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
+        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult().orElse(null);
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {

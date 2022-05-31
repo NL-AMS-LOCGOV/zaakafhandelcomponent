@@ -38,9 +38,9 @@ public class ProductAanvraagService {
 
     public static final String ZAAK_INFORMATIEOBJECT_TITEL = "Aanvraag PDF";
 
-    private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
+    public static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
 
-    private static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
+    private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
 

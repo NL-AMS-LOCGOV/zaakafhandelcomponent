@@ -22,9 +22,11 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Opschorting;
+import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
@@ -146,7 +148,11 @@ public class RESTZaakConverter {
                 .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
         restZaak.behandelaar = userConverter.convertUserId(behandelaarId);
-        restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
+
+        final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
+        if (initiator != null) {
+            restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
+        }
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));

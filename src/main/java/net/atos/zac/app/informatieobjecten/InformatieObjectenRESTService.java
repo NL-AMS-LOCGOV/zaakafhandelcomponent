@@ -27,9 +27,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.shared.util.URIUtil;
-import net.atos.zac.flowable.FlowableService;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -38,6 +35,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
@@ -62,6 +60,7 @@ import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
+import net.atos.zac.flowable.FlowableService;
 
 @Singleton
 @Path("informatieobjecten")
@@ -307,9 +306,7 @@ public class InformatieObjectenRESTService {
     }
 
     private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
-        return zrcClientService.listZaakinformatieobjecten(parameters);
+        return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid));
     }
 
     private String lockEigenaar() {

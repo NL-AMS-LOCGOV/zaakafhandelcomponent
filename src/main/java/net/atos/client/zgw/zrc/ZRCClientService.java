@@ -360,6 +360,12 @@ public class ZRCClientService implements Caching {
         return zrcClient.zaakinformatieobjectList(filter);
     }
 
+    public List<ZaakInformatieobject> listZaakinformatieobjecten(final EnkelvoudigInformatieobject informatieobject) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setInformatieobject(informatieobject.getUrl());
+        return listZaakinformatieobjecten(parameters);
+    }
+
     /**
      * List instances of {@link Rol} filtered by {@link RolListParameters}.
      *
@@ -377,9 +383,7 @@ public class ZRCClientService implements Caching {
      * @return List of {@link Rol}
      */
     public List<Rol<?>> listRollen(final URI zaakURI) {
-        final RolListParameters rolListParameters = new RolListParameters();
-        rolListParameters.setZaak(zaakURI);
-        return zrcClient.rolList(rolListParameters).getResults();
+        return zrcClient.rolList(new RolListParameters(zaakURI)).getResults();
     }
 
     public Zaak readZaakByID(final String identificatie) {
@@ -433,12 +437,6 @@ public class ZRCClientService implements Caching {
         nieuweZaakInformatieObject.setBeschrijving(informatieobject.getBeschrijving());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
-    }
-
-    public List<ZaakInformatieobject> listZaakinformatieobjecten(final EnkelvoudigInformatieobject informatieobject) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(informatieobject.getUrl());
-        return listZaakinformatieobjecten(parameters);
     }
 
     @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
