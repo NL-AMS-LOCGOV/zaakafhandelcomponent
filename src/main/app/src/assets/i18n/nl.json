@@ -338,7 +338,7 @@
   "msg.error.invalid.email": "Het {{label}}-veld bevat een ongeldig E-Mailadres. Gebruik het voorbeeld@example.com formaat!",
   "msg.error.invalid.formaat": "Het {{label}}-veld bevat een ongeldige waarde. Gebruik het {{requiredPattern}} formaat!",
   "msg.error.date.formaat": "DD-MM-JJJJ",
-  "msg.error.date.invalid.streef": "De streefdatum mag niet voor de startdatum of na de streefdatum liggen",
+  "msg.error.date.invalid.streef": "De streefdatum mag niet voor de startdatum of na de fatale datum liggen",
   "msg.error.date.invalid.fatale1": "De fatale datum mag niet voor de startdatum of de streefdatum liggen",
   "msg.error.date.invalid.fatale2": "De fatale datum mag niet voor de startdatum liggen",
   "msg.email.verstuurd": "Email is verstuurd",
