@@ -120,7 +120,7 @@ public class DataConverter {
         zaakData.identificatie = zaak.getIdentificatie();
         zaakData.omschrijving = zaak.getOmschrijving();
         zaakData.toelichting = zaak.getToelichting();
-        zaakData.zaaktypeOmschrijving = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
+        zaakData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         zaakData.registratiedatum = zaak.getRegistratiedatum();
         zaakData.startdatum = zaak.getStartdatum();
         zaakData.einddatumGepland = zaak.getEinddatumGepland();
@@ -128,11 +128,11 @@ public class DataConverter {
         zaakData.einddatum = zaak.getEinddatum();
 
         if (zaak.getStatus() != null) {
-            zaakData.statustypeOmschrijving = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
+            zaakData.status = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
         }
 
         if (zaak.getResultaat() != null) {
-            zaakData.resultaattypeOmschrijving = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype())
+            zaakData.resultaat = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype())
                     .getOmschrijving();
         }
 

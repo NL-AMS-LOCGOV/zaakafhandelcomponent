@@ -13,7 +13,7 @@ import javax.json.bind.annotation.JsonbDateFormat;
 
 public class ZaakData {
 
-    public String zaaktypeOmschrijving;
+    public String zaaktype;
 
     public String identificatie;
 
@@ -44,9 +44,9 @@ public class ZaakData {
 
     public String opschortingReden;
 
-    public String resultaattypeOmschrijving;
+    public String resultaat;
 
-    public String statustypeOmschrijving;
+    public String status;
 
     public String besluit;
 
