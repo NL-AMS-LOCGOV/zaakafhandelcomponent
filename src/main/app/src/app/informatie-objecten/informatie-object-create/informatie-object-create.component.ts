@@ -30,6 +30,7 @@ import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
 import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
+import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
 
 @Component({
     selector: 'zac-informatie-object-create',
@@ -122,6 +123,16 @@ export class InformatieObjectCreateComponent implements OnInit {
                                                           .validators(Validators.required)
                                                           .build();
 
+        const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
+                                                         .label('ontvangstdatum')
+                                                         .hint(new FormFieldHint(this.translateService.instant(
+                                                             'msg.document.ontvangstdatum.hint')))
+                                                         .build();
+
+        const verzendDatum = new DateFormFieldBuilder().id('verzenddatum')
+                                                       .label('verzenddatum')
+                                                       .build();
+
         const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
                                                        .label(this.translateService.instant(
                                                            'actie.document.aanmaken.nogmaals'))
@@ -129,9 +140,10 @@ export class InformatieObjectCreateComponent implements OnInit {
 
         if (this.zaak) {
             this.fields =
-                [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk], [status, beginRegistratie], [auteur, taal], [nogmaals]];
+                [[inhoudField], [titel], [beschrijving], [informatieobjectType, vertrouwelijk],
+                    [status, beginRegistratie], [auteur, taal], [ontvangstDatum, verzendDatum], [nogmaals]];
         } else if (this.taak) {
-            this.fields = [[inhoudField], [titel], [informatieobjectType], [nogmaals]];
+            this.fields = [[inhoudField], [titel], [informatieobjectType], [ontvangstDatum, verzendDatum], [nogmaals]];
         }
 
 
@@ -150,6 +162,25 @@ export class InformatieObjectCreateComponent implements OnInit {
             }
         });
 
+        ontvangstDatum.formControl.valueChanges.subscribe(value => {
+            if (value && verzendDatum.formControl.enabled) {
+                status.formControl.setValue(
+                    informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
+                status.formControl.disable();
+                verzendDatum.formControl.disable();
+            } else if (!value && verzendDatum.formControl.disabled) {
+                status.formControl.enable();
+                verzendDatum.formControl.enable();
+            }
+        });
+
+        verzendDatum.formControl.valueChanges.subscribe(value => {
+            if (value && ontvangstDatum.formControl.enabled) {
+                ontvangstDatum.formControl.disable();
+            } else if (!value && ontvangstDatum.formControl.disabled) {
+                ontvangstDatum.formControl.enable();
+            }
+        });
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -210,6 +241,10 @@ export class InformatieObjectCreateComponent implements OnInit {
         }
         formGroup.get('informatieobjectTypeUUID').reset();
         formGroup.get('informatieobjectTypeUUID').setErrors(null);
+        formGroup.get('ontvangstdatum').reset();
+        formGroup.get('ontvangstdatum').setErrors(null);
+        formGroup.get('verzenddatum').reset();
+        formGroup.get('verzenddatum').setErrors(null);
         this.resetForm(formGroup);
     }
 

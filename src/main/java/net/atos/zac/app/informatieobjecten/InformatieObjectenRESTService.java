@@ -158,8 +158,7 @@ public class InformatieObjectenRESTService {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieId);
         final EnkelvoudigInformatieobjectWithInhoud data = taakObject ?
-                restInformatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject.titel,
-                                                                restEnkelvoudigInformatieobject.informatieobjectTypeUUID, file) :
+                restInformatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject, file) :
                 restInformatieobjectConverter.convertZaakObject(restEnkelvoudigInformatieobject, file);
 
         final ZaakInformatieobject zaakInformatieobject =

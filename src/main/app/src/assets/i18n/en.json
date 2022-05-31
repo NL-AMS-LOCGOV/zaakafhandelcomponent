@@ -387,6 +387,7 @@
   "msg.zaak.verlengen.meer": "Enter the extra extension duur (previous extensions {{eerdereDuur}}).",
   "msg.document.toegevoegd.aan.zaak": "The document has been added to the case",
   "msg.document.nieuwe.versie.toegevoegd": "A new version of the document has been added",
+  "msg.document.ontvangstdatum.hint": "The status is changed to final when entering a receipt date!",
   "msg.loading": "Retrieving the data",
   "msg.zaakafhandelparameters.opgeslagen": "The case handling parameters are saved",
   "msg.advies.behandelen": "The case handler asks for advice.<br>Assess the question and, if necessary, the documents and provide your advice with an explanation.",

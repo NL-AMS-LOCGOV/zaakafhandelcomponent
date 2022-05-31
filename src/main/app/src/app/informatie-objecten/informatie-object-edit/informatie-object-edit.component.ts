@@ -28,6 +28,7 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
+import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
 
 @Component({
     selector: 'zac-informatie-object-edit',
@@ -103,6 +104,12 @@ export class InformatieObjectEditComponent implements OnInit {
                                                        .value(this.infoObject.verzenddatum)
                                                        .build();
 
+        const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
+                                                         .label('ontvangstdatum')
+                                                         .hint(new FormFieldHint(this.translateService.instant(
+                                                             'msg.document.ontvangstdatum.hint')))
+                                                         .build();
+
         const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
                                                   .validators(Validators.required)
                                                   .value(this.ingelogdeMedewerker.naam)
@@ -129,7 +136,32 @@ export class InformatieObjectEditComponent implements OnInit {
             vorigeBestandsnaam = '' + titelCtrl.value;
         });
 
-        this.fields = [[inhoudField], [titel], [beschrijving], [status, vertrouwelijk], [auteur], [verzenddatum, taal], [toelichting]];
+        this.fields = [[inhoudField], [titel], [beschrijving], [status, vertrouwelijk], [auteur, taal],
+            [ontvangstDatum, verzenddatum], [toelichting]];
+
+        ontvangstDatum.formControl.valueChanges.subscribe(value => {
+            if (value && verzenddatum.formControl.enabled) {
+                status.formControl.setValue(
+                    informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
+                status.formControl.disable();
+                verzenddatum.formControl.disable();
+            } else if (!value && verzenddatum.formControl.disabled) {
+                status.formControl.enable();
+                verzenddatum.formControl.enable();
+            }
+        });
+
+        verzenddatum.formControl.valueChanges.subscribe(value => {
+            if (value && ontvangstDatum.formControl.enabled) {
+                ontvangstDatum.formControl.disable();
+            } else if (!value && ontvangstDatum.formControl.disabled && !this.infoObject.verzenddatum) {
+                ontvangstDatum.formControl.enable();
+            }
+        });
+
+        if (verzenddatum.formControl.value || this.infoObject.verzenddatum) {
+            ontvangstDatum.formControl.disable(verzenddatum.formControl.value);
+        }
     }
 
     onFormSubmit(formGroup: FormGroup): void {

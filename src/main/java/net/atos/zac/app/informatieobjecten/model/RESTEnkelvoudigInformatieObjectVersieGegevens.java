@@ -34,5 +34,7 @@ public class RESTEnkelvoudigInformatieObjectVersieGegevens {
 
     public LocalDate verzenddatum;
 
+    public LocalDate ontvangstdatum;
+
     public String toelichting;
 }
