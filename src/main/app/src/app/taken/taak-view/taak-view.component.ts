@@ -68,7 +68,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
-                protected translate: TranslateService, private iInformatieObjectenService: InformatieObjectenService) {
+                protected translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
         super();
     }
 
@@ -161,9 +161,10 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         this.menu.push(new ButtonMenuItem('actie.document.creeren', () => {
+            // ToDo: #1028 - Huidige implementatie is alleen bedoeld om te kunnen testen
             const documentCreatieGegevens = new DocumentCreatieGegevens(this.taak.zaakUUID, '46802bae-5759-4185-9a65-ffac1da77e8a', this.taak.id);
             documentCreatieGegevens.titel = 'Optionele titel van het document';
-            this.iInformatieObjectenService.createDocument(documentCreatieGegevens)
+            this.informatieObjectenService.createDocument(documentCreatieGegevens)
                 .subscribe((redirectUrl) => {
                     console.log(redirectUrl);
                 });
