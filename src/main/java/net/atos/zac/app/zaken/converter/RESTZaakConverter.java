@@ -161,7 +161,6 @@ public class RESTZaakConverter {
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);
 
-        zaak.setEinddatumGepland(restZaak.startdatum);
         zaak.setRegistratiedatum(restZaak.registratiedatum);
 
         if (restZaak.communicatiekanaal != null) {
