@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {UtilService} from '../../core/service/util.service';
@@ -31,13 +31,14 @@ import {FormComponent} from '../../shared/material-form-builder/form/form/form.c
 import {MatDrawer} from '@angular/material/sidenav';
 import {Taak} from '../../taken/model/taak';
 import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'zac-informatie-object-create',
     templateUrl: './informatie-object-create.component.html',
     styleUrls: ['./informatie-object-create.component.less']
 })
-export class InformatieObjectCreateComponent implements OnInit {
+export class InformatieObjectCreateComponent implements OnInit, OnDestroy {
 
     @Input() zaak: Zaak;
     @Input() taak: Taak;
@@ -50,6 +51,8 @@ export class InformatieObjectCreateComponent implements OnInit {
     informatieobjecttypes: Informatieobjecttype[];
     formConfig: FormConfig;
     ingelogdeMedewerker: User;
+
+    private subscriptions$: Subscription[] = [];
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -148,21 +151,21 @@ export class InformatieObjectCreateComponent implements OnInit {
 
 
         let vorigeBestandsnaam = null;
-        inhoudField.fileUploaded.subscribe(bestandsnaam => {
+        this.subscriptions$.push(inhoudField.fileUploaded.subscribe(bestandsnaam => {
             const titelCtrl = titel.formControl;
             if (!titelCtrl.value || titelCtrl.value === vorigeBestandsnaam) {
                 titelCtrl.setValue(bestandsnaam.replace(/\.[^/.]+$/, ''));
                 vorigeBestandsnaam = '' + titelCtrl.value;
             }
-        });
+        }));
 
-        informatieobjectType.formControl.valueChanges.subscribe(value => {
+        this.subscriptions$.push(informatieobjectType.formControl.valueChanges.subscribe(value => {
             if (value) {
                 vertrouwelijk.formControl.setValue(vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
             }
-        });
+        }));
 
-        ontvangstDatum.formControl.valueChanges.subscribe(value => {
+        this.subscriptions$.push(ontvangstDatum.formControl.valueChanges.subscribe(value => {
             if (value && verzendDatum.formControl.enabled) {
                 status.formControl.setValue(
                     informatieobjectStatussen.find(option => option.value === InformatieobjectStatus.DEFINITIEF));
@@ -172,15 +175,21 @@ export class InformatieObjectCreateComponent implements OnInit {
                 status.formControl.enable();
                 verzendDatum.formControl.enable();
             }
-        });
+        }));
 
-        verzendDatum.formControl.valueChanges.subscribe(value => {
+        this.subscriptions$.push(verzendDatum.formControl.valueChanges.subscribe(value => {
             if (value && ontvangstDatum.formControl.enabled) {
                 ontvangstDatum.formControl.disable();
             } else if (!value && ontvangstDatum.formControl.disabled) {
                 ontvangstDatum.formControl.enable();
             }
-        });
+        }));
+    }
+
+    ngOnDestroy(): void {
+        for (const subscription of this.subscriptions$) {
+            subscription.unsubscribe();
+        }
     }
 
     onFormSubmit(formGroup: FormGroup): void {
