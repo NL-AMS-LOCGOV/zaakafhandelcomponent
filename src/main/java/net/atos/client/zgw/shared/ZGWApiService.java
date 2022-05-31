@@ -5,12 +5,10 @@
 
 package net.atos.client.zgw.shared;
 
-import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
-import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -178,10 +175,10 @@ public class ZGWApiService implements Caching {
     /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
-     * @param zaak                                   {@link Zaak}.
-     * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
-     * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
-     * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.
+     * @param zaak             {@link Zaak}.
+     * @param informatieobject {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
+     * @param titel            Titel of the new {@link ZaakInformatieobject}.
+     * @param beschrijving     Beschrijving of the new {@link ZaakInformatieobject}.
      * @return Created {@link ZaakInformatieobject}.
      */
     public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
@@ -252,8 +249,8 @@ public class ZGWApiService implements Caching {
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
-        // Subtract one second from now() in order to prevent 'date in future' exception.
-        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now().minusSeconds(1));
+        // In case of a 'date in future' exception during local development: subtract 10 seconds from now().
+        final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
         final Status created = zrcClientService.createStatus(status);
         // This event will also happen via open-notificaties
@@ -263,17 +260,12 @@ public class ZGWApiService implements Caching {
 
     private void calculateDoorlooptijden(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Period streefDatum = zaaktype.getServicenorm();
-        final Period fataleDatum = zaaktype.getDoorlooptijd();
 
-        if (streefDatum != null) {
-            final LocalDate eindDatumGepland = zaak.getStartdatum().plus(streefDatum);
-            zaak.setEinddatumGepland(eindDatumGepland);
+        if (zaaktype.getServicenorm() != null) {
+            zaak.setEinddatumGepland(zaak.getStartdatum().plus(zaaktype.getServicenorm()));
         }
-        if (fataleDatum != null) {
-            final LocalDate uiterlijkeEindDatumAfdoening = zaak.getStartdatum().plus(fataleDatum);
-            zaak.setUiterlijkeEinddatumAfdoening(uiterlijkeEindDatumAfdoening);
-        }
+
+        zaak.setUiterlijkeEinddatumAfdoening(zaak.getStartdatum().plus(zaaktype.getDoorlooptijd()));
     }
 
     @CacheRemoveAll(cacheName = ZGW_ZAAK_GROEP_MANAGED)

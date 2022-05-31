@@ -11,11 +11,7 @@ import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-comp
 import {TranslateService} from '@ngx-translate/core';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {CustomValidators} from '../../shared/validators/customValidators';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {TaakDocumentUploadFieldBuilder} from '../../shared/material-form-builder/form-components/taak-document-upload/taak-document-upload-field-builder';
 import {Observable, of} from 'rxjs';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {TakenService} from '../../taken/taken.service';
 import * as moment from 'moment/moment';
@@ -44,19 +40,17 @@ export class AanvullendeInformatie extends AbstractFormulier {
         DATUMGEVRAAGD: 'datumGevraagd',
         DATUMGELEVERD: 'datumGeleverd',
         OPMERKINGEN: 'opmerkingen',
-        BIJLAGE: 'bijlage',
         AANVULLENDE_INFORMATIE: 'aanvullendeInformatie'
     };
 
     taakinformatieMapping = {
         uitkomst: this.fields.AANVULLENDE_INFORMATIE,
-        opmerking: this.fields.OPMERKINGEN,
-        bijlage: this.fields.BIJLAGE
+        opmerking: this.fields.OPMERKINGEN
     };
 
     constructor(translate: TranslateService, public takenService: TakenService,
                 public informatieObjectenService: InformatieObjectenService) {
-        super(translate);
+        super(translate, informatieObjectenService);
     }
 
     _initStartForm() {
@@ -74,7 +68,6 @@ export class AanvullendeInformatie extends AbstractFormulier {
     }
 
     _initBehandelForm() {
-        this.doDisablePartialSave();
         const fields = this.fields;
         const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(
@@ -114,34 +107,6 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                         .readonly(this.isAfgerond())
                                         .build()]
         );
-        if (this.isAfgerond()) {
-            this.form.push(
-                [new DocumentenLijstFieldBuilder().id(fields.BIJLAGE)
-                                                  .label(fields.BIJLAGE)
-                                                  .documenten(this.getDocumenten$(fields.BIJLAGE))
-                                                  .readonly(true)
-                                                  .build()]);
-        } else {
-            this.form.push(
-                [new TaakDocumentUploadFieldBuilder().id(fields.BIJLAGE)
-                                                     .label(fields.BIJLAGE)
-                                                     .defaultTitel(this.translate.instant('advies'))
-                                                     .uploadURL(this.takenService.getUploadURL(this.taak.id, fields.BIJLAGE))
-                                                     .zaakUUID(this.taak.zaakUUID)
-                                                     .readonly(this.isAfgerond())
-                                                     .build()]);
-        }
-    }
-
-    getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
-        const dataElement = this.getDataElement(field);
-        if (dataElement) {
-            const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            zoekParameters.UUIDs = dataElement.split(';');
-            return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
-        } else {
-            return of([]);
-        }
     }
 
     getStartTitel(): string {

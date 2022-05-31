@@ -79,7 +79,11 @@ public class FlowableService {
 
     public static final String VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
 
+    public static final String VAR_CASE_ONTVANKELIJK = "ontvankelijk";
+
     public static final String VAR_TASK_TAAKDATA = "taakdata";
+
+    public static final String VAR_TASK_TAAKDOCUMENTEN = "taakdocumenten";
 
     public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
 
@@ -227,7 +231,10 @@ public class FlowableService {
     public void startUserEventListenerPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
         final PlanItemInstance planItem = readOpenPlanItem(planItemInstanceId);
         if (StringUtils.isNotEmpty(resultaatToelichting)) {
+            cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_ONTVANKELIJK, Boolean.FALSE);
             cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_RESULTAAT_TOELICHTING, resultaatToelichting);
+        } else {
+            cmmnRuntimeService.setVariable(planItem.getCaseInstanceId(), VAR_CASE_ONTVANKELIJK, Boolean.TRUE);
         }
         cmmnRuntimeService.triggerPlanItemInstance(planItemInstanceId);
     }
@@ -312,6 +319,12 @@ public class FlowableService {
         return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
     }
 
+    public List<UUID> readTaakdocumentenForOpenTask(final String taskId) {
+        final List<UUID> taakdocumenten = (List<UUID>) cmmnTaskService.getVariableLocal(taskId,
+                                                                                        VAR_TASK_TAAKDOCUMENTEN);
+        return taakdocumenten != null ? taakdocumenten : new ArrayList<>();
+    }
+
     public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
         return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKINFORMATIE);
     }
@@ -323,6 +336,15 @@ public class FlowableService {
 
     public Map<String, String> readTaakdataForClosedTask(final String taskId) {
         return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public List<UUID> readTaakdocumentenForClosedTask(final String taskId) {
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .taskId(taskId)
+                .variableName(VAR_TASK_TAAKDOCUMENTEN)
+                .singleResult();
+        return historicVariableInstance != null ? (List<UUID>) historicVariableInstance.getValue() :
+                Collections.emptyList();
     }
 
     public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
@@ -343,6 +365,17 @@ public class FlowableService {
 
     public Map<String, String> updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
         return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    public void updateTaakdocumenten(final String taskId, final UUID taakdocument) {
+        final List<UUID> taakdocumenten = readTaakdocumentenForOpenTask(taskId);
+        taakdocumenten.add(taakdocument);
+        updateTaakdocumenten(taskId, taakdocumenten);
+    }
+
+    private List<UUID> updateTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
+        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+        return taakdocumenten;
     }
 
     private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {

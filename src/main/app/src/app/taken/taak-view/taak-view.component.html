@@ -3,11 +3,15 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container tablet-bottom-toolbar" #sideNavContainer [class]="sideNaveMode">
-    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+<mat-drawer-container class="inner-sidenav-container tablet-bottom-toolbar" #sideNavContainer [class]="sideNaveMode">
+    <mat-drawer #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
-    </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    </mat-drawer>
+    <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
+        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav"
+                                      [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-create>
+    </mat-drawer>
+    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100" *ngIf="formulier">
                 <mat-card-content>
@@ -110,5 +114,5 @@
         </div>
 
         <zac-zaak-documenten [zaakUUID]="taak.zaakUUID"></zac-zaak-documenten>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+    </mat-drawer-content>
+</mat-drawer-container>

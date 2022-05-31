@@ -14,7 +14,6 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TakenService} from '../../taken/taken.service';
-import {TaakDocumentUploadFieldBuilder} from '../../shared/material-form-builder/form-components/taak-document-upload/taak-document-upload-field-builder';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
 
@@ -24,21 +23,19 @@ export class Advies extends AbstractFormulier {
         TOELICHTING: 'toelichtingAdvies',
         VRAAG: 'vraag',
         ADVIES: 'advies',
-        BIJLAGE: 'bijlage',
         RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
     };
 
     taakinformatieMapping = {
         uitkomst: this.fields.ADVIES,
-        opmerking: this.fields.TOELICHTING,
-        bijlage: this.fields.BIJLAGE
+        opmerking: this.fields.TOELICHTING
     };
 
     constructor(
         translate: TranslateService,
         public takenService: TakenService,
         public informatieObjectenService: InformatieObjectenService) {
-        super(translate);
+        super(translate, informatieObjectenService);
     }
 
     _initStartForm() {
@@ -55,7 +52,6 @@ export class Advies extends AbstractFormulier {
     }
 
     _initBehandelForm() {
-        this.doDisablePartialSave();
         const fields = this.fields;
         const adviesDataElement = this.getDataElement(fields.ADVIES);
         this.form.push(
@@ -85,23 +81,6 @@ export class Advies extends AbstractFormulier {
                                            .maxlength(1000)
                                            .build()]
         );
-        if (this.isAfgerond()) {
-            this.form.push(
-                [new DocumentenLijstFieldBuilder().id(fields.BIJLAGE)
-                                                  .label(fields.BIJLAGE)
-                                                  .documenten(this.getDocumenten$(fields.BIJLAGE))
-                                                  .readonly(true)
-                                                  .build()]);
-        } else {
-            this.form.push(
-                [new TaakDocumentUploadFieldBuilder().id(fields.BIJLAGE)
-                                                     .label(fields.BIJLAGE)
-                                                     .defaultTitel(this.translate.instant('advies'))
-                                                     .uploadURL(this.takenService.getUploadURL(this.taak.id, fields.BIJLAGE))
-                                                     .zaakUUID(this.taak.zaakUUID)
-                                                     .readonly(this.isAfgerond())
-                                                     .build()]);
-        }
     }
 
     getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {

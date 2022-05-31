@@ -23,8 +23,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import net.atos.client.zgw.shared.util.URIUtil;
+import net.atos.zac.flowable.FlowableService;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -76,6 +80,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private FlowableService flowableService;
 
     @Inject
     private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
@@ -143,14 +150,23 @@ public class InformatieObjectenRESTService {
     }
 
     @POST
-    @Path("informatieobject/{zaakUuid}")
+    @Path("informatieobject/{zaakUuid}/{documentReferentieId}")
     public RESTEnkelvoudigInformatieobject createEnkelvoudigInformatieobject(@PathParam("zaakUuid") final UUID zaakUuid,
+            @PathParam("documentReferentieId") final String documentReferentieId,
+            @QueryParam("taakObject") final boolean taakObject,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + zaakUuid);
-        final EnkelvoudigInformatieobjectWithInhoud data = restInformatieobjectConverter.convert(restEnkelvoudigInformatieobject, file);
-        final ZaakInformatieobject zaakInformatieobject = zgwApiService.createZaakInformatieobjectForZaak(zaak, data, restEnkelvoudigInformatieobject.titel,
-                                                                                                          restEnkelvoudigInformatieobject.beschrijving);
+        final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieId);
+        final EnkelvoudigInformatieobjectWithInhoud data = taakObject ?
+                restInformatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject, file) :
+                restInformatieobjectConverter.convertZaakObject(restEnkelvoudigInformatieobject, file);
+
+        final ZaakInformatieobject zaakInformatieobject =
+                zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving());
+        if (taakObject) {
+            flowableService.updateTaakdocumenten(documentReferentieId,
+                                                 URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
+        }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
 

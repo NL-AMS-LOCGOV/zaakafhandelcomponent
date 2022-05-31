@@ -4,7 +4,6 @@
  */
 
 export enum UserEventListenerActie {
-    Ontvankelijk = 'ONTVANKELIJK',
-    NietOntvankelijk = 'NIET_ONTVANKELIJK',
-    Afhandelen = 'AFHANDELEN',
+    IntakeAfronden = 'INTAKE_AFRONDEN',
+    ZaakAfhandelen = 'ZAAK_AFHANDELEN',
 }

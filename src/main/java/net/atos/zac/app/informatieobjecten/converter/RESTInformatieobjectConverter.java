@@ -6,10 +6,12 @@
 package net.atos.zac.app.informatieobjecten.converter;
 
 import static net.atos.zac.aanvraag.ProductAanvraagService.ZAAK_INFORMATIEOBJECT_TITEL;
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -106,7 +108,7 @@ public class RESTInformatieobjectConverter {
         return restObject;
     }
 
-    public EnkelvoudigInformatieobjectWithInhoud convert(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
+    public EnkelvoudigInformatieobjectWithInhoud convertZaakObject(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
                 ConfiguratieService.BRON_ORGANISATIE,
                 restEnkelvoudigInformatieobject.creatiedatum,
@@ -120,7 +122,30 @@ public class RESTInformatieobjectConverter {
         data.setBestandsnaam(restEnkelvoudigInformatieobject.bestandsnaam);
         data.setBeschrijving(restEnkelvoudigInformatieobject.beschrijving);
         data.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieobject.status));
+        data.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
+        data.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding));
+        return data;
+    }
+
+    public EnkelvoudigInformatieobjectWithInhoud convertTaakObject(
+            final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
+        final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
+                ConfiguratieService.BRON_ORGANISATIE,
+                LocalDate.now(),
+                restEnkelvoudigInformatieobject.titel,
+                loggedInUserInstance.get().getFullName(),
+                ConfiguratieService.TAAL_NEDERLANDS,
+                ztcClientService.readInformatieobjecttype(restEnkelvoudigInformatieobject.informatieobjectTypeUUID).getUrl(),
+                Base64.getEncoder().encodeToString(bestand.file)
+        );
+        data.setFormaat(bestand.type);
+        data.setBestandsnaam(bestand.filename);
+        data.setBeschrijving(OMSCHRIJVING_TAAK_DOCUMENT);
+        data.setStatus(InformatieobjectStatus.DEFINITIEF);
+        data.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
+        data.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
+        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         return data;
     }
 
@@ -221,6 +246,9 @@ public class RESTInformatieobjectConverter {
         if (restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum != null) {
             data.setVerzenddatum(restEnkelvoudigInformatieObjectVersieGegevens.verzenddatum);
         }
+        if (restEnkelvoudigInformatieObjectVersieGegevens.ontvangstdatum != null) {
+            data.setOntvangstdatum(restEnkelvoudigInformatieObjectVersieGegevens.ontvangstdatum);
+        }
         if (restEnkelvoudigInformatieObjectVersieGegevens.titel != null) {
             data.setTitel(restEnkelvoudigInformatieObjectVersieGegevens.titel);
         }
@@ -235,6 +263,7 @@ public class RESTInformatieobjectConverter {
         }
         if (file != null && file.file != null) {
             data.setInhoud(Base64.getEncoder().encodeToString(file.file));
+            data.setFormaat(file.type);
         }
 
         return data;

@@ -27,6 +27,8 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {ViewComponent} from '../../shared/abstract-view/view-component';
 import {UserEventListenerParameter} from '../model/user-event-listener-parameter';
+import {ZaaknietontvankelijkReden} from '../model/zaaknietontvankelijk-reden';
+import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-parameter';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -61,7 +63,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     medewerkers: Observable<User[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
 
-    constructor(public utilService: UtilService, private adminService: ZaakafhandelParametersService,
+    constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService,
                 private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
         super();
@@ -75,9 +77,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
             this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
             this.zaakResultaten = adminService.listZaakResultaten(this.parameters.zaaktype.uuid);
-            adminService.listZaakbeeindigRedenen().subscribe(redenen => {
-                this.readZaakbeeindigRedenen(redenen);
-            });
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
@@ -163,15 +162,37 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     createZaakbeeindigForm() {
         this.zaakbeeindigFormGroup = this.formBuilder.group({});
+        this.readZaaknietontvankelijkParameter(this.parameters);
+        this.adminService.listZaakbeeindigRedenen().subscribe(redenen => {
+            this.readZaakbeeindigRedenen(redenen);
+        });
+    }
+
+    readZaaknietontvankelijkParameter(zaakafhandelParameters: ZaakafhandelParameters): void {
+        this.addZaakbeeindigParameter(this.getZaaknietontvankelijkParameter(zaakafhandelParameters));
     }
 
     readZaakbeeindigRedenen(zaakbeeindigRedenen: ZaakbeeindigReden[]): void {
         for (const reden of zaakbeeindigRedenen) {
-            const parameter: ZaakbeeindigParameter = this.getZaakbeeindigParameter(reden);
-            this.zaakbeeindigParameters.push(parameter);
-            this.zaakbeeindigFormGroup.addControl(parameter.zaakbeeindigReden.id + '__beeindigResultaat', new FormControl(parameter.zaakResultaat));
-            this.updateZaakbeeindigForm(parameter);
+            this.addZaakbeeindigParameter(this.getZaakbeeindigParameter(reden));
         }
+    }
+
+    isZaaknietontvankelijkParameter(parameter): boolean {
+        return ZaaknietontvankelijkReden.is(parameter.zaakbeeindigReden);
+    }
+
+    private addZaakbeeindigParameter(parameter: ZaakbeeindigParameter): void {
+        this.zaakbeeindigParameters.push(parameter);
+        this.zaakbeeindigFormGroup.addControl(parameter.zaakbeeindigReden.id + '__beeindigResultaat', new FormControl(parameter.zaakResultaat));
+        this.updateZaakbeeindigForm(parameter);
+    }
+
+    private getZaaknietontvankelijkParameter(zaakafhandelParameters: ZaakafhandelParameters): ZaaknietontvankelijkParameter {
+        const parameter: ZaaknietontvankelijkParameter = new ZaaknietontvankelijkParameter();
+        parameter.zaakResultaat = zaakafhandelParameters.zaakNietOntvankelijkResultaat;
+        this.selection.select(parameter);
+        return parameter;
     }
 
     private getZaakbeeindigParameter(reden: ZaakbeeindigReden): ZaakbeeindigParameter {
@@ -236,10 +257,15 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         });
         this.parameters.userEventListenerParameters = this.userEventListenerParameters;
 
+        this.parameters.zaakbeeindigParameters = [];
         this.selection.selected.forEach(param => {
-            param.zaakResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
+            if (this.isZaaknietontvankelijkParameter(param)) {
+                this.parameters.zaakNietOntvankelijkResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
+            } else {
+                param.zaakResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
+                this.parameters.zaakbeeindigParameters.push(param);
+            }
         });
-        this.parameters.zaakbeeindigParameters = this.selection.selected;
 
         this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(() => {
             this.utilService.openSnackbar('msg.zaakafhandelparameters.opgeslagen');

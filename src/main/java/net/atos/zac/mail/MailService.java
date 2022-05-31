@@ -111,6 +111,7 @@ public class MailService {
         data.setBestandsnaam(String.format("%s.txt", onderwerp));
         data.setStatus(InformatieobjectStatus.DEFINITIEF);
         data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
+        data.setVerzenddatum(LocalDate.now());
 
         return data;
     }

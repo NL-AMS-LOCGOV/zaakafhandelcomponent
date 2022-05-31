@@ -61,6 +61,9 @@ public class ZaakafhandelParameters {
     @Column(name = "uiterlijke_einddatum_afdoening_waarschuwing")
     private Integer uiterlijkeEinddatumAfdoeningWaarschuwing;
 
+    @Column(name = "niet_ontvankelijk_resultaattype_uuid")
+    private UUID nietOntvankelijkResultaattype;
+
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<HumanTaskParameters> humanTaskParametersCollection;
@@ -127,6 +130,14 @@ public class ZaakafhandelParameters {
 
     public void setUiterlijkeEinddatumAfdoeningWaarschuwing(final Integer fataledatumWaarschuwing) {
         this.uiterlijkeEinddatumAfdoeningWaarschuwing = fataledatumWaarschuwing;
+    }
+
+    public UUID getNietOntvankelijkResultaattype() {
+        return nietOntvankelijkResultaattype;
+    }
+
+    public void setNietOntvankelijkResultaattype(final UUID nietOntvankelijkResultaattype) {
+        this.nietOntvankelijkResultaattype = nietOntvankelijkResultaattype;
     }
 
     public Collection<HumanTaskParameters> getHumanTaskParametersCollection() {
