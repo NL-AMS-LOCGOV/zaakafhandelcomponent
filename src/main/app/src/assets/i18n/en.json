@@ -311,7 +311,6 @@
   "actie.zoeken": "Search",
   "actie.ja": "Yes",
   "actie.nee": "No",
-  "actie.planitem.uitvoeren.bevestigen": "Execute \"<i>{{planitem}}\"</i>?",
   "actie.planitem.uitgevoerd": "Executed {{planitem}}",
   "actie.taak.starten": "Start task",
   "actie.zoekopdracht.wissen": "Delete search query",

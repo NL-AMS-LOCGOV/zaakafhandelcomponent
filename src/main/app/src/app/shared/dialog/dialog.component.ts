@@ -6,6 +6,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DialogData} from './dialog-data';
+import {FieldType} from '../material-form-builder/model/field-type.enum';
 
 @Component({
     templateUrl: 'dialog.component.html',
@@ -26,7 +27,14 @@ export class DialogComponent {
         if (this.data.fn) {
             const results: any[] = [];
             for (const formField of this.data.formFields) {
-                results[formField.id] = formField.formControl.value;
+                switch (formField.fieldType) {
+                    case FieldType.CHECKBOX:
+                        results[formField.id] = formField.formControl.value != null && formField.formControl.value;
+                        break;
+                    default:
+                        results[formField.id] = formField.formControl.value;
+                        break;
+                }
             }
             this.data.fn(results).subscribe(() => {
                 this.dialogRef.close(true);

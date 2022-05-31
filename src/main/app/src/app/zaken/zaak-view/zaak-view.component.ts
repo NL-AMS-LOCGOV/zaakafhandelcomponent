@@ -365,8 +365,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     openPlanItemStartenDialog(planItem: PlanItem): void {
         this.websocketService.doubleSuspendListener(this.zaakListener);
-        const melding = this.translate.instant('actie.planitem.uitvoeren.bevestigen', {planitem: planItem.naam});
-        const userEventListenerDialog = this.createUserEventListenerDialog(planItem, melding);
+        const userEventListenerDialog = this.createUserEventListenerDialog(planItem);
         this.dialog.open(userEventListenerDialog.dialogComponent, {
             data: userEventListenerDialog.dialogData
         }).afterClosed().subscribe(result => {
@@ -381,21 +380,24 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    createUserEventListenerDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         switch (planItem.userEventListenerActie) {
             case UserEventListenerActie.IntakeAfronden:
-                return this.createUserEventListenerIntakeAfrondenDialog(planItem, melding);
+                return this.createUserEventListenerIntakeAfrondenDialog(planItem);
             case UserEventListenerActie.ZaakAfhandelen:
-                return this.createUserEventListenerZaakAfhandelenDialog(planItem, melding);
+                return this.createUserEventListenerZaakAfhandelenDialog(planItem);
             default:
                 throw new Error(`Niet bestaande UserEventListenerActie: ${planItem.userEventListenerActie}`);
         }
     }
 
-    createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         const radio = new RadioFormFieldBuilder().id('ontvankelijk')
                                                  .label('zaakOntvankelijk')
-                                                 .options(of(['actie.ja', 'actie.nee']))
+                                                 .optionLabel('key')
+                                                 .options(of([
+                                                     {value: true, key: 'actie.ja'},
+                                                     {value: false, key: 'actie.nee'}]))
                                                  .validators(Validators.required)
                                                  .build();
         const reden = new TextareaFormFieldBuilder().id('reden')
@@ -405,14 +407,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                     .build();
 
         const dialogData: DialogData = new DialogData(
-            [radio, reden],
-            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'] === 'actie.ja', results['reden']),
+            [radio],
+            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden']),
             null,
             planItem.toelichting);
         dialogData.confirmButtonActionKey = 'actie.intake.afronden';
 
         this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
-            dialogData.formFields = value === 'actie.nee' ? [radio, reden] : [radio];
+            if (value) {
+                dialogData.formFields = value.value ? [radio] : [radio, reden];
+            }
         }));
 
         return {
@@ -428,7 +432,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
-    createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem, melding: string): { dialogComponent: any, dialogData: any } {
+    createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: DialogComponent,
             dialogData: new DialogData([
@@ -443,7 +447,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                .maxlength(80)
                                                .build()],
                 (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
-                melding,
+                null,
                 planItem.toelichting)
         };
     }
