@@ -90,7 +90,7 @@
   "filter.groep": "Only group members",
   "formaat": "format",
   "gegevens.algemeen": "General information",
-  "gegevens.beeindiging": "Case finishing information",
+  "gegevens.beeindiging": "Case termination information (not admissible and aborting)",
   "gegevens.overig": "Other information",
   "gegevens.humantasks": "Task information",
   "gegevens.acties": "Action information",

@@ -186,7 +186,8 @@
                                     <td mat-cell *matCellDef="let parameter">
                                         <mat-checkbox (click)="$event.stopPropagation()"
                                                       (change)="changeSelection($event, parameter)"
-                                                      [checked]="selection.isSelected(parameter)">
+                                                      [checked]="selection.isSelected(parameter)"
+                                                      [disabled]="isZaaknietontvankelijkParameter(parameter)">
                                         </mat-checkbox>
                                     </td>
                                 </ng-container>

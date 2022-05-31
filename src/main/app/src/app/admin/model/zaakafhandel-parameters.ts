@@ -10,6 +10,7 @@ import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
+import {ZaakResultaat} from './zaak-resultaat';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
@@ -21,4 +22,5 @@ export class ZaakafhandelParameters {
     defaultBehandelaar: User;
     einddatumGeplandWaarschuwing: number;
     uiterlijkeEinddatumAfdoeningWaarschuwing: number;
+    zaakNietOntvankelijkResultaat: ZaakResultaat;
 }

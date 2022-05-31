@@ -148,7 +148,7 @@ public class RESTZaakConverter {
         restZaak.behandelaar = userConverter.convertUserId(behandelaarId);
         restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
 
-        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaaktype, zaak);
+        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));
         return restZaak;
     }

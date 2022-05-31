@@ -28,6 +28,8 @@ public class RESTZaakafhandelParameters {
 
     public Integer uiterlijkeEinddatumAfdoeningWaarschuwing;
 
+    public RESTZaakResultaattype zaakNietOntvankelijkResultaat;
+
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
 
     public List<RESTUserEventListenerParameter> userEventListenerParameters = new ArrayList<>();
