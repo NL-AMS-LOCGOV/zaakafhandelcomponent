@@ -36,6 +36,8 @@ import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -66,7 +68,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
-                protected translate: TranslateService) {
+                protected translate: TranslateService, private iInformatieObjectenService: InformatieObjectenService) {
         super();
     }
 
@@ -157,6 +159,16 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
         }
+
+        this.menu.push(new ButtonMenuItem('actie.document.creeren', () => {
+            const documentCreatieGegevens = new DocumentCreatieGegevens(this.taak.zaakUUID, '46802bae-5759-4185-9a65-ffac1da77e8a', this.taak.id);
+            documentCreatieGegevens.titel = 'Optionele titel van het document';
+            this.iInformatieObjectenService.createDocument(documentCreatieGegevens)
+                .subscribe((redirectUrl) => {
+                    console.log(redirectUrl);
+                });
+        }, 'upload_file'));
+
     }
 
     private loadHistorie(): void {
@@ -239,7 +251,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.utilService.openSnackbar('msg.taak.afgerond');
             this.init(taak);
         });
-    }
+    };
 
     private getIngelogdeMedewerker() {
         this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {

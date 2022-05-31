@@ -5,6 +5,12 @@
 
 package net.atos.zac.documentcreatie.model;
 
+import static net.atos.zac.documentcreatie.converter.DataConverter.DATE_FORMAT;
+
+import java.time.LocalDate;
+
+import javax.json.bind.annotation.JsonbDateFormat;
+
 public class ZaakData {
 
     public String zaaktypeOmschrijving;
@@ -15,17 +21,22 @@ public class ZaakData {
 
     public String toelichting;
 
-    public String registratiedatum;
+    @JsonbDateFormat(DATE_FORMAT)
+    public LocalDate registratiedatum;
 
-    public String startdatum;
+    @JsonbDateFormat(DATE_FORMAT)
+    public LocalDate startdatum;
 
-    public String einddatumGepland;
+    @JsonbDateFormat(DATE_FORMAT)
+    public LocalDate einddatumGepland;
 
-    public String uiterlijkeEinddatumAfdoening;
+    @JsonbDateFormat(DATE_FORMAT)
+    public LocalDate uiterlijkeEinddatumAfdoening;
 
-    public String einddatum;
+    @JsonbDateFormat(DATE_FORMAT)
+    public LocalDate einddatum;
 
-    public String communicatiekanaalNaam;
+    public String communicatiekanaal;
 
     public String vertrouwelijkheidaanduiding;
 
@@ -39,5 +50,7 @@ public class ZaakData {
 
     public String besluit;
 
-    public String groepNaam;
+    public String groep;
+
+    public String behandelaar;
 }

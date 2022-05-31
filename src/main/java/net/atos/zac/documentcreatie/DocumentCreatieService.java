@@ -20,6 +20,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import net.atos.client.sd.SmartDocumentsClient;
 import net.atos.client.sd.model.SmartDocument;
 import net.atos.client.sd.model.WizardResponse;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.converter.DataConverter;
@@ -41,7 +42,7 @@ public class DocumentCreatieService {
 
     @Inject
     @ConfigProperty(name = "SD_AUTHENTICATION")
-    private String authenticationHeader;
+    private String authenticationToken;
 
     @Inject
     private DataConverter dataConverter;
@@ -51,6 +52,9 @@ public class DocumentCreatieService {
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
 
     /**
      * Creeer een document met de wizard van SmartDocuments.
@@ -63,13 +67,14 @@ public class DocumentCreatieService {
         final Registratie registratie = createRegistratie(documentCreatieGegevens);
         final Data data = dataConverter.createData(documentCreatieGegevens, loggedInUser);
         final WizardRequest wizardRequest = new WizardRequest(new SmartDocument(), registratie, data);
-        final WizardResponse wizardResponse = smartDocumentsClient.wizardDeposit(authenticationHeader, loggedInUser.getId(), wizardRequest);
+        final WizardResponse wizardResponse = smartDocumentsClient.wizardDeposit(format("Basic %s", authenticationToken), loggedInUser.getId(), wizardRequest);
         return URI.create(format("%s/smartdocuments/wizard/?ticket=%s", smartDocumentsURL, wizardResponse.ticket));
     }
 
     private Registratie createRegistratie(final DocumentCreatieGegevens documentCreatieGegevens) {
         final Registratie registratie = new Registratie();
         registratie.bronorganisatie = BRON_ORGANISATIE;
+        registratie.zaak = zrcClientService.readZaak(documentCreatieGegevens.getZaakUUID()).getUrl();
         registratie.informatieobjecttype = ztcClientService.readInformatieobjecttype(documentCreatieGegevens.getInformatieobjecttype()).getUrl();
         registratie.titel = documentCreatieGegevens.getTitel();
         registratie.informatieobjectStatus = documentCreatieGegevens.getInformatieobjectStatus();

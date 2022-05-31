@@ -11,6 +11,7 @@ import static net.atos.zac.aanvraag.ProductAanvraagService.OBJECT_TYPE_OVERIGE_P
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,7 +20,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.brp.BRPClientService;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
@@ -52,6 +53,8 @@ import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.identity.IdentityService;
 
 public class DataConverter {
+
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
 
     private static final String FIELDS_PERSOON =
             "burgerservicenummer," +
@@ -118,11 +121,11 @@ public class DataConverter {
         zaakData.omschrijving = zaak.getOmschrijving();
         zaakData.toelichting = zaak.getToelichting();
         zaakData.zaaktypeOmschrijving = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
-        zaakData.registratiedatum = zaak.getRegistratiedatum().toString();
-        zaakData.startdatum = zaak.getStartdatum().toString();
-        zaakData.einddatumGepland = zaak.getEinddatumGepland().toString();
-        zaakData.uiterlijkeEinddatumAfdoening = zaak.getUiterlijkeEinddatumAfdoening().toString();
-        zaakData.einddatum = zaak.getEinddatum().toString();
+        zaakData.registratiedatum = zaak.getRegistratiedatum();
+        zaakData.startdatum = zaak.getStartdatum();
+        zaakData.einddatumGepland = zaak.getEinddatumGepland();
+        zaakData.uiterlijkeEinddatumAfdoening = zaak.getUiterlijkeEinddatumAfdoening();
+        zaakData.einddatum = zaak.getEinddatum();
 
         if (zaak.getStatus() != null) {
             zaakData.statustypeOmschrijving = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
@@ -146,13 +149,17 @@ public class DataConverter {
         }
 
         zgwApiService.findGroepForZaak(zaak.getUrl()).ifPresent(groep -> {
-            zaakData.groepNaam = groep.getNaam();
+            zaakData.groep = groep.getNaam();
+        });
+
+        zgwApiService.findBehandelaarForZaak(zaak.getUrl()).ifPresent(behandelaar -> {
+            zaakData.behandelaar = behandelaar.getNaam();
         });
 
         if (zaak.getCommunicatiekanaal() != null) {
             final CommunicatieKanaal communicatiekanaal = vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()));
             if (communicatiekanaal != null) {
-                zaakData.communicatiekanaalNaam = communicatiekanaal.getNaam();
+                zaakData.communicatiekanaal = communicatiekanaal.getNaam();
             }
         }
 
@@ -258,14 +265,13 @@ public class DataConverter {
     }
 
     private TaakData createTaakData(final String taskId) {
-        final Task task = flowableService.readOpenTask(taskId);
+        final TaskInfo task = flowableService.readTask(taskId);
         final TaakData taakData = new TaakData();
         taakData.naam = task.getName();
-        taakData.toelichting = task.getDescription();
-        if (taakData.behandelaar != null) {
+        if (task.getAssignee() != null) {
             taakData.behandelaar = identityService.readUser(task.getAssignee()).getFullName();
         }
-        taakData.data = flowableService.readTaakdataForOpenTask(taskId);
+        taakData.data = (Map<String, String>) flowableService.findTaskVariable(taskId, FlowableService.VAR_TASK_TAAKDATA);
         return taakData;
     }
 }

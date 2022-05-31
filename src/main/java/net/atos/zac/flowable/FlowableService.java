@@ -314,73 +314,44 @@ public class FlowableService {
         }
     }
 
-
-    public Map<String, String> readTaakdataForOpenTask(final String taskId) {
-        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKDATA);
+    public Object findTaskVariable(final String taskId, final String variableName) {
+        return isOpenTask(taskId)
+                ? readOpenTaskVariable(taskId, variableName)
+                : readClosedTaskVariable(taskId, variableName);
     }
 
-    public List<UUID> readTaakdocumentenForOpenTask(final String taskId) {
-        final List<UUID> taakdocumenten = (List<UUID>) cmmnTaskService.getVariableLocal(taskId,
-                                                                                        VAR_TASK_TAAKDOCUMENTEN);
-        return taakdocumenten != null ? taakdocumenten : new ArrayList<>();
+    public Object findOpenTaskVariable(final String taskId, final String variableName) {
+        return cmmnTaskService.getVariableLocal(taskId, variableName);
     }
 
-    public Map<String, String> readTaakinformatieForOpenTask(final String taskId) {
-        return readTaakVariableForOpenTask(taskId, VAR_TASK_TAAKINFORMATIE);
+    public Object readOpenTaskVariable(final String taskId, final String variableName) {
+        final Object variableValue = findOpenTaskVariable(taskId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for open task id '%s'", variableName, taskId));
+        }
     }
 
-    private Map<String, String> readTaakVariableForOpenTask(final String taskId, final String variableName) {
-        final Map<String, String> taakdata = (Map<String, String>) cmmnTaskService.getVariableLocal(taskId, variableName);
-        return taakdata != null ? taakdata : Collections.emptyMap();
-    }
-
-    public Map<String, String> readTaakdataForClosedTask(final String taskId) {
-        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKDATA);
-    }
-
-    public List<UUID> readTaakdocumentenForClosedTask(final String taskId) {
-        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
-                .taskId(taskId)
-                .variableName(VAR_TASK_TAAKDOCUMENTEN)
-                .singleResult();
-        return historicVariableInstance != null ? (List<UUID>) historicVariableInstance.getValue() :
-                Collections.emptyList();
-    }
-
-    public Map<String, String> readTaakinformatieForClosedTask(final String taskId) {
-        return readTaakVariableForClosedTask(taskId, VAR_TASK_TAAKINFORMATIE);
-    }
-
-    private Map<String, String> readTaakVariableForClosedTask(final String taskId, final String variableName) {
+    public Object findClosedTaskVariable(final String taskId, final String variableName) {
         final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
                 .taskId(taskId)
                 .variableName(variableName)
                 .singleResult();
-        return historicVariableInstance != null ? (Map<String, String>) historicVariableInstance.getValue() : Collections.emptyMap();
+        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
     }
 
-    public Map<String, String> updateTaakdata(final String taskId, final Map<String, String> taakdata) {
-        return updateTaakVariable(taskId, taakdata, VAR_TASK_TAAKDATA);
+    public Object readClosedTaskVariable(final String taskId, final String variableName) {
+        final Object variableValue = findClosedTaskVariable(taskId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for closed task id '%s'", variableName, taskId));
+        }
     }
 
-    public Map<String, String> updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
-        return updateTaakVariable(taskId, taakinformatie, VAR_TASK_TAAKINFORMATIE);
-    }
-
-    public void updateTaakdocumenten(final String taskId, final UUID taakdocument) {
-        final List<UUID> taakdocumenten = readTaakdocumentenForOpenTask(taskId);
-        taakdocumenten.add(taakdocument);
-        updateTaakdocumenten(taskId, taakdocumenten);
-    }
-
-    private List<UUID> updateTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
-        cmmnTaskService.setVariableLocal(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
-        return taakdocumenten;
-    }
-
-    private Map<String, String> updateTaakVariable(final String taskId, final Map<String, String> value, final String variableName) {
+    public void updateOpenTaskVariable(final String taskId, final String variableName, Object value) {
         cmmnTaskService.setVariableLocal(taskId, variableName, value);
-        return value;
     }
 
     public List<CaseDefinition> listCaseDefinitions() {
@@ -435,12 +406,27 @@ public class FlowableService {
         return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
     }
 
+    public Object readCaseVariable(final String caseInstanceId, final String variableName) {
+        return isOpenCase(caseInstanceId)
+                ? readOpenCaseVariable(caseInstanceId, variableName)
+                : readClosedCaseVariable(caseInstanceId, variableName);
+    }
+
     public Object readOpenCaseVariable(final String caseInstanceId, final String variableName) {
         final Object variableValue = findOpenCaseVariable(caseInstanceId, variableName);
         if (variableValue != null) {
             return variableValue;
         } else {
             throw new RuntimeException(String.format("No variable found with name '%s' for open case instance id '%s'", variableName, caseInstanceId));
+        }
+    }
+
+    public Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
+        final Object variableValue = findClosedCaseVariable(caseInstanceId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
         }
     }
 
@@ -463,26 +449,11 @@ public class FlowableService {
     }
 
     public Object findClosedCaseVariable(final String caseInstanceId, final String variableName) {
-        return cmmnHistoryService.createHistoricVariableInstanceQuery()
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
                 .caseInstanceId(caseInstanceId)
                 .variableName(variableName)
-                .singleResult()
-                .getValue();
-    }
-
-    public Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
-        final Object variableValue = findClosedCaseVariable(caseInstanceId, variableName);
-        if (variableValue != null) {
-            return variableValue;
-        } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
-        }
-    }
-
-    public Object readCaseVariable(final String caseInstanceId, final String variableName) {
-        return isOpenCase(caseInstanceId)
-                ? readOpenCaseVariable(caseInstanceId, variableName)
-                : readClosedCaseVariable(caseInstanceId, variableName);
+                .singleResult();
+        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
     }
 
     public TaskInfo readTask(final String taskId) {
@@ -506,6 +477,12 @@ public class FlowableService {
     public boolean isOpenCase(final String caseInstanceId) {
         return cmmnRuntimeService.createCaseInstanceQuery()
                 .caseInstanceId(caseInstanceId)
+                .count() > 0;
+    }
+
+    public boolean isOpenTask(final String taskId) {
+        return cmmnTaskService.createTaskQuery()
+                .taskId(taskId)
                 .count() > 0;
     }
 

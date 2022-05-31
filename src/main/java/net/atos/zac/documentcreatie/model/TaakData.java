@@ -11,8 +11,6 @@ public class TaakData {
 
     public String naam;
 
-    public String toelichting;
-
     public String behandelaar;
 
     public Map<String, String> data;

@@ -25,11 +25,11 @@ public interface SmartDocumentsClient {
 
     @POST
     @Path("deposit/unattended")
-    UnattendedResponse unattendedDeposit(@HeaderParam("Authorization") final String authenticationHeader, @HeaderParam("Username") final String username,
+    UnattendedResponse unattendedDeposit(@HeaderParam("Authorization") final String authenticationToken, @HeaderParam("Username") final String username,
             final Deposit deposit);
 
     @POST
     @Path("deposit/wizard")
-    WizardResponse wizardDeposit(@HeaderParam("Authorization") final String authenticationHeader, @HeaderParam("Username") final String username,
+    WizardResponse wizardDeposit(@HeaderParam("Authorization") final String authenticationToken, @HeaderParam("Username") final String username,
             final Deposit deposit);
 }
