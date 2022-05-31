@@ -63,6 +63,7 @@ import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-t
 import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
+import {Indicatie} from '../model/indicatie';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -77,6 +78,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
     action: string;
+    indicaties: Indicatie[];
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -96,7 +98,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     viewInitialized = false;
     toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
-    indicatieIcon = new TextIcon(Conditionals.always, 'notifications', 'indicatie_icon', '', 'warning');
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -156,6 +157,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
+        this.setupIndicaties();
         this.loadLocatie();
         this.loadOpschorting();
     }
@@ -349,6 +351,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
             }
         });
+    }
+
+    private setupIndicaties(): void {
+        this.indicaties = [];
+        if (this.zaak.indicatieOpschorting) {
+            this.indicaties.push(new Indicatie('indicatieOpschorting', this.zaak.redenOpschorting));
+        }
+        if (this.zaak.indicatieVerlenging) {
+            this.indicaties.push(new Indicatie('indicatieVerlenging', this.zaak.redenVerlenging));
+        }
     }
 
     openPlanItemStartenDialog(planItem: PlanItem): void {

@@ -54,23 +54,33 @@
             </div>
         </div>
     </div>
-    <div class="datum-control-wrapper">
-        <div class="time-control">
-            <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
-                <mat-icon class="time-button">history</mat-icon>
-            </button>
+    <div class="datum-control-wrapper" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+        <div [fxFlex]="75">
+            <div *ngIf="verlengDuur" fxLayout.sm="row">
+                {{'duurVerlenging' | translate:{duur: verlengDuur} }}
+            </div>
+            <div *ngIf="opgeschort" fxLayout.sm="row">
+                {{'duurDagenOpschorting' | translate:{dagen: opschortDuur} }}
+            </div>
         </div>
-        <div *ngIf="!opgeschort" class="play-control">
-            <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
-                <mat-icon class="play-icon">play_arrow</mat-icon>
-                <mat-icon class="play-button">pause_circle_outline</mat-icon>
-            </button>
-        </div>
-        <div *ngIf="opgeschort" class="play-control">
-            <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
-                <mat-icon class="play-icon">pause</mat-icon>
-                <mat-icon class="play-button">play_circle_outline</mat-icon>
-            </button>
+        <div [fxFlex]="25" fxLayout.sm="row">
+            <div class="time-control">
+                <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
+                    <mat-icon class="time-button">history</mat-icon>
+                </button>
+            </div>
+            <div *ngIf="!opgeschort" class="play-control">
+                <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
+                    <mat-icon class="play-icon">play_arrow</mat-icon>
+                    <mat-icon class="play-button">pause_circle_outline</mat-icon>
+                </button>
+            </div>
+            <div *ngIf="opgeschort" class="play-control">
+                <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
+                    <mat-icon class="play-icon">pause</mat-icon>
+                    <mat-icon class="play-button">play_circle_outline</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>
