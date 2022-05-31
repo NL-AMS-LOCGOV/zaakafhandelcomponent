@@ -85,11 +85,11 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             this.infoObject = data['informatieObject'];
             this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(eiObject => {
                 this.laatsteVersieInfoObject = eiObject;
-                this.toevoegenNieuweVersieActie();
                 this.versieInformatie = this.translate.instant('versie.x.van', {
                     versie: this.infoObject.versie,
                     laatsteVersie: this.laatsteVersieInfoObject.versie,
                 });
+                this.loadZaken();
             });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
@@ -102,7 +102,6 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 });
 
             this.setupMenu();
-            this.loadZaken();
             this.loadHistorie();
         }));
     }
@@ -151,6 +150,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     private loadZaken(): void {
         this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaken => {
             this.zaken = zaken;
+            this.toevoegenNieuweVersieActie();
         });
     }
 
