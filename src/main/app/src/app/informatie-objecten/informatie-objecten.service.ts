@@ -20,6 +20,7 @@ import {ActionIcon} from '../shared/edit/action-icon';
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
 import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
+import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -63,6 +64,12 @@ export class InformatieObjectenService {
                 taakObject: taakObject
             }
         }).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    createDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<string> {
+        return this.http.post<string>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

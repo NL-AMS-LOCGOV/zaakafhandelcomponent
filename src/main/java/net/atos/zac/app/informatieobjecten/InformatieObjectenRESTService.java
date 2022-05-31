@@ -5,10 +5,13 @@
 
 package net.atos.zac.app.informatieobjecten;
 
+import static net.atos.zac.flowable.FlowableService.VAR_TASK_TAAKDOCUMENTEN;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,9 +30,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.shared.util.URIUtil;
-import net.atos.zac.flowable.FlowableService;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -38,6 +38,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
@@ -49,6 +50,7 @@ import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
@@ -58,10 +60,13 @@ import net.atos.zac.app.informatieobjecten.model.RESTInformatieobjecttype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.documentcreatie.DocumentCreatieService;
+import net.atos.zac.documentcreatie.model.DocumentCreatieGegevens;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
+import net.atos.zac.flowable.FlowableService;
 
 @Singleton
 @Path("informatieobjecten")
@@ -101,6 +106,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private RESTHistorieRegelConverter restHistorieRegelConverter;
+
+    @Inject
+    private DocumentCreatieService documentCreatieService;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -164,8 +172,12 @@ public class InformatieObjectenRESTService {
         final ZaakInformatieobject zaakInformatieobject =
                 zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving());
         if (taakObject) {
-            flowableService.updateTaakdocumenten(documentReferentieId,
-                                                 URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
+            List<UUID> taakdocumenten = (List<UUID>) flowableService.findOpenTaskVariable(documentReferentieId, VAR_TASK_TAAKDOCUMENTEN);
+            if (taakdocumenten == null) {
+                taakdocumenten = new LinkedList<>();
+            }
+            taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
+            flowableService.updateOpenTaskVariable(documentReferentieId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
@@ -305,10 +317,19 @@ public class InformatieObjectenRESTService {
         return restHistorieRegelConverter.convert(auditTrail);
     }
 
+    @POST
+    @Path("/documentcreatie")
+    public Response createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
+        final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(restDocumentCreatieGegevens.zaakUUID,
+                                                                                            restDocumentCreatieGegevens.informatieobjecttypeUUID,
+                                                                                            restDocumentCreatieGegevens.taskId);
+        documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
+        final URI redirectURI = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
+        return Response.status(Response.Status.CREATED).entity(redirectURI).build();
+    }
+
     private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(uuid).getUrl());
-        return zrcClientService.listZaakinformatieobjecten(parameters);
+        return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid));
     }
 
     private String lockEigenaar() {

@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.klanten.model.personen;
 
-import net.atos.zac.app.klanten.model.KlantType;
 import net.atos.zac.app.klanten.model.RESTKlant;
 
 public class RESTPersoon extends RESTKlant {
@@ -23,11 +22,6 @@ public class RESTPersoon extends RESTKlant {
     @Override
     public String getIdentificatie() {
         return bsn;
-    }
-
-    @Override
-    public KlantType getKlantType() {
-        return KlantType.PERSOON;
     }
 
     @Override

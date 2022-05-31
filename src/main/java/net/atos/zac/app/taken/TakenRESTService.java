@@ -7,6 +7,7 @@ package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
+import static net.atos.zac.flowable.FlowableService.VAR_TASK_TAAKDATA;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
@@ -158,8 +159,8 @@ public class TakenRESTService {
     @PUT
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
-        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        flowableService.updateOpenTaskVariable(restTaak.id, VAR_TASK_TAAKDATA, restTaak.taakdata);
+        flowableService.updateOpenTaskVariable(restTaak.id, FlowableService.VAR_TASK_TAAKINFORMATIE, restTaak.taakinformatie);
         return restTaak;
     }
 
@@ -219,8 +220,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        flowableService.updateOpenTaskVariable(restTaak.id, VAR_TASK_TAAKDATA, restTaak.taakdata);
+        flowableService.updateOpenTaskVariable(restTaak.id, FlowableService.VAR_TASK_TAAKINFORMATIE, restTaak.taakinformatie);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
