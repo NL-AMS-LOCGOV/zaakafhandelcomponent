@@ -26,6 +26,7 @@ import {DocumentOntkoppelGegevens} from './model/document-ontkoppel-gegevens';
 import {ZaakOpschortGegevens} from './model/zaak-opschort-gegevens';
 import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
+import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 
 @Injectable({
     providedIn: 'root'
@@ -217,7 +218,7 @@ export class ZakenService {
         );
     }
 
-    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht, reden?: string): Observable<ZaakOverzicht> {
+    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht | ZaakZoekObject, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
         toekennenGegevens.reden = reden;

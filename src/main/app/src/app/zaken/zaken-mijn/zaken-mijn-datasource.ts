@@ -12,11 +12,7 @@ import {ZaakOverzicht} from '../model/zaak-overzicht';
 
 export class ZakenMijnDatasource extends TableDataSource<ZaakOverzicht> {
 
-    zoekParameters: {
-        zaaktype: string
-    } = {
-        zaaktype: ''
-    };
+    zoekParameters: { zaaktype: string } = {zaaktype: ''};
 
     constructor(private zakenService: ZakenService, private utilService: UtilService) {
         super();

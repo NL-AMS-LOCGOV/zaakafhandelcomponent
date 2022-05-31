@@ -7,6 +7,7 @@ package net.atos.zac.zoeken.model;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.atos.zac.shared.model.SorteerRichting;
@@ -22,7 +23,11 @@ public class ZoekParameters {
 
     private EnumMap<ZoekVeld, String> zoeken = new EnumMap<>(ZoekVeld.class);
 
+    private EnumMap<DatumVeld, DatumRange> datums = new EnumMap<>(DatumVeld.class);
+
     private final EnumMap<FilterVeld, String> filters = new EnumMap<>(FilterVeld.class);
+
+    private final HashMap<String, String> filterQueries = new HashMap<>();
 
     private Sortering sorteren = new Sortering(SorteerVeld.IDENTIFICATIE, SorteerRichting.DESCENDING);
 
@@ -58,6 +63,19 @@ public class ZoekParameters {
         this.zoeken.put(zoekVeld, zoekTekst);
     }
 
+    public EnumMap<DatumVeld, DatumRange> getDatums() {
+        return datums;
+    }
+
+    public void setDatums(final EnumMap<DatumVeld, DatumRange> datums) {
+        this.datums = datums;
+    }
+
+    public void addDatum(final DatumVeld zoekVeld, final DatumRange range) {
+        this.datums.put(zoekVeld, range);
+    }
+
+
     public EnumSet<FilterVeld> getBeschikbareFilters() {
         switch (type) {
             case ZAAK -> {
@@ -81,6 +99,14 @@ public class ZoekParameters {
 
     public void addFilter(FilterVeld veld, String waarde) {
         this.filters.put(veld, waarde);
+    }
+
+    public void addFilterQuery(final String veld, final String waarde) {
+        this.filterQueries.put(veld, waarde);
+    }
+
+    public HashMap<String, String> getFilterQueries() {
+        return filterQueries;
     }
 
     public Sortering getSorteren() {

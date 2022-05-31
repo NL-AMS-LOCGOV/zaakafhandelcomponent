@@ -6,6 +6,8 @@
 package net.atos.zac.zoeken;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,6 +27,7 @@ import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
+import net.atos.zac.zoeken.model.ZoekVeld;
 
 @ApplicationScoped
 public class ZoekenService {
@@ -40,21 +43,34 @@ public class ZoekenService {
 
     public ZoekResultaat<ZaakZoekObject> zoekZaak(final ZoekParameters zoekZaakParameters) {
         final SolrQuery query = new SolrQuery("*:*");
-        final StringBuilder queryBuilder = new StringBuilder();
         zoekZaakParameters.getZoeken().forEach((zoekVeld, tekst) -> {
             if (StringUtils.isNotBlank(tekst)) {
-                queryBuilder.append(String.format("%s:(%s) ", zoekVeld.getVeld(), tekst));
+                if (zoekVeld == ZoekVeld.IDENTIFICATIE) {
+                    query.addFilterQuery(String.format("%s:(*%s*)", zoekVeld.getVeld(), tekst));
+                } else {
+                    query.addFilterQuery(String.format("%s:(%s)", zoekVeld.getVeld(), tekst));
+                }
+
             }
         });
-        if (StringUtils.isNotBlank(queryBuilder.toString())) {
-            query.setQuery(queryBuilder.toString());
-        }
+
+        zoekZaakParameters.getDatums().forEach((datumVeld, datum) -> {
+            if (datum != null) {
+                query.addFilterQuery(String.format("%s:[%s TO %s]", datumVeld.getVeld(),
+                                                   DateTimeFormatter.ISO_INSTANT.format(datum.van.atStartOfDay(ZoneOffset.UTC)),
+                                                   DateTimeFormatter.ISO_INSTANT.format(datum.tot.atStartOfDay(ZoneOffset.UTC))));
+            }
+        });
+
         zoekZaakParameters.getBeschikbareFilters()
                 .forEach(facetVeld -> query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
         zoekZaakParameters.getFilters()
                 .forEach((filter, waarde) -> query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde)));
 
+        zoekZaakParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(String.format("%s:\"%s\"", veld, waarde)));
+
+        query.setFacetMinCount(1);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());

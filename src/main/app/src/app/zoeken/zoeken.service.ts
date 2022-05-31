@@ -8,9 +8,9 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {Resultaat} from '../shared/model/resultaat';
 import {ZoekObject} from './model/zoek-object';
 import {ZoekParameters} from './model/zoek-parameters';
+import {ZoekResultaat} from './model/zoek-resultaat';
 
 @Injectable({
     providedIn: 'root'
@@ -22,9 +22,8 @@ export class ZoekenService {
 
     private basepath = '/rest/zoeken';
 
-
-    list(zoekParameters: ZoekParameters): Observable<Resultaat<ZoekObject>> {
-        return this.http.put<Resultaat<ZoekObject>>(`${this.basepath}/list`, zoekParameters).pipe(
+    list(zoekParameters: ZoekParameters): Observable<ZoekResultaat<ZoekObject>> {
+        return this.http.put<ZoekResultaat<ZoekObject>>(`${this.basepath}/list`, zoekParameters).pipe(
             catchError(this.handleError)
         );
     }

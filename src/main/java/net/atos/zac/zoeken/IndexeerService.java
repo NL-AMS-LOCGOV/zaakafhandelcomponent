@@ -70,6 +70,19 @@ public class IndexeerService {
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
+    public void indexeerDirect(final UUID uuid, final ZoekObjectType type) {
+        if (type == ZoekObjectType.ZAAK) {
+            addToSolr(List.of(zaakZoekObjectConverter.convert(uuid)));
+        }
+    }
+
+    public void indexeerDirect(final List<UUID> uuids, final ZoekObjectType type) {
+        if (type == ZoekObjectType.ZAAK) {
+            List<ZaakZoekObject> zaken = new ArrayList<>();
+            uuids.forEach(uuid -> zaken.add(zaakZoekObjectConverter.convert(uuid)));
+            addToSolr(zaken);
+        }
+    }
 
     public HerindexeerInfo herindexeren(final ZoekObjectType type) {
         final HerindexeerInfo info = new HerindexeerInfo();

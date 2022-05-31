@@ -163,7 +163,7 @@
     <field name="informatieobject_bestandsomvang" type="plong" indexed="true" stored="true"/>
     <field name="informatieobject_documentType" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
-    <field name="informatieobject_vezenddatum" type="pdate" indexed="true" stored="true"/>
+    <field name="informatieobject_verzenddatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_ondertekening" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_locked" type="boolean" indexed="true" stored="true"/>
     <field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
