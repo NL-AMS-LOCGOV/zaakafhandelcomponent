@@ -5,9 +5,17 @@
 
 package net.atos.zac.app.zaken.model;
 
+import java.time.LocalDate;
+
 public class RESTZaakOpschortGegevens {
 
-    public RESTZaak zaak;
+    public boolean indicatieOpschorting;
+
+    public String redenOpschorting;
 
     public Integer duurDagen;
+
+    public LocalDate einddatumGepland;
+
+    public LocalDate uiterlijkeEinddatumAfdoening;
 }

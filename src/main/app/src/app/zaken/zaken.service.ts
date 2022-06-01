@@ -75,21 +75,14 @@ export class ZakenService {
         );
     }
 
-    updateOpschortingZaak(uuid: string, zaak: Zaak, duurDagen: number): Observable<Zaak> {
-        const zaakOpschortGegevens: ZaakOpschortGegevens = new ZaakOpschortGegevens();
-        zaakOpschortGegevens.zaak = zaak;
-        zaakOpschortGegevens.duurDagen = duurDagen;
+    opschortenZaak(uuid: string, zaakOpschortGegevens: ZaakOpschortGegevens): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/opschorting`, zaakOpschortGegevens).pipe(
             catchError(this.handleError)
         );
     }
 
-    updateVerlengingZaak(uuid: string, zaak: Zaak, duurDagen: number, takenVerlengen: boolean): Observable<Zaak> {
-        const zaakVerlengGegevens: ZaakVerlengGegevens = new ZaakVerlengGegevens();
-        zaakVerlengGegevens.zaak = zaak;
-        zaakVerlengGegevens.duurDagen = duurDagen;
-        zaakVerlengGegevens.takenVerlengen = takenVerlengen;
-        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/verlenging`, zaakVerlengGegevens).pipe(
+    verlengenZaak(zaakUUID: string, zaakVerlengGegevens: ZaakVerlengGegevens): Observable<Zaak> {
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${zaakUUID}/verlenging`, zaakVerlengGegevens).pipe(
             catchError(this.handleError)
         );
     }
