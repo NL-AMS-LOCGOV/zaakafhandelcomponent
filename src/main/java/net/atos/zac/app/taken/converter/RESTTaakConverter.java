@@ -17,6 +17,7 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -83,8 +84,8 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForClosedCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
-            restTaak.taakdocumenten = flowableService.readTaakdocumentenForClosedTask(task.getId());
+            restTaak.taakdata = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
+            restTaak.taakdocumenten = (List<UUID>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
         }
         return restTaak;
     }
@@ -93,10 +94,10 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = task.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.readTaakdataForOpenTask(task.getId());
-            restTaak.taakdocumenten = flowableService.readTaakdocumentenForOpenTask(task.getId());
+            restTaak.taakdata = (Map<String, String>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
+            restTaak.taakdocumenten = (List<UUID>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
         }
-        restTaak.taakinformatie = flowableService.readTaakinformatieForOpenTask(task.getId());
+        restTaak.taakinformatie = (Map<String, String>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKINFORMATIE);
 
         return restTaak;
     }
@@ -105,10 +106,10 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.readTaakdataForClosedTask(task.getId());
-            restTaak.taakdocumenten = flowableService.readTaakdocumentenForClosedTask(task.getId());
+            restTaak.taakdata = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
+            restTaak.taakdocumenten = (List<UUID>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
         }
-        restTaak.taakinformatie = flowableService.readTaakinformatieForClosedTask(task.getId());
+        restTaak.taakinformatie = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKINFORMATIE);
 
         return restTaak;
     }

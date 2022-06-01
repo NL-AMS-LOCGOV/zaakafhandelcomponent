@@ -7,6 +7,7 @@ package net.atos.client.sd;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,9 +25,11 @@ public interface SmartDocumentsClient {
 
     @POST
     @Path("deposit/unattended")
-    UnattendedResponse unattendedDeposit(final Deposit deposit);
+    UnattendedResponse unattendedDeposit(@HeaderParam("Authorization") final String authenticationToken, @HeaderParam("Username") final String username,
+            final Deposit deposit);
 
     @POST
     @Path("deposit/wizard")
-    WizardResponse wizardDeposit(final Deposit deposit);
+    WizardResponse wizardDeposit(@HeaderParam("Authorization") final String authenticationToken, @HeaderParam("Username") final String username,
+            final Deposit deposit);
 }

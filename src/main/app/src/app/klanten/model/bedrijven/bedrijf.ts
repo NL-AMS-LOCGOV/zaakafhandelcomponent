@@ -15,5 +15,4 @@ export class Bedrijf implements Klant {
     type: string;
     identificatie: string;
     naam: string;
-    klantType: string;
 }

@@ -9,6 +9,10 @@ RUN mvn -DskipTests package
 ### Create runtime image fase
 FROM eclipse-temurin:17-jre-focal as runtime
 
+# Import certificates into Java truststore
+ADD src/main/resources/certificates /certificates
+RUN keytool -importcert -cacerts -file /certificates/* -storepass changeit -noprompt
+
 # Copy zaakafhandelcomponent bootable jar
 COPY --from=build /target/zaakafhandelcomponent.jar /
 

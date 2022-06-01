@@ -9,6 +9,8 @@ import java.util.Date;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import net.atos.client.zgw.zrc.model.Rol;
+
 public class ZaakZoekObject {
 
     @Field
@@ -266,8 +268,10 @@ public class ZaakZoekObject {
         return initiatorIdentificatie;
     }
 
-    public void setInitiatorIdentificatie(final String initiatorIdentificatie) {
-        this.initiatorIdentificatie = initiatorIdentificatie;
+    public void setInitiatorIdentificatie(final Rol<?> initiator) {
+        if (initiator != null) {
+            this.initiatorIdentificatie = initiator.getIdentificatienummer();
+        }
     }
 
     public String getLocatie() {

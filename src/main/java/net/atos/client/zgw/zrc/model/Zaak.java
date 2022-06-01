@@ -509,4 +509,9 @@ public class Zaak {
     public boolean isOpgeschort() {
         return opschorting != null && opschorting.getIndicatie();
     }
+
+    @JsonbTransient
+    public boolean isVerlengd() {
+        return verlenging != null;
+    }
 }

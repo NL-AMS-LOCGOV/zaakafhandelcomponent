@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Zaak} from './zaak';
-
 export class ZaakVerlengGegevens {
-    zaak: Zaak;
+    einddatumGepland: string;
+    uiterlijkeEinddatumAfdoening: string;
+    redenVerlenging: string;
     duurDagen: number;
     takenVerlengen: boolean;
 }

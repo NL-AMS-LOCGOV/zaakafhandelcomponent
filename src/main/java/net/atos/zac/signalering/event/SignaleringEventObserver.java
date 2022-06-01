@@ -120,11 +120,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     }
 
     private Optional<Rol<?>> getRol(final Zaak zaak, final Roltype roltype, final BetrokkeneType betrokkeneType) {
-        final RolListParameters rolListParameters = new RolListParameters();
-        rolListParameters.setZaak(zaak.getUrl());
-        rolListParameters.setRoltype(roltype.getUrl());
-        rolListParameters.setBetrokkeneType(betrokkeneType);
-        return zrcClientService.listRollen(rolListParameters).getSingleResult();
+        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult();
     }
 
     private Signalering addTarget(final Signalering signalering, final Rol<?> rol) {

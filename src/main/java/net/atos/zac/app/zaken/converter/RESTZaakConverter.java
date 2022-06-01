@@ -22,14 +22,17 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Opschorting;
+import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
+import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -146,7 +149,11 @@ public class RESTZaakConverter {
                 .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
                 .orElse(null);
         restZaak.behandelaar = userConverter.convertUserId(behandelaarId);
-        restZaak.initiatorIdentificatie = zgwApiService.findInitiatorForZaak(zaak.getUrl());
+
+        final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
+        if (initiator != null) {
+            restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
+        }
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));
@@ -194,18 +201,27 @@ public class RESTZaakConverter {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
         zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
-        if (restZaak.redenOpschorting != null) {
-            zaak.setOpschorting(new Opschorting(restZaak.indicatieOpschorting, restZaak.redenOpschorting));
-        }
         return zaak;
     }
 
-    public Zaak convertToPatch(final RESTZaakVerlengGegevens verlengGegevens, final UUID zaakUUID) {
-        final Zaak zaak = convertToPatch(verlengGegevens.zaak);
+    public Zaak convertToPatch(final UUID zaakUUID, final RESTZaakVerlengGegevens verlengGegevens) {
+        final Zaak zaak = new Zaak();
+        zaak.setEinddatumGepland(verlengGegevens.einddatumGepland);
+        zaak.setUiterlijkeEinddatumAfdoening(verlengGegevens.uiterlijkeEinddatumAfdoening);
         final Verlenging verlenging = zrcClientService.readZaak(zaakUUID).getVerlenging();
         zaak.setVerlenging(verlenging != null && verlenging.getDuur() != null
-                                   ? new Verlenging(verlengGegevens.zaak.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
-                                   : new Verlenging(verlengGegevens.zaak.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
+                                   ? new Verlenging(verlengGegevens.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
+                                   : new Verlenging(verlengGegevens.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
+        return zaak;
+    }
+
+    public Zaak convertToPatch(final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
+        final Zaak zaak = new Zaak();
+        zaak.setEinddatumGepland(restZaakOpschortGegevens.einddatumGepland);
+        zaak.setUiterlijkeEinddatumAfdoening(restZaakOpschortGegevens.uiterlijkeEinddatumAfdoening);
+        if (restZaakOpschortGegevens.redenOpschorting != null) {
+            zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting, restZaakOpschortGegevens.redenOpschorting));
+        }
         return zaak;
     }
 

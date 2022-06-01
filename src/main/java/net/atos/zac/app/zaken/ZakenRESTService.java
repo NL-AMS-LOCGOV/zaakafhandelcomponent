@@ -52,6 +52,7 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
@@ -66,7 +67,6 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
-import net.atos.zac.app.klanten.model.KlantType;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
@@ -208,14 +208,10 @@ public class ZakenRESTService {
 
     @DELETE
     @Path("{uuid}/initiator")
-    public void deleteInitiator(@PathParam("uuid") final String zaakUUID) {
-
-        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
-        String initiatorID = zgwApiService.findInitiatorForZaak(zaak.getUrl());
-        switch (KlantType.getType(initiatorID)) {
-            case PERSOON -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.NATUURLIJK_PERSOON, INITIATOR_VERWIJDER_REDEN);
-            case BEDRIJF -> zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.VESTIGING, INITIATOR_VERWIJDER_REDEN);
-        }
+    public void deleteInitiator(@PathParam("uuid") final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
+        zrcClientService.deleteRol(zaak.getUrl(), initiator.getBetrokkeneType(), INITIATOR_VERWIJDER_REDEN);
     }
 
     @POST
@@ -247,9 +243,9 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/opschorting")
     public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens.zaak),
-                                                                      restZaakOpschortGegevens.zaak.indicatieOpschorting ? OPSCHORTING : HERVATTING);
-        if (restZaakOpschortGegevens.zaak.indicatieOpschorting) {
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
+                                                                      restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
+        if (restZaakOpschortGegevens.indicatieOpschorting) {
             flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
             flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
         } else {
@@ -271,19 +267,10 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/verlenging")
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakVerlengGegevens, zaakUUID),
-                                                                      VERLENGING);
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), VERLENGING);
         if (restZaakVerlengGegevens.takenVerlengen) {
-            final int[] count = new int[1];
-            flowableService.listOpenTasksforCase(zaakUUID).stream()
-                    .filter(task -> task.getDueDate() != null)
-                    .forEach(task -> {
-                        task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(restZaakVerlengGegevens.duurDagen)));
-                        flowableService.updateTask(task);
-                        eventingService.send(TAAK.updated(task));
-                        count[0]++;
-                    });
-            if (0 < count[0]) {
+            final int aantalTakenVerlengd = verlengOpenTaken(zaakUUID, restZaakVerlengGegevens.duurDagen);
+            if (aantalTakenVerlengd > 0) {
                 eventingService.send(ZAAK_TAKEN.updated(updatedZaak));
             }
         }
@@ -314,9 +301,8 @@ public class ZakenRESTService {
     @GET
     @Path("zaken/informatieobject/{informatieObjectUuid}")
     public List<String> findZakenInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
-        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid).getUrl());
-        List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
+        List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(
+                drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid));
         return zaakInformatieobjects.stream()
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).collect(Collectors.toList());
     }
@@ -579,9 +565,10 @@ public class ZakenRESTService {
     }
 
     private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
-        switch (KlantType.getType(identificatienummer)) {
-            case PERSOON -> addInitiatorBurger(identificatienummer, zaak, toelichting);
-            case BEDRIJF -> addInitiatorBedrijf(identificatienummer, zaak, toelichting);
+        switch (identificatienummer.length()) {
+            case 9 -> addInitiatorBurger(identificatienummer, zaak, toelichting);
+            case 12 -> addInitiatorBedrijf(identificatienummer, zaak, toelichting);
+            default -> throw new IllegalStateException("Unexpected value: '%s'" + identificatienummer);
         }
     }
 
@@ -595,5 +582,18 @@ public class ZakenRESTService {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
+    }
+
+    private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
+        final int[] count = new int[1];
+        flowableService.listOpenTasksforCase(zaakUUID).stream()
+                .filter(task -> task.getDueDate() != null)
+                .forEach(task -> {
+                    task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));
+                    flowableService.updateTask(task);
+                    eventingService.send(TAAK.updated(task));
+                    count[0]++;
+                });
+        return count[0];
     }
 }

@@ -34,6 +34,21 @@ public class RolListParameters extends AbstractListParameters {
     @QueryParam("roltype")
     private URI roltype;
 
+    public RolListParameters(final URI zaak) {
+        this.zaak = zaak;
+    }
+
+    public RolListParameters(final URI zaak, final URI roltype) {
+        this.zaak = zaak;
+        this.roltype = roltype;
+    }
+
+    public RolListParameters(final URI zaak, final URI roltype, final BetrokkeneType betrokkeneType) {
+        this.zaak = zaak;
+        this.betrokkeneType = betrokkeneType.toValue();
+        this.roltype = roltype;
+    }
+
     public URI getZaak() {
         return zaak;
     }

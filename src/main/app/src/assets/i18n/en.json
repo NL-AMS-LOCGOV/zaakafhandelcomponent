@@ -255,6 +255,7 @@
   "actie.deselecteren": "Deselect",
   "actie.document.aanmaken": "Add document",
   "actie.document.aanmaken.nogmaals": "Add another document",
+  "actie.document.creeren": "Create document",
   "actie.document.bekijken": "View document",
   "actie.document.verplaatsen": "Move document",
   "actie.document.verplaatsen.uitgevoerd": "The document has been moved",
