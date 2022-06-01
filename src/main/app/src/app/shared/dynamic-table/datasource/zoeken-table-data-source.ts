@@ -14,7 +14,7 @@ import {ZoekResultaat} from '../../../zoeken/model/zoek-resultaat';
 
 export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
 
-    beschikbareFilters: { [key: string]: string } = {};
+    beschikbareFilters: { [key: string]: string[] } = {};
     totalItems: number = 0;
     paginator: MatPaginator;
     sort: MatSort;

@@ -50,8 +50,8 @@
                 <mat-form-field appearance="standard">
                     <mat-select placeholder="{{ 'status.-kies-' | translate }}" id="status_filter" (selectionChange)="filtersChange()"
                                 [(ngModel)]="dataSource.zoekParameters.filters['ZAAK_STATUS']">
-                        <mat-option>{{ '-geen-' | translate }}</mat-option>
-                        <mat-option *ngFor="let value of dataSource.beschikbareFilters['ZAAK_STATUS']" [value]="value">{{ value }}</mat-option>
+                        <mat-option>{{ 'status.-kies-' | translate }}</mat-option>
+                        <mat-option *ngFor="let value of getFilters('ZAAK_STATUS')" [value]="value">{{ value }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </th>
@@ -67,8 +67,8 @@
                 <mat-form-field appearance="standard">
                     <mat-select id="zaaktype_filter" (selectionChange)="filtersChange()" placeholder="{{'zaaktype.-kies-' | translate}}"
                                 [(ngModel)]="dataSource.zoekParameters.filters['ZAAK_ZAAKTYPE']">
-                        <mat-option>{{ '-geen-' | translate }}</mat-option>
-                        <mat-option *ngFor="let value of dataSource.beschikbareFilters['ZAAK_ZAAKTYPE']" [value]="value">{{ value }}</mat-option>
+                        <mat-option>{{ 'zaaktype.-kies-' | translate }}</mat-option>
+                        <mat-option *ngFor="let value of  getFilters('ZAAK_ZAAKTYPE')" [value]="value">{{ value }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </th>
@@ -98,8 +98,10 @@
                 <mat-form-field appearance="standard">
                     <mat-select id="groep_filter" (selectionChange)="filtersChange()" placeholder="{{'groep.-kies-' | translate}}"
                                 [(ngModel)]="dataSource.zoekParameters.filters['ZAAK_GROEP']">
-                        <mat-option>{{ '-geen-' | translate }}</mat-option>
-                        <mat-option *ngFor="let value of dataSource.beschikbareFilters['ZAAK_GROEP']" [value]="value">{{ value }}</mat-option>
+                        <mat-option>{{ 'groep.-kies-' | translate }}</mat-option>
+                        <mat-option *ngFor="let value of getFilters('ZAAK_GROEP')" [value]="value">
+                            {{ value == '-NULL-' ? ('-geen-' | translate) : value }}
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
             </th>
@@ -168,8 +170,10 @@
                 <mat-form-field appearance="standard">
                     <mat-select id="behandelaar_filter" (selectionChange)="filtersChange()" placeholder="{{'behandelaar.-kies-' | translate}}"
                                 [(ngModel)]="dataSource.zoekParameters.filters['ZAAK_BEHANDELAAR']">
-                        <mat-option>{{ '-geen-' | translate }}</mat-option>
-                        <mat-option *ngFor="let value of dataSource.beschikbareFilters['ZAAK_BEHANDELAAR']" [value]="value">{{ value }}</mat-option>
+                        <mat-option>{{ 'behandelaar.-kies-' | translate }}</mat-option>
+                        <mat-option *ngFor="let value of getFilters('ZAAK_BEHANDELAAR')" [value]="value">
+                            {{ value == '-NULL-' ? ('-geen-' | translate) : value }}
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
             </th>

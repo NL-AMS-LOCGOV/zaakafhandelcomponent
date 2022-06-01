@@ -8,6 +8,7 @@ package net.atos.zac.zoeken;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,7 +18,6 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -34,6 +34,8 @@ import net.atos.zac.zoeken.model.ZoekVeld;
 public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
+
+    private static final String LEGE_WAARDE = "-NULL-";
 
     private SolrClient solrClient;
 
@@ -67,11 +69,19 @@ public class ZoekenService {
                 .forEach(facetVeld -> query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
         zoekZaakParameters.getFilters()
-                .forEach((filter, waarde) -> query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde)));
+                .forEach((filter, waarde) -> {
+                    if (waarde.equals(LEGE_WAARDE)) {
+                        query.addFilterQuery(String.format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
+                    } else {
+                        query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                    }
+
+                });
 
         zoekZaakParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(String.format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
+        query.setFacetMissing(true);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
@@ -85,8 +95,11 @@ public class ZoekenService {
             final ZoekResultaat<ZaakZoekObject> zoekResultaat = new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class),
                                                                                     response.getResults().getNumFound());
             response.getFacetFields().forEach(facetField -> {
-                FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
-                final List<String> waardes = facetField.getValues().stream().map(FacetField.Count::getName).toList();
+                final FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
+                final List<String> waardes = new ArrayList<>();
+                facetField.getValues().stream()
+                        .filter(facet -> facet.getCount() > 0)
+                        .forEach(facet -> waardes.add(facet.getName() == null ? LEGE_WAARDE : facet.getName()));
                 zoekResultaat.addFilter(facetVeld, waardes);
             });
             return zoekResultaat;
