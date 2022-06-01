@@ -411,7 +411,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden']),
             null,
             planItem.toelichting);
-        dialogData.confirmButtonActionKey = 'actie.intake.afronden';
+        dialogData.confirmButtonActionKey = planItem.naam;
 
         this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
             if (value) {
@@ -433,22 +433,25 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
+        const dialogData: DialogData = new DialogData([
+                new SelectFormFieldBuilder().id('resultaattype')
+                                            .label('resultaat')
+                                            .optionLabel('naam')
+                                            .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                            .validators(Validators.required)
+                                            .build(),
+                new InputFormFieldBuilder().id('toelichting')
+                                           .label('toelichting')
+                                           .maxlength(80)
+                                           .build()],
+            (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
+            null,
+            planItem.toelichting);
+        dialogData.confirmButtonActionKey = planItem.naam;
+
         return {
             dialogComponent: DialogComponent,
-            dialogData: new DialogData([
-                    new SelectFormFieldBuilder().id('resultaattype')
-                                                .label('resultaat')
-                                                .optionLabel('naam')
-                                                .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
-                                                .validators(Validators.required)
-                                                .build(),
-                    new InputFormFieldBuilder().id('toelichting')
-                                               .label('toelichting')
-                                               .maxlength(80)
-                                               .build()],
-                (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
-                null,
-                planItem.toelichting)
+            dialogData: dialogData
         };
     }
 
