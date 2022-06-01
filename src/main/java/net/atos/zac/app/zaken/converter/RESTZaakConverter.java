@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.net.URI;
@@ -156,7 +155,7 @@ public class RESTZaakConverter {
         }
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
-        restZaak.ontvangstbevestigingVerstuurd = isTrue((Boolean) flowableService.findVariableForCase(zaak.getUuid(), VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD));
+        restZaak.ontvangstbevestigingVerstuurd = isTrue(flowableService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         return restZaak;
     }
 

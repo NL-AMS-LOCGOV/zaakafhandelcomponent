@@ -11,7 +11,6 @@ import static net.atos.zac.aanvraag.ProductAanvraagService.OBJECT_TYPE_OVERIGE_P
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -271,7 +270,7 @@ public class DataConverter {
         if (task.getAssignee() != null) {
             taakData.behandelaar = identityService.readUser(task.getAssignee()).getFullName();
         }
-        taakData.data = (Map<String, String>) flowableService.findTaskVariable(taskId, FlowableService.VAR_TASK_TAAKDATA);
+        taakData.data = flowableService.findTaakdata(taskId);
         return taakData;
     }
 }

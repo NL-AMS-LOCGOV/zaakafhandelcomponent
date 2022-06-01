@@ -246,11 +246,11 @@ public class ZakenRESTService {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
                                                                       restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
-            flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
+            flowableService.updateDatumtijdOpgeschortForOpenCase(zaakUUID, ZonedDateTime.now());
+            flowableService.updateVerwachteDagenOpgeschortForOpenCase(zaakUUID, restZaakOpschortGegevens.duurDagen);
         } else {
-            flowableService.removeVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
-            flowableService.removeVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+            flowableService.removeDatumtijdOpgeschortForOpenCase(zaakUUID);
+            flowableService.removeVerwachteDagenOpgeschortForOpenCase(zaakUUID);
         }
         return zaakConverter.convert(updatedZaak);
     }
@@ -259,8 +259,8 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/opschorting")
     public RESTZaakOpschorting getZaakOpschorting(@PathParam("uuid") final UUID zaakUUID) {
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        zaakOpschorting.vanafDatumTijd = (ZonedDateTime) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT);
-        zaakOpschorting.duurDagen = (Integer) flowableService.findVariableForCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschortForCase(zaakUUID);
+        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschortForCase(zaakUUID);
         return zaakOpschorting;
     }
 

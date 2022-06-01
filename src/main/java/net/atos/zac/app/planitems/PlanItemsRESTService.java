@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.planitems;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
-
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +70,7 @@ public class PlanItemsRESTService {
     @Path("{id}")
     public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
-        final UUID zaakUuidForCase = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAK_UUID);
+        final UUID zaakUuidForCase = flowableService.readZaakUUIDOpenCase(planItem.getCaseInstanceId());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
         return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
     }

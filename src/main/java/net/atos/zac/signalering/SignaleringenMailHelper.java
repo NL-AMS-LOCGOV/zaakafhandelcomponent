@@ -5,8 +5,6 @@
 
 package net.atos.zac.signalering;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_OMSCHRIJVING;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_IDENTIFICATIE;
 
 import java.util.UUID;
 
@@ -82,8 +80,8 @@ public class SignaleringenMailHelper {
             case TAAK -> {
                 final String id = signalering.getSubject();
                 final TaskInfo taak = flowableService.readTask(id);
-                final String zaakIdentificatie = (String) flowableService.readCaseVariable(taak.getScopeId(), VAR_CASE_ZAAK_IDENTIFICATIE);
-                final String zaaktypeOmschrijving = (String) flowableService.readCaseVariable(taak.getScopeId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+                final String zaakIdentificatie = flowableService.readZaakIdentificatie(taak.getScopeId());
+                final String zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijving(taak.getScopeId());
                 return new SignaleringSubject.Link(taak.getName(),
                                                    String.format("de taak %s voor zaak %s (%s)", taak.getName(), zaakIdentificatie, zaaktypeOmschrijving),
                                                    configuratieService.taakTonenUrl(id));

@@ -5,8 +5,6 @@
 
 package net.atos.zac.zaaksturing;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_UUUID;
-
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,7 +38,7 @@ public class ZaakafhandelParameterService {
     }
 
     public HumanTaskParameters getHumanTaskParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
             return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         }
@@ -52,7 +50,7 @@ public class ZaakafhandelParameterService {
     }
 
     public UserEventListenerParameters getUserEventParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(planItem.getCaseInstanceId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
 
