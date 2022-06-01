@@ -172,7 +172,7 @@ export class InformatieObjectenService {
         verplaatsAction.asObservable().subscribe(url => {
             const nieuweZaakID = url.split('/').pop();
             this.postVerplaatsDocument(document, nieuweZaakID).subscribe(() =>
-                this.utilService.openSnackbar('actie.document.verplaatsen.uitgevoerd')
+                this.utilService.openSnackbar('msg.document.verplaatsen.uitgevoerd')
             );
             this.deleteTeVerplaatsenDocument(document);
         });
