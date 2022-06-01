@@ -6,5 +6,5 @@
 import {Resultaat} from '../../shared/model/resultaat';
 
 export interface ZoekResultaat<TYPE> extends Resultaat<TYPE> {
-    filters: { [key: string]: string };
+    filters: { [key: string]: string[] };
 }

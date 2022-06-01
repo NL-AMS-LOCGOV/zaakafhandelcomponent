@@ -212,4 +212,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         });
     }
 
+    getFilters(field): string[] {
+        if (this.dataSource.beschikbareFilters[field]) {
+            return this.dataSource.beschikbareFilters[field].sort((a, b) => a.localeCompare(b));
+        }
+    }
+
 }
