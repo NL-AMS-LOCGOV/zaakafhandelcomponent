@@ -175,7 +175,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
     }
 
     showAssignToMe(row: ZaakZoekObject): boolean {
-        return this.ingelogdeMedewerker.id !== row.behandelaarGebruikersnaam;
+        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== row.behandelaarGebruikersnaam;
     }
 
     openVerdelenScherm(): void {

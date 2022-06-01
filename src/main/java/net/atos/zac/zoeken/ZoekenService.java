@@ -24,6 +24,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterVeld;
+import net.atos.zac.zoeken.model.SorteerVeld;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
@@ -74,8 +75,11 @@ public class ZoekenService {
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekZaakParameters.getRows());
         query.setStart(zoekZaakParameters.getStart());
-        query.addSort(zoekZaakParameters.getSorteren().getSorteerVeld().getVeld(),
-                      zoekZaakParameters.getSorteren().getRichting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+        query.addSort(zoekZaakParameters.getSortering().getSorteerVeld().getVeld(),
+                      zoekZaakParameters.getSortering().getRichting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+        if (zoekZaakParameters.getSortering().getSorteerVeld() != SorteerVeld.IDENTIFICATIE) {
+            query.addSort(SorteerVeld.IDENTIFICATIE.getVeld(), SolrQuery.ORDER.desc);
+        }
         try {
             final QueryResponse response = solrClient.query(query);
             final ZoekResultaat<ZaakZoekObject> zoekResultaat = new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class),

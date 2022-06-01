@@ -4,8 +4,8 @@
   -->
 
 <div class="table-wrapper" [class.loading]="utilService.loading$ | async">
-    <table mat-table matSort multiTemplateDataRows cdkDropList cdkDropListLockAxis="x" cdkDropListOrientation="horizontal"
-           (cdkDropListDropped)="dataSource.drop($event)">
+    <table mat-table matSort matSortDisableClear matSortDirection="desc" matSortActive="IDENTIFICATIE"
+           multiTemplateDataRows cdkDropList cdkDropListLockAxis="x" cdkDropListOrientation="horizontal" (cdkDropListDropped)="dataSource.drop($event)">
 
         <ng-container matColumnDef="select_filter">
             <th mat-header-cell *matHeaderCellDef></th>
@@ -40,7 +40,7 @@
         </ng-container>
 
         <ng-container matColumnDef="zaak.identificatie">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'zaak.identificatie' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="IDENTIFICATIE">{{ 'zaak.identificatie' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.identificatie }}</td>
         </ng-container>
 
@@ -58,7 +58,7 @@
         </ng-container>
 
         <ng-container matColumnDef="status">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'status' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_STATUS">{{ 'status' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.statustypeOmschrijving | empty }}</td>
         </ng-container>
 
@@ -75,7 +75,7 @@
         </ng-container>
 
         <ng-container matColumnDef="zaaktype">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'zaaktype' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_ZAAKTYPE">{{ 'zaaktype' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.zaaktypeOmschrijving | empty }}</td>
         </ng-container>
 
@@ -106,7 +106,7 @@
         </ng-container>
 
         <ng-container matColumnDef="groep">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'groep' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_GROEP">{{ 'groep' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.groepNaam | empty}}</td>
         </ng-container>
 
@@ -126,7 +126,7 @@
         </ng-container>
 
         <ng-container matColumnDef="startdatum">
-            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="'startdatum'">{{ 'startdatum' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_STARTDATUM">{{ 'startdatum' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.startdatum | datum | empty }}</td>
         </ng-container>
 
@@ -148,7 +148,7 @@
         </ng-container>
 
         <ng-container matColumnDef="einddatumGepland">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'einddatumGepland' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_EINDDATUMGEPLAND">{{ 'einddatumGepland' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | datum | empty }}
                 <mat-icon *ngIf="isAfterDate(row.einddatumGepland)" class="warning" [title]="'msg.datum.overschreden' | translate"></mat-icon>
             </td>
@@ -176,7 +176,7 @@
         </ng-container>
 
         <ng-container matColumnDef="behandelaar">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'behandelaar' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_BEHANDELAAR">{{ 'behandelaar' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.behandelaarNaam | empty }}</td>
         </ng-container>
 
@@ -198,7 +198,7 @@
         </ng-container>
 
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_UITERLIJKEEINDDATUMAFDOENING">
                 {{ 'uiterlijkeEinddatumAfdoening' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
@@ -237,7 +237,7 @@
         </ng-container>
 
         <ng-container matColumnDef="openstaandeTaken">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'openstaandeTaken' | translate | empty}}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_AANTALOPENSTAANDETAKEN">{{ 'openstaandeTaken' | translate | empty}}</th>
             <td mat-cell *matCellDef="let row">{{ row.aantalOpenstaandeTaken }}</td>
         </ng-container>
 
