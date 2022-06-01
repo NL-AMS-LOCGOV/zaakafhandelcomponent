@@ -285,9 +285,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'assignment');
 
             case PlanItemType.UserEventListener:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), this.getIcon(planItem));
+                return new ButtonMenuItem('planitem.' + planItem.userEventListenerActie, () =>
+                    this.openPlanItemStartenDialog(planItem), this.getIcon(planItem));
             case PlanItemType.ProcessTask:
-                return new ButtonMenuItem(planItem.naam, () => this.openPlanItemStartenDialog(planItem), 'launch');
+                return new ButtonMenuItem(planItem.naam, () =>
+                    this.openPlanItemStartenDialog(planItem), 'launch');
         }
         throw new Error(`Onbekend type: ${planItem.type}`);
     }
@@ -376,7 +378,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
             this.dialogSubscriptions.length = 0;
             if (result) {
-                this.utilService.openSnackbar('actie.planitem.uitgevoerd', {planitem: planItem.naam});
+                this.utilService.openSnackbar('msg.planitem.uitgevoerd.' + planItem.userEventListenerActie);
                 this.updateZaak();
             }
         });
@@ -413,7 +415,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden']),
             null,
             planItem.toelichting);
-        dialogData.confirmButtonActionKey = 'actie.intake.afronden';
+        dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
 
         this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
             if (value) {
@@ -435,22 +437,25 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
+        const dialogData: DialogData = new DialogData([
+                new SelectFormFieldBuilder().id('resultaattype')
+                                            .label('resultaat')
+                                            .optionLabel('naam')
+                                            .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                            .validators(Validators.required)
+                                            .build(),
+                new InputFormFieldBuilder().id('toelichting')
+                                           .label('toelichting')
+                                           .maxlength(80)
+                                           .build()],
+            (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
+            null,
+            planItem.toelichting);
+        dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
+
         return {
             dialogComponent: DialogComponent,
-            dialogData: new DialogData([
-                    new SelectFormFieldBuilder().id('resultaattype')
-                                                .label('resultaat')
-                                                .optionLabel('naam')
-                                                .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
-                                                .validators(Validators.required)
-                                                .build(),
-                    new InputFormFieldBuilder().id('toelichting')
-                                               .label('toelichting')
-                                               .maxlength(80)
-                                               .build()],
-                (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
-                null,
-                planItem.toelichting)
+            dialogData: dialogData
         };
     }
 
@@ -689,12 +694,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                this.translate.instant('actie.initiator.ontkoppelen.bevestigen'),
+                this.translate.instant('msg.initiator.ontkoppelen.bevestigen'),
                 this.zakenService.deleteInitiator(this.zaak)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.initiator.ontkoppelen.uitgevoerd');
+                this.utilService.openSnackbar('msg.initiator.ontkoppelen.uitgevoerd');
                 this.zaak.initiatorIdentificatie = null;
                 this.init(this.zaak);
             }

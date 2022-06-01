@@ -112,10 +112,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
             ).subscribe(zaakIDs => {
                 let melding: string;
                 if (zaakIDs) {
-                    melding = this.translate.instant('actie.document.ontkoppelen.meerdere.zaken.bevestigen',
+                    melding = this.translate.instant('msg.document.ontkoppelen.meerdere.zaken.bevestigen',
                         {zaken: zaakIDs, document: informatieobject.titel});
                 } else {
-                    melding = this.translate.instant('actie.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
+                    melding = this.translate.instant('msg.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
                 }
                 const dialogData = new DialogData([
                         new TextareaFormFieldBuilder().id('reden')
@@ -127,7 +127,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                     data: dialogData
                 }).afterClosed().subscribe(result => {
                     if (result) {
-                        this.utilService.openSnackbar('actie.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
+                        this.utilService.openSnackbar('msg.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
                         this.websocketService.suspendListener(this.zaakDocumentenListener);
                         this.loadInformatieObjecten();
                     }

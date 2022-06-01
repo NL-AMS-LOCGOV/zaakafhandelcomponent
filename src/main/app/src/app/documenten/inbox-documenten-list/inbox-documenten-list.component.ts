@@ -88,12 +88,12 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     documentVerwijderen(inboxDocument: InboxDocument): void {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
-                this.translate.instant('actie.document.verwijderen.bevestigen', {document: inboxDocument.titel}),
+                this.translate.instant('msg.document.verwijderen.bevestigen', {document: inboxDocument.titel}),
                 this.service.delete(inboxDocument)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('actie.document.verwijderen.uitgevoerd', {document: inboxDocument.titel});
+                this.utilService.openSnackbar('msg.document.verwijderen.uitgevoerd', {document: inboxDocument.titel});
                 this.paginator.page.emit();
             }
         });
