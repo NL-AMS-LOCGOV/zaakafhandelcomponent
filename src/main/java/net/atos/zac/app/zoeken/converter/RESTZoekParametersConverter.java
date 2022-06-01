@@ -28,6 +28,11 @@ public class RESTZoekParametersConverter {
         if (restZoekParameters.zoeken != null) {
             restZoekParameters.zoeken.forEach(zoekParameters::addZoekVeld);
         }
+
+        if (restZoekParameters.sorteerVeld != null) {
+            zoekParameters.setSortering(restZoekParameters.sorteerVeld, restZoekParameters.sorteerRichting);
+        }
+
         zoekParameters.setStart(restZoekParameters.start);
         zoekParameters.setRows(restZoekParameters.rows);
         return zoekParameters;

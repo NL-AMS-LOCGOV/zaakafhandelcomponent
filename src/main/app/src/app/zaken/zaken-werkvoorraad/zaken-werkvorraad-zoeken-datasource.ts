@@ -26,6 +26,8 @@ export class ZakenWerkvoorraadZoekenDatasource extends ZoekenTableDataSource<Zaa
         this.zoekParameters.filterQueries['zaak_afgehandeld'] = 'false';
         this.zoekParameters.start = this.paginator.pageIndex * this.paginator.pageSize;
         this.zoekParameters.rows = this.paginator.pageSize;
+        this.zoekParameters.sorteerRichting = this.sort.direction === 'asc' ? 'ASCENDING' : 'DESCENDING';
+        this.zoekParameters.sorteerVeld = this.sort.active;
         return this.zoekParameters;
     }
 
