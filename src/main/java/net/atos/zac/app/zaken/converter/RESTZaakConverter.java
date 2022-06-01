@@ -32,6 +32,7 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
+import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -200,18 +201,27 @@ public class RESTZaakConverter {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
         zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
-        if (restZaak.redenOpschorting != null) {
-            zaak.setOpschorting(new Opschorting(restZaak.indicatieOpschorting, restZaak.redenOpschorting));
-        }
         return zaak;
     }
 
-    public Zaak convertToPatch(final RESTZaakVerlengGegevens verlengGegevens, final UUID zaakUUID) {
-        final Zaak zaak = convertToPatch(verlengGegevens.zaak);
+    public Zaak convertToPatch(final UUID zaakUUID, final RESTZaakVerlengGegevens verlengGegevens) {
+        final Zaak zaak = new Zaak();
+        zaak.setEinddatumGepland(verlengGegevens.einddatumGepland);
+        zaak.setUiterlijkeEinddatumAfdoening(verlengGegevens.uiterlijkeEinddatumAfdoening);
         final Verlenging verlenging = zrcClientService.readZaak(zaakUUID).getVerlenging();
         zaak.setVerlenging(verlenging != null && verlenging.getDuur() != null
-                                   ? new Verlenging(verlengGegevens.zaak.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
-                                   : new Verlenging(verlengGegevens.zaak.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
+                                   ? new Verlenging(verlengGegevens.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
+                                   : new Verlenging(verlengGegevens.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
+        return zaak;
+    }
+
+    public Zaak convertToPatch(final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
+        final Zaak zaak = new Zaak();
+        zaak.setEinddatumGepland(restZaakOpschortGegevens.einddatumGepland);
+        zaak.setUiterlijkeEinddatumAfdoening(restZaakOpschortGegevens.uiterlijkeEinddatumAfdoening);
+        if (restZaakOpschortGegevens.redenOpschorting != null) {
+            zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting, restZaakOpschortGegevens.redenOpschorting));
+        }
         return zaak;
     }
 

@@ -243,9 +243,9 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/opschorting")
     public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens.zaak),
-                                                                      restZaakOpschortGegevens.zaak.indicatieOpschorting ? OPSCHORTING : HERVATTING);
-        if (restZaakOpschortGegevens.zaak.indicatieOpschorting) {
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
+                                                                      restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
+        if (restZaakOpschortGegevens.indicatieOpschorting) {
             flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_DATUMTIJD_OPGESCHORT, ZonedDateTime.now());
             flowableService.createVariableForOpenCase(zaakUUID, FlowableService.VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, restZaakOpschortGegevens.duurDagen);
         } else {
@@ -267,19 +267,10 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/verlenging")
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakVerlengGegevens, zaakUUID),
-                                                                      VERLENGING);
+        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), VERLENGING);
         if (restZaakVerlengGegevens.takenVerlengen) {
-            final int[] count = new int[1];
-            flowableService.listOpenTasksforCase(zaakUUID).stream()
-                    .filter(task -> task.getDueDate() != null)
-                    .forEach(task -> {
-                        task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(restZaakVerlengGegevens.duurDagen)));
-                        flowableService.updateTask(task);
-                        eventingService.send(TAAK.updated(task));
-                        count[0]++;
-                    });
-            if (0 < count[0]) {
+            final int aantalTakenVerlengd = verlengOpenTaken(zaakUUID, restZaakVerlengGegevens.duurDagen);
+            if (aantalTakenVerlengd > 0) {
                 eventingService.send(ZAAK_TAKEN.updated(updatedZaak));
             }
         }
@@ -591,5 +582,18 @@ public class ZakenRESTService {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
         zrcClientService.createRol(rol);
+    }
+
+    private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
+        final int[] count = new int[1];
+        flowableService.listOpenTasksforCase(zaakUUID).stream()
+                .filter(task -> task.getDueDate() != null)
+                .forEach(task -> {
+                    task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));
+                    flowableService.updateTask(task);
+                    eventingService.send(TAAK.updated(task));
+                    count[0]++;
+                });
+        return count[0];
     }
 }

@@ -64,6 +64,8 @@ import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {Indicatie} from '../model/indicatie';
+import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
+import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -494,25 +496,27 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     editOpschorting(event: any): void {
-        const zaak: Zaak = new Zaak();
-        zaak.indicatieOpschorting = !this.zaak.indicatieOpschorting;
-        zaak.einddatumGepland = event.einddatumGepland;
-        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
-        zaak.redenOpschorting = event.reden;
+        const zaakOpschortGegevens = new ZaakOpschortGegevens();
+        zaakOpschortGegevens.indicatieOpschorting = !this.zaak.indicatieOpschorting;
+        zaakOpschortGegevens.einddatumGepland = event.einddatumGepland;
+        zaakOpschortGegevens.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+        zaakOpschortGegevens.redenOpschorting = event.reden;
+        zaakOpschortGegevens.duurDagen = event.duurDagen;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateOpschortingZaak(this.zaak.uuid, zaak, event.duurDagen).subscribe(updatedZaak => {
+        this.zakenService.opschortenZaak(this.zaak.uuid, zaakOpschortGegevens).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
 
     editVerlenging(event: any): void {
-        const zaak: Zaak = new Zaak();
-        zaak.indicatieVerlenging = true;
-        zaak.einddatumGepland = event.einddatumGepland;
-        zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
-        zaak.redenVerlenging = event.reden;
+        const zaakVerlengGegevens = new ZaakVerlengGegevens();
+        zaakVerlengGegevens.einddatumGepland = event.einddatumGepland;
+        zaakVerlengGegevens.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
+        zaakVerlengGegevens.redenVerlenging = event.reden;
+        zaakVerlengGegevens.duurDagen = event.duurDagen;
+        zaakVerlengGegevens.takenVerlengen = event.takenVerlengen;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.updateVerlengingZaak(this.zaak.uuid, zaak, event.duurDagen, event.takenVerlengen).subscribe(updatedZaak => {
+        this.zakenService.verlengenZaak(this.zaak.uuid, zaakVerlengGegevens).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }

@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Zaak} from './zaak';
-
 export class ZaakOpschortGegevens {
-    zaak: Zaak;
+    indicatieOpschorting: boolean;
+    einddatumGepland: string;
+    uiterlijkeEinddatumAfdoening: string;
+    redenOpschorting: string;
     duurDagen: number;
 }

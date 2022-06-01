@@ -5,11 +5,17 @@
 
 package net.atos.zac.app.zaken.model;
 
+import java.time.LocalDate;
+
 public class RESTZaakVerlengGegevens {
 
-    public RESTZaak zaak;
+    public String redenVerlenging;
 
     public int duurDagen;
 
     public boolean takenVerlengen;
+
+    public LocalDate einddatumGepland;
+
+    public LocalDate uiterlijkeEinddatumAfdoening;
 }
