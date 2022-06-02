@@ -53,7 +53,13 @@ public class SignaleringType implements Comparable<SignaleringType> {
         ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
         ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streef- of fatale datum."),
         TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet."),
-        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.");
+        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.") {
+            @Override
+            public boolean isDashboard() {
+                // This one has no dashboard card
+                return false;
+            }
+        };
 
         private final String naam;
 
@@ -70,6 +76,14 @@ public class SignaleringType implements Comparable<SignaleringType> {
 
         public String getBericht() {
             return bericht;
+        }
+
+        public boolean isDashboard() {
+            return true;
+        }
+
+        public boolean isMail() {
+            return true;
         }
     }
 

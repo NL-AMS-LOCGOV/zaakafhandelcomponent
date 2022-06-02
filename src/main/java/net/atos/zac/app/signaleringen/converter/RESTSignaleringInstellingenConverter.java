@@ -27,8 +27,12 @@ public class RESTSignaleringInstellingenConverter {
         restInstellingen.id = instellingen.getId();
         restInstellingen.type = instellingen.getType().getType();
         restInstellingen.subjecttype = instellingen.getType().getSubjecttype();
-        restInstellingen.dashboard = instellingen.isDashboard();
-        restInstellingen.mail = instellingen.isMail();
+        if (instellingen.getType().getType().isDashboard()) {
+            restInstellingen.dashboard = instellingen.isDashboard();
+        }
+        if (instellingen.getType().getType().isMail()) {
+            restInstellingen.mail = instellingen.isMail();
+        }
         return restInstellingen;
     }
 
@@ -45,8 +49,8 @@ public class RESTSignaleringInstellingenConverter {
 
     public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final User user) {
         final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, user);
-        instellingen.setDashboard(restInstellingen.dashboard);
-        instellingen.setMail(restInstellingen.mail);
+        instellingen.setDashboard(instellingen.getType().getType().isDashboard() && restInstellingen.dashboard);
+        instellingen.setMail(instellingen.getType().getType().isMail() && restInstellingen.mail);
         return instellingen;
     }
 }

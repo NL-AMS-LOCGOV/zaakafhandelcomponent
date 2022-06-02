@@ -16,7 +16,7 @@ public class RESTSignaleringInstellingen {
 
     public SignaleringSubject subjecttype;
 
-    public boolean dashboard;
+    public Boolean dashboard;
 
-    public boolean mail;
+    public Boolean mail;
 }

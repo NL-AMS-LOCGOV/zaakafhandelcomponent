@@ -102,6 +102,10 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                     return addTarget(signalering, subject);
                 }
             }
+            case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {
+                // These are NOT event driven and should not show up here
+                LOG.warning(String.format("ignored SignaleringType %s", event.getObjectType()));
+            }
             default -> LOG.warning(String.format("unknown SignaleringType %s", event.getObjectType()));
         }
         return null;

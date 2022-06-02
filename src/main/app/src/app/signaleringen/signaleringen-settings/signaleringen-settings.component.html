@@ -14,7 +14,7 @@
                     <ng-container *ngIf="column == 'type' || column == 'subjecttype'">
                         {{'signalering.' + column + '.' + row[column] | translate}}
                     </ng-container>
-                    <ng-container *ngIf="column != 'type' && column != 'subjecttype'">
+                    <ng-container *ngIf="column != 'type' && column != 'subjecttype' && row[column] != null">
                         <mat-checkbox (click)="$event.stopPropagation()"
                                       (change)="changed(row,column,$event.checked)"
                                       [checked]="row[column]"
