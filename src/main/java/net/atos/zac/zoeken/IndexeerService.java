@@ -73,6 +73,10 @@ public class IndexeerService {
     public void indexeerDirect(final UUID uuid, final ZoekObjectType type) {
         if (type == ZoekObjectType.ZAAK) {
             addToSolr(List.of(zaakZoekObjectConverter.convert(uuid)));
+            final ZoekIndexEntity entity = findEntity(uuid);
+            if (entity != null) {
+                entityManager.remove(entity);
+            }
         }
     }
 
@@ -81,6 +85,12 @@ public class IndexeerService {
             List<ZaakZoekObject> zaken = new ArrayList<>();
             uuids.forEach(uuid -> zaken.add(zaakZoekObjectConverter.convert(uuid)));
             addToSolr(zaken);
+            uuids.forEach(uuid -> {
+                final ZoekIndexEntity entity = findEntity(uuid);
+                if (entity != null) {
+                    entityManager.remove(entity);
+                }
+            });
         }
     }
 
