@@ -51,7 +51,9 @@ public class SignaleringType implements Comparable<SignaleringType> {
     public enum Type {
         ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd."),
         ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
-        TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet.");
+        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streef- of fatale datum."),
+        TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet."),
+        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.");
 
         private final String naam;
 
