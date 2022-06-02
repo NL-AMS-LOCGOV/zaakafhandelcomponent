@@ -137,12 +137,12 @@
                 <mat-form-field appearance="standard">
                     <mat-label>{{'streefdatum' | translate}}</mat-label>
                     <mat-date-range-input [rangePicker]="streefdatumPicker">
-                        <input readonly matStartDate placeholder="van" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_EINDDATUMGEPLAND'].van">
-                        <input readonly matEndDate placeholder="tot" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_EINDDATUMGEPLAND'].tot">
+                        <input readonly matStartDate placeholder="van" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_EINDDATUM_GEPLAND'].van">
+                        <input readonly matEndDate placeholder="tot" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_EINDDATUM_GEPLAND'].tot">
                     </mat-date-range-input>
-                    <mat-datepicker-toggle *ngIf="!hasDate('ZAAK_EINDDATUMGEPLAND')" matSuffix [for]="streefdatumPicker"></mat-datepicker-toggle>
-                    <mat-icon *ngIf="hasDate('ZAAK_EINDDATUMGEPLAND')" matSuffix
-                              (click)="clearDate($event, 'ZAAK_EINDDATUMGEPLAND')">clear
+                    <mat-datepicker-toggle *ngIf="!hasDate('ZAAK_EINDDATUM_GEPLAND')" matSuffix [for]="streefdatumPicker"></mat-datepicker-toggle>
+                    <mat-icon *ngIf="hasDate('ZAAK_EINDDATUM_GEPLAND')" matSuffix
+                              (click)="clearDate($event, 'ZAAK_EINDDATUM_GEPLAND')">clear
                     </mat-icon>
                     <mat-date-range-picker (closed)="filtersChange()" disabled="false" #streefdatumPicker></mat-date-range-picker>
                 </mat-form-field>
@@ -150,7 +150,7 @@
         </ng-container>
 
         <ng-container matColumnDef="einddatumGepland">
-            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_EINDDATUMGEPLAND">{{ 'einddatumGepland' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_EINDDATUM_GEPLAND">{{ 'einddatumGepland' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | datum | empty }}
                 <mat-icon *ngIf="isAfterDate(row.einddatumGepland)" class="warning" [title]="'msg.datum.overschreden' | translate"></mat-icon>
             </td>
@@ -189,12 +189,13 @@
                 <mat-form-field appearance="standard">
                     <mat-label>{{'uiterlijkedatumafdoening' | translate}}</mat-label>
                     <mat-date-range-input [rangePicker]="fataledatumPicker">
-                        <input readonly matStartDate placeholder="van" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_UITERLIJKEEINDDATUMAFDOENING'].van">
-                        <input readonly matEndDate placeholder="tot" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_UITERLIJKEEINDDATUMAFDOENING'].tot">
+                        <input readonly matStartDate placeholder="van"
+                               [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_UITERLIJKE_EINDDATUM_AFDOENING'].van">
+                        <input readonly matEndDate placeholder="tot" [(ngModel)]="dataSource.zoekParameters.datums['ZAAK_UITERLIJKE_EINDDATUM_AFDOENING'].tot">
                     </mat-date-range-input>
-                    <mat-datepicker-toggle *ngIf="!hasDate('ZAAK_UITERLIJKEEINDDATUMAFDOENING')" matSuffix [for]="fataledatumPicker"></mat-datepicker-toggle>
-                    <mat-icon *ngIf="hasDate('ZAAK_UITERLIJKEEINDDATUMAFDOENING')" matSuffix
-                              (click)="clearDate($event, 'ZAAK_UITERLIJKEEINDDATUMAFDOENING')">clear
+                    <mat-datepicker-toggle *ngIf="!hasDate('ZAAK_UITERLIJKE_EINDDATUM_AFDOENING')" matSuffix [for]="fataledatumPicker"></mat-datepicker-toggle>
+                    <mat-icon *ngIf="hasDate('ZAAK_UITERLIJKE_EINDDATUM_AFDOENING')" matSuffix
+                              (click)="clearDate($event, 'ZAAK_UITERLIJKE_EINDDATUM_AFDOENING')">clear
                     </mat-icon>
                     <mat-date-range-picker (closed)="filtersChange()" disabled="false" #fataledatumPicker></mat-date-range-picker>
                 </mat-form-field>
@@ -202,7 +203,7 @@
         </ng-container>
 
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
-            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_UITERLIJKEEINDDATUMAFDOENING">
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_UITERLIJKE_EINDDATUM_AFDOENING">
                 {{ 'uiterlijkeEinddatumAfdoening' | translate }}
             </th>
             <td mat-cell *matCellDef="let row">
@@ -241,7 +242,7 @@
         </ng-container>
 
         <ng-container matColumnDef="openstaandeTaken">
-            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_AANTALOPENSTAANDETAKEN">{{ 'openstaandeTaken' | translate | empty}}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header="ZAAK_AANTAL_OPENSTAANDE_TAKEN">{{ 'openstaandeTaken' | translate | empty}}</th>
             <td mat-cell *matCellDef="let row">{{ row.aantalOpenstaandeTaken }}</td>
         </ng-container>
 
