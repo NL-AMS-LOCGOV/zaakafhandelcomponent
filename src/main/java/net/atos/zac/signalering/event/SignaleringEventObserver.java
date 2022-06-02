@@ -106,7 +106,6 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                 // These are NOT event driven and should not show up here
                 LOG.warning(String.format("ignored SignaleringType %s", event.getObjectType()));
             }
-            default -> LOG.warning(String.format("unknown SignaleringType %s", event.getObjectType()));
         }
         return null;
     }
