@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten;
 
-import static net.atos.zac.flowable.FlowableService.VAR_TASK_TAAKDOCUMENTEN;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -172,12 +170,12 @@ public class InformatieObjectenRESTService {
         final ZaakInformatieobject zaakInformatieobject =
                 zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving());
         if (taakObject) {
-            List<UUID> taakdocumenten = (List<UUID>) flowableService.findOpenTaskVariable(documentReferentieId, VAR_TASK_TAAKDOCUMENTEN);
+            List<UUID> taakdocumenten = flowableService.findTaakdocumentenOpenTask(documentReferentieId);
             if (taakdocumenten == null) {
                 taakdocumenten = new LinkedList<>();
             }
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            flowableService.updateOpenTaskVariable(documentReferentieId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+            flowableService.updateTaakdocumentenOpenTask(documentReferentieId, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }

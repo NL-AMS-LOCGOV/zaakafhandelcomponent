@@ -8,16 +8,11 @@ package net.atos.zac.app.taken.converter;
 import static net.atos.zac.app.taken.model.TaakStatus.AFGEROND;
 import static net.atos.zac.app.taken.model.TaakStatus.NIET_TOEGEKEND;
 import static net.atos.zac.app.taken.model.TaakStatus.TOEGEKEND;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_OMSCHRIJVING;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_UUUID;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_IDENTIFICATIE;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -84,8 +79,8 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForClosedCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
-            restTaak.taakdocumenten = (List<UUID>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
+            restTaak.taakdata = flowableService.findTaakdataClosedTask(task.getId());
+            restTaak.taakdocumenten = flowableService.findTaakdocumentenClosedTask(task.getId());
         }
         return restTaak;
     }
@@ -94,10 +89,10 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = task.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND;
         if (withTaakdata) {
-            restTaak.taakdata = (Map<String, String>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
-            restTaak.taakdocumenten = (List<UUID>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
+            restTaak.taakdata = flowableService.findTaakdataOpenTask(task.getId());
+            restTaak.taakdocumenten = flowableService.findTaakdocumentenOpenTask(task.getId());
         }
-        restTaak.taakinformatie = (Map<String, String>) flowableService.findOpenTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKINFORMATIE);
+        restTaak.taakinformatie = flowableService.findTaakinformatieOpenTask(task.getId());
 
         return restTaak;
     }
@@ -106,29 +101,29 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDATA);
-            restTaak.taakdocumenten = (List<UUID>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKDOCUMENTEN);
+            restTaak.taakdata = flowableService.findTaakdataClosedTask(task.getId());
+            restTaak.taakdocumenten = flowableService.findTaakdocumentenClosedTask(task.getId());
         }
-        restTaak.taakinformatie = (Map<String, String>) flowableService.findClosedTaskVariable(task.getId(), FlowableService.VAR_TASK_TAAKINFORMATIE);
+        restTaak.taakinformatie = flowableService.findTaakinformatieClosedTask(task.getId());
 
         return restTaak;
     }
 
     private RESTTaak convertTaskInfoForOpenCase(final TaskInfo taskInfo) {
-        final UUID zaaktypeUUID = (UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
-        restTaak.zaakUUID = (UUID) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID);
-        restTaak.zaakIdentificatie = (String) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_IDENTIFICATIE);
-        restTaak.zaaktypeOmschrijving = (String) flowableService.readOpenCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+        restTaak.zaakUUID = flowableService.readZaakUUIDOpenCase(taskInfo.getScopeId());
+        restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieOpenCase(taskInfo.getScopeId());
+        restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingOpenCase(taskInfo.getScopeId());
         return restTaak;
     }
 
     private RESTTaak convertTaskInfoForClosedCase(final HistoricTaskInstance taskInfo) {
-        final UUID zaaktypeUUID = (UUID) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_UUUID);
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDClosedCase(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
-        restTaak.zaakUUID = (UUID) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_UUID);
-        restTaak.zaakIdentificatie = (String) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAK_IDENTIFICATIE);
-        restTaak.zaaktypeOmschrijving = (String) flowableService.readClosedCaseVariable(taskInfo.getScopeId(), VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+        restTaak.zaakUUID = flowableService.readZaakUUIDClosedCase(taskInfo.getScopeId());
+        restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieOClosedCase(taskInfo.getScopeId());
+        restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingClosedCase(taskInfo.getScopeId());
         return restTaak;
     }
 

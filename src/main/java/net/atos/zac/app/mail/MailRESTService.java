@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.mail;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD;
-
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -57,8 +55,7 @@ public class MailRESTService {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
 
-        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.createDocumentFromMail, zaakUuid);
-        flowableService.createVariableForOpenCase(zaakUuid, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, Boolean.TRUE);
+        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
+        flowableService.updateOntvangstbevestigingVerstuurdForOpenCase(zaakUuid, Boolean.TRUE);
     }
 }

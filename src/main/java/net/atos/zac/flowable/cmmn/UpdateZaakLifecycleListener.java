@@ -6,7 +6,6 @@
 package net.atos.zac.flowable.cmmn;
 
 import static java.lang.String.format;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -51,7 +50,7 @@ public class UpdateZaakLifecycleListener implements PlanItemInstanceLifecycleLis
     }
 
     private void updateZaak(final String caseInstanceId, final String statustypeOmschrijving) {
-        final UUID zaakUUID = (UUID) FlowableHelper.getInstance().getFlowableService().readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
+        final UUID zaakUUID = FlowableHelper.getInstance().getFlowableService().readZaakUUIDOpenCase(caseInstanceId);
         final Zaak zaak = FlowableHelper.getInstance().getZrcClientService().readZaak(zaakUUID);
         LOG.info(format("Zaak %s: Change Status to '%s'", zaakUUID, statustypeOmschrijving));
         FlowableHelper.getInstance().getZgwApiService().createStatusForZaak(zaak, statustypeOmschrijving, STATUS_TOELICHTING);

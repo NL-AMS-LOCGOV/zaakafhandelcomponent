@@ -5,18 +5,21 @@
 
 package net.atos.zac.flowable;
 
-import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ASSIGNEE;
-import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_CANDIDATE_GROUP;
-import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_DUE_DATE;
-import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_OWNER;
-import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TASK_ZAAK_UUID;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ASSIGNEE;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_CANDIDATE_GROUP;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_DUE_DATE;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_OWNER;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_TAAKDATA;
+import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ZAAK_UUID;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +66,9 @@ import net.atos.zac.mail.MailService;
 @Transactional
 public class FlowableService {
 
-    public static final String VAR_CASE_RESULTAAT_TOELICHTING = "resultaatToelichting";
+    public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
+
+    private static final String VAR_CASE_RESULTAAT_TOELICHTING = "resultaatToelichting";
 
     public static final String VAR_CASE_ZAAK_UUID = "zaakUUID";
 
@@ -73,21 +78,19 @@ public class FlowableService {
 
     public static final String VAR_CASE_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
-    public static final String VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
+    private static final String VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
-    public static final String VAR_CASE_DATUMTIJD_OPGESCHORT = "datumTijdOpgeschort";
+    private static final String VAR_CASE_DATUMTIJD_OPGESCHORT = "datumTijdOpgeschort";
 
-    public static final String VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
+    private static final String VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
 
-    public static final String VAR_CASE_ONTVANKELIJK = "ontvankelijk";
+    private static final String VAR_CASE_ONTVANKELIJK = "ontvankelijk";
 
-    public static final String VAR_TASK_TAAKDATA = "taakdata";
+    private static final String VAR_TASK_TAAKDATA = "taakdata";
 
-    public static final String VAR_TASK_TAAKDOCUMENTEN = "taakdocumenten";
+    private static final String VAR_TASK_TAAKDOCUMENTEN = "taakdocumenten";
 
-    public static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
-
-    public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
+    private static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
 
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
@@ -140,21 +143,6 @@ public class FlowableService {
         } else {
             return Collections.emptyList();
         }
-    }
-
-    private List<Task> listOpenTasksForCase(final String caseInstanceId) {
-        return cmmnTaskService.createTaskQuery()
-                .caseInstanceId(caseInstanceId)
-                .includeIdentityLinks()
-                .list();
-    }
-
-    private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {
-        return cmmnHistoryService.createHistoricTaskInstanceQuery()
-                .caseInstanceId(caseInstanceId)
-                .finished()
-                .includeIdentityLinks()
-                .list();
     }
 
     public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final String direction,
@@ -219,12 +207,12 @@ public class FlowableService {
         }
 
         cmmnRuntimeService.createPlanItemInstanceTransitionBuilder(planItemInstance.getId())
-                .transientVariable(VAR_TASK_OWNER, loggedInUserInstance.get().getId())
-                .transientVariable(VAR_TASK_CANDIDATE_GROUP, groupId)
-                .transientVariable(VAR_TASK_ASSIGNEE, assignee)
-                .transientVariable(VAR_TASK_ZAAK_UUID, zaakUUID)
-                .transientVariable(VAR_TASK_DUE_DATE, dueDate)
-                .transientVariable(VAR_TASK_TAAKDATA, taakdata)
+                .transientVariable(VAR_TRANSIENT_OWNER, loggedInUserInstance.get().getId())
+                .transientVariable(VAR_TRANSIENT_CANDIDATE_GROUP, groupId)
+                .transientVariable(VAR_TRANSIENT_ASSIGNEE, assignee)
+                .transientVariable(VAR_TRANSIENT_ZAAK_UUID, zaakUUID)
+                .transientVariable(VAR_TRANSIENT_DUE_DATE, dueDate)
+                .transientVariable(VAR_TRANSIENT_TAAKDATA, taakdata)
                 .start();
     }
 
@@ -314,46 +302,6 @@ public class FlowableService {
         }
     }
 
-    public Object findTaskVariable(final String taskId, final String variableName) {
-        return isOpenTask(taskId)
-                ? readOpenTaskVariable(taskId, variableName)
-                : readClosedTaskVariable(taskId, variableName);
-    }
-
-    public Object findOpenTaskVariable(final String taskId, final String variableName) {
-        return cmmnTaskService.getVariableLocal(taskId, variableName);
-    }
-
-    public Object readOpenTaskVariable(final String taskId, final String variableName) {
-        final Object variableValue = findOpenTaskVariable(taskId, variableName);
-        if (variableValue != null) {
-            return variableValue;
-        } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for open task id '%s'", variableName, taskId));
-        }
-    }
-
-    public Object findClosedTaskVariable(final String taskId, final String variableName) {
-        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
-                .taskId(taskId)
-                .variableName(variableName)
-                .singleResult();
-        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
-    }
-
-    public Object readClosedTaskVariable(final String taskId, final String variableName) {
-        final Object variableValue = findClosedTaskVariable(taskId, variableName);
-        if (variableValue != null) {
-            return variableValue;
-        } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for closed task id '%s'", variableName, taskId));
-        }
-    }
-
-    public void updateOpenTaskVariable(final String taskId, final String variableName, Object value) {
-        cmmnTaskService.setVariableLocal(taskId, variableName, value);
-    }
-
     public List<CaseDefinition> listCaseDefinitions() {
         return cmmnRepositoryService.createCaseDefinitionQuery().latestVersion().list();
     }
@@ -394,80 +342,6 @@ public class FlowableService {
         }
     }
 
-    public Object findOpenCaseVariable(final String caseInstanceId, final String variableName) {
-        return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
-    }
-
-    public Object findVariableForCase(final UUID zaakUUID, final String variableName) {
-        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
-                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
-                .includeCaseVariables()
-                .singleResult();
-        return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
-    }
-
-    public Object readCaseVariable(final String caseInstanceId, final String variableName) {
-        return isOpenCase(caseInstanceId)
-                ? readOpenCaseVariable(caseInstanceId, variableName)
-                : readClosedCaseVariable(caseInstanceId, variableName);
-    }
-
-    public Object readOpenCaseVariable(final String caseInstanceId, final String variableName) {
-        final Object variableValue = findOpenCaseVariable(caseInstanceId, variableName);
-        if (variableValue != null) {
-            return variableValue;
-        } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for open case instance id '%s'", variableName, caseInstanceId));
-        }
-    }
-
-    public Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
-        final Object variableValue = findClosedCaseVariable(caseInstanceId, variableName);
-        if (variableValue != null) {
-            return variableValue;
-        } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
-        }
-    }
-
-    public void createVariableForOpenCase(final UUID zaakUUID, final String variableName, final Object value) {
-        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
-        if (caseInstance != null) {
-            cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
-        } else {
-            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
-        }
-    }
-
-    public void removeVariableForOpenCase(final UUID zaakUUID, final String variableName) {
-        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
-        if (caseInstance != null) {
-            cmmnRuntimeService.removeVariable(caseInstance.getId(), variableName);
-        } else {
-            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
-        }
-    }
-
-    public Object findClosedCaseVariable(final String caseInstanceId, final String variableName) {
-        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
-                .caseInstanceId(caseInstanceId)
-                .variableName(variableName)
-                .singleResult();
-        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
-    }
-
-    public TaskInfo readTask(final String taskId) {
-        TaskInfo task = findOpenTask(taskId);
-        if (task != null) {
-            return task;
-        }
-        task = findClosedTask(taskId);
-        if (task != null) {
-            return task;
-        }
-        throw new RuntimeException(String.format("No task found with task id '%s'", taskId));
-    }
-
     public boolean isOpenCase(final UUID zaakUUID) {
         return cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
@@ -488,6 +362,252 @@ public class FlowableService {
 
     public List<HistoricTaskLogEntry> listHistorieForTask(final String taskId) {
         return cmmnHistoryService.createHistoricTaskLogEntryQuery().taskId(taskId).list();
+    }
+
+    public UUID readZaakUUID(final String caseInstanceId) {
+        return (UUID) readCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
+    }
+
+    public UUID readZaakUUIDOpenCase(final String caseInstanceId) {
+        return (UUID) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
+    }
+
+    public UUID readZaakUUIDClosedCase(final String caseInstanceId) {
+        return (UUID) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAK_UUID);
+    }
+
+    public String readZaakIdentificatie(final String caseInstanceId) {
+        return (String) readCaseVariable(caseInstanceId, VAR_CASE_ZAAK_IDENTIFICATIE);
+    }
+
+    public String readZaakIdentificatieOpenCase(final String caseInstanceId) {
+        return (String) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_IDENTIFICATIE);
+    }
+
+    public String readZaakIdentificatieOClosedCase(final String caseInstanceId) {
+        return (String) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAK_IDENTIFICATIE);
+    }
+
+    public Boolean findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
+        return (Boolean) findVariableForCase(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD);
+    }
+
+    public void updateOntvangstbevestigingVerstuurdForOpenCase(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
+        updateVariableForOpenCase(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
+    }
+
+    public UUID readZaaktypeUUIDOpenCase(final String caseInstanceId) {
+        return (UUID) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
+    }
+
+    public UUID readZaaktypeUUIDClosedCase(final String caseInstanceId) {
+        return (UUID) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
+    }
+
+    public String readZaaktypeOmschrijving(final String caseInstanceId) {
+        return (String) readCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+    }
+
+    public String readZaaktypeOmschrijvingOpenCase(final String caseInstanceId) {
+        return (String) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+    }
+
+    public String readZaaktypeOmschrijvingClosedCase(final String caseInstanceId) {
+        return (String) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+    }
+
+    public ZonedDateTime findDatumtijdOpgeschortForCase(final UUID zaakUUID) {
+        return (ZonedDateTime) findVariableForCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
+    }
+
+    public void updateDatumtijdOpgeschortForOpenCase(final UUID zaakUUID, final ZonedDateTime datumtijOpgeschort) {
+        updateVariableForOpenCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT, datumtijOpgeschort);
+    }
+
+    public void removeDatumtijdOpgeschortForOpenCase(final UUID zaakUUID) {
+        removeVariableForOpenCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
+    }
+
+    public Integer findVerwachteDagenOpgeschortForCase(final UUID zaakUUID) {
+        return (Integer) findVariableForCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+    }
+
+    public void updateVerwachteDagenOpgeschortForOpenCase(final UUID zaakUUID, final Integer verwachteDagenOpgeschort) {
+        updateVariableForOpenCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, verwachteDagenOpgeschort);
+    }
+
+    public void removeVerwachteDagenOpgeschortForOpenCase(final UUID zaakUUID) {
+        removeVariableForOpenCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+    }
+
+    public HashMap<String, String> findTaakdata(final String taskId) {
+        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public HashMap<String, String> findTaakdataOpenTask(final String taskId) {
+        return (HashMap<String, String>) findOpenTaskVariable(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public HashMap<String, String> findTaakdataClosedTask(final String taskId) {
+        return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKDATA);
+    }
+
+    public void updateTaakdataOpenTask(final String taskId, final Map<String, String> taakdata) {
+        updateOpenTaskVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
+    }
+
+    public List<UUID> findTaakdocumentenOpenTask(final String taskId) {
+        return (List<UUID>) findOpenTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN);
+    }
+
+    public List<UUID> findTaakdocumentenClosedTask(final String taskId) {
+        return (List<UUID>) findClosedTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN);
+    }
+
+    public void updateTaakdocumentenOpenTask(final String taskId, final List<UUID> taakdocumenten) {
+        updateOpenTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+    }
+
+    public HashMap<String, String> findTaakinformatieOpenTask(final String taskId) {
+        return (HashMap<String, String>) findOpenTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    public HashMap<String, String> findTaakinformatieClosedTask(final String taskId) {
+        return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
+    }
+
+    public void updateTaakinformatieOpenTask(final String taskId, final Map<String, String> taakinformatie) {
+        updateOpenTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE, taakinformatie);
+    }
+
+    private List<Task> listOpenTasksForCase(final String caseInstanceId) {
+        return cmmnTaskService.createTaskQuery()
+                .caseInstanceId(caseInstanceId)
+                .includeIdentityLinks()
+                .list();
+    }
+
+    private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {
+        return cmmnHistoryService.createHistoricTaskInstanceQuery()
+                .caseInstanceId(caseInstanceId)
+                .finished()
+                .includeIdentityLinks()
+                .list();
+    }
+
+    private Object findTaskVariable(final String taskId, final String variableName) {
+        return isOpenTask(taskId)
+                ? readOpenTaskVariable(taskId, variableName)
+                : readClosedTaskVariable(taskId, variableName);
+    }
+
+    private Object findOpenTaskVariable(final String taskId, final String variableName) {
+        return cmmnTaskService.getVariableLocal(taskId, variableName);
+    }
+
+    private Object readOpenTaskVariable(final String taskId, final String variableName) {
+        final Object variableValue = findOpenTaskVariable(taskId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for open task id '%s'", variableName, taskId));
+        }
+    }
+
+    private Object findClosedTaskVariable(final String taskId, final String variableName) {
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .taskId(taskId)
+                .variableName(variableName)
+                .singleResult();
+        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
+    }
+
+    private Object readClosedTaskVariable(final String taskId, final String variableName) {
+        final Object variableValue = findClosedTaskVariable(taskId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for closed task id '%s'", variableName, taskId));
+        }
+    }
+
+    private void updateOpenTaskVariable(final String taskId, final String variableName, Object value) {
+        cmmnTaskService.setVariableLocal(taskId, variableName, value);
+    }
+
+
+    private Object findOpenCaseVariable(final String caseInstanceId, final String variableName) {
+        return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
+    }
+
+    private Object findVariableForCase(final UUID zaakUUID, final String variableName) {
+        final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
+                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
+                .includeCaseVariables()
+                .singleResult();
+        return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
+    }
+
+    private Object readCaseVariable(final String caseInstanceId, final String variableName) {
+        return isOpenCase(caseInstanceId)
+                ? readOpenCaseVariable(caseInstanceId, variableName)
+                : readClosedCaseVariable(caseInstanceId, variableName);
+    }
+
+    private Object readOpenCaseVariable(final String caseInstanceId, final String variableName) {
+        final Object variableValue = findOpenCaseVariable(caseInstanceId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for open case instance id '%s'", variableName, caseInstanceId));
+        }
+    }
+
+    private Object readClosedCaseVariable(final String caseInstanceId, final String variableName) {
+        final Object variableValue = findClosedCaseVariable(caseInstanceId, variableName);
+        if (variableValue != null) {
+            return variableValue;
+        } else {
+            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
+        }
+    }
+
+    private void updateVariableForOpenCase(final UUID zaakUUID, final String variableName, final Object value) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
+        } else {
+            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
+        }
+    }
+
+    private Object findClosedCaseVariable(final String caseInstanceId, final String variableName) {
+        final HistoricVariableInstance historicVariableInstance = cmmnHistoryService.createHistoricVariableInstanceQuery()
+                .caseInstanceId(caseInstanceId)
+                .variableName(variableName)
+                .singleResult();
+        return historicVariableInstance != null ? historicVariableInstance.getValue() : null;
+    }
+
+    public TaskInfo readTask(final String taskId) {
+        TaskInfo task = findOpenTask(taskId);
+        if (task != null) {
+            return task;
+        }
+        task = findClosedTask(taskId);
+        if (task != null) {
+            return task;
+        }
+        throw new RuntimeException(String.format("No task found with task id '%s'", taskId));
+    }
+
+    private void removeVariableForOpenCase(final UUID zaakUUID, final String variableName) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            cmmnRuntimeService.removeVariable(caseInstance.getId(), variableName);
+        } else {
+            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
+        }
     }
 
     private Task findOpenTask(final String taskId) {
