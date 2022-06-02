@@ -138,7 +138,7 @@ export class InformatieObjectCreateComponent implements OnInit, OnDestroy {
 
         const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
                                                        .label(this.translateService.instant(
-                                                           'actie.document.aanmaken.nogmaals'))
+                                                           'actie.document.toevoegen.nogmaals'))
                                                        .build();
 
         if (this.zaak) {

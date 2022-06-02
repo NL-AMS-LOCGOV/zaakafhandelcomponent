@@ -154,7 +154,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.menu.push(new HeaderMenuItem('taak'));
 
         if (!this.isAfgerond()) {
-            this.menu.push(new ButtonMenuItem('actie.document.aanmaken', () => {
+            this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));

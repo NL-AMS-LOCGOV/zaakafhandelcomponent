@@ -308,7 +308,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new ButtonMenuItem('actie.document.aanmaken', () => {
+        this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
             this.actionsSidenav.open();
             this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
         }, 'upload_file'));
