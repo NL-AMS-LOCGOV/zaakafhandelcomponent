@@ -7,7 +7,7 @@ CREATE TABLE ${schema}.signalering_verzonden
 (
     id_signalering_verzonden BIGINT                   NOT NULL,
     signaleringtype_enum     VARCHAR                  NOT NULL, -- bijvoorbeeld: ZAAK_VERLOPEND, TAAK_VERLOPEN
-    subjectfield_enum        VARCHAR                  NOT NULL, -- bijvoorbeeld: DUE, FATAL
+    subjectfield_enum        VARCHAR                  NOT NULL, -- bijvoorbeeld: DUE, FATAL.
     targettype_enum          VARCHAR                  NOT NULL, -- bijvoorbeeld: GROEP, MEDEWERKER
     target                   VARCHAR                  NOT NULL, -- bijvoorbeeld: groep.id, medewerker.gebruikersnaam
     subject                  VARCHAR                  NOT NULL, -- bijvoorbeeld: zaak.uuid, taak.id
