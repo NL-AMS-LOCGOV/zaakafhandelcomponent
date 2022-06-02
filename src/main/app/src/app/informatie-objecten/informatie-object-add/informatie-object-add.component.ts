@@ -34,11 +34,11 @@ import {FormFieldHint} from '../../shared/material-form-builder/model/form-field
 import {Subscription} from 'rxjs';
 
 @Component({
-    selector: 'zac-informatie-object-create',
-    templateUrl: './informatie-object-create.component.html',
-    styleUrls: ['./informatie-object-create.component.less']
+    selector: 'zac-informatie-object-add',
+    templateUrl: './informatie-object-add.component.html',
+    styleUrls: ['./informatie-object-add.component.less']
 })
-export class InformatieObjectCreateComponent implements OnInit, OnDestroy {
+export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
     @Input() zaak: Zaak;
     @Input() taak: Taak;

@@ -8,15 +8,15 @@ import {NgModule} from '@angular/core';
 import {InformatieObjectenRoutingModule} from './informatie-objecten-routing.module';
 import {InformatieObjectViewComponent} from './informatie-object-view/informatie-object-view.component';
 import {SharedModule} from '../shared/shared.module';
-import {InformatieObjectCreateComponent} from './informatie-object-create/informatie-object-create.component';
+import {InformatieObjectAddComponent} from './informatie-object-add/informatie-object-add.component';
 import {InformatieObjectEditComponent} from './informatie-object-edit/informatie-object-edit.component';
 import {RouteReuseStrategy} from '@angular/router';
 import {RouteReuseStrategyService} from './route-reuse-strategy.service';
 
 @NgModule({
-    declarations: [InformatieObjectViewComponent, InformatieObjectEditComponent, InformatieObjectCreateComponent],
+    declarations: [InformatieObjectViewComponent, InformatieObjectEditComponent, InformatieObjectAddComponent],
     exports: [
-        InformatieObjectCreateComponent
+        InformatieObjectAddComponent
     ],
     imports: [
         SharedModule,
@@ -24,7 +24,7 @@ import {RouteReuseStrategyService} from './route-reuse-strategy.service';
     ],
     providers: [
         {provide: RouteReuseStrategy, useClass: RouteReuseStrategyService}
-    ],
+    ]
 })
 export class InformatieObjectenModule {
 }
