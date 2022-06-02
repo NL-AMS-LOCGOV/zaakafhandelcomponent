@@ -12,11 +12,11 @@ export class ZoekParameters {
             van: null,
             tot: null
         },
-        ZAAK_EINDDATUMGEPLAND: {
+        ZAAK_EINDDATUM_GEPLAND: {
             van: null,
             tot: null
         },
-        ZAAK_UITERLIJKEEINDDATUMAFDOENING: {
+        ZAAK_UITERLIJKE_EINDDATUM_AFDOENING: {
             van: null,
             tot: null
         }
