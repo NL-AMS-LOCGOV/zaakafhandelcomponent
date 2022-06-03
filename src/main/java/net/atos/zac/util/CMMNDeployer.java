@@ -48,23 +48,39 @@ public class CMMNDeployer {
     private CmmnRepositoryService cmmnRepositoryService;
 
     public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
-        final InputStream modelsContent = getClass().getClassLoader().getResourceAsStream(format("%s/%s", CMMN_MODELS_FOLDER_NAME, CMMN_MODELS_FILE_NAME));
-        new BufferedReader(new InputStreamReader(modelsContent, StandardCharsets.UTF_8)).lines().forEach(this::checkModel);
+        try (final InputStream modelsInputStream = getClass().getClassLoader()
+                .getResourceAsStream(format("%s/%s", CMMN_MODELS_FOLDER_NAME, CMMN_MODELS_FILE_NAME));
+             final BufferedReader modelsReader = new BufferedReader(new InputStreamReader(modelsInputStream, StandardCharsets.UTF_8))) {
+            modelsReader.lines().forEach(this::checkModel);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void checkModel(final String modelFileName) {
         try {
-            final byte[] modelContent = getClass().getClassLoader().getResourceAsStream(format("%s/%s", CMMN_MODELS_FOLDER_NAME, modelFileName)).readAllBytes();
-            final Document modelXml = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(modelContent));
+            final byte[] modelBytes;
+            try (final InputStream modelInputStream = getClass().getClassLoader()
+                    .getResourceAsStream(format("%s/%s", CMMN_MODELS_FOLDER_NAME, modelFileName))) {
+                modelBytes = modelInputStream.readAllBytes();
+            }
+
+            final Document modelXml;
+            try (final InputStream modelInputStream = new ByteArrayInputStream(modelBytes)) {
+                modelXml = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(modelInputStream);
+            }
+
             final XPath xPath = XPathFactory.newInstance().newXPath();
             final String key = (String) xPath.evaluate(CASE_ID_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
             final CmmnDeployment cmmnDeployment = cmmnRepositoryService.createDeploymentQuery().deploymentKey(key).latest().singleResult();
-            final InputStream deployedModelContent = cmmnRepositoryService.getResourceAsStream(cmmnDeployment.getId(), modelFileName);
 
-            if (!IOUtils.contentEquals(new ByteArrayInputStream(modelContent), deployedModelContent)) {
-                final String name = (String) xPath.evaluate(CASE_NAME_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
-                cmmnRepositoryService.createDeployment().key(key).name(name).addBytes(modelFileName, modelContent).deploy();
-                LOG.info(format("Successfully deployed CMMN model with key '%s' and name '%s' from file '%s'", key, name, modelFileName));
+            try (final InputStream modelInputStream = new ByteArrayInputStream(modelBytes);
+                 final InputStream deployedModelInputStream = cmmnRepositoryService.getResourceAsStream(cmmnDeployment.getId(), modelFileName)) {
+                if (!IOUtils.contentEquals(modelInputStream, deployedModelInputStream)) {
+                    final String name = (String) xPath.evaluate(CASE_NAME_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
+                    cmmnRepositoryService.createDeployment().key(key).name(name).addBytes(modelFileName, modelBytes).deploy();
+                    LOG.info(format("Successfully deployed CMMN model with key '%s' and name '%s' from file '%s'", key, name, modelFileName));
+                }
             }
         } catch (final IOException | XPathExpressionException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
