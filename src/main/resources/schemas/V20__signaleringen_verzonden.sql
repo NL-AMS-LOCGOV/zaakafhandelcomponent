@@ -12,7 +12,7 @@ CREATE TABLE ${schema}.signalering_verzonden
     target                   VARCHAR                  NOT NULL, -- bijvoorbeeld: groep.id, medewerker.gebruikersnaam
     subject                  VARCHAR                  NOT NULL, -- bijvoorbeeld: zaak.uuid, taak.id
     tijdstip                 TIMESTAMP WITH TIME ZONE NOT NULL,
-    CONSTRAINT pk_signalering PRIMARY KEY (id_signalering_verzonden),
+    CONSTRAINT pk_signalering_verzonden PRIMARY KEY (id_signalering_verzonden),
     CONSTRAINT fk_signalering_type FOREIGN KEY (signaleringtype_enum)
         REFERENCES ${schema}.signaleringtype (signaleringtype_enum)
             MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT
