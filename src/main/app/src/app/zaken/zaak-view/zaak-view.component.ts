@@ -313,6 +313,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
         }, 'upload_file'));
 
+        this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.DOCUMENT_MAKEN;
+        }, 'note_add'));
+
         this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
             this.actionsSidenav.open();
             this.action = SideNavAction.MAIL_VERSTUREN;
@@ -756,6 +761,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.toegevoegdDocument = informatieobject;
+    }
+
+    documentAangemaakt(redirectUrl: string): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        window.open(redirectUrl);
     }
 }
 

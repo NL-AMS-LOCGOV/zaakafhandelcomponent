@@ -68,7 +68,7 @@ export class InformatieObjectenService {
         );
     }
 
-    createDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<string> {
+    maakDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<string> {
         return this.http.post<string>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

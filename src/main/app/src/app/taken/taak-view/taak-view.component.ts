@@ -36,8 +36,6 @@ import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
-import {DocumentCreatieGegevens} from '../../informatie-objecten/model/document-creatie-gegevens';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -68,7 +66,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
-                protected translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
+                protected translate: TranslateService) {
         super();
     }
 
@@ -158,18 +156,12 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
+
+            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_MAKEN;
+            }, 'note_add'));
         }
-
-        this.menu.push(new ButtonMenuItem('actie.document.creeren', () => {
-            // ToDo: #1028 - Huidige implementatie is alleen bedoeld om te kunnen testen
-            const documentCreatieGegevens = new DocumentCreatieGegevens(this.taak.zaakUUID, '46802bae-5759-4185-9a65-ffac1da77e8a', this.taak.id);
-            documentCreatieGegevens.titel = 'Optionele titel van het document';
-            this.informatieObjectenService.createDocument(documentCreatieGegevens)
-                .subscribe((redirectUrl) => {
-                    console.log(redirectUrl);
-                });
-        }, 'upload_file'));
-
     }
 
     private loadHistorie(): void {
@@ -288,5 +280,11 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         this.taak.taakdocumenten.push(informatieobject.uuid);
         this.formulier.refreshTaakdocumenten();
+    }
+
+    documentAangemaakt(redirectUrl: string): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        window.open(redirectUrl);
     }
 }
