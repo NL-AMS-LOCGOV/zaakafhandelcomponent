@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:flowable="http://flowable.org/cmmn"
+             xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC"
+             xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" targetNamespace="http://www.flowable.org/casedef" exporter="Flowable Open Source Modeler"
+             exporterVersion="6.7.0">
+    <case id="melding-klein-evenement" name="Melding klein evenement" flowable:initiatorVariableName="initiator">
+        <casePlanModel id="melding_klein_evenement" name="Melding klein evenement" flowable:formFieldValidation="true" autoComplete="true">
+            <planItem id="planItem4" name="Intake" definitionRef="INTAKE">
+                <itemControl>
+                    <requiredRule></requiredRule>
+                </itemControl>
+            </planItem>
+            <planItem id="planItem10" name="In behandeling" definitionRef="IN_BEHANDELING">
+                <entryCriterion id="sid-563BE4E9-78ED-432A-9236-1D0708028133" sentryRef="sentry7"></entryCriterion>
+            </planItem>
+            <sentry id="sentry7">
+                <planItemOnPart id="sentryOnPart3" sourceRef="planItem4">
+                    <standardEvent>complete</standardEvent>
+                </planItemOnPart>
+                <ifPart>
+                    <condition><![CDATA[${var:getOrDefault(ontvankelijk,false)}]]></condition>
+                </ifPart>
+            </sentry>
+            <stage id="INTAKE" name="Intake" autoComplete="true" flowable:displayOrder="1">
+                <extensionElements>
+                    <flowable:planItemLifecycleListener sourceState="available" targetState="active"
+                                                        class="net.atos.zac.flowable.cmmn.UpdateZaakLifecycleListener">
+                        <flowable:field name="status">
+                            <flowable:string><![CDATA[Intake]]></flowable:string>
+                        </flowable:field>
+                    </flowable:planItemLifecycleListener>
+                </extensionElements>
+                <planItem id="planItem1" name="Aanvullende info" definitionRef="aamvullende_info">
+                    <itemControl>
+                        <repetitionRule flowable:counterVariable="repetitionCounter">
+                            <extensionElements></extensionElements>
+                            <condition>
+                                <![CDATA[${planItemInstances.definitionId(planItemInstance.getPlanItemDefinitionId()).enabled().count() < 1}]]></condition>
+                        </repetitionRule>
+                        <manualActivationRule></manualActivationRule>
+                    </itemControl>
+                    <entryCriterion id="sid-0700C5A6-BA3E-4056-930E-91A2B5E8C59C" sentryRef="sentry1"></entryCriterion>
+                </planItem>
+                <planItem id="planItem2" name="Intake afronden" definitionRef="INTAKE_AFRONDEN"></planItem>
+                <planItem id="planItem3" name="Intake Gereed" definitionRef="sid-40920C60-3C87-447A-8333-64E3E8186A4D">
+                    <itemControl>
+                        <requiredRule></requiredRule>
+                    </itemControl>
+                    <entryCriterion id="sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D" sentryRef="sentry2"></entryCriterion>
+                </planItem>
+                <sentry id="sentry1">
+                    <ifPart>
+                        <condition><![CDATA[${true}]]></condition>
+                    </ifPart>
+                </sentry>
+                <sentry id="sentry2">
+                    <planItemOnPart id="sentryOnPart1" sourceRef="planItem2">
+                        <standardEvent>occur</standardEvent>
+                    </planItemOnPart>
+                </sentry>
+                <humanTask id="aamvullende_info" name="Aanvullende info" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                    <extensionElements>
+                        <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
+                    </extensionElements>
+                </humanTask>
+                <userEventListener id="INTAKE_AFRONDEN" name="Intake afronden"
+                                   flowable:availableCondition="${planItemInstances.currentStage().active().count() == 0}"></userEventListener>
+                <milestone id="sid-40920C60-3C87-447A-8333-64E3E8186A4D" name="Intake Gereed"></milestone>
+            </stage>
+            <stage id="IN_BEHANDELING" name="In behandeling" autoComplete="true" flowable:displayOrder="2">
+                <extensionElements>
+                    <flowable:planItemLifecycleListener sourceState="available" targetState="active"
+                                                        class="net.atos.zac.flowable.cmmn.UpdateZaakLifecycleListener">
+                        <flowable:field name="status">
+                            <flowable:string><![CDATA[In behandeling]]></flowable:string>
+                        </flowable:field>
+                    </flowable:planItemLifecycleListener>
+                </extensionElements>
+                <planItem id="planItem5" name="Goedkeuren" definitionRef="sid-D65A9D91-8152-46EF-A038-51BBA2BF51DA">
+                    <itemControl>
+                        <repetitionRule flowable:counterVariable="repetitionCounter">
+                            <extensionElements></extensionElements>
+                            <condition>
+                                <![CDATA[${planItemInstances.definitionId(planItemInstance.getPlanItemDefinitionId()).enabled().count() < 1}]]></condition>
+                        </repetitionRule>
+                        <manualActivationRule></manualActivationRule>
+                    </itemControl>
+                    <entryCriterion id="sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6" sentryRef="sentry3"></entryCriterion>
+                </planItem>
+                <planItem id="planItem6" name="Advies intern" definitionRef="sid-19F2CBF2-6855-4FFA-A5D4-DF166416CC27">
+                    <itemControl>
+                        <repetitionRule flowable:counterVariable="repetitionCounter">
+                            <extensionElements></extensionElements>
+                            <condition>
+                                <![CDATA[${planItemInstances.definitionId(planItemInstance.getPlanItemDefinitionId()).enabled().count() < 1}]]></condition>
+                        </repetitionRule>
+                        <manualActivationRule></manualActivationRule>
+                    </itemControl>
+                    <entryCriterion id="sid-1B17B0E5-B175-4854-8307-B84576CF8925" sentryRef="sentry4"></entryCriterion>
+                </planItem>
+                <planItem id="planItem7" name="Behandeling gereed" definitionRef="sid-C6F79B37-B822-4826-AA27-089EB88725B5">
+                    <itemControl>
+                        <requiredRule></requiredRule>
+                    </itemControl>
+                    <entryCriterion id="sid-520E91D7-66C5-41F7-A7C6-C8A094F4DE19" sentryRef="sentry6"></entryCriterion>
+                </planItem>
+                <planItem id="planItem8" name="Zaak afhandelen" definitionRef="ZAAK_AFHANDELEN"></planItem>
+                <planItem id="planItem9" name="Advies extern" definitionRef="sid-813812F4-EB31-4267-9FA9-F210E4199204">
+                    <itemControl>
+                        <repetitionRule flowable:counterVariable="repetitionCounter">
+                            <extensionElements></extensionElements>
+                            <condition>
+                                <![CDATA[${planItemInstances.definitionId(planItemInstance.getPlanItemDefinitionId()).enabled().count() < 1}]]></condition>
+                        </repetitionRule>
+                        <manualActivationRule></manualActivationRule>
+                    </itemControl>
+                    <entryCriterion id="sid-C78C6F29-4CC5-4ABB-B181-BE1FBF298CA5" sentryRef="sentry5"></entryCriterion>
+                </planItem>
+                <sentry id="sentry3">
+                    <ifPart>
+                        <condition><![CDATA[${true}]]></condition>
+                    </ifPart>
+                </sentry>
+                <sentry id="sentry4">
+                    <ifPart>
+                        <condition><![CDATA[${true}]]></condition>
+                    </ifPart>
+                </sentry>
+                <sentry id="sentry6">
+                    <planItemOnPart id="sentryOnPart2" sourceRef="planItem8">
+                        <standardEvent>occur</standardEvent>
+                    </planItemOnPart>
+                </sentry>
+                <sentry id="sentry5">
+                    <ifPart>
+                        <condition><![CDATA[${true}]]></condition>
+                    </ifPart>
+                </sentry>
+                <humanTask id="sid-D65A9D91-8152-46EF-A038-51BBA2BF51DA" name="Goedkeuren" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                    <extensionElements>
+                        <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
+                    </extensionElements>
+                </humanTask>
+                <humanTask id="sid-19F2CBF2-6855-4FFA-A5D4-DF166416CC27" name="Advies intern" flowable:assignee="${initiator}"
+                           flowable:formFieldValidation="true">
+                    <extensionElements>
+                        <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
+                    </extensionElements>
+                </humanTask>
+                <milestone id="sid-C6F79B37-B822-4826-AA27-089EB88725B5" name="Behandeling gereed"></milestone>
+                <userEventListener id="ZAAK_AFHANDELEN" name="Zaak afhandelen"
+                                   flowable:availableCondition="${planItemInstances.currentStage().active().count() == 0}"></userEventListener>
+                <humanTask id="sid-813812F4-EB31-4267-9FA9-F210E4199204" name="Advies extern" flowable:assignee="${initiator}"
+                           flowable:formFieldValidation="true">
+                    <extensionElements>
+                        <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
+                    </extensionElements>
+                </humanTask>
+            </stage>
+        </casePlanModel>
+    </case>
+    <cmmndi:CMMNDI>
+        <cmmndi:CMMNDiagram id="CMMNDiagram_melding-klein-evenement">
+            <cmmndi:CMMNShape id="CMMNShape_melding_klein_evenement" cmmnElementRef="melding_klein_evenement">
+                <dc:Bounds height="610.0" width="725.514099048668" x="15.0" y="75.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem4" cmmnElementRef="planItem4">
+                <dc:Bounds height="224.0" width="682.0093981221153" x="30.0" y="90.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem1" cmmnElementRef="planItem1">
+                <dc:Bounds height="80.0" width="100.0" x="240.0" y="150.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-0700C5A6-BA3E-4056-930E-91A2B5E8C59C" cmmnElementRef="sid-0700C5A6-BA3E-4056-930E-91A2B5E8C59C">
+                <dc:Bounds height="22.0" width="14.0" x="232.45126607208528" y="176.0692459710354"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem2" cmmnElementRef="planItem2">
+                <dc:Bounds height="30.500999999999998" width="30.49799999999999" x="98.05904529820927" y="120.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem3" cmmnElementRef="planItem3">
+                <dc:Bounds height="54.0" width="146.0" x="45.0" y="210.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D" cmmnElementRef="sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D">
+                <dc:Bounds height="22.0" width="14.0" x="106.30804529820928" y="198.01379469697522"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem10" cmmnElementRef="planItem10">
+                <dc:Bounds height="244.0" width="681.2371837392632" x="30.386107191426163" y="390.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-563BE4E9-78ED-432A-9236-1D0708028133" cmmnElementRef="sid-563BE4E9-78ED-432A-9236-1D0708028133">
+                <dc:Bounds height="22.0" width="14.0" x="365.3573673988296" y="378.36330604345875"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem5" cmmnElementRef="planItem5">
+                <dc:Bounds height="80.0" width="100.0" x="556.3861071914262" y="476.5778079397513"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6" cmmnElementRef="sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6">
+                <dc:Bounds height="22.0" width="14.0" x="549.0500471168327" y="508.82529568649943"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem6" cmmnElementRef="planItem6">
+                <dc:Bounds height="80.0" width="100.0" x="240.88610719142616" y="472.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-1B17B0E5-B175-4854-8307-B84576CF8925" cmmnElementRef="sid-1B17B0E5-B175-4854-8307-B84576CF8925">
+                <dc:Bounds height="22.0" width="14.0" x="232.95799386169247" y="505.5778079397513"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem7" cmmnElementRef="planItem7">
+                <dc:Bounds height="54.0" width="146.0" x="47.30243298897253" y="555.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-520E91D7-66C5-41F7-A7C6-C8A094F4DE19" cmmnElementRef="sid-520E91D7-66C5-41F7-A7C6-C8A094F4DE19">
+                <dc:Bounds height="22.0" width="14.0" x="112.19436977229613" y="543.4970569487662"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem8" cmmnElementRef="planItem8">
+                <dc:Bounds height="30.500999999999976" width="30.49799999999999" x="105.05343298897253" y="450.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_planItem9" cmmnElementRef="planItem9">
+                <dc:Bounds height="80.0" width="100.0" x="399.1859414474211" y="472.0"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNShape id="CMMNShape_sid-C78C6F29-4CC5-4ABB-B181-BE1FBF298CA5" cmmnElementRef="sid-C78C6F29-4CC5-4ABB-B181-BE1FBF298CA5">
+                <dc:Bounds height="22.0" width="14.0" x="391.31844990586967" y="503.45308605749744"></dc:Bounds>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNShape>
+            <cmmndi:CMMNEdge id="CMMNEdge_sid-901162BF-7AD3-4E6B-8906-F0FEB6E1C232" cmmnElementRef="planItem4"
+                             targetCMMNElementRef="sid-563BE4E9-78ED-432A-9236-1D0708028133">
+                <di:extension>
+                    <flowable:docker type="source" x="341.00469906105764" y="111.99999999999999"></flowable:docker>
+                    <flowable:docker type="target" x="8.0" y="10.0"></flowable:docker>
+                </di:extension>
+                <di:waypoint x="372.41796665114936" y="313.95"></di:waypoint>
+                <di:waypoint x="373.2488107688928" y="379.7641456249866"></di:waypoint>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNEdge>
+            <cmmndi:CMMNEdge id="CMMNEdge_sid-FF264CFB-BFFA-4B60-B739-15E56E4FCA64" cmmnElementRef="planItem2"
+                             targetCMMNElementRef="sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D">
+                <di:extension>
+                    <flowable:docker type="source" x="15.497999999999994" y="15.500999999999998"></flowable:docker>
+                    <flowable:docker type="target" x="7.0" y="11.0"></flowable:docker>
+                </di:extension>
+                <di:waypoint x="113.50454114113171" y="150.95191321238548"></di:waypoint>
+                <di:waypoint x="113.34493787870241" y="198.0720342804081"></di:waypoint>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNEdge>
+            <cmmndi:CMMNEdge id="CMMNEdge_sid-2EB7621E-74A7-4888-A70E-1F9A2E0C26E3" cmmnElementRef="planItem8"
+                             targetCMMNElementRef="sid-520E91D7-66C5-41F7-A7C6-C8A094F4DE19">
+                <di:extension>
+                    <flowable:docker type="source" x="15.497999999999994" y="15.500999999999996"></flowable:docker>
+                    <flowable:docker type="target" x="7.0" y="11.0"></flowable:docker>
+                </di:extension>
+                <di:waypoint x="120.3150917252186" y="480.95023985603393"></di:waypoint>
+                <di:waypoint x="119.35742434603915" y="543.7544713162447"></di:waypoint>
+                <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+            </cmmndi:CMMNEdge>
+        </cmmndi:CMMNDiagram>
+    </cmmndi:CMMNDI>
+</definitions>
