@@ -27,6 +27,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.repository.CmmnDeployment;
 import org.w3c.dom.Document;
@@ -51,7 +52,7 @@ public class CMMNDeployer {
         try (final InputStream modelsInputStream = getClass().getClassLoader()
                 .getResourceAsStream(format("%s/%s", CMMN_MODELS_FOLDER_NAME, CMMN_MODELS_FILE_NAME));
              final BufferedReader modelsReader = new BufferedReader(new InputStreamReader(modelsInputStream, StandardCharsets.UTF_8))) {
-            modelsReader.lines().forEach(this::checkModel);
+            modelsReader.lines().filter(StringUtils::isNotBlank).forEach(this::checkModel);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
