@@ -74,6 +74,7 @@ public class CMMNDeployer {
             final XPath xPath = XPathFactory.newInstance().newXPath();
             final String key = (String) xPath.evaluate(CASE_ID_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
             final CmmnDeployment cmmnDeployment = cmmnRepositoryService.createDeploymentQuery().deploymentKey(key).latest().singleResult();
+
             if (cmmnDeployment == null) {
                 deployModel(modelFileName, modelBytes, modelXml, key, xPath);
             } else {
