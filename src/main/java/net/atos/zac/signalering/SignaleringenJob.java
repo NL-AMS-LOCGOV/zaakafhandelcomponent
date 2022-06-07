@@ -5,6 +5,7 @@
 
 package net.atos.zac.signalering;
 
+import java.time.LocalDate;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -24,15 +25,21 @@ import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.ZoekenService;
+import net.atos.zac.zoeken.model.DatumRange;
+import net.atos.zac.zoeken.model.DatumVeld;
+import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 @ApplicationScoped
 @Transactional
 public class SignaleringenJob {
+
     private static final Logger LOG = Logger.getLogger(SignaleringenJob.class.getName());
 
     public static final String ZAAK_SIGNALERINGEN_VERZENDEN = "Zaak signaleringen verzenden";
+
+    public static final String ZAAK_AFGEHANDELD_QUERY = "zaak_afgehandeld";
 
     @Inject
     private SignaleringenService signaleringenService;
@@ -77,9 +84,7 @@ public class SignaleringenJob {
 
     private int zaakEinddatumGeplandVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
-        // TODO #1062 zaaktype en streef tussen nu en nu + venster
-        zoekenService.zoekZaak(parameters).getItems()
+        zoekenService.zoekZaak(getVerzendenParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
                     final User target = signaleringVerzendenTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
                     if (target != null) {
@@ -93,9 +98,7 @@ public class SignaleringenJob {
 
     private int zaakUiterlijkeEinddatumAfdoeningVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
-        // TODO #1062 zaaktype en fataal tussen nu en nu + venster
-        zoekenService.zoekZaak(parameters).getItems()
+        zoekenService.zoekZaak(getVerzendenParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
                     final User target = signaleringVerzendenTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
                     if (target != null) {
@@ -105,6 +108,13 @@ public class SignaleringenJob {
                     }
                 });
         return verzonden[0];
+    }
+
+    private ZoekParameters getVerzendenParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
+        final LocalDate now = LocalDate.now();
+        final ZoekParameters parameters = getOpenParameters(zaaktype);
+        parameters.addDatum(veld, new DatumRange(now, now.plusDays(venster)));
+        return parameters;
     }
 
     private User signaleringVerzendenTarget(final String behandelaarGebruikersnaam, final String zaakUUID) {
@@ -119,20 +129,31 @@ public class SignaleringenJob {
     }
 
     private void zaakEinddatumGeplandVerzendenOpruimen(final Zaaktype zaaktype, final int venster) {
-        final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
-        // TODO #1062 zaaktype en streef na nu + venster
-        zoekenService.zoekZaak(parameters).getItems()
+        zoekenService.zoekZaak(getOpruimenParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
                     // TODO #1065 Verwijder de streefsignalering verzonden markering
                 });
     }
 
     private void zaakUiterlijkeEinddatumAfdoeningVerzendenOpruimen(final Zaaktype zaaktype, final int venster) {
-        final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
-        // TODO #1062 zaaktype en fataal na nu + venster
-        zoekenService.zoekZaak(parameters).getItems()
+        zoekenService.zoekZaak(getOpruimenParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
                     // TODO #1065 Verwijder de fataalsignalering verzonden markering
                 });
+    }
+
+    private ZoekParameters getOpruimenParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
+        final LocalDate now = LocalDate.now();
+        final ZoekParameters parameters = getOpenParameters(zaaktype);
+        parameters.addDatum(veld, new DatumRange(now.plusDays(venster + 1), null));
+        return parameters;
+    }
+
+    private ZoekParameters getOpenParameters(final Zaaktype zaaktype) {
+        final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
+        parameters.addFilter(FilterVeld.ZAAK_ZAAKTYPE_UUID, UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
+        parameters.addFilterQuery(ZAAK_AFGEHANDELD_QUERY, "false");
+        parameters.setRows(Integer.MAX_VALUE);
+        return parameters;
     }
 }
