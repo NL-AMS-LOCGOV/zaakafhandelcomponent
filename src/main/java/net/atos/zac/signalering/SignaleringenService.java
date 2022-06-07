@@ -27,10 +27,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.mail.MailService;
@@ -45,8 +42,6 @@ import net.atos.zac.signalering.model.SignaleringVerzonden;
 import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
-import net.atos.zac.zoeken.ZoekenService;
 
 @ApplicationScoped
 @Transactional
@@ -64,21 +59,6 @@ public class SignaleringenService {
 
     @Inject
     private SignaleringenMailHelper signaleringenMailHelper;
-
-    @Inject
-    private ConfiguratieService configuratieService;
-
-    @Inject
-    private IdentityService identityService;
-
-    @Inject
-    private ZTCClientService ztcClientService;
-
-    @Inject
-    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
-
-    @Inject
-    private ZoekenService zoekenService;
 
     private SignaleringType signaleringTypeInstance(final SignaleringType.Type signaleringsType) {
         return entityManager.find(SignaleringType.class, signaleringsType.toString());
