@@ -22,12 +22,12 @@ export class DashboardComponent implements OnInit {
     private signaleringCards: Array<DashboardCardData> = [
         new DashboardCardData('ZAAK', 'dashboard.mijn.zaken.nieuw', SignaleringType.ZAAK_OP_NAAM),
         new DashboardCardData('TAAK', 'dashboard.mijn.taken.nieuw', SignaleringType.TAAK_OP_NAAM),
-        new DashboardCardData('ZAAK', 'dashboard.mijn.documenten.nieuw', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD)
+        new DashboardCardData('ZAAK', 'dashboard.mijn.documenten.nieuw', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
+        new DashboardCardData('ZAAK-WAARSCHUWING', 'dashboard.mijn.zaken.waarschuwing', SignaleringType.ZAAK_VERLOPEND)
     ];
 
     /** These cards will then be added to the grid on the dashboard in this order */
     private otherCards: Array<DashboardCardData> = [
-        new DashboardCardData('ZAAK-WAARSCHUWING', 'dashboard.mijn.zaken.waarschuwing')
     ];
 
     width: number; // Maximum number of cards horizontally
