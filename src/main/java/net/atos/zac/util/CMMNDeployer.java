@@ -74,15 +74,15 @@ public class CMMNDeployer {
             final XPath xPath = XPathFactory.newInstance().newXPath();
             final String key = (String) xPath.evaluate(CASE_ID_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
             final CmmnDeployment cmmnDeployment = cmmnRepositoryService.createDeploymentQuery().deploymentKey(key).latest().singleResult();
-            if (cmmnDeployment != null) {
+            if (cmmnDeployment == null) {
+                deployModel(modelFileName, modelBytes, modelXml, key, xPath);
+            } else {
                 try (final InputStream modelInputStream = new ByteArrayInputStream(modelBytes);
                      final InputStream deployedModelInputStream = cmmnRepositoryService.getResourceAsStream(cmmnDeployment.getId(), modelFileName)) {
                     if (!IOUtils.contentEquals(modelInputStream, deployedModelInputStream)) {
                         deployModel(modelFileName, modelBytes, modelXml, key, xPath);
                     }
                 }
-            } else {
-                deployModel(modelFileName, modelBytes, modelXml, key, xPath);
             }
         } catch (final IOException | XPathExpressionException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
