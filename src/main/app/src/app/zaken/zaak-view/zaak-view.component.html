@@ -11,8 +11,10 @@
         <zac-persoon-zoek *ngSwitchCase="'ZOEK_PERSOON'" (persoon)="initiatorGeselecteerd($event)"></zac-persoon-zoek>
         <zac-bedrijf-zoek *ngSwitchCase="'ZOEK_BEDRIJF'" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
-        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
-                                      (document)="documentToegevoegd($event)"></zac-informatie-object-create>
+        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
+                                   (document)="documentToegevoegd($event)"></zac-informatie-object-add>
+        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'" [sideNav]="actionsSidenav" [zaakUUID]="zaak.uuid"
+                                      (redirectUrl)="documentAangemaakt($event)"></zac-informatie-object-create>
         <zac-human-task-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-human-task-do>
         <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
         <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd($event)"
