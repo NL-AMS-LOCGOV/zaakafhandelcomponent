@@ -4,8 +4,8 @@
  */
 
 export class DocumentCreatieGegevens {
-
+    public zaakUUID: string;
+    public taskId: string;
+    public informatieobjecttypeUUID: string;
     public titel: string;
-
-    constructor(public zaakUUID: string, public informatieobjecttypeUUID: string, public taskId: string) {}
 }

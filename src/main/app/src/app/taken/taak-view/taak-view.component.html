@@ -8,8 +8,10 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                      [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-create>
+        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav"
+                                   [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-add>
+        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'" [sideNav]="actionsSidenav"
+                                      [zaakUUID]="taak.zaakUUID" [taskId]="taak.id" (redirectUrl)="documentAangemaakt($event)"></zac-informatie-object-create>
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
