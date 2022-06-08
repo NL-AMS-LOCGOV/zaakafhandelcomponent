@@ -34,6 +34,8 @@ public class SignaleringVerzondenZoekParameters {
 
     private String subject;
 
+    private SignaleringSubjectField subjectfield;
+
     public SignaleringVerzondenZoekParameters(final User target) {
         this.targettype = USER;
         this.target = target.getId();
@@ -99,5 +101,14 @@ public class SignaleringVerzondenZoekParameters {
     public SignaleringVerzondenZoekParameters subjectInformatieobject(final UUID informatieobjectId) {
         this.subject = informatieobjectId.toString();
         return subjecttype(INFORMATIEOBJECT);
+    }
+
+    public SignaleringSubjectField getSubjectfield() {
+        return subjectfield;
+    }
+
+    public SignaleringVerzondenZoekParameters field(final SignaleringSubjectField subjectfield) {
+        this.subjectfield = subjectfield;
+        return this;
     }
 }
