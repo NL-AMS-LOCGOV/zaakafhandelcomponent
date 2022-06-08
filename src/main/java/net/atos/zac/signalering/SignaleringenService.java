@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -179,7 +179,7 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering) {
+    public void sendSignalering(final Signalering signalering, final String bericht) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
@@ -187,9 +187,13 @@ public class SignaleringenService {
             final SignaleringType.Type type = signalering.getType().getType();
             final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
             final String subject = signaleringenMailHelper.formatSubject(type, link);
-            final String body = signaleringenMailHelper.formatBody(type, mail, link);
+            final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
             mailService.sendMail(to, subject, body);
         }
+    }
+
+    public void sendSignalering(final Signalering signalering) {
+        sendSignalering(signalering, null);
     }
 
     public SignaleringInstellingen createUpdateOrDeleteInstellingen(final SignaleringInstellingen instellingen) {

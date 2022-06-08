@@ -13,11 +13,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzendInfo;
 import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
@@ -28,6 +30,7 @@ import net.atos.zac.zoeken.ZoekenService;
 import net.atos.zac.zoeken.model.DatumRange;
 import net.atos.zac.zoeken.model.DatumVeld;
 import net.atos.zac.zoeken.model.FilterVeld;
+import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
@@ -84,11 +87,11 @@ public class SignaleringenJob {
 
     private int zaakEinddatumGeplandVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        zoekenService.zoekZaak(getVerzendenParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster)).getItems()
+        zoekenService.zoekZaak(getZaakZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
-                    final User target = signaleringVerzendenTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
+                    final User target = getZaakSignaleringTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
                     if (target != null) {
-                        // TODO #1063 Verzend streefwaarschuwing mail
+                        signaleringenService.sendSignalering(buildZaakSignalering(target, zaak), getZaakSignaleringBericht(0));
                         // TODO #1064 Markeer de streefsignalering als verzonden
                         verzonden[0]++;
                     }
@@ -98,11 +101,11 @@ public class SignaleringenJob {
 
     private int zaakUiterlijkeEinddatumAfdoeningVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        zoekenService.zoekZaak(getVerzendenParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster)).getItems()
+        zoekenService.zoekZaak(getZaakZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster)).getItems()
                 .forEach(zaak -> {
-                    final User target = signaleringVerzendenTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
+                    final User target = getZaakSignaleringTarget(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid());
                     if (target != null) {
-                        // TODO #1063 Verzend fataalwaarschuwing mail
+                        signaleringenService.sendSignalering(buildZaakSignalering(target, zaak), getZaakSignaleringBericht(1));
                         // TODO #1064 Markeer de fataalsignalering als verzonden
                         verzonden[0]++;
                     }
@@ -110,14 +113,14 @@ public class SignaleringenJob {
         return verzonden[0];
     }
 
-    private ZoekParameters getVerzendenParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
+    private ZoekParameters getZaakZoekParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
         final LocalDate now = LocalDate.now();
         final ZoekParameters parameters = getOpenParameters(zaaktype);
         parameters.addDatum(veld, new DatumRange(now, now.plusDays(venster)));
         return parameters;
     }
 
-    private User signaleringVerzendenTarget(final String behandelaarGebruikersnaam, final String zaakUUID) {
+    private User getZaakSignaleringTarget(final String behandelaarGebruikersnaam, final String zaakUUID) {
         final User user = identityService.readUser(behandelaarGebruikersnaam);
         if (signaleringenService.readInstellingen(SignaleringType.Type.ZAAK_VERLOPEND, user).isMail() &&
                 signaleringenService.findSignaleringVerzonden(new SignaleringVerzondenZoekParameters(user)
@@ -126,6 +129,19 @@ public class SignaleringenJob {
             return user;
         }
         return null;
+    }
+
+    private Signalering buildZaakSignalering(final User target, final ZaakZoekObject zoekObject) {
+        final Zaak zaak = new Zaak();
+        zaak.setUuid(UUID.fromString(zoekObject.getUuid()));
+        final Signalering signalering = signaleringenService.signaleringInstance(SignaleringType.Type.ZAAK_VERLOPEND);
+        signalering.setTarget(target);
+        signalering.setSubject(zaak);
+        return signalering;
+    }
+
+    private String getZaakSignaleringBericht(final int i) {
+        return SignaleringType.Type.ZAAK_VERLOPEND.getBericht().split(";")[i];
     }
 
     private void zaakEinddatumGeplandVerzendenOpruimen(final Zaaktype zaaktype, final int venster) {
