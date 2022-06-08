@@ -27,7 +27,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.event.AbstractEventObserver;
-import net.atos.zac.flowable.FlowableHelper;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.signalering.SignaleringenService;
@@ -35,7 +34,7 @@ import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 
 /**
- * Deze bean luistert naar CmmnUpdateEvents, en werkt daar vervolgens flowable mee bij.
+ * This bean listens for SignaleringEvents and handles them.
  */
 @ManagedBean
 public class SignaleringEventObserver extends AbstractEventObserver<SignaleringEvent<?>> {
@@ -53,9 +52,6 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Inject
     private IdentityService identityService;
-
-    @Inject
-    private FlowableHelper flowableHelper;
 
     @Inject
     private SignaleringenService signaleringenService;

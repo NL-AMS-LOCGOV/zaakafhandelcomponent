@@ -66,7 +66,6 @@ public class SignaleringenJob {
     @Inject
     private ZoekenService zoekenService;
 
-    // TODO #1080 asynchroon uitvoeren
     public void zaakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
         LOG.info(String.format("%s: gestart", ZAAK_SIGNALERINGEN_VERZENDEN));
