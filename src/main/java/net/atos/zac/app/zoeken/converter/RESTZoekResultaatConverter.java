@@ -57,6 +57,7 @@ public class RESTZoekResultaatConverter {
         restZoekItem.zaaktypeOmschrijving = zoekItem.getZaaktypeOmschrijving();
         restZoekItem.statustypeOmschrijving = zoekItem.getStatustypeOmschrijving();
         restZoekItem.resultaattypeOmschrijving = zoekItem.getResultaattypeOmschrijving();
+        restZoekItem.aantalOpenstaandeTaken = zoekItem.getAantalOpenstaandeTaken();
         return restZoekItem;
     }
 }
