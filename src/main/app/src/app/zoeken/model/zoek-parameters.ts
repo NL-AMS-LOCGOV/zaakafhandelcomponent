@@ -21,8 +21,8 @@ export class ZoekParameters {
             tot: null
         }
     };
-    sorteerVeld: string;
-    sorteerRichting: string;
-    rows: number;
-    start: number;
+    sorteerVeld: string = 'IDENTIFICATIE';
+    sorteerRichting: 'desc' | 'asc' | '';
+    rows: number = 25;
+    page: number = 0;
 }
