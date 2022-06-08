@@ -37,6 +37,7 @@ import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
+import net.atos.zac.signalering.model.SignaleringVerzonden;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
 
@@ -85,6 +86,19 @@ public class SignaleringenService {
     public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType, final SignaleringTarget ownerType,
             final String ownerId) {
         return new SignaleringInstellingen(signaleringTypeInstance(signaleringsType), ownerType, ownerId);
+    }
+
+    /**
+     * Factory method for constructing SignaleringVerzonden instances.
+     *
+     * @param signaleringsType the type of the signaleringVerzonden to construct
+     * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
+     */
+    public SignaleringVerzonden signaleringVerzondenInstance(final SignaleringType.Type signaleringsType) {
+        final SignaleringVerzonden instance = new SignaleringVerzonden();
+        instance.setType(signaleringTypeInstance(signaleringsType));
+        instance.setTijdstip(ZonedDateTime.now());
+        return instance;
     }
 
     /**
@@ -255,5 +269,14 @@ public class SignaleringenService {
 
     public int count() {
         return SignaleringType.Type.values().length;
+    }
+
+    public SignaleringVerzonden createSignaleringVerzonden(final SignaleringVerzonden signaleringVerzonden) {
+        valideerObject(signaleringVerzonden);
+        return entityManager.merge(signaleringVerzonden);
+    }
+
+    public void deleteSignaleringVerzonden(final SignaleringVerzonden signalering) {
+        entityManager.remove(signalering);
     }
 }
