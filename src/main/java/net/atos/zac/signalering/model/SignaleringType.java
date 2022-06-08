@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -46,12 +46,12 @@ public class SignaleringType implements Comparable<SignaleringType> {
 
     /**
      * Maps to signalering-type.ts
-     * !! Remember to add the enum value to signaleringtype table and to add the translation !!
+     * !! Don't forget to add a new enum value to signaleringtype table and to add the translation !!
      */
     public enum Type {
         ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd."),
         ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
-        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streef- of fatale datum."),
+        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum.;Uw zaak nadert de fatale datum."),
         TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet."),
         TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.") {
             @Override

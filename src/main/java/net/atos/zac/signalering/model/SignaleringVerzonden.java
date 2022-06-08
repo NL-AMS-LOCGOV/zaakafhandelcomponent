@@ -5,11 +5,6 @@
 
 package net.atos.zac.signalering.model;
 
-import static net.atos.zac.signalering.model.SignaleringSubject.INFORMATIEOBJECT;
-import static net.atos.zac.signalering.model.SignaleringSubject.TAAK;
-import static net.atos.zac.signalering.model.SignaleringSubject.ZAAK;
-import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
-import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.time.ZonedDateTime;
@@ -27,14 +22,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.flowable.task.api.TaskInfo;
-
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.util.URIUtil;
-import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.identity.model.Group;
-import net.atos.zac.identity.model.User;
 
 @Entity
 @Table(schema = SCHEMA, name = "signalering_verzonden")
@@ -88,18 +75,16 @@ public class SignaleringVerzonden {
         return targettype;
     }
 
+    public void setTargettype(final SignaleringTarget targettype) {
+        this.targettype = targettype;
+    }
+
     public String getTarget() {
         return target;
     }
 
-    public void setTarget(final Group target) {
-        this.targettype = GROUP;
-        this.target = target.getId();
-    }
-
-    public void setTarget(final User target) {
-        this.targettype = USER;
-        this.target = target.getId();
+    public void setTarget(final String target) {
+        this.target = target;
     }
 
     public SignaleringSubject getSubjecttype() {
@@ -110,25 +95,8 @@ public class SignaleringVerzonden {
         return subject;
     }
 
-    public void setSubject(final Zaak subject) {
-        validSubjecttype(ZAAK);
-        this.subject = subject.getUuid().toString();
-    }
-
-    public void setSubject(final TaskInfo subject) {
-        validSubjecttype(TAAK);
-        this.subject = subject.getId();
-    }
-
-    public void setSubject(final EnkelvoudigInformatieobject subject) {
-        validSubjecttype(INFORMATIEOBJECT);
-        this.subject = URIUtil.parseUUIDFromResourceURI(subject.getUrl()).toString();
-    }
-
-    private void validSubjecttype(final SignaleringSubject subjecttype) {
-        if (type.getSubjecttype() != subjecttype) {
-            throw new IllegalArgumentException(String.format("SignaleringType %s expects a %s-type subject", type, type.getSubjecttype()));
-        }
+    public void setSubject(final String subject) {
+        this.subject = subject;
     }
 
     public SignaleringSubjectField getSubjectfield() {
@@ -145,10 +113,5 @@ public class SignaleringVerzonden {
 
     public void setTijdstip(final ZonedDateTime tijdstip) {
         this.tijdstip = tijdstip;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s-signalering-verzonden voor %s %s (over %s %s)", getType(), getTargettype(), getTarget(), getSubjecttype(), getSubject());
     }
 }

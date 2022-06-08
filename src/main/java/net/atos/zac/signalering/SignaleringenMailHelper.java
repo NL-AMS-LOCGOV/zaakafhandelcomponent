@@ -107,10 +107,11 @@ public class SignaleringenMailHelper {
                              link.id);
     }
 
-    public String formatBody(final SignaleringType.Type signaleringType, final SignaleringTarget.Mail mail, final SignaleringSubject.Link link) {
+    public String formatBody(final SignaleringType.Type signaleringType, final SignaleringTarget.Mail mail, final SignaleringSubject.Link link,
+            final String bericht) {
         return String.format("Beste %s,\n\n%s\n\nHet betreft %s.\n\n%s",
                              html(mail.naam),
-                             html(signaleringType.getBericht()),
+                             html(bericht != null ? bericht : signaleringType.getBericht()),
                              html(link.naam),
                              link(link));
     }

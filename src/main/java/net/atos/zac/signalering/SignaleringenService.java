@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -72,8 +72,8 @@ public class SignaleringenService {
      */
     public Signalering signaleringInstance(final SignaleringType.Type signaleringsType) {
         final Signalering instance = new Signalering();
-        instance.setType(signaleringTypeInstance(signaleringsType));
         instance.setTijdstip(ZonedDateTime.now());
+        instance.setType(signaleringTypeInstance(signaleringsType));
         return instance;
     }
 
@@ -93,13 +93,16 @@ public class SignaleringenService {
     /**
      * Factory method for constructing SignaleringVerzonden instances.
      *
-     * @param signaleringsType the type of the signaleringVerzonden to construct
-     * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
+     * @param signalering the signalering that has been sent
+     * @return the constructed instance (subjectfield is still null, all other members have been set)
      */
-    public SignaleringVerzonden signaleringVerzondenInstance(final SignaleringType.Type signaleringsType) {
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering) {
         final SignaleringVerzonden instance = new SignaleringVerzonden();
-        instance.setType(signaleringTypeInstance(signaleringsType));
         instance.setTijdstip(ZonedDateTime.now());
+        instance.setType(signaleringTypeInstance(signalering.getType().getType()));
+        instance.setTargettype(signalering.getTargettype());
+        instance.setTarget(signalering.getTarget());
+        instance.setSubject(signalering.getSubject());
         return instance;
     }
 
@@ -179,7 +182,7 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering) {
+    public void sendSignalering(final Signalering signalering, final String bericht) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
@@ -187,9 +190,13 @@ public class SignaleringenService {
             final SignaleringType.Type type = signalering.getType().getType();
             final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
             final String subject = signaleringenMailHelper.formatSubject(type, link);
-            final String body = signaleringenMailHelper.formatBody(type, mail, link);
+            final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
             mailService.sendMail(to, subject, body);
         }
+    }
+
+    public void sendSignalering(final Signalering signalering) {
+        sendSignalering(signalering, null);
     }
 
     public SignaleringInstellingen createUpdateOrDeleteInstellingen(final SignaleringInstellingen instellingen) {
@@ -307,6 +314,9 @@ public class SignaleringenService {
             if (parameters.getSubject() != null) {
                 where.add(builder.equal(root.get("subject"), parameters.getSubject()));
             }
+        }
+        if (parameters.getSubjectfield() != null) {
+            where.add(builder.equal(root.get("subjectfield"), parameters.getSubjectfield()));
         }
         return builder.and(where.toArray(new Predicate[0]));
     }

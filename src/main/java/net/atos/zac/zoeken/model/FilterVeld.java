@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 public enum FilterVeld {
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_ZAAKTYPE("zaak_zaaktypeOmschrijving"),
+    ZAAK_ZAAKTYPE_UUID("zaak_zaaktypeUuid"),
     ZAAK_BEHANDELAAR("zaak_behandelaarNaam"),
     ZAAK_GROEP("zaak_groepNaam");
 

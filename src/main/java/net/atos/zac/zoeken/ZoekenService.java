@@ -60,8 +60,8 @@ public class ZoekenService {
         zoekZaakParameters.getDatums().forEach((datumVeld, datum) -> {
             if (datum != null) {
                 query.addFilterQuery(String.format("%s:[%s TO %s]", datumVeld.getVeld(),
-                                                   DateTimeFormatter.ISO_INSTANT.format(datum.van.atStartOfDay(ZoneOffset.UTC)),
-                                                   DateTimeFormatter.ISO_INSTANT.format(datum.tot.atStartOfDay(ZoneOffset.UTC))));
+                                                   datum.van == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van.atStartOfDay(ZoneOffset.UTC)),
+                                                   datum.tot == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot.atStartOfDay(ZoneOffset.UTC))));
             }
         });
 
