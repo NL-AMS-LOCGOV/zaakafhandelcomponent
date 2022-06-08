@@ -25,7 +25,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
-import {ZakenWerkvoorraadZoekenDatasource} from './zaken-werkvorraad-datasource';
+import {ZakenWerkvoorraadDatasource} from './zaken-werkvorraad-datasource';
 
 @Component({
     selector: 'zac-zaken-werkvoorraad',
@@ -36,7 +36,7 @@ import {ZakenWerkvoorraadZoekenDatasource} from './zaken-werkvorraad-datasource'
 export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
-    dataSource: ZakenWerkvoorraadZoekenDatasource;
+    dataSource: ZakenWerkvoorraadDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -53,7 +53,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
                 private zoekenService: ZoekenService,
                 public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog) {
-        this.dataSource = new ZakenWerkvoorraadZoekenDatasource(this.zoekenService, this.utilService);
+        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
