@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -38,13 +39,14 @@ import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzonden;
+import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 @ApplicationScoped
 @Transactional
 public class SignaleringenService {
-
+    private static final Logger LOG = Logger.getLogger(SignaleringenService.class.getName());
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -278,5 +280,34 @@ public class SignaleringenService {
 
     public void deleteSignaleringVerzonden(final SignaleringVerzonden signalering) {
         entityManager.remove(signalering);
+    }
+
+    public List<SignaleringVerzonden> findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<SignaleringVerzonden> query = builder.createQuery(SignaleringVerzonden.class);
+        final Root<SignaleringVerzonden> root = query.from(SignaleringVerzonden.class);
+        return entityManager.createQuery(
+                        query.select(root)
+                                .where(getSignaleringVerzondenWhere(parameters, builder, root)))
+                .getResultList();
+    }
+
+    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<SignaleringVerzonden> root) {
+        final List<Predicate> where = new ArrayList<>();
+        where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
+        if (parameters.getTarget() != null) {
+            where.add(builder.equal(root.get("target"), parameters.getTarget()));
+        }
+        if (!parameters.getTypes().isEmpty()) {
+            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+        }
+        if (parameters.getSubjecttype() != null) {
+            where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));
+            if (parameters.getSubject() != null) {
+                where.add(builder.equal(root.get("subject"), parameters.getSubject()));
+            }
+        }
+        return builder.and(where.toArray(new Predicate[0]));
     }
 }
