@@ -11,6 +11,7 @@ import {tap} from 'rxjs/operators';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ColumnPickerValue} from '../column-picker/column-picker-value';
 import {ZoekResultaat} from '../../../zoeken/model/zoek-resultaat';
+import {SessionStorageUtil} from '../../storage/session-storage.util';
 
 export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
 
@@ -20,21 +21,20 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
     sort: MatSort;
 
     private tableSubject = new BehaviorSubject<OBJECT[]>([]);
+    private _defaultColumns: Map<string, ColumnPickerValue>;
     private _columns: Map<string, ColumnPickerValue>;
+    private _sessionKey: string;
     private _visibleColumns: Array<string>;
     private _filterColumns: Array<string>;
     private _detailExpandColumns: Array<string>;
 
-    private subscription$: Subscription;
+    private subscriptions$: Subscription[] = [];
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
-        // reset pageindex on sort change
-        this.subscription$ = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        // watch sortchange and page change
-        merge(this.sort.sortChange, this.paginator.page).pipe(
+        this.subscriptions$.push(this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0));
+        this.subscriptions$.push(merge(this.sort.sortChange, this.paginator.page).pipe(
             tap(() => this.load())
-        ).subscribe();
-
+        ).subscribe());
         return this.tableSubject.asObservable();
     }
 
@@ -43,9 +43,7 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
      * any open connections or free any held resources that were set up during connect.
      */
     disconnect(collectionViewer: CollectionViewer): void {
-        if (this.subscription$) {
-            this.subscription$.unsubscribe();
-        }
+        this.subscriptions$.forEach(s => { s.unsubscribe(); });
         this.tableSubject.complete();
     }
 
@@ -70,7 +68,6 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
         this.totalItems = response.totaal;
         this.tableSubject.next(response.resultaten);
         this.beschikbareFilters = response.filters;
-
     }
 
     public setViewChilds(paginator: MatPaginator, sort: MatSort): void {
@@ -81,11 +78,22 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
     /**
      * Columns can only be instantiated with the initColumns method
      *
-     * @param columns available columns
+     * @param defaultColumns available columns
+     * @param key sessionKey
      */
-    initColumns(columns: Map<string, ColumnPickerValue>): void {
+    protected _initColumns(key: string, defaultColumns: Map<string, ColumnPickerValue>): void {
+        const columnsString = JSON.stringify(Array.from(defaultColumns.entries()));
+        const sessionColumns: string = SessionStorageUtil.getItem(key, columnsString);
+        const columns: Map<string, ColumnPickerValue> = new Map(JSON.parse(sessionColumns));
+        this._defaultColumns = defaultColumns;
         this._columns = columns;
+        this._sessionKey = key;
         this.updateColumns(columns);
+    }
+
+    resetColumns() {
+        this._columns = new Map(this._defaultColumns);
+        this.updateColumns(this._defaultColumns);
     }
 
     /**
@@ -97,6 +105,12 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
         this._visibleColumns = [...columns.keys()].filter(key => columns.get(key) !== ColumnPickerValue.HIDDEN);
         this._detailExpandColumns = [...columns.keys()].filter(key => columns.get(key) === ColumnPickerValue.HIDDEN);
         this._filterColumns = this.visibleColumns.map(c => c + '_filter');
+        this.storeColumns(columns);
+    }
+
+    private storeColumns(columns: Map<string, ColumnPickerValue>): void {
+        const columnsString = JSON.stringify(Array.from(columns.entries()));
+        SessionStorageUtil.setItem(this._sessionKey, columnsString);
     }
 
     /* column getters, NO setters!*/

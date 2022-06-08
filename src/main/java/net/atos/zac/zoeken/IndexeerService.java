@@ -10,8 +10,10 @@ import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_API
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -82,15 +84,9 @@ public class IndexeerService {
 
     public void indexeerDirect(final List<UUID> uuids, final ZoekObjectType type) {
         if (type == ZoekObjectType.ZAAK) {
-            List<ZaakZoekObject> zaken = new ArrayList<>();
-            uuids.forEach(uuid -> zaken.add(zaakZoekObjectConverter.convert(uuid)));
+            final List<ZaakZoekObject> zaken = uuids.stream().map(uuid -> zaakZoekObjectConverter.convert(uuid)).collect(Collectors.toList());
             addToSolr(zaken);
-            uuids.forEach(uuid -> {
-                final ZoekIndexEntity entity = findEntity(uuid);
-                if (entity != null) {
-                    entityManager.remove(entity);
-                }
-            });
+            uuids.stream().map(this::findEntity).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
         }
     }
 
