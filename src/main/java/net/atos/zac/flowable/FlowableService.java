@@ -58,6 +58,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  *
@@ -108,6 +109,9 @@ public class FlowableService {
 
     @Inject
     private MailService mailService;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -176,6 +180,14 @@ public class FlowableService {
         return null;
     }
 
+    public long countOpenTasksforCase(final UUID zaakUUID) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            return countOpenTasksForCase(caseInstance.getId());
+        }
+        return 0;
+    }
+
     public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = listEnabledPlanItemsForOpenCase(zaakUUID);
         planItems.addAll(listAvailableUserEventListenersForOpenCase(zaakUUID));
@@ -214,6 +226,7 @@ public class FlowableService {
                 .transientVariable(VAR_TRANSIENT_DUE_DATE, dueDate)
                 .transientVariable(VAR_TRANSIENT_TAAKDATA, taakdata)
                 .start();
+        indexeerService.addZaak(zaakUUID);
     }
 
     public void startUserEventListenerPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
@@ -288,8 +301,9 @@ public class FlowableService {
         return readOpenTask(task.getId());
     }
 
-    public HistoricTaskInstance completeTask(final String taskId) {
+    public HistoricTaskInstance completeTask(final String taskId, final UUID zaakUUID) {
         cmmnTaskService.complete(taskId);
+        indexeerService.addZaak(zaakUUID);
         return readClosedTask(taskId);
     }
 
@@ -485,6 +499,13 @@ public class FlowableService {
                 .caseInstanceId(caseInstanceId)
                 .includeIdentityLinks()
                 .list();
+    }
+
+    private long countOpenTasksForCase(final String caseInstanceId) {
+        return cmmnTaskService.createTaskQuery()
+                .caseInstanceId(caseInstanceId)
+                .includeIdentityLinks()
+                .count();
     }
 
     private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {

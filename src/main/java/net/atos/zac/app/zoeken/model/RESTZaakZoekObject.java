@@ -76,4 +76,6 @@ public class RESTZaakZoekObject {
 
     public String statusToelichting;
 
+    public long aantalOpenstaandeTaken;
+
 }

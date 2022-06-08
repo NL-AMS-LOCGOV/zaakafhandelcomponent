@@ -17,7 +17,7 @@ import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column
 /**
  * Datasource voor de werkvoorraad zaken. Via deze class wordt de data voor de tabel opgehaald
  */
-export class ZakenWerkvoorraadZoekenDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
+export class ZakenWerkvoorraadDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
 
     zoekParameters: ZoekParameters = SessionStorageUtil.getItem('zakenWerkvoorraadZoekparameters', new ZoekParameters());
 
