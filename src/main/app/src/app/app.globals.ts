@@ -4,6 +4,6 @@
  */
 
 export const AppGlobals = Object.freeze({
-    FILE_MAX_SIZE: 20, // 20mb
+    FILE_MAX_SIZE: 100, // 20mb
     ALLOWED_FILETYPES: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.vsd,.png,.gif,.jpg,.jpeg,.txt,.bmp,.odt,.ods,.rtf'
 });
