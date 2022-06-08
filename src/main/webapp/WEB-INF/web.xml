@@ -92,4 +92,25 @@
     <login-config>
         <auth-method>OIDC</auth-method>
     </login-config>
+
+    <servlet>
+        <servlet-name>webdav</servlet-name>
+        <servlet-class>net.sf.webdav.WebdavServlet</servlet-class>
+        <init-param>
+            <param-name>ResourceHandlerImplementation</param-name>
+            <param-value>net.atos.zac.webdav.WebdavStore</param-value>
+        </init-param>
+        <init-param>
+            <param-name>rootpath</param-name>
+            <param-value>/home/marco/webdav</param-value>
+        </init-param>
+        <init-param>
+            <param-name>storeDebug</param-name>
+            <param-value>1</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>webdav</servlet-name>
+        <url-pattern>/webdav/*</url-pattern>
+    </servlet-mapping>
 </web-app>

@@ -143,6 +143,14 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
                 });
+            }, 'difference'));
+
+            this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
+                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid).subscribe(url => {
+                    console.log('edit returned');
+                    console.log(url);
+                    window.open(url);
+                });
             }, 'edit'));
         }
     }

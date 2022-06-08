@@ -28,6 +28,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.atos.zac.webdav.WebdavHelper;
+
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -110,6 +112,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private WebdavHelper webdavHelper;
 
     @Inject
     @ActiveSession
@@ -238,6 +243,15 @@ public class InformatieObjectenRESTService {
         listZaakInformatieobjectenHelper(uuid)
                 .forEach(i -> restList.add(restZaakInformatieobjectConverter.convert(i)));
         return restList;
+    }
+
+    @GET
+    @Path("informatieobject/{uuid}/edit")
+    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid) {
+        final EnkelvoudigInformatieobject huidigeVersie = drcClientService.readEnkelvoudigInformatieobject(uuid);
+
+        final URI redirectURI = webdavHelper.maakToken(huidigeVersie);
+        return Response.status(Response.Status.CREATED).entity(redirectURI).build();
     }
 
     @GET
