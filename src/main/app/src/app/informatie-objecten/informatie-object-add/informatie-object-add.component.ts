@@ -224,8 +224,18 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                     }
                 });
         } else {
-            this.sideNav.close();
+            this.resetAndClose();
         }
+    }
+
+    private resetAndClose() {
+        this.fields.forEach(row => row.forEach(field => {
+            // Alles leeg maken behalve de volgende 3 velden
+            if (field.id !== 'auteur' && field.id !== 'creatiedatum' && field.id !== 'taal') {
+                field.formControl.reset();
+            }
+        }));
+        this.sideNav.close();
     }
 
     resetForm(formGroup: FormGroup) {
