@@ -19,14 +19,13 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekenService} from '../../zoeken/zoeken.service';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 
-import {ZakenWerkvoorraadZoekenDatasource} from './zaken-werkvorraad-zoeken-datasource';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
+import {ZakenWerkvoorraadDatasource} from './zaken-werkvorraad-datasource';
 
 @Component({
     selector: 'zac-zaken-werkvoorraad',
@@ -37,7 +36,7 @@ import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vri
 export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
-    dataSource: ZakenWerkvoorraadZoekenDatasource;
+    dataSource: ZakenWerkvoorraadDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -54,18 +53,16 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
                 private zoekenService: ZoekenService,
                 public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog) {
+        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.defaults = SessionStorageUtil.getItem('zakenWerkvoorraad', new ZoekParameters() as ZoekParameters);
-        this.dataSource = new ZakenWerkvoorraadZoekenDatasource(this.zoekenService, this.utilService);
-        this.dataSource.initColumns(this.initialColumns());
-
+        this.dataSource.initColumns(this.defaultColumns());
     }
 
-    initialColumns(): Map<string, ColumnPickerValue> {
+    defaultColumns(): Map<string, ColumnPickerValue> {
         return new Map([
             ['select', ColumnPickerValue.STICKY],
             ['zaak.identificatie', ColumnPickerValue.VISIBLE],
@@ -142,9 +139,12 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         return Conditionals.isOverschreden(datum);
     }
 
-    reset(): void {
-        this.dataSource.initColumns(this.initialColumns());
+    resetSearch(): void {
         this.dataSource.reset();
+    }
+
+    resetColumns(): void {
+        this.dataSource.resetColumns();
     }
 
     filtersChange(): void {
@@ -217,5 +217,4 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             return this.dataSource.beschikbareFilters[field].sort((a, b) => a.localeCompare(b));
         }
     }
-
 }

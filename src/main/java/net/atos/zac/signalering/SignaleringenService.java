@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,23 +28,24 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.zac.event.EventingService;
-import net.atos.zac.identity.model.Group;
-import net.atos.zac.identity.model.User;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringSubject;
+import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
+import net.atos.zac.signalering.model.SignaleringVerzonden;
+import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 @ApplicationScoped
 @Transactional
 public class SignaleringenService {
-
+    private static final Logger LOG = Logger.getLogger(SignaleringenService.class.getName());
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -69,8 +71,8 @@ public class SignaleringenService {
      */
     public Signalering signaleringInstance(final SignaleringType.Type signaleringsType) {
         final Signalering instance = new Signalering();
-        instance.setType(signaleringTypeInstance(signaleringsType));
         instance.setTijdstip(ZonedDateTime.now());
+        instance.setType(signaleringTypeInstance(signaleringsType));
         return instance;
     }
 
@@ -85,6 +87,24 @@ public class SignaleringenService {
     public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType, final SignaleringTarget ownerType,
             final String ownerId) {
         return new SignaleringInstellingen(signaleringTypeInstance(signaleringsType), ownerType, ownerId);
+    }
+
+    /**
+     * Factory method for constructing SignaleringVerzonden instances.
+     *
+     * @param signalering the signalering that has been sent
+     * @param field       the field the signalering has been sent for
+     * @return the constructed instance (all members have been set)
+     */
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering, final SignaleringSubjectField field) {
+        final SignaleringVerzonden instance = new SignaleringVerzonden();
+        instance.setTijdstip(ZonedDateTime.now());
+        instance.setType(signaleringTypeInstance(signalering.getType().getType()));
+        instance.setTargettype(signalering.getTargettype());
+        instance.setTarget(signalering.getTarget());
+        instance.setSubject(signalering.getSubject());
+        instance.setSubjectfield(field);
+        return instance;
     }
 
     /**
@@ -163,7 +183,7 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering) {
+    public void sendSignalering(final Signalering signalering, final String bericht) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
@@ -171,9 +191,13 @@ public class SignaleringenService {
             final SignaleringType.Type type = signalering.getType().getType();
             final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
             final String subject = signaleringenMailHelper.formatSubject(type, link);
-            final String body = signaleringenMailHelper.formatBody(type, mail, link);
+            final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
             mailService.sendMail(to, subject, body);
         }
+    }
+
+    public void sendSignalering(final Signalering signalering) {
+        sendSignalering(signalering, null);
     }
 
     public SignaleringInstellingen createUpdateOrDeleteInstellingen(final SignaleringInstellingen instellingen) {
@@ -187,15 +211,15 @@ public class SignaleringenService {
         return entityManager.merge(instellingen);
     }
 
-    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final Group groep) {
+    public SignaleringInstellingen readInstellingenGroup(final SignaleringType.Type type, final String target) {
         final Signalering signalering = signaleringInstance(type);
-        signalering.setTarget(groep);
+        signalering.setTargetGroup(target);
         return readInstellingen(signalering);
     }
 
-    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final User user) {
+    public SignaleringInstellingen readInstellingenUser(final SignaleringType.Type type, final String target) {
         final Signalering signalering = signaleringInstance(type);
-        signalering.setTarget(user);
+        signalering.setTargetUser(target);
         return readInstellingen(signalering);
     }
 
@@ -255,5 +279,51 @@ public class SignaleringenService {
 
     public int count() {
         return SignaleringType.Type.values().length;
+    }
+
+    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering, final SignaleringSubjectField field) {
+        final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering, field);
+        valideerObject(signaleringVerzonden);
+        return entityManager.merge(signaleringVerzonden);
+    }
+
+    public void deleteSignaleringVerzonden(final SignaleringVerzondenZoekParameters verzonden) {
+        final SignaleringVerzonden signaleringVerzonden = findSignaleringVerzonden(verzonden);
+        if (signaleringVerzonden != null) {
+            entityManager.remove(signaleringVerzonden);
+        }
+    }
+
+    public SignaleringVerzonden findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<SignaleringVerzonden> query = builder.createQuery(SignaleringVerzonden.class);
+        final Root<SignaleringVerzonden> root = query.from(SignaleringVerzonden.class);
+        final List<SignaleringVerzonden> result = entityManager.createQuery(
+                        query.select(root)
+                                .where(getSignaleringVerzondenWhere(parameters, builder, root)))
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<SignaleringVerzonden> root) {
+        final List<Predicate> where = new ArrayList<>();
+        where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
+        if (parameters.getTarget() != null) {
+            where.add(builder.equal(root.get("target"), parameters.getTarget()));
+        }
+        if (!parameters.getTypes().isEmpty()) {
+            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+        }
+        if (parameters.getSubjecttype() != null) {
+            where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));
+            if (parameters.getSubject() != null) {
+                where.add(builder.equal(root.get("subject"), parameters.getSubject()));
+            }
+        }
+        if (parameters.getSubjectfield() != null) {
+            where.add(builder.equal(root.get("subjectfield"), parameters.getSubjectfield()));
+        }
+        return builder.and(where.toArray(new Predicate[0]));
     }
 }

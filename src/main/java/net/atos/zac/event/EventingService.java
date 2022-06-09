@@ -10,9 +10,14 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.cache.event.CacheEvent;
+import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.flowable.cmmn.event.CmmnEvent;
+import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEvent;
+import net.atos.zac.signalering.event.SignaleringEventUtil;
+import net.atos.zac.util.event.JobEvent;
 import net.atos.zac.websocket.event.ScreenEvent;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 @ApplicationScoped
 public class EventingService {
@@ -29,51 +34,64 @@ public class EventingService {
     @Inject
     private Event<SignaleringEvent<?>> signaleringEvent;
 
+    @Inject
+    private Event<JobEvent> signaleringJobEvent;
+
     /**
-     * Send {@link package net.atos.zac.websocket.event.CacheEvent}s to Observer(s),
-     * die ze vervolgens gebruiken om caches bij te werken.
+     * Send {@link CacheEvent}s to Observer(s),
+     * These will be used to update the Infinispan caches.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CacheEventType} om het event aan te maken!
+     * Prefer using the factory methods on {@link CacheEventType} to create these event!
      *
-     * @param event het te versturen event
+     * @param event the event that will be sent.
      */
     public void send(final CacheEvent event) {
         cacheUpdateEvent.fire(event);
     }
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.CmmnEvent}s to Observer(s),
-     * die ze vervolgens gebruiken om flowable bij te werken.
+     * Send {@link CmmnEvent}s to Observer(s),
+     * These will be used to update Flowable.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.CmmnEventType} om het event aan te maken!
+     * Prefer using the factory methods on {@link CmmnEventType} to create these event!
      *
-     * @param event het te versturen event
+     * @param event the event that will be sent.
      */
     public void send(final CmmnEvent event) {
         cmmnUpdateEvent.fireAsync(event);
     }
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.SchermEvent}s to Observer(s),
-     * die ze vervolgens weer afleveren bij de juiste websocket clients.
+     * Send {@link ScreenEvent}s to Observer(s),
+     * These will be passed on to the subscribed websocket clients.
      * <p>
-     * Gebruik vooral de factory methods op {@link package net.atos.zac.websocket.event.ScreenEventType} om het event aan te maken!
+     * Prefer using the factory methods on {@link ScreenEventType} to create these event!
      *
-     * @param event het te versturen event
+     * @param event the event that will be sent.
      */
     public void send(final ScreenEvent event) {
         screenUpdateEvent.fireAsync(event);
     }
 
     /**
-     * Send {@link package net.atos.zac.websocket.event.SignaleringEvent}s to Observer(s),
-     * These will be used to create signaleringen.
+     * Send {@link SignaleringEvent}s to Observer(s),
+     * These will be used to create and/or send signaleringen.
      * <p>
-     * Prefer using the factory methods on {@link package net.atos.zac.websocket.event.SignaleringEventUtil} to create these event!
+     * Prefer using the factory methods on {@link SignaleringEventUtil} to create these event!
      *
      * @param event the event that will be sent.
      */
     public void send(final SignaleringEvent<?> event) {
         signaleringEvent.fireAsync(event);
+    }
+
+    /**
+     * Send {@link JobEvent}s to Observer(s),
+     * These will be used to start a background job of the correct type.
+     *
+     * @param event the event that will be sent.
+     */
+    public void send(final JobEvent event) {
+        signaleringJobEvent.fireAsync(event);
     }
 }

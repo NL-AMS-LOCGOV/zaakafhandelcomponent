@@ -74,7 +74,7 @@ export class ZoekComponent implements AfterViewInit {
     getZoekParameters(): ZoekParameters {
         const zoekParameters: ZoekParameters = new ZoekParameters();
         zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
-        zoekParameters.start = this.paginator.pageIndex * this.paginator.pageSize;
+        zoekParameters.page = this.paginator.pageIndex;
         zoekParameters.rows = this.paginator.pageSize;
         return zoekParameters;
     }

@@ -19,3 +19,6 @@ data-source add \
 
 # Add system property to enable the usage of JsonB
 /system-property=resteasy.preferJacksonOverJsonB:add(value=false)
+
+# Enlarge Undertow max POST size
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=max-post-size,value=1000000000)

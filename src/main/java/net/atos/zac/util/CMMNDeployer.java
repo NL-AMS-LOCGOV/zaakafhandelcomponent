@@ -75,16 +75,25 @@ public class CMMNDeployer {
             final String key = (String) xPath.evaluate(CASE_ID_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
             final CmmnDeployment cmmnDeployment = cmmnRepositoryService.createDeploymentQuery().deploymentKey(key).latest().singleResult();
 
-            try (final InputStream modelInputStream = new ByteArrayInputStream(modelBytes);
-                 final InputStream deployedModelInputStream = cmmnRepositoryService.getResourceAsStream(cmmnDeployment.getId(), modelFileName)) {
-                if (!IOUtils.contentEquals(modelInputStream, deployedModelInputStream)) {
-                    final String name = (String) xPath.evaluate(CASE_NAME_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
-                    cmmnRepositoryService.createDeployment().key(key).name(name).addBytes(modelFileName, modelBytes).deploy();
-                    LOG.info(format("Successfully deployed CMMN model with key '%s' and name '%s' from file '%s'", key, name, modelFileName));
+            if (cmmnDeployment == null) {
+                deployModel(modelFileName, modelBytes, modelXml, key, xPath);
+            } else {
+                try (final InputStream modelInputStream = new ByteArrayInputStream(modelBytes);
+                     final InputStream deployedModelInputStream = cmmnRepositoryService.getResourceAsStream(cmmnDeployment.getId(), modelFileName)) {
+                    if (!IOUtils.contentEquals(modelInputStream, deployedModelInputStream)) {
+                        deployModel(modelFileName, modelBytes, modelXml, key, xPath);
+                    }
                 }
             }
         } catch (final IOException | XPathExpressionException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void deployModel(final String modelFileName, final byte[] modelBytes, final Document modelXml, final String key,
+            final XPath xPath) throws XPathExpressionException {
+        final String name = (String) xPath.evaluate(CASE_NAME_XPATH_EXPRESSION, modelXml, XPathConstants.STRING);
+        cmmnRepositoryService.createDeployment().key(key).name(name).addBytes(modelFileName, modelBytes).deploy();
+        LOG.info(format("Successfully deployed CMMN model with key '%s' and name '%s' from file '%s'", key, name, modelFileName));
     }
 }

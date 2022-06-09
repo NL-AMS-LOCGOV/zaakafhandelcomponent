@@ -89,13 +89,21 @@ public class Signalering {
     }
 
     public void setTarget(final Group target) {
-        this.targettype = GROUP;
-        this.target = target.getId();
+        setTargetGroup(target.getId());
     }
 
     public void setTarget(final User target) {
+        setTargetUser(target.getId());
+    }
+
+    public void setTargetGroup(final String target) {
+        this.targettype = GROUP;
+        this.target = target;
+    }
+
+    public void setTargetUser(final String target) {
         this.targettype = USER;
-        this.target = target.getId();
+        this.target = target;
     }
 
     public SignaleringSubject getSubjecttype() {

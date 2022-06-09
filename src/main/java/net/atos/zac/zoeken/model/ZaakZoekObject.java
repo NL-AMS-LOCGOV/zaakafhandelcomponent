@@ -112,6 +112,9 @@ public class ZaakZoekObject {
     @Field("zaak_statusToelichting")
     private String statusToelichting;
 
+    @Field("zaak_aantalOpenstaandeTaken")
+    private long aantalOpenstaandeTaken;
+
 
     public ZaakZoekObject() {
     }
@@ -380,5 +383,13 @@ public class ZaakZoekObject {
 
     public void setStatusToelichting(final String statusToelichting) {
         this.statusToelichting = statusToelichting;
+    }
+
+    public long getAantalOpenstaandeTaken() {
+        return aantalOpenstaandeTaken;
+    }
+
+    public void setAantalOpenstaandeTaken(final long aantalOpenstaandeTaken) {
+        this.aantalOpenstaandeTaken = aantalOpenstaandeTaken;
     }
 }

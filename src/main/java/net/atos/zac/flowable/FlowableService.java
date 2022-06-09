@@ -17,6 +17,7 @@ import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LI
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -58,6 +60,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  *
@@ -110,6 +113,9 @@ public class FlowableService {
     private MailService mailService;
 
     @Inject
+    private IndexeerService indexeerService;
+
+    @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
     public static class TaskDescriptionChangedData {
@@ -160,6 +166,24 @@ public class FlowableService {
                 .listPage(firstResult, maxResults);
     }
 
+    public List<Task> listOpenTasksDueNow() {
+        return cmmnTaskService.createTaskQuery()
+                .taskAssigned()
+                .taskDueBefore(tomorrow())
+                .list();
+    }
+
+    public List<Task> listOpenTasksDueLater() {
+        return cmmnTaskService.createTaskQuery()
+                .taskAssigned()
+                .taskDueAfter(DateUtils.addSeconds(tomorrow(), -1))
+                .list();
+    }
+
+    private Date tomorrow() {
+        return DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), 1);
+    }
+
     public int countOpenTasksAssignedToUser(final String userId) {
         return (int) cmmnTaskService.createTaskQuery().taskAssignee(userId).count();
     }
@@ -174,6 +198,14 @@ public class FlowableService {
             return listOpenTasksForCase(caseInstance.getId());
         }
         return null;
+    }
+
+    public long countOpenTasksforCase(final UUID zaakUUID) {
+        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
+        if (caseInstance != null) {
+            return countOpenTasksForCase(caseInstance.getId());
+        }
+        return 0;
     }
 
     public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
@@ -214,6 +246,7 @@ public class FlowableService {
                 .transientVariable(VAR_TRANSIENT_DUE_DATE, dueDate)
                 .transientVariable(VAR_TRANSIENT_TAAKDATA, taakdata)
                 .start();
+        indexeerService.addZaak(zaakUUID);
     }
 
     public void startUserEventListenerPlanItem(final String planItemInstanceId, final String resultaatToelichting) {
@@ -288,8 +321,9 @@ public class FlowableService {
         return readOpenTask(task.getId());
     }
 
-    public HistoricTaskInstance completeTask(final String taskId) {
+    public HistoricTaskInstance completeTask(final String taskId, final UUID zaakUUID) {
         cmmnTaskService.complete(taskId);
+        indexeerService.addZaak(zaakUUID);
         return readClosedTask(taskId);
     }
 
@@ -485,6 +519,13 @@ public class FlowableService {
                 .caseInstanceId(caseInstanceId)
                 .includeIdentityLinks()
                 .list();
+    }
+
+    private long countOpenTasksForCase(final String caseInstanceId) {
+        return cmmnTaskService.createTaskQuery()
+                .caseInstanceId(caseInstanceId)
+                .includeIdentityLinks()
+                .count();
     }
 
     private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {

@@ -220,7 +220,7 @@ public class TakenRESTService {
         createDocuments(restTaak);
         flowableService.updateTaakdataOpenTask(restTaak.id, restTaak.taakdata);
         flowableService.updateTaakinformatieOpenTask(restTaak.id, restTaak.taakinformatie);
-        final HistoricTaskInstance task = flowableService.completeTask(restTaak.id);
+        final HistoricTaskInstance task = flowableService.completeTask(restTaak.id, restTaak.zaakUUID);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTaskForOpenCase(task);

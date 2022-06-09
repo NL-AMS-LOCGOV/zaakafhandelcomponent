@@ -147,6 +147,7 @@
     <field name="zaak_statusEindstatus" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_resultaattypeOmschrijving" type="string" indexed="true" stored="true"/>
     <field name="zaak_resultaatToelichting" type="text_nl" indexed="true" stored="true"/>
+    <field name="zaak_aantalOpenstaandeTaken" type="pint" indexed="true" stored="true"/>
     <field name="informatieobject_titel" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_beschrijving" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_zaakIdentificatie" type="string" indexed="true" stored="true"/>

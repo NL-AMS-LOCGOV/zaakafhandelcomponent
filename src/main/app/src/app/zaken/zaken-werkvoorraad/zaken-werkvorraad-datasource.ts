@@ -10,24 +10,28 @@ import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekResultaat} from '../../zoeken/model/zoek-resultaat';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 
 /**
  * Datasource voor de werkvoorraad zaken. Via deze class wordt de data voor de tabel opgehaald
  */
-export class ZakenWerkvoorraadZoekenDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
+export class ZakenWerkvoorraadDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
+
+    zoekParameters: ZoekParameters = SessionStorageUtil.getItem('zakenWerkvoorraadZoekparameters', new ZoekParameters());
 
     constructor(private zoekenService: ZoekenService, private utilService: UtilService) {
         super();
     }
 
-    zoekParameters: ZoekParameters = new ZoekParameters();
-
     getZoekParameters(): ZoekParameters {
         this.zoekParameters.filterQueries['zaak_afgehandeld'] = 'false';
-        this.zoekParameters.start = this.paginator.pageIndex * this.paginator.pageSize;
+        this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
-        this.zoekParameters.sorteerRichting = this.sort.direction === 'asc' ? 'ASCENDING' : 'DESCENDING';
+        this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = this.sort.active;
+        SessionStorageUtil.setItem('zakenWerkvoorraadZoekparameters', this.zoekParameters);
         return this.zoekParameters;
     }
 
@@ -44,7 +48,15 @@ export class ZakenWerkvoorraadZoekenDatasource extends ZoekenTableDataSource<Zaa
 
     reset() {
         this.zoekParameters = new ZoekParameters();
+        this.sort.active = this.zoekParameters.sorteerVeld;
+        this.sort.direction = this.zoekParameters.sorteerRichting;
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = this.zoekParameters.rows;
         this.load();
+    }
+
+    initColumns(defaultColumns: Map<string, ColumnPickerValue>): void {
+        this._initColumns('zakenWerkvoorraadColumns', defaultColumns);
     }
 }
 

@@ -41,14 +41,14 @@ public class RESTSignaleringInstellingenConverter {
     }
 
     public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final Group group) {
-        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, group);
+        final SignaleringInstellingen instellingen = signaleringenService.readInstellingenGroup(restInstellingen.type, group.getId());
         instellingen.setDashboard(restInstellingen.dashboard);
         instellingen.setMail(restInstellingen.mail);
         return instellingen;
     }
 
     public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final User user) {
-        final SignaleringInstellingen instellingen = signaleringenService.readInstellingen(restInstellingen.type, user);
+        final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(restInstellingen.type, user.getId());
         instellingen.setDashboard(instellingen.getType().getType().isDashboard() && restInstellingen.dashboard);
         instellingen.setMail(instellingen.getType().getType().isMail() && restInstellingen.mail);
         return instellingen;
