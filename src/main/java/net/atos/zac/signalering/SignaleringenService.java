@@ -28,8 +28,6 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.zac.event.EventingService;
-import net.atos.zac.identity.model.Group;
-import net.atos.zac.identity.model.User;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.signalering.model.Signalering;
@@ -213,15 +211,15 @@ public class SignaleringenService {
         return entityManager.merge(instellingen);
     }
 
-    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final Group groep) {
+    public SignaleringInstellingen readInstellingenGroup(final SignaleringType.Type type, final String target) {
         final Signalering signalering = signaleringInstance(type);
-        signalering.setTarget(groep);
+        signalering.setTargetGroup(target);
         return readInstellingen(signalering);
     }
 
-    public SignaleringInstellingen readInstellingen(final SignaleringType.Type type, final User user) {
+    public SignaleringInstellingen readInstellingenUser(final SignaleringType.Type type, final String target) {
         final Signalering signalering = signaleringInstance(type);
-        signalering.setTarget(user);
+        signalering.setTargetUser(target);
         return readInstellingen(signalering);
     }
 
@@ -283,13 +281,17 @@ public class SignaleringenService {
         return SignaleringType.Type.values().length;
     }
 
-    public SignaleringVerzonden createSignaleringVerzonden(final SignaleringVerzonden signaleringVerzonden) {
+    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering, final SignaleringSubjectField field) {
+        final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering, field);
         valideerObject(signaleringVerzonden);
         return entityManager.merge(signaleringVerzonden);
     }
 
-    public void deleteSignaleringVerzonden(final SignaleringVerzonden signalering) {
-        entityManager.remove(signalering);
+    public void deleteSignaleringVerzonden(final SignaleringVerzondenZoekParameters verzonden) {
+        final SignaleringVerzonden signaleringVerzonden = findSignaleringVerzonden(verzonden);
+        if (signaleringVerzonden != null) {
+            entityManager.remove(signaleringVerzonden);
+        }
     }
 
     public SignaleringVerzonden findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {

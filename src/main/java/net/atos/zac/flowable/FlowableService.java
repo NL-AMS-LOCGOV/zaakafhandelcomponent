@@ -17,6 +17,7 @@ import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LI
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
@@ -162,6 +164,24 @@ public class FlowableService {
                 .taskCandidateGroupIn(groupIds)
                 .ignoreAssigneeValue()
                 .listPage(firstResult, maxResults);
+    }
+
+    public List<Task> listOpenTasksDueNow() {
+        return cmmnTaskService.createTaskQuery()
+                .taskAssigned()
+                .taskDueBefore(tomorrow())
+                .list();
+    }
+
+    public List<Task> listOpenTasksDueLater() {
+        return cmmnTaskService.createTaskQuery()
+                .taskAssigned()
+                .taskDueAfter(DateUtils.addSeconds(tomorrow(), -1))
+                .list();
+    }
+
+    private Date tomorrow() {
+        return DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), 1);
     }
 
     public int countOpenTasksAssignedToUser(final String userId) {
