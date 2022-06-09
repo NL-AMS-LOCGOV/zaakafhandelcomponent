@@ -36,6 +36,7 @@ import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringSubject;
+import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzonden;
@@ -94,15 +95,17 @@ public class SignaleringenService {
      * Factory method for constructing SignaleringVerzonden instances.
      *
      * @param signalering the signalering that has been sent
-     * @return the constructed instance (subjectfield is still null, all other members have been set)
+     * @param field       the field the signalering has been sent for
+     * @return the constructed instance (all members have been set)
      */
-    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering) {
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering, final SignaleringSubjectField field) {
         final SignaleringVerzonden instance = new SignaleringVerzonden();
         instance.setTijdstip(ZonedDateTime.now());
         instance.setType(signaleringTypeInstance(signalering.getType().getType()));
         instance.setTargettype(signalering.getTargettype());
         instance.setTarget(signalering.getTarget());
         instance.setSubject(signalering.getSubject());
+        instance.setSubjectfield(field);
         return instance;
     }
 
@@ -289,14 +292,15 @@ public class SignaleringenService {
         entityManager.remove(signalering);
     }
 
-    public List<SignaleringVerzonden> findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {
+    public SignaleringVerzonden findSignaleringVerzonden(final SignaleringVerzondenZoekParameters parameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<SignaleringVerzonden> query = builder.createQuery(SignaleringVerzonden.class);
         final Root<SignaleringVerzonden> root = query.from(SignaleringVerzonden.class);
-        return entityManager.createQuery(
+        final List<SignaleringVerzonden> result = entityManager.createQuery(
                         query.select(root)
                                 .where(getSignaleringVerzondenWhere(parameters, builder, root)))
                 .getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
 
     private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters, final CriteriaBuilder builder,
