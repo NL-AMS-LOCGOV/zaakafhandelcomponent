@@ -85,10 +85,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             this.infoObject = data['informatieObject'];
             this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(eiObject => {
                 this.laatsteVersieInfoObject = eiObject;
-                this.versieInformatie = this.translate.instant('versie.x.van', {
-                    versie: this.infoObject.versie,
-                    laatsteVersie: this.laatsteVersieInfoObject.versie
-                });
+                this.updateVersieInformatie();
                 this.loadZaakInformatieobjecten();
             });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
@@ -99,6 +96,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                     this.loadInformatieObject(event);
                     this.loadHistorie();
                     this.setupMenu();
+                    this.loadZaakInformatieobjecten();
                 });
 
             this.setupMenu();
@@ -174,6 +172,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
+                this.laatsteVersieInfoObject = informatieObject;
+                this.updateVersieInformatie();
             });
     }
 
@@ -198,5 +198,12 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         } else {
             return {type: 'unknown', icon: 'fa-file-circle-question'};
         }
+    }
+
+    private updateVersieInformatie(): void {
+        this.versieInformatie = this.translate.instant('versie.x.van', {
+            versie: this.infoObject.versie,
+            laatsteVersie: this.laatsteVersieInfoObject.versie
+        });
     }
 }
