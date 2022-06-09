@@ -9,7 +9,6 @@ import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -100,20 +99,23 @@ public class MailService {
         zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp);
     }
 
-    private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak,
-            final String onderwerp, final String body) {
+    private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak, final String onderwerp, final String body) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
-        final EnkelvoudigInformatieobjectWithInhoud data = new EnkelvoudigInformatieobjectWithInhoud(
-                ConfiguratieService.BRON_ORGANISATIE, LocalDate.now(), onderwerp, loggedInUserInstance.get().getFullName(),
-                ConfiguratieService.TAAL_NEDERLANDS, eMailObjectType.getUrl(), Base64.getEncoder().encodeToString(body.getBytes(StandardCharsets.UTF_8)));
-        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
-        data.setFormaat("text/plain");
-        data.setBestandsnaam(String.format("%s.txt", onderwerp));
-        data.setStatus(InformatieobjectStatus.DEFINITIEF);
-        data.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
-        data.setVerzenddatum(LocalDate.now());
-
-        return data;
+        final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
+        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
+        enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(LocalDate.now());
+        enkelvoudigInformatieobjectWithInhoud.setTitel(onderwerp);
+        enkelvoudigInformatieobjectWithInhoud.setAuteur(loggedInUserInstance.get().getFullName());
+        enkelvoudigInformatieobjectWithInhoud.setTaal(ConfiguratieService.TAAL_NEDERLANDS);
+        enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(eMailObjectType.getUrl());
+        enkelvoudigInformatieobjectWithInhoud.setInhoud(body.getBytes(StandardCharsets.UTF_8));
+        enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
+        enkelvoudigInformatieobjectWithInhoud.setFormaat("text/plain");
+        enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.txt", onderwerp));
+        enkelvoudigInformatieobjectWithInhoud.setStatus(InformatieobjectStatus.DEFINITIEF);
+        enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
+        enkelvoudigInformatieobjectWithInhoud.setVerzenddatum(LocalDate.now());
+        return enkelvoudigInformatieobjectWithInhoud;
     }
 
     private Informatieobjecttype getEmailInformatieObjectType(final Zaak zaak) {

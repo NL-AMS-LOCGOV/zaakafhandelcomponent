@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebFilter(filterName = "indexRewriteFilter")
 public class indexRewriteFilter implements Filter {
 
-    private final List<String> resourcePaths = List.of("/assets", "/rest", "/websocket");
+    private final List<String> resourcePaths = List.of("/assets", "/rest", "/websocket", "/webdav");
 
     private static final Pattern REGEX_RESOURCES = Pattern.compile("\\.(js(on|\\.map)?|css|txt|jpe?g|png|gif|svg|ico|webmanifest|eot|ttf|woff2?)$");
 

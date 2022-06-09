@@ -43,7 +43,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     menu: MenuItem[];
     action: string;
     versieInformatie: string;
-    zaken: ZaakInformatieobject[];
+    zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     fileIconList = [
@@ -87,9 +87,9 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 this.laatsteVersieInfoObject = eiObject;
                 this.versieInformatie = this.translate.instant('versie.x.van', {
                     versie: this.infoObject.versie,
-                    laatsteVersie: this.laatsteVersieInfoObject.versie,
+                    laatsteVersie: this.laatsteVersieInfoObject.versie
                 });
-                this.loadZaken();
+                this.loadZaakInformatieobjecten();
             });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
@@ -129,14 +129,15 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.menu = [
             new HeaderMenuItem('informatieobject'),
             new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid),
-                'save_alt'),
+                'save_alt')
         ];
     }
 
-    private toevoegenNieuweVersieActie() {
-        // Nieuwe versie niet toegestaan indien de status definitief is en wanneer er geen zaak gekoppeld is
-        // bij bijvoorbeeld ontkoppelde en inbox documenten.
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaken?.length > 0) {
+    private toevoegenActies() {
+        // Nieuwe versie en bewerken acties niet toegestaan indien de status definitief is
+        // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
+        // ToDo: Vervangen door Policy
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaakInformatieObjecten?.length > 0) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -147,18 +148,16 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
 
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
                 this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid).subscribe(url => {
-                    console.log('edit returned');
-                    console.log(url);
                     window.open(url);
                 });
             }, 'edit'));
         }
     }
 
-    private loadZaken(): void {
-        this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaken => {
-            this.zaken = zaken;
-            this.toevoegenNieuweVersieActie();
+    private loadZaakInformatieobjecten(): void {
+        this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaakInformatieObjecten => {
+            this.zaakInformatieObjecten = zaakInformatieObjecten;
+            this.toevoegenActies();
         });
     }
 
