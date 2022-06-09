@@ -6,6 +6,8 @@
 package net.atos.zac.util.event;
 
 public class JobEvent {
+    public static final String TAAK_SIGNALERINGEN_JOB = "TAAK_SIGNALERINGEN";
+
     public static final String ZAAK_SIGNALERINGEN_JOB = "ZAAK_SIGNALERINGEN";
 
     private String jobId;

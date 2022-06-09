@@ -28,14 +28,17 @@ public class SignaleringInstellingenZoekParameters {
         this.type = signalering.getType().getType();
     }
 
+    public SignaleringInstellingenZoekParameters(final SignaleringTarget ownertype, final String owner) {
+        this.ownertype = ownertype;
+        this.owner = owner;
+    }
+
     public SignaleringInstellingenZoekParameters(final Group owner) {
-        this.ownertype = GROUP;
-        this.owner = owner.getId();
+        this(GROUP, owner.getId());
     }
 
     public SignaleringInstellingenZoekParameters(final User owner) {
-        this.ownertype = USER;
-        this.owner = owner.getId();
+        this(USER, owner.getId());
     }
 
     public SignaleringTarget getOwnertype() {

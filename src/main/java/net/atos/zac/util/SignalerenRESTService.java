@@ -33,6 +33,7 @@ public class SignalerenRESTService {
     @GET
     @Path("taak/verlopen")
     public String taakSignaleringenVerzenden() {
-        return "TODO";
+        eventingService.send(new JobEvent(JobEvent.TAAK_SIGNALERINGEN_JOB));
+        return String.format("%s: gestart...", SignaleringenJob.TAAK_SIGNALERINGEN_VERZENDEN);
     }
 }
