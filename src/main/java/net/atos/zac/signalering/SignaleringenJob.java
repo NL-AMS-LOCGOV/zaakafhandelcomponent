@@ -100,7 +100,6 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoekZaak(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
-                .filter(zaak -> zaak.getBehandelaarGebruikersnaam() != null)
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.DUE), zaak))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.DUE));
@@ -116,7 +115,6 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoekZaak(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
-                .filter(zaak -> zaak.getBehandelaarGebruikersnaam() != null)
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.FATAL), zaak))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.FATAL));
@@ -157,7 +155,6 @@ public class SignaleringenJob {
     private void zaakEinddatumGeplandOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoekZaak(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
-                .filter(zaak -> zaak.getBehandelaarGebruikersnaam() != null)
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.DUE))
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
@@ -169,7 +166,6 @@ public class SignaleringenJob {
     private void zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoekZaak(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
-                .filter(zaak -> zaak.getBehandelaarGebruikersnaam() != null)
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.FATAL))
 
@@ -178,21 +174,22 @@ public class SignaleringenJob {
 
     private ZoekParameters getZaakSignaleringTeVerzendenZoekParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
         final LocalDate now = LocalDate.now();
-        final ZoekParameters parameters = getOpenZaakZoekParameters(zaaktype);
+        final ZoekParameters parameters = getOpenZaakMetBehandelaarZoekParameters(zaaktype);
         parameters.addDatum(veld, new DatumRange(now, now.plusDays(venster)));
         return parameters;
     }
 
     private ZoekParameters getZaakSignaleringLaterTeVerzendenZoekParameters(final DatumVeld veld, final Zaaktype zaaktype, final int venster) {
         final LocalDate now = LocalDate.now();
-        final ZoekParameters parameters = getOpenZaakZoekParameters(zaaktype);
+        final ZoekParameters parameters = getOpenZaakMetBehandelaarZoekParameters(zaaktype);
         parameters.addDatum(veld, new DatumRange(now.plusDays(venster + 1), null));
         return parameters;
     }
 
-    private ZoekParameters getOpenZaakZoekParameters(final Zaaktype zaaktype) {
+    private ZoekParameters getOpenZaakMetBehandelaarZoekParameters(final Zaaktype zaaktype) {
         final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
         parameters.addFilter(FilterVeld.ZAAK_ZAAKTYPE_UUID, UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
+        parameters.addFilter(FilterVeld.ZAAK_BEHANDELAAR, "*");
         parameters.addFilterQuery(ZAAK_AFGEHANDELD_QUERY, "false");
         parameters.setRows(Integer.MAX_VALUE);
         return parameters;
