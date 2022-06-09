@@ -157,6 +157,7 @@
   "informatieobject": "Document",
   "enkelvoudigInformatieObjecten": "Documenten",
   "informatieobjectType": "Documenttype",
+  "informatieobjectTypeOmschrijving": "Documenttype",
   "document.preview": "Documentvoorbeeld",
   "documenten": "Documenten",
   "documentType": "Documenttype",
