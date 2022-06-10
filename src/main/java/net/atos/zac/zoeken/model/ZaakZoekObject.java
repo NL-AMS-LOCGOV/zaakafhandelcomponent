@@ -13,6 +13,10 @@ import net.atos.client.zgw.zrc.model.Rol;
 
 public class ZaakZoekObject {
 
+    public static final String AFGEHANDELD = "zaak_afgehandeld";
+
+    public static final String BEHANDELAAR_ID = "zaak_behandelaarGebruikersnaam";
+
     @Field
     private String uuid;
 
@@ -52,7 +56,7 @@ public class ZaakZoekObject {
     @Field("zaak_vertrouwelijkheidaanduiding")
     private String vertrouwelijkheidaanduiding;
 
-    @Field("zaak_afgehandeld")
+    @Field(AFGEHANDELD)
     private boolean afgehandeld;
 
     @Field("zaak_groepId")
@@ -64,7 +68,7 @@ public class ZaakZoekObject {
     @Field("zaak_behandelaarNaam")
     private String behandelaarNaam;
 
-    @Field("zaak_behandelaarGebruikersnaam")
+    @Field(BEHANDELAAR_ID)
     private String behandelaarGebruikersnaam;
 
     @Field("zaak_initiatorIdentificatie")

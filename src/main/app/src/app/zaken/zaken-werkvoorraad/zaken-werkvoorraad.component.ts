@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 
 import {detailExpand} from '../../shared/animations/animations';
 
@@ -25,7 +25,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
-import {ZakenWerkvoorraadDatasource} from './zaken-werkvorraad-datasource';
+import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
 
 @Component({
     selector: 'zac-zaken-werkvoorraad',
@@ -33,7 +33,7 @@ import {ZakenWerkvoorraadDatasource} from './zaken-werkvorraad-datasource';
     styleUrls: ['./zaken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
@@ -88,8 +88,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.dataSource.load();
     }
 
-    ngOnDestroy(): void {
-    }
 
     private getIngelogdeMedewerker() {
         this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
@@ -153,17 +151,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.dataSource.load();
     }
 
-    clearDate($event: MouseEvent, datum: string): void {
-        $event.stopPropagation();
-        this.dataSource.zoekParameters.datums[datum].van = null;
-        this.dataSource.zoekParameters.datums[datum].tot = null;
-        this.filtersChange();
-    }
-
-    hasDate(datum: string): boolean {
-        return this.dataSource.zoekParameters.datums[datum].van != null;
-    }
-
     assignToMe(zaakZoekObject: ZaakZoekObject, $event) {
         $event.stopPropagation();
 
@@ -212,9 +199,4 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         });
     }
 
-    getFilters(field): string[] {
-        if (this.dataSource.beschikbareFilters[field]) {
-            return this.dataSource.beschikbareFilters[field].sort((a, b) => a.localeCompare(b));
-        }
-    }
 }

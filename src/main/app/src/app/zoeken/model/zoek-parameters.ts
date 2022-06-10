@@ -4,11 +4,18 @@
  */
 
 export class ZoekParameters {
+
+    alleenMijnZaken: boolean = false;
+    alleenOpenstaandeZaken: boolean = false;
+    alleenAfgeslotenZaken: boolean = false;
     zoeken: { [key: string]: string } = {};
     filters: { [key: string]: string } = {};
-    filterQueries: { [key: string]: string } = {};
     datums: { [key: string]: { van: any; tot: any } } = {
         ZAAK_STARTDATUM: {
+            van: null,
+            tot: null
+        },
+        ZAAK_EINDDATUM: {
             van: null,
             tot: null
         },

@@ -19,8 +19,6 @@ public class RESTZoekParameters {
 
     public Map<DatumVeld, RESTDatumRange> datums;
 
-    public Map<String, String> filterQueries;
-
     public SorteerVeld sorteerVeld;
 
     public String sorteerRichting;
@@ -28,4 +26,10 @@ public class RESTZoekParameters {
     public int rows;
 
     public int page;
+
+    public boolean alleenMijnZaken;
+
+    public boolean alleenOpenstaandeZaken;
+
+    public boolean alleenAfgeslotenZaken;
 }
