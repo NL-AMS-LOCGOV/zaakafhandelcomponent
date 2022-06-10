@@ -17,7 +17,6 @@ import {MatTable} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -40,7 +39,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
-    defaults: ZoekParameters;
     ingelogdeMedewerker: User;
     expandedRow: ZaakZoekObject | null;
 

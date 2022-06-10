@@ -14,7 +14,6 @@ import {MatTable} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
@@ -32,7 +31,6 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
-    defaults: ZoekParameters;
     expandedRow: ZaakZoekObject | null;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
