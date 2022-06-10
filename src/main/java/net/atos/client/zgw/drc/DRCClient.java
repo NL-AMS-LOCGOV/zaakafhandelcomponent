@@ -30,7 +30,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.drc.model.ObjectInformatieobject;
@@ -78,13 +78,17 @@ public interface DRCClient {
     @GET
     @Produces(APPLICATION_OCTET_STREAM)
     @Path("enkelvoudiginformatieobjecten/{uuid}/download")
-    Response enkelvoudigInformatieobjectDownload(@PathParam("uuid") final UUID uuid, @QueryParam("versie") final Integer versie);
+    Response enkelvoudigInformatieobjectDownload(@PathParam("uuid") final UUID uuid);
 
+    @GET
+    @Produces(APPLICATION_OCTET_STREAM)
+    @Path("enkelvoudiginformatieobjecten/{uuid}/download")
+    Response enkelvoudigInformatieobjectDownloadVersie(@PathParam("uuid") final UUID uuid, @QueryParam("versie") final Integer versie);
 
     @PATCH
     @Path("enkelvoudiginformatieobjecten/{uuid}")
-    EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
-            final EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieObjectWithLockAndInhoud);
+    EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectPartialUpdate(@PathParam("uuid") final UUID uuid,
+            final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieObjectWithInhoudAndLock);
 
     @DELETE
     @Path("enkelvoudiginformatieobjecten/{uuid}")

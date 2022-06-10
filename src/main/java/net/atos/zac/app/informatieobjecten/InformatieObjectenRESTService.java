@@ -33,7 +33,7 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.URIUtil;
@@ -65,6 +65,7 @@ import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.webdav.WebdavHelper;
 
 @Singleton
 @Path("informatieobjecten")
@@ -110,6 +111,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private WebdavHelper webdavHelper;
 
     @Inject
     @ActiveSession
@@ -235,9 +239,16 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}/zaken")
     public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
         final List<RESTZaakInformatieobject> restList = new ArrayList<>();
-        listZaakInformatieobjectenHelper(uuid)
-                .forEach(i -> restList.add(restZaakInformatieobjectConverter.convert(i)));
+        zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid))
+                .forEach(zaakInformatieobject -> restList.add(restZaakInformatieobjectConverter.convert(zaakInformatieobject)));
         return restList;
+    }
+
+    @GET
+    @Path("informatieobject/{uuid}/edit")
+    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid) {
+        final URI redirectURI = webdavHelper.createRedirectURL(uuid);
+        return Response.ok(redirectURI).build();
     }
 
     @GET
@@ -252,9 +263,9 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        try (final ByteArrayInputStream inhoud =
-                     drcClientService.downloadEnkelvoudigInformatieobject(uuid, versie != null ? versie :
-                             enkelvoudigInformatieObject.getVersie())) {
+        try (final ByteArrayInputStream inhoud = (versie != null) ?
+                drcClientService.downloadEnkelvoudigInformatieobjectVersie(uuid, versie) :
+                drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
             return Response.ok(inhoud)
                     .header("Content-Disposition", "attachment; filename=\"" + enkelvoudigInformatieObject.getBestandsnaam() + "\"")
                     .build();
@@ -274,37 +285,33 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/partialupdate")
     public RESTEnkelvoudigInformatieobject partialUpdateEnkelvoudigInformatieObject(
             final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens) {
+        final UUID enkelvoudigInformatieobjectUUID = UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid);
+        final LoggedInUser loggedInUser = loggedInUserInstance.get();
         try {
-            final String lock = drcClientService.lockEnkelvoudigInformatieobject(
-                    UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid), lockEigenaar());
-            final RESTFileUpload file = (RESTFileUpload) httpSession.get()
-                    .getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
+            final String lock = drcClientService.lockEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID, loggedInUser.getId());
+            final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
 
-            final EnkelvoudigInformatieobjectWithLockAndInhoud returnObject =
-                    drcClientService.partialUpdateEnkelvoudigInformatieobject(
-                            UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid),
-                            restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
-                            restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
-                                                                  lock, file));
+            final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.partialUpdateEnkelvoudigInformatieobject(
+                    enkelvoudigInformatieobjectUUID, restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
+                    restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens, lock, file));
 
             return restInformatieobjectConverter.convert(returnObject);
         } finally {
-            drcClientService.unlockEnkelvoudigInformatieobject(UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid),
-                                                               lockEigenaar());
+            drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID, loggedInUser.getId());
         }
     }
 
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.lockEnkelvoudigInformatieobject(uuid, lockEigenaar());
+        drcClientService.lockEnkelvoudigInformatieobject(uuid, loggedInUserInstance.get().getId());
         return Response.ok().build();
     }
 
     @POST
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.unlockEnkelvoudigInformatieobject(uuid, lockEigenaar());
+        drcClientService.unlockEnkelvoudigInformatieobject(uuid, loggedInUserInstance.get().getId());
         return Response.ok().build();
     }
 
@@ -324,14 +331,6 @@ public class InformatieObjectenRESTService {
         documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
         final URI redirectURI = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
         return Response.status(Response.Status.CREATED).entity(redirectURI).build();
-    }
-
-    private List<ZaakInformatieobject> listZaakInformatieobjectenHelper(final UUID uuid) {
-        return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid));
-    }
-
-    private String lockEigenaar() {
-        return loggedInUserInstance.get().getId();
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {

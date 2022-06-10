@@ -5,15 +5,9 @@
 
 package net.atos.client.zgw.drc.model;
 
-import static net.atos.client.zgw.shared.util.DateTimeUtil.DATE_TIME_FORMAT_WITH_MILLISECONDS;
+import java.util.Base64;
 
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbDateFormat;
-import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 /**
  * Representation of EnkelvoudigInformatieobject for POST request and response only
@@ -23,32 +17,18 @@ public class EnkelvoudigInformatieobjectWithInhoud extends AbstractEnkelvoudigIn
     /**
      * Binaire inhoud, in base64 ge-encodeerd.
      */
-    private final String inhoud;
-
-    /**
-     * Constructor with required attributes for POST request
-     */
-    public EnkelvoudigInformatieobjectWithInhoud(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
-            final String taal, final URI informatieobjecttype, final String inhoud) {
-        super(bronorganisatie, creatiedatum, titel, auteur, taal, informatieobjecttype);
-        this.inhoud = inhoud;
-    }
-
-    /**
-     * Constructor with readOnly attributes for POST response
-     */
-    @JsonbCreator
-    public EnkelvoudigInformatieobjectWithInhoud(@JsonbProperty("url") final URI url,
-            @JsonbProperty("versie") final Integer versie,
-            @JsonbProperty("beginRegistratie") @JsonbDateFormat(DATE_TIME_FORMAT_WITH_MILLISECONDS) final ZonedDateTime beginRegistratie,
-            @JsonbProperty("bestandsomvang") final Long bestandsomvang,
-            @JsonbProperty("locked") final Boolean locked,
-            @JsonbProperty("inhoud") final String inhoud) {
-        super(url, versie, beginRegistratie, bestandsomvang, locked);
-        this.inhoud = inhoud;
-    }
+    private String inhoud;
 
     public String getInhoud() {
         return inhoud;
+    }
+
+    public void setInhoud(final String inhoud) {
+        this.inhoud = inhoud;
+    }
+
+    @JsonbTransient
+    public void setInhoud(final byte[] inhoud) {
+        this.inhoud = Base64.getEncoder().encodeToString(inhoud);
     }
 }

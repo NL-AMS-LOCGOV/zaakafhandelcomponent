@@ -19,13 +19,12 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithLockAndInhoud;
-
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.drc.model.Lock;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
@@ -69,7 +68,7 @@ public class DRCClientService {
      * Read {@link EnkelvoudigInformatieobject} via its UUID and version.
      * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be read.
      *
-     * @param uuid UUID of the {@link EnkelvoudigInformatieobject}.
+     * @param uuid   UUID of the {@link EnkelvoudigInformatieobject}.
      * @param versie Required version
      * @return {@link EnkelvoudigInformatieobject}. Never 'null'!
      */
@@ -99,11 +98,11 @@ public class DRCClientService {
         return createInvocationBuilder(enkelvoudigInformatieobjectURI).get(EnkelvoudigInformatieobject.class);
     }
 
-    public EnkelvoudigInformatieobjectWithLockAndInhoud partialUpdateEnkelvoudigInformatieobject(final UUID uuid,
+    public EnkelvoudigInformatieobjectWithInhoudAndLock partialUpdateEnkelvoudigInformatieobject(final UUID uuid,
             final String toelichting,
-            final EnkelvoudigInformatieobjectWithLockAndInhoud enkelvoudigInformatieObjectWithLockAndInhoud) {
+            final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieObjectWithInhoudAndLock) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieObjectWithLockAndInhoud);
+        return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieObjectWithInhoudAndLock);
     }
 
     /**
@@ -137,11 +136,26 @@ public class DRCClientService {
      * Download content of {@link EnkelvoudigInformatieobject}.
      *
      * @param enkelvoudigInformatieobjectUUID UUID of {@link EnkelvoudigInformatieobject}
+     * @return Content of {@link EnkelvoudigInformatieobject}.
+     */
+    public ByteArrayInputStream downloadEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID) {
+        final Response response = drcClient.enkelvoudigInformatieobjectDownload(enkelvoudigInformatieobjectUUID);
+        if (!response.bufferEntity()) {
+            throw new RuntimeException(
+                    String.format("Content of enkelvoudig informatieobject with uuid '%s' could not be buffered.", enkelvoudigInformatieobjectUUID.toString()));
+        }
+        return (ByteArrayInputStream) response.getEntity();
+    }
+
+    /**
+     * Download content of {@link EnkelvoudigInformatieobject} of a specific version
+     *
+     * @param enkelvoudigInformatieobjectUUID UUID of {@link EnkelvoudigInformatieobject}
      * @param versie                          Required version
      * @return Content of {@link EnkelvoudigInformatieobject}.
      */
-    public ByteArrayInputStream downloadEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, final Integer versie) {
-        final Response response = drcClient.enkelvoudigInformatieobjectDownload(enkelvoudigInformatieobjectUUID, versie);
+    public ByteArrayInputStream downloadEnkelvoudigInformatieobjectVersie(final UUID enkelvoudigInformatieobjectUUID, final Integer versie) {
+        final Response response = drcClient.enkelvoudigInformatieobjectDownloadVersie(enkelvoudigInformatieobjectUUID, versie);
         if (!response.bufferEntity()) {
             throw new RuntimeException(String.format("Content of enkelvoudig informatieobject with uuid '%s' and version '%d' could not be buffered.",
                                                      enkelvoudigInformatieobjectUUID.toString(), versie));

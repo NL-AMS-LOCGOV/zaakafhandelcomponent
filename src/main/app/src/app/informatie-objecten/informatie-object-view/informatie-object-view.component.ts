@@ -43,7 +43,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     menu: MenuItem[];
     action: string;
     versieInformatie: string;
-    zaken: ZaakInformatieobject[];
+    zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     fileIconList = [
@@ -85,11 +85,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             this.infoObject = data['informatieObject'];
             this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(eiObject => {
                 this.laatsteVersieInfoObject = eiObject;
-                this.versieInformatie = this.translate.instant('versie.x.van', {
-                    versie: this.infoObject.versie,
-                    laatsteVersie: this.laatsteVersieInfoObject.versie,
-                });
-                this.loadZaken();
+                this.updateVersieInformatie();
+                this.loadZaakInformatieobjecten();
             });
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
@@ -99,6 +96,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                     this.loadInformatieObject(event);
                     this.loadHistorie();
                     this.setupMenu();
+                    this.loadZaakInformatieobjecten();
                 });
 
             this.setupMenu();
@@ -129,28 +127,35 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.menu = [
             new HeaderMenuItem('informatieobject'),
             new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid),
-                'save_alt'),
+                'save_alt')
         ];
     }
 
-    private toevoegenNieuweVersieActie() {
-        // Nieuwe versie niet toegestaan indien de status definitief is en wanneer er geen zaak gekoppeld is
-        // bij bijvoorbeeld ontkoppelde en inbox documenten.
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaken?.length > 0) {
+    private toevoegenActies() {
+        // Nieuwe versie en bewerken acties niet toegestaan indien de status definitief is
+        // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
+        // ToDo: Vervangen door Policy
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaakInformatieObjecten?.length > 0) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
                 });
+            }, 'difference'));
+
+            this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
+                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid).subscribe(url => {
+                    window.open(url);
+                });
             }, 'edit'));
         }
     }
 
-    private loadZaken(): void {
-        this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaken => {
-            this.zaken = zaken;
-            this.toevoegenNieuweVersieActie();
+    private loadZaakInformatieobjecten(): void {
+        this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaakInformatieObjecten => {
+            this.zaakInformatieObjecten = zaakInformatieObjecten;
+            this.toevoegenActies();
         });
     }
 
@@ -167,6 +172,8 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
             .subscribe(informatieObject => {
                 this.infoObject = informatieObject;
+                this.laatsteVersieInfoObject = informatieObject;
+                this.updateVersieInformatie();
             });
     }
 
@@ -191,5 +198,12 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         } else {
             return {type: 'unknown', icon: 'fa-file-circle-question'};
         }
+    }
+
+    private updateVersieInformatie(): void {
+        this.versieInformatie = this.translate.instant('versie.x.van', {
+            versie: this.infoObject.versie,
+            laatsteVersie: this.laatsteVersieInfoObject.versie
+        });
     }
 }

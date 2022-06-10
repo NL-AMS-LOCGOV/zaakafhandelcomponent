@@ -117,7 +117,7 @@ public abstract class AbstractEnkelvoudigInformatieobject {
     /**
      * Aantal bytes dat de inhoud van INFORMATIEOBJECT in beslag neemt.
      */
-    private Long Bestandsomvang;
+    private Long bestandsomvang;
 
     /**
      * De URL waarmee de inhoud van het INFORMATIEOBJECT op te vragen
@@ -176,40 +176,12 @@ public abstract class AbstractEnkelvoudigInformatieobject {
      */
     private Boolean locked;
 
-    /**
-     * Constructor for PATCH request
-     */
-    public AbstractEnkelvoudigInformatieobject() {
-    }
-
-    /**
-     * Constructor with required attributes for POST request
-     */
-    public AbstractEnkelvoudigInformatieobject(final String bronorganisatie, final LocalDate creatiedatum, final String titel, final String auteur,
-            final String taal,
-            final URI informatieobjecttype) {
-        this.bronorganisatie = bronorganisatie;
-        this.creatiedatum = creatiedatum;
-        this.titel = titel;
-        this.auteur = auteur;
-        this.taal = taal;
-        this.informatieobjecttype = informatieobjecttype;
-    }
-
-    /**
-     * Constructor with readOnly attributes for GET response
-     */
-    public AbstractEnkelvoudigInformatieobject(final URI url, final Integer versie, final ZonedDateTime beginRegistratie, final Long bestandsomvang,
-            final Boolean locked) {
-        this.url = url;
-        this.versie = versie;
-        this.beginRegistratie = beginRegistratie;
-        Bestandsomvang = bestandsomvang;
-        this.locked = locked;
-    }
-
     public URI getUrl() {
         return url;
+    }
+
+    public void setUrl(final URI url) {
+        this.url = url;
     }
 
     public String getIdentificatie() {
@@ -288,8 +260,16 @@ public abstract class AbstractEnkelvoudigInformatieobject {
         return versie;
     }
 
+    public void setVersie(final Integer versie) {
+        this.versie = versie;
+    }
+
     public ZonedDateTime getBeginRegistratie() {
         return beginRegistratie;
+    }
+
+    public void setBeginRegistratie(final ZonedDateTime beginRegistratie) {
+        this.beginRegistratie = beginRegistratie;
     }
 
     public String getBestandsnaam() {
@@ -301,7 +281,11 @@ public abstract class AbstractEnkelvoudigInformatieobject {
     }
 
     public Long getBestandsomvang() {
-        return Bestandsomvang;
+        return bestandsomvang;
+    }
+
+    public void setBestandsomvang(final Long bestandsomvang) {
+        this.bestandsomvang = bestandsomvang;
     }
 
     public URI getLink() {
@@ -372,8 +356,17 @@ public abstract class AbstractEnkelvoudigInformatieobject {
         return locked;
     }
 
+    public void setLocked(final Boolean locked) {
+        this.locked = locked;
+    }
+
     @JsonbTransient
     public UUID getUUID() {
-        return URIUtil.parseUUIDFromResourceURI(getInformatieobjecttype());
+        return URIUtil.parseUUIDFromResourceURI(url);
+    }
+
+    @JsonbTransient
+    public UUID getInformatieobjectTypeUUID() {
+        return URIUtil.parseUUIDFromResourceURI(informatieobjecttype);
     }
 }

@@ -138,6 +138,12 @@ export class InformatieObjectenService {
         );
     }
 
+    editEnkelvoudigInformatieObjectInhoud(uuid: string): Observable<string> {
+        return this.http.get<string>(`${this.basepath}/informatieobject/${uuid}/edit`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {
         documentVerplaatsGegevens.nieuweZaakID = nieuweZaakID;
         return this.http.post<void>(`${this.basepath}/informatieobject/verplaats`, documentVerplaatsGegevens).pipe(

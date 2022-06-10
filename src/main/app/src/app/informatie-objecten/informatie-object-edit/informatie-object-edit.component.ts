@@ -40,7 +40,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
     @Input() infoObject: EnkelvoudigInformatieObjectVersieGegevens;
     @Input() sideNav: MatSidenav;
-    @Input() zaken: ZaakInformatieobject[];
+    @Input() zaakInformatieObjecten: ZaakInformatieobject[];
     @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
 
     @ViewChild(FormComponent) form: FormComponent;
@@ -70,7 +70,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
                                                       .uploadURL(
-                                                          this.informatieObjectenService.getUploadURL(this.zaken[0].zaakUuid))
+                                                          this.informatieObjectenService.getUploadURL(this.zaakInformatieObjecten[0].zaakUuid))
                                                       .build();
 
         const titel = new InputFormFieldBuilder().id('titel').label('titel')
@@ -177,7 +177,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         if (formGroup) {
             const nieuweVersie = new EnkelvoudigInformatieObjectVersieGegevens();
             nieuweVersie.uuid = this.infoObject.uuid;
-            nieuweVersie.zaakUuid = this.zaken[0].zaakUuid;
+            nieuweVersie.zaakUuid = this.zaakInformatieObjecten[0].zaakUuid;
             Object.keys(formGroup.controls).forEach((key) => {
                 const control = formGroup.controls[key];
                 const value = control.value;

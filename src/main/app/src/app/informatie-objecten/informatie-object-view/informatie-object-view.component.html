@@ -9,7 +9,7 @@
     </mat-sidenav>
     <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-informatie-object-edit *ngSwitchCase="'DOCUMENT_VERSIE_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                    [infoObject]="documentNieuweVersieGegevens" [zaken]="zaken"
+                                    [infoObject]="documentNieuweVersieGegevens" [zaakInformatieObjecten]="zaakInformatieObjecten"
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
     </mat-sidenav>
@@ -152,24 +152,24 @@
                         {{'gerelateerdeZaken'| translate}}
                     </mat-expansion-panel-header>
                 </mat-expansion-panel>
-                <mat-expansion-panel *ngFor="let zaak of zaken" hideToggle [expanded]="zaken.length === 1">
+                <mat-expansion-panel *ngFor="let zaakInformatieobject of zaakInformatieObjecten" hideToggle [expanded]="zaakInformatieObjecten.length === 1">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{zaak.zaakIdentificatie}}
+                            {{zaakInformatieobject.zaakIdentificatie}}
                         </mat-panel-title>
                         <mat-panel-description>
-                            {{zaak.zaaktype}}
-                            <button mat-flat-button [routerLink]="['/zaken', zaak.zaakIdentificatie]" (click)="$event.stopPropagation()">
+                            {{zaakInformatieobject.zaaktype}}
+                            <button mat-flat-button [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
                                 <mat-icon>visibility</mat-icon>
                             </button>
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
                     <zac-static-text [fxFlex]="100/3" [label]="'status' | translate"
-                                     [value]="zaak.status|empty:'naam'"></zac-static-text>
-                    <zac-static-text [fxFlex]="100/3" [label]="'startdatum' | translate" [value]="zaak.zaakStartDatum|datum"></zac-static-text>
+                                     [value]="zaakInformatieobject.status|empty:'naam'"></zac-static-text>
+                    <zac-static-text [fxFlex]="100/3" [label]="'startdatum' | translate" [value]="zaakInformatieobject.zaakStartDatum|datum"></zac-static-text>
                     <zac-static-text [fxFlex]="100/3" [label]="'einddatumGepland' | translate"
-                                     [value]="zaak.zaakEinddatumGepland|datum|empty"></zac-static-text>
+                                     [value]="zaakInformatieobject.zaakEinddatumGepland|datum|empty"></zac-static-text>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
