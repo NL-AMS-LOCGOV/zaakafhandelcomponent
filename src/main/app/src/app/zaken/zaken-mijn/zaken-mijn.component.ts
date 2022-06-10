@@ -18,9 +18,12 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ZakenMijnDatasource} from './zaken-mijn-datasource';
+import {ZoekVeld} from '../../zoeken/model/zoek-veld';
+import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
+import {FilterVeld} from '../../zoeken/model/filter-veld';
+import {DatumVeld} from '../../zoeken/model/datum-veld';
 
 @Component({
-    selector: 'zac-zaken-mijn',
     templateUrl: './zaken-mijn.component.html',
     styleUrls: ['./zaken-mijn.component.less'],
     animations: [detailExpand]
@@ -32,6 +35,10 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     expandedRow: ZaakZoekObject | null;
+    ZoekVeld = ZoekVeld;
+    SorteerVeld = SorteerVeld;
+    FilterVeld = FilterVeld;
+    DatumVeld = DatumVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
