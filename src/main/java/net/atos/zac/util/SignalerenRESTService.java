@@ -20,20 +20,13 @@ import net.atos.zac.util.event.JobId;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SignalerenRESTService {
+
     @Inject
     private EventingService eventingService;
 
     @GET
-    @Path("zaak/verlopend")
     public String zaakSignaleringenVerzenden() {
-        eventingService.send(new JobEvent(JobId.ZAAK_SIGNALERINGEN_JOB));
-        return String.format("%s: gestart...", JobId.ZAAK_SIGNALERINGEN_JOB.getName());
-    }
-
-    @GET
-    @Path("taak/verlopen")
-    public String taakSignaleringenVerzenden() {
-        eventingService.send(new JobEvent(JobId.TAAK_SIGNALERINGEN_JOB));
-        return String.format("%s: gestart...", JobId.TAAK_SIGNALERINGEN_JOB.getName());
+        eventingService.send(new JobEvent(JobId.SIGNALERINGEN_JOB));
+        return String.format("%s: gestart...", JobId.SIGNALERINGEN_JOB.getName());
     }
 }
