@@ -82,8 +82,10 @@ public class SignaleringenJob {
                         info.dueVerzonden += zaakEinddatumGeplandVerzenden(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                         zaakEinddatumGeplandOnterechtVerzondenVerwijderen(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                     }
-                    info.fatalVerzonden += zaakUiterlijkeEinddatumAfdoeningVerzenden(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
-                    zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                    if (parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing() != null) {
+                        info.fatalVerzonden += zaakUiterlijkeEinddatumAfdoeningVerzenden(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                        zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                    }
                 });
         LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen, %d fatale datum waarschuwingen)",
                                ZAAK_SIGNALERINGEN_VERZENDEN,

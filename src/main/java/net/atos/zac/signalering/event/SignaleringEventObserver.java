@@ -7,6 +7,7 @@ package net.atos.zac.signalering.event;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
@@ -58,15 +59,19 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
 
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
-        final Signalering signalering = buildSignalering(signaleringenService.signaleringInstance(event.getObjectType()), event);
-        if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
-            final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
-            if (subscriptions.isDashboard()) {
-                signaleringenService.createSignalering(signalering);
+        try {
+            final Signalering signalering = buildSignalering(signaleringenService.signaleringInstance(event.getObjectType()), event);
+            if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
+                final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
+                if (subscriptions.isDashboard()) {
+                    signaleringenService.createSignalering(signalering);
+                }
+                if (subscriptions.isMail()) {
+                    signaleringenService.sendSignalering(signalering);
+                }
             }
-            if (subscriptions.isMail()) {
-                signaleringenService.sendSignalering(signalering);
-            }
+        } catch (final Exception ex) {
+            LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
     }
 
