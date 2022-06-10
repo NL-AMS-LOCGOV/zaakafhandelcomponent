@@ -20,6 +20,8 @@ import javax.validation.constraints.NotNull;
 @Table(schema = SCHEMA, name = "signaleringtype")
 public class SignaleringType implements Comparable<SignaleringType> {
 
+    public static final String SEPARATOR = ";";
+
     @Id
     @Column(name = "signaleringtype_enum", updatable = false, insertable = false)
     private String id;
@@ -51,7 +53,7 @@ public class SignaleringType implements Comparable<SignaleringType> {
     public enum Type {
         ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd."),
         ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
-        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum.;Uw zaak nadert de fatale datum."),
+        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum." + SEPARATOR + "Uw zaak nadert de fatale datum."),
         TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet."),
         TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.") {
             @Override

@@ -94,6 +94,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit, OnDestroy {
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
             ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['dagenTotStreefdatum', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);

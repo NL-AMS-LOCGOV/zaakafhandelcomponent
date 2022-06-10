@@ -193,6 +193,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
             ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],
+            ['dagenTotStreefdatum', ColumnPickerValue.HIDDEN],
             ['groep', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
