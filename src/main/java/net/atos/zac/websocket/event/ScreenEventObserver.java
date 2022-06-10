@@ -38,14 +38,18 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
-        if (event.isDelay()) {
-            try {
-                TimeUnit.SECONDS.sleep(SECONDS_TO_DELAY);
-            } catch (InterruptedException e) {
-                // Ignore exception
+        try {
+            if (event.isDelay()) {
+                try {
+                    TimeUnit.SECONDS.sleep(SECONDS_TO_DELAY);
+                } catch (InterruptedException e) {
+                    // Ignore exception
+                }
             }
+            sendToWebsocketSubscribers(event);
+        } catch (final Exception ex) {
+            LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
-        sendToWebsocketSubscribers(event);
     }
 
     private void sendToWebsocketSubscribers(final ScreenEvent event) {

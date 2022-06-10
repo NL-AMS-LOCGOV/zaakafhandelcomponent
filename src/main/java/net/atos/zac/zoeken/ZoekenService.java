@@ -5,6 +5,9 @@
 
 package net.atos.zac.zoeken;
 
+import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
+import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
+
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -34,8 +37,6 @@ import net.atos.zac.zoeken.model.ZoekVeld;
 public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
-
-    private static final String LEGE_WAARDE = "-NULL-";
 
     private SolrClient solrClient;
 
@@ -70,10 +71,14 @@ public class ZoekenService {
 
         zoekZaakParameters.getFilters()
                 .forEach((filter, waarde) -> {
-                    if (waarde.equals(LEGE_WAARDE)) {
+                    if (LEEG.is(waarde)) {
                         query.addFilterQuery(String.format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
                     } else {
-                        query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                        if (NIET_LEEG.is(waarde)) {
+                            query.addFilterQuery(String.format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
+                        } else {
+                            query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                        }
                     }
 
                 });
@@ -99,7 +104,7 @@ public class ZoekenService {
                 final List<String> waardes = new ArrayList<>();
                 facetField.getValues().stream()
                         .filter(facet -> facet.getCount() > 0)
-                        .forEach(facet -> waardes.add(facet.getName() == null ? LEGE_WAARDE : facet.getName()));
+                        .forEach(facet -> waardes.add(facet.getName() == null ? LEEG.toString() : facet.getName()));
                 zoekResultaat.addFilter(facetVeld, waardes);
             });
             return zoekResultaat;

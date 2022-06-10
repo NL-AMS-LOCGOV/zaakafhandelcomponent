@@ -5,6 +5,7 @@
 
 package net.atos.zac.flowable.cmmn.event;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.ManagedBean;
@@ -54,7 +55,11 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
 
     @Override
     public void onFire(final @ObservesAsync CmmnEvent event) {
-        startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
+        try {
+            startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
+        } catch (final Exception ex) {
+            LOG.log(Level.SEVERE, "asynchronous guard", ex);
+        }
     }
 
     private void startZaakAfhandeling(final Zaak zaak) {

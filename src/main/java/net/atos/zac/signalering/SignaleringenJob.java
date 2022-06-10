@@ -5,6 +5,8 @@
 
 package net.atos.zac.signalering;
 
+import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -82,8 +84,10 @@ public class SignaleringenJob {
                         info.dueVerzonden += zaakEinddatumGeplandVerzenden(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                         zaakEinddatumGeplandOnterechtVerzondenVerwijderen(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                     }
-                    info.fatalVerzonden += zaakUiterlijkeEinddatumAfdoeningVerzenden(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
-                    zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                    if (parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing() != null) {
+                        info.fatalVerzonden += zaakUiterlijkeEinddatumAfdoeningVerzenden(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                        zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+                    }
                 });
         LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen, %d fatale datum waarschuwingen)",
                                ZAAK_SIGNALERINGEN_VERZENDEN,
@@ -189,7 +193,7 @@ public class SignaleringenJob {
     private ZoekParameters getOpenZaakMetBehandelaarZoekParameters(final Zaaktype zaaktype) {
         final ZoekParameters parameters = new ZoekParameters(ZoekObjectType.ZAAK);
         parameters.addFilter(FilterVeld.ZAAK_ZAAKTYPE_UUID, UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
-        parameters.addFilter(FilterVeld.ZAAK_BEHANDELAAR, "*");
+        parameters.addFilter(FilterVeld.ZAAK_BEHANDELAAR, NIET_LEEG.toString());
         parameters.addFilterQuery(ZAAK_AFGEHANDELD_QUERY, "false");
         parameters.setRows(Integer.MAX_VALUE);
         return parameters;
