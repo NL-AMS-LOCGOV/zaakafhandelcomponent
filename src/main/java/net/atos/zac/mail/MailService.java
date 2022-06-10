@@ -5,6 +5,7 @@
 
 package net.atos.zac.mail;
 
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.nio.charset.StandardCharsets;
@@ -96,7 +97,8 @@ public class MailService {
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         final EnkelvoudigInformatieobjectWithInhoud data = createDocumentInformatieObject(zaak, onderwerp, body);
-        zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp);
+        zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp,
+                                                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
 
     private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak, final String onderwerp, final String body) {

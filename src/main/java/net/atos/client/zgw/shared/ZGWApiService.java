@@ -5,6 +5,7 @@
 
 package net.atos.client.zgw.shared;
 
+import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
@@ -21,6 +22,8 @@ import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
+import net.atos.client.zgw.drc.model.Gebruiksrechten;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -179,11 +182,14 @@ public class ZGWApiService implements Caching {
      * @param informatieobject {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
      * @param titel            Titel of the new {@link ZaakInformatieobject}.
      * @param beschrijving     Beschrijving of the new {@link ZaakInformatieobject}.
+     * @param omschrijvingVoorwaardenGebruiksrechten Used to create the {@link Gebruiksrechten} for the to be created {@link EnkelvoudigInformatieobjectWithInhoud}
      * @return Created {@link ZaakInformatieobject}.
      */
     public ZaakInformatieobject createZaakInformatieobjectForZaak(final Zaak zaak, final EnkelvoudigInformatieobjectWithInhoud informatieobject,
-            final String titel, final String beschrijving) {
+            final String titel, final String beschrijving, final String omschrijvingVoorwaardenGebruiksrechten) {
         final EnkelvoudigInformatieobjectWithInhoud newInformatieobject = drcClientService.createEnkelvoudigInformatieobject(informatieobject);
+        drcClientService.createGebruiksrechten(new Gebruiksrechten(newInformatieobject.getUrl(), convertToDateTime(newInformatieobject.getCreatiedatum()),
+                                                                   omschrijvingVoorwaardenGebruiksrechten));
         final ZaakInformatieobject zaakInformatieObject = new ZaakInformatieobject();
         zaakInformatieObject.setZaak(zaak.getUrl());
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());

@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.informatieobjecten;
 
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -172,7 +174,8 @@ public class InformatieObjectenRESTService {
                 restInformatieobjectConverter.convertZaakObject(restEnkelvoudigInformatieobject, file);
 
         final ZaakInformatieobject zaakInformatieobject =
-                zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving());
+                zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving(),
+                                                                OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
             List<UUID> taakdocumenten = flowableService.findTaakdocumentenOpenTask(documentReferentieId);
             if (taakdocumenten == null) {
