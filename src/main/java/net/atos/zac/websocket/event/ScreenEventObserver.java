@@ -47,7 +47,7 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
                 }
             }
             sendToWebsocketSubscribers(event);
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
     }

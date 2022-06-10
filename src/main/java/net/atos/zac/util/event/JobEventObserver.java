@@ -5,10 +5,6 @@
 
 package net.atos.zac.util.event;
 
-
-import static net.atos.zac.util.event.JobEvent.TAAK_SIGNALERINGEN_JOB;
-import static net.atos.zac.util.event.JobEvent.ZAAK_SIGNALERINGEN_JOB;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,9 +29,8 @@ public class JobEventObserver {
             switch (event.getJobId()) {
                 case TAAK_SIGNALERINGEN_JOB -> signaleringenJob.taakSignaleringenVerzenden();
                 case ZAAK_SIGNALERINGEN_JOB -> signaleringenJob.zaakSignaleringenVerzenden();
-                default -> throw new IllegalArgumentException(String.format("unknown job %s", event.getJobId()));
             }
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
     }

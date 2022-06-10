@@ -30,6 +30,7 @@ import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzendInfo;
 import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.util.event.JobId;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.ZoekenService;
@@ -45,10 +46,6 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 public class SignaleringenJob {
 
     private static final Logger LOG = Logger.getLogger(SignaleringenJob.class.getName());
-
-    public static final String TAAK_SIGNALERINGEN_VERZENDEN = "Taaksignaleringen verzenden";
-
-    public static final String ZAAK_SIGNALERINGEN_VERZENDEN = "Zaaksignaleringen verzenden";
 
     public static final String ZAAK_AFGEHANDELD_QUERY = "zaak_afgehandeld";
 
@@ -75,7 +72,8 @@ public class SignaleringenJob {
      */
     public void zaakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
-        LOG.info(String.format("%s: gestart", ZAAK_SIGNALERINGEN_VERZENDEN));
+        LOG.info(String.format("%s: gestart...",
+                               JobId.ZAAK_SIGNALERINGEN_JOB.getName()));
         ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI())
                 .forEach(zaaktype -> {
                     final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaaktype.getUrl());
@@ -90,7 +88,7 @@ public class SignaleringenJob {
                     }
                 });
         LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen, %d fatale datum waarschuwingen)",
-                               ZAAK_SIGNALERINGEN_VERZENDEN,
+                               JobId.ZAAK_SIGNALERINGEN_JOB.getName(),
                                info.dueVerzonden,
                                info.fatalVerzonden));
     }
@@ -212,11 +210,12 @@ public class SignaleringenJob {
      */
     public void taakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
-        LOG.info(String.format("%s: gestart", TAAK_SIGNALERINGEN_VERZENDEN));
+        LOG.info(String.format("%s: gestart...",
+                               JobId.TAAK_SIGNALERINGEN_JOB.getName()));
         info.dueVerzonden += taakDueVerzenden();
         taakDueOnterechtVerzondenVerwijderen();
         LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen)",
-                               TAAK_SIGNALERINGEN_VERZENDEN,
+                               JobId.TAAK_SIGNALERINGEN_JOB.getName(),
                                info.dueVerzonden));
     }
 
