@@ -41,7 +41,6 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 document['viewLink'] = `/informatie-objecten/${document.uuid}`;
                 document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
             }
-            this.data.formControl.setValue(documenten.map(v => v.uuid).join(';'));
             this.dataSource.data = documenten;
             this.loading = false;
         });
