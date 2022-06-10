@@ -27,8 +27,7 @@ public class JobEventObserver {
     public void onFire(final @ObservesAsync JobEvent event) {
         try {
             switch (event.getJobId()) {
-                case TAAK_SIGNALERINGEN_JOB -> signaleringenJob.taakSignaleringenVerzenden();
-                case ZAAK_SIGNALERINGEN_JOB -> signaleringenJob.zaakSignaleringenVerzenden();
+                case SIGNALERINGEN_JOB -> signaleringenJob.signaleringenVerzenden();
             }
         } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);

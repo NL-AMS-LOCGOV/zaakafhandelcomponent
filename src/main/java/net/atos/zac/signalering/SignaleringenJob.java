@@ -30,7 +30,6 @@ import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzendInfo;
 import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.util.event.JobId;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.ZoekenService;
@@ -67,13 +66,17 @@ public class SignaleringenJob {
     @Inject
     private FlowableService flowableService;
 
+    public void signaleringenVerzenden() {
+        zaakSignaleringenVerzenden();
+        taakSignaleringenVerzenden();
+    }
+
     /**
      * This is the batchjob to send E-Mail warnings about cases that are approaching their einddatum gepland or their uiterlijke einddatum afdoening.
      */
-    public void zaakSignaleringenVerzenden() {
+    private void zaakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
-        LOG.info(String.format("%s: gestart...",
-                               JobId.ZAAK_SIGNALERINGEN_JOB.getName()));
+        LOG.info("Zaak signaleringen verzenden: gestart...");
         ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI())
                 .forEach(zaaktype -> {
                     final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaaktype.getUrl());
@@ -87,9 +90,7 @@ public class SignaleringenJob {
                         zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(zaaktype, parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
                     }
                 });
-        LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen, %d fatale datum waarschuwingen)",
-                               JobId.ZAAK_SIGNALERINGEN_JOB.getName(),
-                               info.dueVerzonden,
+        LOG.info(String.format("Zaak signaleringen verzenden: gestopt (%d streefdatum waarschuwingen, %d fatale datum waarschuwingen)", info.dueVerzonden,
                                info.fatalVerzonden));
     }
 
@@ -208,15 +209,12 @@ public class SignaleringenJob {
     /**
      * This is the batchjob to send E-Mail warnings about tasks that are at or past their due date.
      */
-    public void taakSignaleringenVerzenden() {
+    private void taakSignaleringenVerzenden() {
         final SignaleringVerzendInfo info = new SignaleringVerzendInfo();
-        LOG.info(String.format("%s: gestart...",
-                               JobId.TAAK_SIGNALERINGEN_JOB.getName()));
+        LOG.info("Taak signaleringen verzenden: gestart...");
         info.dueVerzonden += taakDueVerzenden();
         taakDueOnterechtVerzondenVerwijderen();
-        LOG.info(String.format("%s: gestopt (%d streefdatum waarschuwingen)",
-                               JobId.TAAK_SIGNALERINGEN_JOB.getName(),
-                               info.dueVerzonden));
+        LOG.info(String.format("Taak signaleringen verzenden: gestopt (%d streefdatum waarschuwingen)", info.dueVerzonden));
     }
 
     /**

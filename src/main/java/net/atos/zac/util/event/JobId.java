@@ -6,8 +6,7 @@
 package net.atos.zac.util.event;
 
 public enum JobId {
-    TAAK_SIGNALERINGEN_JOB("Taaksignaleringen verzenden"),
-    ZAAK_SIGNALERINGEN_JOB("Zaaksignaleringen verzenden");
+    SIGNALERINGEN_JOB("Signaleringen verzenden");
 
     private final String name;
 
