@@ -6,11 +6,8 @@
 package net.atos.zac.util.event;
 
 public class JobEvent {
-    public static final String TAAK_SIGNALERINGEN_JOB = "TAAK_SIGNALERINGEN";
 
-    public static final String ZAAK_SIGNALERINGEN_JOB = "ZAAK_SIGNALERINGEN";
-
-    private String jobId;
+    private JobId jobId;
 
     /**
      * Constructor for the sake of JAXB
@@ -24,11 +21,11 @@ public class JobEvent {
      *
      * @param jobId indicates the job that must be started
      */
-    public JobEvent(final String jobId) {
+    public JobEvent(final JobId jobId) {
         this.jobId = jobId;
     }
 
-    public String getJobId() {
+    public JobId getJobId() {
         return jobId;
     }
 }

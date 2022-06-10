@@ -57,7 +57,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     public void onFire(final @ObservesAsync CmmnEvent event) {
         try {
             startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
     }

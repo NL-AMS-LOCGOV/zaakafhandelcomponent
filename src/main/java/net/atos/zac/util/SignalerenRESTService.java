@@ -13,8 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.zac.event.EventingService;
-import net.atos.zac.signalering.SignaleringenJob;
 import net.atos.zac.util.event.JobEvent;
+import net.atos.zac.util.event.JobId;
 
 @Path("signaleren")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -26,14 +26,14 @@ public class SignalerenRESTService {
     @GET
     @Path("zaak/verlopend")
     public String zaakSignaleringenVerzenden() {
-        eventingService.send(new JobEvent(JobEvent.ZAAK_SIGNALERINGEN_JOB));
-        return String.format("%s: gestart...", SignaleringenJob.ZAAK_SIGNALERINGEN_VERZENDEN);
+        eventingService.send(new JobEvent(JobId.ZAAK_SIGNALERINGEN_JOB));
+        return String.format("%s: gestart...", JobId.ZAAK_SIGNALERINGEN_JOB.getName());
     }
 
     @GET
     @Path("taak/verlopen")
     public String taakSignaleringenVerzenden() {
-        eventingService.send(new JobEvent(JobEvent.TAAK_SIGNALERINGEN_JOB));
-        return String.format("%s: gestart...", SignaleringenJob.TAAK_SIGNALERINGEN_VERZENDEN);
+        eventingService.send(new JobEvent(JobId.TAAK_SIGNALERINGEN_JOB));
+        return String.format("%s: gestart...", JobId.TAAK_SIGNALERINGEN_JOB.getName());
     }
 }

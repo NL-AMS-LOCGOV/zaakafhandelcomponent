@@ -70,7 +70,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
                     signaleringenService.sendSignalering(signalering);
                 }
             }
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LOG.log(Level.SEVERE, "asynchronous guard", ex);
         }
     }
