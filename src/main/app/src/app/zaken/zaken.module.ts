@@ -22,6 +22,7 @@ import {PlanItemsModule} from '../plan-items/plan-items.module';
 import {MailModule} from '../mail/mail.module';
 import {ZaakDocumentenComponent} from './zaak-documenten/zaak-documenten.component';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
+import {ZoekenModule} from '../zoeken/zoeken.module';
 
 @NgModule({
     declarations: [
@@ -47,7 +48,8 @@ import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraa
         KlantenModule,
         InformatieObjectenModule,
         PlanItemsModule,
-        MailModule
+        MailModule,
+        ZoekenModule
     ]
 })
 export class ZakenModule {

@@ -26,7 +26,7 @@ export class ZakenWerkvoorraadDatasource extends ZoekenTableDataSource<ZaakZoekO
     }
 
     getZoekParameters(): ZoekParameters {
-        this.zoekParameters.filterQueries['zaak_afgehandeld'] = 'false';
+        this.zoekParameters.alleenOpenstaandeZaken = true;
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         this.zoekParameters.sorteerRichting = this.sort.direction;
@@ -59,4 +59,3 @@ export class ZakenWerkvoorraadDatasource extends ZoekenTableDataSource<ZaakZoekO
         this._initColumns('zakenWerkvoorraadColumns', defaultColumns);
     }
 }
-

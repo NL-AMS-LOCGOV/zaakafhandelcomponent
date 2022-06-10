@@ -1,0 +1,15 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field appearance="standard">
+    <mat-label>{{label | translate}}</mat-label>
+    <mat-date-range-input [rangePicker]="datumPicker">
+        <input matStartDate placeholder="van" [(ngModel)]="range.van">
+        <input matEndDate placeholder="tot" [(ngModel)]="range.tot">
+    </mat-date-range-input>
+    <mat-datepicker-toggle *ngIf="!hasDate()" matSuffix [for]="datumPicker"></mat-datepicker-toggle>
+    <mat-icon *ngIf="hasDate()" matSuffix (click)="clearDate($event)">clear</mat-icon>
+    <mat-date-range-picker (closed)="changed.emit()" disabled="false" #datumPicker></mat-date-range-picker>
+</mat-form-field>

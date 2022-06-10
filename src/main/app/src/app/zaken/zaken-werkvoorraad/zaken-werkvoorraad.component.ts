@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 
 import {detailExpand} from '../../shared/animations/animations';
 
@@ -17,7 +17,6 @@ import {MatTable} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
@@ -25,24 +24,30 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
-import {ZakenWerkvoorraadDatasource} from './zaken-werkvorraad-datasource';
+import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
+import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
+import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
+import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
+import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 
 @Component({
-    selector: 'zac-zaken-werkvoorraad',
     templateUrl: './zaken-werkvoorraad.component.html',
     styleUrls: ['./zaken-werkvoorraad.component.less'],
     animations: [detailExpand]
 })
-export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
-    defaults: ZoekParameters;
     ingelogdeMedewerker: User;
     expandedRow: ZaakZoekObject | null;
+    ZoekVeld = ZoekVeld;
+    SorteerVeld = SorteerVeld;
+    FilterVeld = FilterVeld;
+    DatumVeld = DatumVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
@@ -88,8 +93,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.dataSource.load();
     }
 
-    ngOnDestroy(): void {
-    }
 
     private getIngelogdeMedewerker() {
         this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
@@ -153,17 +156,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         this.dataSource.load();
     }
 
-    clearDate($event: MouseEvent, datum: string): void {
-        $event.stopPropagation();
-        this.dataSource.zoekParameters.datums[datum].van = null;
-        this.dataSource.zoekParameters.datums[datum].tot = null;
-        this.filtersChange();
-    }
-
-    hasDate(datum: string): boolean {
-        return this.dataSource.zoekParameters.datums[datum].van != null;
-    }
-
     assignToMe(zaakZoekObject: ZaakZoekObject, $event) {
         $event.stopPropagation();
 
@@ -212,9 +204,4 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit, OnDest
         });
     }
 
-    getFilters(field): string[] {
-        if (this.dataSource.beschikbareFilters[field]) {
-            return this.dataSource.beschikbareFilters[field].sort((a, b) => a.localeCompare(b));
-        }
-    }
 }
