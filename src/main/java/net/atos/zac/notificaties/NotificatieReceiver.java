@@ -74,10 +74,10 @@ public class NotificatieReceiver {
                         notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
+        handleProductAanvraag(notificatie);
         if (!configuratieService.isLocalDevelopment()) {
             handleSignaleringen(notificatie);
             handleCmmn(notificatie);
-            handleProductAanvraag(notificatie);
             handleIndexering(notificatie);
             handleInboxDocumenten(notificatie);
         }

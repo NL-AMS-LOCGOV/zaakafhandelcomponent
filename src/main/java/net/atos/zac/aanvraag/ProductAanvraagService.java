@@ -32,6 +32,7 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.zac.util.JsonbUtil;
 
 @ApplicationScoped
 public class ProductAanvraagService {
@@ -66,6 +67,8 @@ public class ProductAanvraagService {
     public void createZaak(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
+        final String s = JsonbUtil.JSONB.toJson(object.getRecord().getData());
+        final ProductaanvraagDenhaag productaanvraagDenhaag = JsonbUtil.JSONB.fromJson(s, ProductaanvraagDenhaag.class);
 
         Zaak zaak;
         switch (productAanvraag.getType()) {
