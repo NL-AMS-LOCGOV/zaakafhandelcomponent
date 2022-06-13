@@ -5,14 +5,21 @@
 
 package net.atos.zac.zoeken.model;
 
+import java.util.EnumSet;
 import java.util.stream.Stream;
 
 public enum FilterVeld {
+
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_ZAAKTYPE("zaak_zaaktypeOmschrijving"),
     ZAAK_ZAAKTYPE_UUID("zaak_zaaktypeUuid"),
     ZAAK_BEHANDELAAR("zaak_behandelaarNaam"),
-    ZAAK_GROEP("zaak_groepNaam");
+    ZAAK_GROEP("zaak_groepNaam"),
+    ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving");
+
+    public static final EnumSet<FilterVeld> ZAAK_FACETTEN = EnumSet.of(ZAAK_ZAAKTYPE, ZAAK_STATUS, ZAAK_BEHANDELAAR, ZAAK_GROEP, ZAAK_RESULTAAT);
+
+    public static final EnumSet<FilterVeld> INFORMATIE_OBJECT_FACETTEN = EnumSet.noneOf(FilterVeld.class);
 
     private final String veld;
 

@@ -79,10 +79,10 @@ public class ZoekParameters {
     public EnumSet<FilterVeld> getBeschikbareFilters() {
         switch (type) {
             case ZAAK -> {
-                return EnumSet.of(FilterVeld.ZAAK_ZAAKTYPE, FilterVeld.ZAAK_STATUS, FilterVeld.ZAAK_BEHANDELAAR, FilterVeld.ZAAK_GROEP);
+                return FilterVeld.ZAAK_FACETTEN;
             }
             case INFORMATIE_OBJECT -> {
-                return EnumSet.noneOf(FilterVeld.class);
+                return FilterVeld.INFORMATIE_OBJECT_FACETTEN;
             }
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }

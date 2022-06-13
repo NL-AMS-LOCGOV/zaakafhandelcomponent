@@ -3,46 +3,56 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {TableDataSource} from '../../shared/dynamic-table/datasource/table-data-source';
-import {ZaakOverzicht} from '../model/zaak-overzicht';
-import {ZakenService} from '../zaken.service';
+import {finalize} from 'rxjs/operators';
 import {UtilService} from '../../core/service/util.service';
-import {catchError, finalize} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeken-table-data-source';
+import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
+import {ZoekenService} from '../../zoeken/zoeken.service';
+import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
+import {ZoekResultaat} from '../../zoeken/model/zoek-resultaat';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
-export class ZakenAfgehandeldDatasource extends TableDataSource<ZaakOverzicht> {
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 
-    zoekParameters: {
-        selectie: 'groep' | 'zaaktype',
-        groep: string,
-        zaaktype: string
-    } = {
-        selectie: 'groep',
-        groep: null,
-        zaaktype: null
-    };
+export class ZakenAfgehandeldDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
 
-    selecties: string[] = ['groep', 'zaaktype'];
+    zoekParameters: ZoekParameters = SessionStorageUtil.getItem('zakenMijnZoekparameters', new ZoekParameters());
 
-    constructor(private zakenService: ZakenService, private utilService: UtilService) {
+    constructor(private zoekenService: ZoekenService, private utilService: UtilService) {
         super();
     }
 
-    load() {
+    getZoekParameters(): ZoekParameters {
+        this.zoekParameters.alleenAfgeslotenZaken = true;
+        this.zoekParameters.page = this.paginator.pageIndex;
+        this.zoekParameters.rows = this.paginator.pageSize;
+        this.zoekParameters.sorteerRichting = this.sort.direction;
+        this.zoekParameters.sorteerVeld = this.sort.active;
+        SessionStorageUtil.setItem('zakenAfgehandeldZoekparameters', this.zoekParameters);
+        return this.zoekParameters;
+    }
+
+    load(): void {
         this.utilService.setLoading(true);
-
-        this.zakenService.listZakenAfgehandeld(this.getTableRequest())
+        this.zoekenService.list(this.getZoekParameters())
             .pipe(
-                catchError(() => of({data: [], totalItems: 0})),
-                finalize(() => this.utilService.setLoading(false)))
-            .subscribe(zaakResponse => {
-                this.setData(zaakResponse);
-            });
+                finalize(() => this.utilService.setLoading(false))
+            ).subscribe(zaakResponse => {
+                this.setData(zaakResponse as ZoekResultaat<ZaakZoekObject>);
+            }
+        );
     }
 
-    zoekZaken(): void {
-        this.removeFilter(this.zoekParameters.selectie === 'groep' ? 'zaaktype' : 'groep');
-        this.setFilter(this.zoekParameters.selectie, this.zoekParameters[this.zoekParameters.selectie]);
+    reset() {
+        this.zoekParameters = new ZoekParameters();
+        this.sort.active = this.zoekParameters.sorteerVeld;
+        this.sort.direction = this.zoekParameters.sorteerRichting;
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = this.zoekParameters.rows;
+        this.load();
     }
 
+    initColumns(defaultColumns: Map<string, ColumnPickerValue>): void {
+        this._initColumns('zakenAfgehandeldColumns', defaultColumns);
+    }
 }
