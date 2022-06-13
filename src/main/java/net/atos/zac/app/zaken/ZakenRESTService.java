@@ -13,7 +13,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,18 +32,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.IllegalInstantException;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
-import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -87,8 +82,6 @@ import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.datatable.TableRequest;
-import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
@@ -98,7 +91,6 @@ import net.atos.zac.identity.model.User;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
-import net.atos.zac.util.OpenZaakPaginationUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zoeken.IndexeerService;
@@ -307,31 +299,6 @@ public class ZakenRESTService {
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).collect(Collectors.toList());
     }
 
-    @GET
-    @Path("zaken")
-    public TableResponse<RESTZaakOverzicht> listZaken(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-
-        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter
-                .convertZaakResults(zaakResults, tableState.getPagination());
-
-        return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-    }
-
-    @GET
-    @Path("mijn")
-    public TableResponse<RESTZaakOverzicht> listZakenMijn(@Context final HttpServletRequest request) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-        final ZaakListParameters zaakListParameters = getZaakListParameters(tableState);
-        zaakListParameters.setRolBetrokkeneIdentificatieMedewerkerIdentificatie(loggedInUserInstance.get().getId());
-        final Results<Zaak> zaakResults = zrcClientService.listZaken(zaakListParameters);
-        final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults,
-                                                                                                  tableState.getPagination());
-        return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-    }
 
     @GET
     @Path("waarschuwing")
@@ -377,19 +344,7 @@ public class ZakenRESTService {
         return vandaag.plusDays(dagen + 1);
     }
 
-    @GET
-    @Path("werkvoorraad")
-    public TableResponse<RESTZaakOverzicht> listZakenWerkvoorraad(@Context final HttpServletRequest request) {
-        return findZaakOverzichten(request, true);
-    }
 
-    @GET
-    @Path("afgehandeld")
-    public TableResponse<RESTZaakOverzicht> listZakenAfgehandeld(@Context final HttpServletRequest request) {
-        return findZaakOverzichten(request, false);
-    }
-
-    @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
@@ -495,48 +450,11 @@ public class ZakenRESTService {
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 
-    private TableResponse<RESTZaakOverzicht> findZaakOverzichten(final HttpServletRequest request,
-            final boolean getOpenZaken) {
-        final TableRequest tableState = TableRequest.getTableState(request);
-
-        if (loggedInUserInstance.get().isInAnyGroup()) {
-            final Results<Zaak> zaakResults;
-            if (getOpenZaken) {
-                zaakResults = zrcClientService.listOpenZaken(getZaakListParameters(tableState));
-            } else {
-                zaakResults = zrcClientService.listClosedZaken(getZaakListParameters(tableState));
-            }
-            final List<RESTZaakOverzicht> zaakOverzichten = zaakOverzichtConverter.convertZaakResults(zaakResults, tableState.getPagination());
-            return new TableResponse<>(zaakOverzichten, zaakResults.getCount());
-        } else {
-            return new TableResponse<>(Collections.emptyList(), 0);
-        }
-    }
-
     private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         final User user = identityService.readUser(loggedInUserInstance.get().getId());
         zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
         return zaak;
-    }
-
-    private ZaakListParameters getZaakListParameters(final TableRequest tableState) {
-        final ZaakListParameters zaakListParameters = new ZaakListParameters();
-
-        zaakListParameters.setPage(OpenZaakPaginationUtil.calculateOpenZaakPageNumber(tableState.getPagination()));
-
-        final boolean desc = "desc".equals(tableState.getSort().getDirection());
-        zaakListParameters.setOrdering(desc ? "-" + tableState.getSort().getPredicate() : tableState.getSort().getPredicate());
-
-        for (final Map.Entry<String, String> entry : tableState.getSearch().getPredicateObject().entrySet()) {
-            switch (entry.getKey()) {
-                case "zaaktype" -> zaakListParameters.setZaaktype(ztcClientService.readZaaktypeUrl(entry.getValue()));
-                case "groep" -> zaakListParameters
-                        .setRolBetrokkeneIdentificatieOrganisatorischeEenheidIdentificatie(entry.getValue());
-                default -> throw new IllegalInstantException(String.format("Unknown search criteria: '%s'", entry.getKey()));
-            }
-        }
-        return zaakListParameters;
     }
 
     private RolOrganisatorischeEenheid bepaalRolGroep(final Group group, final Zaak zaak) {
