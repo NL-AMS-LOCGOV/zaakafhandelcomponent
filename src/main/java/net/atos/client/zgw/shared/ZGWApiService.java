@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
-import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
@@ -239,10 +238,7 @@ public class ZGWApiService {
         // In case of a 'date in future' exception during local development: subtract 10 seconds from now().
         final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
-        final Status created = zrcClientService.createStatus(status);
-        // This event will also happen via open-notificaties
-        eventingService.send(CacheEventType.ZAAKSTATUS.event(created));
-        return created;
+        return zrcClientService.createStatus(status);
     }
 
     private void calculateDoorlooptijden(final Zaak zaak) {

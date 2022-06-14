@@ -30,7 +30,6 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
@@ -84,17 +83,12 @@ public class ZRCClientService {
 
     private Rol<?> createRol(final Rol<?> rol, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        final Rol<?> created = zrcClient.rolCreate(rol);
-        // This event will also happen via open-notificaties
-        eventingService.send(CacheEventType.ZAAKROL.event(created));
-        return created;
+        return zrcClient.rolCreate(rol);
     }
 
     private void deleteRol(final Rol<?> rol, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         zrcClient.rolDelete(rol.getUuid());
-        // This event will also happen via open-notificaties
-        eventingService.send(CacheEventType.ZAAKROL.event(rol));
     }
 
     /**
