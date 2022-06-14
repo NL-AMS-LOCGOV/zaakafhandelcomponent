@@ -22,9 +22,9 @@
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie"
-                             [isWijzigbaar]="isWijzigbaar" (delete)="deleteInitiator()"></zac-persoongegevens>
+                             [isVerwijderbaar]="isWijzigbaar" (delete)="deleteInitiator()"></zac-persoongegevens>
         <zac-bedrijfsgegevens *ngIf="initiatorType==='BEDRIJF'" [vestigingsnummer]="zaak.initiatorIdentificatie"
-                              [isWijzigbaar]="isWijzigbaar" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
+                              [isVerwijderbaar]="isWijzigbaar" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
