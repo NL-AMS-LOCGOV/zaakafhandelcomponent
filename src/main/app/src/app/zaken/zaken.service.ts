@@ -9,7 +9,6 @@ import {Observable} from 'rxjs';
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
-import {TableResponse} from '../shared/dynamic-table/datasource/table-response';
 import {Zaaktype} from './model/zaaktype';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {ZaakOverzicht} from './model/zaak-overzicht';
@@ -87,32 +86,9 @@ export class ZakenService {
         );
     }
 
-    listZakenWerkvoorraad(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
-        return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/werkvoorraad`, {
-            params: ZakenService.getTableParams(request)
-        }).pipe(
-            catchError(this.handleError)
-        );
-    }
-
-    listZakenMijn(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
-        return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/mijn`, {
-            params: ZakenService.getTableParams(request)
-        }).pipe(
-            catchError(this.handleError)
-        );
-    }
 
     listZaakWaarschuwingen(): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/waarschuwing`).pipe(
-            catchError(this.handleError)
-        );
-    }
-
-    listZakenAfgehandeld(request: TableRequest): Observable<TableResponse<ZaakOverzicht>> {
-        return this.http.get<TableResponse<ZaakOverzicht>>(`${this.basepath}/afgehandeld`, {
-            params: ZakenService.getTableParams(request)
-        }).pipe(
             catchError(this.handleError)
         );
     }

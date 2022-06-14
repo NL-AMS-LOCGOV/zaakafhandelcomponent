@@ -3,155 +3,58 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ZakenService} from '../zaken.service';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+
+import {detailExpand} from '../../shared/animations/animations';
+
+import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {UtilService} from '../../core/service/util.service';
-import {Zaaktype} from '../model/zaaktype';
-import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
+import {ZakenService} from '../zaken.service';
+import {MatTable} from '@angular/material/table';
+import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatTable} from '@angular/material/table';
-import {ZaakOverzicht} from '../model/zaak-overzicht';
-import {IdentityService} from '../../identity/identity.service';
-import {Group} from '../../identity/model/group';
-import {detailExpand} from '../../shared/animations/animations';
-import {Conditionals} from '../../shared/edit/conditional-fn';
-import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
+import {ZoekenService} from '../../zoeken/zoeken.service';
 import {TextIcon} from '../../shared/edit/text-icon';
-import {WerklijstData} from '../../shared/dynamic-table/model/werklijst-data';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {TranslateService} from '@ngx-translate/core';
+import {Conditionals} from '../../shared/edit/conditional-fn';
+import {ZoekVeld} from '../../zoeken/model/zoek-veld';
+import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
+import {FilterVeld} from '../../zoeken/model/filter-veld';
+import {DatumVeld} from '../../zoeken/model/datum-veld';
+import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
     styleUrls: ['./zaken-afgehandeld.component.less'],
     animations: [detailExpand]
 })
-export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
 
+    dataSource: ZakenAfgehandeldDatasource;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatTable) table: MatTable<ZaakOverzicht>;
-    dataSource: ZakenAfgehandeldDatasource;
-    expandedRow: ZaakOverzicht | null;
-    groepen: Group[] = [];
-    zaakTypes: Zaaktype[] = [];
+    @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
+    expandedRow: ZaakZoekObject | null;
+    ZoekVeld = ZoekVeld;
+    SorteerVeld = SorteerVeld;
+    FilterVeld = FilterVeld;
+    DatumVeld = DatumVeld;
 
-    werklijstData: WerklijstData;
+    einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
+    uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
+        'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    selectZaaktypePlaceholder: string;
-    selectGroepPlaceholder: string;
-
-    constructor(private zakenService: ZakenService, public utilService: UtilService,
-                private identityService: IdentityService, private cd: ChangeDetectorRef,
-                private translate: TranslateService) { }
+    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService) {
+        this.dataSource = new ZakenAfgehandeldDatasource(this.zoekenService, this.utilService);
+    }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.afgehandeld');
-        this.dataSource = new ZakenAfgehandeldDatasource(this.zakenService, this.utilService);
-
-        this.zaaktypesOphalen();
-        this.groepenOphalen();
-
-        this.werklijstData = SessionStorageUtil.getItem(
-            'afgehandeldeZakenWerkvoorraadData') as WerklijstData;
-
-        if (this.werklijstData) {
-            this.dataSource.zoekParameters = this.werklijstData.searchParameters;
-        }
-
-        this.setColumns();
-
-        this.selectGroepPlaceholder = this.translate.instant('groep.-kies-');
-        this.selectZaaktypePlaceholder = this.translate.instant('zaaktype.-kies-');
+        this.dataSource.initColumns(this.defaultColumns());
     }
 
-    ngAfterViewInit(): void {
-        this.dataSource.setViewChilds(this.paginator, this.sort);
-        this.table.dataSource = this.dataSource;
-
-        if (this.werklijstData) {
-            this.dataSource.filters = this.werklijstData.filters;
-
-            this.paginator.pageIndex = this.werklijstData.paginator.page;
-            this.paginator.pageSize = this.werklijstData.paginator.pageSize;
-
-            this.sort.active = this.werklijstData.sorting.column;
-            this.sort.direction = this.werklijstData.sorting.direction;
-
-            // Manually trigger ChangeDetection because changes have been made to the sort
-            this.cd.detectChanges();
-
-            if (this.dataSource.zoekParameters.groep !== null || this.dataSource.zoekParameters.zaaktype !== null) {
-                this.searchCases();
-            }
-        }
-    }
-
-    ngOnDestroy() {
-        this.saveSearchQuery();
-    }
-
-    private zaaktypesOphalen() {
-        this.zakenService.listZaaktypes().subscribe(zaakTypes => {
-            this.zaakTypes = zaakTypes;
-        });
-    }
-
-    private groepenOphalen() {
-        this.identityService.listGroups().subscribe(groepen => {
-            this.groepen = groepen;
-        });
-    }
-
-    switchTypeAndSearch() {
-        this.setColumns();
-        if (this.dataSource.zoekParameters[this.dataSource.zoekParameters.selectie]) {
-            this.searchAndGoToFirstPage();
-        }
-    }
-
-    searchAndGoToFirstPage() {
-        if (this.dataSource.zoekParameters.selectie === 'groep') {
-            this.selectGroepPlaceholder = this.translate.instant('groep');
-        } else {
-            this.selectZaaktypePlaceholder = this.translate.instant('zaaktype');
-        }
-        this.searchCases();
-        this.paginator.firstPage();
-    }
-
-    searchCases() {
-        this.dataSource.zoekZaken();
-    }
-
-    isAfterDate(datum, actual): boolean {
-        return Conditionals.isOverschreden(datum, actual);
-    }
-
-    getIcon(row, icon: string): TextIcon {
-        switch (icon) {
-            case 'einddatumGepland':
-                return new TextIcon(Conditionals.isAfterDate(row.einddatum), 'report_problem',
-                    'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
-            case 'uiterlijkeEinddatumAfdoening':
-                return new TextIcon(Conditionals.isAfterDate(row.einddatum), 'report_problem',
-                    'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
-            default:
-                throw new Error(`Unknown icon field: ${icon}`);
-        }
-    }
-
-    private setColumns() {
-        if (this.werklijstData) {
-            const mapColumns: Map<string, ColumnPickerValue> = new Map(JSON.parse(this.werklijstData.columns));
-            this.toggleGroepOrZaaktype(mapColumns);
-        } else {
-            this.toggleGroepOrZaaktype(this.initialColumns());
-        }
-    }
-
-    initialColumns(): Map<string, ColumnPickerValue> {
+    defaultColumns(): Map<string, ColumnPickerValue> {
         return new Map([
             ['zaak.identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.HIDDEN],
@@ -169,53 +72,26 @@ export class ZakenAfgehandeldComponent implements OnInit, AfterViewInit, OnDestr
         ]);
     }
 
-    toggleGroepOrZaaktype(columns: Map<string, ColumnPickerValue>): Map<string, ColumnPickerValue> {
-        if (this.dataSource.zoekParameters.selectie === 'groep') {
-            columns.set('groep', ColumnPickerValue.HIDDEN);
-            columns.set('zaaktype', ColumnPickerValue.VISIBLE);
-        } else {
-            columns.set('groep', ColumnPickerValue.VISIBLE);
-            columns.set('zaaktype', ColumnPickerValue.HIDDEN);
-        }
-
-        this.dataSource.initColumns(columns);
-
-        return columns;
+    ngAfterViewInit(): void {
+        this.dataSource.setViewChilds(this.paginator, this.sort);
+        this.table.dataSource = this.dataSource;
+        this.dataSource.load();
     }
 
-    saveSearchQuery() {
-        const flatListColumns = JSON.stringify([...this.dataSource.columns]);
-        const werklijstData = new WerklijstData();
-        werklijstData.searchParameters = this.dataSource.zoekParameters;
-        werklijstData.filters = this.dataSource.filters;
-        werklijstData.columns = flatListColumns;
-        werklijstData.sorting = {
-            column: this.sort.active,
-            direction: this.sort.direction
-        };
-        werklijstData.paginator = {
-            page: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize
-        };
-
-        SessionStorageUtil.setItem('afgehandeldeZakenWerkvoorraadData', werklijstData);
+    isAfterDate(datum): boolean {
+        return Conditionals.isOverschreden(datum);
     }
 
-    resetSearchCriteria() {
-        this.dataSource.zoekParameters = {
-            selectie: 'groep',
-            groep: null,
-            zaaktype: null
-        };
-        this.dataSource.filters = {};
-        this.dataSource.initColumns(this.initialColumns());
+    resetSearch(): void {
+        this.dataSource.reset();
+    }
+
+    resetColumns(): void {
+        this.dataSource.resetColumns();
+    }
+
+    filtersChange(): void {
         this.paginator.pageIndex = 0;
-        this.paginator.pageSize = 25;
-        this.sort.active = '';
-        this.sort.direction = '';
-
-        this.saveSearchQuery();
-
-        this.dataSource.clear();
+        this.dataSource.load();
     }
 }
