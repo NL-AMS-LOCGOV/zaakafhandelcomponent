@@ -5,24 +5,18 @@
 
 package net.atos.client.zgw.zrc;
 
-import static net.atos.client.zgw.shared.ZGWApiService.FIRST_PAGE_NUMBER_ZGW_APIS;
-import static net.atos.zac.util.OpenZaakPaginationUtil.PAGE_SIZE_OPEN_ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -286,55 +280,6 @@ public class ZRCClientService {
      */
     public Results<Zaak> listZaken(final ZaakListParameters filter) {
         return zrcClient.zaakList(filter);
-    }
-
-    /**
-     * List instances of {@link Zaak} filtered which are open.
-     *
-     * @param filters {@link ZaakListParameters}.
-     * @return List of {@link Zaak} instances.
-     */
-    public Results<Zaak> listOpenZaken(final ZaakListParameters filters) {
-        /*
-         * Using a filter to retrieve a list of 'Open Zaken' is not supported by the current version of the ZGW API's.
-         * This will be fixed in a future version of the ZGW APIś. see https://github.com/VNG-Realisatie/gemma-zaken/issues/1659
-         * Until then this method provide a workaround by retrieving all Zaken, filtering out the closed ones and then returning the required page.
-         */
-        final int page = filters.getPage();
-        filters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
-
-        Results<Zaak> results = zrcClient.zaakList(filters);
-        final List<Zaak> allZaken = results.getResults();
-        while (results.getNext() != null) {
-            results = createInvocationBuilder(results.getNext()).get(new GenericType<Results<Zaak>>() {});
-            allZaken.addAll(results.getResults());
-        }
-
-        final List<Zaak> openZaken = allZaken.stream()
-                .filter(zaak -> zaak.isOpen())
-                .collect(Collectors.toList());
-        final List<Zaak> zakenOnPage = openZaken.stream()
-                .skip((page - FIRST_PAGE_NUMBER_ZGW_APIS) * PAGE_SIZE_OPEN_ZAAK)
-                .limit(PAGE_SIZE_OPEN_ZAAK)
-                .collect(Collectors.toList());
-
-        return new Results<Zaak>(zakenOnPage, openZaken.size());
-    }
-
-    /**
-     * List instances of {@link Zaak} filtered which are closed.
-     *
-     * @param filters {@link ZaakListParameters}.
-     * @return List of {@link Zaak} instances.
-     */
-    public Results<Zaak> listClosedZaken(final ZaakListParameters filters) {
-        final Set<Archiefnominatie> archiefnominaties = new HashSet<>();
-        archiefnominaties.add(Archiefnominatie.BLIJVEND_BEWAREN);
-        archiefnominaties.add(Archiefnominatie.VERNIETIGEN);
-
-        filters.setArchiefnominatieIn(archiefnominaties);
-
-        return zrcClient.zaakList(filters);
     }
 
     /**

@@ -4,7 +4,7 @@
  */
 
 export class UserEventListenerParameter {
-    id: number;
+    id: string;
     naam: string;
     toelichting: string;
 }

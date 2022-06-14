@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
@@ -24,11 +24,7 @@ export class ZoekenService {
 
     list(zoekParameters: ZoekParameters): Observable<ZoekResultaat<ZoekObject>> {
         return this.http.put<ZoekResultaat<ZoekObject>>(`${this.basepath}/list`, zoekParameters).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private handleError(err: HttpErrorResponse): Observable<never> {
-        return this.foutAfhandelingService.redirect(err);
     }
 }

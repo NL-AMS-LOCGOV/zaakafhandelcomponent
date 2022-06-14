@@ -27,13 +27,19 @@ export class FoutAfhandelingService {
         console.log(err);
         this.foutmelding = err.message;
         if (err.error instanceof ErrorEvent) {
-            //Client-side / network error .
+            // Client-side
             this.foutmelding = `Er is een fout opgetreden`;
             this.bericht = err.error.message;
             this.exception = '';
             this.stack = '';
         } else {
             // Server-side error.
+
+            if (err.status === 0 && err.url.startsWith('/rest/')) { // status 0, niet meer ingelogd
+                window.location.reload();
+                return;
+            }
+
             this.foutmelding = `De server heeft code ${err.status} geretourneerd`;
             if (err.error) {
                 this.stack = err.error.stackTrace;
