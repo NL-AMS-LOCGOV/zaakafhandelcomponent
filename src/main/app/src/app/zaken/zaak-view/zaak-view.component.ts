@@ -484,7 +484,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .validators(Validators.required)
                                             .build()],
             (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
-                tap(val => this.websocketService.suspendListener(this.zaakListener))
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
@@ -505,7 +505,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             data: new ConfirmDialogData(
                 this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
                 this.zakenService.heropenen(this.zaak.uuid).pipe(
-                    tap(val => this.websocketService.suspendListener(this.zaakListener))
+                    tap(() => this.websocketService.suspendListener(this.zaakListener))
                 ))
         }).afterClosed().subscribe(result => {
             if (result) {
