@@ -208,7 +208,7 @@ export class ZakenService {
         const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
         zaakAfbrekenGegevens.zaakbeeindigRedenId = beeindigReden.id;
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, zaakAfbrekenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
