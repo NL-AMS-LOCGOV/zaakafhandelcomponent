@@ -58,7 +58,7 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
@@ -483,7 +483,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build()],
-            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']));
+            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
+                tap(val => this.websocketService.suspendListener(this.zaakListener))
+            ));
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
         this.websocketService.doubleSuspendListener(this.zaakListener);
@@ -499,12 +501,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private openZaakHeropenenDialog(): void {
-        this.websocketService.doubleSuspendListener(this.zaakListener);
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
-                this.zakenService.heropenen(this.zaak.uuid)
-            )
+                this.zakenService.heropenen(this.zaak.uuid).pipe(
+                    tap(val => this.websocketService.suspendListener(this.zaakListener))
+                ))
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();

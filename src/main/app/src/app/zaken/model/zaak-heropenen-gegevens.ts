@@ -4,4 +4,5 @@
  */
 
 export class ZaakHeropenenGegevens {
+    // ToDo: moet hier nog een reden in komen?
 }
