@@ -346,6 +346,7 @@ public class ZakenRESTService {
     }
 
 
+    @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
