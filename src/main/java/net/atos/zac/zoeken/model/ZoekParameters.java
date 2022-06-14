@@ -77,15 +77,10 @@ public class ZoekParameters {
 
 
     public EnumSet<FilterVeld> getBeschikbareFilters() {
-        switch (type) {
-            case ZAAK -> {
-                return FilterVeld.ZAAK_FACETTEN;
-            }
-            case INFORMATIE_OBJECT -> {
-                return FilterVeld.INFORMATIE_OBJECT_FACETTEN;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + type);
-        }
+        return switch (type) {
+            case ZAAK -> FilterVeld.ZAAK_FACETTEN;
+            case INFORMATIE_OBJECT -> FilterVeld.INFORMATIE_OBJECT_FACETTEN;
+        };
     }
 
     public EnumMap<FilterVeld, String> getFilters() {
