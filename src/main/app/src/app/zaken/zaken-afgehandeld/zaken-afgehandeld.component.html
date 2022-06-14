@@ -3,174 +3,193 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<div class="zoek-wrapper" fxLayout="column" fxLayoutGap="5px">
-    <div fxLayoutGap="16px">
-        <label class="form-label" for="werkvoorraadVan_radio" fxFlex="15"
-               fxFlex.lt-md="25">{{'werkvoorraad.van' | translate}}</label>
-
-        <mat-radio-group aria-labelledby="werkvoorraadVan_radio" id="werkvoorraadVan_radio"
-                         [(ngModel)]="dataSource.zoekParameters.selectie" fxFlex="35" fxFlex.lt-md="75"
-                         (ngModelChange)="switchTypeAndSearch()">
-            <mat-radio-button *ngFor="let selectie of dataSource.selecties" [id]="selectie + '_radiobutton'"
-                              [value]="selectie">
-                {{ selectie | translate}}
-            </mat-radio-button>
-        </mat-radio-group>
-    </div>
-    <div fxLayoutGap="16px">
-        <label fxFlex="15" fxFlex.lt-md="25"></label>
-        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'groep'">
-            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
-                <mat-label>{{ selectGroepPlaceholder }}</mat-label>
-                <mat-select (selectionChange)="searchAndGoToFirstPage()" [(ngModel)]="dataSource.zoekParameters.groep"
-                            id="groep_filter">
-                    <mat-option *ngFor="let groep of groepen"
-                                [value]="groep.id">
-                        {{groep.naam}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </ng-container>
-
-        <ng-container *ngIf="dataSource.zoekParameters.selectie === 'zaaktype'">
-            <mat-form-field appearance="standard" fxFlex="35" fxFlex.lt-md="75">
-                <mat-label>{{ selectZaaktypePlaceholder }}</mat-label>
-                <mat-select (selectionChange)="searchAndGoToFirstPage()"
-                            [(ngModel)]="dataSource.zoekParameters.zaaktype"
-                            id="zaaktype_filter">
-                    <mat-option *ngFor="let zaakType of zaakTypes" [value]="zaakType.identificatie">
-                        {{zaakType.omschrijving}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </ng-container>
-    </div>
-</div>
-
 <div class="table-wrapper" [class.loading]="utilService.loading$ | async">
-    <table mat-table matSort multiTemplateDataRows
-           cdkDropList
-           cdkDropListLockAxis="x"
-           cdkDropListOrientation="horizontal"
-           (cdkDropListDropped)="dataSource.drop($event)">
+    <table mat-table matSort matSortDisableClear [matSortDirection]="dataSource.zoekParameters.sorteerRichting"
+           [matSortActive]="dataSource.zoekParameters.sorteerVeld"
+           multiTemplateDataRows cdkDropList cdkDropListLockAxis="x" cdkDropListOrientation="horizontal" (cdkDropListDropped)="dataSource.drop($event)">
 
-        <ng-container matColumnDef="zaak.identificatie">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'zaak.identificatie' | translate }}
+        <ng-container matColumnDef="zaak.identificatie_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.IDENTIFICATIE] = $event; filtersChange()"></zac-tekst-filter>
             </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.identificatie }}
-            </td>
+        </ng-container>
+        <ng-container matColumnDef="zaak.identificatie">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.IDENTIFICATIE">{{ 'zaak.identificatie' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.identificatie }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="status"
+                                  [opties]="this.dataSource.beschikbareFilters[FilterVeld.ZAAK_STATUS]"
+                                  (changed)="dataSource.zoekParameters.filters[FilterVeld.ZAAK_STATUS] = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
         </ng-container>
         <ng-container matColumnDef="status">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'status' | translate }}
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_STATUS">{{ 'status' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.statustypeOmschrijving | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="zaaktype_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="zaaktype"
+                                  [opties]="this.dataSource.beschikbareFilters[FilterVeld.ZAAK_ZAAKTYPE]"
+                                  (changed)="dataSource.zoekParameters.filters[FilterVeld.ZAAK_ZAAKTYPE] = $event; filtersChange()">
+                </zac-facet-filter>
             </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.status | empty }}
-            </td>
         </ng-container>
         <ng-container matColumnDef="zaaktype">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'zaaktype' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.zaaktype | empty }}
-            </td>
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_ZAAKTYPE">{{ 'zaaktype' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.zaaktypeOmschrijving | empty }}</td>
         </ng-container>
-        <ng-container matColumnDef="omschrijving">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'omschrijving' | translate }}
+
+        <ng-container matColumnDef="behandelaar_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="behandelaar"
+                                  [opties]="this.dataSource.beschikbareFilters[FilterVeld.ZAAK_BEHANDELAAR]"
+                                  (changed)="dataSource.zoekParameters.filters[FilterVeld.ZAAK_BEHANDELAAR] = $event; filtersChange()">
+                </zac-facet-filter>
             </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.omschrijving | empty }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="groep">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'groep' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.groep | empty: 'naam' }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="startdatum">
-            <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="'startdatum'">
-                {{ 'startdatum' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.startdatum | datum | empty }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="einddatum">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'einddatum' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.einddatum | datum | empty }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="einddatumGepland">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'einddatumGepland' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.einddatumGepland | datum | empty }}
-                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
-                          *ngIf="isAfterDate(row.einddatumGepland , row.einddatum)">warning
-                </mat-icon>
-            </td>
         </ng-container>
         <ng-container matColumnDef="behandelaar">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'behandelaar' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.behandelaar | empty: 'naam' }}
-            </td>
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_BEHANDELAAR">{{ 'behandelaar' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.behandelaarNaam | empty }}</td>
         </ng-container>
-        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'uiterlijkeEinddatumAfdoening' | translate }}
+
+        <ng-container matColumnDef="resultaat_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="resultaat"
+                                  [opties]="this.dataSource.beschikbareFilters[FilterVeld.ZAAK_RESULTAAT]"
+                                  (changed)="dataSource.zoekParameters.filters[FilterVeld.ZAAK_RESULTAAT] = $event; filtersChange()">
+                </zac-facet-filter>
             </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.uiterlijkeEinddatumAfdoening | datum | empty }}
-                <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
-                          *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening, row.einddatum)">warning
-                </mat-icon>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="toelichting">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'toelichting' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.toelichting | empty }}
-            </td>
         </ng-container>
         <ng-container matColumnDef="resultaat">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>
-                {{ 'resultaat' | translate }}
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_RESULTAAT">{{ 'resultaat' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.resultaattypeOmschrijving | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="omschrijving_filter">
+            <th mat-header-cell *matHeaderCellDef id="omschrijving_filter">
+                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.ZAAK_OMSCHRIJVING] = $event; filtersChange()"></zac-tekst-filter>
             </th>
-            <td mat-cell *matCellDef="let row">
-                {{ row.resultaat | empty: 'naam' }}
+        </ng-container>
+        <ng-container matColumnDef="omschrijving">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'omschrijving' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.omschrijving | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="groep_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="groep"
+                                  [opties]="this.dataSource.beschikbareFilters[FilterVeld.ZAAK_GROEP]"
+                                  (changed)="dataSource.zoekParameters.filters[FilterVeld.ZAAK_GROEP] = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="groep">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_GROEP">{{ 'groep' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.groepNaam | empty}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="startdatum_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-datum-filter label="startdatum"
+                                  [range]="dataSource.zoekParameters.datums[DatumVeld.ZAAK_STARTDATUM]" (changed)="filtersChange()">
+                </zac-datum-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="startdatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_STARTDATUM">{{ 'startdatum' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.startdatum | datum | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="einddatum_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-datum-filter label="einddatum"
+                                  [range]="dataSource.zoekParameters.datums[DatumVeld.ZAAK_EINDDATUM]" (changed)="filtersChange()">
+                </zac-datum-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="einddatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_EINDDATUM">{{ 'einddatum' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.einddatum | datum | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="einddatumGepland_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-datum-filter label="streefdatum"
+                                  [range]="dataSource.zoekParameters.datums[DatumVeld.ZAAK_EINDDATUM_GEPLAND]" (changed)="filtersChange()">
+                </zac-datum-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="einddatumGepland">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.ZAAK_EINDDATUM_GEPLAND">{{ 'einddatumGepland' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | datum | empty }}
+                <mat-icon *ngIf="isAfterDate(row.einddatumGepland)" class="warning" [title]="'msg.datum.overschreden' | translate"></mat-icon>
             </td>
         </ng-container>
 
+        <ng-container matColumnDef="dagenTotStreefdatum_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="dagenTotStreefdatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'dagenTotStreefdatum' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | dagen | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-datum-filter label="uiterlijkedatumafdoening"
+                                  [range]="dataSource.zoekParameters.datums[DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING]" (changed)="filtersChange()">
+                </zac-datum-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="SorteerVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING">{{ 'uiterlijkeEinddatumAfdoening' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+                {{ row.uiterlijkeEinddatumAfdoening | datum | empty }}
+                <mat-icon class="error" [title]="'msg.datum.overschreden' | translate" *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning</mat-icon>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dagenTotFataledatum_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="dagenTotFataledatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'dagenTotFataledatum' | translate }} </th>
+            <td mat-cell *matCellDef="let row">{{ row.uiterlijkeEinddatumAfdoening | dagen | empty }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="toelichting_filter">
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.ZAAK_TOELICHTING] = $event; filtersChange()"></zac-tekst-filter>
+            </th>
+        </ng-container>
+        <ng-container matColumnDef="toelichting">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'toelichting' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.toelichting | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="url_filter" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef>
+                <button mat-icon-button (click)="resetSearch()" title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="wisZoekopdracht_button">
+                    <mat-icon>search_off</mat-icon>
+                </button>
+            </th>
+        </ng-container>
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button (click)="resetSearchCriteria()" title="{{ 'actie.zoekopdracht.wissen' | translate }}"
-                        mat-flat-button id="wisZoekopdracht_button">
+                <button (click)="resetColumns()" title="{{ 'actie.kolommen.reset' | translate }}" mat-icon-button id="wisKolommen_button">
                     <mat-icon>replay</mat-icon>
                 </button>
-                <zac-column-picker [columnSrc]="dataSource.columns"
-                                   (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
+                <zac-column-picker [columnSrc]="dataSource.columns" (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
                 <button mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
-                        [id]="'zaakBekijken_' + row.identificatie +'_button'"
-                        title="{{ 'actie.zaak.bekijken' | translate }}">
+                        [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </button>
             </td>
@@ -182,49 +201,48 @@
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
                         <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
-                            <zac-static-text *ngSwitchCase="'groep'" fxFlex="33" [label]="column | translate"
-                                             [value]="row.groep | empty: 'naam'"></zac-static-text>
-
-                            <zac-static-text *ngSwitchCase="'behandelaar'" fxFlex="33" [label]="column | translate"
-                                             [value]="row.behandelaar | empty: 'naam'"></zac-static-text>
-
-                            <zac-static-text *ngSwitchCase="'einddatumGepland'" fxFlex="33"
-                                             [label]="column | translate"
-                                             [value]="row.einddatumGepland"
-                                             [icon]="getIcon(row, 'einddatumGepland')"></zac-static-text>
-
-                            <zac-static-text *ngSwitchCase="'uiterlijkeEinddatumAfdoening'" fxFlex="33"
-                                             [label]="column | translate"
-                                             [value]="row.uiterlijkeEinddatumAfdoening"
-                                             [icon]="getIcon(row, 'uiterlijkeEinddatumAfdoening')"></zac-static-text>
-
-                            <zac-static-text *ngSwitchDefault fxFlex="33" [label]="column | translate"
-                                             [value]="row[column] | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'einddatumGepland'" [value]="row.einddatumGepland | datum" [icon]="einddatumGeplandIcon"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'dagenTotStreefdatum'" [value]="row.einddatumGepland | dagen" [icon]="einddatumGeplandIcon"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'uiterlijkeEinddatumAfdoening'" [value]="row.uiterlijkeEinddatumAfdoening | datum"
+                                             [icon]="uiterlijkeEinddatumAfdoeningIcon"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'dagenTotFataledatum'" [value]="row.uiterlijkeEinddatumAfdoening | dagen"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'startdatum'" [value]="row.startdatum | datum"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'einddatum'" [value]="row.einddatum | datum"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'zaak.identificatie'" [value]="row.identificatie"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'groep'" [value]="row.groepNaam"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'zaaktype'" [value]="row.zaaktypeOmschrijving"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'status'" [value]="row.statustypeOmschrijving"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'behandelaar'" [value]="row.behandelaarNaam"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'resultaat'" [value]="row.resultaattypeOmschrijving"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
+                            <zac-static-text *ngSwitchDefault [label]="column | translate" [value]="row[column] | translate"
+                                             fxFlex="33"></zac-static-text>
                         </ng-container>
                     </div>
                 </div>
             </td>
         </ng-container>
 
-        <tr mat-header-row
-            *matHeaderRowDef="dataSource.visibleColumns; sticky:true"></tr>
-        <tr mat-row *matRowDef="let row; columns: dataSource.visibleColumns"
-            class="row"
-            [class.expanded-row]="expandedRow === row"
+        <tr mat-header-row *matHeaderRowDef="dataSource.visibleColumns; sticky: true"></tr>
+        <tr mat-header-row *matHeaderRowDef="dataSource.filterColumns; sticky:true"></tr>
+        <tr mat-row *matRowDef="let row; columns: dataSource.visibleColumns" class="row" [class.expanded-row]="expandedRow === row"
             (click)="expandedRow = expandedRow === row ? null : row"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"
-            class="collapsed-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row"></tr>
     </table>
 
-    <ng-container *ngIf="dataSource.totalItems === 0">
-        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
-    </ng-container>
-
-    <mat-paginator #paginator
-                   [length]="dataSource.totalItems"
-                   [pageIndex]="0"
-                   [pageSize]="25"
-                   [pageSizeOptions]="[10, 25, 50, 100]"
-                   sticky>
+    <ng-container *ngIf="dataSource.totalItems === 0"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></ng-container>
+    <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
+                   [pageSizeOptions]="[10, 25, 50, 100]" sticky>
     </mat-paginator>
 </div>

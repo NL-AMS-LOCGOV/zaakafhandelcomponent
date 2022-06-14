@@ -96,21 +96,45 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.menu.push(new LinkMenuItem('parameters', '/admin/parameters', 'tune'));
     }
 
-    readHumanTaskParameters(event: MatSelectChange): void {
+    readPlanItemDefinitions(event: MatSelectChange): void {
+        this.readHumanTaskParameters(event);
+        this.readUserEventListenerParameters(event);
+    }
+
+    private readHumanTaskParameters(event: MatSelectChange): void {
         this.humanTaskParameters = [];
-        const caseDefinition = event.value;
-        if (this.compareObject(caseDefinition, this.parameters.caseDefinition)) {
+        const changedCaseDefinition = event.value;
+        if (this.compareObject(changedCaseDefinition, this.parameters.caseDefinition)) {
             this.humanTaskParameters = this.parameters.humanTaskParameters;
             this.updateHumanTaskForm();
         } else {
-            this.adminService.readCaseDefinition(caseDefinition.key).subscribe(data => {
-                data.planItemDefinitions.forEach(planItemDefinition => {
+            this.adminService.readCaseDefinition(changedCaseDefinition.key).subscribe(caseDefinition => {
+                caseDefinition.humanTaskDefinitions.forEach(humanTaskDefinition => {
                     const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
-                    humanTaskParameter.planItemDefinition = planItemDefinition;
+                    humanTaskParameter.planItemDefinition = humanTaskDefinition;
                     humanTaskParameter.defaultGroep = this.parameters.defaultGroep;
                     this.humanTaskParameters.push(humanTaskParameter);
                 });
                 this.updateHumanTaskForm();
+            });
+        }
+    }
+
+    private readUserEventListenerParameters(event: MatSelectChange): void {
+        this.userEventListenerParameters = [];
+        const changedCaseDefinition = event.value;
+        if (this.compareObject(changedCaseDefinition, this.parameters.caseDefinition)) {
+            this.userEventListenerParameters = this.parameters.userEventListenerParameters;
+            this.updateUserEventListenerForm();
+        } else {
+            this.adminService.readCaseDefinition(changedCaseDefinition.key).subscribe(caseDefinition => {
+                caseDefinition.userEventListenerDefinitions.forEach(userEventListenerDefinition => {
+                    const userEventListenerParameter: UserEventListenerParameter = new UserEventListenerParameter();
+                    userEventListenerParameter.id = userEventListenerDefinition.id;
+                    userEventListenerParameter.naam = userEventListenerDefinition.naam;
+                    this.userEventListenerParameters.push(userEventListenerParameter);
+                });
+                this.updateUserEventListenerForm();
             });
         }
     }
@@ -132,17 +156,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.createZaakbeeindigForm();
     }
 
-    updateHumanTaskForm() {
-        this.humanTaskFormGroup = this.formBuilder.group({});
-        this.humanTaskParameters.forEach(parameter => {
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
-                new FormControl(parameter.formulierDefinitie, [Validators.required]));
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
-                new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
-        });
-    }
-
     isHumanTaskParameterValid(humanTaskParameter: HumanTaskParameter): boolean {
         return this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid &&
             this.getHumanTaskControl(humanTaskParameter, 'formulierDefinitie').valid &&
@@ -153,7 +166,18 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         return this.UserEventListenerFormGroup.get(`${parameter.id}__${field}`) as FormControl;
     }
 
-    updateUserEventListenerForm() {
+    private updateHumanTaskForm() {
+        this.humanTaskFormGroup = this.formBuilder.group({});
+        this.humanTaskParameters.forEach(parameter => {
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
+                new FormControl(parameter.formulierDefinitie, [Validators.required]));
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
+                new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
+        });
+    }
+
+    private updateUserEventListenerForm() {
         this.UserEventListenerFormGroup = this.formBuilder.group({});
         this.userEventListenerParameters.forEach(parameter => {
             this.UserEventListenerFormGroup.addControl(parameter.id + '__toelichting', new FormControl(parameter.toelichting));

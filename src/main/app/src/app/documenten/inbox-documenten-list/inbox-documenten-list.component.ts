@@ -33,7 +33,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     displayedColumns: string[] = ['enkelvoudiginformatieobjectID', 'creatiedatum', 'titel', 'actions'];
     defaults: ListParameters;
 
-    constructor(private service: InboxDocumentenService,
+    constructor(private inboxDocumentenService: InboxDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
@@ -51,7 +51,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
             switchMap(() => {
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
-                return this.service.list(this.getListParameters());
+                return this.inboxDocumentenService.list(this.getListParameters());
             }),
             map(data => {
                 this.isLoadingResults = false;
@@ -89,7 +89,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.document.verwijderen.bevestigen', {document: inboxDocument.titel}),
-                this.service.delete(inboxDocument)
+                this.inboxDocumentenService.delete(inboxDocument)
             )
         }).afterClosed().subscribe(result => {
             if (result) {

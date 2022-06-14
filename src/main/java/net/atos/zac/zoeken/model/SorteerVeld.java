@@ -19,7 +19,7 @@ public enum SorteerVeld {
     ZAAK_UITERLIJKE_EINDDATUM_AFDOENING("zaak_uiterlijkeEinddatumAfdoening"),
     ZAAK_COMMUNICATIEKANAAL("zaak_communicatiekanaal"),
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
-    ZAAK_RESULTAATTYPE("zaak_resultaattypeOmschrijving"),
+    ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving"),
     ZAAK_AANTAL_OPENSTAANDE_TAKEN("zaak_aantalOpenstaandeTaken"),
     INFORMATIEOBJECT_TITEL("informatieobject_titel_sort"),
     INFORMATIEOBJECT_ZAAK_IDENTIFICATIE("informatieobject_zaakIdentificatie"),

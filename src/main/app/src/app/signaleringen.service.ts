@@ -8,7 +8,7 @@ import {SignaleringType} from './shared/signaleringen/signalering-type';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {ZaakOverzicht} from './zaken/model/zaak-overzicht';
 import {catchError, switchMap} from 'rxjs/operators';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from './fout-afhandeling/fout-afhandeling.service';
 import {Taak} from './taken/model/taak';
 import {EnkelvoudigInformatieobject} from './informatie-objecten/model/enkelvoudig-informatieobject';
@@ -33,30 +33,26 @@ export class SignaleringenService {
 
     listDashboardSignaleringTypen(): Observable<SignaleringType[]> {
         return this.http.get<SignaleringType[]>(`${this.basepath}/typen/dashboard`).pipe(
-            catchError(this.handleError)
+            catchError((err) => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listZakenSignalering(signaleringType: SignaleringType): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/zaken/${signaleringType}`).pipe(
-            catchError(this.handleError)
+            catchError((err) => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listTakenSignalering(signaleringType: SignaleringType): Observable<Taak[]> {
         return this.http.get<Taak[]>(`${this.basepath}/taken/${signaleringType}`).pipe(
-            catchError(this.handleError)
+            catchError((err) => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listInformatieobjectenSignalering(signaleringType: SignaleringType): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten/${signaleringType}`).pipe(
-            catchError(this.handleError)
+            catchError((err) => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private handleError(err: HttpErrorResponse): Observable<never> {
-        return this.foutAfhandelingService.redirect(err);
     }
 
 }

@@ -74,6 +74,8 @@ public class ConfiguratieService {
 
     public static final String OMSCHRIJVING_TAAK_DOCUMENT = "taak-document";
 
+    public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
+
     public static final String TAAL_NEDERLANDS = "dut"; // ISO 639-2/B
 
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)

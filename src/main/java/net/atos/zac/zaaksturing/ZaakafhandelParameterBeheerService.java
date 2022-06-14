@@ -40,7 +40,8 @@ public class ZaakafhandelParameterBeheerService {
 
     public ZaakafhandelParameters createZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getHumanTaskParameters().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getUserEventListenerParameters().forEach(ValidationUtil::valideerObject);
         entityManager.persist(zaakafhandelParameters);
         return zaakafhandelParameters;
     }
@@ -61,7 +62,7 @@ public class ZaakafhandelParameterBeheerService {
 
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getHumanTaskParameters().forEach(ValidationUtil::valideerObject);
         return entityManager.merge(zaakafhandelParameters);
     }
 

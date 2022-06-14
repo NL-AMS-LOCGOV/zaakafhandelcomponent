@@ -7,35 +7,56 @@ import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {tap} from 'rxjs/operators';
+import {finalize, tap} from 'rxjs/operators';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ColumnPickerValue} from '../column-picker/column-picker-value';
 import {ZoekResultaat} from '../../../zoeken/model/zoek-resultaat';
 import {SessionStorageUtil} from '../../storage/session-storage.util';
+import {ZoekParameters} from '../../../zoeken/model/zoek-parameters';
+import {ZoekenService} from '../../../zoeken/zoeken.service';
+import {UtilService} from '../../../core/service/util.service';
+import {ZoekObject} from '../../../zoeken/model/zoek-object';
 
-export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
+export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
+    zoekParameters: ZoekParameters;
     beschikbareFilters: { [key: string]: string[] } = {};
     totalItems: number = 0;
     paginator: MatPaginator;
     sort: MatSort;
 
-    private tableSubject = new BehaviorSubject<OBJECT[]>([]);
+    private tableSubject = new BehaviorSubject<ZoekObject[]>([]);
     private _defaultColumns: Map<string, ColumnPickerValue>;
     private _columns: Map<string, ColumnPickerValue>;
     private _sessionKey: string;
     private _visibleColumns: Array<string>;
     private _filterColumns: Array<string>;
     private _detailExpandColumns: Array<string>;
-
     private subscriptions$: Subscription[] = [];
+
+    protected constructor(private tableName: string, private zoekenService: ZoekenService, private utilService: UtilService) {
+        super();
+        this.zoekParameters = SessionStorageUtil.getItem(`${tableName}Zoekparameters`, new ZoekParameters());
+    }
+
+    protected abstract initZoekparameters(zoekParameters: ZoekParameters): void;
+
+    private _getZoekParameters(): ZoekParameters {
+        this.initZoekparameters(this.zoekParameters);
+        this.zoekParameters.page = this.paginator.pageIndex;
+        this.zoekParameters.rows = this.paginator.pageSize;
+        this.zoekParameters.sorteerRichting = this.sort.direction;
+        this.zoekParameters.sorteerVeld = this.sort.active;
+        SessionStorageUtil.setItem(this.tableName + 'Zoekparameters', this.zoekParameters);
+        return this.zoekParameters;
+    }
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
         this.subscriptions$.push(this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0));
         this.subscriptions$.push(merge(this.sort.sortChange, this.paginator.page).pipe(
             tap(() => this.load())
         ).subscribe());
-        return this.tableSubject.asObservable();
+        return this.tableSubject.asObservable() as Observable<OBJECT[]>;
     }
 
     /**
@@ -47,8 +68,15 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
         this.tableSubject.complete();
     }
 
-    get data(): OBJECT[] {
-        return this.tableSubject.value;
+    load(): void {
+        this.utilService.setLoading(true);
+        this.zoekenService.list(this._getZoekParameters())
+            .pipe(
+                finalize(() => this.utilService.setLoading(false))
+            ).subscribe(zaakResponse => {
+                this.setData(zaakResponse);
+            }
+        );
     }
 
     clear() {
@@ -56,21 +84,19 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
         this.tableSubject.next([]);
     }
 
-    abstract load();
-
     drop(event: CdkDragDrop<string[]>) {
         const extraIndex = this.visibleColumns.includes('select') ? 1 : 0;
         moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
         moveItemInArray(this.filterColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
 
-    protected setData(response: ZoekResultaat<OBJECT>): void {
+    setData(response: ZoekResultaat<ZoekObject>): void {
         this.totalItems = response.totaal;
         this.tableSubject.next(response.resultaten);
         this.beschikbareFilters = response.filters;
     }
 
-    public setViewChilds(paginator: MatPaginator, sort: MatSort): void {
+    setViewChilds(paginator: MatPaginator, sort: MatSort): void {
         this.paginator = paginator;
         this.sort = sort;
     }
@@ -79,9 +105,9 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
      * Columns can only be instantiated with the initColumns method
      *
      * @param defaultColumns available columns
-     * @param key sessionKey
      */
-    protected _initColumns(key: string, defaultColumns: Map<string, ColumnPickerValue>): void {
+    initColumns(defaultColumns: Map<string, ColumnPickerValue>): void {
+        const key = this.tableName + 'Columns';
         const columnsString = JSON.stringify(Array.from(defaultColumns.entries()));
         const sessionColumns: string = SessionStorageUtil.getItem(key, columnsString);
         const columns: Map<string, ColumnPickerValue> = new Map(JSON.parse(sessionColumns));
@@ -108,6 +134,15 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
         this.storeColumns(columns);
     }
 
+    reset() {
+        this.zoekParameters = new ZoekParameters();
+        this.sort.active = this.zoekParameters.sorteerVeld;
+        this.sort.direction = this.zoekParameters.sorteerRichting;
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = this.zoekParameters.rows;
+        this.load();
+    }
+
     private storeColumns(columns: Map<string, ColumnPickerValue>): void {
         const columnsString = JSON.stringify(Array.from(columns.entries()));
         SessionStorageUtil.setItem(this._sessionKey, columnsString);
@@ -128,5 +163,9 @@ export abstract class ZoekenTableDataSource<OBJECT> extends DataSource<OBJECT> {
 
     get filterColumns(): Array<string> {
         return this._filterColumns;
+    }
+
+    get data(): OBJECT[] {
+        return this.tableSubject.value as OBJECT[];
     }
 }

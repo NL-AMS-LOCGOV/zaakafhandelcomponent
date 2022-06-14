@@ -8,7 +8,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 
 @Component({
-    selector: 'zac-confirm-dialog',
     templateUrl: 'confirm-dialog.component.html',
     styleUrls: ['./confirm-dialog.component.less']
 })

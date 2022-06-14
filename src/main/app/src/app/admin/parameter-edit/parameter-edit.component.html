@@ -28,7 +28,7 @@
                         <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                             <mat-label>{{'caseDefinition' | translate}}</mat-label>
                             <mat-select placeholder="{{'model.-kies-' | translate}}"
-                                        (selectionChange)="readHumanTaskParameters($event)"
+                                        (selectionChange)="readPlanItemDefinitions($event)"
                                         [formControl]="caseDefinitionControl" [compareWith]="compareObject">
                                 <mat-option *ngFor="let cd of caseDefinitions | async"
                                             [value]="cd">{{ cd.naam }}</mat-option>

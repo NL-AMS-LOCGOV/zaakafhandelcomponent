@@ -6,6 +6,7 @@
 package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
+import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
@@ -270,7 +271,8 @@ public class TakenRESTService {
                 final EnkelvoudigInformatieobjectWithInhoud document = restInformatieobjectConverter.convert(restTaakDocumentData, uploadedFile);
                 final ZaakInformatieobject zaakInformatieobject =
                         zgwApiService.createZaakInformatieobjectForZaak(zaak, document, document.getTitel(),
-                                                                        OMSCHRIJVING_TAAK_DOCUMENT);
+                                                                        OMSCHRIJVING_TAAK_DOCUMENT,
+                                                                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
                 restTaak.taakdata.replace(key, UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString());
                 httpSession.removeAttribute(fileKey);
             }

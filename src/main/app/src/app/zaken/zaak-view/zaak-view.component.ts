@@ -58,7 +58,7 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
@@ -334,6 +334,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
         }
 
+        if (!this.zaak.rechten.open) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
+        }
+
         const tail: MenuItem[] = [];
 
         if (!this.zaak.initiatorIdentificatie) {
@@ -471,7 +475,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
-    openZaakAfbrekenDialog(): void {
+    private openZaakAfbrekenDialog(): void {
         const dialogData = new DialogData([
                 new SelectFormFieldBuilder().id('reden')
                                             .label('actie.zaak.afbreken.reden')
@@ -479,7 +483,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build()],
-            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']));
+            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
+            ));
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
         this.websocketService.doubleSuspendListener(this.zaakListener);
@@ -490,6 +496,21 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.updateZaak();
                 this.loadTaken();
                 this.utilService.openSnackbar('actie.zaak.afgebroken');
+            }
+        });
+    }
+
+    private openZaakHeropenenDialog(): void {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
+                this.zakenService.heropenen(this.zaak.uuid).pipe(
+                    tap(() => this.websocketService.suspendListener(this.zaakListener))
+                ))
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.updateZaak();
+                this.utilService.openSnackbar('msg.zaak.heropenen.uitgevoerd', {zaak: this.zaak.identificatie});
             }
         });
     }

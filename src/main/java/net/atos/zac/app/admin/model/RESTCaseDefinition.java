@@ -5,20 +5,15 @@
 
 package net.atos.zac.app.admin.model;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-
-import net.atos.zac.app.planitems.model.PlanItemType;
 
 public class RESTCaseDefinition {
-    public String naam;
 
     public String key;
 
-    public List<RESTPlanItemDefinition> planItemDefinitions;
+    public String naam;
+
+    public List<RESTPlanItemDefinition> humanTaskDefinitions;
 
     public List<RESTPlanItemDefinition> userEventListenerDefinitions;
 
@@ -29,19 +24,4 @@ public class RESTCaseDefinition {
         this.naam = naam;
         this.key = key;
     }
-
-    public List<RESTPlanItemDefinition> getHumanTaskPlanItemDefinitions() {
-        if (CollectionUtils.isEmpty(planItemDefinitions)) {
-            return Collections.emptyList();
-        }
-        return planItemDefinitions.stream().filter(planItemDefinition -> PlanItemType.HUMAN_TASK == planItemDefinition.type).collect(Collectors.toList());
-    }
-
-    public List<RESTPlanItemDefinition> getUserEventListenerDefinitions() {
-        if (CollectionUtils.isEmpty(userEventListenerDefinitions)) {
-            return Collections.emptyList();
-        }
-        return userEventListenerDefinitions.stream().filter(planItemDefinition -> PlanItemType.USER_EVENT_LISTENER == planItemDefinition.type).collect(Collectors.toList());
-    }
-
 }

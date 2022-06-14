@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {Notitie} from './model/notitie';
@@ -23,29 +23,25 @@ export class NotitieService {
     listNotities(type: string, uuid: string): Observable<Notitie[]> {
 
         return this.http.get<Notitie[]>(`${this.basepath}/${type}/${uuid}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     createNotitie(notitie: Notitie): Observable<Notitie> {
         return this.http.post<Notitie>(`${this.basepath}`, notitie).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     updateNotitie(notitie: Notitie): Observable<Notitie> {
         return this.http.patch<Notitie>(`${this.basepath}`, notitie).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     deleteNotitie(id: number): Observable<any> {
         return this.http.delete(`${this.basepath}/${id}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private handleError(err: HttpErrorResponse): Observable<never> {
-        return this.foutAfhandelingService.redirect(err);
     }
 }

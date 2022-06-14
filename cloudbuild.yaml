@@ -11,6 +11,7 @@ steps:
       - CLOUDSDK_COMPUTE_ZONE=europe-west4-a
       - CLOUDSDK_CONTAINER_CLUSTER=develop
     args: [ 'rollout', 'restart', 'deployment', '${_DEPLOYMENT}' ]
+timeout: 900s
 substitutions:
   _REPOSITORY: common-ground
   _DEPLOYMENT: zaakafhandelcomponent
