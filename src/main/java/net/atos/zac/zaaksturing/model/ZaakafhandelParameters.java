@@ -140,7 +140,7 @@ public class ZaakafhandelParameters {
         this.nietOntvankelijkResultaattype = nietOntvankelijkResultaattype;
     }
 
-    public Collection<HumanTaskParameters> getHumanTaskParametersCollection() {
+    public Collection<HumanTaskParameters> getHumanTaskParameters() {
         if (humanTaskParametersCollection == null) {
             humanTaskParametersCollection = new HashSet<>();
         }
@@ -149,11 +149,11 @@ public class ZaakafhandelParameters {
 
     public void addHumanTaskParameters(HumanTaskParameters humanTaskParameters) {
         humanTaskParameters.setZaakafhandelParameters(this);
-        getHumanTaskParametersCollection().add(humanTaskParameters);
+        getHumanTaskParameters().add(humanTaskParameters);
     }
 
-    public void setHumanTaskParametersCollection(final Collection<HumanTaskParameters> collection) {
-        getHumanTaskParametersCollection().clear();
+    public void setHumanTaskParameters(final Collection<HumanTaskParameters> collection) {
+        getHumanTaskParameters().clear();
         collection.forEach(this::addHumanTaskParameters);
     }
 

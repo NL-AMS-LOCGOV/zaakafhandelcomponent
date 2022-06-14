@@ -6,6 +6,7 @@
 package net.atos.zac.app.admin.converter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class RESTZaakafhandelParametersConverter {
@@ -50,57 +52,67 @@ public class RESTZaakafhandelParametersConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public RESTZaakafhandelParameters convert(final ZaakafhandelParameters parameters, boolean inclusiefPlanitems) {
-        final RESTZaakafhandelParameters restParameters = new RESTZaakafhandelParameters();
-        restParameters.id = parameters.getId();
-        restParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(parameters.getZaakTypeUUID()));
-        restParameters.defaultGroep = groupConverter.convertGroupId(parameters.getGroepID());
-        restParameters.defaultBehandelaar = userConverter.convertUserId(parameters.getGebruikersnaamMedewerker());
-        restParameters.einddatumGeplandWaarschuwing = parameters.getEinddatumGeplandWaarschuwing();
-        restParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = parameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
-        if (parameters.getNietOntvankelijkResultaattype() != null) {
-            restParameters.zaakNietOntvankelijkResultaat = restZaakResultaattypeConverter.convertToRest(
-                    ztcClientService.readResultaattype(parameters.getNietOntvankelijkResultaattype()));
+    public RESTZaakafhandelParameters convert(final ZaakafhandelParameters zaakafhandelParameters, boolean inclusiefPlanitems) {
+        final RESTZaakafhandelParameters restZaakafhandelParameters = new RESTZaakafhandelParameters();
+        restZaakafhandelParameters.id = zaakafhandelParameters.getId();
+        restZaakafhandelParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
+        restZaakafhandelParameters.defaultGroep = groupConverter.convertGroupId(zaakafhandelParameters.getGroepID());
+        restZaakafhandelParameters.defaultBehandelaar = userConverter.convertUserId(zaakafhandelParameters.getGebruikersnaamMedewerker());
+        restZaakafhandelParameters.einddatumGeplandWaarschuwing = zaakafhandelParameters.getEinddatumGeplandWaarschuwing();
+        restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = zaakafhandelParameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
+        if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
+            restZaakafhandelParameters.zaakNietOntvankelijkResultaat = restZaakResultaattypeConverter.convertToRest(
+                    ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
         }
-        restParameters.caseDefinition = caseDefinitionConverter.convertToRest(parameters.getCaseDefinitionID());
-        if (inclusiefPlanitems && restParameters.caseDefinition != null) {
-            final List<RESTHumanTaskParameters> list = new ArrayList<>();
-            //remove non-existent plan-item-definition params and add new plan-item-definition
-            for (RESTPlanItemDefinition pDef : restParameters.caseDefinition.planItemDefinitions) {
-                boolean found = false;
-                final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
-                for (HumanTaskParameters htParam : parameters.getHumanTaskParametersCollection()) {
-                    if (htParam.getPlanItemDefinitionID().equals(pDef.id)) {
-                        found = true;
-                        restHumanTaskParameters.id = htParam.getId();
-                        restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(htParam.getGroepID());
-                        restHumanTaskParameters.formulierDefinitie = FormulierDefinitie.valueOf(htParam.getFormulierDefinitieID());
-                        restHumanTaskParameters.planItemDefinition = pDef;
-                        restHumanTaskParameters.doorlooptijd = htParam.getDoorlooptijd();
-                        break;
-                    }
-                }
-                if (!found) {
-                    restHumanTaskParameters.planItemDefinition = pDef;
-                }
-                list.add(restHumanTaskParameters);
-            }
-            restParameters.humanTaskParameters = list;
+        restZaakafhandelParameters.caseDefinition = caseDefinitionConverter.convertToRest(zaakafhandelParameters.getCaseDefinitionID());
+        if (inclusiefPlanitems && restZaakafhandelParameters.caseDefinition != null) {
+            restZaakafhandelParameters.humanTaskParameters = convertToHumanTaskParameters(restZaakafhandelParameters.caseDefinition.humanTaskDefinitions,
+                                                                                          zaakafhandelParameters.getHumanTaskParameters());
+            restZaakafhandelParameters.userEventListenerParameters = convertToUserEventListenerParameeters(
+                    restZaakafhandelParameters.caseDefinition.userEventListenerDefinitions, zaakafhandelParameters.getUserEventListenerParameters());
+        }
+        restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertToRest(zaakafhandelParameters.getZaakbeeindigParameters());
+        return restZaakafhandelParameters;
+    }
 
-            final List<RESTUserEventListenerParameter> actieParameters = new ArrayList<>();
-            restParameters.caseDefinition.userEventListenerDefinitions.forEach(planItem -> {
-                final RESTUserEventListenerParameter restUserEventListenerParameter = new RESTUserEventListenerParameter();
-                restUserEventListenerParameter.id = planItem.id;
-                restUserEventListenerParameter.naam = planItem.naam;
-                parameters.getUserEventListenerParameters().stream()
-                        .filter(uelParameter -> uelParameter.getPlanItemDefinitionID().equals(planItem.id)).forEach(
-                                uelParameter -> restUserEventListenerParameter.toelichting = uelParameter.getToelichting());
-                actieParameters.add(restUserEventListenerParameter);
-            });
-            restParameters.userEventListenerParameters = actieParameters;
+    private List<RESTHumanTaskParameters> convertToHumanTaskParameters(final List<RESTPlanItemDefinition> humanTaskDefinitions,
+            final Collection<HumanTaskParameters> humanTaskParametersCollection) {
+        final List<RESTHumanTaskParameters> restHumanTaskParametersList = new ArrayList<>();
+        //remove non-existent plan-item-definition params and add new plan-item-definition
+        for (final RESTPlanItemDefinition humanTaskDefinition : humanTaskDefinitions) {
+            boolean found = false;
+            final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
+            for (final HumanTaskParameters humanTaskParameters : humanTaskParametersCollection) {
+                if (humanTaskParameters.getPlanItemDefinitionID().equals(humanTaskDefinition.id)) {
+                    restHumanTaskParameters.id = humanTaskParameters.getId();
+                    restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(humanTaskParameters.getGroepID());
+                    restHumanTaskParameters.formulierDefinitie = FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
+                    restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
+                    restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
+            }
         }
-        restParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertToRest(parameters.getZaakbeeindigParameters());
-        return restParameters;
+        return restHumanTaskParametersList;
+    }
+
+    private List<RESTUserEventListenerParameter> convertToUserEventListenerParameeters(final List<RESTPlanItemDefinition> userEventListenerDefinitions,
+            final Collection<UserEventListenerParameters> userEventListenerParametersCollection) {
+        final List<RESTUserEventListenerParameter> restUserEventListenerParameters = new ArrayList<>();
+        userEventListenerDefinitions.forEach(userEventListenerDefinition -> {
+            final RESTUserEventListenerParameter restUserEventListenerParameter = new RESTUserEventListenerParameter();
+            restUserEventListenerParameter.id = userEventListenerDefinition.id;
+            restUserEventListenerParameter.naam = userEventListenerDefinition.naam;
+            userEventListenerParametersCollection.stream()
+                    .filter(userEventListenerParameters -> userEventListenerParameters.getPlanItemDefinitionID().equals(userEventListenerDefinition.id))
+                    .forEach(userEventListenerParameters -> restUserEventListenerParameter.toelichting = userEventListenerParameters.getToelichting());
+            restUserEventListenerParameters.add(restUserEventListenerParameter);
+        });
+        return restUserEventListenerParameters;
     }
 
     public ZaakafhandelParameters convert(final RESTZaakafhandelParameters restParameters) {
@@ -131,7 +143,7 @@ public class RESTZaakafhandelParametersConverter {
             }
             list.add(humanTaskParameters);
         });
-        parameters.setHumanTaskParametersCollection(list);
+        parameters.setHumanTaskParameters(list);
         parameters.setZaakbeeindigParameters(zaakbeeindigParameterConverter.convertToDomain(restParameters.zaakbeeindigParameters));
         parameters.setUserEventListenerParameters(restUserEventListenerParametersConverter
                                                           .convertToDomain(restParameters.userEventListenerParameters));

@@ -8,5 +8,6 @@ import {PlanItemDefinition} from './plan-item-definition';
 export class CaseDefinition {
     key: string;
     naam: string;
-    planItemDefinitions: PlanItemDefinition[];
+    humanTaskDefinitions: PlanItemDefinition[];
+    userEventListenerDefinitions: PlanItemDefinition[];
 }

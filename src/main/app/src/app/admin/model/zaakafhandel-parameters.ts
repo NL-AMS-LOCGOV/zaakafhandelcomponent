@@ -15,12 +15,12 @@ import {ZaakResultaat} from './zaak-resultaat';
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
     caseDefinition: CaseDefinition;
-    humanTaskParameters: HumanTaskParameter[];
-    userEventListenerParameters: UserEventListenerParameter[];
-    zaakbeeindigParameters: ZaakbeeindigParameter[];
-    defaultGroep: Group;
     defaultBehandelaar: User;
+    defaultGroep: Group;
     einddatumGeplandWaarschuwing: number;
     uiterlijkeEinddatumAfdoeningWaarschuwing: number;
     zaakNietOntvankelijkResultaat: ZaakResultaat;
+    humanTaskParameters: HumanTaskParameter[];
+    userEventListenerParameters: UserEventListenerParameter[];
+    zaakbeeindigParameters: ZaakbeeindigParameter[];
 }
