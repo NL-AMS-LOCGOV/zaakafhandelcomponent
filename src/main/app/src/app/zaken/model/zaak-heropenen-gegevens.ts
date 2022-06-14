@@ -3,7 +3,5 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ZaakAfbrekenGegevens {
-    zaakbeeindigRedenId: string;
+export class ZaakHeropenenGegevens {
 }
-

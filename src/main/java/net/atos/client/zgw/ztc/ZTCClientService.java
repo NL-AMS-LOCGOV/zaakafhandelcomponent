@@ -149,6 +149,18 @@ public class ZTCClientService implements Caching {
     }
 
     /**
+     * Read {@link Statustype} via its UUID.
+     * Throws a RuntimeException if the {@link Statustype} can not be read.
+     *
+     * @param statustypeUUID UUID of {@link Statustype}.
+     * @return {@link Statustype}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_STATUSTYPE)
+    public Statustype readStatustype(final UUID statustypeUUID) {
+        return ztcClient.statustypeRead(statustypeUUID);
+    }
+
+    /**
      * Read the {@link Statustype} of {@link Zaaktype}.
      *
      * @param zaaktypeURI URI of {@link Zaaktype}.
@@ -157,36 +169,6 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
     public List<Statustype> readStatustypen(final URI zaaktypeURI) {
         return ztcClient.statustypeList(new StatustypeListParameters(zaaktypeURI)).getSinglePageResults();
-    }
-
-    /**
-     * Read {@link Statustype} of {@link Zaaktype} and Omschrijving of {@link Statustype}.
-     * Throws a RuntimeException if the {@link Statustype} can not be read.
-     *
-     * @param zaaktypeURI  URI of {@link Zaaktype}.
-     * @param omschrijving Omschrijving of {@link Statustype}/
-     * @return {@link Statustype}. Never 'null'!
-     */
-    public Statustype readStatustype(final List<Statustype> statustypes, final String omschrijving, final URI zaaktypeURI) {
-        return statustypes.stream()
-                .filter(statustype -> omschrijving.equals(statustype.getOmschrijving()))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("Zaaktype '%s': Statustype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
-    }
-
-    /**
-     * Read the Eind {@link Statustype} of {@link Zaaktype}.
-     * Throws a RuntimeException if the {@link Statustype} can not be read.
-     *
-     * @param zaaktypeURI URI of {@link Zaaktype}.
-     * @return {@link Statustype}. Never 'null'!
-     */
-    public Statustype readStatustypeEind(final List<Statustype> statustypes, final URI zaaktypeURI) {
-        return statustypes.stream()
-                .filter(Statustype::getEindstatus)
-                .findAny()
-                .orElseThrow(() -> new RuntimeException(String.format("Zaaktype '%s': No eind Status found for Zaaktype.", zaaktypeURI)));
     }
 
     /**

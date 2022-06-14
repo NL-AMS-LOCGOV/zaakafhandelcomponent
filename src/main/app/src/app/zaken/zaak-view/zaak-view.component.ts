@@ -334,6 +334,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
         }
 
+        if (!this.zaak.rechten.open) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
+        }
+
         const tail: MenuItem[] = [];
 
         if (!this.zaak.initiatorIdentificatie) {
@@ -471,7 +475,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         return this.planItemsService.doUserEventListener(userEventListenerData);
     }
 
-    openZaakAfbrekenDialog(): void {
+    private openZaakAfbrekenDialog(): void {
         const dialogData = new DialogData([
                 new SelectFormFieldBuilder().id('reden')
                                             .label('actie.zaak.afbreken.reden')
@@ -490,6 +494,21 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.updateZaak();
                 this.loadTaken();
                 this.utilService.openSnackbar('actie.zaak.afgebroken');
+            }
+        });
+    }
+
+    private openZaakHeropenenDialog(): void {
+        this.websocketService.doubleSuspendListener(this.zaakListener);
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
+                this.zakenService.heropenen(this.zaak.uuid)
+            )
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.updateZaak();
+                this.utilService.openSnackbar('msg.zaak.heropenen.uitgevoerd', {zaak: this.zaak.identificatie});
             }
         });
     }

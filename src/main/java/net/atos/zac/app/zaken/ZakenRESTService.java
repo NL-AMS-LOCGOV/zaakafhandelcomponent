@@ -78,6 +78,7 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -442,16 +443,23 @@ public class ZakenRESTService {
         indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
     }
 
-    @PUT
-    @Path("afbreken")
-    public void afbreken(final RESTZaakAfbrekenGegevens zaakAfbrekenGegevens) {
-        Zaak zaak = zrcClientService.readZaak(zaakAfbrekenGegevens.zaakUUID);
+    @PATCH
+    @Path("/zaak/{uuid}/afbreken")
+    public void afbreken(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfbrekenGegevens afbrekenGegevens) {
+        Zaak zaak = zrcClientService.readZaak(zaakUUID);
         final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameterBeheerService.readZaakbeeindigParameter(
-                uuidFromURI(zaak.getZaaktype()), zaakAfbrekenGegevens.zaakbeeindigRedenId);
+                uuidFromURI(zaak.getZaaktype()), afbrekenGegevens.zaakbeeindigRedenId);
         zgwApiService.createResultaatForZaak(zaak, zaakbeeindigParameter.getResultaattype(), zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         zgwApiService.endZaak(zaak, zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         // Terminate case after the zaak is ended in order to prevent the EndCaseLifecycleListener from ending the zaak.
-        flowableService.terminateCase(zaakAfbrekenGegevens.zaakUUID);
+        flowableService.terminateCase(zaakUUID);
+    }
+
+    @PATCH
+    @Path("/zaak/{uuid}/heropenen")
+    public void heropenen(@PathParam("uuid") final UUID zaakUUID, final RESTZaakHeropenenGegevens heropenenGegevens) {
+        Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        zgwApiService.heropenZaak(zaak);
     }
 
     @PUT
