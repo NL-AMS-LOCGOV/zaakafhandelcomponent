@@ -15,7 +15,7 @@
                 <zac-skeleton-loader [loading$]="bedrijf$">
                     {{bedrijf?.naam}}
                 </zac-skeleton-loader>
-                <button *ngIf="bedrijf" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(bedrijf)">
+                <button *ngIf="bedrijf && isWijzigbaar" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(bedrijf)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-panel-description>

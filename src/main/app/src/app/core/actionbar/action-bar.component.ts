@@ -20,7 +20,9 @@ export class ActionBarComponent implements AfterViewInit {
 
     @ViewChild(TemplateRef) template: TemplateRef<any>;
     addAction$: Observable<ActionBarAction>;
+    disableActionBar$: Observable<boolean>;
     actions: ActionBarAction[] = [];
+    actionBarDisabled: boolean = false;
     matBottomSheetRef: MatBottomSheetRef;
 
     constructor(readonly bottomSheet: MatBottomSheet, public utilService: UtilService, private router: Router) {
@@ -49,6 +51,10 @@ export class ActionBarComponent implements AfterViewInit {
             if (this.actions.length === 1) {
                 this.matBottomSheetRef = this.bottomSheet.open(this.template, {closeOnNavigation: false, hasBackdrop: false});
             }
+        });
+        this.disableActionBar$ = this.utilService.disableActionBar$.asObservable();
+        this.disableActionBar$.subscribe(state => {
+            this.actionBarDisabled = state;
         });
     }
 }

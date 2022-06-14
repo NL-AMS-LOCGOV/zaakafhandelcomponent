@@ -81,6 +81,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     menu: MenuItem[];
     action: string;
     indicaties: Indicatie[];
+    isWijzigbaar: boolean = false;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -156,6 +157,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
+        this.setWijzigbaar(zaak);
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
@@ -199,9 +201,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
+        this.utilService.disableActionBar(false);
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakTakenListener);
+    }
+
+    private setWijzigbaar(zaak: Zaak) {
+        this.isWijzigbaar = zaak.rechten.open;
+        this.utilService.disableActionBar(!zaak.rechten.open);
     }
 
     private setEditableFormFields(): void {
@@ -308,62 +316,65 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
-            this.actionsSidenav.open();
-            this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
-        }, 'upload_file'));
-
-        this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-            this.actionsSidenav.open();
-            this.action = SideNavAction.DOCUMENT_MAKEN;
-        }, 'note_add'));
-
-        this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
-            this.actionsSidenav.open();
-            this.action = SideNavAction.MAIL_VERSTUREN;
-        }, 'mail'));
-
-        if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
-            this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
+        if (this.isWijzigbaar) {
+            this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
-                this.action = SideNavAction.ONTVANGSTBEVESTIGING;
-            }, 'mark_email_read'));
-        }
+                this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+            }, 'upload_file'));
 
-        if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
-        }
-
-        if (!this.zaak.rechten.open) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
-        }
-
-        const tail: MenuItem[] = [];
-
-        if (!this.zaak.initiatorIdentificatie) {
-            tail.push(new HeaderMenuItem('initiator.toevoegen'));
-            tail.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
+            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.actionsSidenav.open();
-                this.action = SideNavAction.ZOEK_PERSOON;
-            }, 'emoji_people'));
-            tail.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.ZOEK_BEDRIJF;
-            }, 'business'));
-        }
+                this.action = SideNavAction.DOCUMENT_MAKEN;
+            }, 'note_add'));
 
-        this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
-            const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
-            const humanTaskItems: PlanItem[] = planItems.filter(planItem => planItem.type === PlanItemType.HumanTask);
-            if (actieItems.length > 0) {
-                this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
+            this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.MAIL_VERSTUREN;
+            }, 'mail'));
+
+            if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
+                this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.ONTVANGSTBEVESTIGING;
+                }, 'mark_email_read'));
             }
-            this.menu = this.menu.concat(tail);
-            if (humanTaskItems.length > 0) {
-                this.menu.push(new HeaderMenuItem('actie.taak.starten'));
-                this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
+
+            if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
+                this.menu.push(
+                    new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
-        });
+
+            const tail: MenuItem[] = [];
+
+            if (!this.zaak.initiatorIdentificatie) {
+                tail.push(new HeaderMenuItem('initiator.toevoegen'));
+                tail.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.ZOEK_PERSOON;
+                }, 'emoji_people'));
+                tail.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.ZOEK_BEDRIJF;
+                }, 'business'));
+            }
+
+            this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
+                const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
+                const humanTaskItems: PlanItem[] = planItems.filter(
+                    planItem => planItem.type === PlanItemType.HumanTask);
+                if (actieItems.length > 0) {
+                    this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
+                }
+                this.menu = this.menu.concat(tail);
+                if (humanTaskItems.length > 0) {
+                    this.menu.push(new HeaderMenuItem('actie.taak.starten'));
+                    this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
+                }
+            });
+        } else {
+            this.menu.push(
+                new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
+        }
     }
 
     private setupIndicaties(): void {

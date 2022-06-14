@@ -14,7 +14,7 @@
             <div fxFlex fxLayoutAlign="end center">
                 <button mat-icon-button color="primary"
                         title="{{'actie.uitvoeren' | translate}}"
-                        [disabled]="!action.actionEnabled()"
+                        [disabled]="!action.actionEnabled() || actionBarDisabled"
                         (click)="actionTextClicked(action)">
                     <mat-icon>{{action.action.icon}}</mat-icon>
                 </button>
