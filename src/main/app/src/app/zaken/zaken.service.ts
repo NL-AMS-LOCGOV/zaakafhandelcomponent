@@ -6,7 +6,7 @@
 import {Injectable} from '@angular/core';
 import {Zaak} from './model/zaak';
 import {Observable} from 'rxjs';
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
 import {Zaaktype} from './model/zaaktype';
@@ -44,19 +44,19 @@ export class ZakenService {
 
     readZaak(uuid: string): Observable<Zaak> {
         return this.http.get<Zaak>(`${this.basepath}/zaak/${uuid}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     readZaakByID(id: string): Observable<Zaak> {
         return this.http.get<Zaak>(`${this.basepath}/zaak/id/${id}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     createZaak(zaak: Zaak): Observable<Zaak> {
         return this.http.post<Zaak>(`${this.basepath}/zaak`, zaak).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -65,38 +65,38 @@ export class ZakenService {
         zaakEditMetRedenGegevens.zaak = zaak;
         zaakEditMetRedenGegevens.reden = reden;
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaakEditMetRedenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     readOpschortingZaak(uuid: string): Observable<ZaakOpschorting> {
         return this.http.get<ZaakOpschorting>(`${this.basepath}/zaak/${uuid}/opschorting`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     opschortenZaak(uuid: string, zaakOpschortGegevens: ZaakOpschortGegevens): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/opschorting`, zaakOpschortGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     verlengenZaak(zaakUUID: string, zaakVerlengGegevens: ZaakVerlengGegevens): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${zaakUUID}/verlenging`, zaakVerlengGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
 
     listZaakWaarschuwingen(): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/waarschuwing`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listZaaktypes(): Observable<Zaaktype[]> {
         return this.http.get<Zaaktype[]>(`${this.basepath}/zaaktypes`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -107,7 +107,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -118,7 +118,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, toekennenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -130,7 +130,7 @@ export class ZakenService {
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -140,7 +140,7 @@ export class ZakenService {
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/vrijgeven`, verdeelGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -150,7 +150,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, toekennenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -159,32 +159,32 @@ export class ZakenService {
         gegevens.zaakUUID = zaak.uuid;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
         return this.http.post<void>(`${this.basepath}/initiator`, gegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     deleteInitiator(zaak: Zaak): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     updateZaakGeometrie(uuid: string, zaak: Zaak): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaakgeometrie`, zaak).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     ontkoppelInformatieObject(zaakUUID: string, documentUUID: string, reden: string): Observable<void> {
         const gegevens = new DocumentOntkoppelGegevens(zaakUUID, documentUUID, reden);
         return this.http.put<void>(`${this.basepath}/zaakinformatieobjecten/ontkoppel`, gegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     findZakenForInformatieobject(documentUUID: string): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/zaken/informatieobject/${documentUUID}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -194,7 +194,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, toekennenGegevens).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -214,17 +214,14 @@ export class ZakenService {
 
     heropenen(uuid: string): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens()).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listCommunicatiekanalen(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    private handleError(err: HttpErrorResponse): Observable<never> {
-        return this.foutAfhandelingService.redirect(err);
-    }
 }
