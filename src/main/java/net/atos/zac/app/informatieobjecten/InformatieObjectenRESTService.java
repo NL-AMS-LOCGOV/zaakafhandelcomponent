@@ -182,7 +182,7 @@ public class InformatieObjectenRESTService {
                 taakdocumenten = new LinkedList<>();
             }
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            flowableService.updateTaakdocumentenOpenTask(documentReferentieId, taakdocumenten);
+            flowableService.updateTaakdocumenten(documentReferentieId, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }

@@ -239,11 +239,11 @@ public class ZakenRESTService {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
                                                                       restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            flowableService.updateDatumtijdOpgeschortForOpenCase(zaakUUID, ZonedDateTime.now());
-            flowableService.updateVerwachteDagenOpgeschortForOpenCase(zaakUUID, restZaakOpschortGegevens.duurDagen);
+            flowableService.updateDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
+            flowableService.updateVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
         } else {
-            flowableService.removeDatumtijdOpgeschortForOpenCase(zaakUUID);
-            flowableService.removeVerwachteDagenOpgeschortForOpenCase(zaakUUID);
+            flowableService.removeDatumtijdOpgeschort(zaakUUID);
+            flowableService.removeVerwachteDagenOpgeschort(zaakUUID);
         }
         return zaakConverter.convert(updatedZaak);
     }
@@ -252,8 +252,8 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/opschorting")
     public RESTZaakOpschorting getZaakOpschorting(@PathParam("uuid") final UUID zaakUUID) {
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschortForCase(zaakUUID);
-        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschortForCase(zaakUUID);
+        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschort(zaakUUID);
+        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschort(zaakUUID);
         return zaakOpschorting;
     }
 
@@ -513,7 +513,7 @@ public class ZakenRESTService {
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
         final int[] count = new int[1];
-        flowableService.listOpenTasksforCase(zaakUUID).stream()
+        flowableService.listOpenTasks(zaakUUID).stream()
                 .filter(task -> task.getDueDate() != null)
                 .forEach(task -> {
                     task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));

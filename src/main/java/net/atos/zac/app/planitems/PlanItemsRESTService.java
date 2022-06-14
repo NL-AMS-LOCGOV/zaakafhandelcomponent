@@ -67,11 +67,11 @@ public class PlanItemsRESTService {
     }
 
     @GET
-    @Path("{id}")
+    @Path("humanTask/{id}")
     public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = flowableService.readZaakUUIDOpenCase(planItem.getCaseInstanceId());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
     }
 
@@ -79,7 +79,7 @@ public class PlanItemsRESTService {
     @Path("doHumanTask")
     public void doHumanTask(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(humanTaskData.planItemInstanceId);
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.getHumanTaskParameters(planItem);
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         flowableService.startHumanTaskPlanItem(planItem, humanTaskData.groep.id,
                                                humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
@@ -94,7 +94,7 @@ public class PlanItemsRESTService {
             case INTAKE_AFRONDEN -> {
                 if (!userEventListenerData.zaakOntvankelijk) {
                     final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-                    final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.getZaakafhandelParameters(zaak);
+                    final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
                     if (zaakafhandelParameters.getNietOntvankelijkResultaattype() == null) {
                         throw new ResulttaattypeNotFoundException("geen resultaattype voor het niet ontvankelijk verklaren");
                     }

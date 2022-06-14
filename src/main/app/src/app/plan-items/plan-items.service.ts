@@ -23,7 +23,7 @@ export class PlanItemsService {
     }
 
     readHumanTask(id: string): Observable<PlanItem> {
-        return this.http.get<PlanItem>(`${this.basepath}/${id}`).pipe(
+        return this.http.get<PlanItem>(`${this.basepath}/humanTask/${id}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

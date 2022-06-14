@@ -122,7 +122,7 @@ public class RESTTaakConverter {
         final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDClosedCase(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
         restTaak.zaakUUID = flowableService.readZaakUUIDClosedCase(taskInfo.getScopeId());
-        restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieOClosedCase(taskInfo.getScopeId());
+        restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieClosedCase(taskInfo.getScopeId());
         restTaak.zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijvingClosedCase(taskInfo.getScopeId());
         return restTaak;
     }
