@@ -4,7 +4,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
@@ -25,13 +25,13 @@ export class ZaakafhandelParametersService {
 
     listZaakafhandelParameters(): Observable<ZaakafhandelParameters[]> {
         return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     readZaakafhandelparameters(zaaktypeUuid: string): Observable<ZaakafhandelParameters> {
         return this.http.get<ZaakafhandelParameters>(`${this.basepath}/${zaaktypeUuid}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -55,29 +55,25 @@ export class ZaakafhandelParametersService {
 
     listCaseDefinitions(): Observable<CaseDefinition[]> {
         return this.http.get<CaseDefinition[]>(`${this.basepath}/caseDefinition`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     readCaseDefinition(key: string): Observable<CaseDefinition> {
         return this.http.get<CaseDefinition>(`${this.basepath}/caseDefinition/${key}`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listFormulierDefinities(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/formulierDefinities`).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     updateZaakafhandelparameters(zaakafhandelparameters): Observable<void> {
         return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
-            catchError(this.handleError)
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private handleError(err: HttpErrorResponse): Observable<never> {
-        return this.foutAfhandelingService.redirect(err);
     }
 }
