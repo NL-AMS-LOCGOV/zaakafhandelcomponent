@@ -5,7 +5,5 @@
 
 package net.atos.zac.app.zaken.model;
 
-public class RESTZaakAfbrekenGegevens {
-
-    public Long zaakbeeindigRedenId;
+public class RESTZaakHeropenenGegevens {
 }

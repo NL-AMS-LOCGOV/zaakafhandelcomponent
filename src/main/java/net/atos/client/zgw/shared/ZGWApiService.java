@@ -72,6 +72,10 @@ public class ZGWApiService implements Caching {
             ZGW_ZAAK_BEHANDELAAR_MANAGED,
             ZGW_ZAAK_GROEP_MANAGED);
 
+    private static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
+
+    private static final String HEROPENEN_TOELICHTING = "Zaak is heropend";
+
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -107,8 +111,7 @@ public class ZGWApiService implements Caching {
      * @return Created {@link Status}.
      */
     public Status createStatusForZaak(final Zaak zaak, final String statustypeOmschrijving, final String statusToelichting) {
-        final Statustype statustype = ztcClientService.readStatustype(
-                ztcClientService.readStatustypen(zaak.getZaaktype()), statustypeOmschrijving, zaak.getZaaktype());
+        final Statustype statustype = readStatustype(ztcClientService.readStatustypen(zaak.getZaaktype()), statustypeOmschrijving, zaak.getZaaktype());
         return createStatusForZaak(zaak.getUrl(), statustype.getUrl(), statusToelichting);
     }
 
@@ -159,7 +162,7 @@ public class ZGWApiService implements Caching {
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
      */
     public void endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = ztcClientService.readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
+        final Statustype eindStatustype = readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
         createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
         berekenArchiveringsparameters(zaak.getUuid());
     }
@@ -173,6 +176,15 @@ public class ZGWApiService implements Caching {
     public void endZaak(final UUID zaakUUID, final String eindstatusToelichting) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         endZaak(zaak, eindstatusToelichting);
+    }
+
+    /**
+     * Reopen {@link Zaak}. Creating a new Heropend {@link Status} for the {@link Zaak}.
+     *
+     * @param zaak {@link Zaak} welke heropend wordt
+     */
+    public void heropenZaak(final Zaak zaak) {
+        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, HEROPENEN_TOELICHTING);
     }
 
     /**
@@ -320,5 +332,20 @@ public class ZGWApiService implements Caching {
             }
         }
         return null;
+    }
+
+    private Statustype readStatustype(final List<Statustype> statustypes, final String omschrijving, final URI zaaktypeURI) {
+        return statustypes.stream()
+                .filter(statustype -> omschrijving.equals(statustype.getOmschrijving()))
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Zaaktype '%s': Statustype with omschrijving '%s' not found", zaaktypeURI, omschrijving)));
+    }
+
+    private Statustype readStatustypeEind(final List<Statustype> statustypes, final URI zaaktypeURI) {
+        return statustypes.stream()
+                .filter(Statustype::getEindstatus)
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(String.format("Zaaktype '%s': No eind Status found for Zaaktype.", zaaktypeURI)));
     }
 }

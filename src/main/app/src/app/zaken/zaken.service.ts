@@ -26,6 +26,7 @@ import {ZaakOpschortGegevens} from './model/zaak-opschort-gegevens';
 import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
+import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -203,12 +204,16 @@ export class ZakenService {
         );
     }
 
-    afbreken(uuid: string, zaakbeeindigReden: ZaakbeeindigReden): Observable<void> {
+    afbreken(uuid: string, beeindigReden: ZaakbeeindigReden): Observable<void> {
         const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
-        zaakAfbrekenGegevens.zaakUUID = uuid;
-        zaakAfbrekenGegevens.zaakbeeindigRedenId = zaakbeeindigReden.id;
+        zaakAfbrekenGegevens.zaakbeeindigRedenId = beeindigReden.id;
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, zaakAfbrekenGegevens).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-        return this.http.put<void>(`${this.basepath}/afbreken`, zaakAfbrekenGegevens).pipe(
+    heropenen(uuid: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens()).pipe(
             catchError(this.handleError)
         );
     }
