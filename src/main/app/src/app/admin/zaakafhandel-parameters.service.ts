@@ -71,7 +71,7 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    updateZaakafhandelparameters(zaakafhandelparameters): Observable<void> {
+    updateZaakafhandelparameters(zaakafhandelparameters: ZaakafhandelParameters): Observable<void> {
         return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
