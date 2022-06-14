@@ -19,6 +19,6 @@ export class ZakenWerkvoorraadDatasource extends ZoekenTableDataSource<ZaakZoekO
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
-        zoekParameters.alleenMijnZaken = true;
+        zoekParameters.alleenOpenstaandeZaken = true;
     }
 }
