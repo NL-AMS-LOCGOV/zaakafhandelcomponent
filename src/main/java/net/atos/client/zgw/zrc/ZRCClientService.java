@@ -18,9 +18,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.cache.annotation.CacheRemove;
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -33,7 +30,6 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
@@ -64,9 +60,7 @@ import net.atos.zac.util.UriUtil;
  * Use Optional for caches that need to hold nulls (Infinispan does not cache nulls).
  */
 @ApplicationScoped
-public class ZRCClientService implements Caching {
-
-    private static final List<String> CACHES = List.of(ZRC_STATUS_MANAGED);
+public class ZRCClientService {
 
     @Inject
     @RestClient
@@ -241,7 +235,6 @@ public class ZRCClientService implements Caching {
      * @param statusURI URI of {@link Status}.
      * @return {@link Status}. Never 'null'!
      */
-    @CacheResult(cacheName = ZRC_STATUS_MANAGED)
     public Status readStatus(final URI statusURI) {
         return createInvocationBuilder(statusURI).get(Status.class);
     }
@@ -437,21 +430,6 @@ public class ZRCClientService implements Caching {
         nieuweZaakInformatieObject.setBeschrijving(informatieobject.getBeschrijving());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
-    }
-
-    @CacheRemoveAll(cacheName = ZRC_STATUS_MANAGED)
-    public String clearZaakstatusManagedCache() {
-        return cleared(ZRC_STATUS_MANAGED);
-    }
-
-    @CacheRemove(cacheName = ZRC_STATUS_MANAGED)
-    public void updateZaakstatusCache(final URI key) {
-        removed(ZRC_STATUS_MANAGED, key);
-    }
-
-    @Override
-    public List<String> cacheNames() {
-        return CACHES;
     }
 
     /**

@@ -12,24 +12,18 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.cache.annotation.CacheRemove;
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-
-import net.atos.client.zgw.drc.model.Gebruiksrechten;
 
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
-import net.atos.client.zgw.shared.cache.Caching;
+import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
@@ -61,16 +55,12 @@ import net.atos.zac.signalering.model.SignaleringType;
  * Use Optional for caches that need to hold nulls (Infinispan does not cache nulls).
  */
 @ApplicationScoped
-public class ZGWApiService implements Caching {
+public class ZGWApiService {
 
     private static final Logger LOG = Logger.getLogger(ZGWApiService.class.getName());
 
     // Page numbering in ZGW Api's starts with 1
     public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
-
-    private static final List<String> CACHES = List.of(
-            ZGW_ZAAK_BEHANDELAAR_MANAGED,
-            ZGW_ZAAK_GROEP_MANAGED);
 
     private static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
 
@@ -219,10 +209,9 @@ public class ZGWApiService implements Caching {
      * @param zaakUrl {@link URI}
      * @return {@link RolOrganisatorischeEenheid} or 'null'.
      */
-    @CacheResult(cacheName = ZGW_ZAAK_GROEP_MANAGED)
-    public Optional<RolOrganisatorischeEenheid> findGroepForZaak(final URI zaakUrl) {
+    public RolOrganisatorischeEenheid findGroepForZaak(final URI zaakUrl) {
         final Zaak zaak = zrcClientService.readZaak(zaakUrl);
-        return Optional.ofNullable((RolOrganisatorischeEenheid) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.ORGANISATORISCHE_EENHEID));
+        return (RolOrganisatorischeEenheid) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.ORGANISATORISCHE_EENHEID);
     }
 
     /**
@@ -231,10 +220,9 @@ public class ZGWApiService implements Caching {
      * @param zaakUrl {@link URI}
      * @return {@link RolMedewerker} or 'null'.
      */
-    @CacheResult(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
-    public Optional<RolMedewerker> findBehandelaarForZaak(final URI zaakUrl) {
+    public RolMedewerker findBehandelaarForZaak(final URI zaakUrl) {
         final Zaak zaak = zrcClientService.readZaak(zaakUrl);
-        return Optional.ofNullable((RolMedewerker) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.MEDEWERKER));
+        return (RolMedewerker) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.MEDEWERKER);
     }
 
     public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
@@ -265,31 +253,6 @@ public class ZGWApiService implements Caching {
         }
 
         zaak.setUiterlijkeEinddatumAfdoening(zaak.getStartdatum().plus(zaaktype.getDoorlooptijd()));
-    }
-
-    @CacheRemoveAll(cacheName = ZGW_ZAAK_GROEP_MANAGED)
-    public String clearZaakGroepManagedCache() {
-        return cleared(ZGW_ZAAK_GROEP_MANAGED);
-    }
-
-    @CacheRemove(cacheName = ZGW_ZAAK_GROEP_MANAGED)
-    public void updateZaakgroepCache(final URI key) {
-        removed(ZGW_ZAAK_GROEP_MANAGED, key);
-    }
-
-    @CacheRemoveAll(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
-    public String clearZaakBehandelaarManagedCache() {
-        return cleared(ZGW_ZAAK_BEHANDELAAR_MANAGED);
-    }
-
-    @CacheRemove(cacheName = ZGW_ZAAK_BEHANDELAAR_MANAGED)
-    public void updateZaakbehandelaarCache(final URI key) {
-        removed(ZGW_ZAAK_BEHANDELAAR_MANAGED, key);
-    }
-
-    @Override
-    public List<String> cacheNames() {
-        return CACHES;
     }
 
     private Resultaat createResultaat(final URI zaakURI, final URI resultaattypeURI, final String resultaatToelichting) {

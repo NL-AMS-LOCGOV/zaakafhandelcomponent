@@ -10,6 +10,8 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -80,12 +82,12 @@ public class ZaakZoekObjectConverter {
         }
 
         final User behandelaar = findBehandelaar(zaak);
-        if(behandelaar != null) {
+        if (behandelaar != null) {
             zaakZoekObject.setBehandelaarNaam(getVolledigeNaam(behandelaar));
             zaakZoekObject.setBehandelaarGebruikersnaam(behandelaar.getId());
         }
 
-        if(zaak.getVerlenging() != null) {
+        if (zaak.getVerlenging() != null) {
             zaakZoekObject.setIndicatieVerlenging(true);
             zaakZoekObject.setDuurVerlenging(String.valueOf(zaak.getVerlenging().getDuur()));
             zaakZoekObject.setRedenVerlenging(zaak.getVerlenging().getReden());
@@ -132,10 +134,8 @@ public class ZaakZoekObjectConverter {
     }
 
     private User findBehandelaar(final Zaak zaak) {
-        return zgwApiService.findBehandelaarForZaak(zaak.getUrl())
-                .map(betrokkene -> betrokkene.getBetrokkeneIdentificatie().getIdentificatie())
-                .map(id -> identityService.readUser(id))
-                .orElse(null);
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        return behandelaar != null ? identityService.readUser(behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 
     private String getVolledigeNaam(final User user) {
@@ -152,10 +152,8 @@ public class ZaakZoekObjectConverter {
     }
 
     private Group findGroep(final Zaak zaak) {
-        return zgwApiService.findGroepForZaak(zaak.getUrl())
-                .map(betrokkene -> betrokkene.getBetrokkeneIdentificatie().getIdentificatie())
-                .map(id -> identityService.readGroup(id))
-                .orElse(null);
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        return groep != null ? identityService.readGroup(groep.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 
     private CommunicatieKanaal findCommunicatieKanaal(final Zaak zaak) {
