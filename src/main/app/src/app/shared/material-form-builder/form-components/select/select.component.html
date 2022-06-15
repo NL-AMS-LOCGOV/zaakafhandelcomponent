@@ -3,10 +3,11 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-form-field appearance="fill" class="full-width">
+<mat-form-field appearance="fill" class="full-width" floatLabel="always">
     <mat-label>{{data.label | translate}}</mat-label>
-    <mat-select [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'"
-                [required]="data.required">
+    <mat-select placeholder="{{(data.required ? data.label+'.-kies-' : data.label+'.-geen-') | translate}}"
+                [compareWith]="data.compareWithFn" [formControl]="data.formControl" [id]="data.id + '_select'" [required]="data.required">
+        <mat-option [value]="" *ngIf="!data.required">{{data.label + '.-geen-' | translate}}</mat-option>
         <mat-option *ngFor="let option of data.options | async" [value]="option">
             {{(data.optionLabel ? option[data.optionLabel] : option) | empty | translate}}
         </mat-option>

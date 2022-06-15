@@ -25,7 +25,7 @@ export class ParametersComponent extends ViewComponent implements OnInit {
 
     menu: MenuItem[] = [];
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
-    loading: boolean;
+    loading: boolean = false;
 
     constructor(private adminService: ZaakafhandelParametersService, public utilService: UtilService) {
         super();
@@ -34,12 +34,13 @@ export class ParametersComponent extends ViewComponent implements OnInit {
     ngOnInit(): void {
         this.menu = [];
         this.menu.push(new HeaderMenuItem('actie.admin'));
-        this.menu.push(new LinkMenuItem('parameters', 'parameters', 'tune'));
+        this.menu.push(new LinkMenuItem('parameters', '/admin/parameters', 'tune'));
         this.utilService.setTitle('title.parameters');
         this.getZaakafhandelParameters();
     }
 
     private getZaakafhandelParameters(): void {
+        this.loading = true;
         this.adminService.listZaakafhandelParameters().subscribe(parameters => {
             this.loading = false;
             this.parameters.data = parameters;

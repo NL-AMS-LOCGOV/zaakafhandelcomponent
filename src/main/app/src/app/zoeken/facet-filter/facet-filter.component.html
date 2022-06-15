@@ -7,6 +7,6 @@
     <mat-select id="{{label+'_filter'}}" (selectionChange)="changed.emit(model)" placeholder="{{ (label+'.-kies-') | translate }}"
                 [(ngModel)]="model">
         <mat-option>{{ (label + '.-kies-') | translate }}</mat-option>
-        <mat-option *ngFor="let value of getFilters()" [value]="value">{{ value == '-NULL-' ? ('-geen-' | translate) : value }}</mat-option>
+        <mat-option *ngFor="let value of getFilters()" [value]="value">{{ value == '-NULL-' ? (label + '.-geen-' | translate) : value }}</mat-option>
     </mat-select>
 </mat-form-field>
