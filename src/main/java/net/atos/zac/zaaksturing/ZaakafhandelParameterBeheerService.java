@@ -46,18 +46,19 @@ public class ZaakafhandelParameterBeheerService {
         return zaakafhandelParameters;
     }
 
-    public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaakTypeUUID) {
+    public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
-        query.select(root).where(builder.equal(root.get(ZAAKTYPE_UUID), zaakTypeUUID));
+        query.select(root).where(builder.equal(root.get(ZAAKTYPE_UUID), zaaktypeUUID));
         final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
+        } else {
+            final ZaakafhandelParameters zaakafhandelParameters = new ZaakafhandelParameters();
+            zaakafhandelParameters.setZaakTypeUUID(zaaktypeUUID);
+            return zaakafhandelParameters;
         }
-        final ZaakafhandelParameters zaakafhandelParameters = new ZaakafhandelParameters();
-        zaakafhandelParameters.setZaakTypeUUID(zaakTypeUUID);
-        return zaakafhandelParameters;
     }
 
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
@@ -74,39 +75,43 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public HumanTaskParameters readHumanTaskParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
+    public HumanTaskParameters readHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
         final Root<HumanTaskParameters> queryRoot = query.from(HumanTaskParameters.class);
 
         final Join<HumanTaskParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
         final List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
+        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaaktypeUUID));
         predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
         query.where(predicates.toArray(new Predicate[0]));
         final List<HumanTaskParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
-            return null;
+            throw new RuntimeException(
+                    String.format("No HumanTaskParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaaktypeUUID.toString(),
+                                  planitemDefinitionID));
         }
     }
 
-    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaakTypeUUID, final String planitemDefinitionID) {
+    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
         final Root<UserEventListenerParameters> queryRoot = query.from(UserEventListenerParameters.class);
 
         final Join<UserEventListenerParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
         final List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaakTypeUUID));
+        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaaktypeUUID));
         predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
         query.where(predicates.toArray(new Predicate[0]));
         final List<UserEventListenerParameters> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
-            return null;
+            throw new RuntimeException(
+                    String.format("No UserEventListenerParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaaktypeUUID.toString(),
+                                  planitemDefinitionID));
         }
     }
 
@@ -122,6 +127,8 @@ public class ZaakafhandelParameterBeheerService {
     public ZaakbeeindigParameter readZaakbeeindigParameter(final UUID zaaktypeUUID, final Long zaakbeeindigRedenId) {
         return readZaakafhandelParameters(zaaktypeUUID).getZaakbeeindigParameters().stream()
                 .filter(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden().getId().equals(zaakbeeindigRedenId))
-                .findAny().orElseThrow();
+                .findAny().orElseThrow(() -> new RuntimeException(
+                        String.format("No ZaakbeeindigParameter found for zaaktypeUUID: '%s' and zaakbeeindigRedenId: '%d'", zaaktypeUUID.toString(),
+                                      zaakbeeindigRedenId)));
     }
 }

@@ -137,7 +137,7 @@ public class RESTTaakConverter {
         restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
         restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
         restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
-        restTaak.formulierDefinitie = zaakafhandelParameterService.findFormulierDefinitie(zaaktypeUUID, taskInfo.getTaskDefinitionKey());
+        restTaak.formulierDefinitie = zaakafhandelParameterService.readFormulierDefinitie(zaaktypeUUID, taskInfo.getTaskDefinitionKey());
         return restTaak;
     }
 

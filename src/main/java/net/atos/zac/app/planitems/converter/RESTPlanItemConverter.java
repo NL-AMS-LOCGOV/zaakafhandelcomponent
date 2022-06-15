@@ -49,7 +49,7 @@ public class RESTPlanItemConverter {
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
         if (restPlanItem.type == USER_EVENT_LISTENER) {
             restPlanItem.userEventListenerActie = UserEventListenerActie.valueOf(planItem.getPlanItemDefinitionId());
-            restPlanItem.toelichting = zaakafhandelParameterService.getUserEventParameters(planItem).getToelichting();
+            restPlanItem.toelichting = zaakafhandelParameterService.readUserEventParameters(planItem).getToelichting();
         }
         return restPlanItem;
     }
