@@ -801,4 +801,3 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         window.open(redirectUrl);
     }
 }
-
