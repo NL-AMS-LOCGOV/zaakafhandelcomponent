@@ -24,6 +24,7 @@ export class UtilService {
 
     public headerTitle$: Observable<string> = this.headerTitle.asObservable();
     public addAction$ = new Subject<ActionBarAction>();
+    public disableActionBar$ = new Subject<boolean>();
 
     public loading$: Observable<boolean> = this.loading.pipe(switchMap((loading) =>
         iif(() => loading,
@@ -102,6 +103,10 @@ export class UtilService {
 
     addAction(action: ActionBarAction) {
         this.addAction$.next(action);
+    }
+
+    disableActionBar(state: boolean) {
+        this.disableActionBar$.next(state);
     }
 
     reloadRoute(): void {

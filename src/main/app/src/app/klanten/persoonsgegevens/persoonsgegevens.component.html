@@ -16,7 +16,7 @@
                     {{persoon?.naam}}
                 </zac-skeleton-loader>
 
-                <button *ngIf="persoon" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(persoon)">
+                <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(persoon)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-panel-description>

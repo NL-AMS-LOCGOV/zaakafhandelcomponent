@@ -16,6 +16,7 @@ import {Observable, share} from 'rxjs';
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     @Input() vestigingsnummer;
+    @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
 
     bedrijf: Bedrijf;

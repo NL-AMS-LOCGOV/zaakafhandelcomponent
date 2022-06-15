@@ -29,6 +29,7 @@ import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {TranslateService} from '@ngx-translate/core';
+import {FileIcon} from '../model/file-icon';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -46,23 +47,6 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
-    fileIconList = [
-        {type: 'xlsx', icon: 'fa-file-excel', color: 'green'},
-        {type: 'xls', icon: 'fa-file-excel', color: 'green'},
-        {type: 'pdf', icon: 'fa-file-pdf', color: 'red'},
-        {type: 'jpg', icon: 'fa-file-image'},
-        {type: 'png', icon: 'fa-file-image'},
-        {type: 'jpeg', icon: 'fa-file-image'},
-        {type: 'gif', icon: 'fa-file-image'},
-        {type: 'rtf', icon: 'fa-file-image'},
-        {type: 'vsd', icon: 'fa-file-image'},
-        {type: 'bmp', icon: 'fa-file-image'},
-        {type: 'doc', icon: 'fa-file-word', color: 'blue'},
-        {type: 'docx', icon: 'fa-file-word', color: 'blue'},
-        {type: 'odt', icon: 'fa-file-word', color: 'blue'},
-        {type: 'pptx', icon: 'fa-file-powerpoint', color: 'red'},
-        {type: 'txt', icon: 'fa-file-lines'}
-    ];
 
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
@@ -188,7 +172,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
 
     getFileIcon(filename) {
         const extension = filename.split('.').pop();
-        const obj = this.fileIconList.filter(row => {
+        const obj = FileIcon.fileIconList.filter(row => {
             if (row.type === extension) {
                 return true;
             }

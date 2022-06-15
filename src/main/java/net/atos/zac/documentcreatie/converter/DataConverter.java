@@ -34,6 +34,8 @@ import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
@@ -147,13 +149,15 @@ public class DataConverter {
             zaakData.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toValue();
         }
 
-        zgwApiService.findGroepForZaak(zaak.getUrl()).ifPresent(groep -> {
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        if (groep != null) {
             zaakData.groep = groep.getNaam();
-        });
+        }
 
-        zgwApiService.findBehandelaarForZaak(zaak.getUrl()).ifPresent(behandelaar -> {
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        if (behandelaar != null) {
             zaakData.behandelaar = behandelaar.getNaam();
-        });
+        }
 
         if (zaak.getCommunicatiekanaal() != null) {
             final CommunicatieKanaal communicatiekanaal = vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()));

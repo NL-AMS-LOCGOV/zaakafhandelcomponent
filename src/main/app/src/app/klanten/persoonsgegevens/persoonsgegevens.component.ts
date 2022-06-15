@@ -16,6 +16,7 @@ import {Observable, share} from 'rxjs';
 export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
 
     @Input() bsn: string;
+    @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Persoon>();
 
     persoon: Persoon;
