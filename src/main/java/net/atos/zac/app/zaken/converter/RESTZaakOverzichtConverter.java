@@ -6,13 +6,14 @@
 package net.atos.zac.app.zaken.converter;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
@@ -61,17 +62,16 @@ public class RESTZaakOverzichtConverter {
             restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }
 
-        final String groupId = zgwApiService.findGroepForZaak(zaak.getUrl())
-                .filter(Objects::nonNull)
-                .map(groep -> groep.getBetrokkeneIdentificatie().getIdentificatie())
-                .orElse(null);
-        restZaakOverzicht.groep = groupConverter.convertGroupId(groupId);
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        if (groep != null) {
+            restZaakOverzicht.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
+        }
 
-        final String behandelaarId = zgwApiService.findBehandelaarForZaak(zaak.getUrl())
-                .filter(Objects::nonNull)
-                .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
-                .orElse(null);
-        restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaarId);
+
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        if (behandelaar != null) {
+            restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
+        }
 
         restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 

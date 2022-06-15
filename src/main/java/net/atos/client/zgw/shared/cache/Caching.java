@@ -18,15 +18,6 @@ import java.util.logging.Logger;
 public interface Caching {
     Logger LOG = Logger.getLogger(Caching.class.getName());
 
-    // Deze cache is managed (alleen zaak URI als sleutel gebruiken!)
-    String ZGW_ZAAK_BEHANDELAAR_MANAGED = "zgw-zaak-behandelaar-managed";
-
-    // Deze cache is managed (alleen zaak URI als sleutel gebruiken!)
-    String ZGW_ZAAK_GROEP_MANAGED = "zgw-zaak-groep-managed";
-
-    // Deze cache is managed (alleen URI als sleutel gebruiken!)
-    String ZRC_STATUS_MANAGED = "zrc-status-managed";
-
     String ZTC_RESULTAATTYPE = "ztc-resultaattype";
 
     String ZTC_STATUSTYPE = "ztc-statustype";

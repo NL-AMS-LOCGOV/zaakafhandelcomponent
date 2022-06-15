@@ -9,7 +9,6 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.net.URI;
 import java.time.Period;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +21,8 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Opschorting;
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -137,17 +138,15 @@ public class RESTZaakConverter {
 
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final String groepId = zgwApiService.findGroepForZaak(zaak.getUrl())
-                .filter(Objects::nonNull)
-                .map(groep -> groep.getBetrokkeneIdentificatie().getIdentificatie())
-                .orElse(null);
-        restZaak.groep = groupConverter.convertGroupId(groepId);
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        if (groep != null) {
+            restZaak.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
+        }
 
-        final String behandelaarId = zgwApiService.findBehandelaarForZaak(zaak.getUrl())
-                .filter(Objects::nonNull)
-                .map(behandelaar -> behandelaar.getBetrokkeneIdentificatie().getIdentificatie())
-                .orElse(null);
-        restZaak.behandelaar = userConverter.convertUserId(behandelaarId);
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        if (behandelaar != null) {
+            restZaak.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
+        }
 
         final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
         if (initiator != null) {
