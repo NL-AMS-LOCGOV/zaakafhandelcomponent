@@ -95,11 +95,9 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 (event) => {
                     this.loadInformatieObject(event);
                     this.loadHistorie();
-                    this.setupMenu();
                     this.loadZaakInformatieobjecten();
                 });
 
-            this.setupMenu();
             this.loadHistorie();
         }));
     }
@@ -123,15 +121,13 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.websocketService.removeListener(this.documentListener);
     }
 
-    private setupMenu(): void {
+    private toevoegenActies() {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
-            new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid),
+            new HrefMenuItem('actie.downloaden',
+                this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie),
                 'save_alt')
         ];
-    }
-
-    private toevoegenActies() {
         // Nieuwe versie en bewerken acties niet toegestaan indien de status definitief is
         // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
         // ToDo: Vervangen door Policy
