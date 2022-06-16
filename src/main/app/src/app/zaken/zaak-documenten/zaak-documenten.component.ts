@@ -36,7 +36,7 @@ import {Observable, share} from 'rxjs';
 export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
-    @Input() isWijzigbaar: boolean;
+    @Input() readonly: boolean;
 
     @Input() set documentToegevoegd(informatieobject: EnkelvoudigInformatieobject) {
         if (informatieobject) {

@@ -69,10 +69,8 @@
                     </div>
 
                     <div class="button-group" fxLayout="row wrap">
-                        <button mat-raised-button color="primary" [disabled]="humanTaskParameters.length == 0"
-                                matStepperNext>{{"actie.volgende" | translate}}</button>
-                        <button mat-raised-button [disabled]="!isValid()"
-                                (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                        <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
+                        <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                     </div>
                 </form>
             </mat-step>
@@ -84,47 +82,35 @@
                             <mat-expansion-panel fxLayout="column" *ngFor="let humanTaskParameter of humanTaskParameters">
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        <mat-icon *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">
-                                            check_circle_outline
-                                        </mat-icon>
-                                        <mat-icon *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">
-                                            error_outline
-                                        </mat-icon>
+                                        <mat-icon *ngIf="isHumanTaskParameterValid(humanTaskParameter)" color="primary">check_circle_outline</mat-icon>
+                                        <mat-icon *ngIf="!isHumanTaskParameterValid(humanTaskParameter)" color="warn">error_outline</mat-icon>
                                         {{humanTaskParameter.planItemDefinition.naam}}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <div fxLayout="row wrap">
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
-                                                    floatLabel="always">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
                                         <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
-                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')"
-                                                    [compareWith]="compareObject">
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')" [compareWith]="compareObject">
                                             <mat-option *ngFor="let formDef of formulierDefinities | async"
                                                         [value]="formDef">{{ 'formulierDefinitie.' + formDef | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                                 <div fxLayout="row wrap">
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
-                                                    floatLabel="always">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'groep' | translate}}</mat-label>
                                         <mat-select placeholder="{{'groep.-geen-' | translate}}"
-                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')"
-                                                    [compareWith]="compareObject">
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')" [compareWith]="compareObject">
                                             <mat-option [value]="">{{'groep.-geen-' | translate}}</mat-option>
-                                            <mat-option *ngFor="let groep of groepen | async"
-                                                        [value]="groep">{{ groep.naam }}</mat-option>
+                                            <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                                 <div fxLayout="row wrap">
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard"
-                                                    floatLabel="always">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'doorlooptijd.gewenst' | translate}}</mat-label>
-                                        <input matInput type="number"
-                                               [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')"
-                                               min="0"
+                                        <input matInput type="number" [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')" min="0"
                                                max="2147483647">
                                         <span matSuffix>{{'kalenderdagen' | translate}}</span>
                                     </mat-form-field>
@@ -133,10 +119,8 @@
                         </mat-accordion>
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
-                            <button mat-raised-button color="primary" [disabled]="zaakbeeindigParameters.length == 0"
-                                    matStepperNext>{{"actie.volgende" | translate}}</button>
-                            <button mat-raised-button color="primary" (click)="opslaan()"
-                                    [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
+                            <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                         </div>
                     </form>
                 </ng-template>
@@ -166,10 +150,8 @@
                         </mat-accordion>
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
-                            <button mat-raised-button color="primary" [disabled]="zaakbeeindigParameters.length == 0"
-                                    matStepperNext>{{"actie.volgende" | translate}}</button>
-                            <button mat-raised-button color="primary" (click)="opslaan()"
-                                    [disabled]="!isValid()">{{"actie.opslaan" | translate}}</button>
+                            <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                         </div>
                     </form>
                 </ng-template>

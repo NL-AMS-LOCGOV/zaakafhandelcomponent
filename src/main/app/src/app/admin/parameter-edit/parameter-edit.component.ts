@@ -63,8 +63,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     medewerkers: Observable<User[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
 
-    constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService,
-                private identityService: IdentityService,
+    constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
         super();
         this.route.data.subscribe(data => {

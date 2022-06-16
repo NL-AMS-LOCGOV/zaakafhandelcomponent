@@ -8,6 +8,7 @@ package net.atos.zac.zaaksturing.model;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -140,55 +141,58 @@ public class ZaakafhandelParameters {
         this.nietOntvankelijkResultaattype = nietOntvankelijkResultaattype;
     }
 
-    public Collection<HumanTaskParameters> getHumanTaskParameters() {
-        if (humanTaskParametersCollection == null) {
-            humanTaskParametersCollection = new HashSet<>();
-        }
-        return humanTaskParametersCollection;
+    public Set<HumanTaskParameters> getHumanTaskParametersCollection() {
+        return humanTaskParametersCollection != null ? humanTaskParametersCollection : Collections.emptySet();
     }
 
-    public void addHumanTaskParameters(HumanTaskParameters humanTaskParameters) {
+    public void setHumanTaskParametersCollection(final Collection<HumanTaskParameters> humanTaskParametersCollection) {
+        if (this.humanTaskParametersCollection == null) {
+            this.humanTaskParametersCollection = new HashSet<>();
+        } else {
+            this.humanTaskParametersCollection.clear();
+        }
+        humanTaskParametersCollection.forEach(this::addHumanTaskParameters);
+    }
+
+    public Set<ZaakbeeindigParameter> getZaakbeeindigParameters() {
+        return zaakbeeindigParameters != null ? zaakbeeindigParameters : Collections.emptySet();
+    }
+
+    public void setZaakbeeindigParameters(final Collection<ZaakbeeindigParameter> zaakbeeindigParameters) {
+        if (this.zaakbeeindigParameters == null) {
+            this.zaakbeeindigParameters = new HashSet<>();
+        } else {
+            this.zaakbeeindigParameters.clear();
+        }
+        zaakbeeindigParameters.forEach(this::addZaakbeeindigParameter);
+    }
+
+    public Set<UserEventListenerParameters> getUserEventListenerParametersCollection() {
+        return userEventListenerParametersCollection != null ? userEventListenerParametersCollection : Collections.emptySet();
+    }
+
+    public void setUserEventListenerParametersCollection(final Collection<UserEventListenerParameters> userEventListenerParametersCollection) {
+        if (this.userEventListenerParametersCollection == null) {
+            this.userEventListenerParametersCollection = new HashSet<>();
+        } else {
+            this.userEventListenerParametersCollection.clear();
+        }
+        userEventListenerParametersCollection.forEach(this::addUserEventListenerParameters);
+    }
+
+    private void addHumanTaskParameters(final HumanTaskParameters humanTaskParameters) {
         humanTaskParameters.setZaakafhandelParameters(this);
-        getHumanTaskParameters().add(humanTaskParameters);
+        humanTaskParametersCollection.add(humanTaskParameters);
     }
 
-    public void setHumanTaskParameters(final Collection<HumanTaskParameters> collection) {
-        getHumanTaskParameters().clear();
-        collection.forEach(this::addHumanTaskParameters);
-    }
-
-    public Collection<ZaakbeeindigParameter> getZaakbeeindigParameters() {
-        if (zaakbeeindigParameters == null) {
-            zaakbeeindigParameters = new HashSet<>();
-        }
-        return zaakbeeindigParameters;
-    }
-
-    public void addZaakbeeindigParameter(ZaakbeeindigParameter zaakbeeindigParameter) {
+    private void addZaakbeeindigParameter(final ZaakbeeindigParameter zaakbeeindigParameter) {
         zaakbeeindigParameter.setZaakafhandelParameters(this);
-        getZaakbeeindigParameters().add(zaakbeeindigParameter);
+        zaakbeeindigParameters.add(zaakbeeindigParameter);
     }
 
-    public void setZaakbeeindigParameters(final Collection<ZaakbeeindigParameter> collection) {
-        getZaakbeeindigParameters().clear();
-        collection.forEach(this::addZaakbeeindigParameter);
-    }
-
-    public Collection<UserEventListenerParameters> getUserEventListenerParameters() {
-        if (userEventListenerParametersCollection == null) {
-            userEventListenerParametersCollection = new HashSet<>();
-        }
-        return userEventListenerParametersCollection;
-    }
-
-    public void addUserEventListenerParameter(final UserEventListenerParameters userEventListenerParameters) {
+    private void addUserEventListenerParameters(final UserEventListenerParameters userEventListenerParameters) {
         userEventListenerParameters.setZaakafhandelParameters(this);
-        getUserEventListenerParameters().add(userEventListenerParameters);
-    }
-
-    public void setUserEventListenerParameters(final Collection<UserEventListenerParameters> collection) {
-        getUserEventListenerParameters().clear();
-        collection.forEach(this::addUserEventListenerParameter);
+        userEventListenerParametersCollection.add(userEventListenerParameters);
     }
 }
 
