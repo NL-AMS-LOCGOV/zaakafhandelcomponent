@@ -21,7 +21,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     @Input() readonly: boolean = false;
     @Input() abstract formField: AbstractFormField;
-    @Input() isWijzigbaar: boolean;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
 
     subscription: Subscription;
@@ -61,7 +60,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     edit(editing: boolean): void {
-        if (!this.readonly && !this.utilService.hasEditOverlay() && this.isWijzigbaar) {
+        if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = editing;
             this.formField.formControl.markAsUntouched();
         }
