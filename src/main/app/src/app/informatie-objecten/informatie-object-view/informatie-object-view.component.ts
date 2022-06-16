@@ -30,6 +30,7 @@ import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-comp
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {TranslateService} from '@ngx-translate/core';
 import {FileIcon} from '../model/file-icon';
+import {Zaak} from '../../zaken/model/zaak';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -105,7 +106,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.websocketService.removeListener(this.documentListener);
     }
 
-    private toevoegenActies() {
+    private toevoegenActies(zaak?: Zaak) {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
             new HrefMenuItem('actie.downloaden',
@@ -114,8 +115,9 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         ];
         // Nieuwe versie en bewerken acties niet toegestaan indien de status definitief is
         // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
+        // Als er wel een zaak gekoppeld is, dan moet deze niet gesloten zijn.
         // ToDo: Vervangen door Policy
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaakInformatieObjecten?.length > 0) {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && zaak?.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -138,8 +140,18 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     private loadZaakInformatieobjecten(): void {
         this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaakInformatieObjecten => {
             this.zaakInformatieObjecten = zaakInformatieObjecten;
-            this.toevoegenActies();
+            this.loadZaak();
         });
+    }
+
+    private loadZaak(): void {
+        if (this.zaakInformatieObjecten.length > 0) {
+            this.zakenService.readZaak(this.zaakInformatieObjecten[0].zaakUuid).subscribe(zaak => {
+                this.toevoegenActies(zaak);
+            });
+        } else {
+            this.toevoegenActies();
+        }
     }
 
     private loadHistorie(): void {
