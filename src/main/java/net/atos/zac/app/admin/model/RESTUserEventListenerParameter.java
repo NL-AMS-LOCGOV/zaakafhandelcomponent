@@ -7,9 +7,9 @@ package net.atos.zac.app.admin.model;
 
 public class RESTUserEventListenerParameter {
 
-    public String naam;
-
     public String id;
+
+    public String naam;
 
     public String toelichting;
 }
