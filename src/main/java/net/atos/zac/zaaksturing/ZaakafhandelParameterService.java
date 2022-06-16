@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -32,35 +31,30 @@ public class ZaakafhandelParameterService {
     @Inject
     private ZaakafhandelParameterBeheerService beheerService;
 
-    public ZaakafhandelParameters getZaakafhandelParameters(final Zaak zaak) {
+    public ZaakafhandelParameters readZaakafhandelParameters(final Zaak zaak) {
         final UUID zaakTypeUUID = UriUtil.uuidFromURI(zaak.getZaaktype());
         return beheerService.readZaakafhandelParameters(zaakTypeUUID);
     }
 
-    public HumanTaskParameters getHumanTaskParameters(final PlanItemInstance planItem) {
+    public HumanTaskParameters readHumanTaskParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
             return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
+        } else {
+            final HumanTaskParameters parameters = new HumanTaskParameters();
+            parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
+            ZaakafhandelParameters zaakafhandelParameters = beheerService.readZaakafhandelParameters(zaaktypeUUID);
+            parameters.setZaakafhandelParameters(zaakafhandelParameters);
+            return parameters;
         }
-        final HumanTaskParameters parameters = new HumanTaskParameters();
-        parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
-        ZaakafhandelParameters zaakafhandelParameters = beheerService.readZaakafhandelParameters(zaaktypeUUID);
-        parameters.setZaakafhandelParameters(zaakafhandelParameters);
-        return parameters;
     }
 
-    public UserEventListenerParameters getUserEventParameters(final PlanItemInstance planItem) {
+    public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
 
-    public FormulierDefinitie findFormulierDefinitie(final UUID zaaktypeUUID, final String taskDefinitionKey) {
-        final HumanTaskParameters humanTaskParameters = beheerService.readHumanTaskParameters(zaaktypeUUID, taskDefinitionKey);
-        if (humanTaskParameters == null) {
-            throw new NotFoundException(
-                    String.format("HumanTaskParameters not configured! zaakTypeUUID: %s, planItemDefinitionKey: %s",
-                                  zaaktypeUUID, zaaktypeUUID));
-        }
-        return FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
+    public FormulierDefinitie readFormulierDefinitie(final UUID zaaktypeUUID, final String taskDefinitionKey) {
+        return FormulierDefinitie.valueOf(beheerService.readHumanTaskParameters(zaaktypeUUID, taskDefinitionKey).getFormulierDefinitieID());
     }
 }

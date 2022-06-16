@@ -21,17 +21,14 @@ public class RESTCaseDefinitionConverter {
     @Inject
     private FlowableService flowableService;
 
-    public RESTCaseDefinition convertToRest(final String key) {
-        if (key == null) {
-            return null;
-        }
-        final CaseDefinition caseDefinition = flowableService.readCaseDefinition(key);
-        final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), key);
+    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey) {
+        final CaseDefinition caseDefinition = flowableService.readCaseDefinition(caseDefinitionKey);
+        final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinitionKey);
         restCaseDefinition.humanTaskDefinitions = flowableService.listHumanTasks(caseDefinition.getId()).stream()
-                .map(humanTaskDefinition -> new RESTPlanItemDefinition(humanTaskDefinition.getName(), humanTaskDefinition.getId(), HUMAN_TASK))
+                .map(humanTaskDefinition -> new RESTPlanItemDefinition(humanTaskDefinition.getId(), humanTaskDefinition.getName(), HUMAN_TASK))
                 .toList();
         restCaseDefinition.userEventListenerDefinitions = flowableService.listUserEventListeners(caseDefinition.getId()).stream()
-                .map(userEventListenerDefinition -> new RESTPlanItemDefinition(userEventListenerDefinition.getName(), userEventListenerDefinition.getId(),
+                .map(userEventListenerDefinition -> new RESTPlanItemDefinition(userEventListenerDefinition.getId(), userEventListenerDefinition.getName(),
                                                                                USER_EVENT_LISTENER))
                 .toList();
         return restCaseDefinition;

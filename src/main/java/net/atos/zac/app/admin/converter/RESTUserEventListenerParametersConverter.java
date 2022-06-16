@@ -5,37 +5,45 @@
 
 package net.atos.zac.app.admin.converter;
 
+import java.util.List;
+import java.util.Set;
+
+import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.admin.model.RESTUserEventListenerParameter;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 
-import java.util.Collection;
-import java.util.List;
-
 public class RESTUserEventListenerParametersConverter {
 
-    public RESTUserEventListenerParameter convertToRest(final UserEventListenerParameters userEventListenerParameters) {
-        final RESTUserEventListenerParameter restUserEventListenerParameter = new RESTUserEventListenerParameter();
-        restUserEventListenerParameter.id = userEventListenerParameters.getPlanItemDefinitionID();
-        restUserEventListenerParameter.toelichting = userEventListenerParameters.getToelichting();
-        return restUserEventListenerParameter;
-    }
-
-    public List<RESTUserEventListenerParameter> convertToRest(final Collection<UserEventListenerParameters> userEventListenerParameters) {
-        return userEventListenerParameters.stream()
-                .map(this::convertToRest)
+    public List<RESTUserEventListenerParameter> convertUserEventListenerParametersCollection(
+            final Set<UserEventListenerParameters> userEventListenerParametersCollection, final List<RESTPlanItemDefinition> userEventListenerDefinitions) {
+        return userEventListenerDefinitions.stream()
+                .map(userEventListenerDefinition -> convertUserEventListenerDefinition(userEventListenerDefinition, userEventListenerParametersCollection))
                 .toList();
     }
 
-    public UserEventListenerParameters convertToDomain(final RESTUserEventListenerParameter restUserEventListenerParameter) {
+    private RESTUserEventListenerParameter convertUserEventListenerDefinition(final RESTPlanItemDefinition userEventListenerDefinition,
+            final Set<UserEventListenerParameters> userEventListenerParametersCollection) {
+        final RESTUserEventListenerParameter restUserEventListenerParameter = new RESTUserEventListenerParameter();
+        restUserEventListenerParameter.id = userEventListenerDefinition.id;
+        restUserEventListenerParameter.naam = userEventListenerDefinition.naam;
+        userEventListenerParametersCollection.stream()
+                .filter(userEventListenerParameters -> userEventListenerParameters.getPlanItemDefinitionID().equals(userEventListenerDefinition.id))
+                .findAny()
+                .ifPresent(userEventListenerParameters -> restUserEventListenerParameter.toelichting = userEventListenerParameters.getToelichting());
+        return restUserEventListenerParameter;
+    }
+
+    public List<UserEventListenerParameters> convertRESTUserEventListenerParameters(
+            final List<RESTUserEventListenerParameter> restUserEventListenerParameters) {
+        return restUserEventListenerParameters.stream()
+                .map(this::convertRESTUserEventListenerParameter)
+                .toList();
+    }
+
+    private UserEventListenerParameters convertRESTUserEventListenerParameter(final RESTUserEventListenerParameter restUserEventListenerParameter) {
         final UserEventListenerParameters userEventListenerParameters = new UserEventListenerParameters();
         userEventListenerParameters.setPlanItemDefinitionID(restUserEventListenerParameter.id);
         userEventListenerParameters.setToelichting(restUserEventListenerParameter.toelichting);
         return userEventListenerParameters;
-    }
-
-    public List<UserEventListenerParameters> convertToDomain(Collection<RESTUserEventListenerParameter> restUserEventListenerParameters) {
-        return restUserEventListenerParameters.stream()
-                .map(this::convertToDomain)
-                .toList();
     }
 }

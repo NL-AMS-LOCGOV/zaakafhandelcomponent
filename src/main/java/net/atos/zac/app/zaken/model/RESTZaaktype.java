@@ -5,9 +5,11 @@
 
 package net.atos.zac.app.zaken.model;
 
+import java.util.UUID;
+
 public class RESTZaaktype {
 
-    public String uuid;
+    public UUID uuid;
 
     public String identificatie;
 

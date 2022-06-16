@@ -13,7 +13,7 @@ public class RESTZaaktypeConverter {
 
     public RESTZaaktype convert(final Zaaktype zaaktype) {
         final RESTZaaktype restZaaktype = new RESTZaaktype();
-        restZaaktype.uuid = UriUtil.uuidFromURI(zaaktype.getUrl()).toString();
+        restZaaktype.uuid = UriUtil.uuidFromURI(zaaktype.getUrl());
         restZaaktype.identificatie = zaaktype.getIdentificatie();
         restZaaktype.doel = zaaktype.getDoel();
         restZaaktype.omschrijving = zaaktype.getOmschrijving();
