@@ -27,7 +27,7 @@ export class BedrijfZoekComponent implements OnInit {
     bedrijfColumns: string[] = ['naam', 'kvk', 'vestigingsnummer', 'type', 'adres', 'acties'];
     loading = false;
 
-    types = [null, 'HOOFDVESTIGING', 'NEVENVESTIGING'];
+    types = ['HOOFDVESTIGING', 'NEVENVESTIGING'];
 
     kvkFormField: AbstractFormField;
     vestigingsnummerFormField: AbstractFormField;
@@ -76,8 +76,6 @@ export class BedrijfZoekComponent implements OnInit {
         const vestigingsnummer = this.vestigingsnummerFormField.formControl.value;
         const postcode = this.postcodeFormField.formControl.value;
         const huisnummer = this.huisnummerFormField.formControl.value;
-        const plaats = this.plaatsFormField.formControl.value;
-        const type = this.typeFormField.formControl.value;
 
         return postcode ? huisnummer : huisnummer ? postcode : kvkNummer || handelsnaam || vestigingsnummer;
     }
