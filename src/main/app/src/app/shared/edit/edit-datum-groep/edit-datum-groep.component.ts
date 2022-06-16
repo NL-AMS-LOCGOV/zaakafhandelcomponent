@@ -126,7 +126,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     edit(editing: boolean): void {
-        if (!this.readonly && !this.utilService.hasEditOverlay() && this.isWijzigbaar) {
+        if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = editing;
             this.startDatumField.formControl.markAsUntouched();
             this.einddatumGeplandField.formControl.markAsUntouched();

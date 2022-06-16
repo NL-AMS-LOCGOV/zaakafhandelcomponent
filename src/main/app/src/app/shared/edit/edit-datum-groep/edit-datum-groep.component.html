@@ -8,7 +8,7 @@
         <div [fxFlex]="100/3 + 1.5" fxLayout.sm="row">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
-                <mat-icon *ngIf="isWijzigbaar">edit</mat-icon>
+                <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
@@ -19,7 +19,7 @@
         <div [fxFlex]="100/3 + 0.75" fxLayout.sm="row">
             <label class="static-text-label">
                 {{einddatumGeplandField.label | translate}}
-                <mat-icon *ngIf="isWijzigbaar">edit</mat-icon>
+                <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
@@ -36,7 +36,7 @@
         <div [fxFlex]="100/3 - 2.25" fxLayout.sm="row">
             <label class="static-text-label">
                 {{uiterlijkeEinddatumAfdoeningField.label | translate}}
-                <mat-icon *ngIf="isWijzigbaar">edit</mat-icon>
+                <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
                 <div>
@@ -48,7 +48,7 @@
                         {{uiterlijkeEinddatumAfdoeningIcon.icon}}
                     </mat-icon>
                 </div>
-                <div *ngIf="isWijzigbaar" class="edit-icon">
+                <div *ngIf="!readonly" class="edit-icon">
                     <mat-icon>edit</mat-icon>
                 </div>
             </div>
@@ -64,18 +64,18 @@
             </div>
         </div>
         <div [fxFlex]="25" fxLayout.sm="row">
-            <div *ngIf="isWijzigbaar" class="time-control">
+            <div *ngIf="!readonly" class="time-control">
                 <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
                     <mat-icon class="time-button">history</mat-icon>
                 </button>
             </div>
-            <div *ngIf="!opgeschort && isWijzigbaar" class="play-control">
+            <div *ngIf="!opgeschort && !readonly" class="play-control">
                 <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
                     <mat-icon class="play-icon">play_arrow</mat-icon>
                     <mat-icon class="play-button">pause_circle_outline</mat-icon>
                 </button>
             </div>
-            <div *ngIf="opgeschort && isWijzigbaar" class="play-control">
+            <div *ngIf="opgeschort && !readonly" class="play-control">
                 <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
                     <mat-icon class="play-icon">pause</mat-icon>
                     <mat-icon class="play-button">play_circle_outline</mat-icon>

@@ -81,7 +81,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     menu: MenuItem[];
     action: string;
     indicaties: Indicatie[];
-    isWijzigbaar: boolean = false;
+    readonly: boolean = false;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -208,7 +208,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private setWijzigbaar(zaak: Zaak) {
-        this.isWijzigbaar = zaak.rechten.open;
+        this.readonly = !zaak.rechten.open;
         this.utilService.disableActionBar(!zaak.rechten.open);
     }
 
@@ -316,7 +316,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.isWijzigbaar) {
+        if (!this.readonly) {
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
