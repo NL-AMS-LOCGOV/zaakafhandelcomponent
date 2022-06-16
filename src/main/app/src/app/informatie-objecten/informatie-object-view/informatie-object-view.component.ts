@@ -124,11 +124,14 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 });
             }, 'difference'));
 
-            this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
-                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid).subscribe(url => {
-                    window.open(url);
-                });
-            }, 'edit'));
+            if (FileFormatUtil.isOffice(this.infoObject.formaat)) {
+                this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
+                    this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid)
+                        .subscribe(url => {
+                            window.open(url);
+                        });
+                }, 'edit'));
+            }
         }
     }
 
