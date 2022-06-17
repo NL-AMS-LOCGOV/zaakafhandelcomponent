@@ -19,12 +19,13 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
@@ -54,6 +55,10 @@ import net.atos.zac.util.UriUtil;
  */
 @ApplicationScoped
 public class ZRCClientService {
+
+    @Inject
+    @ConfigProperty(name = "ZGW_API_URL_EXTERN")
+    private String zgwApiUrlExtern;
 
     @Inject
     @RestClient
@@ -394,6 +399,10 @@ public class ZRCClientService {
     public Status createStatus(final Status status) {
         zgwClientHeadersFactory.setAuditToelichting(status.getStatustoelichting());
         return zrcClient.statusCreate(status);
+    }
+
+    public URI createUrlExternToZaak(final UUID zaakUUID) {
+        return UriBuilder.fromUri(zgwApiUrlExtern).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
     }
 
     private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {

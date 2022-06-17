@@ -97,5 +97,4 @@ public interface ZTCClient {
     @GET
     @Path("informatieobjecttypen/{uuid}")
     Informatieobjecttype informatieObjectTypeRead(@PathParam("uuid") UUID informatieObjectTypeUUID);
-
 }

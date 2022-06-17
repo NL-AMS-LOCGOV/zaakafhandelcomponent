@@ -26,6 +26,7 @@ export class InformatieObjectCreateComponent implements OnInit {
     @Input() taskId: string;
     @Input() sideNav: MatDrawer;
     @Output() redirectUrl = new EventEmitter<string>();
+    @Output() melding = new EventEmitter<string>();
 
     fields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
@@ -57,8 +58,12 @@ export class InformatieObjectCreateComponent implements OnInit {
             documentCreatieGegeven.informatieobjecttypeUUID = formGroup.controls['informatieobjectTypeUUID'].value.uuid;
             documentCreatieGegeven.titel = formGroup.controls['titel'].value;
             this.informatieObjectenService.maakDocument(documentCreatieGegeven)
-                .subscribe((redirectUrl) => {
-                    this.redirectUrl.emit(redirectUrl);
+                .subscribe((documentCreatieResponse) => {
+                    if (documentCreatieResponse.redirectURL) {
+                        this.redirectUrl.emit(documentCreatieResponse.redirectURL);
+                    } else {
+                        this.melding.emit(documentCreatieResponse.message);
+                    }
                     this.resetAndClose();
                 });
         } else {

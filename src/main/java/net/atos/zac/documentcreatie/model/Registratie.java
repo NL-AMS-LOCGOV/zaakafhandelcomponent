@@ -6,6 +6,7 @@
 package net.atos.zac.documentcreatie.model;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 
@@ -20,4 +21,6 @@ public class Registratie {
     public InformatieobjectStatus informatieobjectStatus;
 
     public String bronorganisatie;
+
+    public LocalDate creatiedatum;
 }

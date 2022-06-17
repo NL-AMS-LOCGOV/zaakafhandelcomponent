@@ -51,6 +51,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConvert
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieResponse;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
@@ -62,6 +63,7 @@ import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.DocumentCreatieService;
 import net.atos.zac.documentcreatie.model.DocumentCreatieGegevens;
+import net.atos.zac.documentcreatie.model.DocumentCreatieResponse;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
@@ -327,13 +329,13 @@ public class InformatieObjectenRESTService {
 
     @POST
     @Path("/documentcreatie")
-    public Response createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
+    public RESTDocumentCreatieResponse createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(restDocumentCreatieGegevens.zaakUUID,
                                                                                             restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);
         documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
-        final URI redirectURI = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
-        return Response.status(Response.Status.CREATED).entity(redirectURI).build();
+        final DocumentCreatieResponse documentCreatieResponse = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
+        return new RESTDocumentCreatieResponse(documentCreatieResponse.getRedirectUrl(), documentCreatieResponse.getMessage());
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {
