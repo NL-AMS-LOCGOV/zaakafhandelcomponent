@@ -11,8 +11,6 @@ import java.util.UUID;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.io.FilenameUtils;
@@ -45,9 +43,6 @@ public class WebdavHelper {
     @ConfigProperty(name = "CONTEXT_URL")
     private String contextUrl;
 
-    @Context
-    UriInfo uriInfo;
-
     @Inject
     private DRCClientService drcClientService;
 
@@ -57,26 +52,10 @@ public class WebdavHelper {
     private final Map<String, Gegevens> tokenMap = Collections.synchronizedMap(new LRUMap<>(1000));
 
 
-    public URI createRedirectURL(final UUID enkelvoudigInformatieobjectUUID, final UriInfo uriInfo) {
-        System.out.println(">>>> " + uriInfo.getRequestUri().toString());
-
+    public URI createRedirectURL(final UUID enkelvoudigInformatieobjectUUID) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
-
-        final URI build = uriInfo.getBaseUriBuilder()
-                .replacePath("/webdav/folder/{file}")
-                .scheme(format("%s:%s", getWebDAVApp(enkelvoudigInformatieobject.getFormaat()), uriInfo.getBaseUri().getScheme()))
-                .build(format("%s.%s", createToken(enkelvoudigInformatieobjectUUID),
-                              FilenameUtils.getExtension(enkelvoudigInformatieobject.getBestandsnaam())));
-
-        final URI uri = URI.create(format("%s:%s/%s/%s.%s",
-                                          getWebDAVApp(enkelvoudigInformatieobject.getFormaat()),
-                                          getWebdavBaseUrl(),
-                                          FOLDER,
-                                          createToken(enkelvoudigInformatieobjectUUID),
-                                          FilenameUtils.getExtension(enkelvoudigInformatieobject.getBestandsnaam())));
-        System.out.println(uri.toString());
-        System.out.println(build.toString());
-        return build;
+        return URI.create(format("%s:%s/%s/%s.%s", getWebDAVApp(enkelvoudigInformatieobject.getFormaat()), getWebdavBaseUrl(), FOLDER,
+                                 createToken(enkelvoudigInformatieobjectUUID), FilenameUtils.getExtension(enkelvoudigInformatieobject.getBestandsnaam())));
     }
 
     public Gegevens readGegevens(final String token) {

@@ -27,10 +27,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -122,9 +120,6 @@ public class InformatieObjectenRESTService {
     @Inject
     @ActiveSession
     private Instance<HttpSession> httpSession;
-
-    @Context
-    UriInfo uriInfo;
 
     @GET
     @Path("informatieobject/{uuid}")
@@ -255,7 +250,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/edit")
     public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid) {
-        final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
+        final URI redirectURI = webdavHelper.createRedirectURL(uuid);
         return Response.ok(redirectURI).build();
     }
 
