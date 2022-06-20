@@ -415,7 +415,7 @@ public class ZakenRESTService {
     @Path("/zaak/{uuid}/heropenen")
     public void heropenen(@PathParam("uuid") final UUID zaakUUID, final RESTZaakHeropenenGegevens heropenenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        zgwApiService.heropenZaak(zaak);
+        zgwApiService.heropenZaak(zaak, heropenenGegevens.reden);
     }
 
     @PUT

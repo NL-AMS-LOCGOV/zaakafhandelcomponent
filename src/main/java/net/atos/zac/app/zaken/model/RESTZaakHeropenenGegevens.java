@@ -6,4 +6,6 @@
 package net.atos.zac.app.zaken.model;
 
 public class RESTZaakHeropenenGegevens {
+
+    public String reden;
 }

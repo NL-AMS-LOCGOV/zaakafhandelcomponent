@@ -212,8 +212,8 @@ export class ZakenService {
         );
     }
 
-    heropenen(uuid: string): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens()).pipe(
+    heropenen(uuid: string, heropenReden: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

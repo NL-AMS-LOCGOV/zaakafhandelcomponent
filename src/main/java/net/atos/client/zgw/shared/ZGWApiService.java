@@ -63,8 +63,6 @@ public class ZGWApiService {
 
     private static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
 
-    private static final String HEROPENEN_TOELICHTING = "Zaak is heropend";
-
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -172,8 +170,8 @@ public class ZGWApiService {
      *
      * @param zaak {@link Zaak} welke heropend wordt
      */
-    public void heropenZaak(final Zaak zaak) {
-        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, HEROPENEN_TOELICHTING);
+    public void heropenZaak(final Zaak zaak, final String reden) {
+        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, reden);
     }
 
     /**

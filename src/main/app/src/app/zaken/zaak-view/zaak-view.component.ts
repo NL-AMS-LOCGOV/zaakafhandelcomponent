@@ -497,31 +497,32 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
+
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
-        this.websocketService.doubleSuspendListener(this.zaakListener);
-        this.dialog.open(DialogComponent, {
-            data: dialogData
-        }).afterClosed().subscribe(result => {
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();
                 this.loadTaken();
-                this.utilService.openSnackbar('actie.zaak.afgebroken');
+                this.utilService.openSnackbar('msg.zaak.afgebroken');
             }
         });
     }
 
     private openZaakHeropenenDialog(): void {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
-                this.zakenService.heropenen(this.zaak.uuid).pipe(
-                    tap(() => this.websocketService.suspendListener(this.zaakListener))
-                ))
-        }).afterClosed().subscribe(result => {
+        const dialogData = new DialogData([
+                new InputFormFieldBuilder().id('reden').label('actie.zaak.heropenen.reden').validators(Validators.required).maxlength(100).build()],
+            (results: any[]) => this.zakenService.heropenen(this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
+            ));
+
+        dialogData.confirmButtonActionKey = 'actie.zaak.heropenen';
+
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();
-                this.utilService.openSnackbar('msg.zaak.heropenen.uitgevoerd', {zaak: this.zaak.identificatie});
+                this.loadTaken();
+                this.utilService.openSnackbar('msg.zaak.heropend');
             }
         });
     }

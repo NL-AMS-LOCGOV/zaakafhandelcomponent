@@ -4,5 +4,9 @@
  */
 
 export class ZaakHeropenenGegevens {
-    // ToDo: moet hier nog een reden in komen?
+    public reden: string;
+
+    constructor(reden: string) {
+        this.reden = reden;
+    }
 }
