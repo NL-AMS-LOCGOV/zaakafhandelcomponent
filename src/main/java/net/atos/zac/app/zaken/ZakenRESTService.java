@@ -71,6 +71,7 @@ import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
@@ -416,6 +417,13 @@ public class ZakenRESTService {
     public void heropenen(@PathParam("uuid") final UUID zaakUUID, final RESTZaakHeropenenGegevens heropenenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
         zgwApiService.heropenZaak(zaak, heropenenGegevens.reden);
+    }
+
+    @PATCH
+    @Path("/zaak/{uuid}/afsluiten")
+    public void afsluiten(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
+        Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
     }
 
     @PUT

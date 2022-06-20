@@ -27,6 +27,7 @@ import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
+import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -214,6 +215,12 @@ export class ZakenService {
 
     heropenen(uuid: string, heropenReden: string): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden)).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    afsluiten(uuid: string, afsluitenReden: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

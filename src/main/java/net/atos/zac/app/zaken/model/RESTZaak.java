@@ -79,4 +79,6 @@ public class RESTZaak {
     public RESTZaakRechten rechten;
 
     public boolean ontvangstbevestigingVerstuurd;
+
+    public boolean heropend;
 }
