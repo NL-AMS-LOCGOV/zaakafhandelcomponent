@@ -108,6 +108,7 @@ public class ZaakZoekObjectConverter {
         zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
         zaakZoekObject.setStatusToelichting(status.getStatustoelichting());
         zaakZoekObject.setStatusDatumGezet(DateTimeConverterUtil.convertToDate(status.getDatumStatusGezet()));
+        zaakZoekObject.setAantalOpenstaandeTaken(flowableService.countOpenTasks(zaak.getUuid()));
 
         if (zaak.getResultaat() != null) {
             final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
@@ -116,12 +117,6 @@ public class ZaakZoekObjectConverter {
                 zaakZoekObject.setResultaattypeOmschrijving(resultaattype.getOmschrijving());
                 zaakZoekObject.setResultaatToelichting(resultaat.getToelichting());
             }
-        }
-
-        if (zaak.getEinddatum() == null) {
-            zaakZoekObject.setAantalOpenstaandeTaken(flowableService.countOpenTasksforCase(zaak.getUuid()));
-        } else {
-            zaakZoekObject.setAantalOpenstaandeTaken(0);
         }
 
         return zaakZoekObject;
