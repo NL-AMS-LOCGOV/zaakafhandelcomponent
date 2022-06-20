@@ -40,6 +40,8 @@ import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 public class RESTZaakConverter {
 
     @Inject
@@ -155,6 +157,9 @@ public class RESTZaakConverter {
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue(flowableService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.heeftHoofdzaak = zaak.getHoofdzaak() != null;
+        restZaak.heeftDeelzaken = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
+
         return restZaak;
     }
 

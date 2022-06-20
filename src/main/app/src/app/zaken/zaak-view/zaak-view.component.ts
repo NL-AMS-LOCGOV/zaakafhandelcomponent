@@ -332,6 +332,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.action = SideNavAction.MAIL_VERSTUREN;
             }, 'mail'));
 
+            this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
+                this.zakenService.addTeKoppelenZaak(this.zaak);
+            }, 'account_tree'));
+
             if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
                 this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                     this.actionsSidenav.open();
