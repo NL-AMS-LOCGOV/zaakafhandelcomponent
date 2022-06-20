@@ -1,6 +1,7 @@
 package net.atos.zac.webdav;
 
 import static java.lang.String.format;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 import java.net.URI;
 import java.util.Collections;
@@ -11,10 +12,9 @@ import java.util.UUID;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.io.FilenameUtils;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -40,10 +40,6 @@ public class WebdavHelper {
                                                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
     @Inject
-    @ConfigProperty(name = "CONTEXT_URL")
-    private String contextUrl;
-
-    @Inject
     private DRCClientService drcClientService;
 
     @Inject
@@ -51,11 +47,11 @@ public class WebdavHelper {
 
     private final Map<String, Gegevens> tokenMap = Collections.synchronizedMap(new LRUMap<>(1000));
 
-
-    public URI createRedirectURL(final UUID enkelvoudigInformatieobjectUUID) {
+    public URI createRedirectURL(final UUID enkelvoudigInformatieobjectUUID, final UriInfo uriInfo) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
-        return URI.create(format("%s:%s/%s/%s.%s", getWebDAVApp(enkelvoudigInformatieobject.getFormaat()), getWebdavBaseUrl(), FOLDER,
-                                 createToken(enkelvoudigInformatieobjectUUID), FilenameUtils.getExtension(enkelvoudigInformatieobject.getBestandsnaam())));
+        final String scheme = format("%s:%s", getWebDAVApp(enkelvoudigInformatieobject.getFormaat()), uriInfo.getBaseUri().getScheme());
+        final String filename = format("%s.%s", createToken(enkelvoudigInformatieobjectUUID), getExtension(enkelvoudigInformatieobject.getBestandsnaam()));
+        return uriInfo.getBaseUriBuilder().scheme(scheme).replacePath("webdav/folder/{filename}").build(filename);
     }
 
     public Gegevens readGegevens(final String token) {
@@ -83,10 +79,6 @@ public class WebdavHelper {
             return "ms-powerpoint";
         }
         return null;
-    }
-
-    private String getWebdavBaseUrl() {
-        return contextUrl + WEBDAV_CONTEXT_PATH;
     }
 
     public record Gegevens(UUID enkelvoudigInformatieibjectUUID, String loggedInUserId) {}
