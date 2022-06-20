@@ -10,9 +10,6 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
-/**
- *
- */
 public class RuntimeExceptionMapper implements ResponseExceptionMapper<RuntimeException> {
 
 

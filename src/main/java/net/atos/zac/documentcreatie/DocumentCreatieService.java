@@ -33,8 +33,6 @@ import net.atos.zac.documentcreatie.model.WizardRequest;
 @ApplicationScoped
 public class DocumentCreatieService {
 
-    private static final String HTTPS = "https";
-
     @Inject
     @RestClient
     private SmartDocumentsClient smartDocumentsClient;
