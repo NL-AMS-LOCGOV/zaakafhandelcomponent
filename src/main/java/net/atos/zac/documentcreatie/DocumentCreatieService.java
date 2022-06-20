@@ -76,7 +76,7 @@ public class DocumentCreatieService {
             return new DocumentCreatieResponse(
                     UriBuilder.fromUri(smartDocumentsURL).path("smartdocuments/wizard").queryParam("ticket", wizardResponse.ticket).build());
         } catch (final BadRequestException badRequestException) {
-            return new DocumentCreatieResponse("Aanmaken van een document is helaas niet mogelijk.");
+            return new DocumentCreatieResponse("Aanmaken van een document is helaas niet mogelijk. (ben je als user geregistreerd in SmartDocuments?)");
         }
     }
 
