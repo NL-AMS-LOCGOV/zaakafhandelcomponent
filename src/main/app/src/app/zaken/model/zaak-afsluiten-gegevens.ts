@@ -4,9 +4,5 @@
  */
 
 export class ZaakAfsluitenGegevens {
-    public reden: string;
-
-    constructor(reden: string) {
-        this.reden = reden;
-    }
+    constructor(public reden: string) {}
 }

@@ -4,6 +4,6 @@
  */
 
 export class ZaakAfbrekenGegevens {
-    zaakbeeindigRedenId: string;
+    constructor(public zaakbeeindigRedenId: string) {}
 }
 

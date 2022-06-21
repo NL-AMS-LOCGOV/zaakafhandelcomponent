@@ -62,10 +62,7 @@ export class ZakenService {
     }
 
     partialUpdateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
-        const zaakEditMetRedenGegevens: ZaakEditMetRedenGegevens = new ZaakEditMetRedenGegevens();
-        zaakEditMetRedenGegevens.zaak = zaak;
-        zaakEditMetRedenGegevens.reden = reden;
-        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaakEditMetRedenGegevens).pipe(
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, new ZaakEditMetRedenGegevens(zaak, reden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -206,9 +203,7 @@ export class ZakenService {
     }
 
     afbreken(uuid: string, beeindigReden: ZaakbeeindigReden): Observable<void> {
-        const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
-        zaakAfbrekenGegevens.zaakbeeindigRedenId = beeindigReden.id;
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, zaakAfbrekenGegevens).pipe(
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, new ZaakAfbrekenGegevens(beeindigReden.id)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
