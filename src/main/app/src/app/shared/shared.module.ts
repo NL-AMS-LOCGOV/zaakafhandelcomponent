@@ -40,6 +40,7 @@ import {EditSelectComponent} from './edit/edit-select/edit-select.component';
 import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.component';
 import {DagenPipe} from './pipes/dagen.pipe';
+import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
 
 @NgModule({
     declarations: [
@@ -63,7 +64,8 @@ import {DagenPipe} from './pipes/dagen.pipe';
         TooltipListPipe,
         DocumentViewerComponent,
         SkeletonLoaderComponent,
-        DagenPipe
+        DagenPipe,
+        NotificationDialogComponent
     ],
     imports: [
         FormsModule,

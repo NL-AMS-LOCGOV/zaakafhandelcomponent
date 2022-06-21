@@ -1,0 +1,21 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 mat-dialog-title>{{'title.zaak.koppelen' | translate }}</h1>
+
+<div mat-dialog-content>
+    <mfb-form-field *ngIf="koppelSelectFormField" [field]="koppelSelectFormField"></mfb-form-field>
+    <div *ngIf="!loading && koppelKeuzes.length === 0">{{'msg.zaak.koppelen.niet.toegestaan' | translate}}</div>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="koppelSelectFormField && koppelSelectFormField.formControl.invalid || loading"
+            mat-button color="primary" (click)="koppel()" id="zakenKoppelen_button">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.koppelen' | translate}}
+    </button>
+    <button [disabled]="loading" autofocus mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+</div>

@@ -158,8 +158,8 @@ public class TakenRESTService {
     @PUT
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
-        flowableService.updateTaakdataOpenTask(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatieOpenTask(restTaak.id, restTaak.taakinformatie);
+        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
     }
 
@@ -219,8 +219,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        flowableService.updateTaakdataOpenTask(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatieOpenTask(restTaak.id, restTaak.taakinformatie);
+        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id, restTaak.zaakUUID);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));

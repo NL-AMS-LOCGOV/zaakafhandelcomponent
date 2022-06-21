@@ -66,6 +66,8 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Indicatie} from '../model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -125,7 +127,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private websocketService: WebsocketService,
                 private dialog: MatDialog,
                 private translate: TranslateService,
-                private locationService: LocationService) {
+                private locationService: LocationService,
+                private zaakKoppelenService: ZaakKoppelenService) {
         super();
     }
 
@@ -325,6 +328,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.actionsSidenav.open();
                 this.action = SideNavAction.MAIL_VERSTUREN;
             }, 'mail'));
+
+            this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
+                this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
+            }, 'account_tree'));
 
             if (!this.zaak.ontvangstbevestigingVerstuurd && !this.zaak.heropend) {
                 this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
@@ -814,9 +821,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.toegevoegdDocument = informatieobject;
     }
 
-    documentAangemaakt(redirectUrl: string): void {
+    documentAanmakenStarten(redirectUrl: string): void {
         this.action = null;
         this.actionsSidenav.close();
         window.open(redirectUrl);
+    }
+
+    documentAanmakenNietMogelijk(melding: string): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
     }
 }

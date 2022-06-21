@@ -9,6 +9,7 @@ import {Title} from '@angular/platform-browser';
 import {UtilService} from './core/service/util.service';
 import {InformatieObjectenService} from './informatie-objecten/informatie-objecten.service';
 import {SessionStorageUtil} from './shared/storage/session-storage.util';
+import {ZaakKoppelenService} from './zaken/zaak-koppelen/zaak-koppelen.service';
 
 @Component({
     selector: 'zac-root',
@@ -20,7 +21,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     initialized = false;
 
     constructor(private translate: TranslateService, private titleService: Title,
-                private infoService: InformatieObjectenService, public utilService: UtilService) {
+                private infoService: InformatieObjectenService, private zaakKoppelenService: ZaakKoppelenService,
+                public utilService: UtilService) {
 
     }
 
@@ -36,6 +38,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         if (!this.initialized) {
             this.infoService.appInit();
+            this.zaakKoppelenService.appInit();
             this.initialized = true;
         }
     }

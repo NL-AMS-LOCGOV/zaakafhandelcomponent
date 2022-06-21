@@ -81,4 +81,8 @@ public class RESTZaak {
     public boolean ontvangstbevestigingVerstuurd;
 
     public boolean heropend;
+
+    public boolean isHoofdzaak;
+
+    public boolean isDeelzaak;
 }

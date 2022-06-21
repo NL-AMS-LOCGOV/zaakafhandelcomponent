@@ -50,4 +50,6 @@ export class Zaak {
     initiatorIdentificatie: string; // BSN or Vestigingsnummer
     ontvangstbevestigingVerstuurd: boolean;
     heropend: boolean;
+    isHoofdzaak: boolean;
+    isDeelzaak: boolean;
 }

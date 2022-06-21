@@ -21,6 +21,7 @@ import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
 import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
+import {DocumentCreatieResponse} from './model/document-creatie-response';
 
 @Injectable({
     providedIn: 'root'
@@ -68,8 +69,8 @@ export class InformatieObjectenService {
         );
     }
 
-    maakDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<string> {
-        return this.http.post<string>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
+    maakDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<DocumentCreatieResponse> {
+        return this.http.post<DocumentCreatieResponse>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

@@ -192,20 +192,22 @@ public class FlowableService {
         return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
     }
 
-    public List<Task> listOpenTasksforCase(final UUID zaakUUID) {
+    public List<Task> listOpenTasks(final UUID zaakUUID) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             return listOpenTasksForCase(caseInstance.getId());
+        } else {
+            return Collections.emptyList();
         }
-        return null;
     }
 
-    public long countOpenTasksforCase(final UUID zaakUUID) {
+    public long countOpenTasks(final UUID zaakUUID) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
-            return countOpenTasksForCase(caseInstance.getId());
+            return countOpenTasksForOpenCase(caseInstance.getId());
+        } else {
+            return 0;
         }
-        return 0;
     }
 
     public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
@@ -267,7 +269,7 @@ public class FlowableService {
         if (planItemInstance != null) {
             return planItemInstance;
         } else {
-            throw new RuntimeException(String.format("No plan item found with plan item instance id '%s'", planItemInstanceId));
+            throw new RuntimeException(String.format("No open plan item found with plan item instance id '%s'", planItemInstanceId));
         }
     }
 
@@ -418,7 +420,7 @@ public class FlowableService {
         return (String) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAK_IDENTIFICATIE);
     }
 
-    public String readZaakIdentificatieOClosedCase(final String caseInstanceId) {
+    public String readZaakIdentificatieClosedCase(final String caseInstanceId) {
         return (String) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAK_IDENTIFICATIE);
     }
 
@@ -426,8 +428,8 @@ public class FlowableService {
         return (Boolean) findVariableForCase(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD);
     }
 
-    public void updateOntvangstbevestigingVerstuurdForOpenCase(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
-        updateVariableForOpenCase(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
+    public void updateOntvangstbevestigingVerstuurd(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
+        updateVariable(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
     }
 
     public UUID readZaaktypeUUIDOpenCase(final String caseInstanceId) {
@@ -450,28 +452,28 @@ public class FlowableService {
         return (String) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
     }
 
-    public ZonedDateTime findDatumtijdOpgeschortForCase(final UUID zaakUUID) {
+    public ZonedDateTime findDatumtijdOpgeschort(final UUID zaakUUID) {
         return (ZonedDateTime) findVariableForCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
     }
 
-    public void updateDatumtijdOpgeschortForOpenCase(final UUID zaakUUID, final ZonedDateTime datumtijOpgeschort) {
-        updateVariableForOpenCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT, datumtijOpgeschort);
+    public void updateDatumtijdOpgeschort(final UUID zaakUUID, final ZonedDateTime datumtijOpgeschort) {
+        updateVariable(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT, datumtijOpgeschort);
     }
 
-    public void removeDatumtijdOpgeschortForOpenCase(final UUID zaakUUID) {
-        removeVariableForOpenCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
+    public void removeDatumtijdOpgeschort(final UUID zaakUUID) {
+        removeVariable(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
     }
 
-    public Integer findVerwachteDagenOpgeschortForCase(final UUID zaakUUID) {
+    public Integer findVerwachteDagenOpgeschort(final UUID zaakUUID) {
         return (Integer) findVariableForCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
     }
 
-    public void updateVerwachteDagenOpgeschortForOpenCase(final UUID zaakUUID, final Integer verwachteDagenOpgeschort) {
-        updateVariableForOpenCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, verwachteDagenOpgeschort);
+    public void updateVerwachteDagenOpgeschort(final UUID zaakUUID, final Integer verwachteDagenOpgeschort) {
+        updateVariable(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT, verwachteDagenOpgeschort);
     }
 
-    public void removeVerwachteDagenOpgeschortForOpenCase(final UUID zaakUUID) {
-        removeVariableForOpenCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+    public void removeVerwachteDagenOpgeschort(final UUID zaakUUID) {
+        removeVariable(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
     }
 
     public HashMap<String, String> findTaakdata(final String taskId) {
@@ -486,8 +488,8 @@ public class FlowableService {
         return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKDATA);
     }
 
-    public void updateTaakdataOpenTask(final String taskId, final Map<String, String> taakdata) {
-        updateOpenTaskVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
+    public void updateTaakdata(final String taskId, final Map<String, String> taakdata) {
+        updateTaskVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
     }
 
     public List<UUID> findTaakdocumentenOpenTask(final String taskId) {
@@ -498,8 +500,8 @@ public class FlowableService {
         return (List<UUID>) findClosedTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN);
     }
 
-    public void updateTaakdocumentenOpenTask(final String taskId, final List<UUID> taakdocumenten) {
-        updateOpenTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+    public void updateTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
+        updateTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
     }
 
     public HashMap<String, String> findTaakinformatieOpenTask(final String taskId) {
@@ -510,8 +512,8 @@ public class FlowableService {
         return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
     }
 
-    public void updateTaakinformatieOpenTask(final String taskId, final Map<String, String> taakinformatie) {
-        updateOpenTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE, taakinformatie);
+    public void updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
+        updateTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE, taakinformatie);
     }
 
     private List<Task> listOpenTasksForCase(final String caseInstanceId) {
@@ -521,7 +523,7 @@ public class FlowableService {
                 .list();
     }
 
-    private long countOpenTasksForCase(final String caseInstanceId) {
+    private long countOpenTasksForOpenCase(final String caseInstanceId) {
         return cmmnTaskService.createTaskQuery()
                 .caseInstanceId(caseInstanceId)
                 .includeIdentityLinks()
@@ -572,7 +574,7 @@ public class FlowableService {
         }
     }
 
-    private void updateOpenTaskVariable(final String taskId, final String variableName, Object value) {
+    private void updateTaskVariable(final String taskId, final String variableName, Object value) {
         cmmnTaskService.setVariableLocal(taskId, variableName, value);
     }
 
@@ -613,7 +615,7 @@ public class FlowableService {
         }
     }
 
-    private void updateVariableForOpenCase(final UUID zaakUUID, final String variableName, final Object value) {
+    private void updateVariable(final UUID zaakUUID, final String variableName, final Object value) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
@@ -642,7 +644,7 @@ public class FlowableService {
         throw new RuntimeException(String.format("No task found with task id '%s'", taskId));
     }
 
-    private void removeVariableForOpenCase(final UUID zaakUUID, final String variableName) {
+    private void removeVariable(final UUID zaakUUID, final String variableName) {
         final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
         if (caseInstance != null) {
             cmmnRuntimeService.removeVariable(caseInstance.getId(), variableName);

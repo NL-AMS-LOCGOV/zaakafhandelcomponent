@@ -9,13 +9,17 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
+import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -240,11 +247,11 @@ public class ZakenRESTService {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
                                                                       restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            flowableService.updateDatumtijdOpgeschortForOpenCase(zaakUUID, ZonedDateTime.now());
-            flowableService.updateVerwachteDagenOpgeschortForOpenCase(zaakUUID, restZaakOpschortGegevens.duurDagen);
+            flowableService.updateDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
+            flowableService.updateVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
         } else {
-            flowableService.removeDatumtijdOpgeschortForOpenCase(zaakUUID);
-            flowableService.removeVerwachteDagenOpgeschortForOpenCase(zaakUUID);
+            flowableService.removeDatumtijdOpgeschort(zaakUUID);
+            flowableService.removeVerwachteDagenOpgeschort(zaakUUID);
         }
         return zaakConverter.convert(updatedZaak);
     }
@@ -253,8 +260,8 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/opschorting")
     public RESTZaakOpschorting getZaakOpschorting(@PathParam("uuid") final UUID zaakUUID) {
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschortForCase(zaakUUID);
-        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschortForCase(zaakUUID);
+        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschort(zaakUUID);
+        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschort(zaakUUID);
         return zaakOpschorting;
     }
 
@@ -426,6 +433,28 @@ public class ZakenRESTService {
         zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
     }
 
+    @PATCH
+    @Path("/zaak/koppel")
+    public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
+        final Zaak teKoppelenZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
+
+        final Zaak bronZaakPatch = new Zaak();
+        final Zaak teKoppelenZaakPatch = new Zaak();
+
+        bronZaakPatch.setUrl(zaak.getUrl());
+        bronZaakPatch.setDeelzaken(zaak.getDeelzaken());
+        teKoppelenZaakPatch.setUrl(teKoppelenZaak.getUrl());
+        teKoppelenZaakPatch.setDeelzaken(teKoppelenZaak.getDeelzaken());
+
+        switch (zaakKoppelGegevens.relatieType) {
+            case DEELZAAK ->
+                    koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), teKoppelenZaakPatch, zaak.getUuid(), bronZaakPatch);
+            case HOOFDZAAK ->
+                    koppelHoofdEnDeelzaak(zaak.getUuid(), bronZaakPatch, teKoppelenZaak.getUuid(), teKoppelenZaakPatch);
+        }
+    }
+
     @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens toekennenGegevens) {
@@ -521,7 +550,7 @@ public class ZakenRESTService {
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
         final int[] count = new int[1];
-        flowableService.listOpenTasksforCase(zaakUUID).stream()
+        flowableService.listOpenTasks(zaakUUID).stream()
                 .filter(task -> task.getDueDate() != null)
                 .forEach(task -> {
                     task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));
@@ -530,5 +559,18 @@ public class ZakenRESTService {
                     count[0]++;
                 });
         return count[0];
+    }
+
+    private void koppelHoofdEnDeelzaak(final UUID hoofdzaakUuid, final Zaak hoofdzaak,
+            final UUID deelzaakUuid, final Zaak deelzaak) {
+        final Set<URI> deelzaken = hoofdzaak.getDeelzaken() != null ? hoofdzaak.getDeelzaken() : new HashSet<>();
+        deelzaken.add(deelzaak.getUrl());
+        hoofdzaak.setDeelzaken(deelzaken);
+        deelzaak.setHoofdzaak(hoofdzaak.getUrl());
+
+        zrcClientService.updateZaakPartially(hoofdzaakUuid, hoofdzaak);
+        zrcClientService.updateZaakPartially(deelzaakUuid, deelzaak);
+        eventingService.send(ZAAK.updated(deelzaakUuid));
+        eventingService.send(ZAAK.updated(hoofdzaakUuid));
     }
 }
