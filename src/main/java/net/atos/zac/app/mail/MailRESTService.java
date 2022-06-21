@@ -56,6 +56,6 @@ public class MailRESTService {
         }
 
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
-        flowableService.updateOntvangstbevestigingVerstuurdForOpenCase(zaakUuid, Boolean.TRUE);
+        flowableService.updateOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
     }
 }

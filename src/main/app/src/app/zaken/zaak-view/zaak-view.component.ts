@@ -66,6 +66,7 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Indicatie} from '../model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 
 @Component({
@@ -801,9 +802,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.toegevoegdDocument = informatieobject;
     }
 
-    documentAangemaakt(redirectUrl: string): void {
+    documentAanmakenStarten(redirectUrl: string): void {
         this.action = null;
         this.actionsSidenav.close();
         window.open(redirectUrl);
+    }
+
+    documentAanmakenNietMogelijk(melding: string): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
     }
 }

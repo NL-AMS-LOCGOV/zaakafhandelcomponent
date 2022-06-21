@@ -67,7 +67,7 @@ public class PlanItemsRESTService {
     }
 
     @GET
-    @Path("{id}")
+    @Path("humanTask/{id}")
     public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = flowableService.readZaakUUIDOpenCase(planItem.getCaseInstanceId());

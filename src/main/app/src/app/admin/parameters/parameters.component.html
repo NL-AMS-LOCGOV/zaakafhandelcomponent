@@ -54,7 +54,8 @@
                             *matHeaderRowDef="['identificatie','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'url']; sticky: true"></tr>
                         <tr mat-row *matRowDef="let row; columns: ['identificatie', 'omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'url'];"></tr>
                     </table>
-                    <p *ngIf="parameters.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                    <p *ngIf="parameters.data.length === 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                    <p *ngIf="parameters.data.length === 0 && loading">{{'msg.loading' | translate}}</p>
                 </div>
             </mat-card-content>
         </mat-card>

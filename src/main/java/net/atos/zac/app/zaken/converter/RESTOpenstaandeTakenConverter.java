@@ -5,17 +5,16 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import net.atos.zac.app.zaken.model.RESTOpenstaandeTaken;
+import java.util.List;
+import java.util.UUID;
 
-import net.atos.zac.flowable.FlowableService;
+import javax.inject.Inject;
 
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
-import javax.inject.Inject;
-
-import java.util.List;
-import java.util.UUID;
+import net.atos.zac.app.zaken.model.RESTOpenstaandeTaken;
+import net.atos.zac.flowable.FlowableService;
 
 public class RESTOpenstaandeTakenConverter {
 
@@ -23,7 +22,7 @@ public class RESTOpenstaandeTakenConverter {
     private FlowableService flowableService;
 
     public RESTOpenstaandeTaken convert(final UUID zaakUUID) {
-        final List<Task> openstaandeTaken = flowableService.listOpenTasksforCase(zaakUUID);
+        final List<Task> openstaandeTaken = flowableService.listOpenTasks(zaakUUID);
         final RESTOpenstaandeTaken restOpenstaandeTaken = new RESTOpenstaandeTaken();
 
         if (openstaandeTaken != null) {

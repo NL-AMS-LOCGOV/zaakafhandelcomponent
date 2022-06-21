@@ -27,8 +27,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -51,6 +53,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConvert
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjecttypeConverter;
 import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieResponse;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
@@ -62,6 +65,7 @@ import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.DocumentCreatieService;
 import net.atos.zac.documentcreatie.model.DocumentCreatieGegevens;
+import net.atos.zac.documentcreatie.model.DocumentCreatieResponse;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
@@ -182,7 +186,7 @@ public class InformatieObjectenRESTService {
                 taakdocumenten = new LinkedList<>();
             }
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            flowableService.updateTaakdocumentenOpenTask(documentReferentieId, taakdocumenten);
+            flowableService.updateTaakdocumenten(documentReferentieId, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
@@ -249,8 +253,8 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("informatieobject/{uuid}/edit")
-    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid) {
-        final URI redirectURI = webdavHelper.createRedirectURL(uuid);
+    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid, @Context final UriInfo uriInfo) {
+        final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
         return Response.ok(redirectURI).build();
     }
 
@@ -327,13 +331,13 @@ public class InformatieObjectenRESTService {
 
     @POST
     @Path("/documentcreatie")
-    public Response createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
+    public RESTDocumentCreatieResponse createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(restDocumentCreatieGegevens.zaakUUID,
                                                                                             restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);
         documentCreatieGegevens.setTitel(restDocumentCreatieGegevens.titel);
-        final URI redirectURI = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
-        return Response.status(Response.Status.CREATED).entity(redirectURI).build();
+        final DocumentCreatieResponse documentCreatieResponse = documentCreatieService.creeerDocumentAttendedSD(documentCreatieGegevens);
+        return new RESTDocumentCreatieResponse(documentCreatieResponse.getRedirectUrl(), documentCreatieResponse.getMessage());
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {

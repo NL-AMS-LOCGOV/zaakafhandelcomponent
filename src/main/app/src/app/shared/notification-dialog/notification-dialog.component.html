@@ -1,0 +1,12 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div mat-dialog-content>
+    <p [innerHTML]="data.melding"></p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button color="primary" (click)="confirm()" id="confirmButton">{{'actie.ok' | translate}}</button>
+</div>
+

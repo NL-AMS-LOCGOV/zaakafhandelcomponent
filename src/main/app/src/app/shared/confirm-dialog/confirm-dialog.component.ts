@@ -38,6 +38,5 @@ export class ConfirmDialogComponent {
 }
 
 export class ConfirmDialogData {
-    constructor(public melding: string, public observable?: Observable<any>, public uitleg?: string) {
-    }
+    constructor(public melding: string, public observable?: Observable<any>, public uitleg?: string) {}
 }

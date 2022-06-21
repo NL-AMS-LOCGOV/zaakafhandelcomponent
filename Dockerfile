@@ -18,4 +18,6 @@ COPY --from=build /target/zaakafhandelcomponent.jar /
 
 # Start zaakafhandelcomponent
 ENTRYPOINT ["java", "-jar", "zaakafhandelcomponent.jar"]
+# Start zaakafhandelcomponent in debug mode
+# ENTRYPOINT ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787", "-jar", "zaakafhandelcomponent.jar"]
 EXPOSE 8080 8787 9990

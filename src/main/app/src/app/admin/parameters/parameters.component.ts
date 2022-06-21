@@ -24,7 +24,7 @@ export class ParametersComponent extends ViewComponent implements OnInit {
 
     menu: MenuItem[] = [];
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
-    loading: boolean;
+    loading: boolean = false;
 
     constructor(private zaakafhandelParametersService: ZaakafhandelParametersService, public utilService: UtilService) {
         super();

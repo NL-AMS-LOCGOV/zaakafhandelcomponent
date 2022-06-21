@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
-public class PersoonNotFoundExceptionMapping implements ResponseExceptionMapper<PersoonNotFoundException> {
+public class PersoonNotFoundExceptionMapper implements ResponseExceptionMapper<PersoonNotFoundException> {
 
     @Override
     public boolean handles(final int status, final MultivaluedMap<String, Object> headers) {

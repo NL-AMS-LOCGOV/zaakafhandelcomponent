@@ -20,7 +20,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.client.brp.exception.PersoonNotFoundExceptionMapping;
+import net.atos.client.brp.exception.PersoonNotFoundExceptionMapper;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
@@ -41,7 +41,7 @@ import net.atos.client.brp.util.JsonbConfiguration;
 @RegisterRestClient(configKey = "BRP-API-Client")
 @RegisterClientHeaders(BRPClientHeadersFactory.class)
 @RegisterProviders({
-        @RegisterProvider(PersoonNotFoundExceptionMapping.class),
+        @RegisterProvider(PersoonNotFoundExceptionMapper.class),
         @RegisterProvider(RuntimeExceptionMapper.class),
         @RegisterProvider(JsonbConfiguration.class)
 })
