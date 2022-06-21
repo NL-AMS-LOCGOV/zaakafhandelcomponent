@@ -27,6 +27,7 @@ import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
+import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -220,6 +221,12 @@ export class ZakenService {
 
     listCommunicatiekanalen(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    postKoppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

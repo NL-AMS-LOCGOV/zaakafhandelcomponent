@@ -49,4 +49,6 @@ export class Zaak {
     rechten: ZaakRechten;
     initiatorIdentificatie: string; // BSN or Vestigingsnummer
     ontvangstbevestigingVerstuurd: boolean;
+    isHoofdzaak: boolean;
+    isDeelzaak: boolean;
 }

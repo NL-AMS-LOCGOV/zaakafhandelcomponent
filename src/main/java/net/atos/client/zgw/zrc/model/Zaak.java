@@ -512,6 +512,6 @@ public class Zaak {
 
     @JsonbTransient
     public boolean isVerlengd() {
-        return verlenging != null;
+        return verlenging != null && verlenging.getDuur() != null;
     }
 }
