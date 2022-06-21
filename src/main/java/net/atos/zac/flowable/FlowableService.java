@@ -425,7 +425,7 @@ public class FlowableService {
     }
 
     public Boolean findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
-        return (Boolean) findVariableForCase(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD);
+        return (Boolean) findCaseVariable(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD);
     }
 
     public void updateOntvangstbevestigingVerstuurd(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
@@ -453,7 +453,7 @@ public class FlowableService {
     }
 
     public ZonedDateTime findDatumtijdOpgeschort(final UUID zaakUUID) {
-        return (ZonedDateTime) findVariableForCase(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
+        return (ZonedDateTime) findCaseVariable(zaakUUID, VAR_CASE_DATUMTIJD_OPGESCHORT);
     }
 
     public void updateDatumtijdOpgeschort(final UUID zaakUUID, final ZonedDateTime datumtijOpgeschort) {
@@ -465,7 +465,7 @@ public class FlowableService {
     }
 
     public Integer findVerwachteDagenOpgeschort(final UUID zaakUUID) {
-        return (Integer) findVariableForCase(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
+        return (Integer) findCaseVariable(zaakUUID, VAR_CASE_VERWACHTE_DAGEN_OPGESCHORT);
     }
 
     public void updateVerwachteDagenOpgeschort(final UUID zaakUUID, final Integer verwachteDagenOpgeschort) {
@@ -583,12 +583,16 @@ public class FlowableService {
         return cmmnRuntimeService.getVariable(caseInstanceId, variableName);
     }
 
-    private Object findVariableForCase(final UUID zaakUUID, final String variableName) {
+    private Object findCaseVariable(final UUID zaakUUID, final String variableName) {
         final CaseInstance caseInstance = cmmnRuntimeService.createCaseInstanceQuery()
                 .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
                 .includeCaseVariables()
                 .singleResult();
-        return caseInstance != null ? caseInstance.getCaseVariables().get(variableName) : null;
+        if (caseInstance != null) {
+            return caseInstance.getCaseVariables().get(variableName);
+        } else {
+            return findClosedCaseVariable(zaakUUID, variableName);
+        }
     }
 
     private Object readCaseVariable(final String caseInstanceId, final String variableName) {
@@ -622,6 +626,15 @@ public class FlowableService {
         } else {
             throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
         }
+    }
+
+    private Object findClosedCaseVariable(final UUID zaakUUID, final String variableName) {
+        final HistoricCaseInstance historicCaseInstance = cmmnHistoryService.createHistoricCaseInstanceQuery()
+                .variableValueEquals(VAR_CASE_ZAAK_UUID, zaakUUID)
+                .includeCaseVariables()
+                .singleResult();
+
+        return historicCaseInstance != null ? historicCaseInstance.getCaseVariables().get(variableName) : null;
     }
 
     private Object findClosedCaseVariable(final String caseInstanceId, final String variableName) {
