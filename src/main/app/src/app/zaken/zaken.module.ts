@@ -23,7 +23,7 @@ import {MailModule} from '../mail/mail.module';
 import {ZaakDocumentenComponent} from './zaak-documenten/zaak-documenten.component';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZoekenModule} from '../zoeken/zoeken.module';
-import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog/zaak-koppelen-dialog.component';
+import {ZaakKoppelenDialogComponent} from './zaak-koppelen/zaak-koppelen-dialog.component';
 
 @NgModule({
     declarations: [

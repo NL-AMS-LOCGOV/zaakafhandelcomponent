@@ -157,8 +157,8 @@ public class RESTZaakConverter {
 
         restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue(flowableService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
-        restZaak.heeftHoofdzaak = zaak.getHoofdzaak() != null;
-        restZaak.heeftDeelzaken = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
+        restZaak.isHoofdzaak = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
+        restZaak.isDeelzaak = zaak.getHoofdzaak() != null;
 
         return restZaak;
     }

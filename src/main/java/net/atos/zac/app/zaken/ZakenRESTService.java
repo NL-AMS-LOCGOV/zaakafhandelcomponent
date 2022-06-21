@@ -9,6 +9,7 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.net.URI;
@@ -428,7 +429,7 @@ public class ZakenRESTService {
     @Path("/zaak/koppel")
     public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
         final Zaak zaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
-        final Zaak teKoppelenZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.gerelateerdeZaak.identificatie);
+        final Zaak teKoppelenZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
         final Zaak bronZaakPatch = new Zaak();
         final Zaak teKoppelenZaakPatch = new Zaak();
@@ -438,7 +439,7 @@ public class ZakenRESTService {
         teKoppelenZaakPatch.setUrl(teKoppelenZaak.getUrl());
         teKoppelenZaakPatch.setDeelzaken(teKoppelenZaak.getDeelzaken());
 
-        switch (zaakKoppelGegevens.gerelateerdeZaak.relatieType) {
+        switch (zaakKoppelGegevens.relatieType) {
             case DEELZAAK ->
                     koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), teKoppelenZaakPatch, zaak.getUuid(), bronZaakPatch);
             case HOOFDZAAK ->
@@ -561,5 +562,7 @@ public class ZakenRESTService {
 
         zrcClientService.updateZaakPartially(hoofdzaakUuid, hoofdzaak);
         zrcClientService.updateZaakPartially(deelzaakUuid, deelzaak);
+        eventingService.send(ZAAK.updated(deelzaakUuid));
+        eventingService.send(ZAAK.updated(hoofdzaakUuid));
     }
 }

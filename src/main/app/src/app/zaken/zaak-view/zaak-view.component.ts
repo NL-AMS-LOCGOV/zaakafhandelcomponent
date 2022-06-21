@@ -66,6 +66,7 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Indicatie} from '../model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
+import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -126,7 +127,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private websocketService: WebsocketService,
                 private dialog: MatDialog,
                 private translate: TranslateService,
-                private locationService: LocationService) {
+                private locationService: LocationService,
+                private zaakKoppelenService: ZaakKoppelenService) {
         super();
     }
 
@@ -333,7 +335,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'mail'));
 
             this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
-                this.zakenService.addTeKoppelenZaak(this.zaak);
+                this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));
 
             if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {

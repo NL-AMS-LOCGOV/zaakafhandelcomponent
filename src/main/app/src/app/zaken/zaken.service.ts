@@ -5,7 +5,7 @@
 
 import {Injectable} from '@angular/core';
 import {Zaak} from './model/zaak';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
 import {TableRequest} from '../shared/dynamic-table/datasource/table-request';
@@ -27,23 +27,14 @@ import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
-import {SessionStorageUtil} from '../shared/storage/session-storage.util';
-import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
-import {ActionIcon} from '../shared/edit/action-icon';
-import {UtilService} from '../core/service/util.service';
-import {Router} from '@angular/router';
 import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
-import {GerelateerdeZaak} from './model/gerelateerde-zaak';
-import {MatDialog} from '@angular/material/dialog';
-import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog/zaak-koppelen-dialog.component';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ZakenService {
 
-    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService,
-                private utilService: UtilService, private router: Router, private dialog: MatDialog) {
+    constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
     private basepath = '/rest/zaken';
@@ -234,82 +225,10 @@ export class ZakenService {
         );
     }
 
-    addTeKoppelenZaak(zaak: Zaak): void {
-        if (!this.isReedsTeKoppelen(zaak)) {
-            this._koppelenZaak(zaak);
-        }
-    }
-
-    isReedsTeKoppelen(zaak: Zaak): boolean {
-        const teKoppelenZaken = SessionStorageUtil.getItem('teKoppelenZaken', []) as Zaak[];
-        return teKoppelenZaken.find(_zaak => _zaak.uuid === zaak.uuid) !== undefined;
-    }
-
-    appInit() {
-        const zaken = SessionStorageUtil.getItem('teKoppelenZaken', []) as Zaak[];
-        zaken.forEach(zaak => {
-            this._koppelenZaak(zaak, true);
-        });
-    }
-
     postKoppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    private _koppelenZaak(zaak: Zaak, onInit?: boolean) {
-        const dismiss: Subject<void> = new Subject<void>();
-        dismiss.asObservable().subscribe(() => {
-            this.deleteTeKoppelenZaak(zaak);
-        });
-        const editAction = new Subject<string>();
-        editAction.asObservable().subscribe(url => {
-            const nieuwZaakID = url.split('/').pop();
-            this.openDialog(zaak, nieuwZaakID);
-        });
-        const teKoppelenZaken = SessionStorageUtil.getItem('teKoppelenZaken', []) as Zaak[];
-        teKoppelenZaken.push(zaak);
-        if (!onInit) {
-            SessionStorageUtil.setItem('teKoppelenZaken', teKoppelenZaken);
-        }
-        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, 'zaak', zaak.identificatie,
-            new ActionIcon('link', editAction), dismiss, () => this.isKoppelenToegestaan(zaak));
-        this.utilService.addAction(action);
-    }
-
-    private openDialog(zaak: Zaak, nieuwZaakID: string) {
-        const zaakKoppelGegevens = new ZaakKoppelGegevens();
-        zaakKoppelGegevens.bronZaakUuid = zaak.uuid;
-        const gerelateerdeZaak = new GerelateerdeZaak();
-        gerelateerdeZaak.identificatie = nieuwZaakID;
-        zaakKoppelGegevens.gerelateerdeZaak = gerelateerdeZaak;
-
-        const dialogRef = this.dialog.open(ZaakKoppelenDialogComponent, {
-            data: zaakKoppelGegevens,
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.utilService.reloadRoute();
-            }
-        });
-    }
-
-    private deleteTeKoppelenZaak(zaak: Zaak) {
-        const zaken = SessionStorageUtil.getItem('teKoppelenZaken', []) as Zaak[];
-        SessionStorageUtil.setItem('teKoppelenZaken', zaken.filter(_zaak => _zaak.uuid !== zaak.uuid));
-    }
-
-    private pathContains(path: string): boolean {
-        return this.router.url.indexOf(path) !== -1;
-    }
-
-    private isZaakTonen(): boolean {
-        return this.pathContains('zaken/ZAAK-');
-    }
-
-    private isKoppelenToegestaan(zaak: Zaak): boolean {
-        return this.isZaakTonen() && !this.pathContains(`zaken/${zaak.identificatie}`);
     }
 
 }

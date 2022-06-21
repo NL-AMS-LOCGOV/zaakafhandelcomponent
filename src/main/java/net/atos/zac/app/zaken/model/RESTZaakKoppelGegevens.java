@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public class RESTZaakKoppelGegevens {
     public UUID bronZaakUuid;
-    public RESTGerelateerdeZaak gerelateerdeZaak;
+    public String identificatie;
+    public RelatieType relatieType;
 }

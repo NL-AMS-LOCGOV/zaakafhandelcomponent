@@ -13,7 +13,8 @@ import {ZaakKoppelGegevens} from '../model/zaak-koppel-gegevens';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {UtilService} from '../../core/service/util.service';
-import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
+import {ZaakKoppelenService} from './zaak-koppelen.service';
+import {combineLatestWith} from 'rxjs';
 
 @Component({
     templateUrl: 'zaak-koppelen-dialog.component.html'
@@ -31,41 +32,42 @@ export class ZaakKoppelenDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: ZaakKoppelGegevens,
         private mfbService: MaterialFormBuilderService,
         private zakenService: ZakenService,
-        private utilService: UtilService) {
+        private utilService: UtilService,
+        private zaakKoppelenService: ZaakKoppelenService) {
     }
 
     close(): void {
-        this.zakenService.addTeKoppelenZaak(this.bronZaak);
+        this.zaakKoppelenService.addTeKoppelenZaak(this.bronZaak);
         this.dialogRef.close();
     }
 
     ngOnInit(): void {
         this.loading = true;
-        this.zakenService.readZaak(this.data.bronZaakUuid).subscribe(bronZaak => {
+        const bronZaak$ = this.zakenService.readZaak(this.data.bronZaakUuid);
+        const teKoppelenZaak$ = this.zakenService.readZaakByID(this.data.identificatie);
+
+        bronZaak$.pipe(combineLatestWith(teKoppelenZaak$)).subscribe(([bronZaak, teKoppelenZaak]) => {
             this.bronZaak = bronZaak;
-            this.zakenService.readZaakByID(this.data.gerelateerdeZaak.identificatie).subscribe(teKoppelenZaak => {
-                this.teKoppelenZaak = teKoppelenZaak;
+            this.teKoppelenZaak = teKoppelenZaak;
 
-                if (bronZaak.heeftDeelzaken && !teKoppelenZaak.heeftDeelzaken && !teKoppelenZaak.heeftHoofdzaak) {
-                    this.koppelKeuzes.push({label: 'Hoofdzaak', value: 'HOOFDZAAK'});
-                } else if (!bronZaak.heeftDeelzaken && !bronZaak.heeftHoofdzaak &&
-                    !teKoppelenZaak.heeftDeelzaken && !teKoppelenZaak.heeftHoofdzaak) {
-                    this.koppelKeuzes.push({label: 'Deelzaak', value: 'DEELZAAK'});
-                    this.koppelKeuzes.push({label: 'Hoofdzaak', value: 'HOOFDZAAK'});
-                } else if (!bronZaak.heeftHoofdzaak && !bronZaak.heeftDeelzaken && !teKoppelenZaak.heeftHoofdzaak) {
-                    this.koppelKeuzes.push({label: 'Deelzaak', value: 'DEELZAAK'});
-                }
+            if (!bronZaak.isDeelzaak && !teKoppelenZaak.isHoofdzaak && !teKoppelenZaak.isDeelzaak) {
+                this.koppelKeuzes.push({label: 'Hoofdzaak', value: 'HOOFDZAAK'});
+            }
 
-                if (this.koppelKeuzes.length > 0) {
-                    this.koppelSelectFormField = new SelectFormFieldBuilder().id('koppelkeuze')
-                                                                             .label('title.zaak.koppelen.dialog')
-                                                                             .optionLabel('label')
-                                                                             .validators(Validators.required)
-                                                                             .options(this.koppelKeuzes).build();
-                }
+            if (!bronZaak.isDeelzaak && !bronZaak.isHoofdzaak && !teKoppelenZaak.isDeelzaak) {
+                this.koppelKeuzes.push({label: 'Deelzaak', value: 'DEELZAAK'});
+            }
 
-                this.loading = false;
-            });
+            if (this.koppelKeuzes.length > 0) {
+                this.koppelSelectFormField = new SelectFormFieldBuilder().id('koppelkeuze')
+                                                                         .label('title.zaak.koppelen.dialog')
+                                                                         .optionLabel('label')
+                                                                         .value(this.koppelKeuzes.length === 1 ? this.koppelKeuzes[0] : null)
+                                                                         .validators(Validators.required)
+                                                                         .options(this.koppelKeuzes).build();
+            }
+
+            this.loading = false;
         });
     }
 
@@ -80,10 +82,8 @@ export class ZaakKoppelenDialogComponent implements OnInit {
     private koppelZaak(zaak: Zaak, nieuweZaakID: string, relatieType: any) {
         const zaakKoppelGegevens = new ZaakKoppelGegevens();
         zaakKoppelGegevens.bronZaakUuid = zaak.uuid;
-        const gerelateerdeZaak = new GerelateerdeZaak();
-        gerelateerdeZaak.identificatie = nieuweZaakID;
-        gerelateerdeZaak.relatieType = relatieType.value;
-        zaakKoppelGegevens.gerelateerdeZaak = gerelateerdeZaak;
+        zaakKoppelGegevens.identificatie = nieuweZaakID;
+        zaakKoppelGegevens.relatieType = relatieType.value;
         this.zakenService.postKoppelZaak(zaakKoppelGegevens).subscribe(() => {
             this.dialogRef.close(true);
             this.utilService.openSnackbar('msg.zaak.koppelen.uitgevoerd',
