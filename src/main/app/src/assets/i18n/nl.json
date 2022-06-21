@@ -21,6 +21,7 @@
   "title.zaak.aanmaken": "Zaak aanmaken",
   "title.zaak.koppelen": "Zaak koppelen",
   "title.zaak.koppelen.dialog": "Zaak koppelen als",
+  "title.zaak.koppelen.dialog.-kies-": "- Kies een relatie type -",
   "title.zaak.verdelen": "Zaak verdelen",
   "title.zaak.vrijgeven": "Zaak vrijgeven",
   "title.zaak.wijzigen": "Zaak wijzigen | {{zaak}}",

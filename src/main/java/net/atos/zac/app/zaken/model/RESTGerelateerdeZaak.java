@@ -9,26 +9,13 @@ import java.time.LocalDate;
 
 public class RESTGerelateerdeZaak {
 
-    public enum RelatieType {
-        DEELZAAK,
-        HOOFDZAAK,
-        VERVOLG,
-        RELEVANT,
-        BIJDRAGE
-    }
-
     public RelatieType relatieType;
 
-    public String identificatie;
+    public String zaaknummer;
 
-    public String omschrijving;
+    public String zaaktype;
 
-    public String toelichting;
+    public String status;
 
     public LocalDate startdatum;
-
-    public LocalDate einddatum;
-
-    public String uuid;
-
 }

@@ -38,7 +38,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
 
 import org.apache.commons.lang3.StringUtils;

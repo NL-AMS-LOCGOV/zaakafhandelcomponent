@@ -13,6 +13,13 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import net.atos.client.zgw.zrc.model.Status;
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Statustype;
+import net.atos.client.zgw.ztc.model.Zaaktype;
+
+import net.atos.zac.app.zaken.model.RelatieType;
+
 import org.apache.commons.collections4.CollectionUtils;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -24,6 +31,9 @@ public class RESTGerelateerdeZaakConverter {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private ZTCClientService ztcClientService;
 
     public List<RESTGerelateerdeZaak> getGerelateerdeZaken(final Zaak zaak) {
         final List<RESTGerelateerdeZaak> list = new ArrayList<>();
@@ -43,15 +53,16 @@ public class RESTGerelateerdeZaakConverter {
         return list;
     }
 
-    private RESTGerelateerdeZaak convert(final URI zaakURI, final RESTGerelateerdeZaak.RelatieType relatieType) {
+    private RESTGerelateerdeZaak convert(final URI zaakURI, final RelatieType relatieType) {
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
         final RESTGerelateerdeZaak restZaak = new RESTGerelateerdeZaak();
         restZaak.relatieType = relatieType;
-        restZaak.omschrijving = zaak.getOmschrijving();
-        restZaak.toelichting = zaak.getToelichting();
-        restZaak.identificatie = zaak.getIdentificatie();
-        restZaak.uuid = zaak.getUuid().toString();
-        restZaak.einddatum = zaak.getEinddatum();
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+        restZaak.zaaktype = zaaktype.getIdentificatie();
+        final Status status = zrcClientService.readStatus(zaak.getStatus());
+        final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
+        restZaak.status = statustype.getOmschrijving();
+        restZaak.zaaknummer = zaak.getIdentificatie();
         restZaak.startdatum = zaak.getStartdatum();
         return restZaak;
     }
@@ -64,13 +75,13 @@ public class RESTGerelateerdeZaakConverter {
         for (final RelevanteZaak relevanteZaak : relevanteZaken) {
             switch (relevanteZaak.getAardRelatie()) {
                 case VERVOLG: //De andere zaak gaf aanleiding tot het starten van de onderhanden zaak.
-                    list.add(convert(relevanteZaak.getUrl(), RESTGerelateerdeZaak.RelatieType.VERVOLG));
+                    list.add(convert(relevanteZaak.getUrl(), RelatieType.VERVOLG));
                     break;
                 case ONDERWERP: //De andere zaak is relevant voor cq. is onderwerp van de onderhanden zaak.
-                    list.add(convert(relevanteZaak.getUrl(), RESTGerelateerdeZaak.RelatieType.RELEVANT));
+                    list.add(convert(relevanteZaak.getUrl(), RelatieType.RELEVANT));
                     break;
                 case BIJDRAGE: //Aan het bereiken van de uitkomst van de andere zaak levert de onderhanden zaak een bijdrage.
-                    list.add(convert(relevanteZaak.getUrl(), RESTGerelateerdeZaak.RelatieType.BIJDRAGE));
+                    list.add(convert(relevanteZaak.getUrl(), RelatieType.BIJDRAGE));
                     break;
                 default:
                     throw new IllegalStateException("Onbekende waarde: " + relevanteZaak.getAardRelatie());
@@ -83,13 +94,13 @@ public class RESTGerelateerdeZaakConverter {
         if (uri == null) {
             return null;
         }
-        return convert(uri, RESTGerelateerdeZaak.RelatieType.HOOFDZAAK);
+        return convert(uri, RelatieType.HOOFDZAAK);
     }
 
     private List<RESTGerelateerdeZaak> convertDeelzaken(final Collection<URI> uris) {
         if (CollectionUtils.isEmpty(uris)) {
             return null;
         }
-        return uris.stream().map((URI zaak) -> convert(zaak, RESTGerelateerdeZaak.RelatieType.DEELZAAK)).collect(Collectors.toList());
+        return uris.stream().map((URI zaak) -> convert(zaak, RelatieType.DEELZAAK)).collect(Collectors.toList());
     }
 }

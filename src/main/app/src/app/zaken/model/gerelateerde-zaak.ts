@@ -6,11 +6,9 @@
 import {ZaakRelatietype} from './zaak-relatietype';
 
 export class GerelateerdeZaak {
-    identificatie: string;
-    uuid: string;
-    relatieType: ZaakRelatietype;
-    omschrijving: string;
-    toelichting: string;
+    zaaknummer: string;
+    zaaktype: string;
+    status: string;
     startdatum: string;
-    einddatum: string;
+    relatieType: ZaakRelatietype;
 }

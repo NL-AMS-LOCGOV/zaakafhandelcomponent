@@ -21,6 +21,7 @@
   "title.zaak.aanmaken": "Create case",
   "title.zaak.koppelen": "Link case",
   "title.zaak.koppelen.dialog": "Link case as",
+  "title.zaak.koppelen.dialog.-kies-": "- Select a relation type -",
   "title.zaak.verdelen": "Assign case",
   "title.zaak.vrijgeven": "Release case",
   "title.zaak.wijzigen": "Edit case | {{zaak}}",
