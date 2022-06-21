@@ -83,7 +83,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     menu: MenuItem[];
     action: string;
     indicaties: Indicatie[];
-    readonly: boolean = false;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -160,7 +159,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.setWijzigbaar(zaak);
+        this.utilService.disableActionBar(!zaak.rechten.open);
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
@@ -208,11 +207,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
         this.websocketService.removeListener(this.zaakTakenListener);
-    }
-
-    private setWijzigbaar(zaak: Zaak) {
-        this.readonly = !zaak.rechten.open;
-        this.utilService.disableActionBar(!zaak.rechten.open);
     }
 
     private setEditableFormFields(): void {
@@ -319,7 +313,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (!this.readonly) {
+        if (this.zaak.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
@@ -339,16 +333,19 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));
 
-            if (!this.zaak.ontvangstbevestigingVerstuurd && this.zaak.rechten.open) {
+            if (!this.zaak.ontvangstbevestigingVerstuurd && !this.zaak.heropend) {
                 this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ONTVANGSTBEVESTIGING;
                 }, 'mark_email_read'));
             }
 
-            if (this.zaak.rechten.open && this.zaak.rechten.afbreekbaar) {
-                this.menu.push(
-                    new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+            if (this.zaak.rechten.afbreekbaar && !this.zaak.heropend) {
+                this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+            }
+
+            if (this.zaak.heropend) {
+                this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
             }
 
             const tail: MenuItem[] = [];
@@ -391,6 +388,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
         if (this.zaak.indicatieVerlenging) {
             this.indicaties.push(new Indicatie('indicatieVerlenging', this.zaak.redenVerlenging));
+        }
+        if (this.zaak.heropend) {
+            this.indicaties.push(new Indicatie('indicatieHeropend', this.zaak.status.toelichting));
         }
     }
 
@@ -504,31 +504,50 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
+
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
-        this.websocketService.doubleSuspendListener(this.zaakListener);
-        this.dialog.open(DialogComponent, {
-            data: dialogData
-        }).afterClosed().subscribe(result => {
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();
                 this.loadTaken();
-                this.utilService.openSnackbar('actie.zaak.afgebroken');
+                this.utilService.openSnackbar('msg.zaak.afgebroken');
             }
         });
     }
 
     private openZaakHeropenenDialog(): void {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: new ConfirmDialogData(
-                this.translate.instant('msg.zaak.heropenen.bevestigen', {zaak: this.zaak.identificatie}),
-                this.zakenService.heropenen(this.zaak.uuid).pipe(
-                    tap(() => this.websocketService.suspendListener(this.zaakListener))
-                ))
-        }).afterClosed().subscribe(result => {
+        const dialogData = new DialogData([
+                new InputFormFieldBuilder().id('reden').label('actie.zaak.heropenen.reden').validators(Validators.required).maxlength(100).build()],
+            (results: any[]) => this.zakenService.heropenen(this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
+            ));
+
+        dialogData.confirmButtonActionKey = 'actie.zaak.heropenen';
+
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
             if (result) {
                 this.updateZaak();
-                this.utilService.openSnackbar('msg.zaak.heropenen.uitgevoerd', {zaak: this.zaak.identificatie});
+                this.loadTaken();
+                this.utilService.openSnackbar('msg.zaak.heropend');
+            }
+        });
+    }
+
+    private openZaakAfsluitenDialog(): void {
+        const dialogData = new DialogData([
+                new InputFormFieldBuilder().id('reden').label('actie.zaak.afsluiten.reden').validators(Validators.required).maxlength(100).build()],
+            (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
+            ));
+
+        dialogData.confirmButtonActionKey = 'actie.zaak.afsluiten';
+
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
+            if (result) {
+                this.updateZaak();
+                this.loadTaken();
+                this.utilService.openSnackbar('msg.zaak.afgesloten');
             }
         });
     }

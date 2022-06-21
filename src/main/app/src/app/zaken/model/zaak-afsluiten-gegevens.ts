@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ZaakHeropenenGegevens {
+export class ZaakAfsluitenGegevens {
     constructor(public reden: string) {}
 }

@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.zaken.converter;
 
+import static net.atos.client.zgw.shared.ZGWApiService.STATUSTYPE_HEROPEND_OMSCHRIJVING;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.net.URI;
@@ -155,10 +156,12 @@ public class RESTZaakConverter {
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 
-        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak);
         restZaak.ontvangstbevestigingVerstuurd = isTrue(flowableService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         restZaak.isHoofdzaak = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
         restZaak.isDeelzaak = zaak.getHoofdzaak() != null;
+
+        restZaak.heropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
+        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak, restZaak.heropend);
 
         return restZaak;
     }
