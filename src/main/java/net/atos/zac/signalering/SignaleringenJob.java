@@ -101,7 +101,7 @@ public class SignaleringenJob {
      */
     private int zaakEinddatumGeplandVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        zoekenService.zoekZaak(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
+        zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.DUE), zaak))
                 .filter(Objects::nonNull)
@@ -116,7 +116,7 @@ public class SignaleringenJob {
      */
     private int zaakUiterlijkeEinddatumAfdoeningVerzenden(final Zaaktype zaaktype, final int venster) {
         final int[] verzonden = new int[1];
-        zoekenService.zoekZaak(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
+        zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.FATAL), zaak))
                 .filter(Objects::nonNull)
@@ -156,7 +156,7 @@ public class SignaleringenJob {
      * Make sure already sent E-Mail warnings will get send again (in cases where the einddatum gepland has changed)
      */
     private void zaakEinddatumGeplandOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
-        zoekenService.zoekZaak(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
+        zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.DUE))
@@ -167,7 +167,7 @@ public class SignaleringenJob {
      * Make sure already sent E-Mail warnings will get send again (in cases where the uiterlijke einddatum afdoening has changed)
      */
     private void zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
-        zoekenService.zoekZaak(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
+        zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.FATAL))

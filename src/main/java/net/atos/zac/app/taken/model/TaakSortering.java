@@ -8,6 +8,7 @@ package net.atos.zac.app.taken.model;
 import java.util.Arrays;
 
 public enum TaakSortering {
+    ID,
     TAAKNAAM,
     CREATIEDATUM,
     STREEFDATUM,

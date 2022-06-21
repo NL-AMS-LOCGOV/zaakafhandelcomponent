@@ -26,8 +26,9 @@ import net.atos.zac.identity.model.User;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
-public class ZaakZoekObjectConverter {
+public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoekObject> {
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -83,7 +84,7 @@ public class ZaakZoekObjectConverter {
 
         final User behandelaar = findBehandelaar(zaak);
         if (behandelaar != null) {
-            zaakZoekObject.setBehandelaarNaam(getVolledigeNaam(behandelaar));
+            zaakZoekObject.setBehandelaarNaam(getUserFullName(behandelaar));
             zaakZoekObject.setBehandelaarGebruikersnaam(behandelaar.getId());
         }
 
@@ -133,18 +134,6 @@ public class ZaakZoekObjectConverter {
         return behandelaar != null ? identityService.readUser(behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 
-    private String getVolledigeNaam(final User user) {
-        if (user == null) {
-            return null;
-        }
-        if (user.getFullName() != null) {
-            return user.getFullName();
-        } else if (user.getFirstName() != null && user.getLastName() != null) {
-            return String.format("%s %s", user.getFirstName(), user.getLastName());
-        } else {
-            return user.getId();
-        }
-    }
 
     private Group findGroep(final Zaak zaak) {
         final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
@@ -159,4 +148,8 @@ public class ZaakZoekObjectConverter {
         return null;
     }
 
+    @Override
+    public boolean supports(final ZoekObjectType objectType) {
+        return objectType == ZoekObjectType.ZAAK;
+    }
 }

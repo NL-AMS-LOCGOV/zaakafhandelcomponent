@@ -8,8 +8,12 @@ package net.atos.zac.zoeken.model;
 public enum ZoekVeld {
     ALLE("text"),
     IDENTIFICATIE("identificatie"),
+
     ZAAK_OMSCHRIJVING("zaak_omschrijving"),
-    ZAAK_TOELICHTING("zaak_toelichting");
+    ZAAK_TOELICHTING("zaak_toelichting"),
+
+    TAAK_ZAAK_ID("taak_zaakId"),
+    TAAK_TOELICHTING("taak_toelichting");
 
     private final String veld;
 

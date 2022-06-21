@@ -39,9 +39,9 @@ public class IndexerenRESTService {
     @GET
     @Path("{type}/{aantal}")
     public String indexeer(@PathParam("type") ZoekObjectType type, @PathParam("aantal") int aantal) {
-        if (type == ZoekObjectType.ZAAK) {
-            int aantalResterend = indexeerService.indexeerZaken(aantal);
-            return "\"Aantal resterende zaken: %d\"\n".formatted(aantalResterend);
+        if (type == ZoekObjectType.ZAAK || type == ZoekObjectType.TAAK) {
+            int aantalResterend = indexeerService.indexeer(aantal, type);
+            return "\"Aantal resterende items: %d\"\n".formatted(aantalResterend);
         } else {
             throw new RuntimeException("indexeren: " + type + "nog niet geïmplementeerd");
         }

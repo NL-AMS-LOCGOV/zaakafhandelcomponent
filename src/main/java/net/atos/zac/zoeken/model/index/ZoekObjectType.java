@@ -7,5 +7,6 @@ package net.atos.zac.zoeken.model.index;
 
 public enum ZoekObjectType {
     ZAAK,
-    INFORMATIE_OBJECT
+    TAAK,
+    INFORMATIE_OBJECT,
 }

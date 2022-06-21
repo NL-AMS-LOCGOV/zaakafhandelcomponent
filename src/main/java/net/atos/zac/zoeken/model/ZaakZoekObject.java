@@ -11,7 +11,7 @@ import org.apache.solr.client.solrj.beans.Field;
 
 import net.atos.client.zgw.zrc.model.Rol;
 
-public class ZaakZoekObject {
+public class ZaakZoekObject implements ZoekObject {
 
     public static final String AFGEHANDELD_FIELD = "zaak_afgehandeld";
 

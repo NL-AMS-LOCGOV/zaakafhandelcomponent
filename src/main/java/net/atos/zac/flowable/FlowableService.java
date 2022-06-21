@@ -60,6 +60,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.IndexeerService;
 
 /**
@@ -151,14 +152,18 @@ public class FlowableService {
         }
     }
 
-    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final SorteerRichting direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskAssignee(userid)
                 .listPage(firstResult, maxResults);
     }
 
-    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
+        return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
+    }
+
+    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final SorteerRichting direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskCandidateGroupIn(groupIds)
@@ -703,18 +708,18 @@ public class FlowableService {
                 .singleResult();
     }
 
-    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final String direction) {
+    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final SorteerRichting direction) {
         final TaskQuery taskQuery = cmmnTaskService.createTaskQuery().includeIdentityLinks();
         if (sortering != null) {
             final TaskQuery sortedTaskQuery = switch (sortering) {
+                case ID -> taskQuery.orderByTaskId();
                 case TAAKNAAM -> taskQuery.orderByTaskName();
                 case CREATIEDATUM -> taskQuery.orderByTaskCreateTime();
                 case STREEFDATUM -> taskQuery.orderByTaskDueDate();
                 case BEHANDELAAR -> taskQuery.orderByTaskAssignee();
             };
-            return "asc".equals(direction) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
+            return direction.equals(SorteerRichting.ASCENDING) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
         }
-
         return taskQuery;
     }
 }

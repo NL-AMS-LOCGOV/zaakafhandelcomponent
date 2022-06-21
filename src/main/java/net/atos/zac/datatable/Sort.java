@@ -7,6 +7,8 @@ package net.atos.zac.datatable;
 
 import javax.json.bind.annotation.JsonbProperty;
 
+import net.atos.zac.shared.model.SorteerRichting;
+
 public class Sort {
 
     @JsonbProperty("predicate")
@@ -29,8 +31,8 @@ public class Sort {
         this.predicate = predicate;
     }
 
-    public String getDirection() {
-        return direction;
+    public SorteerRichting getDirection() {
+        return "desc".equals(direction) ? SorteerRichting.DESCENDING : SorteerRichting.ASCENDING;
     }
 
     public void setDirection(final String direction) {

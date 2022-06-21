@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -36,13 +38,17 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.flowable.task.api.Task;
 
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
-import net.atos.zac.zoeken.converter.ZaakZoekObjectConverter;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.app.taken.model.TaakSortering;
+import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.converter.AbstractZoekObjectConverter;
+import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.HerindexeerInfo;
 import net.atos.zac.zoeken.model.index.IndexStatus;
 import net.atos.zac.zoeken.model.index.ZoekIndexEntity;
@@ -57,10 +63,14 @@ public class IndexeerService {
     private static final Logger LOG = Logger.getLogger(IndexeerService.class.getName());
 
     @Inject
-    private ZaakZoekObjectConverter zaakZoekObjectConverter;
+    @Any
+    private Instance<AbstractZoekObjectConverter<? extends ZoekObject>> converterInstances;
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private FlowableService flowableService;
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -73,68 +83,64 @@ public class IndexeerService {
     }
 
     public void indexeerDirect(final UUID uuid, final ZoekObjectType type) {
-        if (type == ZoekObjectType.ZAAK) {
-            addToSolr(List.of(zaakZoekObjectConverter.convert(uuid)));
-            final ZoekIndexEntity entity = findEntity(uuid);
-            if (entity != null) {
-                entityManager.remove(entity);
-            }
+        addToSolr(List.of(getConverter(type).convert(uuid)));
+        final ZoekIndexEntity entity = findEntity(uuid);
+        if (entity != null) {
+            entityManager.remove(entity);
         }
+
     }
 
     public void indexeerDirect(final List<UUID> uuids, final ZoekObjectType type) {
-        if (type == ZoekObjectType.ZAAK) {
-            final List<ZaakZoekObject> zaken = uuids.stream().map(uuid -> zaakZoekObjectConverter.convert(uuid)).collect(Collectors.toList());
-            addToSolr(zaken);
-            uuids.stream().map(this::findEntity).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
-        }
+        final List<ZoekObject> zoekObjecten = uuids.stream().map(uuid -> getConverter(type).convert(uuid)).collect(Collectors.toList());
+        addToSolr(zoekObjecten);
+        uuids.stream().map(this::findEntity).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
     }
 
     public HerindexeerInfo herindexeren(final ZoekObjectType type) {
-        final HerindexeerInfo info = new HerindexeerInfo();
         deleteEntities(type);
         processSolrIndex(type);
         switch (type) {
             case ZAAK -> processZaken();
+            case TAAK -> processTaken();
             case INFORMATIE_OBJECT -> throw new NotImplementedException();
         }
 
         // In de Solr-index, maar niet (meer) in Open-Zaak
-        info.setVerwijderen(deleteEntities(type, IndexStatus.INDEXED));
-
-        info.setToevoegen(countEntities(type, IndexStatus.ADD));
-        info.setHerindexeren(countEntities(type, IndexStatus.UPDATE));
-
-        return info;
+        final int delete = deleteEntities(type, IndexStatus.INDEXED);
+        final int add = countEntities(type, IndexStatus.ADD);
+        final int update = countEntities(type, IndexStatus.UPDATE);
+        return new HerindexeerInfo(add, update, delete);
     }
 
-    public int indexeerZaken(int batchGrootte) {
-        if (isHerindexeren(ZoekObjectType.ZAAK)) {
-            LOG.info("Wachten met indexeren, herindexeren is nog bezig");
+    public int indexeer(int batchGrootte, ZoekObjectType type) {
+        if (isHerindexeren(type)) {
+            LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
             return batchGrootte;
         }
-        LOG.info("aantal te indexeren: " + countEntities(ZoekObjectType.ZAAK));
-        List<ZoekIndexEntity> entities = listEntities(ZoekObjectType.ZAAK, batchGrootte);
-        final List<ZaakZoekObject> addList = new ArrayList<>();
+        LOG.info("[%s] aantal te indexeren : %d".formatted(type.toString(), countEntities(type)));
+        List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
+        final List<ZoekObject> addList = new ArrayList<>();
         final List<String> deleteList = new ArrayList<>();
+        final AbstractZoekObjectConverter<? extends ZoekObject> converter = getConverter(type);
         entities.forEach(zoekIndexEntity -> {
             try {
                 switch (IndexStatus.valueOf(zoekIndexEntity.getStatus())) {
-                    case ADD, UPDATE -> addList.add(zaakZoekObjectConverter.convert(zoekIndexEntity.getUuid()));
+                    case ADD, UPDATE -> addList.add(converter.convert(zoekIndexEntity.getUuid()));
                     case REMOVE -> deleteList.add(zoekIndexEntity.getUuid().toString());
                     case INDEXED -> {
                         // skip..
                     }
                 }
             } catch (RuntimeException e) {
-                LOG.warning("Skipped %s: %s".formatted(zoekIndexEntity.getUuid(), e.getMessage()));
+                LOG.warning("[%s] Skipped %s: %s".formatted(type.toString(), zoekIndexEntity.getUuid(), e.getMessage()));
                 entityManager.remove(zoekIndexEntity);
             }
         });
         addToSolr(addList);
         deleteFromSolr(deleteList);
         entities.forEach(entity -> entityManager.remove(entity));
-        return countEntities(ZoekObjectType.ZAAK);
+        return countEntities(type);
     }
 
     private void processZaken() {
@@ -147,6 +153,19 @@ public class IndexeerService {
             results.getResults().forEach(zaak -> createEntity(zaak.getUuid(), ZoekObjectType.ZAAK));
             hasNext = results.getNext() != null;
             listParameters.setPage(listParameters.getPage() + 1);
+        }
+    }
+
+    private void processTaken() {
+        int page = 0;
+        final int maxResults = 50;
+        boolean hasNext = true;
+        while (hasNext) {
+            int firstResult = page * maxResults;
+            final List<Task> tasks = flowableService.listOpenTasks(TaakSortering.ID, SorteerRichting.ASCENDING, firstResult, maxResults);
+            tasks.forEach(taak -> createEntity(UUID.fromString(taak.getId()), ZoekObjectType.TAAK));
+            page++;
+            hasNext = CollectionUtils.isNotEmpty(tasks);
         }
     }
 
@@ -270,10 +289,10 @@ public class IndexeerService {
         }
     }
 
-    private void addToSolr(final List<ZaakZoekObject> zaken) {
-        if (CollectionUtils.isNotEmpty(zaken)) {
+    private void addToSolr(final List<ZoekObject> zoekObjecten) {
+        if (CollectionUtils.isNotEmpty(zoekObjecten)) {
             try {
-                solrClient.addBeans(zaken);
+                solrClient.addBeans(zoekObjecten);
                 solrClient.commit();
             } catch (final IOException | SolrServerException e) {
                 throw new RuntimeException(e);
@@ -290,6 +309,15 @@ public class IndexeerService {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private AbstractZoekObjectConverter<? extends ZoekObject> getConverter(ZoekObjectType type) {
+        for (AbstractZoekObjectConverter<? extends ZoekObject> converter : converterInstances) {
+            if (converter.supports(type)) {
+                return converter;
+            }
+        }
+        throw new RuntimeException("No converter found for '%s'".formatted(type));
     }
 
     public void addZaak(final UUID zaakUUID) {
