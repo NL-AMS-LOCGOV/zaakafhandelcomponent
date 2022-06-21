@@ -78,9 +78,9 @@ public class ZoekParameters {
 
     public EnumSet<FilterVeld> getBeschikbareFilters() {
         return switch (type) {
-            case ZAAK -> FilterVeld.ZAAK_FACETTEN;
-            case TAAK -> FilterVeld.TAAK_FACETTEN;
-            case INFORMATIE_OBJECT -> FilterVeld.INFORMATIE_OBJECT_FACETTEN;
+            case ZAAK -> FilterVeld.getZaakFacetten();
+            case TAAK -> FilterVeld.getTaakFacetten();
+            case INFORMATIE_OBJECT -> FilterVeld.getInformatieObjectFacetten();
         };
     }
 

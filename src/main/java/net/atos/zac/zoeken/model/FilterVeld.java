@@ -23,12 +23,6 @@ public enum FilterVeld {
     TAAK_BEHANDELAAR("taak_behandelaarNaam"),
     TAAK_GROEP("taak_groepNaam");
 
-    public static final EnumSet<FilterVeld> ZAAK_FACETTEN = EnumSet.of(ZAAK_ZAAKTYPE, ZAAK_STATUS, ZAAK_BEHANDELAAR, ZAAK_GROEP, ZAAK_RESULTAAT);
-
-    public static final EnumSet<FilterVeld> INFORMATIE_OBJECT_FACETTEN = EnumSet.noneOf(FilterVeld.class);
-
-    public static final EnumSet<FilterVeld> TAAK_FACETTEN = EnumSet.of(TAAK_NAAM, TAAK_STATUS, TAAK_GROEP, TAAK_BEHANDELAAR, TAAK_ZAAKTYPE);
-
     private final String veld;
 
     FilterVeld(final String fieldList) {
@@ -44,5 +38,17 @@ public enum FilterVeld {
                 .filter(filter -> String.valueOf(filter.veld).equals(veld))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Onbekend Filterveld '%s'", veld)));
+    }
+
+    public static EnumSet<FilterVeld> getTaakFacetten() {
+        return EnumSet.of(TAAK_NAAM, TAAK_STATUS, TAAK_GROEP, TAAK_BEHANDELAAR, TAAK_ZAAKTYPE);
+    }
+
+    public static EnumSet<FilterVeld> getZaakFacetten() {
+        return EnumSet.of(ZAAK_ZAAKTYPE, ZAAK_STATUS, ZAAK_BEHANDELAAR, ZAAK_GROEP, ZAAK_RESULTAAT);
+    }
+
+    public static EnumSet<FilterVeld> getInformatieObjectFacetten() {
+        return EnumSet.noneOf(FilterVeld.class);
     }
 }

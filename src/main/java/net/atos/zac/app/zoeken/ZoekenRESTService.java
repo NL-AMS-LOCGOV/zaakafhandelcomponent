@@ -47,7 +47,7 @@ public class ZoekenRESTService {
     @Path("list")
     public RESTZoekResultaat<RESTZaakZoekObject> listZoekResultaat(final RESTZoekParameters restZaakParameters) {
         try {
-            ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
+            final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
             final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
             return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
         } catch (final RuntimeException e) {
