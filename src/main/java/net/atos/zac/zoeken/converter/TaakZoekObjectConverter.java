@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
-import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -38,8 +38,8 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
     }
 
     @Override
-    public TaakZoekObject convert(final UUID uuid) {
-        final Task task = flowableService.readOpenTask(uuid.toString());
+    public TaakZoekObject convert(final UUID taskID) {
+        final TaskInfo task = flowableService.readTask(taskID.toString());
         final TaakZoekObject zoekObject = new TaakZoekObject();
 
         zoekObject.setNaam(task.getName());
@@ -50,12 +50,14 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         zoekObject.setToekenningsdatum(task.getClaimTime());
         zoekObject.setStreefdatum(task.getDueDate());
         zoekObject.setToelichting(task.getDescription());
-        zoekObject.setStatus(task.getAssignee() == null ? TaakStatus.NIET_TOEGEKEND.toString() : TaakStatus.TOEGEKEND.toString());
 
         if (task.getAssignee() != null) {
+            zoekObject.setStatus(TaakStatus.TOEGEKEND.toString());
             final User user = identityService.readUser(task.getAssignee());
-            zoekObject.setBehandelaarNaam(getUserFullName(user));
+            zoekObject.setBehandelaarNaam(user.getFullName());
             zoekObject.setBehandelaarGebruikersnaam(user.getId());
+        } else {
+            zoekObject.setStatus(TaakStatus.NIET_TOEGEKEND.toString());
         }
 
         final String groupID = extractGroupId(task.getIdentityLinks());
@@ -65,20 +67,20 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
             zoekObject.setGroepNaam(group.getName());
         }
 
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(flowableService.readZaaktypeUUIDOpenCase(task.getScopeId()));
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(flowableService.readZaaktypeUUID(task.getScopeId()));
         zoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         zoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         zoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
 
-        zoekObject.setZaakUUID(flowableService.readZaakUUIDOpenCase(task.getScopeId()).toString());
+        zoekObject.setZaakUUID(flowableService.readZaakUUID(task.getScopeId()).toString());
         zoekObject.setZaakID(flowableService.readZaakIdentificatieOpenCase(task.getScopeId()));
 
-        final HashMap<String, String> taakdata = flowableService.findTaakdataOpenTask(task.getId());
+        final HashMap<String, String> taakdata = flowableService.findTaakdata(task.getId());
         if (MapUtils.isNotEmpty(taakdata)) {
             zoekObject.setTaakData(taakdata.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }
 
-        final HashMap<String, String> taakinformatie = flowableService.findTaakinformatieOpenTask(task.getId());
+        final HashMap<String, String> taakinformatie = flowableService.findTaakinformatie(task.getId());
         if (MapUtils.isNotEmpty(taakinformatie)) {
             zoekObject.setTaakInformatie(taakinformatie.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }

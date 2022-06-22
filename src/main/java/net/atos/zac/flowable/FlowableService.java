@@ -437,12 +437,8 @@ public class FlowableService {
         updateVariable(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
     }
 
-    public UUID readZaaktypeUUIDOpenCase(final String caseInstanceId) {
-        return (UUID) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
-    }
-
-    public UUID readZaaktypeUUIDClosedCase(final String caseInstanceId) {
-        return (UUID) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
+    public UUID readZaaktypeUUID(final String caseInstanceId) {
+        return (UUID) readCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
     }
 
     public String readZaaktypeOmschrijving(final String caseInstanceId) {
@@ -509,12 +505,8 @@ public class FlowableService {
         updateTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
     }
 
-    public HashMap<String, String> findTaakinformatieOpenTask(final String taskId) {
-        return (HashMap<String, String>) findOpenTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
-    }
-
-    public HashMap<String, String> findTaakinformatieClosedTask(final String taskId) {
-        return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
+    public HashMap<String, String> findTaakinformatie(final String taskId) {
+        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
     }
 
     public void updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {

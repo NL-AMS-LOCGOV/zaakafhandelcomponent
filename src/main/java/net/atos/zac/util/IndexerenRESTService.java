@@ -32,18 +32,19 @@ public class IndexerenRESTService {
     }
 
     /**
-     * @param type   ZAAK is momenteel geimplementeerd
+     * @param type   ZAAK en TAAK is momenteel geïmplementeerd
      * @param aantal 100 is een mooi aantal
-     * @return het aantal resterende items na het uitvoeren van deze call
+     * @return het aantal resterende items na het uitvoeren van deze aanroep
      */
     @GET
     @Path("{type}/{aantal}")
     public String indexeer(@PathParam("type") ZoekObjectType type, @PathParam("aantal") int aantal) {
-        if (type == ZoekObjectType.ZAAK || type == ZoekObjectType.TAAK) {
-            int aantalResterend = indexeerService.indexeer(aantal, type);
-            return "\"Aantal resterende items: %d\"\n".formatted(aantalResterend);
-        } else {
-            throw new RuntimeException("indexeren: " + type + "nog niet geïmplementeerd");
-        }
+        return switch (type) {
+            case ZAAK, TAAK -> {
+                int aantalResterend = indexeerService.indexeer(aantal, type);
+                yield "\"Aantal items resterend: %d\"\n".formatted(aantalResterend);
+            }
+            case INFORMATIE_OBJECT -> throw new RuntimeException("indexeren \"INFORMATIE_OBJECT\" nog niet geïmplementeerd");
+        };
     }
 }

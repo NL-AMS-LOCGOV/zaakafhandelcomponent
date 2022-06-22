@@ -5,9 +5,6 @@
 
 package net.atos.zac.app.zoeken;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -32,8 +29,6 @@ import net.atos.zac.zoeken.model.ZoekResultaat;
 @Singleton
 public class ZoekenRESTService {
 
-    private static final Logger LOG = Logger.getLogger(ZoekenRESTService.class.getName());
-
     @Inject
     private ZoekenService zoekenService;
 
@@ -46,14 +41,9 @@ public class ZoekenRESTService {
     @PUT
     @Path("list")
     public RESTZoekResultaat<RESTZaakZoekObject> listZoekResultaat(final RESTZoekParameters restZaakParameters) {
-        try {
-            final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
-            final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
-            return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
-        } catch (final RuntimeException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-            return new RESTZoekResultaat<>(e.getMessage());
-        }
+        final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
+        final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
+        return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
     }
 
 }

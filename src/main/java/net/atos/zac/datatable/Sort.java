@@ -5,16 +5,12 @@
 
 package net.atos.zac.datatable;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import net.atos.zac.shared.model.SorteerRichting;
 
 public class Sort {
 
-    @JsonbProperty("predicate")
     private String predicate;
 
-    @JsonbProperty("direction")
     private String direction;
 
     /**
@@ -32,7 +28,7 @@ public class Sort {
     }
 
     public SorteerRichting getDirection() {
-        return "desc".equals(direction) ? SorteerRichting.DESCENDING : SorteerRichting.ASCENDING;
+        return SorteerRichting.fromValue(direction);
     }
 
     public void setDirection(final String direction) {
