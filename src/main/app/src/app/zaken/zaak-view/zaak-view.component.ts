@@ -66,8 +66,12 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Indicatie} from '../model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
+import {ZaakRelatietype} from '../model/zaak-relatietype';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -391,6 +395,18 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
         if (this.zaak.heropend) {
             this.indicaties.push(new Indicatie('indicatieHeropend', this.zaak.status.toelichting));
+        }
+        if (this.zaak.isDeelzaak) {
+            const hoofdzaak = this.zaak.gerelateerdeZaken.find(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.HOOFDZAAK);
+            this.indicaties.push(new Indicatie('indicatieDeelzaak',
+                this.translate.instant('indicatie.relatie.toelichting', {identificatie: hoofdzaak.identificatie})));
+        }
+        if (this.zaak.isHoofdzaak) {
+            const deelzaken = this.zaak.gerelateerdeZaken.filter(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.DEELZAAK);
+            this.indicaties.push(new Indicatie('indicatieHoofdzaak',
+                this.translate.instant(deelzaken.length === 1 ? 'indicatie.relatie.toelichting' : 'indicatie.relatie.toelichting.meerdere.zaken',
+                    deelzaken.length === 1 ? {identificatie: deelzaken[0].identificatie} : {aantal: deelzaken.length})));
+
         }
     }
 
