@@ -61,9 +61,7 @@ public class ZGWApiService {
     // Page numbering in ZGW Api's starts with 1
     public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
 
-    private static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
-
-    private static final String HEROPENEN_TOELICHTING = "Zaak is heropend";
+    public static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -145,19 +143,22 @@ public class ZGWApiService {
     }
 
     /**
-     * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
+     * End {@link Zaak}.
+     * Creating a new Eind {@link Status} for the {@link Zaak}.
+     * And calculating the archiverings parameters
      *
      * @param zaak                  {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
      */
     public void endZaak(final Zaak zaak, final String eindstatusToelichting) {
-        final Statustype eindStatustype = readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
-        createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+        closeZaak(zaak, eindstatusToelichting);
         berekenArchiveringsparameters(zaak.getUuid());
     }
 
     /**
-     * End {@link Zaak}. Creating a new Eind {@link Status} for the {@link Zaak}.
+     * End {@link Zaak}.
+     * Creating a new Eind {@link Status} for the {@link Zaak}.
+     * And calculating the archiverings parameters
      *
      * @param zaakUUID              UUID of the {@link Zaak}
      * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
@@ -168,12 +169,24 @@ public class ZGWApiService {
     }
 
     /**
+     * Close {@link Zaak}.
+     * Creating a new Eind {@link Status} for the {@link Zaak}.
+     *
+     * @param zaak                  {@link Zaak} to be closed
+     * @param eindstatusToelichting Toelichting for thew Eind {@link Status}.
+     */
+    public void closeZaak(final Zaak zaak, final String eindstatusToelichting) {
+        final Statustype eindStatustype = readStatustypeEind(ztcClientService.readStatustypen(zaak.getZaaktype()), zaak.getZaaktype());
+        createStatusForZaak(zaak.getUrl(), eindStatustype.getUrl(), eindstatusToelichting);
+    }
+
+    /**
      * Reopen {@link Zaak}. Creating a new Heropend {@link Status} for the {@link Zaak}.
      *
      * @param zaak {@link Zaak} welke heropend wordt
      */
-    public void heropenZaak(final Zaak zaak) {
-        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, HEROPENEN_TOELICHTING);
+    public void heropenZaak(final Zaak zaak, final String reden) {
+        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, reden);
     }
 
     /**

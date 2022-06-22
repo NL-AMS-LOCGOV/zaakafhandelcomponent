@@ -27,6 +27,8 @@ import {ZaakOpschorting} from './model/zaak-opschorting';
 import {ZaakVerlengGegevens} from './model/zaak-verleng-gegevens';
 import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
+import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
+import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -61,10 +63,7 @@ export class ZakenService {
     }
 
     partialUpdateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
-        const zaakEditMetRedenGegevens: ZaakEditMetRedenGegevens = new ZaakEditMetRedenGegevens();
-        zaakEditMetRedenGegevens.zaak = zaak;
-        zaakEditMetRedenGegevens.reden = reden;
-        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, zaakEditMetRedenGegevens).pipe(
+        return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, new ZaakEditMetRedenGegevens(zaak, reden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -205,21 +204,31 @@ export class ZakenService {
     }
 
     afbreken(uuid: string, beeindigReden: ZaakbeeindigReden): Observable<void> {
-        const zaakAfbrekenGegevens = new ZaakAfbrekenGegevens();
-        zaakAfbrekenGegevens.zaakbeeindigRedenId = beeindigReden.id;
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, zaakAfbrekenGegevens).pipe(
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, new ZaakAfbrekenGegevens(beeindigReden.id)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    heropenen(uuid: string): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens()).pipe(
+    heropenen(uuid: string, heropenReden: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden)).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    afsluiten(uuid: string, afsluitenReden: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listCommunicatiekanalen(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    postKoppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

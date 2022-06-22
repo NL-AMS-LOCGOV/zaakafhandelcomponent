@@ -9,13 +9,17 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
+import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -71,6 +77,7 @@ import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
@@ -415,7 +422,36 @@ public class ZakenRESTService {
     @Path("/zaak/{uuid}/heropenen")
     public void heropenen(@PathParam("uuid") final UUID zaakUUID, final RESTZaakHeropenenGegevens heropenenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        zgwApiService.heropenZaak(zaak);
+        zgwApiService.heropenZaak(zaak, heropenenGegevens.reden);
+    }
+
+    @PATCH
+    @Path("/zaak/{uuid}/afsluiten")
+    public void afsluiten(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
+        Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
+    }
+
+    @PATCH
+    @Path("/zaak/koppel")
+    public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
+        final Zaak teKoppelenZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
+
+        final Zaak bronZaakPatch = new Zaak();
+        final Zaak teKoppelenZaakPatch = new Zaak();
+
+        bronZaakPatch.setUrl(zaak.getUrl());
+        bronZaakPatch.setDeelzaken(zaak.getDeelzaken());
+        teKoppelenZaakPatch.setUrl(teKoppelenZaak.getUrl());
+        teKoppelenZaakPatch.setDeelzaken(teKoppelenZaak.getDeelzaken());
+
+        switch (zaakKoppelGegevens.relatieType) {
+            case DEELZAAK ->
+                    koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), teKoppelenZaakPatch, zaak.getUuid(), bronZaakPatch);
+            case HOOFDZAAK ->
+                    koppelHoofdEnDeelzaak(zaak.getUuid(), bronZaakPatch, teKoppelenZaak.getUuid(), teKoppelenZaakPatch);
+        }
     }
 
     @PUT
@@ -522,5 +558,18 @@ public class ZakenRESTService {
                     count[0]++;
                 });
         return count[0];
+    }
+
+    private void koppelHoofdEnDeelzaak(final UUID hoofdzaakUuid, final Zaak hoofdzaak,
+            final UUID deelzaakUuid, final Zaak deelzaak) {
+        final Set<URI> deelzaken = hoofdzaak.getDeelzaken() != null ? hoofdzaak.getDeelzaken() : new HashSet<>();
+        deelzaken.add(deelzaak.getUrl());
+        hoofdzaak.setDeelzaken(deelzaken);
+        deelzaak.setHoofdzaak(hoofdzaak.getUrl());
+
+        zrcClientService.updateZaakPartially(hoofdzaakUuid, hoofdzaak);
+        zrcClientService.updateZaakPartially(deelzaakUuid, deelzaak);
+        eventingService.send(ZAAK.updated(deelzaakUuid));
+        eventingService.send(ZAAK.updated(hoofdzaakUuid));
     }
 }

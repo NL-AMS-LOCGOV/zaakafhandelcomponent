@@ -23,9 +23,9 @@
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie"
-                             [isVerwijderbaar]="readonly" (delete)="deleteInitiator()"></zac-persoongegevens>
+                             [isVerwijderbaar]="zaak.rechten.open" (delete)="deleteInitiator()"></zac-persoongegevens>
         <zac-bedrijfsgegevens *ngIf="initiatorType==='BEDRIJF'" [vestigingsnummer]="zaak.initiatorIdentificatie"
-                              [isVerwijderbaar]="readonly" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
+                              [isVerwijderbaar]="zaak.rechten.open" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header fxLayout="row">
@@ -52,7 +52,7 @@
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
                                     <zac-edit-select [formField]="editFormFields.get('communicatiekanaal')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="readonly"
+                                                     [readonly]="!zaak.rechten.open"
                                                      (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
                                     </zac-edit-select>
                                 </div>
@@ -62,16 +62,16 @@
                                     </div>
                                     <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="readonly"
+                                                     [readonly]="!zaak.rechten.open"
                                                      (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-select>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="readonly"
+                                                    [readonly]="!zaak.rechten.open"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                                           [reasonField]="editFormFields.get('reden')"
-                                                          [readonly]="readonly"
+                                                          [readonly]="!zaak.rechten.open"
                                                           (onSave)="editBehandelaar($event)"
                                                           [showAssignToMe]="showAssignToMe(zaak)"
                                                           (onAssignToMe)="assignToMe($event)"></zac-edit-behandelaar>
@@ -105,8 +105,8 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'locatie' | translate"
-                                                     [value]="zaakLocatie?.weergavenaam" [icon]="readonly ? null : locatieIcon"
-                                                     (iconClicked)="readonly ? null : editZaakLocatie()"></zac-static-text>
+                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.rechten.open ? null : locatieIcon"
+                                                     (iconClicked)="!zaak.rechten.open ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
 
                                 <div fxFlex="100" class="mat-divider-wrapper">
@@ -127,7 +127,8 @@
                                                           (doOpschorting)="editOpschorting($event)"
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
-                                                          [readonly]="readonly"
+                                                          [readonly]="!zaak.rechten.open"
+                                                          [opschortenEnVerlengenReadonly]="zaak.heropend"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
                                 <div fxFlex="100" class="mat-divider-wrapper">
@@ -137,13 +138,13 @@
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="readonly"
+                                                    [readonly]="!zaak.rechten.open"
                                                     (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="readonly"
+                                                    [readonly]="!zaak.rechten.open"
                                                     (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>
@@ -155,7 +156,7 @@
                                 <table mat-table [dataSource]="zaak.gerelateerdeZaken">
                                     <ng-container *ngFor="let column of gerelateerdeZaakColumns"
                                                   [matColumnDef]="column">
-                                        <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
+                                        <th mat-header-cell *matHeaderCellDef> {{'gerelateerde.zaak.' + column | translate}} </th>
                                         <td mat-cell *matCellDef="let row"> {{row[column] | empty}} </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="gerelateerdeZaakColumns"></tr>
@@ -365,7 +366,7 @@
                 </mat-card-content>
             </mat-card>
         </div>
-        <zac-zaak-documenten [zaak]="zaak" [documentToegevoegd]="toegevoegdDocument" [readonly]="readonly"></zac-zaak-documenten>
+        <zac-zaak-documenten [zaak]="zaak" [documentToegevoegd]="toegevoegdDocument" [readonly]="!zaak.rechten.open"></zac-zaak-documenten>
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-drawer-content>
 </mat-drawer-container>

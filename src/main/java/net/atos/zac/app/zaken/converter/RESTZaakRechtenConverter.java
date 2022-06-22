@@ -16,10 +16,10 @@ public class RESTZaakRechtenConverter {
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
-    public RESTZaakRechten convertToRESTZaakRechten(final Zaak zaak) {
+    public RESTZaakRechten convertToRESTZaakRechten(final Zaak zaak, final boolean heropend) {
         final RESTZaakRechten restZaakRechten = new RESTZaakRechten();
         restZaakRechten.afbreekbaar = !zaakafhandelParameterService.readZaakafhandelParameters(zaak).getZaakbeeindigParameters().isEmpty();
-        restZaakRechten.open = zaak.isOpen();
+        restZaakRechten.open = zaak.isOpen() || heropend;
         restZaakRechten.opgeschort = zaak.isOpgeschort();
         return restZaakRechten;
     }

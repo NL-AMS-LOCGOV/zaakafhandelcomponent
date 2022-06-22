@@ -6,6 +6,5 @@
 import {Zaak} from './zaak';
 
 export class ZaakEditMetRedenGegevens {
-    zaak: Zaak;
-    reden: string;
+    constructor(public zaak: Zaak, public reden: string) {}
 }
