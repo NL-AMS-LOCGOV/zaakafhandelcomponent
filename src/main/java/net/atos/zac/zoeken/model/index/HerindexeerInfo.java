@@ -5,37 +5,26 @@
 
 package net.atos.zac.zoeken.model.index;
 
-public class HerindexeerInfo {
-    int toevoegen; // Nog niet in de Solr-index
+public record HerindexeerInfo(int toevoegen, int herindexeren, int verwijderen) {
 
-    int herindexeren; // Reeds in Solr-index
-
-    int verwijderen; // In de Solr-index, maar niet meer in Open-Zaak
-
-    public HerindexeerInfo() {
-    }
-
+    /**
+     * @return aantal nog niet in de Solr-index
+     */
     public int getToevoegen() {
         return toevoegen;
     }
 
-    public void setToevoegen(final int toevoegen) {
-        this.toevoegen = toevoegen;
-    }
-
+    /**
+     * @return aantal reeds in Solr-index
+     */
     public int getHerindexeren() {
         return herindexeren;
     }
 
-    public void setHerindexeren(final int herindexeren) {
-        this.herindexeren = herindexeren;
-    }
-
+    /**
+     * @return In de Solr-index, maar niet meer in de bron
+     */
     public int getVerwijderen() {
         return verwijderen;
-    }
-
-    public void setVerwijderen(final int verwijderen) {
-        this.verwijderen = verwijderen;
     }
 }

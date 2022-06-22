@@ -37,7 +37,7 @@ public class ZaakafhandelParameterService {
     }
 
     public HumanTaskParameters readHumanTaskParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
             return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         } else {
@@ -50,7 +50,7 @@ public class ZaakafhandelParameterService {
     }
 
     public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(planItem.getCaseInstanceId());
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
 

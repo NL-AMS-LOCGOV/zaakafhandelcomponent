@@ -148,9 +148,28 @@
     <field name="zaak_resultaattypeOmschrijving" type="string" indexed="true" stored="true"/>
     <field name="zaak_resultaatToelichting" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_aantalOpenstaandeTaken" type="pint" indexed="true" stored="true"/>
+
+    <field name="taak_naam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="taak_toelichting" type="text_nl" indexed="true" stored="true"/>
+    <field name="taak_status" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="taak_zaaktypeUuid" type="string" indexed="true" stored="true"/>
+    <field name="taak_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="taak_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="taak_zaakUuid" type="string" indexed="true" stored="true"/>
+    <field name="taak_zaakId" type="string" indexed="true" stored="true"/>
+    <field name="taak_creatiedatum" type="pdate" indexed="true" stored="true"/>
+    <field name="taak_toekenningsdatum" type="pdate" indexed="true" stored="true"/>
+    <field name="taak_streefdatum" type="pdate" indexed="true" stored="true"/>
+    <field name="taak_groepId" type="string" indexed="true" stored="true"/>
+    <field name="taak_groepNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="taak_behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="taak_behandelaarGebruikersnaam" type="string" indexed="true" stored="true"/>
+    <field name="taak_data" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="taak_informatie" type="string" indexed="true" stored="true" multiValued="true"/>
+
     <field name="informatieobject_titel" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_beschrijving" type="text_nl" indexed="true" stored="true"/>
-    <field name="informatieobject_zaakIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakId" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_creatiedatum" type="pdate" indexed="true" stored="true"/>
@@ -162,7 +181,7 @@
     <field name="informatieobject_registratiedatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_bestandsnaam" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_bestandsomvang" type="plong" indexed="true" stored="true"/>
-    <field name="informatieobject_documentType" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_documentType" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_verzenddatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_ondertekening" type="string" indexed="true" stored="true"/>
@@ -222,6 +241,18 @@
     <copyField source="zaak_statusToelichting" dest="text"/>
     <copyField source="zaak_resultaattypeOmschrijving" dest="text"/>
     <copyField source="zaak_resultaatToelichting" dest="text"/>
+
+    <copyField source="taak_naam" dest="text"/>
+    <copyField source="taak_toelichting" dest="text"/>
+    <copyField source="taak_status" dest="text"/>
+    <copyField source="taak_zaaktypeOmschrijving" dest="text"/>
+    <copyField source="taak_groepNaam" dest="text"/>
+    <copyField source="taak_behandelaarNaam" dest="text"/>
+    <copyField source="taak_behandelaarGebruikersnaam" dest="text"/>
+    <copyField source="taak_zaaktypeIdentificatie" dest="text"/>
+    <copyField source="taak_zaaktypeOmschrijving" dest="text"/>
+    <copyField source="taak_data" dest="text"/>
+
     <copyField source="informatieobject_beschrijving" dest="text"/>
     <copyField source="informatieobject_titel" dest="text"/>
     <copyField source="informatieobject_auteur" dest="text"/>
@@ -236,8 +267,15 @@
     <copyField source="zaak_initiatorIdentificatie" dest="text_exact"/>
     <copyField source="zaak_statustypeOmschrijving" dest="text_exact"/>
     <copyField source="zaak_resultaattypeOmschrijving" dest="text_exact"/>
+
+    <copyField source="taak_groepNaam" dest="text_exact"/>
+    <copyField source="taak_behandelaarNaam" dest="text_exact"/>
+    <copyField source="taak_zaakId" dest="text_exact"/>
+    <copyField source="taak_zaaktypeOmschrijving" dest="text_exact"/>
+    <copyField source="taak_status" dest="text_exact"/>
+
     <copyField source="informatieobject_zaakUuid" dest="text_exact"/>
-    <copyField source="informatieobject_zaakIdentificatie" dest="text_exact"/>
+    <copyField source="informatieobject_zaakId" dest="text_exact"/>
 
     <!--  Above, multiple source fields are copied to the [text] field.
          Another way to map multiple source fields to the same

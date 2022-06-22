@@ -34,7 +34,7 @@ public class User {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.fullName = firstName != null ? firstName + " " + lastName : lastName;
+        this.fullName = null;
         this.email = email;
     }
 
@@ -63,6 +63,12 @@ public class User {
     }
 
     public String getFullName() {
-        return fullName;
+        if (fullName != null) {
+            return fullName;
+        } else if (firstName != null && lastName != null) {
+            return String.format("%s %s", firstName, lastName);
+        } else {
+            return id;
+        }
     }
 }

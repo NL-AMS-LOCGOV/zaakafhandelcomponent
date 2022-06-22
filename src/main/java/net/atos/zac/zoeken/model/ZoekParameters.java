@@ -78,8 +78,9 @@ public class ZoekParameters {
 
     public EnumSet<FilterVeld> getBeschikbareFilters() {
         return switch (type) {
-            case ZAAK -> FilterVeld.ZAAK_FACETTEN;
-            case INFORMATIE_OBJECT -> FilterVeld.INFORMATIE_OBJECT_FACETTEN;
+            case ZAAK -> FilterVeld.getZaakFacetten();
+            case TAAK -> FilterVeld.getTaakFacetten();
+            case INFORMATIE_OBJECT -> FilterVeld.getInformatieObjectFacetten();
         };
     }
 
@@ -110,5 +111,9 @@ public class ZoekParameters {
 
     public void setSortering(final SorteerVeld veld, SorteerRichting richting) {
         this.sortering = new Sortering(veld, richting);
+    }
+
+    public ZoekObjectType getType() {
+        return type;
     }
 }

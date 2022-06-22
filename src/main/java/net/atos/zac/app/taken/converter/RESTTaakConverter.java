@@ -92,7 +92,7 @@ public class RESTTaakConverter {
             restTaak.taakdata = flowableService.findTaakdataOpenTask(task.getId());
             restTaak.taakdocumenten = flowableService.findTaakdocumentenOpenTask(task.getId());
         }
-        restTaak.taakinformatie = flowableService.findTaakinformatieOpenTask(task.getId());
+        restTaak.taakinformatie = flowableService.findTaakinformatie(task.getId());
 
         return restTaak;
     }
@@ -104,13 +104,13 @@ public class RESTTaakConverter {
             restTaak.taakdata = flowableService.findTaakdataClosedTask(task.getId());
             restTaak.taakdocumenten = flowableService.findTaakdocumentenClosedTask(task.getId());
         }
-        restTaak.taakinformatie = flowableService.findTaakinformatieClosedTask(task.getId());
+        restTaak.taakinformatie = flowableService.findTaakinformatie(task.getId());
 
         return restTaak;
     }
 
     private RESTTaak convertTaskInfoForOpenCase(final TaskInfo taskInfo) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDOpenCase(taskInfo.getScopeId());
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
         restTaak.zaakUUID = flowableService.readZaakUUIDOpenCase(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieOpenCase(taskInfo.getScopeId());
@@ -119,7 +119,7 @@ public class RESTTaakConverter {
     }
 
     private RESTTaak convertTaskInfoForClosedCase(final HistoricTaskInstance taskInfo) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUIDClosedCase(taskInfo.getScopeId());
+        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
         restTaak.zaakUUID = flowableService.readZaakUUIDClosedCase(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = flowableService.readZaakIdentificatieClosedCase(taskInfo.getScopeId());

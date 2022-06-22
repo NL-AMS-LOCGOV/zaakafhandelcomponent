@@ -21,6 +21,17 @@ public enum SorteerVeld {
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving"),
     ZAAK_AANTAL_OPENSTAANDE_TAKEN("zaak_aantalOpenstaandeTaken"),
+
+    TAAK_NAAM("taak_naam"),
+    TAAK_STATUS("taak_status"),
+    TAAK_ZAAK_ID("taak_zaakId"),
+    TAAK_ZAAKTYPE("taak_zaaktypeOmschrijving"),
+    TAAK_BEHANDELAAR("taak_behandelaarNaam"),
+    TAAK_GROEP("taak_groepNaam"),
+    TAAK_CREATIEDATUM("taak_creatiedatum"),
+    TAAK_TOEKENNINGSDATUM("taak_toekenningsdatum"),
+    TAAK_STREEFDATUM("taak_streefdatum"),
+
     INFORMATIEOBJECT_TITEL("informatieobject_titel_sort"),
     INFORMATIEOBJECT_ZAAK_IDENTIFICATIE("informatieobject_zaakIdentificatie"),
     INFORMATIEOBJECT_CREATIEDATUM("informatieobject_creatiedatum"),

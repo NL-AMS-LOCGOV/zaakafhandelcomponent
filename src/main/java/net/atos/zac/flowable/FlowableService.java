@@ -60,6 +60,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.IndexeerService;
 
 /**
@@ -151,14 +152,18 @@ public class FlowableService {
         }
     }
 
-    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final SorteerRichting direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskAssignee(userid)
                 .listPage(firstResult, maxResults);
     }
 
-    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final String direction,
+    public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
+        return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
+    }
+
+    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final SorteerRichting direction,
             final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, direction)
                 .taskCandidateGroupIn(groupIds)
@@ -432,12 +437,8 @@ public class FlowableService {
         updateVariable(zaakUUID, VAR_CASE_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
     }
 
-    public UUID readZaaktypeUUIDOpenCase(final String caseInstanceId) {
-        return (UUID) readOpenCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
-    }
-
-    public UUID readZaaktypeUUIDClosedCase(final String caseInstanceId) {
-        return (UUID) readClosedCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
+    public UUID readZaaktypeUUID(final String caseInstanceId) {
+        return (UUID) readCaseVariable(caseInstanceId, VAR_CASE_ZAAKTYPE_UUUID);
     }
 
     public String readZaaktypeOmschrijving(final String caseInstanceId) {
@@ -504,12 +505,8 @@ public class FlowableService {
         updateTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
     }
 
-    public HashMap<String, String> findTaakinformatieOpenTask(final String taskId) {
-        return (HashMap<String, String>) findOpenTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
-    }
-
-    public HashMap<String, String> findTaakinformatieClosedTask(final String taskId) {
-        return (HashMap<String, String>) findClosedTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
+    public HashMap<String, String> findTaakinformatie(final String taskId) {
+        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
     }
 
     public void updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
@@ -716,18 +713,18 @@ public class FlowableService {
                 .singleResult();
     }
 
-    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final String direction) {
+    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final SorteerRichting direction) {
         final TaskQuery taskQuery = cmmnTaskService.createTaskQuery().includeIdentityLinks();
         if (sortering != null) {
             final TaskQuery sortedTaskQuery = switch (sortering) {
+                case ID -> taskQuery.orderByTaskId();
                 case TAAKNAAM -> taskQuery.orderByTaskName();
                 case CREATIEDATUM -> taskQuery.orderByTaskCreateTime();
                 case STREEFDATUM -> taskQuery.orderByTaskDueDate();
                 case BEHANDELAAR -> taskQuery.orderByTaskAssignee();
             };
-            return "asc".equals(direction) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
+            return direction.equals(SorteerRichting.ASCENDING) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
         }
-
         return taskQuery;
     }
 }
