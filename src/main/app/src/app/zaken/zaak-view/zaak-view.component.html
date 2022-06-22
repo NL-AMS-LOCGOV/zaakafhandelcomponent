@@ -169,21 +169,15 @@
                             <div id="historie_tab" class="table-wrapper historie-table">
                                 <table mat-table [dataSource]="historie" matSort>
                                     <ng-container matColumnDef="datum">
-                                        <th *matHeaderCellDef mat-header-cell
-                                            mat-sort-header> {{'datum' | translate}} </th>
+                                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'datum' | translate}} </th>
                                         <td *matCellDef="let regel" mat-cell>
-                                            <div matTooltip="{{regel.datumTijd | datum:'short'}}">
-                                                {{regel.datumTijd | datum | empty}}
-                                            </div>
+                                            <div matTooltip="{{regel.datumTijd | datum:'short'}}">{{regel.datumTijd | datum | empty}}</div>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="gebruiker">
-                                        <th *matHeaderCellDef mat-header-cell
-                                            mat-sort-header> {{'door' | translate}} </th>
+                                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'door' | translate}} </th>
                                         <td *matCellDef="let regel" mat-cell>
-                                            <div matTooltip="{{regel.applicatie}}">
-                                                {{regel.door | empty}}
-                                            </div>
+                                            <div matTooltip="{{regel.applicatie}}">{{regel.door | empty}}</div>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="wijziging">
@@ -196,7 +190,7 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.oud' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more *ngIf="regel.attribuutLabel !== 'zaakgeometrie'"
-                                                       [text]="regel.oudeWaarde | datum | empty"
+                                                       [text]="regel.oudeWaarde | empty"
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'"
                                                        [text]="regel.oudeWaarde | location | async | empty"
@@ -207,7 +201,7 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'waarde.nieuw' | translate}} </th>
                                         <td mat-cell *matCellDef="let regel">
                                             <read-more *ngIf="regel.attribuutLabel !== 'zaakgeometrie'"
-                                                       [text]="regel.nieuweWaarde | datum | empty"
+                                                       [text]="regel.nieuweWaarde | empty"
                                                        [maxLength]="20"></read-more>
                                             <read-more *ngIf="regel.attribuutLabel === 'zaakgeometrie'"
                                                        [text]="regel.nieuweWaarde | location | async | empty"
