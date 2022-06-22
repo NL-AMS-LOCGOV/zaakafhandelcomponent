@@ -156,7 +156,7 @@
                                 <table mat-table [dataSource]="zaak.gerelateerdeZaken">
                                     <ng-container *ngFor="let column of gerelateerdeZaakColumns"
                                                   [matColumnDef]="column">
-                                        <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
+                                        <th mat-header-cell *matHeaderCellDef> {{'gerelateerde.zaak.' + column | translate}} </th>
                                         <td mat-cell *matCellDef="let row"> {{row[column] | empty}} </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="gerelateerdeZaakColumns"></tr>

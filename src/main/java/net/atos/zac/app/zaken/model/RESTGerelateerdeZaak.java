@@ -11,11 +11,11 @@ public class RESTGerelateerdeZaak {
 
     public RelatieType relatieType;
 
-    public String zaaknummer;
+    public String identificatie;
 
-    public String zaaktype;
+    public String zaaktypeOmschrijving;
 
-    public String status;
+    public String statustypeOmschrijving;
 
     public LocalDate startdatum;
 }

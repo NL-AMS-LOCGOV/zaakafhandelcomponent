@@ -55,16 +55,16 @@ public class RESTGerelateerdeZaakConverter {
 
     private RESTGerelateerdeZaak convert(final URI zaakURI, final RelatieType relatieType) {
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
-        final RESTGerelateerdeZaak restZaak = new RESTGerelateerdeZaak();
-        restZaak.relatieType = relatieType;
+        final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
+        restGerelateerdeZaak.relatieType = relatieType;
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        restZaak.zaaktype = zaaktype.getIdentificatie();
+        restGerelateerdeZaak.zaaktypeOmschrijving = zaaktype.getOmschrijving();
         final Status status = zrcClientService.readStatus(zaak.getStatus());
         final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-        restZaak.status = statustype.getOmschrijving();
-        restZaak.zaaknummer = zaak.getIdentificatie();
-        restZaak.startdatum = zaak.getStartdatum();
-        return restZaak;
+        restGerelateerdeZaak.statustypeOmschrijving = statustype.getOmschrijving();
+        restGerelateerdeZaak.identificatie = zaak.getIdentificatie();
+        restGerelateerdeZaak.startdatum = zaak.getStartdatum();
+        return restGerelateerdeZaak;
     }
 
     private List<RESTGerelateerdeZaak> convertRelevanteAndereZaken(final List<RelevanteZaak> relevanteZaken) {
@@ -101,6 +101,6 @@ public class RESTGerelateerdeZaakConverter {
         if (CollectionUtils.isEmpty(uris)) {
             return null;
         }
-        return uris.stream().map((URI zaak) -> convert(zaak, RelatieType.DEELZAAK)).collect(Collectors.toList());
+        return uris.stream().map((URI zaak) -> convert(zaak, RelatieType.DEELZAAK)).toList();
     }
 }
