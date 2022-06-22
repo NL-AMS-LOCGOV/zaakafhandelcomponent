@@ -64,7 +64,7 @@ public class WebdavHelper {
 
     private String createToken(final UUID enkelvoudigInformatieobjectUUID) {
         final String token = UUID.randomUUID().toString();
-        tokenMap.put(token, new Gegevens(enkelvoudigInformatieobjectUUID, loggedInUserInstance.get().getId()));
+        tokenMap.put(token, new Gegevens(enkelvoudigInformatieobjectUUID, loggedInUserInstance.get()));
         return token;
     }
 
@@ -81,5 +81,5 @@ public class WebdavHelper {
         return null;
     }
 
-    public record Gegevens(UUID enkelvoudigInformatieibjectUUID, String loggedInUserId) {}
+    public record Gegevens(UUID enkelvoudigInformatieibjectUUID, LoggedInUser loggedInUser) {}
 }

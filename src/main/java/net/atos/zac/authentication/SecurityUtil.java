@@ -33,7 +33,6 @@ public class SecurityUtil implements Serializable {
     @Produces
     public LoggedInUser getLoggedInUser() {
         return getLoggedInUser(httpSession);
-
     }
 
     public static LoggedInUser getLoggedInUser(final HttpSession httpSession) {
