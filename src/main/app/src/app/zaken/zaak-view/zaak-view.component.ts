@@ -66,10 +66,7 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Indicatie} from '../model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {ZaakRelatietype} from '../model/zaak-relatietype';
 
@@ -766,6 +763,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: initiator.naam});
                 this.zaak.initiatorIdentificatie = initiator.identificatie;
                 this.setupMenu();
+                this.loadHistorie();
             });
     }
 
@@ -780,7 +778,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             if (result) {
                 this.utilService.openSnackbar('msg.initiator.ontkoppelen.uitgevoerd');
                 this.zaak.initiatorIdentificatie = null;
-                this.init(this.zaak);
+                this.setupMenu();
+                this.loadHistorie();
             }
         });
 
