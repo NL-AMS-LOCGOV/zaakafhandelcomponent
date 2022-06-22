@@ -7,6 +7,7 @@ package net.atos.zac.authentication;
 
 import java.io.Serializable;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -22,7 +23,7 @@ public class SecurityUtil implements Serializable {
 
     @Inject
     @ActiveSession
-    private HttpSession httpSession;
+    private Instance<HttpSession> httpSession;
 
     /**
      * Produces an authenticated {@link LoggedInUser} for use in CDI Beans.
@@ -32,8 +33,7 @@ public class SecurityUtil implements Serializable {
      */
     @Produces
     public LoggedInUser getLoggedInUser() {
-        return getLoggedInUser(httpSession);
-
+        return getLoggedInUser(httpSession.get());
     }
 
     public static LoggedInUser getLoggedInUser(final HttpSession httpSession) {

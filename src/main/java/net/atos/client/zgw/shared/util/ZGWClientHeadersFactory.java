@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 
 import com.auth0.jwt.JWT;
@@ -32,20 +32,23 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
-    private static final String CLIENT_ID = ConfigProvider.getConfig().getValue("zgw.api.clientId", String.class);
+    @Inject
+    @ConfigProperty(name = "ZGW_API_CLIENTID")
+    private String clientId;
 
-    private static final String SECRET = ConfigProvider.getConfig().getValue("zgw.api.secret", String.class);
+    @Inject
+    @ConfigProperty(name = "ZGW_API_SECRET")
+    private String secret;
 
     private static final Map<String, String> AUDIT_TOELICHTINGEN = new ConcurrentHashMap<>();
 
     @Override
-    public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders,
-            final MultivaluedMap<String, String> clientOutgoingHeaders) {
+    public MultivaluedMap<String, String> update(final MultivaluedMap<String, String> incomingHeaders, final MultivaluedMap<String, String> outgoingHeaders) {
         final LoggedInUser loggedInUser = loggedInUserInstance.get();
         try {
-            addAutorizationHeader(clientOutgoingHeaders, loggedInUser);
-            addXAuditToelichtingHeader(clientOutgoingHeaders, loggedInUser);
-            return clientOutgoingHeaders;
+            addAutorizationHeader(outgoingHeaders, loggedInUser);
+            addXAuditToelichtingHeader(outgoingHeaders, loggedInUser);
+            return outgoingHeaders;
         } finally {
             clearAuditToelichting(loggedInUser);
         }
@@ -72,29 +75,29 @@ public class ZGWClientHeadersFactory implements ClientHeadersFactory {
 
     private String generateJWTToken(final LoggedInUser loggedInUser) {
         final Map<String, Object> headerClaims = new HashMap<>();
-        headerClaims.put("client_identifier", CLIENT_ID);
+        headerClaims.put("client_identifier", clientId);
         final JWTCreator.Builder jwtBuilder = JWT.create();
-        jwtBuilder.withIssuer(CLIENT_ID)
+        jwtBuilder.withIssuer(clientId)
                 .withIssuedAt(new Date())
                 .withHeader(headerClaims)
-                .withClaim("client_id", CLIENT_ID);
+                .withClaim("client_id", clientId);
         if (loggedInUser != null) {
             jwtBuilder.withClaim("user_id", loggedInUser.getId());
             jwtBuilder.withClaim("user_representation", loggedInUser.getFullName());
         }
-        String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(SECRET));
+        String jwtToken = jwtBuilder.sign(Algorithm.HMAC256(secret));
         return "Bearer " + jwtToken;
     }
 
-    private void addAutorizationHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final LoggedInUser loggedInUser) {
-        clientOutgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(loggedInUser));
+    private void addAutorizationHeader(final MultivaluedMap<String, String> outgoingHeaders, final LoggedInUser loggedInUser) {
+        outgoingHeaders.add(HttpHeaders.AUTHORIZATION, generateJWTToken(loggedInUser));
     }
 
-    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> clientOutgoingHeaders, final LoggedInUser loggedInUser) {
+    private void addXAuditToelichtingHeader(final MultivaluedMap<String, String> outgoingHeaders, final LoggedInUser loggedInUser) {
         if (loggedInUser != null) {
             final String toelichting = AUDIT_TOELICHTINGEN.get(loggedInUser.getId());
             if (toelichting != null) {
-                clientOutgoingHeaders.add("X-Audit-Toelichting", toelichting);
+                outgoingHeaders.add("X-Audit-Toelichting", toelichting);
             }
         }
     }
