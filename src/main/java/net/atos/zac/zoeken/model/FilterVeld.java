@@ -48,7 +48,4 @@ public enum FilterVeld {
         return EnumSet.of(ZAAK_ZAAKTYPE, ZAAK_STATUS, ZAAK_BEHANDELAAR, ZAAK_GROEP, ZAAK_RESULTAAT);
     }
 
-    public static EnumSet<FilterVeld> getInformatieObjectFacetten() {
-        return EnumSet.noneOf(FilterVeld.class);
-    }
 }

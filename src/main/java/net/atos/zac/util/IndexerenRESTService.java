@@ -44,7 +44,6 @@ public class IndexerenRESTService {
                 int aantalResterend = indexeerService.indexeer(aantal, type);
                 yield "\"Aantal items resterend: %d\"\n".formatted(aantalResterend);
             }
-            case INFORMATIE_OBJECT -> throw new RuntimeException("indexeren \"INFORMATIE_OBJECT\" nog niet geïmplementeerd");
         };
     }
 }

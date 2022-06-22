@@ -29,7 +29,6 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -103,7 +102,6 @@ public class IndexeerService {
         switch (type) {
             case ZAAK -> processZaken();
             case TAAK -> processTaken();
-            case INFORMATIE_OBJECT -> throw new NotImplementedException();
         }
 
         // In de Solr-index, maar niet (meer) in Open-Zaak

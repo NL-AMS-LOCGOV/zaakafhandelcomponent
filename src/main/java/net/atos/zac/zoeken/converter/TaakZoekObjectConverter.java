@@ -45,19 +45,19 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         zoekObject.setNaam(task.getName());
         zoekObject.setUuid(task.getId());
         zoekObject.setIdentificatie(task.getId());
-        zoekObject.setType(ZoekObjectType.TAAK.toString());
+        zoekObject.setType(ZoekObjectType.TAAK);
         zoekObject.setCreatiedatum(task.getCreateTime());
         zoekObject.setToekenningsdatum(task.getClaimTime());
         zoekObject.setStreefdatum(task.getDueDate());
         zoekObject.setToelichting(task.getDescription());
 
         if (task.getAssignee() != null) {
-            zoekObject.setStatus(TaakStatus.TOEGEKEND.toString());
+            zoekObject.setStatus(TaakStatus.TOEGEKEND);
             final User user = identityService.readUser(task.getAssignee());
             zoekObject.setBehandelaarNaam(user.getFullName());
             zoekObject.setBehandelaarGebruikersnaam(user.getId());
         } else {
-            zoekObject.setStatus(TaakStatus.NIET_TOEGEKEND.toString());
+            zoekObject.setStatus(TaakStatus.NIET_TOEGEKEND);
         }
 
         final String groupID = extractGroupId(task.getIdentityLinks());
@@ -73,7 +73,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         zoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
 
         zoekObject.setZaakUUID(flowableService.readZaakUUID(task.getScopeId()).toString());
-        zoekObject.setZaakID(flowableService.readZaakIdentificatieOpenCase(task.getScopeId()));
+        zoekObject.setZaakIdentificatie(flowableService.readZaakIdentificatieOpenCase(task.getScopeId()));
 
         final HashMap<String, String> taakdata = flowableService.findTaakdata(task.getId());
         if (MapUtils.isNotEmpty(taakdata)) {

@@ -13,6 +13,7 @@ import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/do
 import {DatumFilterComponent} from './datum-filter/datum-filter.component';
 import {FacetFilterComponent} from './facet-filter/facet-filter.component';
 import {TekstFilterComponent} from './tekst-filter/tekst-filter.component';
+import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-object.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import {TekstFilterComponent} from './tekst-filter/tekst-filter.component';
         FacetFilterComponent,
         TekstFilterComponent,
         ZaakZoekObjectComponent,
+        TaakZoekObjectComponent,
         DocumentZoekObjectComponent
     ],
     exports: [

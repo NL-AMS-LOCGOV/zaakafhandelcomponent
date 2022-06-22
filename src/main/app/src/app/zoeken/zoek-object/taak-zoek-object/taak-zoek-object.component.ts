@@ -4,28 +4,27 @@
  */
 
 import {Component, Input} from '@angular/core';
-
-import {ZaakZoekObject} from '../../model/zaken/zaak-zoek-object';
 import {Router} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ZoekObjectComponent} from '../zoek-object/zoek-object-component';
+import {TaakZoekObject} from '../../model/taken/taak-zoek-object';
 
 @Component({
-    selector: 'zac-zaak-zoek-object',
-    styleUrls: ['./zaak-zoek-object.component.less'],
-    templateUrl: './zaak-zoek-object.component.html'
+    selector: 'zac-taak-zoek-object',
+    styleUrls: ['./taak-zoek-object.component.less'],
+    templateUrl: './taak-zoek-object.component.html'
 })
-export class ZaakZoekObjectComponent extends ZoekObjectComponent {
+export class TaakZoekObjectComponent extends ZoekObjectComponent {
 
-    @Input() zaak: ZaakZoekObject;
+    @Input() taak: TaakZoekObject;
     @Input() sideNav: MatSidenav;
 
     constructor(private router: Router) {
         super();
     }
 
-    open(zaak: ZaakZoekObject): void {
+    open(taak: TaakZoekObject): void {
         super._open();
-        this.router.navigate(['/zaken/', zaak.identificatie]);
+        this.router.navigate(['/taken/', taak.identificatie]);
     }
 }

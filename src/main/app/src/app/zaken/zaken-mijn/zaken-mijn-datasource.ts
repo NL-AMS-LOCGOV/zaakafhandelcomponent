@@ -19,6 +19,7 @@ export class ZakenMijnDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
+        zoekParameters.type = 'ZAAK';
         zoekParameters.alleenMijnZaken = true;
     }
 }

@@ -1,0 +1,38 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div fxLayout="row wrap" class="taak-wrapper">
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'Taak' | translate"
+                         [icon]="viewIcon"
+                         class="type-label"
+                         (iconClicked)="open(taak)"
+                         [value]="taak.naam"></zac-static-text>
+        <zac-static-text [label]="'zaaktype' | translate"
+                         [value]="taak.zaaktypeOmschrijving"></zac-static-text>
+        <zac-static-text [label]="'status' | translate"
+                         [value]="'taak.status.'+taak.status | translate"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'zaakIdentificatie' | translate"
+                         [value]="taak.zaakIdentificatie"></zac-static-text>
+        <zac-static-text [label]="'behandelaar' | translate"
+                         [value]="taak.behandelaarNaam"></zac-static-text>
+        <zac-static-text [label]="'groep' | translate"
+                         [value]="taak.groepNaam"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'creatiedatum' | translate"
+                         [value]="taak.creatiedatum | datum"></zac-static-text>
+        <zac-static-text [label]="'streefdatum' | translate"
+                         [value]="taak.streefdatum | datum"></zac-static-text>
+        <zac-static-text [label]="'toekenningsdatum' | translate"
+                         [value]="taak.toekenningsdatum | datum"></zac-static-text>
+    </div>
+    <div [fxFlex]="100" class="toelichting">
+        <zac-static-text [label]="'toelichting' | translate"
+                         [value]="taak.toelichting"></zac-static-text>
+    </div>
+</div>

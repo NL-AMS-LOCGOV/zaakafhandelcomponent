@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import net.atos.zac.app.taken.model.TaakStatus;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
+
 public class TaakZoekObject implements ZoekObject {
 
     @Field
@@ -43,7 +46,7 @@ public class TaakZoekObject implements ZoekObject {
     private String zaakUUID;
 
     @Field("taak_zaakId")
-    private String zaakID;
+    private String zaakIdentificatie;
 
     @Field("taak_creatiedatum")
     private Date creatiedatum;
@@ -84,12 +87,13 @@ public class TaakZoekObject implements ZoekObject {
         this.uuid = uuid;
     }
 
-    public String getType() {
-        return type;
+    @Override
+    public ZoekObjectType getType() {
+        return ZoekObjectType.valueOf(type);
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setType(final ZoekObjectType type) {
+        this.type = type.toString();
     }
 
     public String getIdentificatie() {
@@ -116,12 +120,12 @@ public class TaakZoekObject implements ZoekObject {
         this.toelichting = toelichting;
     }
 
-    public String getStatus() {
-        return status;
+    public TaakStatus getStatus() {
+        return TaakStatus.valueOf(status);
     }
 
-    public void setStatus(final String status) {
-        this.status = status;
+    public void setStatus(final TaakStatus status) {
+        this.status = status.toString();
     }
 
     public String getZaaktypeOmschrijving() {
@@ -156,12 +160,12 @@ public class TaakZoekObject implements ZoekObject {
         this.zaakUUID = zaakUUID;
     }
 
-    public String getZaakID() {
-        return zaakID;
+    public String getZaakIdentificatie() {
+        return zaakIdentificatie;
     }
 
-    public void setZaakID(final String zaakID) {
-        this.zaakID = zaakID;
+    public void setZaakIdentificatie(final String zaakIdentificatie) {
+        this.zaakIdentificatie = zaakIdentificatie;
     }
 
     public Date getCreatiedatum() {
