@@ -24,6 +24,9 @@ public class FlowableHelper {
     private FlowableService flowableService;
 
     @Inject
+    private CaseVariablesService caseVariablesService;
+
+    @Inject
     private TaskVariablesService taskVariablesService;
 
     @Inject
@@ -60,6 +63,10 @@ public class FlowableHelper {
 
     public IdentityService getIdentityService() {
         return identityService;
+    }
+
+    public CaseVariablesService getCaseVariablesService() {
+        return caseVariablesService;
     }
 
     public TaskVariablesService getTaskVariablesService() {

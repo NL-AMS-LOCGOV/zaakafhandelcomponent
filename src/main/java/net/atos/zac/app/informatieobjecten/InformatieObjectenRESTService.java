@@ -190,7 +190,7 @@ public class InformatieObjectenRESTService {
                 taakdocumenten = new LinkedList<>();
             }
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            taskVariablesService.updateTaakdocumenten(documentReferentieId, taakdocumenten);
+            taskVariablesService.setTaakdocumenten(documentReferentieId, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }

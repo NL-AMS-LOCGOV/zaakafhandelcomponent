@@ -61,6 +61,7 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.signalering.SignaleringenService;
@@ -80,6 +81,9 @@ public class TakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private CaseVariablesService caseVariablesService;
 
     @Inject
     private TaskVariablesService taskVariablesService;
@@ -162,8 +166,8 @@ public class TakenRESTService {
     @PUT
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
-        taskVariablesService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        taskVariablesService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
+        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
     }
 
@@ -223,8 +227,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        taskVariablesService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        taskVariablesService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
+        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id, restTaak.zaakUUID);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
@@ -292,7 +296,7 @@ public class TakenRESTService {
         signaleringenService.deleteSignaleringen(
                 new SignaleringZoekParameters(loggedInUser)
                         .types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
-                        .subjectZaak(flowableService.readZaakUUID(taskInfo.getScopeId())));
+                        .subjectZaak(caseVariablesService.readZaakUUID(taskInfo.getScopeId())));
     }
 
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {

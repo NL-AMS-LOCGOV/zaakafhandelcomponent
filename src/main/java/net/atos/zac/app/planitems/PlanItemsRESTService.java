@@ -29,6 +29,7 @@ import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.exception.ResulttaattypeNotFoundException;
@@ -46,6 +47,9 @@ public class PlanItemsRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private CaseVariablesService caseVariablesService;
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -70,7 +74,7 @@ public class PlanItemsRESTService {
     @Path("humanTask/{id}")
     public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
         final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
-        final UUID zaakUuidForCase = flowableService.readZaakUUIDOpenCase(planItem.getCaseInstanceId());
+        final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
     }
@@ -98,17 +102,15 @@ public class PlanItemsRESTService {
                     if (zaakafhandelParameters.getNietOntvankelijkResultaattype() == null) {
                         throw new ResulttaattypeNotFoundException("geen resultaattype voor het niet ontvankelijk verklaren");
                     }
-                    zgwApiService.createResultaatForZaak(zaak,
-                                                         zaakafhandelParameters.getNietOntvankelijkResultaattype(),
+                    zgwApiService.createResultaatForZaak(zaak, zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
                 }
-                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, userEventListenerData.resultaatToelichting);
+                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId);
             }
             case ZAAK_AFHANDELEN -> {
-                zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid,
-                                                     userEventListenerData.resultaattypeUuid,
+                zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
-                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId, userEventListenerData.resultaatToelichting);
+                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId);
             }
         }
     }

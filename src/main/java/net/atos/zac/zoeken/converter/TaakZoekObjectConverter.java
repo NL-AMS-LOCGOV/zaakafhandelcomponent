@@ -14,6 +14,7 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakStatus;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.identity.IdentityService;
@@ -32,14 +33,13 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
     private FlowableService flowableService;
 
     @Inject
+    private CaseVariablesService caseVariablesService;
+
+    @Inject
     private TaskVariablesService taskVariablesService;
 
     @Inject
     private ZTCClientService ztcClientService;
-
-
-    public TaakZoekObjectConverter() {
-    }
 
     @Override
     public TaakZoekObject convert(final UUID taskID) {
@@ -71,13 +71,13 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
             zoekObject.setGroepNaam(group.getName());
         }
 
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(flowableService.readZaaktypeUUID(task.getScopeId()));
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(caseVariablesService.readZaaktypeUUID(task.getScopeId()));
         zoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         zoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         zoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
 
-        zoekObject.setZaakUUID(flowableService.readZaakUUID(task.getScopeId()).toString());
-        zoekObject.setZaakIdentificatie(flowableService.readZaakIdentificatieOpenCase(task.getScopeId()));
+        zoekObject.setZaakUUID(caseVariablesService.readZaakUUID(task.getScopeId()).toString());
+        zoekObject.setZaakIdentificatie(caseVariablesService.readZaakIdentificatie(task.getScopeId()));
 
         final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(task.getId());
         if (MapUtils.isNotEmpty(taakdata)) {

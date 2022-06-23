@@ -22,11 +22,11 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 @Transactional
 public class TaskVariablesService {
 
-    private static final String VAR_TASK_TAAKDATA = "taakdata";
+    private static final String VAR_TAAKDATA = "taakdata";
 
-    private static final String VAR_TASK_TAAKDOCUMENTEN = "taakdocumenten";
+    private static final String VAR_TAAKDOCUMENTEN = "taakdocumenten";
 
-    private static final String VAR_TASK_TAAKINFORMATIE = "taakinformatie";
+    private static final String VAR_TAAKINFORMATIE = "taakinformatie";
 
     @Inject
     private CmmnTaskService cmmnTaskService;
@@ -35,27 +35,27 @@ public class TaskVariablesService {
     private CmmnHistoryService cmmnHistoryService;
 
     public HashMap<String, String> findTaakdata(final String taskId) {
-        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TASK_TAAKDATA);
+        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TAAKDATA);
     }
 
-    public void updateTaakdata(final String taskId, final Map<String, String> taakdata) {
-        updateTaskVariable(taskId, VAR_TASK_TAAKDATA, taakdata);
+    public void setTaakdata(final String taskId, final Map<String, String> taakdata) {
+        setTaskVariable(taskId, VAR_TAAKDATA, taakdata);
     }
 
     public HashMap<String, String> findTaakinformatie(final String taskId) {
-        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE);
+        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TAAKINFORMATIE);
     }
 
-    public void updateTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
-        updateTaskVariable(taskId, VAR_TASK_TAAKINFORMATIE, taakinformatie);
+    public void setTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
+        setTaskVariable(taskId, VAR_TAAKINFORMATIE, taakinformatie);
     }
 
     public List<UUID> findTaakdocumenten(final String taskId) {
-        return (List<UUID>) findTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN);
+        return (List<UUID>) findTaskVariable(taskId, VAR_TAAKDOCUMENTEN);
     }
 
-    public void updateTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
-        updateTaskVariable(taskId, VAR_TASK_TAAKDOCUMENTEN, taakdocumenten);
+    public void setTaakdocumenten(final String taskId, final List<UUID> taakdocumenten) {
+        setTaskVariable(taskId, VAR_TAAKDOCUMENTEN, taakdocumenten);
     }
 
     private Object findTaskVariable(final String taskId, final String variableName) {
@@ -68,8 +68,7 @@ public class TaskVariablesService {
         }
     }
 
-    private void updateTaskVariable(final String taskId, final String variableName, Object value) {
+    private void setTaskVariable(final String taskId, final String variableName, Object value) {
         cmmnTaskService.setVariableLocal(taskId, variableName, value);
     }
-
 }

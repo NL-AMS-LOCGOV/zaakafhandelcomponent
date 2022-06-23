@@ -38,8 +38,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -81,6 +79,7 @@ import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -92,6 +91,7 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -140,6 +140,9 @@ public class ZakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private CaseVariablesService caseVariablesService;
 
     @Inject
     private EventingService eventingService;
@@ -246,11 +249,11 @@ public class ZakenRESTService {
         final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
                                                                       restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            flowableService.updateDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
-            flowableService.updateVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
+            caseVariablesService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
+            caseVariablesService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
         } else {
-            flowableService.removeDatumtijdOpgeschort(zaakUUID);
-            flowableService.removeVerwachteDagenOpgeschort(zaakUUID);
+            caseVariablesService.removeDatumtijdOpgeschort(zaakUUID);
+            caseVariablesService.removeVerwachteDagenOpgeschort(zaakUUID);
         }
         return zaakConverter.convert(updatedZaak);
     }
@@ -259,8 +262,8 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/opschorting")
     public RESTZaakOpschorting getZaakOpschorting(@PathParam("uuid") final UUID zaakUUID) {
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        zaakOpschorting.vanafDatumTijd = flowableService.findDatumtijdOpgeschort(zaakUUID);
-        zaakOpschorting.duurDagen = flowableService.findVerwachteDagenOpgeschort(zaakUUID);
+        zaakOpschorting.vanafDatumTijd = caseVariablesService.findDatumtijdOpgeschort(zaakUUID);
+        zaakOpschorting.duurDagen = caseVariablesService.findVerwachteDagenOpgeschort(zaakUUID);
         return zaakOpschorting;
     }
 

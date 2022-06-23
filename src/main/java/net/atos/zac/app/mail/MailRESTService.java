@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import com.mailjet.client.errors.MailjetException;
 
 import net.atos.zac.app.mail.model.RESTMailObject;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.util.ValidationUtil;
@@ -34,6 +35,9 @@ public class MailRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private CaseVariablesService caseVariablesService;
 
     @POST
     @Path("send/{zaakUuid}")
@@ -56,6 +60,6 @@ public class MailRESTService {
         }
 
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
-        flowableService.updateOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
+        caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
     }
 }
