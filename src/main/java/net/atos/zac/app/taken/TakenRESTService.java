@@ -62,6 +62,7 @@ import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -79,6 +80,9 @@ public class TakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskVariablesService taskVariablesService;
 
     @Inject
     private RESTTaakConverter taakConverter;
@@ -158,8 +162,8 @@ public class TakenRESTService {
     @PUT
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
-        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        taskVariablesService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        taskVariablesService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
     }
 
@@ -219,8 +223,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        flowableService.updateTaakdata(restTaak.id, restTaak.taakdata);
-        flowableService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        taskVariablesService.updateTaakdata(restTaak.id, restTaak.taakdata);
+        taskVariablesService.updateTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = flowableService.completeTask(restTaak.id, restTaak.zaakUUID);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));

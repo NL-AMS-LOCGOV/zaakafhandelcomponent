@@ -24,6 +24,9 @@ public class FlowableHelper {
     private FlowableService flowableService;
 
     @Inject
+    private TaskVariablesService taskVariablesService;
+
+    @Inject
     private ZGWApiService zgwApiService;
 
     @Inject
@@ -57,5 +60,9 @@ public class FlowableHelper {
 
     public IdentityService getIdentityService() {
         return identityService;
+    }
+
+    public TaskVariablesService getTaskVariablesService() {
+        return taskVariablesService;
     }
 }

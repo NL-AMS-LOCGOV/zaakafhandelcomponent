@@ -27,6 +27,7 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 
 /**
@@ -45,6 +46,9 @@ public class RESTTaakConverter {
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
+
+    @Inject
+    private TaskVariablesService taskVariablesService;
 
     public List<RESTTaak> convertTasksForOpenCase(final List<? extends TaskInfo> tasks) {
         return tasks.stream()
@@ -79,8 +83,8 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForClosedCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.findTaakdataClosedTask(task.getId());
-            restTaak.taakdocumenten = flowableService.findTaakdocumentenClosedTask(task.getId());
+            restTaak.taakdata = taskVariablesService.findTaakdata(task.getId());
+            restTaak.taakdocumenten = taskVariablesService.findTaakdocumenten(task.getId());
         }
         return restTaak;
     }
@@ -89,10 +93,10 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = task.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.findTaakdataOpenTask(task.getId());
-            restTaak.taakdocumenten = flowableService.findTaakdocumentenOpenTask(task.getId());
+            restTaak.taakdata = taskVariablesService.findTaakdata(task.getId());
+            restTaak.taakdocumenten = taskVariablesService.findTaakdocumenten(task.getId());
         }
-        restTaak.taakinformatie = flowableService.findTaakinformatie(task.getId());
+        restTaak.taakinformatie = taskVariablesService.findTaakinformatie(task.getId());
 
         return restTaak;
     }
@@ -101,10 +105,10 @@ public class RESTTaakConverter {
         final RESTTaak restTaak = convertTaskInfoForOpenCase(task);
         restTaak.status = AFGEROND;
         if (withTaakdata) {
-            restTaak.taakdata = flowableService.findTaakdataClosedTask(task.getId());
-            restTaak.taakdocumenten = flowableService.findTaakdocumentenClosedTask(task.getId());
+            restTaak.taakdata = taskVariablesService.findTaakdata(task.getId());
+            restTaak.taakdocumenten = taskVariablesService.findTaakdocumenten(task.getId());
         }
-        restTaak.taakinformatie = flowableService.findTaakinformatie(task.getId());
+        restTaak.taakinformatie = taskVariablesService.findTaakinformatie(task.getId());
 
         return restTaak;
     }

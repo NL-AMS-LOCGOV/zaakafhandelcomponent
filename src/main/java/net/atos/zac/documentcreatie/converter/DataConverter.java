@@ -51,6 +51,7 @@ import net.atos.zac.documentcreatie.model.StartformulierData;
 import net.atos.zac.documentcreatie.model.TaakData;
 import net.atos.zac.documentcreatie.model.ZaakData;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.identity.IdentityService;
 
 public class DataConverter {
@@ -92,6 +93,9 @@ public class DataConverter {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskVariablesService taskVariablesService;
 
     @Inject
     private IdentityService identityService;
@@ -274,7 +278,7 @@ public class DataConverter {
         if (task.getAssignee() != null) {
             taakData.behandelaar = identityService.readUser(task.getAssignee()).getFullName();
         }
-        taakData.data = flowableService.findTaakdata(taskId);
+        taakData.data = taskVariablesService.findTaakdata(taskId);
         return taakData;
     }
 }

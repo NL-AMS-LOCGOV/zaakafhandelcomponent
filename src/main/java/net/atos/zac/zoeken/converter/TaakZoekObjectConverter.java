@@ -15,6 +15,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -29,6 +30,9 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskVariablesService taskVariablesService;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -75,12 +79,12 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         zoekObject.setZaakUUID(flowableService.readZaakUUID(task.getScopeId()).toString());
         zoekObject.setZaakIdentificatie(flowableService.readZaakIdentificatieOpenCase(task.getScopeId()));
 
-        final HashMap<String, String> taakdata = flowableService.findTaakdata(task.getId());
+        final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(task.getId());
         if (MapUtils.isNotEmpty(taakdata)) {
             zoekObject.setTaakData(taakdata.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }
 
-        final HashMap<String, String> taakinformatie = flowableService.findTaakinformatie(task.getId());
+        final HashMap<String, String> taakinformatie = taskVariablesService.findTaakinformatie(task.getId());
         if (MapUtils.isNotEmpty(taakinformatie)) {
             zoekObject.setTaakInformatie(taakinformatie.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }

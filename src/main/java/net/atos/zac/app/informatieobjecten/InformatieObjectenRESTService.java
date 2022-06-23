@@ -71,6 +71,7 @@ import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.webdav.WebdavHelper;
 
 @Singleton
@@ -93,6 +94,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskVariablesService taskVariablesService;
 
     @Inject
     private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
@@ -181,12 +185,12 @@ public class InformatieObjectenRESTService {
                 zgwApiService.createZaakInformatieobjectForZaak(zaak, data, data.getTitel(), data.getBeschrijving(),
                                                                 OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
-            List<UUID> taakdocumenten = flowableService.findTaakdocumentenOpenTask(documentReferentieId);
+            List<UUID> taakdocumenten = taskVariablesService.findTaakdocumenten(documentReferentieId);
             if (taakdocumenten == null) {
                 taakdocumenten = new LinkedList<>();
             }
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
-            flowableService.updateTaakdocumenten(documentReferentieId, taakdocumenten);
+            taskVariablesService.updateTaakdocumenten(documentReferentieId, taakdocumenten);
         }
         return restInformatieobjectConverter.convert(zaakInformatieobject);
     }
