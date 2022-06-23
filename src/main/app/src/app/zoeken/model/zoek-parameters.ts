@@ -6,6 +6,7 @@
 import {SorteerVeld} from './sorteer-veld';
 
 export class ZoekParameters {
+    type: 'ZAAK' | 'TAAK' | null;
     alleenMijnZaken: boolean = false;
     alleenOpenstaandeZaken: boolean = false;
     alleenAfgeslotenZaken: boolean = false;

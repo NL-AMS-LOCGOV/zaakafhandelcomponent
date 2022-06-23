@@ -56,7 +56,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     private ZaakZoekObject convert(final Zaak zaak) {
         final ZaakZoekObject zaakZoekObject = new ZaakZoekObject();
         zaakZoekObject.setUuid(zaak.getUuid().toString());
-        zaakZoekObject.setType("ZAAK");
+        zaakZoekObject.setType(ZoekObjectType.ZAAK);
         zaakZoekObject.setIdentificatie(zaak.getIdentificatie());
         zaakZoekObject.setOmschrijving(zaak.getOmschrijving());
         zaakZoekObject.setToelichting(zaak.getToelichting());

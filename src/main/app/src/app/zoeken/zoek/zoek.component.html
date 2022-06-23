@@ -17,6 +17,7 @@
     <ng-container *ngFor="let item of zoekResultaat.resultaten">
         <ng-container [ngSwitch]="item.type">
             <zac-zaak-zoek-object *ngSwitchCase="'ZAAK'" [sideNav]="sideNav" [zaak]="getZaak(item)"></zac-zaak-zoek-object>
+            <zac-taak-zoek-object *ngSwitchCase="'TAAK'" [sideNav]="sideNav" [taak]="getTaak(item)"></zac-taak-zoek-object>
             <zac-document-zoek-object *ngSwitchCase="'DOCUMENT'" [sideNav]="sideNav" [infoObject]="item"></zac-document-zoek-object>
         </ng-container>
         <mat-divider></mat-divider>

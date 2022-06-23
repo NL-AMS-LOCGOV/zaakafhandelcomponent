@@ -5,4 +5,8 @@
 
 package net.atos.zac.zoeken.model;
 
-public interface ZoekObject {}
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
+
+public interface ZoekObject {
+    ZoekObjectType getType();
+}

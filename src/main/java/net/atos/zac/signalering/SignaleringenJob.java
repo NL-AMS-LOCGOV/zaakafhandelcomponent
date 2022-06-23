@@ -103,6 +103,7 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
+                .map(zoekObject -> (ZaakZoekObject) zoekObject)
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.DUE), zaak))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.DUE));
@@ -118,6 +119,7 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
+                .map(zoekObject -> (ZaakZoekObject) zoekObject)
                 .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.FATAL), zaak))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.FATAL));
@@ -158,6 +160,7 @@ public class SignaleringenJob {
     private void zaakEinddatumGeplandOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
+                .map(zoekObject -> (ZaakZoekObject) zoekObject)
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.DUE))
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
@@ -169,6 +172,7 @@ public class SignaleringenJob {
     private void zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
+                .map(zoekObject -> (ZaakZoekObject) zoekObject)
                 .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
                                                                    SignaleringSubjectField.FATAL))
 

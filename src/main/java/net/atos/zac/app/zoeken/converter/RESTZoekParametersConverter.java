@@ -16,7 +16,6 @@ import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.DatumRange;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
-import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public class RESTZoekParametersConverter {
 
@@ -24,7 +23,7 @@ public class RESTZoekParametersConverter {
     private Instance<LoggedInUser> loggedInUserInstance;
 
     public ZoekParameters convert(final RESTZoekParameters restZoekParameters) {
-        final ZoekParameters zoekParameters = new ZoekParameters(ZoekObjectType.ZAAK);
+        final ZoekParameters zoekParameters = new ZoekParameters(restZoekParameters.type);
 
         restZoekParameters.filters.forEach(zoekParameters::addFilter);
 

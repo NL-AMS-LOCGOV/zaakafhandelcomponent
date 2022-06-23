@@ -15,11 +15,11 @@ import javax.ws.rs.core.MediaType;
 
 import net.atos.zac.app.zoeken.converter.RESTZoekParametersConverter;
 import net.atos.zac.app.zoeken.converter.RESTZoekResultaatConverter;
-import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
+import net.atos.zac.app.zoeken.model.AbstractRESTZoekObject;
 import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.app.zoeken.model.RESTZoekResultaat;
 import net.atos.zac.zoeken.ZoekenService;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 
@@ -40,9 +40,9 @@ public class ZoekenRESTService {
 
     @PUT
     @Path("list")
-    public RESTZoekResultaat<RESTZaakZoekObject> listZoekResultaat(final RESTZoekParameters restZaakParameters) {
+    public RESTZoekResultaat<? extends AbstractRESTZoekObject> listZoekResultaat(final RESTZoekParameters restZaakParameters) {
         final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
-        final ZoekResultaat<ZaakZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
+        final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
         return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
     }
 
