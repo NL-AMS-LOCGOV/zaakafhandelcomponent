@@ -22,6 +22,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -47,6 +48,9 @@ public class SignaleringenMailHelper {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskService taskService;
 
     @Inject
     private CaseVariablesService caseVariablesService;
@@ -83,7 +87,7 @@ public class SignaleringenMailHelper {
             }
             case TAAK -> {
                 final String id = signalering.getSubject();
-                final TaskInfo taak = flowableService.readTask(id);
+                final TaskInfo taak = taskService.readTask(id);
                 final String zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taak.getScopeId());
                 final String zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taak.getScopeId());
                 return new SignaleringSubject.Link(taak.getName(),

@@ -63,12 +63,14 @@ import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  *
@@ -83,10 +85,16 @@ public class TakenRESTService {
     private FlowableService flowableService;
 
     @Inject
+    private TaskService taskService;
+
+    @Inject
     private CaseVariablesService caseVariablesService;
 
     @Inject
     private TaskVariablesService taskVariablesService;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     @Inject
     private RESTTaakConverter taakConverter;
@@ -121,12 +129,12 @@ public class TakenRESTService {
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
         final Set<String> loggedInUserGroupIds = loggedInUserInstance.get().getGroupIds();
-        final List<Task> tasks = flowableService.listOpenTasksAssignedToGroups(loggedInUserGroupIds,
-                                                                               TaakSortering.fromValue(tableState.getSort().getPredicate()),
-                                                                               tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
-                                                                               tableState.getPagination().getPageSize());
+        final List<Task> tasks = taskService.listOpenTasksAssignedToGroups(loggedInUserGroupIds,
+                                                                           TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                                                           tableState.getSort().getDirection(), tableState.getPagination().getFirstResult(),
+                                                                           tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTasksForOpenCase(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksAssignedToGroups(loggedInUserGroupIds));
+        return new TableResponse<>(taken, taskService.countOpenTasksAssignedToGroups(loggedInUserGroupIds));
     }
 
     @GET
@@ -134,23 +142,23 @@ public class TakenRESTService {
     public TableResponse<RESTTaak> listMijnTaken(@Context final HttpServletRequest request) {
         final TableRequest tableState = TableRequest.getTableState(request);
         final String loggedInUserId = loggedInUserInstance.get().getId();
-        final List<Task> tasks = flowableService.listOpenTasksAssignedToUser(loggedInUserId,
-                                                                             TaakSortering.fromValue(tableState.getSort().getPredicate()),
-                                                                             tableState.getSort().getDirection(),
-                                                                             tableState.getPagination().getFirstResult(),
-                                                                             tableState.getPagination().getPageSize());
+        final List<Task> tasks = taskService.listOpenTasksAssignedToUser(loggedInUserId,
+                                                                         TaakSortering.fromValue(tableState.getSort().getPredicate()),
+                                                                         tableState.getSort().getDirection(),
+                                                                         tableState.getPagination().getFirstResult(),
+                                                                         tableState.getPagination().getPageSize());
         final List<RESTTaak> taken = taakConverter.convertTasksForOpenCase(tasks);
-        return new TableResponse<>(taken, flowableService.countOpenTasksAssignedToUser(loggedInUserId));
+        return new TableResponse<>(taken, taskService.countOpenTasksAssignedToUser(loggedInUserId));
     }
 
     @GET
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> listTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
         if (flowableService.isOpenCase(zaakUUID)) {
-            final List<TaskInfo> tasks = flowableService.listTasksForOpenCase(zaakUUID);
+            final List<TaskInfo> tasks = taskService.listTasksForOpenCase(zaakUUID);
             return taakConverter.convertTasksForOpenCase(tasks);
         } else {
-            final List<HistoricTaskInstance> tasks = flowableService.listTasksForClosedCase(zaakUUID);
+            final List<HistoricTaskInstance> tasks = taskService.listTasksForClosedCase(zaakUUID);
             return taakConverter.convertTasksForClosedCase(tasks);
         }
     }
@@ -158,7 +166,7 @@ public class TakenRESTService {
     @GET
     @Path("{taskId}")
     public RESTTaak readTaak(@PathParam("taskId") final String taskId) {
-        final TaskInfo task = flowableService.readTask(taskId);
+        final TaskInfo task = taskService.readTask(taskId);
         deleteSignaleringen(task);
         return taakConverter.convertTask(task);
     }
@@ -203,16 +211,16 @@ public class TakenRESTService {
     @PATCH
     @Path("assign/group")
     public void assignGroup(final RESTTaak restTaak) {
-        final Task task = flowableService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
+        final Task task = taskService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
         taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
     }
 
     @PATCH
     @Path("")
     public RESTTaak updateTaak(final RESTTaak restTaak) {
-        Task task = flowableService.readOpenTask(restTaak.id);
+        Task task = taskService.readOpenTask(restTaak.id);
         taakConverter.updateOpenTask(task, restTaak);
-        task = flowableService.updateTask(task);
+        task = taskService.updateTask(task);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTaskForOpenCase(task);
@@ -223,13 +231,14 @@ public class TakenRESTService {
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
-            flowableService.assignTaskToUser(restTaak.id, loggedInUserId);
+            taskService.assignTaskToUser(restTaak.id, loggedInUserId);
         }
 
         createDocuments(restTaak);
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
-        final HistoricTaskInstance task = flowableService.completeTask(restTaak.id, restTaak.zaakUUID);
+        final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
+        indexeerService.addZaak(restTaak.zaakUUID);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
         return taakConverter.convertTaskForOpenCase(task);
@@ -247,12 +256,12 @@ public class TakenRESTService {
     @GET
     @Path("{taskId}/historie")
     public List<RESTTaakHistorieRegel> listHistorie(@PathParam("taskId") final String taskId) {
-        final List<HistoricTaskLogEntry> historicTaskLogEntries = flowableService.listHistorieForTask(taskId);
+        final List<HistoricTaskLogEntry> historicTaskLogEntries = taskService.listHistorieForTask(taskId);
         return taakHistorieConverter.convert(historicTaskLogEntries);
     }
 
     private Task assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
-        final Task task = flowableService.assignTaskToUser(taakId, assignee);
+        final Task task = taskService.assignTaskToUser(taakId, assignee);
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, task, loggedInUserInstance.get()));
         taakBehandelaarGewijzigd(task, zaakUuid);
         return task;

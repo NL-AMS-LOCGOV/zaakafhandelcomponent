@@ -45,6 +45,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.converter.AbstractZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZoekObject;
@@ -70,6 +71,9 @@ public class IndexeerService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskService taskService;
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -160,7 +164,7 @@ public class IndexeerService {
         boolean hasNext = true;
         while (hasNext) {
             int firstResult = page * maxResults;
-            final List<Task> tasks = flowableService.listOpenTasks(TaakSortering.ID, SorteerRichting.ASCENDING, firstResult, maxResults);
+            final List<Task> tasks = taskService.listOpenTasks(TaakSortering.ID, SorteerRichting.ASCENDING, firstResult, maxResults);
             tasks.forEach(taak -> createEntity(UUID.fromString(taak.getId()), ZoekObjectType.TAAK));
             page++;
             hasNext = CollectionUtils.isNotEmpty(tasks);

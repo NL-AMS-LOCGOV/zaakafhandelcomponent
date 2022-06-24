@@ -11,17 +11,12 @@ import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIEN
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_OWNER;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_TAAKDATA;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ZAAK_UUID;
-import static net.atos.zac.util.JsonbUtil.JSONB;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -30,34 +25,21 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.CmmnHistoryService;
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.CmmnRuntimeService;
-import org.flowable.cmmn.api.CmmnTaskService;
 import org.flowable.cmmn.api.history.HistoricCaseInstance;
 import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.cmmn.model.CmmnModel;
-import org.flowable.cmmn.model.HumanTask;
 import org.flowable.cmmn.model.UserEventListener;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
-import org.flowable.identitylink.api.IdentityLinkInfo;
-import org.flowable.identitylink.api.IdentityLinkType;
-import org.flowable.task.api.Task;
-import org.flowable.task.api.TaskInfo;
-import org.flowable.task.api.TaskQuery;
-import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.task.api.history.HistoricTaskLogEntry;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.mail.MailService;
-import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.IndexeerService;
 
 /**
@@ -67,16 +49,10 @@ import net.atos.zac.zoeken.IndexeerService;
 @Transactional
 public class FlowableService {
 
-    public static final String USER_TASK_DESCRIPTION_CHANGED = "USER_TASK_DESCRIPTION_CHANGED";
-
-
     private static final Logger LOG = Logger.getLogger(FlowableService.class.getName());
 
     @Inject
     private CmmnRuntimeService cmmnRuntimeService;
-
-    @Inject
-    private CmmnTaskService cmmnTaskService;
 
     @Inject
     private CmmnHistoryService cmmnHistoryService;
@@ -95,102 +71,6 @@ public class FlowableService {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
-
-    public static class TaskDescriptionChangedData {
-
-        public String newDescription;
-
-        public String previousDescription;
-
-        public TaskDescriptionChangedData() {}
-
-        public TaskDescriptionChangedData(final String previousDescription, final String newDescription) {
-            this.newDescription = newDescription;
-            this.previousDescription = previousDescription;
-        }
-    }
-
-    public List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
-        final List<TaskInfo> tasks = new ArrayList<>();
-        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
-        if (caseInstance != null) {
-            tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
-            tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
-        }
-        return tasks;
-    }
-
-    public List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
-        final HistoricCaseInstance historicCaseInstance = findClosedCaseForZaak(zaakUUID);
-        if (historicCaseInstance != null) {
-            return listClosedTasksForCase(historicCaseInstance.getId());
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final SorteerRichting direction,
-            final int firstResult, final int maxResults) {
-        return createOpenTasksQueryWithSorting(sortering, direction)
-                .taskAssignee(userid)
-                .listPage(firstResult, maxResults);
-    }
-
-    public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
-        return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
-    }
-
-    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final SorteerRichting direction,
-            final int firstResult, final int maxResults) {
-        return createOpenTasksQueryWithSorting(sortering, direction)
-                .taskCandidateGroupIn(groupIds)
-                .ignoreAssigneeValue()
-                .listPage(firstResult, maxResults);
-    }
-
-    public List<Task> listOpenTasksDueNow() {
-        return cmmnTaskService.createTaskQuery()
-                .taskAssigned()
-                .taskDueBefore(tomorrow())
-                .list();
-    }
-
-    public List<Task> listOpenTasksDueLater() {
-        return cmmnTaskService.createTaskQuery()
-                .taskAssigned()
-                .taskDueAfter(DateUtils.addSeconds(tomorrow(), -1))
-                .list();
-    }
-
-    private Date tomorrow() {
-        return DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), 1);
-    }
-
-    public int countOpenTasksAssignedToUser(final String userId) {
-        return (int) cmmnTaskService.createTaskQuery().taskAssignee(userId).count();
-    }
-
-    public int countOpenTasksAssignedToGroups(final Set<String> groupIds) {
-        return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
-    }
-
-    public List<Task> listOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
-        if (caseInstance != null) {
-            return listOpenTasksForCase(caseInstance.getId());
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public long countOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = findOpenCaseForZaak(zaakUUID);
-        if (caseInstance != null) {
-            return countOpenTasksForOpenCase(caseInstance.getId());
-        } else {
-            return 0;
-        }
-    }
 
     public List<PlanItemInstance> listPlanItemsForOpenCase(final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = listEnabledPlanItemsForOpenCase(zaakUUID);
@@ -249,71 +129,6 @@ public class FlowableService {
         }
     }
 
-    /**
-     * Assign task to user.
-     * When the userId is null the task is released.
-     *
-     * @param taskId Id of the task to assign or release.
-     * @param userId Id of the user to assign the task to or null which implies that the task is released.
-     * @return Assigned or released task.
-     */
-    public Task assignTaskToUser(final String taskId, final String userId) {
-        if (userId != null) {
-            cmmnTaskService.setAssignee(taskId, userId);
-        } else {
-            cmmnTaskService.unclaim(taskId);
-        }
-        return readOpenTask(taskId);
-    }
-
-    /**
-     * Assign task to a group
-     *
-     * @param taskId  Id of the task to assign
-     * @param groupId Id of the new group
-     * @return Assigned Task
-     */
-    public Task assignTaskToGroup(final String taskId, final String groupId) {
-        final Task task = readOpenTask(taskId);
-
-        task.getIdentityLinks().stream()
-                .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
-                .map(IdentityLinkInfo::getGroupId)
-                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(taskId, currentGroupId, IdentityLinkType.CANDIDATE));
-
-        cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
-
-        return readOpenTask(taskId);
-    }
-
-    public Task updateTask(final Task task) {
-        final Task originalTask = readOpenTask(task.getId());
-        cmmnTaskService.saveTask(task);
-        if (!StringUtils.equals(originalTask.getDescription(), task.getDescription())) {
-            final TaskDescriptionChangedData descriptionChangedData = new TaskDescriptionChangedData(originalTask.getDescription(), task.getDescription());
-            cmmnHistoryService.createHistoricTaskLogEntryBuilder(originalTask)
-                    .type(USER_TASK_DESCRIPTION_CHANGED)
-                    .data(JSONB.toJson(descriptionChangedData))
-                    .create();
-        }
-        return readOpenTask(task.getId());
-    }
-
-    public HistoricTaskInstance completeTask(final String taskId, final UUID zaakUUID) {
-        cmmnTaskService.complete(taskId);
-        indexeerService.addZaak(zaakUUID);
-        return readClosedTask(taskId);
-    }
-
-    public Task readOpenTask(final String taskId) {
-        final Task task = findOpenTask(taskId);
-        if (task != null) {
-            return task;
-        } else {
-            throw new RuntimeException(String.format("No open task found with task id '%s'", taskId));
-        }
-    }
-
     public List<CaseDefinition> listCaseDefinitions() {
         return cmmnRepositoryService.createCaseDefinitionQuery().latestVersion().list();
     }
@@ -328,11 +143,6 @@ public class FlowableService {
         } else {
             throw new RuntimeException(String.format("No case definition found for case definition key: '%s'", caseDefinitionKey));
         }
-    }
-
-    public List<HumanTask> listHumanTasks(final String caseDefinitionKey) {
-        final CmmnModel cmmnModel = cmmnRepositoryService.getCmmnModel(caseDefinitionKey);
-        return cmmnModel.getPrimaryCase().findPlanItemDefinitionsOfType(HumanTask.class);
     }
 
     public List<UserEventListener> listUserEventListeners(final String caseDefinitionKey) {
@@ -366,68 +176,15 @@ public class FlowableService {
                 .count() > 0;
     }
 
-
-    public List<HistoricTaskLogEntry> listHistorieForTask(final String taskId) {
-        return cmmnHistoryService.createHistoricTaskLogEntryQuery().taskId(taskId).list();
-    }
-
-
-
-    private List<Task> listOpenTasksForCase(final String caseInstanceId) {
-        return cmmnTaskService.createTaskQuery()
-                .caseInstanceId(caseInstanceId)
-                .includeIdentityLinks()
-                .list();
-    }
-
-    private long countOpenTasksForOpenCase(final String caseInstanceId) {
-        return cmmnTaskService.createTaskQuery()
-                .caseInstanceId(caseInstanceId)
-                .includeIdentityLinks()
-                .count();
-    }
-
-    private List<HistoricTaskInstance> listClosedTasksForCase(final String caseInstanceId) {
-        return cmmnHistoryService.createHistoricTaskInstanceQuery()
-                .caseInstanceId(caseInstanceId)
-                .finished()
-                .includeIdentityLinks()
-                .list();
-    }
-
-
-    public TaskInfo readTask(final String taskId) {
-        TaskInfo task = findOpenTask(taskId);
-        if (task != null) {
-            return task;
-        }
-        task = findClosedTask(taskId);
-        if (task != null) {
-            return task;
-        }
-        throw new RuntimeException(String.format("No task found with task id '%s'", taskId));
-    }
-
-    private Task findOpenTask(final String taskId) {
-        return cmmnTaskService.createTaskQuery()
-                .taskId(taskId)
-                .includeIdentityLinks()
+    CaseInstance findOpenCaseForZaak(final UUID zaakUUID) {
+        return cmmnRuntimeService.createCaseInstanceQuery()
+                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
     }
 
-    private HistoricTaskInstance readClosedTask(final String taskId) {
-        final HistoricTaskInstance task = findClosedTask(taskId);
-        if (task != null) {
-            return task;
-        } else {
-            throw new RuntimeException(String.format("No closed task found with task id '%s'", taskId));
-        }
-    }
-
-    private HistoricTaskInstance findClosedTask(final String taskId) {
-        return cmmnHistoryService.createHistoricTaskInstanceQuery()
-                .taskId(taskId)
-                .includeIdentityLinks()
+    HistoricCaseInstance findClosedCaseForZaak(final UUID zaakUUID) {
+        return cmmnHistoryService.createHistoricCaseInstanceQuery()
+                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
     }
 
@@ -444,32 +201,5 @@ public class FlowableService {
                 .planItemInstanceStateAvailable()
                 .planItemDefinitionType(USER_EVENT_LISTENER)
                 .list();
-    }
-
-    private CaseInstance findOpenCaseForZaak(final UUID zaakUUID) {
-        return cmmnRuntimeService.createCaseInstanceQuery()
-                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
-                .singleResult();
-    }
-
-    private HistoricCaseInstance findClosedCaseForZaak(final UUID zaakUUID) {
-        return cmmnHistoryService.createHistoricCaseInstanceQuery()
-                .variableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
-                .singleResult();
-    }
-
-    private TaskQuery createOpenTasksQueryWithSorting(final TaakSortering sortering, final SorteerRichting direction) {
-        final TaskQuery taskQuery = cmmnTaskService.createTaskQuery().includeIdentityLinks();
-        if (sortering != null) {
-            final TaskQuery sortedTaskQuery = switch (sortering) {
-                case ID -> taskQuery.orderByTaskId();
-                case TAAKNAAM -> taskQuery.orderByTaskName();
-                case CREATIEDATUM -> taskQuery.orderByTaskCreateTime();
-                case STREEFDATUM -> taskQuery.orderByTaskDueDate();
-                case BEHANDELAAR -> taskQuery.orderByTaskAssignee();
-            };
-            return direction.equals(SorteerRichting.ASCENDING) ? sortedTaskQuery.asc() : sortedTaskQuery.desc();
-        }
-        return taskQuery;
     }
 }

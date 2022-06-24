@@ -93,6 +93,7 @@ import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -140,6 +141,9 @@ public class ZakenRESTService {
 
     @Inject
     private FlowableService flowableService;
+
+    @Inject
+    private TaskService taskService;
 
     @Inject
     private CaseVariablesService caseVariablesService;
@@ -552,11 +556,11 @@ public class ZakenRESTService {
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
         final int[] count = new int[1];
-        flowableService.listOpenTasks(zaakUUID).stream()
+        taskService.listOpenTasks(zaakUUID).stream()
                 .filter(task -> task.getDueDate() != null)
                 .forEach(task -> {
                     task.setDueDate(convertToDate(convertToLocalDate(task.getDueDate()).plusDays(duurDagen)));
-                    flowableService.updateTask(task);
+                    taskService.updateTask(task);
                     eventingService.send(TAAK.updated(task));
                     count[0]++;
                 });
