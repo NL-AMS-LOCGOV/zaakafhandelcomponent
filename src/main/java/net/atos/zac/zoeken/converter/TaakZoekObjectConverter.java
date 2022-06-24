@@ -77,7 +77,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         taakZoekObject.setZaakUUID(caseVariablesService.readZaakUUID(taskInfo.getScopeId()).toString());
         taakZoekObject.setZaakIdentificatie(caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId()));
 
-        final HashMap<String, String> taakdata = flowableService.findTaakdata(taskInfo.getId());
+        final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
         if (MapUtils.isNotEmpty(taakdata)) {
             taakZoekObject.setTaakData(taakdata.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }
