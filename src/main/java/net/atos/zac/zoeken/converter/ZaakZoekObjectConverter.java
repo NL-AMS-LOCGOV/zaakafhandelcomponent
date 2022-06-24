@@ -19,7 +19,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -46,7 +46,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     private IdentityService identityService;
 
     @Inject
-    private FlowableService flowableService;
+    private TaskService taskService;
 
     public ZaakZoekObject convert(final String zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
@@ -109,7 +109,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
         zaakZoekObject.setStatusToelichting(status.getStatustoelichting());
         zaakZoekObject.setStatusDatumGezet(DateTimeConverterUtil.convertToDate(status.getDatumStatusGezet()));
-        zaakZoekObject.setAantalOpenstaandeTaken(flowableService.countOpenTasks(zaak.getUuid()));
+        zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));
 
         if (zaak.getResultaat() != null) {
             final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());

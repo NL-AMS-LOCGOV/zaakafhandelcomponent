@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -26,7 +26,7 @@ public class ZaakafhandelParameterService {
     private static final String PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK = "humantask";
 
     @Inject
-    private FlowableService flowableService;
+    private CaseVariablesService caseVariablesService;
 
     @Inject
     private ZaakafhandelParameterBeheerService beheerService;
@@ -37,7 +37,7 @@ public class ZaakafhandelParameterService {
     }
 
     public HumanTaskParameters readHumanTaskParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(planItem.getCaseInstanceId());
+        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
             return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         } else {
@@ -50,7 +50,7 @@ public class ZaakafhandelParameterService {
     }
 
     public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = flowableService.readZaaktypeUUID(planItem.getCaseInstanceId());
+        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
 

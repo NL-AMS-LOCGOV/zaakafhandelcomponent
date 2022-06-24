@@ -20,7 +20,8 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -45,7 +46,10 @@ public class SignaleringenMailHelper {
     private DRCClientService drcClientService;
 
     @Inject
-    private FlowableService flowableService;
+    private TaskService taskService;
+
+    @Inject
+    private CaseVariablesService caseVariablesService;
 
     @Inject
     private IdentityService identityService;
@@ -79,9 +83,9 @@ public class SignaleringenMailHelper {
             }
             case TAAK -> {
                 final String id = signalering.getSubject();
-                final TaskInfo taak = flowableService.readTask(id);
-                final String zaakIdentificatie = flowableService.readZaakIdentificatie(taak.getScopeId());
-                final String zaaktypeOmschrijving = flowableService.readZaaktypeOmschrijving(taak.getScopeId());
+                final TaskInfo taak = taskService.readTask(id);
+                final String zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taak.getScopeId());
+                final String zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taak.getScopeId());
                 return new SignaleringSubject.Link(taak.getName(),
                                                    String.format("de taak %s voor zaak %s (%s)", taak.getName(), zaakIdentificatie, zaaktypeOmschrijving),
                                                    configuratieService.taakTonenUrl(id));
