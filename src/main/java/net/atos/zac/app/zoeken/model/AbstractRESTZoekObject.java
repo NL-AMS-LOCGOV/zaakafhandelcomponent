@@ -11,7 +11,7 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public abstract class AbstractRESTZoekObject {
 
-    public UUID uuid;
+    public UUID id;
 
     public ZoekObjectType type;
 

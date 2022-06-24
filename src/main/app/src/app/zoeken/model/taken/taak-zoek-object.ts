@@ -6,9 +6,8 @@
 import {ZoekObject} from '../zoek-object';
 
 export class TaakZoekObject implements ZoekObject {
-    uuid: string;
+    id: string;
     type: string;
-    identificatie: string;
     naam: string;
     toelichting: string;
     status: string;

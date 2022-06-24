@@ -16,13 +16,10 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 public class TaakZoekObject implements ZoekObject {
 
     @Field
-    private String uuid;
+    private String id;
 
     @Field
     private String type;
-
-    @Field
-    private String identificatie;
 
     @Field("taak_naam")
     private String naam;
@@ -79,12 +76,12 @@ public class TaakZoekObject implements ZoekObject {
     public TaakZoekObject() {
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getId() {
+        return id;
     }
 
-    public void setUuid(final String uuid) {
-        this.uuid = uuid;
+    public void setId(final String id) {
+        this.id = id;
     }
 
     @Override
@@ -94,14 +91,6 @@ public class TaakZoekObject implements ZoekObject {
 
     public void setType(final ZoekObjectType type) {
         this.type = type.toString();
-    }
-
-    public String getIdentificatie() {
-        return identificatie;
-    }
-
-    public void setIdentificatie(final String identificatie) {
-        this.identificatie = identificatie;
     }
 
     public String getNaam() {

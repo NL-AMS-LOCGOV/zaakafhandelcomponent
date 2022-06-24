@@ -15,9 +15,8 @@ public class RESTTaakZoekObjectConverter {
 
     public static RESTTaakZoekObject convert(final TaakZoekObject taakZoekObject) {
         final RESTTaakZoekObject restZaakZoekObject = new RESTTaakZoekObject();
-        restZaakZoekObject.uuid = UUID.fromString(taakZoekObject.getUuid());
+        restZaakZoekObject.id = UUID.fromString(taakZoekObject.getId());
         restZaakZoekObject.type = taakZoekObject.getType();
-        restZaakZoekObject.identificatie = taakZoekObject.getIdentificatie();
         restZaakZoekObject.naam = taakZoekObject.getNaam();
         restZaakZoekObject.status = taakZoekObject.getStatus();
         restZaakZoekObject.toelichting = taakZoekObject.getToelichting();

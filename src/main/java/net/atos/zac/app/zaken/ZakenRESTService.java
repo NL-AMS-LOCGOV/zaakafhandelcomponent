@@ -38,8 +38,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -81,6 +79,7 @@ import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -393,7 +392,7 @@ public class ZakenRESTService {
                 zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), verdeelGegevens.reden);
             }
         });
-        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).collect(Collectors.toList()), ZoekObjectType.ZAAK);
     }
 
     @PUT
@@ -403,7 +402,7 @@ public class ZakenRESTService {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
         });
-        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).collect(Collectors.toList()), ZoekObjectType.ZAAK);
     }
 
     @PATCH
@@ -466,7 +465,7 @@ public class ZakenRESTService {
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(
             final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
-        indexeerService.indexeerDirect(zaak.getUuid(), ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
         return zaakOverzichtConverter.convert(zaak);
     }
 

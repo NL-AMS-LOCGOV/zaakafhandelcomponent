@@ -80,11 +80,11 @@ export class ZoekComponent implements AfterViewInit {
         return zoekParameters;
     }
 
-    getZaak(item: ZoekObject) {
-        return item as ZaakZoekObject;
+    getZaakZoekObject(zoekObject: ZoekObject): ZaakZoekObject {
+        return zoekObject as ZaakZoekObject;
     }
 
-    getTaak(item: ZoekObject) {
-        return item as TaakZoekObject;
+    getTaakZoekObject(zoekObject: ZoekObject): TaakZoekObject {
+        return zoekObject as TaakZoekObject;
     }
 }

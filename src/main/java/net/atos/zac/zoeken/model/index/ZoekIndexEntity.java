@@ -7,8 +7,6 @@ package net.atos.zac.zoeken.model.index;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,8 +30,8 @@ public class ZoekIndexEntity {
     private Long id;
 
     @NotNull
-    @Column(name = "uuid", nullable = false)
-    private UUID uuid;
+    @Column(name = "object_id", nullable = false)
+    private String objectId;
 
     @NotNull
     @Column(name = "type", nullable = false)
@@ -47,8 +45,8 @@ public class ZoekIndexEntity {
         super();
     }
 
-    public ZoekIndexEntity(final java.util.UUID uuid, final ZoekObjectType type, final IndexStatus status) {
-        this.uuid = uuid;
+    public ZoekIndexEntity(final String uuid, final ZoekObjectType type, final IndexStatus status) {
+        this.objectId = uuid;
         this.type = type.toString();
         this.status = status.toString();
     }
@@ -61,12 +59,12 @@ public class ZoekIndexEntity {
         this.id = id;
     }
 
-    public java.util.UUID getUuid() {
-        return uuid;
+    public String getObjectId() {
+        return objectId;
     }
 
-    public void setUuid(final java.util.UUID uuid) {
-        this.uuid = uuid;
+    public void setObjectId(final String objectId) {
+        this.objectId = objectId;
     }
 
     public String getType() {
