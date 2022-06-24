@@ -29,7 +29,7 @@ public class ZoekParameters {
 
     private final HashMap<String, String> filterQueries = new HashMap<>();
 
-    private Sortering sortering = new Sortering(SorteerVeld.IDENTIFICATIE, SorteerRichting.DESCENDING);
+    private Sortering sortering = new Sortering(SorteerVeld.CREATED, SorteerRichting.DESCENDING);
 
     public ZoekParameters(final ZoekObjectType type) {
         this.type = type;

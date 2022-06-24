@@ -8,7 +8,8 @@ package net.atos.zac.zoeken.model;
 import java.util.stream.Stream;
 
 public enum SorteerVeld {
-    IDENTIFICATIE("identificatie"),
+    CREATED("created"),
+    ZAAK_IDENTIFICATIE("zaak_identificatie"),
     ZAAK_ZAAKTYPE("zaak_zaaktypeOmschrijving"),
     ZAAK_BEHANDELAAR("zaak_behandelaarNaam"),
     ZAAK_GROEP("zaak_groepNaam"),
