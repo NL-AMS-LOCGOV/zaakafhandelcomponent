@@ -5,6 +5,7 @@
 
 export class ZaakRechten {
     afbreekbaar: boolean;
+    beeindigbaar: boolean;
     open: boolean;
     opgeschort: boolean;
 }

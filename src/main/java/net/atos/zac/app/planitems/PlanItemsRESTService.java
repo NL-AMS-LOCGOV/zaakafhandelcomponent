@@ -19,6 +19,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.app.planitems.model.UserEventListenerActie;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -63,6 +65,10 @@ public class PlanItemsRESTService {
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> planItems = flowableService.listPlanItemsForOpenCase(zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        if (zaak.getDeelzaken().stream().anyMatch(uri -> zrcClientService.readZaak(uri).isOpen())) {
+            planItems.removeIf(planItem -> planItem.getPlanItemDefinitionId().equals(UserEventListenerActie.ZAAK_AFHANDELEN.toString()));
+        }
         return planItemConverter.convertPlanItems(planItems, zaakUUID);
     }
 

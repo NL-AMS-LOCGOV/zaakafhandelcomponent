@@ -341,11 +341,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'mark_email_read'));
             }
 
-            if (this.zaak.rechten.afbreekbaar && !this.zaak.heropend) {
+            if (this.zaak.rechten.afbreekbaar && this.zaak.rechten.beeindigbaar && !this.zaak.heropend) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
 
-            if (this.zaak.heropend) {
+            if (this.zaak.heropend && this.zaak.rechten.beeindigbaar) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
             }
 
