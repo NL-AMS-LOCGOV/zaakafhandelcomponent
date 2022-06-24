@@ -229,7 +229,7 @@ public class IndexeerService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
         final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
-        query.select(root).where(builder.equal(root.get("object_id"), objectId));
+        query.select(root).where(builder.equal(root.get("objectId"), objectId));
         final List<ZoekIndexEntity> list = entityManager.createQuery(query).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
@@ -260,9 +260,9 @@ public class IndexeerService {
 
     private void processSolrIndex(final ZoekObjectType type) {
         final SolrQuery query = new SolrQuery("*:*");
-        query.setFields("uuid");
+        query.setFields("id");
         query.addFilterQuery("type:%s".formatted(type.toString()));
-        query.addSort("uuid", SolrQuery.ORDER.asc);
+        query.addSort("id", SolrQuery.ORDER.asc);
         query.setRows(100);
         String cursorMark = CursorMarkParams.CURSOR_MARK_START;
         boolean done = false;
@@ -276,7 +276,7 @@ public class IndexeerService {
             }
             String nextCursorMark = response.getNextCursorMark();
             for (SolrDocument document : response.getResults()) {
-                final String objectId = String.valueOf(document.get("uuid"));
+                final String objectId = String.valueOf(document.get("id"));
                 createEntity(objectId, type, IndexStatus.INDEXED);
             }
             if (cursorMark.equals(nextCursorMark)) {
@@ -297,10 +297,10 @@ public class IndexeerService {
         }
     }
 
-    private void deleteFromSolr(final List<String> uuids) {
-        if (CollectionUtils.isNotEmpty(uuids)) {
+    private void deleteFromSolr(final List<String> ids) {
+        if (CollectionUtils.isNotEmpty(ids)) {
             try {
-                solrClient.deleteById(uuids);
+                solrClient.deleteById(ids);
                 solrClient.commit();
             } catch (final IOException | SolrServerException e) {
                 throw new RuntimeException(e);
