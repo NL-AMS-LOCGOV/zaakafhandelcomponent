@@ -97,9 +97,15 @@ public class ZoekenService {
         query.setStart(zoekParameters.getStart());
         query.addSort(zoekParameters.getSortering().sorteerVeld().getVeld(),
                       zoekParameters.getSortering().richting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
-        if (zoekParameters.getSortering().sorteerVeld() != SorteerVeld.IDENTIFICATIE) {
-            query.addSort(SorteerVeld.IDENTIFICATIE.getVeld(), SolrQuery.ORDER.desc);
+
+        if (zoekParameters.getSortering().sorteerVeld() != SorteerVeld.CREATED) {
+            query.addSort(SorteerVeld.CREATED.getVeld(), SolrQuery.ORDER.desc);
         }
+        if (zoekParameters.getSortering().sorteerVeld() != SorteerVeld.ZAAK_IDENTIFICATIE) {
+            query.addSort(SorteerVeld.ZAAK_IDENTIFICATIE.getVeld(), SolrQuery.ORDER.desc);
+        }
+        query.addSort("id", SolrQuery.ORDER.desc); // uniek veld, zodat resultaten (van dezelfde query) altijd in dezelfde volgorde staan
+
         try {
             final QueryResponse response = solrClient.query(query);
 

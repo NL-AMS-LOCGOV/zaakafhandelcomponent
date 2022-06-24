@@ -69,5 +69,6 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
             final SignaleringEvent<String> signaleringEvent = SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, context.getTaskEntity(), user);
             FlowableHelper.getInstance().getEventingService().send(signaleringEvent);
         }
+        FlowableHelper.getInstance().getIndexeerService().addTaak(context.getTaskEntity().getId());
     }
 }
