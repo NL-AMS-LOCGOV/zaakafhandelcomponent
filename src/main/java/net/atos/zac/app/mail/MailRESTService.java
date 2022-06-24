@@ -20,7 +20,6 @@ import com.mailjet.client.errors.MailjetException;
 
 import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.util.ValidationUtil;
 
@@ -32,9 +31,6 @@ public class MailRESTService {
 
     @Inject
     private MailService mailService;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private CaseVariablesService caseVariablesService;

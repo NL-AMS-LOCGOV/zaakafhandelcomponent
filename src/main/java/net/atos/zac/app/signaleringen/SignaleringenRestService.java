@@ -31,7 +31,6 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
@@ -50,9 +49,6 @@ public class SignaleringenRestService {
 
     @Inject
     private ZRCClientService zrcClientService;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private TaskService taskService;

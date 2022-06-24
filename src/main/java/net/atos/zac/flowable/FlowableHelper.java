@@ -21,9 +21,6 @@ import net.atos.zac.identity.IdentityService;
 public class FlowableHelper {
 
     @Inject
-    private FlowableService flowableService;
-
-    @Inject
     private CaseVariablesService caseVariablesService;
 
     @Inject
@@ -47,10 +44,6 @@ public class FlowableHelper {
 
     public ZGWApiService getZgwApiService() {
         return zgwApiService;
-    }
-
-    public FlowableService getFlowableService() {
-        return flowableService;
     }
 
     public ZRCClientService getZrcClientService() {

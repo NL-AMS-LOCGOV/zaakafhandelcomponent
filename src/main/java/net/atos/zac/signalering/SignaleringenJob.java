@@ -22,7 +22,6 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringSubjectField;
@@ -63,9 +62,6 @@ public class SignaleringenJob {
 
     @Inject
     private ZoekenService zoekenService;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private TaskService taskService;

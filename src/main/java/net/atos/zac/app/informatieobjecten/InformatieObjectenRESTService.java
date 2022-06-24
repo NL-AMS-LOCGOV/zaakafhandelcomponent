@@ -70,7 +70,6 @@ import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.webdav.WebdavHelper;
 
@@ -91,9 +90,6 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private ZGWApiService zgwApiService;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private TaskVariablesService taskVariablesService;

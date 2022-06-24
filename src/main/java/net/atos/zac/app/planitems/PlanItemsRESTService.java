@@ -29,12 +29,14 @@ import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.mail.MailService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.exception.ResulttaattypeNotFoundException;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  *
@@ -46,10 +48,10 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 public class PlanItemsRESTService {
 
     @Inject
-    private FlowableService flowableService;
+    private CaseVariablesService caseVariablesService;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
+    private CaseService caseService;
 
     @Inject
     private ZRCClientService zrcClientService;
@@ -63,17 +65,23 @@ public class PlanItemsRESTService {
     @Inject
     private ZGWApiService zgwApiService;
 
+    @Inject
+    private IndexeerService indexeerService;
+
+    @Inject
+    private MailService mailService;
+
     @GET
     @Path("zaak/{uuid}")
     public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = flowableService.listPlanItemsForOpenCase(zaakUUID);
+        final List<PlanItemInstance> planItems = caseService.listPlanItems(zaakUUID);
         return planItemConverter.convertPlanItems(planItems, zaakUUID);
     }
 
     @GET
     @Path("humanTask/{id}")
     public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = flowableService.readOpenPlanItem(planItemId);
+        final PlanItemInstance planItem = caseService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
@@ -82,13 +90,18 @@ public class PlanItemsRESTService {
     @PUT
     @Path("doHumanTask")
     public void doHumanTask(final RESTHumanTaskData humanTaskData) {
-        final PlanItemInstance planItem = flowableService.readOpenPlanItem(humanTaskData.planItemInstanceId);
+        final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
-        flowableService.startHumanTaskPlanItem(planItem, humanTaskData.groep.id,
-                                               humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
-                                               humanTaskData.taakdata, humanTaskData.taakStuurGegevens.sendMail,
-                                               humanTaskData.taakStuurGegevens.onderwerp);
+        final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
+        if (humanTaskData.taakStuurGegevens.sendMail) {
+            mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
+                                 humanTaskData.taakdata.get("body"), true, zaakUUID);
+        }
+        caseService.startHumanTask(planItem, humanTaskData.groep.id,
+                                   humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
+                                   humanTaskData.taakdata, zaakUUID);
+        indexeerService.addZaak(zaakUUID);
     }
 
     @PUT
@@ -105,12 +118,12 @@ public class PlanItemsRESTService {
                     zgwApiService.createResultaatForZaak(zaak, zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
                 }
-                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId);
+                caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
             }
             case ZAAK_AFHANDELEN -> {
                 zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
-                flowableService.startUserEventListenerPlanItem(userEventListenerData.planItemInstanceId);
+                caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
             }
         }
     }

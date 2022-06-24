@@ -50,7 +50,6 @@ import net.atos.zac.documentcreatie.model.GebruikerData;
 import net.atos.zac.documentcreatie.model.StartformulierData;
 import net.atos.zac.documentcreatie.model.TaakData;
 import net.atos.zac.documentcreatie.model.ZaakData;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.identity.IdentityService;
@@ -91,9 +90,6 @@ public class DataConverter {
 
     @Inject
     private ObjectsClientService objectsClientService;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private TaskService taskService;

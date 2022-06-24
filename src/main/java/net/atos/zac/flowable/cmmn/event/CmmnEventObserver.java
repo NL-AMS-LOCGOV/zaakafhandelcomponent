@@ -23,7 +23,7 @@ import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.event.AbstractEventObserver;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -45,7 +45,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private FlowableService flowableService;
+    private CaseService caseService;
 
     @Inject
     private IdentityService identityService;
@@ -69,7 +69,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
             final String caseDefinitionKey = zaakafhandelParameters.getCaseDefinitionID();
             LOG.info(() -> String.format("Zaak %s: Starten Case definition '%s'", zaak.getUuid(), caseDefinitionKey));
             toekennenZaak(zaak, zaakafhandelParameters);
-            flowableService.startCase(caseDefinitionKey, zaak, zaaktype);
+            caseService.startCase(caseDefinitionKey, zaak, zaaktype);
         } else {
             LOG.warning(String.format("Zaaktype '%s': Geen zaakafhandelParameters gevonden", zaaktype.getIdentificatie()));
         }

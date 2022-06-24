@@ -14,13 +14,9 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.zac.app.zaken.model.RESTOpenstaandeTaken;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 
 public class RESTOpenstaandeTakenConverter {
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private TaskService taskService;

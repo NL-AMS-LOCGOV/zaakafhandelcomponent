@@ -26,8 +26,8 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 
@@ -37,7 +37,7 @@ import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 public class RESTTaakConverter {
 
     @Inject
-    private FlowableService flowableService;
+    private CaseService caseService;
 
     @Inject
     private CaseVariablesService caseVariablesService;
@@ -67,7 +67,7 @@ public class RESTTaakConverter {
     }
 
     public RESTTaak convertTask(final TaskInfo task) {
-        return flowableService.isOpenCase(task.getScopeId()) ? convertTaskForOpenCase(task, true) : convertTaskForClosedCase((HistoricTaskInstance) task, true);
+        return caseService.isOpenCase(task.getScopeId()) ? convertTaskForOpenCase(task, true) : convertTaskForClosedCase((HistoricTaskInstance) task, true);
     }
 
     public RESTTaak convertTaskForOpenCase(final TaskInfo task) {

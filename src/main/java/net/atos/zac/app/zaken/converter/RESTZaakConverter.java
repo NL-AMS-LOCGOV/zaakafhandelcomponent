@@ -40,7 +40,6 @@ import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 
@@ -87,9 +86,6 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTGeometryConverter restGeometryConverter;
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private CaseVariablesService caseVariablesService;

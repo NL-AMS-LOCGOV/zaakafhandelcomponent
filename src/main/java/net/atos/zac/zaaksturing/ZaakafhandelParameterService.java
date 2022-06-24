@@ -14,7 +14,6 @@ import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -25,9 +24,6 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 public class ZaakafhandelParameterService {
 
     private static final String PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK = "humantask";
-
-    @Inject
-    private FlowableService flowableService;
 
     @Inject
     private CaseVariablesService caseVariablesService;

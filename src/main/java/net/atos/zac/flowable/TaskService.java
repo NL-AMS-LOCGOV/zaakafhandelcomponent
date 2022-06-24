@@ -55,7 +55,7 @@ public class TaskService {
     private CmmnRepositoryService cmmnRepositoryService;
 
     @Inject
-    private FlowableService flowableService;
+    private CaseService caseService;
 
     public record TaskDescriptionChangedData(String newDescription, String previousDescription) {}
 
@@ -94,7 +94,7 @@ public class TaskService {
 
     public List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
         final List<TaskInfo> tasks = new ArrayList<>();
-        final CaseInstance caseInstance = flowableService.findOpenCaseForZaak(zaakUUID);
+        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
         if (caseInstance != null) {
             tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
             tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
@@ -103,7 +103,7 @@ public class TaskService {
     }
 
     public List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
-        final HistoricCaseInstance historicCaseInstance = flowableService.findClosedCaseForZaak(zaakUUID);
+        final HistoricCaseInstance historicCaseInstance = caseService.findClosedCase(zaakUUID);
         if (historicCaseInstance != null) {
             return listClosedTasksForCase(historicCaseInstance.getId());
         } else {
@@ -112,7 +112,7 @@ public class TaskService {
     }
 
     public List<Task> listOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = flowableService.findOpenCaseForZaak(zaakUUID);
+        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
         if (caseInstance != null) {
             return listOpenTasksForCase(caseInstance.getId());
         } else {
@@ -130,7 +130,7 @@ public class TaskService {
     }
 
     public long countOpenTasks(final UUID zaakUUID) {
-        final CaseInstance caseInstance = flowableService.findOpenCaseForZaak(zaakUUID);
+        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
         if (caseInstance != null) {
             return cmmnTaskService.createTaskQuery()
                     .caseInstanceId(caseInstance.getId())

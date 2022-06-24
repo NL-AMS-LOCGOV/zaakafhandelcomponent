@@ -91,8 +91,8 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -140,7 +140,7 @@ public class ZakenRESTService {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private FlowableService flowableService;
+    private CaseService caseService;
 
     @Inject
     private TaskService taskService;
@@ -422,7 +422,7 @@ public class ZakenRESTService {
         zgwApiService.createResultaatForZaak(zaak, zaakbeeindigParameter.getResultaattype(), zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         zgwApiService.endZaak(zaak, zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         // Terminate case after the zaak is ended in order to prevent the EndCaseLifecycleListener from ending the zaak.
-        flowableService.terminateCase(zaakUUID);
+        caseService.terminateCase(zaakUUID);
     }
 
     @PATCH

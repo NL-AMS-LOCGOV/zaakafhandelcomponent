@@ -61,8 +61,8 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.datatable.TableRequest;
 import net.atos.zac.datatable.TableResponse;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.FlowableService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.signalering.SignaleringenService;
@@ -82,7 +82,7 @@ import net.atos.zac.zoeken.IndexeerService;
 public class TakenRESTService {
 
     @Inject
-    private FlowableService flowableService;
+    private CaseService caseService;
 
     @Inject
     private TaskService taskService;
@@ -154,7 +154,7 @@ public class TakenRESTService {
     @GET
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> listTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
-        if (flowableService.isOpenCase(zaakUUID)) {
+        if (caseService.isOpenCase(zaakUUID)) {
             final List<TaskInfo> tasks = taskService.listTasksForOpenCase(zaakUUID);
             return taakConverter.convertTasksForOpenCase(tasks);
         } else {
