@@ -26,6 +26,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
 import {Observable, share} from 'rxjs';
+import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -60,7 +61,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                 private utilService: UtilService,
                 private zakenService: ZakenService,
                 private dialog: MatDialog,
-                private translate: TranslateService) { }
+                private translate: TranslateService,
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
         this.taakModus = !!this.zaakUUID;
@@ -96,7 +98,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     documentVerplaatsen(informatieobject: EnkelvoudigInformatieobject): void {
         if (!this.taakModus) {
-            this.informatieObjectenService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
+            this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(informatieobject, this.zaak.identificatie);
         }
     }
 
@@ -138,11 +140,11 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     isDocumentVerplaatsenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
+        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(informatieobject);
     }
 
     isOntkoppelenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return informatieobject['loading'] || this.informatieObjectenService.isReedsTeVerplaatsen(informatieobject);
+        return informatieobject['loading'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(informatieobject);
     }
 
     isPreviewBeschikbaar(formaat: FileFormat): boolean {

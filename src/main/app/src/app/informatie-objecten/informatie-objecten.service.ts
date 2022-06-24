@@ -6,19 +6,16 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject';
 import {ZaakInformatieobject} from './model/zaak-informatieobject';
 import {Informatieobjecttype} from './model/informatieobjecttype';
 import {HistorieRegel} from '../shared/historie/model/historie-regel';
 import {EnkelvoudigInformatieObjectZoekParameters} from './model/enkelvoudig-informatie-object-zoek-parameters';
-import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 import {UtilService} from '../core/service/util.service';
 import {Router} from '@angular/router';
-import {ActionIcon} from '../shared/edit/action-icon';
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
-import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
 import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
 import {DocumentCreatieResponse} from './model/document-creatie-response';
@@ -150,63 +147,5 @@ export class InformatieObjectenService {
         return this.http.post<void>(`${this.basepath}/informatieobject/verplaats`, documentVerplaatsGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
-    }
-
-    addTeVerplaatsenDocument(informatieobject: EnkelvoudigInformatieobject, bron: string): void {
-        if (!this.isReedsTeVerplaatsen(informatieobject)) {
-            this._verplaatsenDocument(new DocumentVerplaatsGegevens(informatieobject.uuid, informatieobject.titel, bron));
-        }
-    }
-
-    isReedsTeVerplaatsen(informatieobject: EnkelvoudigInformatieobject): boolean {
-        const teVerplaatsenDocumenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
-        return teVerplaatsenDocumenten.find(dvg => dvg.documentUUID === informatieobject.uuid) !== undefined;
-    }
-
-    appInit() {
-        const documenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
-        documenten.forEach(document => {
-            this._verplaatsenDocument(document, true);
-        });
-    }
-
-    private _verplaatsenDocument(document: DocumentVerplaatsGegevens, onInit?: boolean) {
-        const dismiss: Subject<void> = new Subject<void>();
-        dismiss.asObservable().subscribe(() => {
-            this.deleteTeVerplaatsenDocument(document);
-        });
-        const verplaatsAction = new Subject<string>();
-        verplaatsAction.asObservable().subscribe(url => {
-            const nieuweZaakID = url.split('/').pop();
-            this.postVerplaatsDocument(document, nieuweZaakID).subscribe(() =>
-                this.utilService.openSnackbar('msg.document.verplaatsen.uitgevoerd')
-            );
-            this.deleteTeVerplaatsenDocument(document);
-        });
-        const teVerplaatsenDocumenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
-        teVerplaatsenDocumenten.push(document);
-        if (!onInit) {
-            SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
-        }
-        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.bron,
-            new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document));
-        this.utilService.addAction(action);
-    }
-
-    private deleteTeVerplaatsenDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens) {
-        const documenten = SessionStorageUtil.getItem('teVerplaatsenDocumenten', []) as DocumentVerplaatsGegevens[];
-        SessionStorageUtil.setItem('teVerplaatsenDocumenten', documenten.filter(document => document.documentUUID !== documentVerplaatsGegevens.documentUUID));
-    }
-
-    private pathContains(path: string): boolean {
-        return this.router.url.indexOf(path) !== -1;
-    }
-
-    private isZaakTonen(): boolean {
-        return this.pathContains('zaken/ZAAK-');
-    }
-
-    private isVerplaatsenToegestaan(gegevens: DocumentVerplaatsGegevens): boolean {
-        return this.isZaakTonen() && !this.pathContains(`zaken/${gegevens.bron}`);
     }
 }
