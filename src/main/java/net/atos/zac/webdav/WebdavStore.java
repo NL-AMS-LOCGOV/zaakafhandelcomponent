@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.io.FilenameUtils;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.zac.authentication.SecurityUtil;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
@@ -89,8 +91,9 @@ public class WebdavStore implements IWebdavStore {
         if (StringUtils.isNotEmpty(token)) {
             final WebdavHelper.Gegevens webdavGegevens = webdavHelper.readGegevens(token);
             try {
+                SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(), webdavGegevens.loggedInUser());
                 final String lock = drcClientService.lockEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID(),
-                                                                                     webdavGegevens.loggedInUserId());
+                                                                                     webdavGegevens.loggedInUser().getId());
                 final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
                 enkelvoudigInformatieobjectWithInhoudAndLock.setLock(lock);
                 enkelvoudigInformatieobjectWithInhoudAndLock.setInhoud(IOUtils.toByteArray(content));
@@ -100,7 +103,7 @@ public class WebdavStore implements IWebdavStore {
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
-                drcClientService.unlockEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID(), webdavGegevens.loggedInUserId());
+                drcClientService.unlockEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID(), webdavGegevens.loggedInUser().getId());
                 fileStoredObjectMap.remove(token);
             }
         } else {
