@@ -220,12 +220,12 @@
     <!--  Field to use to determine and enforce document uniqueness.
              Unless this field is marked with required="false", it will be a required field
            -->
-    <uniqueKey>uuid</uniqueKey>
+    <uniqueKey>id</uniqueKey>
     <!--  copyField commands copy one field to another at the time a document
               is added to the index.  It's used either to index the same field differently,
               or to add multiple fields to the same field for easier/faster searching.   -->
-    <copyField source="uuid" dest="text"/>
-    <copyField source="identificatie" dest="text"/>
+    <copyField source="id" dest="text"/>
+    <copyField source="zaak_identificatie" dest="text"/>
     <copyField source="zaak_omschrijving" dest="text"/>
     <copyField source="zaak_toelichting" dest="text"/>
     <copyField source="zaak_communicatiekanaal" dest="text"/>
@@ -260,8 +260,8 @@
     <copyField source="informatieobject_bestandsnaam" dest="text"/>
     <copyField source="informatieobject_documentType" dest="text"/>
 
-    <copyField source="uuid" dest="text_exact"/>
-    <copyField source="identificatie" dest="text_exact"/>
+    <copyField source="id" dest="text_exact"/>
+    <copyField source="zaak_identificatie" dest="text_exact"/>
     <copyField source="zaak_groepNaam" dest="text_exact"/>
     <copyField source="zaak_behandelaarNaam" dest="text_exact"/>
     <copyField source="zaak_initiatorIdentificatie" dest="text_exact"/>
