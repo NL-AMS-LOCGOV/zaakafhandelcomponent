@@ -13,6 +13,7 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.identity.IdentityService;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  * A Helper for Flowable CMMN and BPMN LifecycleListener's, Interceptors etc. in order to get access to CDI resources.
@@ -34,6 +35,9 @@ public class FlowableHelper {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     @Inject
     private IdentityService identityService;
@@ -64,5 +68,9 @@ public class FlowableHelper {
 
     public TaskVariablesService getTaskVariablesService() {
         return taskVariablesService;
+    }
+
+    public IndexeerService getIndexeerService() {
+        return indexeerService;
     }
 }
