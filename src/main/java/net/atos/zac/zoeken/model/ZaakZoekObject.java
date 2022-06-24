@@ -19,12 +19,12 @@ public class ZaakZoekObject implements ZoekObject {
     public static final String BEHANDELAAR_ID_FIELD = "zaak_behandelaarGebruikersnaam";
 
     @Field
-    private String uuid;
+    private String id;
 
     @Field
     private String type;
 
-    @Field
+    @Field("zaak_identificatie")
     private String identificatie;
 
     @Field("zaak_omschrijving")
@@ -125,11 +125,11 @@ public class ZaakZoekObject implements ZoekObject {
     }
 
     public String getUuid() {
-        return uuid;
+        return id;
     }
 
     public void setUuid(final String uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
     }
 
     public ZoekObjectType getType() {

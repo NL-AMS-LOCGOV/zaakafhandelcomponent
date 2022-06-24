@@ -6,7 +6,7 @@
 import {ZoekObject} from '../zoek-object';
 
 export class ZaakZoekObject implements ZoekObject {
-    uuid: string;
+    id: string;
     type: string;
     identificatie: string;
     omschrijving: string;

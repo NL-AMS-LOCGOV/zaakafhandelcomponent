@@ -15,7 +15,7 @@ public class RESTZaakZoekObjectConverter {
 
     public static RESTZaakZoekObject convert(final ZaakZoekObject zoekItem) {
         final RESTZaakZoekObject restZoekItem = new RESTZaakZoekObject();
-        restZoekItem.uuid = UUID.fromString(zoekItem.getUuid());
+        restZoekItem.id = UUID.fromString(zoekItem.getUuid());
         restZoekItem.type = zoekItem.getType();
         restZoekItem.identificatie = zoekItem.getIdentificatie();
         restZoekItem.omschrijving = zoekItem.getOmschrijving();

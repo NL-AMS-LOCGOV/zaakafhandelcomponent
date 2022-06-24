@@ -81,19 +81,18 @@ public class IndexeerService {
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
-    public void indexeerDirect(final UUID uuid, final ZoekObjectType type) {
-        addToSolr(List.of(getConverter(type).convert(uuid)));
-        final ZoekIndexEntity entity = findEntity(uuid);
+    public void indexeerDirect(final String id, final ZoekObjectType type) {
+        addToSolr(List.of(getConverter(type).convert(id)));
+        final ZoekIndexEntity entity = findEntityByObjectId(id);
         if (entity != null) {
             entityManager.remove(entity);
         }
-
     }
 
-    public void indexeerDirect(final List<UUID> uuids, final ZoekObjectType type) {
-        final List<ZoekObject> zoekObjecten = uuids.stream().map(uuid -> getConverter(type).convert(uuid)).collect(Collectors.toList());
+    public void indexeerDirect(final List<String> objectIds, final ZoekObjectType type) {
+        final List<ZoekObject> zoekObjecten = objectIds.stream().map(objectId -> getConverter(type).convert(objectId)).collect(Collectors.toList());
         addToSolr(zoekObjecten);
-        uuids.stream().map(this::findEntity).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
+        objectIds.stream().map(this::findEntityByObjectId).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
     }
 
     public HerindexeerInfo herindexeren(final ZoekObjectType type) {
@@ -124,14 +123,14 @@ public class IndexeerService {
         entities.forEach(zoekIndexEntity -> {
             try {
                 switch (IndexStatus.valueOf(zoekIndexEntity.getStatus())) {
-                    case ADD, UPDATE -> addList.add(converter.convert(zoekIndexEntity.getUuid()));
-                    case REMOVE -> deleteList.add(zoekIndexEntity.getUuid().toString());
+                    case ADD, UPDATE -> addList.add(converter.convert(zoekIndexEntity.getObjectId()));
+                    case REMOVE -> deleteList.add(zoekIndexEntity.getObjectId().toString());
                     case INDEXED -> {
                         // skip..
                     }
                 }
             } catch (RuntimeException e) {
-                LOG.warning("[%s] Skipped %s: %s".formatted(type.toString(), zoekIndexEntity.getUuid(), e.getMessage()));
+                LOG.warning("[%s] Skipped %s: %s".formatted(type.toString(), zoekIndexEntity.getObjectId(), e.getMessage()));
                 entityManager.remove(zoekIndexEntity);
             }
         });
@@ -148,7 +147,7 @@ public class IndexeerService {
         boolean hasNext = true;
         while (hasNext) {
             final Results<Zaak> results = zrcClientService.listZaken(listParameters);
-            results.getResults().forEach(zaak -> createEntity(zaak.getUuid(), ZoekObjectType.ZAAK));
+            results.getResults().forEach(zaak -> createEntity(zaak.getUuid().toString(), ZoekObjectType.ZAAK));
             hasNext = results.getNext() != null;
             listParameters.setPage(listParameters.getPage() + 1);
         }
@@ -161,7 +160,7 @@ public class IndexeerService {
         while (hasNext) {
             int firstResult = page * maxResults;
             final List<Task> tasks = taskService.listOpenTasks(TaakSortering.ID, SorteerRichting.ASCENDING, firstResult, maxResults);
-            tasks.forEach(taak -> createEntity(UUID.fromString(taak.getId()), ZoekObjectType.TAAK));
+            tasks.forEach(taak -> createEntity(taak.getId(), ZoekObjectType.TAAK));
             page++;
             hasNext = CollectionUtils.isNotEmpty(tasks);
         }
@@ -226,32 +225,32 @@ public class IndexeerService {
         return result.intValue();
     }
 
-    private ZoekIndexEntity findEntity(final UUID uuid) {
+    private ZoekIndexEntity findEntityByObjectId(final String objectId) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZoekIndexEntity> query = builder.createQuery(ZoekIndexEntity.class);
         final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
-        query.select(root).where(builder.equal(root.get("uuid"), uuid));
+        query.select(root).where(builder.equal(root.get("object_id"), objectId));
         final List<ZoekIndexEntity> list = entityManager.createQuery(query).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void createEntity(final UUID uuid, final ZoekObjectType type) {
-        final ZoekIndexEntity entity = findEntity(uuid);
+    private void createEntity(final String objectId, final ZoekObjectType type) {
+        final ZoekIndexEntity entity = findEntityByObjectId(objectId);
         if (entity != null) {
             entity.setStatus(IndexStatus.UPDATE);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(uuid, type, IndexStatus.ADD));
+            entityManager.persist(new ZoekIndexEntity(objectId, type, IndexStatus.ADD));
         }
     }
 
-    private void createEntity(final UUID uuid, final ZoekObjectType type, final IndexStatus status) {
-        final ZoekIndexEntity entity = findEntity(uuid);
+    private void createEntity(final String id, final ZoekObjectType type, final IndexStatus status) {
+        final ZoekIndexEntity entity = findEntityByObjectId(id);
         if (entity != null) {
             entity.setStatus(status);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(uuid, type, status));
+            entityManager.persist(new ZoekIndexEntity(id, type, status));
         }
     }
 
@@ -277,8 +276,8 @@ public class IndexeerService {
             }
             String nextCursorMark = response.getNextCursorMark();
             for (SolrDocument document : response.getResults()) {
-                final UUID uuid = UUID.fromString(String.valueOf(document.get("uuid")));
-                createEntity(uuid, type, IndexStatus.INDEXED);
+                final String objectId = String.valueOf(document.get("uuid"));
+                createEntity(objectId, type, IndexStatus.INDEXED);
             }
             if (cursorMark.equals(nextCursorMark)) {
                 done = true;
@@ -319,10 +318,19 @@ public class IndexeerService {
     }
 
     public void addZaak(final UUID zaakUUID) {
-        createEntity(zaakUUID, ZoekObjectType.ZAAK);
+        createEntity(zaakUUID.toString(), ZoekObjectType.ZAAK);
     }
 
     public void removeZaak(final UUID zaakUUID) {
-        createEntity(zaakUUID, ZoekObjectType.ZAAK, IndexStatus.REMOVE);
+        createEntity(zaakUUID.toString(), ZoekObjectType.ZAAK, IndexStatus.REMOVE);
     }
+
+    public void addTaak(final String taskID) {
+        createEntity(taskID, ZoekObjectType.TAAK);
+    }
+
+    public void removeTaak(final String taskID) {
+        createEntity(taskID, ZoekObjectType.TAAK, IndexStatus.REMOVE);
+    }
+
 }

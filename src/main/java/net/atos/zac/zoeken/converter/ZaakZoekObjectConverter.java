@@ -48,8 +48,8 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     @Inject
     private TaskService taskService;
 
-    public ZaakZoekObject convert(final UUID zaakUUID) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+    public ZaakZoekObject convert(final String zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
         return convert(zaak);
     }
 

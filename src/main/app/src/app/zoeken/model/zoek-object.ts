@@ -1,5 +1,4 @@
 export interface ZoekObject {
-    identificatie: string;
-    uuid: string;
+    id: string;
     type: string;
 }

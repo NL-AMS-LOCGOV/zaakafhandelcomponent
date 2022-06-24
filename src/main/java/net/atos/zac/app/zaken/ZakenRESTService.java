@@ -400,7 +400,7 @@ public class ZakenRESTService {
                 zrcClientService.updateRol(zaak.getUrl(), bepaalRolMedewerker(user, zaak), verdeelGegevens.reden);
             }
         });
-        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).collect(Collectors.toList()), ZoekObjectType.ZAAK);
     }
 
     @PUT
@@ -410,7 +410,7 @@ public class ZakenRESTService {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
         });
-        indexeerService.indexeerDirect(verdeelGegevens.uuids, ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).collect(Collectors.toList()), ZoekObjectType.ZAAK);
     }
 
     @PATCH
@@ -473,7 +473,7 @@ public class ZakenRESTService {
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(
             final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
-        indexeerService.indexeerDirect(zaak.getUuid(), ZoekObjectType.ZAAK);
+        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
         return zaakOverzichtConverter.convert(zaak);
     }
 

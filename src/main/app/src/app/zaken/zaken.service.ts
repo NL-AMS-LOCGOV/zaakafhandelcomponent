@@ -189,7 +189,11 @@ export class ZakenService {
 
     toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht | ZaakZoekObject, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        toekennenGegevens.zaakUUID = zaak.uuid;
+        if ('id' in zaak) {
+            toekennenGegevens.zaakUUID = zaak.id;
+        } else {
+            toekennenGegevens.zaakUUID = zaak.uuid;
+        }
         toekennenGegevens.reden = reden;
 
         return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, toekennenGegevens).pipe(

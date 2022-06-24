@@ -13,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -101,12 +102,11 @@ public class ZoekenService {
         }
         try {
             final QueryResponse response = solrClient.query(query);
-            final List<ZoekObject> zoekObjecten = new ArrayList<>(response.getResults().size());
-            response.getResults().forEach(solrDocument -> {
-                final ZoekObjectType zoekObjectType = ZoekObjectType.valueOf((String) solrDocument.get("type"));
-                final ZoekObject bean = solrClient.getBinder().getBean(zoekObjectType.getZoekObjectClass(), solrDocument);
-                zoekObjecten.add(bean);
-            });
+
+            List<? extends ZoekObject> zoekObjecten = response.getResults().stream().map(solrDocument -> {
+                final ZoekObjectType zoekObjectType = ZoekObjectType.valueOf(String.valueOf(solrDocument.get("type")));
+                return solrClient.getBinder().getBean(zoekObjectType.getZoekObjectClass(), solrDocument);
+            }).collect(Collectors.toList());
 
             final ZoekResultaat<? extends ZoekObject> zoekResultaat = new ZoekResultaat<>(zoekObjecten, response.getResults().getNumFound());
             response.getFacetFields().forEach(facetField -> {

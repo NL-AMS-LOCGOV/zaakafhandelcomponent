@@ -103,8 +103,8 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
-                .map(zoekObject -> (ZaakZoekObject) zoekObject)
-                .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.DUE), zaak))
+                .map(zaakZoekObject -> (ZaakZoekObject) zaakZoekObject)
+                .map(zaakZoekObject -> buildZaakSignalering(getZaakSignaleringTarget(zaakZoekObject, SignaleringSubjectField.DUE), zaakZoekObject))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.DUE));
         return verzonden[0];
@@ -119,8 +119,8 @@ public class SignaleringenJob {
         final int[] verzonden = new int[1];
         zoekenService.zoek(getZaakSignaleringTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
-                .map(zoekObject -> (ZaakZoekObject) zoekObject)
-                .map(zaak -> buildZaakSignalering(getZaakSignaleringTarget(zaak, SignaleringSubjectField.FATAL), zaak))
+                .map(zaakZoekObject -> (ZaakZoekObject) zaakZoekObject)
+                .map(zaakZoekObject -> buildZaakSignalering(getZaakSignaleringTarget(zaakZoekObject, SignaleringSubjectField.FATAL), zaakZoekObject))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendZaakSignalering(signalering, SignaleringSubjectField.FATAL));
         return verzonden[0];
@@ -135,10 +135,10 @@ public class SignaleringenJob {
         return null;
     }
 
-    private Signalering buildZaakSignalering(final String target, final ZaakZoekObject zoekObject) {
+    private Signalering buildZaakSignalering(final String target, final ZaakZoekObject zaakZoekObject) {
         if (target != null) {
             final Zaak zaak = new Zaak();
-            zaak.setUuid(UUID.fromString(zoekObject.getUuid()));
+            zaak.setUuid(UUID.fromString(zaakZoekObject.getUuid()));
             final Signalering signalering = signaleringenService.signaleringInstance(SignaleringType.Type.ZAAK_VERLOPEND);
             signalering.setTargetUser(target);
             signalering.setSubject(zaak);
@@ -160,9 +160,9 @@ public class SignaleringenJob {
     private void zaakEinddatumGeplandOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_EINDDATUM_GEPLAND, zaaktype, venster))
                 .getItems().stream()
-                .map(zoekObject -> (ZaakZoekObject) zoekObject)
-                .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
-                                                                   SignaleringSubjectField.DUE))
+                .map(zaakZoekObject -> (ZaakZoekObject) zaakZoekObject)
+                .map(zaakZoekObject -> getZaakSignaleringVerzondenParameters(zaakZoekObject.getBehandelaarGebruikersnaam(), zaakZoekObject.getUuid(),
+                                                                             SignaleringSubjectField.DUE))
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
     }
 
@@ -172,9 +172,9 @@ public class SignaleringenJob {
     private void zaakUiterlijkeEinddatumAfdoeningOnterechtVerzondenVerwijderen(final Zaaktype zaaktype, final int venster) {
         zoekenService.zoek(getZaakSignaleringLaterTeVerzendenZoekParameters(DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING, zaaktype, venster))
                 .getItems().stream()
-                .map(zoekObject -> (ZaakZoekObject) zoekObject)
-                .map(zaak -> getZaakSignaleringVerzondenParameters(zaak.getBehandelaarGebruikersnaam(), zaak.getUuid(),
-                                                                   SignaleringSubjectField.FATAL))
+                .map(zaakZoekObject -> (ZaakZoekObject) zaakZoekObject)
+                .map(zaakZoekObject -> getZaakSignaleringVerzondenParameters(zaakZoekObject.getBehandelaarGebruikersnaam(), zaakZoekObject.getUuid(),
+                                                                             SignaleringSubjectField.FATAL))
 
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
     }

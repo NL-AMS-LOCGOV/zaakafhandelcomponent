@@ -25,6 +25,6 @@ export class TaakZoekObjectComponent extends ZoekObjectComponent {
 
     open(taak: TaakZoekObject): void {
         super._open();
-        this.router.navigate(['/taken/', taak.identificatie]);
+        this.router.navigate(['/taken/', taak.id]);
     }
 }
