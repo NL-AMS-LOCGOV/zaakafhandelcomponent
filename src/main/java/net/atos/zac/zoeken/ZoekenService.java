@@ -13,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,10 +29,11 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.SorteerVeld;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 import net.atos.zac.zoeken.model.ZoekVeld;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 @ApplicationScoped
 public class ZoekenService {
@@ -45,10 +47,14 @@ public class ZoekenService {
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
-    public ZoekResultaat<ZaakZoekObject> zoek(final ZoekParameters zoekZaakParameters) {
+    public ZoekResultaat<? extends ZoekObject> zoek(final ZoekParameters zoekParameters) {
         final SolrQuery query = new SolrQuery("*:*");
-        query.addFilterQuery(String.format("type:%s", zoekZaakParameters.getType().toString()));
-        zoekZaakParameters.getZoeken().forEach((zoekVeld, tekst) -> {
+
+        if (zoekParameters.getType() != null) {
+            query.addFilterQuery(String.format("type:%s", zoekParameters.getType().toString()));
+        }
+
+        zoekParameters.getZoeken().forEach((zoekVeld, tekst) -> {
             if (StringUtils.isNotBlank(tekst)) {
                 if (zoekVeld == ZoekVeld.IDENTIFICATIE) {
                     query.addFilterQuery(String.format("%s:(*%s*)", zoekVeld.getVeld(), tekst));
@@ -59,18 +65,19 @@ public class ZoekenService {
             }
         });
 
-        zoekZaakParameters.getDatums().forEach((datumVeld, datum) -> {
+        zoekParameters.getDatums().forEach((datumVeld, datum) -> {
             if (datum != null) {
-                query.addFilterQuery(String.format("%s:[%s TO %s]", datumVeld.getVeld(),
-                                                   datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
-                                                   datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
+                query.addFilterQuery(
+                        String.format("%s:[%s TO %s]", datumVeld.getVeld(),
+                                      datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
+                                      datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
             }
         });
 
-        zoekZaakParameters.getBeschikbareFilters()
+        zoekParameters.getBeschikbareFilters()
                 .forEach(facetVeld -> query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
-        zoekZaakParameters.getFilters().forEach((filter, waarde) -> {
+        zoekParameters.getFilters().forEach((filter, waarde) -> {
             if (LEEG.is(waarde)) {
                 query.addFilterQuery(String.format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
             } else if (NIET_LEEG.is(waarde)) {
@@ -80,22 +87,28 @@ public class ZoekenService {
             }
         });
 
-        zoekZaakParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(String.format("%s:\"%s\"", veld, waarde)));
+        zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(String.format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
         query.setFacetMissing(true);
+        query.setFacet(true);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
-        query.setRows(zoekZaakParameters.getRows());
-        query.setStart(zoekZaakParameters.getStart());
-        query.addSort(zoekZaakParameters.getSortering().sorteerVeld().getVeld(),
-                      zoekZaakParameters.getSortering().richting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
-        if (zoekZaakParameters.getSortering().sorteerVeld() != SorteerVeld.IDENTIFICATIE) {
+        query.setRows(zoekParameters.getRows());
+        query.setStart(zoekParameters.getStart());
+        query.addSort(zoekParameters.getSortering().sorteerVeld().getVeld(),
+                      zoekParameters.getSortering().richting() == SorteerRichting.DESCENDING ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
+        if (zoekParameters.getSortering().sorteerVeld() != SorteerVeld.IDENTIFICATIE) {
             query.addSort(SorteerVeld.IDENTIFICATIE.getVeld(), SolrQuery.ORDER.desc);
         }
         try {
             final QueryResponse response = solrClient.query(query);
-            final ZoekResultaat<ZaakZoekObject> zoekResultaat = new ZoekResultaat<>(response.getBeans(ZaakZoekObject.class),
-                                                                                    response.getResults().getNumFound());
+
+            List<? extends ZoekObject> zoekObjecten = response.getResults().stream().map(solrDocument -> {
+                final ZoekObjectType zoekObjectType = ZoekObjectType.valueOf(String.valueOf(solrDocument.get("type")));
+                return solrClient.getBinder().getBean(zoekObjectType.getZoekObjectClass(), solrDocument);
+            }).collect(Collectors.toList());
+
+            final ZoekResultaat<? extends ZoekObject> zoekResultaat = new ZoekResultaat<>(zoekObjecten, response.getResults().getNumFound());
             response.getFacetFields().forEach(facetField -> {
                 final FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
                 final List<String> waardes = new ArrayList<>();

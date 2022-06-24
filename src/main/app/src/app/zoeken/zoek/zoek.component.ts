@@ -17,6 +17,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
 import {ZoekVeld} from '../model/zoek-veld';
+import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 
 @Component({
     selector: 'zac-zoeken',
@@ -79,7 +80,11 @@ export class ZoekComponent implements AfterViewInit {
         return zoekParameters;
     }
 
-    getZaak(item: ZoekObject) {
-        return item as ZaakZoekObject;
+    getZaakZoekObject(zoekObject: ZoekObject): ZaakZoekObject {
+        return zoekObject as ZaakZoekObject;
+    }
+
+    getTaakZoekObject(zoekObject: ZoekObject): TaakZoekObject {
+        return zoekObject as TaakZoekObject;
     }
 }

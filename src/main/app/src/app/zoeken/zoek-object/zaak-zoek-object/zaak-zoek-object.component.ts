@@ -12,7 +12,7 @@ import {ZoekObjectComponent} from '../zoek-object/zoek-object-component';
 
 @Component({
     selector: 'zac-zaak-zoek-object',
-    styleUrls: ['./zoek-zaak-object.component.less'],
+    styleUrls: ['./zaak-zoek-object.component.less'],
     templateUrl: './zaak-zoek-object.component.html'
 })
 export class ZaakZoekObjectComponent extends ZoekObjectComponent {

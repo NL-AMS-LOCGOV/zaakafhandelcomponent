@@ -10,6 +10,7 @@ import java.util.Date;
 import org.apache.solr.client.solrj.beans.Field;
 
 import net.atos.client.zgw.zrc.model.Rol;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public class ZaakZoekObject implements ZoekObject {
 
@@ -18,12 +19,12 @@ public class ZaakZoekObject implements ZoekObject {
     public static final String BEHANDELAAR_ID_FIELD = "zaak_behandelaarGebruikersnaam";
 
     @Field
-    private String uuid;
+    private String id;
 
     @Field
     private String type;
 
-    @Field
+    @Field("zaak_identificatie")
     private String identificatie;
 
     @Field("zaak_omschrijving")
@@ -124,19 +125,19 @@ public class ZaakZoekObject implements ZoekObject {
     }
 
     public String getUuid() {
-        return uuid;
+        return id;
     }
 
     public void setUuid(final String uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
     }
 
-    public String getType() {
-        return type;
+    public ZoekObjectType getType() {
+        return ZoekObjectType.valueOf(type);
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setType(final ZoekObjectType type) {
+        this.type = type.toString();
     }
 
     public String getIdentificatie() {

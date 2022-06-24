@@ -112,10 +112,10 @@
           required, it is highly recommended. A <uniqueKey> is present in almost all Solr
           installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
          -->
-    <field name="uuid" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
-    <field name="identificatie" type="string" indexed="true" stored="true"/>
+    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
     <field name="type" type="string" indexed="true" stored="true"/>
     <field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW"/>
+    <field name="zaak_identificatie" type="string" indexed="true" stored="true"/>
     <field name="zaak_omschrijving" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_toelichting" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_registratiedatum" type="pdate" indexed="true" stored="true"/>

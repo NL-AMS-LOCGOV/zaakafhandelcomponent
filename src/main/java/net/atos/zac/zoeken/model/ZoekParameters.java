@@ -77,10 +77,12 @@ public class ZoekParameters {
 
 
     public EnumSet<FilterVeld> getBeschikbareFilters() {
+        if (type == null) {
+            return EnumSet.noneOf(FilterVeld.class);
+        }
         return switch (type) {
             case ZAAK -> FilterVeld.getZaakFacetten();
             case TAAK -> FilterVeld.getTaakFacetten();
-            case INFORMATIE_OBJECT -> FilterVeld.getInformatieObjectFacetten();
         };
     }
 

@@ -14,10 +14,10 @@
         </div>
     </div>
 
-    <ng-container *ngFor="let item of zoekResultaat.resultaten">
-        <ng-container [ngSwitch]="item.type">
-            <zac-zaak-zoek-object *ngSwitchCase="'ZAAK'" [sideNav]="sideNav" [zaak]="getZaak(item)"></zac-zaak-zoek-object>
-            <zac-document-zoek-object *ngSwitchCase="'DOCUMENT'" [sideNav]="sideNav" [infoObject]="item"></zac-document-zoek-object>
+    <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
+        <ng-container [ngSwitch]="zoekObject.type">
+            <zac-zaak-zoek-object *ngSwitchCase="'ZAAK'" [sideNav]="sideNav" [zaak]="getZaakZoekObject(zoekObject)"></zac-zaak-zoek-object>
+            <zac-taak-zoek-object *ngSwitchCase="'TAAK'" [sideNav]="sideNav" [taak]="getTaakZoekObject(zoekObject)"></zac-taak-zoek-object>
         </ng-container>
         <mat-divider></mat-divider>
     </ng-container>

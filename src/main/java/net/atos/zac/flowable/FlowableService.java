@@ -537,8 +537,8 @@ public class FlowableService {
 
     private Object findTaskVariable(final String taskId, final String variableName) {
         return isOpenTask(taskId)
-                ? readOpenTaskVariable(taskId, variableName)
-                : readClosedTaskVariable(taskId, variableName);
+                ? findOpenTaskVariable(taskId, variableName)
+                : findClosedTaskVariable(taskId, variableName);
     }
 
     private Object findOpenTaskVariable(final String taskId, final String variableName) {

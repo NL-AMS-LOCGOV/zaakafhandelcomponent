@@ -6,15 +6,8 @@
 package net.atos.zac.app.zoeken.model;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public class RESTZaakZoekObject {
-
-    public UUID uuid;
-
-    public String type;
-
-    public String identificatie;
+public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public String omschrijving;
 

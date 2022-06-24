@@ -6,24 +6,25 @@
 import {Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
-import {ZoekObject} from '../../model/zoek-object';
 import {ZoekObjectComponent} from '../zoek-object/zoek-object-component';
+import {TaakZoekObject} from '../../model/taken/taak-zoek-object';
 
 @Component({
-    selector: 'zac-document-zoek-object',
-    templateUrl: './document-zoek-object.component.html'
+    selector: 'zac-taak-zoek-object',
+    styleUrls: ['./taak-zoek-object.component.less'],
+    templateUrl: './taak-zoek-object.component.html'
 })
-export class DocumentZoekObjectComponent extends ZoekObjectComponent {
+export class TaakZoekObjectComponent extends ZoekObjectComponent {
 
-    @Input() infoObject: ZoekObject;
+    @Input() taak: TaakZoekObject;
     @Input() sideNav: MatSidenav;
 
     constructor(private router: Router) {
         super();
     }
 
-    openInfoObject(): void {
+    open(taak: TaakZoekObject): void {
         super._open();
-        this.router.navigate(['/informatie-objecten/', this.infoObject.uuid]);
+        this.router.navigate(['/taken/', taak.id]);
     }
 }

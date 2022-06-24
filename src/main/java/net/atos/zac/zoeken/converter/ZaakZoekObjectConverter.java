@@ -48,15 +48,15 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     @Inject
     private FlowableService flowableService;
 
-    public ZaakZoekObject convert(final UUID zaakUUID) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+    public ZaakZoekObject convert(final String zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(zaakUUID));
         return convert(zaak);
     }
 
     private ZaakZoekObject convert(final Zaak zaak) {
         final ZaakZoekObject zaakZoekObject = new ZaakZoekObject();
         zaakZoekObject.setUuid(zaak.getUuid().toString());
-        zaakZoekObject.setType("ZAAK");
+        zaakZoekObject.setType(ZoekObjectType.ZAAK);
         zaakZoekObject.setIdentificatie(zaak.getIdentificatie());
         zaakZoekObject.setOmschrijving(zaak.getOmschrijving());
         zaakZoekObject.setToelichting(zaak.getToelichting());
