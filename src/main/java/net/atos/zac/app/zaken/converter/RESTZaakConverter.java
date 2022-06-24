@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -37,11 +39,9 @@ import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
-
-import org.apache.commons.collections4.CollectionUtils;
 
 public class RESTZaakConverter {
 
@@ -88,7 +88,7 @@ public class RESTZaakConverter {
     private RESTGeometryConverter restGeometryConverter;
 
     @Inject
-    private FlowableService flowableService;
+    private CaseVariablesService caseVariablesService;
 
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
@@ -156,7 +156,7 @@ public class RESTZaakConverter {
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 
-        restZaak.ontvangstbevestigingVerstuurd = isTrue(flowableService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.ontvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         restZaak.isHoofdzaak = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
         restZaak.isDeelzaak = zaak.getHoofdzaak() != null;
 

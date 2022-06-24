@@ -54,7 +54,7 @@ public class CreateHumanTaskInterceptor implements org.flowable.cmmn.engine.inte
     @Override
     public void afterCreateHumanTask(final CreateHumanTaskAfterContext context) {
         final Map<String, String> taakdata = (Map<String, String>) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_TAAKDATA);
-        FlowableHelper.getInstance().getFlowableService().updateTaakdata(context.getTaskEntity().getId(), taakdata);
+        FlowableHelper.getInstance().getTaskVariablesService().setTaakdata(context.getTaskEntity().getId(), taakdata);
         context.getTaskEntity().setDueDate((Date) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_DUE_DATE));
         final UUID zaakUUID = (UUID) context.getPlanItemInstanceEntity().getTransientVariable(VAR_TRANSIENT_ZAAK_UUID);
         final ScreenEvent screenEvent = ScreenEventType.ZAAK_TAKEN.updated(zaakUUID);

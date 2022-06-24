@@ -22,7 +22,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.FlowableService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
@@ -64,7 +64,7 @@ public class SignaleringenJob {
     private ZoekenService zoekenService;
 
     @Inject
-    private FlowableService flowableService;
+    private TaskService taskService;
 
     public void signaleringenVerzenden() {
         zaakSignaleringenVerzenden();
@@ -228,7 +228,7 @@ public class SignaleringenJob {
      */
     private int taakDueVerzenden() {
         final int[] verzonden = new int[1];
-        flowableService.listOpenTasksDueNow().stream()
+        taskService.listOpenTasksDueNow().stream()
                 .map(taak -> buildTaakSignalering(getTaakSignaleringTarget(taak), taak))
                 .filter(Objects::nonNull)
                 .forEach(signalering -> verzonden[0] += verzendTaakSignalering(signalering));
@@ -264,7 +264,7 @@ public class SignaleringenJob {
      * Make sure already sent E-Mail warnings will get send again (in cases where the due date has changed)
      */
     private void taakDueOnterechtVerzondenVerwijderen() {
-        flowableService.listOpenTasksDueLater().stream()
+        taskService.listOpenTasksDueLater().stream()
                 .map(taak -> getTaakSignaleringVerzondenParameters(taak.getAssignee(), taak.getId()))
                 .forEach(signaleringenService::deleteSignaleringVerzonden);
     }

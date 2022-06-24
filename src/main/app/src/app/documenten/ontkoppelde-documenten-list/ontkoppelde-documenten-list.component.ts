@@ -19,6 +19,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
+import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -37,7 +38,8 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
-                private translate: TranslateService) { }
+                private translate: TranslateService,
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
@@ -82,7 +84,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     documentVerplaatsen(od: OntkoppeldDocument): void {
-        this.infoService.addTeVerplaatsenDocument(OntkoppeldeDocumentenListComponent.getInformatieobject(od), 'ontkoppelde-documenten');
+        this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(OntkoppeldeDocumentenListComponent.getInformatieobject(od), 'ontkoppelde-documenten');
     }
 
     documentVerwijderen(od: OntkoppeldDocument): void {
@@ -100,7 +102,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     isDocumentVerplaatsenDisabled(od: OntkoppeldDocument): boolean {
-        return this.infoService.isReedsTeVerplaatsen(OntkoppeldeDocumentenListComponent.getInformatieobject(od));
+        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(OntkoppeldeDocumentenListComponent.getInformatieobject(od));
     }
 
     private static getInformatieobject(ontkoppeldDocument: OntkoppeldDocument): EnkelvoudigInformatieobject {

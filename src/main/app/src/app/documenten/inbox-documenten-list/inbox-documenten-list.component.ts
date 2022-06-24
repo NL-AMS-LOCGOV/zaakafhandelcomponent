@@ -19,6 +19,7 @@ import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-di
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {InboxDocument} from '../model/inbox-document';
+import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 
 @Component({
     templateUrl: './inbox-documenten-list.component.html',
@@ -37,7 +38,8 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
-                private translate: TranslateService) { }
+                private translate: TranslateService,
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.inboxDocumenten');
@@ -82,7 +84,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     }
 
     documentVerplaatsen(od: InboxDocument): void {
-        this.infoService.addTeVerplaatsenDocument(InboxDocumentenListComponent.getInformatieobject(od), 'inbox-documenten');
+        this.informatieObjectVerplaatsService.addTeVerplaatsenDocument(InboxDocumentenListComponent.getInformatieobject(od), 'inbox-documenten');
     }
 
     documentVerwijderen(inboxDocument: InboxDocument): void {
@@ -100,7 +102,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     }
 
     isDocumentVerplaatsenDisabled(inboxDocument: InboxDocument): boolean {
-        return this.infoService.isReedsTeVerplaatsen(InboxDocumentenListComponent.getInformatieobject(inboxDocument));
+        return this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(InboxDocumentenListComponent.getInformatieobject(inboxDocument));
     }
 
     private static getInformatieobject(inboxDocument: InboxDocument): EnkelvoudigInformatieobject {

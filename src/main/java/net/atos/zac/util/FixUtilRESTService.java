@@ -5,10 +5,10 @@
 
 package net.atos.zac.util;
 
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_OMSCHRIJVING;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAKTYPE_UUUID;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_IDENTIFICATIE;
-import static net.atos.zac.flowable.FlowableService.VAR_CASE_ZAAK_UUID;
+import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_OMSCHRIJVING;
+import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_UUUID;
+import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAK_IDENTIFICATIE;
+import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAK_UUID;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,10 +49,10 @@ public class FixUtilRESTService {
     @Path("countmissing")
     @Produces(MediaType.APPLICATION_JSON)
     public Response countMissingVariables() {
-        countMissingVariable(VAR_CASE_ZAAK_UUID);
-        countMissingVariable(VAR_CASE_ZAAK_IDENTIFICATIE);
-        countMissingVariable(VAR_CASE_ZAAKTYPE_UUUID);
-        countMissingVariable(VAR_CASE_ZAAKTYPE_OMSCHRIJVING);
+        countMissingVariable(VAR_ZAAK_UUID);
+        countMissingVariable(VAR_ZAAK_IDENTIFICATIE);
+        countMissingVariable(VAR_ZAAKTYPE_UUUID);
+        countMissingVariable(VAR_ZAAKTYPE_OMSCHRIJVING);
         return Response.noContent().build();
     }
 
@@ -60,8 +60,8 @@ public class FixUtilRESTService {
     @Path("logzaaktypeuuid")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logExistingZaaktypeUUID() {
-        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableExists(VAR_CASE_ZAAKTYPE_UUUID).list();
-        caseInstances.forEach(caseInstance -> logVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_UUUID));
+        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableExists(VAR_ZAAKTYPE_UUUID).list();
+        caseInstances.forEach(caseInstance -> logVariable(caseInstance.getId(), VAR_ZAAKTYPE_UUUID));
         return Response.noContent().build();
     }
 
@@ -70,8 +70,8 @@ public class FixUtilRESTService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response fixMissingZaaktypeUUID(@PathParam("zaaktypeuuid") final String zaaktypeUUIDString) {
         final UUID zaaktypeUUID = UUID.fromString(zaaktypeUUIDString);
-        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_CASE_ZAAKTYPE_UUUID).list();
-        caseInstances.forEach(caseInstance -> fixVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_UUUID, zaaktypeUUID));
+        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableNotExists(VAR_ZAAKTYPE_UUUID).list();
+        caseInstances.forEach(caseInstance -> fixVariable(caseInstance.getId(), VAR_ZAAKTYPE_UUUID, zaaktypeUUID));
         return Response.noContent().build();
     }
 
@@ -80,8 +80,8 @@ public class FixUtilRESTService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response fixAllZaaktypeUUID(@PathParam("zaaktypeuuid") final String zaaktypeUUIDString) {
         final UUID zaaktypeUUID = UUID.fromString(zaaktypeUUIDString);
-        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableExists(VAR_CASE_ZAAKTYPE_UUUID).list();
-        caseInstances.forEach(caseInstance -> fixVariable(caseInstance.getId(), VAR_CASE_ZAAKTYPE_UUUID, zaaktypeUUID));
+        final List<CaseInstance> caseInstances = cmmnRuntimeService.createCaseInstanceQuery().variableExists(VAR_ZAAKTYPE_UUUID).list();
+        caseInstances.forEach(caseInstance -> fixVariable(caseInstance.getId(), VAR_ZAAKTYPE_UUUID, zaaktypeUUID));
         return Response.noContent().build();
     }
 
