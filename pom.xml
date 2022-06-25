@@ -175,6 +175,11 @@
             <artifactId>webdav-servlet</artifactId>
             <version>2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsonschema2pojo</groupId>
+            <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+            <version>1.1.3-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -262,13 +267,13 @@
             <plugin>
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                <version>1.1.2</version>
+                <version>1.1.3-SNAPSHOT</version>
                 <configuration>
                     <sourcePaths>${project.basedir}/src/main/resources/json-schema</sourcePaths>
                     <outputDirectory>${project.basedir}/src/generated/java</outputDirectory>
                     <fileExtensions>.schema.json</fileExtensions>
                     <targetPackage>net.atos.zac.aanvraag</targetPackage>
-                    <annotationStyle>none</annotationStyle>
+                    <annotationStyle>JSONB1</annotationStyle>
                     <dateType>java.time.LocalDate</dateType>
                     <timeType>java.time.LocalTime</timeType>
                     <dateTimeType>java.time.ZonedDateTime</dateTimeType>
