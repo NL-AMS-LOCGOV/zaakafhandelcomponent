@@ -10,7 +10,7 @@ RUN mvn -DskipTests package
 FROM eclipse-temurin:17-jre-focal as runtime
 
 # Import certificates into Java truststore
-ADD src/main/resources/certificates /certificates
+ADD docker/certificates /certificates
 RUN keytool -importcert -cacerts -file /certificates/* -storepass changeit -noprompt
 
 # Copy zaakafhandelcomponent bootable jar
