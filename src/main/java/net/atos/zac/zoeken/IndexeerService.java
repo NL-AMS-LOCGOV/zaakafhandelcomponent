@@ -124,7 +124,7 @@ public class IndexeerService {
             try {
                 switch (IndexStatus.valueOf(zoekIndexEntity.getStatus())) {
                     case ADD, UPDATE -> addList.add(converter.convert(zoekIndexEntity.getObjectId()));
-                    case REMOVE -> deleteList.add(zoekIndexEntity.getObjectId().toString());
+                    case REMOVE -> deleteList.add(zoekIndexEntity.getObjectId());
                     case INDEXED -> {
                         // skip..
                     }
@@ -159,7 +159,7 @@ public class IndexeerService {
         boolean hasNext = true;
         while (hasNext) {
             int firstResult = page * maxResults;
-            final List<Task> tasks = taskService.listOpenTasks(TaakSortering.ID, SorteerRichting.ASCENDING, firstResult, maxResults);
+            final List<Task> tasks = taskService.listOpenTasks(TaakSortering.CREATIEDATUM, SorteerRichting.DESCENDING, firstResult, maxResults);
             tasks.forEach(taak -> createEntity(taak.getId(), ZoekObjectType.TAAK));
             page++;
             hasNext = CollectionUtils.isNotEmpty(tasks);

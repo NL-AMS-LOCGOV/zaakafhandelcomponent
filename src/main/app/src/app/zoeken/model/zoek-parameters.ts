@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {SorteerVeld} from './sorteer-veld';
-
 export class ZoekParameters {
     type: 'ZAAK' | 'TAAK' | null;
     alleenMijnZaken: boolean = false;
@@ -18,7 +16,7 @@ export class ZoekParameters {
         ZAAK_EINDDATUM_GEPLAND: {van: null, tot: null},
         ZAAK_UITERLIJKE_EINDDATUM_AFDOENING: {van: null, tot: null}
     };
-    sorteerVeld: string = SorteerVeld.IDENTIFICATIE;
+    sorteerVeld: string;
     sorteerRichting: 'desc' | 'asc' | '';
     rows: number = 25;
     page: number = 0;
