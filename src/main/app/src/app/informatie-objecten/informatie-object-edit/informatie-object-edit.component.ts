@@ -25,7 +25,6 @@ import {Informatieobjecttype} from '../model/informatieobjecttype';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {User} from '../../identity/model/user';
 import {FormComponent} from '../../shared/material-form-builder/form/form/form.component';
-import {ZaakInformatieobject} from '../model/zaak-informatieobject';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {FileFormFieldBuilder} from '../../shared/material-form-builder/form-components/file/file-form-field-builder';
 import {FormFieldHint} from '../../shared/material-form-builder/model/form-field-hint';
@@ -40,7 +39,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
     @Input() infoObject: EnkelvoudigInformatieObjectVersieGegevens;
     @Input() sideNav: MatSidenav;
-    @Input() zaakInformatieObjecten: ZaakInformatieobject[];
+    @Input() zaakUuid: string;
     @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
 
     @ViewChild(FormComponent) form: FormComponent;
@@ -69,8 +68,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
 
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                      .uploadURL(
-                                                          this.informatieObjectenService.getUploadURL(this.zaakInformatieObjecten[0].zaakUuid))
+                                                      .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
                                                       .build();
 
         const titel = new InputFormFieldBuilder().id('titel').label('titel')
@@ -177,7 +175,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         if (formGroup) {
             const nieuweVersie = new EnkelvoudigInformatieObjectVersieGegevens();
             nieuweVersie.uuid = this.infoObject.uuid;
-            nieuweVersie.zaakUuid = this.zaakInformatieObjecten[0].zaakUuid;
+            nieuweVersie.zaakUuid = this.zaakUuid;
             Object.keys(formGroup.controls).forEach((key) => {
                 const control = formGroup.controls[key];
                 const value = control.value;

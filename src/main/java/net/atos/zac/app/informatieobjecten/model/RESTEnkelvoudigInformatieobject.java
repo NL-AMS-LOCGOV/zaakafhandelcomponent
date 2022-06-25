@@ -13,19 +13,24 @@ import java.util.UUID;
  *
  */
 public class RESTEnkelvoudigInformatieobject {
-    public String zaakRelatie;
 
     public String uuid;
 
-    public String url;
-
     public String identificatie;
 
-    public String bronorganisatie;
+    public String titel;
+
+    public String beschrijving;
 
     public LocalDate creatiedatum;
 
-    public String titel;
+    public ZonedDateTime registratiedatumTijd;
+
+    public LocalDate ontvangstdatum;
+
+    public LocalDate verzenddatum;
+
+    public String bronorganisatie;
 
     public String vertrouwelijkheidaanduiding;
 
@@ -39,7 +44,9 @@ public class RESTEnkelvoudigInformatieobject {
 
     public Integer versie;
 
-    public ZonedDateTime registratiedatumTijd;
+    public UUID informatieobjectTypeUUID;
+
+    public String informatieobjectTypeOmschrijving;
 
     public String bestandsnaam;
 
@@ -47,25 +54,7 @@ public class RESTEnkelvoudigInformatieobject {
 
     public String link;
 
-    public UUID informatieobjectTypeUUID;
-
-    public String informatieobjectTypeOmschrijving;
-
-    public String beschrijving;
-
-    public LocalDate ontvangstdatum;
-
-    public LocalDate verzenddatum;
-
     public boolean indicatieGebruiksrecht;
 
-    public LocalDate ondertekening;
-
     public boolean locked;
-
-    public boolean startformulier;
-
-    public String inhoudUrl;
-
-    public boolean taakObject;
 }

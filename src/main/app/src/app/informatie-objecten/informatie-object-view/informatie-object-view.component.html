@@ -9,7 +9,7 @@
     </mat-sidenav>
     <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-informatie-object-edit *ngSwitchCase="'DOCUMENT_VERSIE_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                    [infoObject]="documentNieuweVersieGegevens" [zaakInformatieObjecten]="zaakInformatieObjecten"
+                                    [infoObject]="documentNieuweVersieGegevens" [zaakUuid]="zaak.uuid"
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
     </mat-sidenav>
@@ -158,7 +158,7 @@
                             {{zaakInformatieobject.zaakIdentificatie}}
                         </mat-panel-title>
                         <mat-panel-description>
-                            {{zaakInformatieobject.zaaktype}}
+                            {{zaakInformatieobject.zaaktypeOmschrijving}}
                             <button mat-flat-button [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
                                 <mat-icon>visibility</mat-icon>
                             </button>
@@ -166,7 +166,7 @@
                     </mat-expansion-panel-header>
 
                     <zac-static-text [fxFlex]="100/3" [label]="'status' | translate"
-                                     [value]="zaakInformatieobject.status|empty:'naam'"></zac-static-text>
+                                     [value]="zaakInformatieobject.zaakStatus|empty:'naam'"></zac-static-text>
                     <zac-static-text [fxFlex]="100/3" [label]="'startdatum' | translate" [value]="zaakInformatieobject.zaakStartDatum|datum"></zac-static-text>
                     <zac-static-text [fxFlex]="100/3" [label]="'einddatumGepland' | translate"
                                      [value]="zaakInformatieobject.zaakEinddatumGepland|datum|empty"></zac-static-text>

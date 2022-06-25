@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -192,10 +193,10 @@ public class ZGWApiService {
     /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
-     * @param zaak             {@link Zaak}.
-     * @param informatieobject {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
-     * @param titel            Titel of the new {@link ZaakInformatieobject}.
-     * @param beschrijving     Beschrijving of the new {@link ZaakInformatieobject}.
+     * @param zaak                                   {@link Zaak}.
+     * @param informatieobject                       {@link EnkelvoudigInformatieobjectWithInhoud} to be created.
+     * @param titel                                  Titel of the new {@link ZaakInformatieobject}.
+     * @param beschrijving                           Beschrijving of the new {@link ZaakInformatieobject}.
      * @param omschrijvingVoorwaardenGebruiksrechten Used to create the {@link Gebruiksrechten} for the to be created {@link EnkelvoudigInformatieobjectWithInhoud}
      * @return Created {@link ZaakInformatieobject}.
      */
@@ -213,6 +214,29 @@ public class ZGWApiService {
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(zaak));
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, loggedInUserInstance.get()));
         return created;
+    }
+
+    /**
+     * Delete {@link ZaakInformatieobject} which relates {@link EnkelvoudigInformatieobject} with enkelvoudigInformatieObjectUUID
+     * and {@link Zaak} with zaakUUID.
+     * When the {@link EnkelvoudigInformatieobject} has no other related {@link ZaakInformatieobject}s then it is also deleted.
+     *
+     * @param enkelvoudigInformatieObjectUUID UUID of a  {@link EnkelvoudigInformatieobject}
+     * @param zaakUUID                        UUID of a {@link Zaak}
+     * @param toelichting                     Explanation why the {@link EnkelvoudigInformatieobject} is to be removed.
+     */
+    public void removeEnkelvoudigInformatieObjectFromZaak(final UUID enkelvoudigInformatieObjectUUID, final UUID zaakUUID, final String toelichting) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
+        // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
+        zaakInformatieobjecten.stream()
+                .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
+                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(), toelichting));
+
+        // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
+        if (!zaakInformatieobjecten.stream().filter(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID)).findAny().isPresent()) {
+            drcClientService.deleteEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
+        }
     }
 
     /**

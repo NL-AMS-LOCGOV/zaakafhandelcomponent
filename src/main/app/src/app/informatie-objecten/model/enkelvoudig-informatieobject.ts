@@ -7,10 +7,13 @@ import {FileFormat} from './file-format';
 
 export class EnkelvoudigInformatieobject {
     uuid: string;
+    identificatie: string;
     titel: string;
     beschrijving: string;
-    identificatie: string;
     creatiedatum: string;
+    registratiedatumTijd: string;
+    ontvangstdatum: string;
+    verzenddatum: string;
     bronorganisatie: string;
     vertrouwelijkheidaanduiding: string;
     auteur: string;
@@ -20,15 +23,9 @@ export class EnkelvoudigInformatieobject {
     versie: number;
     informatieobjectTypeUUID: string;
     informatieobjectTypeOmschrijving: string;
-    registratiedatumTijd: string;
     bestandsnaam: string;
     bestandsomvang: number;
     link: string;
-    ontvangstdatum: string;
-    verzenddatum: string;
     indicatieGebruiksrecht: boolean;
-    ondertekening: string;
     locked: boolean;
-    inhoudUrl: string;
-    taakObject: boolean;
 }

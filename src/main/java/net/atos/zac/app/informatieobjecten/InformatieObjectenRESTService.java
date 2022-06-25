@@ -55,6 +55,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTZaakInformatieobjectCon
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentCreatieResponse;
 import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerplaatsGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentVerwijderenGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
@@ -263,6 +264,14 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid) {
         return readFile(uuid, null);
+    }
+
+    @PUT
+    @Path("/informatieobject/{uuid}/remove")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response removeEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
+        zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid, documentVerwijderenGegevens.reden);
+        return Response.noContent().build();
     }
 
     @GET
