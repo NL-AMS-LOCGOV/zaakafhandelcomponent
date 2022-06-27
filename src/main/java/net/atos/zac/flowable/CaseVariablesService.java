@@ -31,6 +31,8 @@ public class CaseVariablesService {
 
     private static final String VAR_VERWACHTE_DAGEN_OPGESCHORT = "verwachteDagenOpgeschort";
 
+    private static final String VAR_ONTVANKELIJK = "ontvankelijk";
+
     @Inject
     private CmmnRuntimeService cmmnRuntimeService;
 
@@ -59,6 +61,10 @@ public class CaseVariablesService {
 
     public void setOntvangstbevestigingVerstuurd(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
         setVariable(zaakUUID, VAR_ONTVANGSTBEVESTIGING_VERSTUURD, ontvangstbevestigingVerstuurd);
+    }
+
+    public void setOntvankelijk(final String caseInstanceId, final Boolean ontvankelijk) {
+        setVariable(caseInstanceId, VAR_ONTVANKELIJK, ontvankelijk);
     }
 
     public ZonedDateTime findDatumtijdOpgeschort(final UUID zaakUUID) {
@@ -131,6 +137,10 @@ public class CaseVariablesService {
 
             return historicCaseInstance != null ? historicCaseInstance.getCaseVariables().get(variableName) : null;
         }
+    }
+
+    private void setVariable(final String caseInstanceId, final String variableName, final Object value) {
+        cmmnRuntimeService.setVariable(caseInstanceId, variableName, value);
     }
 
     private void setVariable(final UUID zaakUUID, final String variableName, final Object value) {
