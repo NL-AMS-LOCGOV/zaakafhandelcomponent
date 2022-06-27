@@ -150,8 +150,8 @@ export class InformatieObjectenService {
         );
     }
 
-    removeEnkelvoudigInformatieObject(uuid: string, zaakUuid: string, reden: string): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/informatieobject/${uuid}/remove`, new DocumentVerwijderenGegevens(zaakUuid, reden)).pipe(
+    deleteEnkelvoudigInformatieObject(uuid: string, zaakUuid: string, reden: string): Observable<void> {
+        return this.http.delete<void>(`${this.basepath}/informatieobject/${uuid}`, {body: new DocumentVerwijderenGegevens(zaakUuid, reden)}).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

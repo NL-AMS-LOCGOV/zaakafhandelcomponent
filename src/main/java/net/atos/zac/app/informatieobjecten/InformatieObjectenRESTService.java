@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -266,10 +267,10 @@ public class InformatieObjectenRESTService {
         return readFile(uuid, null);
     }
 
-    @PUT
-    @Path("/informatieobject/{uuid}/remove")
+    @DELETE
+    @Path("/informatieobject/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response removeEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
+    public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
         zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid, documentVerwijderenGegevens.reden);
         return Response.noContent().build();
     }

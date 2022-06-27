@@ -210,7 +210,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                                            .validators(Validators.required)
                                            .maxlength(100)
                                            .build()],
-            (results: any[]) => this.informatieObjectenService.removeEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak.uuid, results['reden']).pipe(
+            (results: any[]) => this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak.uuid, results['reden']).pipe(
                 tap(() => this.websocketService.suspendListener(this.documentListener))
             )
         );
