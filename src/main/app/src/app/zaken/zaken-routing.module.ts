@@ -20,7 +20,7 @@ const routes: Routes = [
             {path: 'werkvoorraad', component: ZakenWerkvoorraadComponent},
             {path: 'create', component: ZaakCreateComponent},
             {path: 'afgehandeld', component: ZakenAfgehandeldComponent},
-            {path: ':identificatie', component: ZaakViewComponent, resolve: {zaak: ZaakResolver}}
+            {path: ':zaakIdentificatie', component: ZaakViewComponent, resolve: {zaak: ZaakResolver}}
         ]
     }
 ];

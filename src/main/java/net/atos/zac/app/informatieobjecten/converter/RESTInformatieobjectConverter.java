@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten.converter;
 
-import static net.atos.zac.aanvraag.ProductAanvraagService.ZAAK_INFORMATIEOBJECT_TITEL;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 
 import java.net.URI;
@@ -50,10 +49,6 @@ public class RESTInformatieobjectConverter {
 
     public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = convert(zaakInformatieObject.getInformatieobject());
-        if (zaakInformatieObject.getAardRelatieWeergave() != null) {
-            restEnkelvoudigInformatieobject.zaakRelatie = zaakInformatieObject.getAardRelatieWeergave().name();
-        }
-        restEnkelvoudigInformatieobject.startformulier = ZAAK_INFORMATIEOBJECT_TITEL.equals(zaakInformatieObject.getTitel());
         return restEnkelvoudigInformatieobject;
     }
 
@@ -65,7 +60,6 @@ public class RESTInformatieobjectConverter {
     public RESTEnkelvoudigInformatieobject convert(final EnkelvoudigInformatieobject enkelvoudigInformatieObject) {
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject
                 = new RESTEnkelvoudigInformatieobject();
-        restEnkelvoudigInformatieobject.url = enkelvoudigInformatieObject.getUrl().toString();
         restEnkelvoudigInformatieobject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
@@ -95,12 +89,8 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
         restEnkelvoudigInformatieobject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
         restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
-        restEnkelvoudigInformatieobject.inhoudUrl = enkelvoudigInformatieObject.getInhoud().toString();
         restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
                 enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
-        if (enkelvoudigInformatieObject.getOndertekening() != null) {
-            restEnkelvoudigInformatieobject.ondertekening = enkelvoudigInformatieObject.getOndertekening().getDatum();
-        }
         restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
 
         return restEnkelvoudigInformatieobject;
@@ -168,7 +158,6 @@ public class RESTInformatieobjectConverter {
 
     public RESTEnkelvoudigInformatieobject convert(final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock) {
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = new RESTEnkelvoudigInformatieobject();
-        restEnkelvoudigInformatieobject.url = enkelvoudigInformatieobjectWithInhoudAndLock.getUrl().toString();
         restEnkelvoudigInformatieobject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieobjectWithInhoudAndLock.getUrl()).toString();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieobjectWithInhoudAndLock.getIdentificatie();
         restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieobjectWithInhoudAndLock.getTitel();
@@ -199,13 +188,8 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieobjectWithInhoudAndLock.getVerzenddatum();
         restEnkelvoudigInformatieobject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieobjectWithInhoudAndLock.getLocked());
         restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieobjectWithInhoudAndLock.getBestandsomvang();
-        restEnkelvoudigInformatieobject.inhoudUrl = enkelvoudigInformatieobjectWithInhoudAndLock.getInhoud();
         restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
                 enkelvoudigInformatieobjectWithInhoudAndLock.getInformatieobjecttype()).getOmschrijving();
-        if (enkelvoudigInformatieobjectWithInhoudAndLock.getOndertekening() != null) {
-            restEnkelvoudigInformatieobject.ondertekening = enkelvoudigInformatieobjectWithInhoudAndLock.getOndertekening().getDatum();
-        }
-
         return restEnkelvoudigInformatieobject;
     }
 

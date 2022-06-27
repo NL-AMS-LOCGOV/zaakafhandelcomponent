@@ -6,7 +6,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
 import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
-import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UtilService} from '../../core/service/util.service';
@@ -31,14 +30,21 @@ import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-in
 import {TranslateService} from '@ngx-translate/core';
 import {FileIcon} from '../model/file-icon';
 import {Zaak} from '../../zaken/model/zaak';
+import {DialogData} from '../../shared/dialog/dialog-data';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {DialogComponent} from '../../shared/dialog/dialog.component';
+import {Validators} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {tap} from 'rxjs/operators';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
     styleUrls: ['./informatie-object-view.component.less']
 })
-export class InformatieObjectViewComponent  extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InformatieObjectViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
+    zaak: Zaak;
     laatsteVersieInfoObject: EnkelvoudigInformatieobject;
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
@@ -47,29 +53,31 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
     versieInformatie: string;
     zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
-    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
 
+    historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild(MatSort) sort: MatSort;
     private documentListener: WebsocketListener;
 
-    constructor(private zakenService: ZakenService,
-                private informatieObjectenService: InformatieObjectenService,
+    constructor(private informatieObjectenService: InformatieObjectenService,
                 private route: ActivatedRoute,
                 public utilService: UtilService,
                 private websocketService: WebsocketService,
                 private router: Router,
-                private translate: TranslateService) {
+                private translate: TranslateService,
+                private dialog: MatDialog) {
         super();
     }
 
     ngOnInit(): void {
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
-            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(eiObject => {
-                this.laatsteVersieInfoObject = eiObject;
+            this.zaak = data['zaak'];
+            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(infoObject => {
+                this.laatsteVersieInfoObject = infoObject;
+                this.toevoegenActies();
                 this.updateVersieInformatie();
                 this.loadZaakInformatieobjecten();
             });
@@ -79,8 +87,9 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
             this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 (event) => {
                     this.loadInformatieObject(event);
-                    this.loadHistorie();
+                    this.toevoegenActies();
                     this.loadZaakInformatieobjecten();
+                    this.loadHistorie();
                 });
 
             this.loadHistorie();
@@ -106,7 +115,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.websocketService.removeListener(this.documentListener);
     }
 
-    private toevoegenActies(zaak?: Zaak) {
+    private toevoegenActies() {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
             new HrefMenuItem('actie.downloaden',
@@ -117,7 +126,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
         // Als er wel een zaak gekoppeld is, dan moet deze niet gesloten zijn.
         // ToDo: Vervangen door Policy
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && zaak?.rechten.open) {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaak?.rechten.open) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -135,23 +144,16 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
                 }, 'edit'));
             }
         }
+
+        if (this.zaak) {
+            this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
+        }
     }
 
     private loadZaakInformatieobjecten(): void {
         this.informatieObjectenService.listZaakInformatieobjecten(this.infoObject.uuid).subscribe(zaakInformatieObjecten => {
             this.zaakInformatieObjecten = zaakInformatieObjecten;
-            this.loadZaak();
         });
-    }
-
-    private loadZaak(): void {
-        if (this.zaakInformatieObjecten.length > 0) {
-            this.zakenService.readZaak(this.zaakInformatieObjecten[0].zaakUuid).subscribe(zaak => {
-                this.toevoegenActies(zaak);
-            });
-        } else {
-            this.toevoegenActies();
-        }
     }
 
     private loadHistorie(): void {
@@ -174,7 +176,7 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
 
     haalVersieOp(versie: number) {
         this.websocketService.removeListener(this.documentListener);
-        this.router.navigate(['/informatie-objecten/', this.infoObject.uuid, versie]);
+        this.router.navigate(['/informatie-objecten/', this.infoObject.uuid, versie, this.zaak.identificatie]);
     }
 
     versieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
@@ -199,6 +201,27 @@ export class InformatieObjectViewComponent  extends ActionsViewComponent impleme
         this.versieInformatie = this.translate.instant('versie.x.van', {
             versie: this.infoObject.versie,
             laatsteVersie: this.laatsteVersieInfoObject.versie
+        });
+    }
+
+    private openDocumentVerwijderenDialog(): void {
+        const dialogData = new DialogData([
+                new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
+                                           .validators(Validators.required)
+                                           .maxlength(100)
+                                           .build()],
+            (results: any[]) => this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.documentListener))
+            )
+        );
+
+        dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
+
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.document.verwijderen.uitgevoerd', {document: this.infoObject.titel});
+                this.router.navigate(['/zaken/', this.zaak.identificatie]);
+            }
         });
     }
 }

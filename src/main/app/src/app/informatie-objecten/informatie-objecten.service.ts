@@ -19,6 +19,7 @@ import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
 import {DocumentCreatieResponse} from './model/document-creatie-response';
+import {DocumentVerwijderenGegevens} from './model/document-verwijderen-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -145,6 +146,12 @@ export class InformatieObjectenService {
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {
         documentVerplaatsGegevens.nieuweZaakID = nieuweZaakID;
         return this.http.post<void>(`${this.basepath}/informatieobject/verplaats`, documentVerplaatsGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    deleteEnkelvoudigInformatieObject(uuid: string, zaakUuid: string, reden: string): Observable<void> {
+        return this.http.delete<void>(`${this.basepath}/informatieobject/${uuid}`, {body: new DocumentVerwijderenGegevens(zaakUuid, reden)}).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

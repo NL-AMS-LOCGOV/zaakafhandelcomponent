@@ -6,10 +6,9 @@
 import {ZaakStatus} from '../../zaken/model/zaak-status';
 
 export class ZaakInformatieobject {
-    status: ZaakStatus;
-    zaakUuid: string;
     zaakIdentificatie: string;
-    zaaktype: string;
+    zaakStatus: ZaakStatus;
     zaakStartDatum: string;
     zaakEinddatumGepland: string;
+    zaaktypeOmschrijving: string;
 }

@@ -28,16 +28,13 @@ public class RESTZaakInformatieobjectConverter {
 
     public RESTZaakInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTZaakInformatieobject restZaakInformatieobject = new RESTZaakInformatieobject();
-
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
-
-        restZaakInformatieobject.status = restZaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
-        restZaakInformatieobject.zaakUuid = zaak.getUuid().toString();
+        restZaakInformatieobject.zaakStatus = restZaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
         restZaakInformatieobject.zaakStartDatum = zaak.getStartdatum();
         restZaakInformatieobject.zaakEinddatumGepland = zaak.getEinddatumGepland();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        restZaakInformatieobject.zaaktype = zaaktype.getOmschrijving();
+        restZaakInformatieobject.zaaktypeOmschrijving = zaaktype.getOmschrijving();
         return restZaakInformatieobject;
     }
 }

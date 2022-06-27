@@ -6,6 +6,7 @@
 package net.atos.client.zgw.zrc.model;
 
 import static net.atos.client.zgw.shared.util.DateTimeUtil.DATE_TIME_FORMAT_WITH_MILLISECONDS;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 /**
  *
@@ -140,5 +142,10 @@ public class ZaakInformatieobject {
 
     public ZonedDateTime getRegistratiedatum() {
         return registratiedatum;
+    }
+
+    @JsonbTransient
+    public UUID getZaakUUID() {
+        return uuidFromURI(zaak);
     }
 }
