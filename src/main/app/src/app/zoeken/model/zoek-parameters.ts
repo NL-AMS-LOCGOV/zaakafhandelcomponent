@@ -8,6 +8,7 @@ export class ZoekParameters {
     alleenMijnZaken: boolean = false;
     alleenOpenstaandeZaken: boolean = false;
     alleenAfgeslotenZaken: boolean = false;
+    alleenMijnTaken: boolean = false;
     zoeken: { [key: string]: string } = {};
     filters: { [key: string]: string } = {};
     datums: { [key: string]: { van: string; tot: string } } = {
