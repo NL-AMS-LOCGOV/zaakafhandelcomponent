@@ -5,8 +5,8 @@
 
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Taak} from '../model/taak';
 import {TakenService} from '../taken.service';
+import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
 
 @Component({
     selector: 'zac-taken-vrijgeven-dialog',
@@ -18,7 +18,7 @@ export class TakenVrijgevenDialogComponent {
     loading: boolean;
 
     constructor(public dialogRef: MatDialogRef<TakenVrijgevenDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: Taak[],
+                @Inject(MAT_DIALOG_DATA) public data: TaakZoekObject[],
                 private takenService: TakenService) { }
 
     close() {

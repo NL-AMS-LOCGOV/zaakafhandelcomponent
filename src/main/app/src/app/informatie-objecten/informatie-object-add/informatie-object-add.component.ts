@@ -105,13 +105,13 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                                                    .build();
 
         const informatieobjectType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
-                                                         .label('informatieobjectType')
-                                                         .options( this.zaak ?
-                                                             this.informatieObjectenService.listInformatieobjecttypesForZaak(this.zaak.uuid) :
-                                                             this.informatieObjectenService.listInformatieobjecttypesForZaak(this.taak.zaakUUID))
-                                                         .optionLabel('omschrijving')
-                                                         .validators(Validators.required)
-                                                         .build();
+                                                                 .label('informatieobjectType')
+                                                                 .options(this.zaak ?
+                                                                     this.informatieObjectenService.listInformatieobjecttypesForZaak(this.zaak.uuid) :
+                                                                     this.informatieObjectenService.listInformatieobjecttypesForZaak(this.taak.zaakUuid))
+                                                                 .optionLabel('omschrijving')
+                                                                 .validators(Validators.required)
+                                                                 .build();
 
         const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
                                                   .validators(Validators.required)
@@ -211,7 +211,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                 }
             });
 
-            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak ? this.zaak.uuid : this.taak.zaakUUID,
+            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak ? this.zaak.uuid : this.taak.zaakUuid,
                 this.zaak ? this.zaak.uuid : this.taak.id, infoObject, !!this.taak)
                 .subscribe((document) => {
                     this.document.emit(document);

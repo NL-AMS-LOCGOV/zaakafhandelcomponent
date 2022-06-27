@@ -10,6 +10,7 @@ import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAA
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -71,6 +72,7 @@ import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.IndexeerService;
+import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 /**
  *
@@ -182,29 +184,36 @@ public class TakenRESTService {
     @PUT
     @Path("verdelen")
     public void allocateTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
+            taakIds.add(task.taakId);
         });
+        indexeerService.indexeerDirect(taakIds, ZoekObjectType.TAAK);
     }
 
     @PUT
     @Path("vrijgeven")
     public void releaseTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, null, task.zaakUuid);
+            taakIds.add(task.taakId);
         });
+        indexeerService.indexeerDirect(taakIds, ZoekObjectType.TAAK);
     }
 
     @PATCH
     @Path("assign")
     public void assignTaak(final RESTTaak restTaak) {
-        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.id : null, restTaak.zaakUUID);
+        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.id : null, restTaak.zaakUuid);
     }
 
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
+        indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convertTaskForOpenCase(task);
     }
 
@@ -212,7 +221,7 @@ public class TakenRESTService {
     @Path("assign/group")
     public void assignGroup(final RESTTaak restTaak) {
         final Task task = taskService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
-        taakBehandelaarGewijzigd(task, restTaak.zaakUUID);
+        taakBehandelaarGewijzigd(task, restTaak.zaakUuid);
     }
 
     @PATCH
@@ -222,7 +231,7 @@ public class TakenRESTService {
         taakConverter.updateOpenTask(task, restTaak);
         task = taskService.updateTask(task);
         eventingService.send(TAAK.updated(task));
-        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
         return taakConverter.convertTaskForOpenCase(task);
     }
 
@@ -238,9 +247,9 @@ public class TakenRESTService {
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
-        indexeerService.addZaak(restTaak.zaakUUID);
+        indexeerService.addZaak(restTaak.zaakUuid);
         eventingService.send(TAAK.updated(task));
-        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUUID));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
         return taakConverter.convertTaskForOpenCase(task);
     }
 
@@ -268,7 +277,7 @@ public class TakenRESTService {
     }
 
     private void createDocuments(final RESTTaak restTaak) {
-        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUUID);
+        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUuid);
         final HttpSession httpSession = this.httpSession.get();
         for (String key : restTaak.taakdata.keySet()) {
             final String fileKey = String.format("_FILE__%s__%s", restTaak.id, key);

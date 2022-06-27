@@ -121,9 +121,9 @@ export class ZakenService {
         );
     }
 
-    verdelen(zaken: ZaakOverzicht[], groep?: Group, medewerker?: User, reden?: string): Observable<void> {
+    verdelen(uuids: string[], groep?: Group, medewerker?: User, reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
-        verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
+        verdeelGegevens.uuids = uuids;
         verdeelGegevens.groepId = groep?.id;
         verdeelGegevens.behandelaarGebruikersnaam = medewerker?.id;
         verdeelGegevens.reden = reden;
@@ -133,9 +133,9 @@ export class ZakenService {
         );
     }
 
-    vrijgeven(zaken: ZaakOverzicht[] | Zaak[], reden?: string): Observable<void> {
+    vrijgeven(uuids: string[], reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
-        verdeelGegevens.uuids = zaken.map(zaak => zaak.uuid);
+        verdeelGegevens.uuids = uuids;
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/vrijgeven`, verdeelGegevens).pipe(

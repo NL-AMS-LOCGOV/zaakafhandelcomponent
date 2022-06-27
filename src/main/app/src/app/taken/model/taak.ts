@@ -17,7 +17,7 @@ export class Taak {
     streefdatum: string;
     behandelaar: User;
     groep: Group;
-    zaakUUID: string;
+    zaakUuid: string;
     zaakIdentificatie: string;
     zaaktypeOmschrijving: string;
     status: TaakStatus;

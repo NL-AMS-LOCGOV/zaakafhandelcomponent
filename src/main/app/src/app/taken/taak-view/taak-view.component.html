@@ -11,7 +11,7 @@
         <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav"
                                    [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-add>
         <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'" [sideNav]="actionsSidenav"
-                                      [zaakUUID]="taak.zaakUUID" [taskId]="taak.id" (redirectUrl)="documentAangemaakt($event)"></zac-informatie-object-create>
+                                      [zaakUUID]="taak.zaakUuid" [taskId]="taak.id" (redirectUrl)="documentAangemaakt($event)"></zac-informatie-object-create>
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
@@ -111,10 +111,10 @@
                     </mat-card-content>
                 </mat-card>
 
-                <zac-zaak-verkort [zaakUuid]="taak.zaakUUID"></zac-zaak-verkort>
+                <zac-zaak-verkort [zaakUuid]="taak.zaakUuid"></zac-zaak-verkort>
             </div>
         </div>
 
-        <zac-zaak-documenten [zaakUUID]="taak.zaakUUID"></zac-zaak-documenten>
+        <zac-zaak-documenten [zaakUUID]="taak.zaakUuid"></zac-zaak-documenten>
     </mat-drawer-content>
 </mat-drawer-container>

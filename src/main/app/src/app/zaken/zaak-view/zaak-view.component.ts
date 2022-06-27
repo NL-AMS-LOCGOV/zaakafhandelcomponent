@@ -635,7 +635,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.vrijgeven([this.zaak], reden).subscribe(() => {
+        this.zakenService.vrijgeven([this.zaak.uuid], reden).subscribe(() => {
             this.init(this.zaak);
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
         });

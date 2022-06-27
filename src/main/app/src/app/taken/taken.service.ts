@@ -15,6 +15,7 @@ import {TaakToekennenGegevens} from './model/taak-toekennen-gegevens';
 import {User} from '../identity/model/user';
 import {TaakVerdelenGegevens} from './model/taak-verdelen-gegevens';
 import {TaakHistorieRegel} from '../shared/historie/model/taak-historie-regel';
+import {TaakZoekObject} from '../zoeken/model/taken/taak-zoek-object';
 
 @Injectable({
     providedIn: 'root'
@@ -77,10 +78,10 @@ export class TakenService {
         );
     }
 
-    assignToLoggedOnUser(taak: Taak): Observable<Taak> {
+    assignToLoggedOnUser(taak: Taak | TaakZoekObject): Observable<Taak> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
-        taakToekennenGegevens.zaakUuid = taak.zaakUUID;
+        taakToekennenGegevens.zaakUuid = taak.zaakUuid;
         return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
@@ -104,18 +105,18 @@ export class TakenService {
         );
     }
 
-    verdelen(taken: Taak[], medewerker: User): Observable<void> {
+    verdelen(taken: TaakZoekObject[], medewerker: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUUID}));
+        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
         return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    vrijgeven(taken: Taak[]): Observable<void> {
+    vrijgeven(taken: TaakZoekObject[]): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUUID}));
+        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         return this.http.put<void>(`${this.basepath}/vrijgeven`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
