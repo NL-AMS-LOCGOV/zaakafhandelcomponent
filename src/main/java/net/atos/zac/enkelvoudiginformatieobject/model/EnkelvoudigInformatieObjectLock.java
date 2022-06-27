@@ -36,7 +36,7 @@ public class EnkelvoudigInformatieObjectLock {
 
     @NotBlank
     @Column(name = "id_user", nullable = false)
-    private String idUser;
+    private String userId;
 
     @NotBlank
     @Column(name = "lock", nullable = false)
@@ -58,12 +58,12 @@ public class EnkelvoudigInformatieObjectLock {
         this.enkelvoudiginformatieobjectUUID = enkelvoudiginformatieobjectUUID;
     }
 
-    public String getIdUser() {
-        return idUser;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setIdUser(final String idUser) {
-        this.idUser = idUser;
+    public void setUserId(final String userId) {
+        this.userId = userId;
     }
 
     public String getLock() {
