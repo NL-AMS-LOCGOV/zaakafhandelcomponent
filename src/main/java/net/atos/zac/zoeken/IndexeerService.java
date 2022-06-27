@@ -57,7 +57,7 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Transactional
 public class IndexeerService {
 
-    private static final String SOLR_CORE = "zac";
+    public static final String SOLR_CORE = "zac";
 
     private static final Logger LOG = Logger.getLogger(IndexeerService.class.getName());
 
