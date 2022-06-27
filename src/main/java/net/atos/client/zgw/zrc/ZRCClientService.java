@@ -249,9 +249,9 @@ public class ZRCClientService {
      * @param zaak     {@link Zaak} with parts that need to be updated.
      * @return Updated {@link Zaak}
      */
-    public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
+    public Zaak updateZaak(final UUID zaakUUID, final Zaak zaak, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        return updateZaakPartially(zaakUUID, zaak);
+        return updateZaak(zaakUUID, zaak);
     }
 
     /**
@@ -261,7 +261,7 @@ public class ZRCClientService {
      * @param zaak     {@link Zaak} with parts that need to be updated.
      * @return Updated {@link Zaak}
      */
-    public Zaak updateZaakPartially(final UUID zaakUUID, final Zaak zaak) {
+    public Zaak updateZaak(final UUID zaakUUID, final Zaak zaak) {
         return zrcClient.zaakPartialUpdate(zaakUUID, zaak);
     }
 

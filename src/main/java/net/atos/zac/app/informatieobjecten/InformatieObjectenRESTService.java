@@ -308,7 +308,7 @@ public class InformatieObjectenRESTService {
             final String lock = drcClientService.lockEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID, loggedInUser.getId());
             final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
 
-            final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.partialUpdateEnkelvoudigInformatieobject(
+            final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.updateEnkelvoudigInformatieobject(
                     enkelvoudigInformatieobjectUUID, restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
                     restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens, lock, file));
 
