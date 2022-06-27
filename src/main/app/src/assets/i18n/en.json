@@ -428,7 +428,6 @@
   "msg.zaak.heropend": "Case has been reopened",
   "msg.zaak.hervatten": "The actual duration of the supension has been {{duur}} days (expected duration {{verwachteDuur}} days).",
   "msg.zaak.opschorten": "Enter the expected duration of the supension.",
-  "msg.zaak.koppelen.uitgevoerd": "Case \"{{zaak}}\" is linked as {{relatie}} to case \"{{gekoppeldeZaak}}\"",
   "msg.zaak.koppelen.niet.toegestaan": "No link is possible. There are already links on the case to be linked or on the current case that conflict.",
   "msg.zaak.toegekend": "The case has been assigned to {{behandelaar}}",
   "msg.zaak.vrijgegeven": "The case has been released",
