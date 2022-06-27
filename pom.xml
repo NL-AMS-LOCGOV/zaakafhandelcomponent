@@ -270,7 +270,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specificaties/kvk/zoeken-openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/zoeken-openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <library>microprofile</library>
@@ -294,7 +294,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specificaties/kvk/basisprofiel-openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/basisprofiel-openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <library>microprofile</library>
@@ -318,7 +318,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specificaties/brp/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/brp/openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <library>microprofile</library>
@@ -342,7 +342,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specificaties/vrl/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specs/vrl/openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
                             <library>microprofile</library>

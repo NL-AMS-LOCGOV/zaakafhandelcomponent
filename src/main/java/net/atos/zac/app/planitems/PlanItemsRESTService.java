@@ -19,8 +19,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.planitems.model.UserEventListenerActie;
-
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -31,11 +29,11 @@ import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
+import net.atos.zac.app.planitems.model.UserEventListenerActie;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
-import net.atos.zac.zaaksturing.exception.ResulttaattypeNotFoundException;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.IndexeerService;
@@ -115,22 +113,20 @@ public class PlanItemsRESTService {
     public void doUserEventListener(final RESTUserEventListenerData userEventListenerData) {
         switch (userEventListenerData.actie) {
             case INTAKE_AFRONDEN -> {
+                final PlanItemInstance planItemInstance = caseService.readOpenPlanItem(userEventListenerData.planItemInstanceId);
+                caseVariablesService.setOntvankelijk(planItemInstance.getCaseInstanceId(), userEventListenerData.zaakOntvankelijk);
                 if (!userEventListenerData.zaakOntvankelijk) {
                     final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
                     final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
-                    if (zaakafhandelParameters.getNietOntvankelijkResultaattype() == null) {
-                        throw new ResulttaattypeNotFoundException("geen resultaattype voor het niet ontvankelijk verklaren");
-                    }
                     zgwApiService.createResultaatForZaak(zaak, zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
                 }
-                caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
             }
             case ZAAK_AFHANDELEN -> {
                 zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
-                caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
             }
         }
+        caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
     }
 }
