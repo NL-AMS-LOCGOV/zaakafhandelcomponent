@@ -14,3 +14,21 @@
 .mat-column-actions {
   width: 170px;
 }
+
+.mat-header-cell {
+  mat-form-field {
+    width: 100%
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    width: auto;
+  }
+
+  ::ng-deep .mat-date-range-input-container {
+    min-width: 170px;
+  }
+
+  ::ng-deep .mat-date-range-input-end-wrapper {
+    width: 0;
+  }
+}

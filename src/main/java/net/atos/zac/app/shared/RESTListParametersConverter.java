@@ -12,10 +12,10 @@ import net.atos.zac.shared.model.Paging;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.shared.model.Sorting;
 
-public class RESTListParametersConverter {
+public abstract class RESTListParametersConverter<LP extends ListParameters> {
 
-    public static ListParameters convert(final RESTListParameters restParameters) {
-        final ListParameters parameters = new ListParameters();
+    public LP convert(final RESTListParameters restParameters) {
+        final LP parameters = getListParameters();
         if (restParameters == null) {
             return parameters;
         }
@@ -25,4 +25,7 @@ public class RESTListParametersConverter {
         parameters.setPaging(new Paging(restParameters.page, restParameters.maxResults));
         return parameters;
     }
+
+    public abstract LP getListParameters();
+
 }
