@@ -18,9 +18,16 @@
             <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header>
                     <mat-card-title>
-                        <mat-icon *ngIf="infoObject.locked" class="material-icons-outlined">lock</mat-icon>
                         {{'informatieobject' | translate}}
                     </mat-card-title>
+                    <mat-chip-list selectable="false" fxLayout="row">
+                        <ng-container *ngFor="let indicatie of indicaties">
+                            <mat-chip [color]="indicatie.color" selected [matTooltip]="indicatie.info">
+                                {{indicatie.naam | translate}}
+                                <mat-icon *ngIf="indicatie.info">info_outline</mat-icon>
+                            </mat-chip>
+                        </ng-container>
+                    </mat-chip-list>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>

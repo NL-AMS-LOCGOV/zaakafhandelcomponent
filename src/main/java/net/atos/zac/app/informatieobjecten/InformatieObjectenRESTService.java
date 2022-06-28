@@ -6,6 +6,7 @@
 package net.atos.zac.app.informatieobjecten;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,6 +33,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+
+import net.atos.zac.event.EventingService;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -101,6 +108,12 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private InboxDocumentenService inboxDocumentenService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
+
+    @Inject
+    private EventingService eventingService;
 
     @Inject
     private RESTZaakInformatieobjectConverter restZaakInformatieobjectConverter;
@@ -271,7 +284,13 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
-        zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid, documentVerwijderenGegevens.reden);
+        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
+                enkelvoudigInformatieObjectLockService.find(uuid);
+
+        if (enkelvoudigInformatieObjectLock == null || enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())) {
+            zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid,
+                                                                    documentVerwijderenGegevens.reden);
+        }
         return Response.noContent().build();
     }
 
@@ -301,35 +320,75 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/partialupdate")
     public RESTEnkelvoudigInformatieobject partialUpdateEnkelvoudigInformatieObject(
-            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens) {
-        final UUID enkelvoudigInformatieobjectUUID = UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid);
-        final LoggedInUser loggedInUser = loggedInUserInstance.get();
+            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens) throws IllegalAccessException {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
+                drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid));
+        final String loggedInUserId = loggedInUserInstance.get().getId();
+        boolean tempLock = false;
+
         try {
-            final String lock = drcClientService.lockEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID, loggedInUser.getId());
-            final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
+            final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
+            if (enkelvoudigInformatieobject.getLocked()) {
+                enkelvoudigInformatieObjectLock =
+                        enkelvoudigInformatieObjectLockService.find(enkelvoudigInformatieobject.getUUID());
+            } else {
+                tempLock = true;
+                enkelvoudigInformatieObjectLock =
+                        enkelvoudigInformatieObjectLockService.create(enkelvoudigInformatieobject.getUUID(),
+                                                                      loggedInUserId);
+            }
 
-            final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.partialUpdateEnkelvoudigInformatieobject(
-                    enkelvoudigInformatieobjectUUID, restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
-                    restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens, lock, file));
+            if (enkelvoudigInformatieObjectLock != null && enkelvoudigInformatieObjectLock.getUserId()
+                    .equals(loggedInUserId)) {
+                final RESTFileUpload file = (RESTFileUpload) httpSession.get()
+                        .getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
 
-            return restInformatieobjectConverter.convert(returnObject);
+                final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject =
+                        drcClientService.partialUpdateEnkelvoudigInformatieobject(
+                                enkelvoudigInformatieobject.getUUID(),
+                                restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
+                                restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
+                                                                      enkelvoudigInformatieObjectLock.getLock(), file));
+
+                return restInformatieobjectConverter.convert(returnObject);
+            }
         } finally {
-            drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID, loggedInUser.getId());
+            if (tempLock) {
+                enkelvoudigInformatieObjectLockService.delete(enkelvoudigInformatieobject.getUUID(), loggedInUserId);
+            }
         }
+
+        throw new IllegalAccessException("Niet toegestaan om document te wijzigen");
     }
 
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.lockEnkelvoudigInformatieobject(uuid, loggedInUserInstance.get().getId());
+        enkelvoudigInformatieObjectLockService.create(uuid, loggedInUserInstance.get().getId());
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }
 
     @POST
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
-        drcClientService.unlockEnkelvoudigInformatieobject(uuid, loggedInUserInstance.get().getId());
+        try {
+            enkelvoudigInformatieObjectLockService.delete(uuid, loggedInUserInstance.get().getId());
+        } catch (final IllegalAccessException e) {
+            Response.notModified().build();
+        }
+
+        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/informatieobject/{uuid}/wijziging/toegestaan")
+    public Response isWijzigenEnkelvoudigInformatieObjectToegestaan(@PathParam("uuid") final UUID uuid) {
+        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
+                enkelvoudigInformatieObjectLockService.find(uuid);
+        return Response.ok(enkelvoudigInformatieObjectLock == null ||
+                                   enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())).build();
     }
 
     @GET

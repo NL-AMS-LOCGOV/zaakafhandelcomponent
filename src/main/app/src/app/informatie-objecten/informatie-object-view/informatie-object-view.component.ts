@@ -36,6 +36,9 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
+import {Indicatie} from '../../zaken/model/indicatie';
+import {IdentityService} from '../../identity/identity.service';
+import {combineLatestWith} from 'rxjs';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -49,10 +52,12 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
+    indicaties: Indicatie[];
     action: string;
     versieInformatie: string;
     zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
+    isWijzigenToegestaan: boolean = false;
 
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
@@ -67,7 +72,8 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 private websocketService: WebsocketService,
                 private router: Router,
                 private translate: TranslateService,
-                private dialog: MatDialog) {
+                private dialog: MatDialog,
+                private identityService: IdentityService) {
         super();
     }
 
@@ -75,8 +81,12 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
             this.zaak = data['zaak'];
-            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid).subscribe(infoObject => {
+            const readEnkelvoudigInformatieObject$ = this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid);
+            const isWijzigenToegestaan$ = this.informatieObjectenService.isWijzigenInformatieObjectToegestaan(this.infoObject.uuid);
+
+            readEnkelvoudigInformatieObject$.pipe(combineLatestWith(isWijzigenToegestaan$)).subscribe(([infoObject, isWijzigenToegestaan]) => {
                 this.laatsteVersieInfoObject = infoObject;
+                this.isWijzigenToegestaan = isWijzigenToegestaan;
                 this.toevoegenActies();
                 this.updateVersieInformatie();
                 this.loadZaakInformatieobjecten();
@@ -93,6 +103,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 });
 
             this.loadHistorie();
+            this.loadIndicaties();
         }));
     }
 
@@ -115,6 +126,17 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.websocketService.removeListener(this.documentListener);
     }
 
+    private loadIndicaties() {
+        this.indicaties = [];
+        if (this.infoObject.locked) {
+            this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
+                console.log('hallo');
+                this.indicaties.push(new Indicatie('indicatieVergrendeld',
+                    this.translate.instant('msg.document.vergrendeld', {gebruiker: ingelogdeMedewerker.naam})));
+            });
+        }
+    }
+
     private toevoegenActies() {
         this.menu = [
             new HeaderMenuItem('informatieobject'),
@@ -126,7 +148,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
         // Als er wel een zaak gekoppeld is, dan moet deze niet gesloten zijn.
         // ToDo: Vervangen door Policy
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaak?.rechten.open) {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaak?.rechten.open && this.isWijzigenToegestaan) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -143,9 +165,21 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                         });
                 }, 'edit'));
             }
+
+            if (this.infoObject.locked) {
+                this.menu.push(new ButtonMenuItem('actie.unlock', () => {
+                    this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid)
+                        .subscribe(() => {});
+                }, 'lock_open'));
+            } else {
+                this.menu.push(new ButtonMenuItem('actie.lock', () => {
+                    this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid)
+                        .subscribe(() => {});
+                }, 'lock'));
+            }
         }
 
-        if (this.zaak) {
+        if (this.zaak && this.isWijzigenToegestaan) {
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
     }
@@ -166,12 +200,17 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         if (event) {
             console.log('callback loadInformatieObject: ' + event.key);
         }
-        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid)
-            .subscribe(informatieObject => {
-                this.infoObject = informatieObject;
-                this.laatsteVersieInfoObject = informatieObject;
-                this.updateVersieInformatie();
-            });
+        const readEnkelvoudigInformatieObject$ = this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid);
+        const isWijzigenToegestaan$ = this.informatieObjectenService.isWijzigenInformatieObjectToegestaan(this.infoObject.uuid);
+
+        readEnkelvoudigInformatieObject$.pipe(combineLatestWith(isWijzigenToegestaan$)).subscribe(([infoObject, isWijzigenToegestaan]) => {
+            this.infoObject = infoObject;
+            this.laatsteVersieInfoObject = infoObject;
+            this.isWijzigenToegestaan = isWijzigenToegestaan;
+            this.toevoegenActies();
+            this.updateVersieInformatie();
+            this.loadIndicaties();
+        });
     }
 
     haalVersieOp(versie: number) {
