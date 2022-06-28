@@ -6,10 +6,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ZakenService} from '../zaken.service';
-import {ZaakOverzicht} from '../model/zaak-overzicht';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 
 @Component({
     templateUrl: 'zaken-vrijgeven-dialog.component.html',
@@ -22,7 +22,7 @@ export class ZakenVrijgevenDialogComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<ZakenVrijgevenDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ZaakOverzicht[],
+        @Inject(MAT_DIALOG_DATA) public data: ZaakZoekObject[],
         private mfbService: MaterialFormBuilderService,
         private zakenService: ZakenService) {
     }
@@ -41,7 +41,7 @@ export class ZakenVrijgevenDialogComponent implements OnInit {
     vrijgeven(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.vrijgeven(this.data, this.redenFormField.formControl.value).subscribe(() => {
+        this.zakenService.vrijgeven(this.data.map(zaak => zaak.id), this.redenFormField.formControl.value).subscribe(() => {
             this.dialogRef.close(true);
         });
     }

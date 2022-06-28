@@ -343,12 +343,11 @@ public class InformatieObjectenRESTService {
                 final RESTFileUpload file = (RESTFileUpload) httpSession.get()
                         .getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
 
-                final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject =
-                        drcClientService.partialUpdateEnkelvoudigInformatieobject(
-                                enkelvoudigInformatieobject.getUUID(),
-                                restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
-                                restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
-                                                                      enkelvoudigInformatieObjectLock.getLock(), file));
+                final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.updateEnkelvoudigInformatieobject(
+                        enkelvoudigInformatieobject.getUUID(), restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
+                        restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
+                                                              enkelvoudigInformatieObjectLock.getLock(),
+                                                              file));
 
                 return restInformatieobjectConverter.convert(returnObject);
             }

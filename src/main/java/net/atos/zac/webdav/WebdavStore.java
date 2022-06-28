@@ -117,7 +117,7 @@ public class WebdavStore implements IWebdavStore {
                 final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
                 enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
                 enkelvoudigInformatieobjectWithInhoudAndLock.setInhoud(IOUtils.toByteArray(content));
-                return drcClientService.partialUpdateEnkelvoudigInformatieobject(
+                return drcClientService.updateEnkelvoudigInformatieobject(
                         webdavGegevens.enkelvoudigInformatieibjectUUID(), TOELICHTING,
                         enkelvoudigInformatieobjectWithInhoudAndLock).getBestandsomvang();
             } catch (final IOException e) {

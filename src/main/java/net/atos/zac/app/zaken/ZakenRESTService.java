@@ -235,8 +235,8 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}")
     public RESTZaak partialUpdateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakEditMetRedenGegevens.zaak),
-                                                                      restZaakEditMetRedenGegevens.reden);
+        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(restZaakEditMetRedenGegevens.zaak),
+                                                             restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -250,8 +250,8 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/opschorting")
     public RESTZaak opschortenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakOpschortGegevens restZaakOpschortGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
-                                                                      restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
+        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
+                                                             restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
             caseVariablesService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
             caseVariablesService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
@@ -274,7 +274,7 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}/verlenging")
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
-        final Zaak updatedZaak = zrcClientService.updateZaakPartially(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), VERLENGING);
+        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), VERLENGING);
         if (restZaakVerlengGegevens.takenVerlengen) {
             final int aantalTakenVerlengd = verlengOpenTaken(zaakUUID, restZaakVerlengGegevens.duurDagen);
             if (aantalTakenVerlengd > 0) {
@@ -574,8 +574,8 @@ public class ZakenRESTService {
         hoofdzaak.setDeelzaken(deelzaken);
         deelzaak.setHoofdzaak(hoofdzaak.getUrl());
 
-        zrcClientService.updateZaakPartially(hoofdzaakUuid, hoofdzaak);
-        zrcClientService.updateZaakPartially(deelzaakUuid, deelzaak);
+        zrcClientService.updateZaak(hoofdzaakUuid, hoofdzaak);
+        zrcClientService.updateZaak(deelzaakUuid, deelzaak);
         eventingService.send(ZAAK.updated(deelzaakUuid));
         eventingService.send(ZAAK.updated(hoofdzaakUuid));
     }

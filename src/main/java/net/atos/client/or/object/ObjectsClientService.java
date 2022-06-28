@@ -49,7 +49,7 @@ public class ObjectsClientService {
      * @param object {@link ORObject}.
      * @return Updated {@link ORObject}.
      */
-    public ORObject updateObject(final ORObject object) {
+    public ORObject replaceObject(final ORObject object) {
         return objectsClient.objectUpdate(object.getUuid(), object);
     }
 }

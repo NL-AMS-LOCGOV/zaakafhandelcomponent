@@ -10,3 +10,21 @@
   z-index: 10;
   transform: translateX(-50%);
 }
+
+.mat-header-cell {
+  mat-form-field {
+    width: 100%
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    width: auto;
+  }
+
+  ::ng-deep .mat-date-range-input-container {
+    min-width: 70px;
+  }
+
+  ::ng-deep .mat-date-range-input-end-wrapper {
+    width: 0;
+  }
+}

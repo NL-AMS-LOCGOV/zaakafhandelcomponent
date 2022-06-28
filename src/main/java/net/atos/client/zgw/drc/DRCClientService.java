@@ -89,7 +89,7 @@ public class DRCClientService {
         return createInvocationBuilder(enkelvoudigInformatieobjectURI).get(EnkelvoudigInformatieobject.class);
     }
 
-    public EnkelvoudigInformatieobjectWithInhoudAndLock partialUpdateEnkelvoudigInformatieobject(final UUID uuid, final String toelichting,
+    public EnkelvoudigInformatieobjectWithInhoudAndLock updateEnkelvoudigInformatieobject(final UUID uuid, final String toelichting,
             final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieObjectWithInhoudAndLock) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return drcClient.enkelvoudigInformatieobjectPartialUpdate(uuid, enkelvoudigInformatieObjectWithInhoudAndLock);

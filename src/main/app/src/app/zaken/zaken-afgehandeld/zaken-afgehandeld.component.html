@@ -10,7 +10,7 @@
 
         <ng-container matColumnDef="zaak.identificatie_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.IDENTIFICATIE] = $event; filtersChange()"></zac-tekst-filter>
+                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.ZAAK_IDENTIFICATIE] = $event; filtersChange()"></zac-tekst-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="zaak.identificatie">
