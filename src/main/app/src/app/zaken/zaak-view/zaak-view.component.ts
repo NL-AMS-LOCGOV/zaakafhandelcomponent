@@ -818,6 +818,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     taakGestart(): void {
         this.actiefPlanItem = null;
         this.actionsSidenav.close();
+        this.updateZaak();
     }
 
     mailVerstuurd(): void {
