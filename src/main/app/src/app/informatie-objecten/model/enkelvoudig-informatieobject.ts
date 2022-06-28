@@ -4,6 +4,7 @@
  */
 
 import {FileFormat} from './file-format';
+import {User} from '../../identity/model/user';
 
 export class EnkelvoudigInformatieobject {
     uuid: string;
@@ -27,5 +28,5 @@ export class EnkelvoudigInformatieobject {
     bestandsomvang: number;
     link: string;
     indicatieGebruiksrecht: boolean;
-    locked: boolean;
+    gelockedDoor: User;
 }

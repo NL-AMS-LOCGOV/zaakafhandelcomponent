@@ -25,7 +25,7 @@ public class EnkelvoudigInformatieObjectLockService {
     @Inject
     private DRCClientService drcClientService;
 
-    public EnkelvoudigInformatieObjectLock create(final UUID enkelvoudiginformatieobejctUUID, final String idUser) {
+    public EnkelvoudigInformatieObjectLock createLock(final UUID enkelvoudiginformatieobejctUUID, final String idUser) {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieobjectLock = new EnkelvoudigInformatieObjectLock();
         enkelvoudigInformatieobjectLock.setEnkelvoudiginformatieobjectUUID(enkelvoudiginformatieobejctUUID);
         enkelvoudigInformatieobjectLock.setUserId(idUser);
@@ -34,7 +34,7 @@ public class EnkelvoudigInformatieObjectLockService {
         return enkelvoudigInformatieobjectLock;
     }
 
-    public EnkelvoudigInformatieObjectLock find(final UUID enkelvoudiginformatieobjectUUID) {
+    public EnkelvoudigInformatieObjectLock findLock(final UUID enkelvoudiginformatieobjectUUID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<EnkelvoudigInformatieObjectLock> query = builder.createQuery(EnkelvoudigInformatieObjectLock.class);
         final Root<EnkelvoudigInformatieObjectLock> root = query.from(EnkelvoudigInformatieObjectLock.class);
@@ -43,8 +43,8 @@ public class EnkelvoudigInformatieObjectLockService {
         return resultList.isEmpty() ? null : resultList.get(0);
     }
 
-    public void delete(final UUID enkelvoudigInformatieObjectUUID, final String idUser) throws IllegalAccessException {
-        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock = find(enkelvoudigInformatieObjectUUID);
+    public void deleteLock(final UUID enkelvoudigInformatieObjectUUID, final String idUser) throws IllegalAccessException {
+        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock = findLock(enkelvoudigInformatieObjectUUID);
         if (enkelvoudigInformatieObjectLock != null && enkelvoudigInformatieObjectLock.getUserId().equals(idUser)) {
             drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID,
                                                                enkelvoudigInformatieObjectLock.getLock());

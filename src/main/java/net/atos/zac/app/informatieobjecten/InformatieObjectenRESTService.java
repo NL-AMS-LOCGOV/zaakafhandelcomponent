@@ -285,7 +285,7 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
-                enkelvoudigInformatieObjectLockService.find(uuid);
+                enkelvoudigInformatieObjectLockService.findLock(uuid);
 
         if (enkelvoudigInformatieObjectLock == null || enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())) {
             zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid,
@@ -330,12 +330,12 @@ public class InformatieObjectenRESTService {
             final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
             if (enkelvoudigInformatieobject.getLocked()) {
                 enkelvoudigInformatieObjectLock =
-                        enkelvoudigInformatieObjectLockService.find(enkelvoudigInformatieobject.getUUID());
+                        enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
             } else {
                 tempLock = true;
                 enkelvoudigInformatieObjectLock =
-                        enkelvoudigInformatieObjectLockService.create(enkelvoudigInformatieobject.getUUID(),
-                                                                      loggedInUserId);
+                        enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
+                                                                          loggedInUserId);
             }
 
             if (enkelvoudigInformatieObjectLock != null && enkelvoudigInformatieObjectLock.getUserId()
@@ -353,7 +353,7 @@ public class InformatieObjectenRESTService {
             }
         } finally {
             if (tempLock) {
-                enkelvoudigInformatieObjectLockService.delete(enkelvoudigInformatieobject.getUUID(), loggedInUserId);
+                enkelvoudigInformatieObjectLockService.deleteLock(enkelvoudigInformatieobject.getUUID(), loggedInUserId);
             }
         }
 
@@ -363,7 +363,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
-        enkelvoudigInformatieObjectLockService.create(uuid, loggedInUserInstance.get().getId());
+        enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }
@@ -372,7 +372,7 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
         try {
-            enkelvoudigInformatieObjectLockService.delete(uuid, loggedInUserInstance.get().getId());
+            enkelvoudigInformatieObjectLockService.deleteLock(uuid, loggedInUserInstance.get().getId());
         } catch (final IllegalAccessException e) {
             Response.notModified().build();
         }
@@ -385,7 +385,7 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}/wijziging/toegestaan")
     public Response isWijzigenEnkelvoudigInformatieObjectToegestaan(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
-                enkelvoudigInformatieObjectLockService.find(uuid);
+                enkelvoudigInformatieObjectLockService.findLock(uuid);
         return Response.ok(enkelvoudigInformatieObjectLock == null ||
                                    enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())).build();
     }

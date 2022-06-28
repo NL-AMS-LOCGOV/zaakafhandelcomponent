@@ -106,12 +106,12 @@ public class WebdavStore implements IWebdavStore {
                 final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
                 if (enkelvoudigInformatieobject.getLocked()) {
                     enkelvoudigInformatieObjectLock =
-                            enkelvoudigInformatieObjectLockService.find(enkelvoudigInformatieobject.getUUID());
+                            enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
                 } else {
                     tempLock = true;
                     enkelvoudigInformatieObjectLock =
-                            enkelvoudigInformatieObjectLockService.create(enkelvoudigInformatieobject.getUUID(),
-                                                                          webdavGegevens.loggedInUser().getId());
+                            enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
+                                                                              webdavGegevens.loggedInUser().getId());
                 }
 
                 final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
@@ -125,8 +125,8 @@ public class WebdavStore implements IWebdavStore {
             } finally {
                 if (tempLock) {
                     try {
-                        enkelvoudigInformatieObjectLockService.delete(webdavGegevens.enkelvoudigInformatieibjectUUID(),
-                                                                      webdavGegevens.loggedInUser().getId());
+                        enkelvoudigInformatieObjectLockService.deleteLock(webdavGegevens.enkelvoudigInformatieibjectUUID(),
+                                                                          webdavGegevens.loggedInUser().getId());
                     } catch (IllegalAccessException ignored) {
                     }
                 }

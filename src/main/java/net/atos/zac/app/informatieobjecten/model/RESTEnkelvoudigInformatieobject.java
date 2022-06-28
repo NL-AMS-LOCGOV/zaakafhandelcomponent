@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.informatieobjecten.model;
 
+import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.identity.model.User;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -56,5 +59,5 @@ public class RESTEnkelvoudigInformatieobject {
 
     public boolean indicatieGebruiksrecht;
 
-    public boolean locked;
+    public RESTUser gelockedDoor;
 }

@@ -36,7 +36,7 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
-import {Indicatie} from '../../zaken/model/indicatie';
+import {Indicatie} from '../../shared/model/indicatie';
 import {IdentityService} from '../../identity/identity.service';
 import {combineLatestWith} from 'rxjs';
 
@@ -128,12 +128,8 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     private loadIndicaties() {
         this.indicaties = [];
-        if (this.infoObject.locked) {
-            this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
-                this.indicaties.push(new Indicatie('indicatieVergrendeld',
-                    this.translate.instant('msg.document.vergrendeld', {gebruiker: ingelogdeMedewerker.naam})));
-            });
-        }
+        this.indicaties.push(new Indicatie('indicatieVergrendeld',
+            this.translate.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})));
     }
 
     private toevoegenActies() {
@@ -165,7 +161,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 }, 'edit'));
             }
 
-            if (this.infoObject.locked) {
+            if (this.infoObject.gelockedDoor) {
                 this.menu.push(new ButtonMenuItem('actie.unlock', () => {
                     this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid)
                         .subscribe(() => {});

@@ -13,6 +13,14 @@ import java.time.LocalDate;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import net.atos.zac.app.identity.converter.RESTUserConverter;
+
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+
+import net.atos.zac.identity.IdentityService;
+
 import org.apache.commons.lang3.BooleanUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -46,6 +54,15 @@ public class RESTInformatieobjectConverter {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private RESTUserConverter restUserConverter;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
+
+    @Inject
+    private IdentityService identityService;
 
     public RESTEnkelvoudigInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = convert(zaakInformatieObject.getInformatieobject());
@@ -87,7 +104,12 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
         restEnkelvoudigInformatieobject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
         restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
-        restEnkelvoudigInformatieobject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieObject.getLocked());
+        if (enkelvoudigInformatieObject.getLocked()) {
+            final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
+            enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObject.getUUID());
+            restEnkelvoudigInformatieobject.gelockedDoor =
+                    restUserConverter.convertUser(identityService.readUser(enkelvoudigInformatieObjectLock.getUserId()));
+        }
         restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
         restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
                 enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
@@ -186,7 +208,13 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.beschrijving = enkelvoudigInformatieobjectWithInhoudAndLock.getBeschrijving();
         restEnkelvoudigInformatieobject.ontvangstdatum = enkelvoudigInformatieobjectWithInhoudAndLock.getOntvangstdatum();
         restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieobjectWithInhoudAndLock.getVerzenddatum();
-        restEnkelvoudigInformatieobject.locked = BooleanUtils.toBoolean(enkelvoudigInformatieobjectWithInhoudAndLock.getLocked());
+        if (enkelvoudigInformatieobjectWithInhoudAndLock.getLocked()) {
+            final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
+                    enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobjectWithInhoudAndLock.getUUID());
+            restEnkelvoudigInformatieobject.gelockedDoor =
+                    restUserConverter.convertUser(identityService.readUser(enkelvoudigInformatieObjectLock.getUserId()));
+        }
+        restEnkelvoudigInformatieobject.gelockedDoor = restUserConverter.convertUser(loggedInUserInstance.get());
         restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieobjectWithInhoudAndLock.getBestandsomvang();
         restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
                 enkelvoudigInformatieobjectWithInhoudAndLock.getInformatieobjecttype()).getOmschrijving();
