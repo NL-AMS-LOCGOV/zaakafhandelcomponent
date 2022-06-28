@@ -14,6 +14,7 @@ import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.DatumRange;
+import net.atos.zac.zoeken.model.TaakZoekObject;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 
@@ -43,6 +44,10 @@ public class RESTZoekParametersConverter {
 
         if (restZoekParameters.alleenMijnZaken) {
             zoekParameters.addFilterQuery(ZaakZoekObject.BEHANDELAAR_ID_FIELD, loggedInUserInstance.get().getId());
+        }
+
+        if (restZoekParameters.alleenMijnTaken) {
+            zoekParameters.addFilterQuery(TaakZoekObject.BEHANDELAAR_ID_FIELD, loggedInUserInstance.get().getId());
         }
 
         if (restZoekParameters.zoeken != null) {

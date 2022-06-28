@@ -15,6 +15,8 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public class TaakZoekObject implements ZoekObject {
 
+    public static final String BEHANDELAAR_ID_FIELD = "taak_behandelaarGebruikersnaam";
+
     @Field
     private String id;
 
@@ -63,7 +65,7 @@ public class TaakZoekObject implements ZoekObject {
     @Field("taak_behandelaarNaam")
     private String behandelaarNaam;
 
-    @Field("taak_behandelaarGebruikersnaam")
+    @Field(BEHANDELAAR_ID_FIELD)
     private String behandelaarGebruikersnaam;
 
     @Field("taak_data")

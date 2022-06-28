@@ -56,7 +56,7 @@ public class ZoekenService {
 
         zoekParameters.getZoeken().forEach((zoekVeld, tekst) -> {
             if (StringUtils.isNotBlank(tekst)) {
-                if (zoekVeld == ZoekVeld.IDENTIFICATIE) {
+                if (zoekVeld == ZoekVeld.ZAAK_IDENTIFICATIE) {
                     query.addFilterQuery(String.format("%s:(*%s*)", zoekVeld.getVeld(), tekst));
                 } else {
                     query.addFilterQuery(String.format("%s:(%s)", zoekVeld.getVeld(), tekst));

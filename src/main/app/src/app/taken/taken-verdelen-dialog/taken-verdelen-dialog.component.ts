@@ -6,12 +6,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {IdentityService} from '../../identity/identity.service';
-import {Taak} from '../model/taak';
 import {TakenService} from '../taken.service';
 import {Validators} from '@angular/forms';
 import {MaterialFormBuilderService} from '../../shared/material-form-builder/material-form-builder.service';
 import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
 
 @Component({
     selector: 'zac-taken-verdelen-dialog',
@@ -25,7 +25,7 @@ export class TakenVerdelenDialogComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<TakenVerdelenDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: Taak[],
+        @Inject(MAT_DIALOG_DATA) public data: TaakZoekObject[],
         private mfbService: MaterialFormBuilderService,
         private takenService: TakenService,
         private identityService: IdentityService) {

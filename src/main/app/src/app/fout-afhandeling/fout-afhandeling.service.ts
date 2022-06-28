@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, isDevMode} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -24,7 +24,6 @@ export class FoutAfhandelingService {
     }
 
     public redirect(err: HttpErrorResponse): Observable<never> {
-        console.log(err);
         this.foutmelding = err.message;
         if (err.error instanceof ErrorEvent) {
             // Client-side
@@ -32,14 +31,14 @@ export class FoutAfhandelingService {
             this.bericht = err.error.message;
             this.exception = '';
             this.stack = '';
-        } else {
-            // Server-side error.
-
-            if (err.status === 0 && err.url.startsWith('/rest/')) { // status 0, niet meer ingelogd
+        } else if (err.status === 0 && err.url.startsWith('/rest/')) { // status 0, niet meer ingelogd
+            if (!isDevMode()) {
                 window.location.reload();
                 return;
             }
-
+            this.foutmelding = 'Helaas! Je bent uitgelogd.';
+            this.bericht = '';
+        } else {
             this.foutmelding = `De server heeft code ${err.status} geretourneerd`;
             if (err.error) {
                 this.stack = err.error.stackTrace;

@@ -37,7 +37,7 @@ public class RESTTaak {
 
     public RESTGroup groep;
 
-    public UUID zaakUUID;
+    public UUID zaakUuid;
 
     public String zaakIdentificatie;
 

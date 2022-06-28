@@ -28,6 +28,7 @@ public class RESTTaakZoekObjectConverter {
         restZaakZoekObject.behandelaarGebruikersnaam = taakZoekObject.getBehandelaarGebruikersnaam();
         restZaakZoekObject.zaaktypeOmschrijving = taakZoekObject.getZaaktypeOmschrijving();
         restZaakZoekObject.zaakIdentificatie = taakZoekObject.getZaakIdentificatie();
+        restZaakZoekObject.zaakUuid = taakZoekObject.getZaakUUID();
         return restZaakZoekObject;
     }
 }

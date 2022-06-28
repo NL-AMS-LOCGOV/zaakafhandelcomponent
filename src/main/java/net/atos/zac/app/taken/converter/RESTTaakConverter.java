@@ -120,7 +120,7 @@ public class RESTTaakConverter {
     private RESTTaak convertTaskInfoForOpenCase(final TaskInfo taskInfo) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
-        restTaak.zaakUUID = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
+        restTaak.zaakUuid = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId());
         restTaak.zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId());
         return restTaak;
@@ -129,7 +129,7 @@ public class RESTTaakConverter {
     private RESTTaak convertTaskInfoForClosedCase(final HistoricTaskInstance taskInfo) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(taskInfo.getScopeId());
         final RESTTaak restTaak = convertTaskInfoForCase(taskInfo, zaaktypeUUID);
-        restTaak.zaakUUID = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
+        restTaak.zaakUuid = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId());
         restTaak.zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId());
         return restTaak;

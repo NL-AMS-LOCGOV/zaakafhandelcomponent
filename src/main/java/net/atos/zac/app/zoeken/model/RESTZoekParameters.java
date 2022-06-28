@@ -36,4 +36,6 @@ public class RESTZoekParameters {
     public boolean alleenOpenstaandeZaken;
 
     public boolean alleenAfgeslotenZaken;
+
+    public boolean alleenMijnTaken;
 }
