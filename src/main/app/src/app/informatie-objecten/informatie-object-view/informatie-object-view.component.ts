@@ -130,7 +130,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.indicaties = [];
         if (this.infoObject.locked) {
             this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
-                console.log('hallo');
                 this.indicaties.push(new Indicatie('indicatieVergrendeld',
                     this.translate.instant('msg.document.vergrendeld', {gebruiker: ingelogdeMedewerker.naam})));
             });
