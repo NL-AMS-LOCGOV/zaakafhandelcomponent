@@ -63,7 +63,7 @@ import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-t
 import {Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
-import {Indicatie} from '../model/indicatie';
+import {Indicatie} from '../../shared/model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';

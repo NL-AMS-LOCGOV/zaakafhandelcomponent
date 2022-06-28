@@ -115,6 +115,12 @@ export class InformatieObjectenService {
         );
     }
 
+    isWijzigenInformatieObjectToegestaan(uuid: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.basepath}/informatieobject/${uuid}/wijziging/toegestaan`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     getDownloadURL(uuid: string, versie?: number): string {
         if (versie) {
             return `${this.basepath}/informatieobject/${uuid}/${versie}/download`;

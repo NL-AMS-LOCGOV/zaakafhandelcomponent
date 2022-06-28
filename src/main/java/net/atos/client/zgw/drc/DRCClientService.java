@@ -43,15 +43,6 @@ public class DRCClientService {
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
-    /*
-     * In memory persistance map of locks.
-     * key: Combination of EnkelvoudigInformatieobject UUID and owner of the lock.
-     * value: the lock.
-     *
-     * ToDo: ESUITEDEV-25841
-     */
-    private static final Map<String, String> LOCKS = new HashMap<>();
-
     /**
      * Read {@link EnkelvoudigInformatieobject} via its UUID.
      * Throws a RuntimeException if the {@link EnkelvoudigInformatieobject} can not be read.
@@ -108,27 +99,21 @@ public class DRCClientService {
      * Lock a {@link EnkelvoudigInformatieobject}.
      *
      * @param enkelvoudigInformatieobjectUUID {@link EnkelvoudigInformatieobject}
-     * @param lockOwner                       Owner of the lock
      */
-    public String lockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, String lockOwner) {
+    public String lockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID) {
         // If the EnkelvoudigInformatieobject is already locked a ValidationException is thrown.
-        final String lock = drcClient.enkelvoudigInformatieobjectLock(enkelvoudigInformatieobjectUUID, new Lock()).getLock();
-        LOCKS.put(generateLockId(enkelvoudigInformatieobjectUUID, lockOwner), lock);
-        return lock;
+        return drcClient.enkelvoudigInformatieobjectLock(enkelvoudigInformatieobjectUUID, new Lock()).getLock();
+
     }
 
     /**
      * Unlock a {@link EnkelvoudigInformatieobject}.
      *
      * @param enkelvoudigInformatieobjectUUID {@link EnkelvoudigInformatieobject}
-     * @param lockOwner                       Owner of the lock
+     * @param lock                            The lock id
      */
-    public void unlockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, String lockOwner) {
-        final String lock = LOCKS.get(generateLockId(enkelvoudigInformatieobjectUUID, lockOwner));
-        if (lock != null) {
-            drcClient.enkelvoudigInformatieobjectUnlock(enkelvoudigInformatieobjectUUID, new Lock(lock));
-            LOCKS.remove(generateLockId(enkelvoudigInformatieobjectUUID, lockOwner));
-        }
+    public void unlockEnkelvoudigInformatieobject(final UUID enkelvoudigInformatieobjectUUID, String lock) {
+        drcClient.enkelvoudigInformatieobjectUnlock(enkelvoudigInformatieobjectUUID, new Lock(lock));
     }
 
     /**

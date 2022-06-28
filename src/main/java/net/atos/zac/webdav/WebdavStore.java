@@ -13,6 +13,10 @@ import java.util.UUID;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.http.HttpSession;
 
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,10 +51,14 @@ public class WebdavStore implements IWebdavStore {
 
     private DRCClientService drcClientService;
 
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
+
     // De dummy parameter is nodig omdat de constructie waarmee deze class wordt geinstantieerd deze parameter verwacht
     public WebdavStore(final File dummy) {
         webdavHelper = CDI.current().select(WebdavHelper.class).get();
         drcClientService = CDI.current().select(DRCClientService.class).get();
+        enkelvoudigInformatieObjectLockService =
+                CDI.current().select(EnkelvoudigInformatieObjectLockService.class).get();
     }
 
     @Override
@@ -90,12 +98,24 @@ public class WebdavStore implements IWebdavStore {
         final String token = extraheerToken(resourceUri);
         if (StringUtils.isNotEmpty(token)) {
             final WebdavHelper.Gegevens webdavGegevens = webdavHelper.readGegevens(token);
+            boolean tempLock = false;
             try {
                 SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(), webdavGegevens.loggedInUser());
-                final String lock = drcClientService.lockEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID(),
-                                                                                     webdavGegevens.loggedInUser().getId());
+                final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
+                        drcClientService.readEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID());
+                final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
+                if (enkelvoudigInformatieobject.getLocked()) {
+                    enkelvoudigInformatieObjectLock =
+                            enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
+                } else {
+                    tempLock = true;
+                    enkelvoudigInformatieObjectLock =
+                            enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
+                                                                              webdavGegevens.loggedInUser().getId());
+                }
+
                 final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock = new EnkelvoudigInformatieobjectWithInhoudAndLock();
-                enkelvoudigInformatieobjectWithInhoudAndLock.setLock(lock);
+                enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
                 enkelvoudigInformatieobjectWithInhoudAndLock.setInhoud(IOUtils.toByteArray(content));
                 return drcClientService.updateEnkelvoudigInformatieobject(
                         webdavGegevens.enkelvoudigInformatieibjectUUID(), TOELICHTING,
@@ -103,7 +123,13 @@ public class WebdavStore implements IWebdavStore {
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             } finally {
-                drcClientService.unlockEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID(), webdavGegevens.loggedInUser().getId());
+                if (tempLock) {
+                    try {
+                        enkelvoudigInformatieObjectLockService.deleteLock(webdavGegevens.enkelvoudigInformatieibjectUUID(),
+                                                                          webdavGegevens.loggedInUser().getId());
+                    } catch (IllegalAccessException ignored) {
+                    }
+                }
                 fileStoredObjectMap.remove(token);
             }
         } else {
