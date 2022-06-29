@@ -16,6 +16,7 @@ export class ZakenAfgehandeldDatasource extends ZoekenTableDataSource<ZaakZoekOb
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
+        zoekParameters.type = 'ZAAK';
         zoekParameters.alleenAfgeslotenZaken = true;
     }
 }
