@@ -159,8 +159,17 @@
                                         <th mat-header-cell *matHeaderCellDef> {{'gerelateerde.zaak.' + column | translate}} </th>
                                         <td mat-cell *matCellDef="let row"> {{row[column] | empty}} </td>
                                     </ng-container>
-                                    <tr mat-header-row *matHeaderRowDef="gerelateerdeZaakColumns"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: gerelateerdeZaakColumns;"></tr>
+                                    <ng-container matColumnDef="url" stickyEnd>
+                                        <th mat-header-cell *matHeaderCellDef></th>
+                                        <td mat-cell *matCellDef="let row">
+                                            <button mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
+                                                    [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
+                                                <mat-icon>visibility</mat-icon>
+                                            </button>
+                                        </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="gerelateerdeZaakColumns.concat(['url'])"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: gerelateerdeZaakColumns.concat(['url']);"></tr>
                                 </table>
                             </div>
                         </mat-tab>
