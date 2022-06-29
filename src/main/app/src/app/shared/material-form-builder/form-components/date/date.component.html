@@ -6,8 +6,7 @@
 <mat-form-field appearance="fill" class="full-width">
     <mat-label>{{data.label | translate}}</mat-label>
     <input [formControl]="data.formControl" [id]="data.id + '_datefield'" [matDatepicker]="picker"
-           [required]="data.required"
-           matInput maxlength="10"/>
+           [required]="data.required" matInput/>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
