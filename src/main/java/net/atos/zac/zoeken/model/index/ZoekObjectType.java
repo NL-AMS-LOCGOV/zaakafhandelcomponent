@@ -10,8 +10,8 @@ import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekObject;
 
 public enum ZoekObjectType {
-    ZAAK(ZaakZoekObject.class),
-    TAAK(TaakZoekObject.class);
+    TAAK(TaakZoekObject.class),
+    ZAAK(ZaakZoekObject.class);
 
     private final Class<? extends ZoekObject> zoekObjectClass;
 
