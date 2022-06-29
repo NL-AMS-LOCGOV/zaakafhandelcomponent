@@ -11,7 +11,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
     styleUrls: ['./facet-filter.component.less']
 })
 export class FacetFilterComponent {
-    model: string;
+    @Input() selected: string;
     @Input() opties: string[];
     @Input() label: string;
     @Output() changed = new EventEmitter<string>();

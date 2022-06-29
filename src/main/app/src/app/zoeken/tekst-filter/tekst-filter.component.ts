@@ -11,6 +11,6 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
     styleUrls: ['./tekst-filter.component.less']
 })
 export class TekstFilterComponent {
-    @Input('value') model: string;
+    @Input() value: string;
     @Output() changed = new EventEmitter<string>();
 }
