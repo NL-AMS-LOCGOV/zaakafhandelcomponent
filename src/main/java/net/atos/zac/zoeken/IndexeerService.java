@@ -115,7 +115,7 @@ public class IndexeerService {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
             return batchGrootte;
         }
-        LOG.info("[%s] aantal te indexeren : %d".formatted(type.toString(), countEntities(type)));
+        LOG.info("[%s] aantal te indexeren: %d".formatted(type.toString(), countEntities(type)));
         List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
         final List<ZoekObject> addList = new ArrayList<>();
         final List<String> deleteList = new ArrayList<>();
@@ -141,7 +141,7 @@ public class IndexeerService {
     }
 
     private void processZaken() {
-        ZaakListParameters listParameters = new ZaakListParameters();
+        final ZaakListParameters listParameters = new ZaakListParameters();
         listParameters.setOrdering("-identificatie");
         listParameters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
         boolean hasNext = true;
@@ -158,7 +158,7 @@ public class IndexeerService {
         final int maxResults = 50;
         boolean hasNext = true;
         while (hasNext) {
-            int firstResult = page * maxResults;
+            final int firstResult = page * maxResults;
             final List<Task> tasks = taskService.listOpenTasks(TaakSortering.CREATIEDATUM, SorteerRichting.DESCENDING, firstResult, maxResults);
             tasks.forEach(taak -> createEntity(taak.getId(), ZoekObjectType.TAAK));
             page++;

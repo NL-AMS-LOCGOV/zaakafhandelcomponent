@@ -5,6 +5,8 @@
 
 package net.atos.zac.util;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,18 +34,20 @@ public class IndexerenRESTService {
     }
 
     /**
-     * @param type   ZAAK en TAAK is momenteel geïmplementeerd
-     * @param aantal 100 is een mooi aantal
+     * Indexeert eerst {aantal} taken, daarna {aantal} zaken.
+     *
+     * @param aantal 100 is een goede default waarde
      * @return het aantal resterende items na het uitvoeren van deze aanroep
      */
     @GET
-    @Path("{type}/{aantal}")
-    public String indexeer(@PathParam("type") ZoekObjectType type, @PathParam("aantal") int aantal) {
-        return switch (type) {
-            case ZAAK, TAAK -> {
-                int aantalResterend = indexeerService.indexeer(aantal, type);
-                yield "\"Aantal items resterend: %d\"\n".formatted(aantalResterend);
-            }
-        };
+    @Path("{aantal}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String indexeer(@PathParam("aantal") int aantal) {
+        final StringBuilder info = new StringBuilder();
+        Arrays.stream(ZoekObjectType.values()).forEach(type -> {
+            int aantalResterend = indexeerService.indexeer(aantal, type);
+            info.append("[%s] Aantal resterend: %d\n".formatted(type.toString(), aantalResterend));
+        });
+        return info.toString();
     }
 }
