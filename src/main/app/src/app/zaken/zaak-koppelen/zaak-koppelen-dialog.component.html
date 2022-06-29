@@ -10,7 +10,7 @@
     <div *ngIf="!loading && koppelKeuzes.length === 0">{{'msg.zaak.koppelen.niet.toegestaan' | translate}}</div>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="koppelSelectFormField && koppelSelectFormField.formControl.invalid || loading"
+    <button [disabled]="koppelSelectFormField && koppelSelectFormField.formControl.invalid || loading || this.koppelKeuzes.length === 0 "
             mat-button color="primary" (click)="koppel()" id="zakenKoppelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>
