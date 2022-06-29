@@ -8,7 +8,7 @@
     <div class="table-wrapper">
         <table mat-table [dataSource]="dataSource" matSort [matSortActive]="parameters.sort" matSortDisableClear [matSortDirection]="parameters.order">
 
-            <ng-container matColumnDef="enkelvoudiginformatieobjectID_filter">
+            <ng-container matColumnDef="identificatie_filter">
                 <th mat-header-cell *matHeaderCellDef>
                     <zac-tekst-filter [value]="parameters.identificatie" (changed)="parameters.identificatie = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
@@ -31,7 +31,7 @@
                 </th>
             </ng-container>
 
-            <ng-container matColumnDef="enkelvoudiginformatieobjectID">
+            <ng-container matColumnDef="identificatie">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{'identificatie' | translate}}</th>
                 <td mat-cell *matCellDef="let row">{{row.enkelvoudiginformatieobjectID}}</td>
             </ng-container>

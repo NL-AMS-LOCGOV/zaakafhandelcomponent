@@ -68,7 +68,7 @@ public class InboxDocumentenService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<InboxDocument> query = builder.createQuery(InboxDocument.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
-        query.select(root).where(builder.equal(root.get("enkelvoudiginformatieobjectUUID"), enkelvoudiginformatieobjectUUID));
+        query.select(root).where(builder.equal(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_UUID), enkelvoudiginformatieobjectUUID));
         final List<InboxDocument> resultList = entityManager.createQuery(query).getResultList();
         return resultList.isEmpty() ? null : resultList.get(0);
     }
@@ -125,18 +125,20 @@ public class InboxDocumentenService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final List<Predicate> predicates = new ArrayList<>();
         if (StringUtils.isNotBlank(listParameters.getIdentificatie())) {
-            predicates.add(builder.like(root.get("enkelvoudiginformatieobjectID"), LIKE.formatted(listParameters.getIdentificatie())));
+            predicates.add(builder.like(root.get(InboxDocument.ENKELVOUDIGINFORMATIEOBJECT_ID), LIKE.formatted(listParameters.getIdentificatie())));
         }
         if (StringUtils.isNotBlank(listParameters.getTitel())) {
             String titel = LIKE.formatted(listParameters.getTitel().toLowerCase().replace(" ", "%"));
-            predicates.add(builder.like(builder.lower(root.get("titel")), titel));
+            predicates.add(builder.like(builder.lower(root.get(InboxDocument.TITEL)), titel));
         }
         if (listParameters.getCreatiedatum() != null) {
             if (listParameters.getCreatiedatum().van() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("creatiedatum"), DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().van())));
+                predicates.add(builder.greaterThanOrEqualTo(root.get(InboxDocument.CREATIEDATUM),
+                                                            DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().van())));
             }
             if (listParameters.getCreatiedatum().tot() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("creatiedatum"), DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().tot())));
+                predicates.add(builder.lessThanOrEqualTo(root.get(InboxDocument.CREATIEDATUM),
+                                                         DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().tot())));
             }
         }
         return builder.and(predicates.toArray(new Predicate[0]));

@@ -10,25 +10,19 @@ import net.atos.zac.app.shared.RESTListParametersConverter;
 import net.atos.zac.documenten.model.InboxDocumentListParameters;
 import net.atos.zac.zoeken.model.DatumRange;
 
-public class RESTInboxDocumentListParametersConverter extends RESTListParametersConverter<InboxDocumentListParameters> {
+public class RESTInboxDocumentListParametersConverter extends RESTListParametersConverter<InboxDocumentListParameters, RESTInboxDocumentListParameters> {
 
-    public RESTInboxDocumentListParametersConverter() {
-        super();
-    }
-
-    public InboxDocumentListParameters convert(final RESTInboxDocumentListParameters restParameters) {
-        final InboxDocumentListParameters parameters = super.convert(restParameters);
-        parameters.setIdentificatie(restParameters.identificatie);
-        parameters.setTitel(restParameters.titel);
-        if (restParameters.creatiedatum != null && restParameters.creatiedatum.hasValue()) {
-            parameters.setCreatiedatum(new DatumRange(restParameters.creatiedatum.van, restParameters.creatiedatum.tot));
+    @Override
+    protected void doConvert(final InboxDocumentListParameters listParameters, final RESTInboxDocumentListParameters restListParameters) {
+        listParameters.setIdentificatie(restListParameters.identificatie);
+        listParameters.setTitel(restListParameters.titel);
+        if (restListParameters.creatiedatum != null && restListParameters.creatiedatum.hasValue()) {
+            listParameters.setCreatiedatum(new DatumRange(restListParameters.creatiedatum.van, restListParameters.creatiedatum.tot));
         }
-
-        return parameters;
     }
 
     @Override
-    public InboxDocumentListParameters getListParameters() {
+    protected InboxDocumentListParameters getListParameters() {
         return new InboxDocumentListParameters();
     }
 }

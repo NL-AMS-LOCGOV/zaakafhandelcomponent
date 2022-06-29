@@ -25,6 +25,26 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(schema = SCHEMA, name = "sq_inbox_document", sequenceName = "sq_inbox_document", allocationSize = 1)
 public class InboxDocument {
 
+    /**
+     * Naam van property: {@link InboxDocument#enkelvoudiginformatieobjectID}
+     */
+    public static final String ENKELVOUDIGINFORMATIEOBJECT_ID = "enkelvoudiginformatieobjectID";
+
+    /**
+     * Naam van property: {@link InboxDocument#enkelvoudiginformatieobjectUUID}
+     */
+    public static final String ENKELVOUDIGINFORMATIEOBJECT_UUID = "enkelvoudiginformatieobjectUUID";
+
+    /**
+     * Naam van property: {@link InboxDocument#titel}
+     */
+    public static final String TITEL = "titel";
+
+    /**
+     * Naam van property: {@link InboxDocument#creatiedatum}
+     */
+    public static final String CREATIEDATUM = "creatiedatum";
+
     @Id
     @GeneratedValue(generator = "sq_inbox_document", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_inbox_document")

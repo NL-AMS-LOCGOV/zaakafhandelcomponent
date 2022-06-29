@@ -31,8 +31,8 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     dataSource: MatTableDataSource<InboxDocument> = new MatTableDataSource<InboxDocument>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['enkelvoudiginformatieobjectID', 'creatiedatum', 'titel', 'actions'];
-    filterColumns: string[] = ['enkelvoudiginformatieobjectID_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
+    displayedColumns: string[] = ['identificatie', 'creatiedatum', 'titel', 'actions'];
+    filterColumns: string[] = ['identificatie_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
     parameters: InboxDocumentListParameters;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
 
@@ -45,8 +45,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.inboxDocumenten');
-        this.parameters = SessionStorageUtil.getItem('inboxDocumenten',
-            new InboxDocumentListParameters('creatiedatum', 'desc')) as InboxDocumentListParameters;
+        this.parameters = SessionStorageUtil.getItem('inboxDocumenten', this.getDefaultParameters());
     }
 
     ngAfterViewInit(): void {
@@ -118,7 +117,11 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     }
 
     resetSearch(): void {
-        this.parameters = new InboxDocumentListParameters('creatiedatum', 'desc');
+        this.parameters = this.getDefaultParameters();
         this.filtersChanged();
+    }
+
+    getDefaultParameters(): InboxDocumentListParameters {
+        return new InboxDocumentListParameters('creatiedatum', 'desc');
     }
 }
