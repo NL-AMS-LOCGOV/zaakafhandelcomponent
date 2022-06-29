@@ -13,10 +13,10 @@ import {Opcode} from './model/opcode';
 import {ObjectType} from './model/object-type';
 import {ScreenEvent} from './model/screen-event';
 import {EventCallback} from './model/event-callback';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {WebsocketListener} from './model/websocket-listener';
 import {EventSuspension} from './model/event-suspension';
+import {UtilService} from '../service/util.service';
 
 @Injectable({
     providedIn: 'root'
@@ -42,7 +42,7 @@ export class WebsocketService implements OnDestroy {
 
     private suspended: EventSuspension[] = [];
 
-    constructor(private snackbar: MatSnackBar, private translate: TranslateService) {
+    constructor(private translate: TranslateService, private utilService: UtilService) {
         if (WebsocketService.test) {
             this.mock();
         } else {
@@ -148,14 +148,13 @@ export class WebsocketService implements OnDestroy {
     public addListenerWithSnackbar(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
         return this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
-                snackbar1: this.translate.get('msg.gewijzigd.objecttype.' + event.objectType),
-                snackbar2: this.translate.get(event.objectType.indexOf('_') < 0 ? 'msg.gewijzigd.2' : 'msg.gewijzigd.2.details'),
-                snackbar3: this.translate.get('msg.gewijzigd.operatie.' + event.opcode),
-                snackbar4: this.translate.get('msg.gewijzigd.4'),
-                actie: this.translate.get('actie.verversen')
+                msgPart1: this.translate.get('msg.gewijzigd.objecttype.' + event.objectType),
+                msgPart2: this.translate.get(event.objectType.indexOf('_') < 0 ? 'msg.gewijzigd.2' : 'msg.gewijzigd.2.details'),
+                msgPart3: this.translate.get('msg.gewijzigd.operatie.' + event.opcode),
+                msgPart4: this.translate.get('msg.gewijzigd.4')
             }).subscribe(result => {
-                this.snackbar.open(result.snackbar1 + result.snackbar2 + result.snackbar3 + result.snackbar4, result.actie)
-                    .onAction().subscribe(() => callback(event));
+                callback(event);
+                this.utilService.openSnackbar(result.msgPart1 + result.msgPart2 + result.msgPart3 + result.msgPart4);
             });
         });
     }
