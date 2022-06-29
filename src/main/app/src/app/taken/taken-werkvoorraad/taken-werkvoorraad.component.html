@@ -34,6 +34,7 @@
         <ng-container matColumnDef="naam_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="naam"
+                                  [selected]="dataSource.zoekParameters.filters[FilterVeld.TAAK_NAAM]"
                                   [opties]="this.dataSource.beschikbareFilters[FilterVeld.TAAK_NAAM]"
                                   (changed)="dataSource.zoekParameters.filters[FilterVeld.TAAK_NAAM] = $event; filtersChange()">
                 </zac-facet-filter>
@@ -46,7 +47,8 @@
 
         <ng-container matColumnDef="zaakIdentificatie_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-tekst-filter (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.TAAK_ZAAK_ID] = $event; filtersChange()"></zac-tekst-filter>
+                <zac-tekst-filter [value]="dataSource.zoekParameters.zoeken[ZoekVeld.TAAK_ZAAK_ID]"
+                                  (changed)="dataSource.zoekParameters.zoeken[ZoekVeld.TAAK_ZAAK_ID] = $event; filtersChange()"></zac-tekst-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="zaakIdentificatie">
@@ -57,6 +59,7 @@
         <ng-container matColumnDef="zaaktypeOmschrijving_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="zaaktype"
+                                  [selected]="dataSource.zoekParameters.filters[FilterVeld.TAAK_ZAAKTYPE]"
                                   [opties]="this.dataSource.beschikbareFilters[FilterVeld.TAAK_ZAAKTYPE]"
                                   (changed)="dataSource.zoekParameters.filters[FilterVeld.TAAK_ZAAKTYPE] = $event; filtersChange()">
                 </zac-facet-filter>
@@ -104,6 +107,7 @@
         <ng-container matColumnDef="groep_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="groep"
+                                  [selected]="dataSource.zoekParameters.filters[FilterVeld.TAAK_GROEP]"
                                   [opties]="this.dataSource.beschikbareFilters[FilterVeld.TAAK_GROEP]"
                                   (changed)="dataSource.zoekParameters.filters[FilterVeld.TAAK_GROEP] = $event; filtersChange()">
                 </zac-facet-filter>
@@ -117,6 +121,7 @@
         <ng-container matColumnDef="behandelaar_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="behandelaar"
+                                  [selected]="dataSource.zoekParameters.filters[FilterVeld.TAAK_BEHANDELAAR]"
                                   [opties]="this.dataSource.beschikbareFilters[FilterVeld.TAAK_BEHANDELAAR]"
                                   (changed)="dataSource.zoekParameters.filters[FilterVeld.TAAK_BEHANDELAAR] = $event; filtersChange()">
                 </zac-facet-filter>
