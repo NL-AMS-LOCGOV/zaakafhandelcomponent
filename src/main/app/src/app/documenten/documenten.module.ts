@@ -9,12 +9,14 @@ import {SharedModule} from '../shared/shared.module';
 import {DocumentenRoutingModule} from './documenten-routing.module';
 import {OntkoppeldeDocumentenListComponent} from './ontkoppelde-documenten-list/ontkoppelde-documenten-list.component';
 import {InboxDocumentenListComponent} from './inbox-documenten-list/inbox-documenten-list.component';
+import {ZoekenModule} from '../zoeken/zoeken.module';
 
 @NgModule({
     declarations: [OntkoppeldeDocumentenListComponent, InboxDocumentenListComponent],
     imports: [
         SharedModule,
-        DocumentenRoutingModule
+        DocumentenRoutingModule,
+        ZoekenModule
     ]
 })
 export class DocumentenModule {

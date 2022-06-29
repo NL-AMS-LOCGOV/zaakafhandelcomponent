@@ -12,17 +12,22 @@ import net.atos.zac.shared.model.Paging;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.shared.model.Sorting;
 
-public class RESTListParametersConverter {
+public abstract class RESTListParametersConverter<LP extends ListParameters, RLP extends RESTListParameters> {
 
-    public static ListParameters convert(final RESTListParameters restParameters) {
-        final ListParameters parameters = new ListParameters();
-        if (restParameters == null) {
-            return parameters;
+    public LP convert(final RLP restListParameters) {
+        final LP listParameters = getListParameters();
+        if (restListParameters == null) {
+            return listParameters;
         }
-        if (StringUtils.isNotBlank(restParameters.sort)) {
-            parameters.setSorting(new Sorting(restParameters.sort, SorteerRichting.fromValue(restParameters.order)));
+        if (StringUtils.isNotBlank(restListParameters.sort)) {
+            listParameters.setSorting(new Sorting(restListParameters.sort, SorteerRichting.fromValue(restListParameters.order)));
         }
-        parameters.setPaging(new Paging(restParameters.page, restParameters.maxResults));
-        return parameters;
+        listParameters.setPaging(new Paging(restListParameters.page, restListParameters.maxResults));
+        doConvert(listParameters, restListParameters);
+        return listParameters;
     }
+
+    protected abstract void doConvert(final LP listParameters, final RLP restListParameters);
+
+    protected abstract LP getListParameters();
 }

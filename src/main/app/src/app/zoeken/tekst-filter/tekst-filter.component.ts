@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
     selector: 'zac-tekst-filter',
@@ -11,6 +11,6 @@ import {Component, EventEmitter, Output} from '@angular/core';
     styleUrls: ['./tekst-filter.component.less']
 })
 export class TekstFilterComponent {
-    model: string;
+    @Input('value') model: string;
     @Output() changed = new EventEmitter<string>();
 }

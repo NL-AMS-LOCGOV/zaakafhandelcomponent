@@ -27,7 +27,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
-import net.atos.zac.shared.model.ListParameters;
+import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.util.UriUtil;
 
@@ -58,7 +58,7 @@ public class OntkoppeldeDocumentenService {
         return ontkoppeldDocument;
     }
 
-    public List<OntkoppeldDocument> list(final ListParameters listParameters) {
+    public List<OntkoppeldDocument> list(final OntkoppeldDocumentListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);

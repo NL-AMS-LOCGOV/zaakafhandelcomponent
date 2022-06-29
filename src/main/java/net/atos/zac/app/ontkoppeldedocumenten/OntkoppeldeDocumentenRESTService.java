@@ -24,9 +24,9 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentConverter;
+import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentListParametersConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocument;
-import net.atos.zac.app.shared.RESTListParameters;
-import net.atos.zac.app.shared.RESTListParametersConverter;
+import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentListParameters;
 import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
@@ -39,7 +39,7 @@ import net.atos.zac.util.UriUtil;
 public class OntkoppeldeDocumentenRESTService {
 
     @Inject
-    private OntkoppeldeDocumentenService service;
+    private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
 
     @Inject
     private DRCClientService drcClientService;
@@ -48,18 +48,22 @@ public class OntkoppeldeDocumentenRESTService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private RESTOntkoppeldDocumentConverter converter;
+    private RESTOntkoppeldDocumentConverter ontkoppeldDocumentConverter;
+
+    @Inject
+    private RESTOntkoppeldDocumentListParametersConverter listParametersConverter;
 
     @GET
     @Path("")
-    public RESTResultaat<RESTOntkoppeldDocument> list(@BeanParam final RESTListParameters listParameters) {
-        return new RESTResultaat<>(converter.convert(service.list(RESTListParametersConverter.convert(listParameters))), service.count());
+    public RESTResultaat<RESTOntkoppeldDocument> list(@BeanParam final RESTOntkoppeldDocumentListParameters listParameters) {
+        return new RESTResultaat<>(ontkoppeldDocumentConverter.convert(
+                ontkoppeldeDocumentenService.list(listParametersConverter.convert(listParameters))), ontkoppeldeDocumentenService.count());
     }
 
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
-        final OntkoppeldDocument ontkoppeldDocument = service.find(id);
+        final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
         if (ontkoppeldDocument == null) {
             return; // reeds verwijderd
         }
@@ -70,6 +74,6 @@ public class OntkoppeldeDocumentenRESTService {
             throw new IllegalStateException(String.format("Informatieobject is gekoppeld aan zaak '%s'", zaakUuid));
         }
         drcClientService.deleteEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
-        service.delete(ontkoppeldDocument.getId());
+        ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
     }
 }

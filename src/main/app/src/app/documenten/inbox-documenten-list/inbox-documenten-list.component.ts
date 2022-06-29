@@ -5,12 +5,11 @@
 
 import {UtilService} from '../../core/service/util.service';
 import {InboxDocumentenService} from '../inbox-documenten.service';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
-import {ListParameters} from '../../shared/model/list-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
@@ -20,6 +19,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {InboxDocument} from '../model/inbox-document';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
+import {InboxDocumentListParameters} from '../model/inbox-document-list-parameters';
 
 @Component({
     templateUrl: './inbox-documenten-list.component.html',
@@ -31,8 +31,10 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     dataSource: MatTableDataSource<InboxDocument> = new MatTableDataSource<InboxDocument>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['enkelvoudiginformatieobjectID', 'creatiedatum', 'titel', 'actions'];
-    defaults: ListParameters;
+    displayedColumns: string[] = ['identificatie', 'creatiedatum', 'titel', 'actions'];
+    filterColumns: string[] = ['identificatie_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
+    parameters: InboxDocumentListParameters;
+    filterChange: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private inboxDocumentenService: InboxDocumentenService,
                 private infoService: InformatieObjectenService,
@@ -43,12 +45,12 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.inboxDocumenten');
-        this.defaults = SessionStorageUtil.getItem('inboxDocumenten', new ListParameters('creatiedatum', 'desc')) as ListParameters;
+        this.parameters = SessionStorageUtil.getItem('inboxDocumenten', this.getDefaultParameters());
     }
 
     ngAfterViewInit(): void {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        merge(this.sort.sortChange, this.paginator.page).pipe(
+        merge(this.sort.sortChange, this.paginator.page, this.filterChange).pipe(
             startWith({}),
             switchMap(() => {
                 this.isLoadingResults = true;
@@ -67,20 +69,16 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    getListParameters(): ListParameters {
-        const params = new ListParameters(this.sort.active, this.sort.direction);
-        params.page = this.paginator.pageIndex;
-        params.maxResults = this.paginator.pageSize;
-        return params;
+    getListParameters(): InboxDocumentListParameters {
+        this.parameters.sort = this.sort.active;
+        this.parameters.order = this.sort.direction;
+        this.parameters.page = this.paginator.pageIndex;
+        this.parameters.maxResults = this.paginator.pageSize;
+        return this.parameters;
     }
 
     getDownloadURL(od: InboxDocument): string {
         return this.infoService.getDownloadURL(od.enkelvoudiginformatieobjectUUID);
-    }
-
-    reset(): void {
-        SessionStorageUtil.setItem('inboxDocumenten', new ListParameters('creatiedatum', 'desc'));
-        this.utilService.reloadRoute();
     }
 
     documentVerplaatsen(od: InboxDocument): void {
@@ -113,4 +111,17 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         return informatieobject;
     }
 
+    filtersChanged(): void {
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit();
+    }
+
+    resetSearch(): void {
+        this.parameters = this.getDefaultParameters();
+        this.filtersChanged();
+    }
+
+    getDefaultParameters(): InboxDocumentListParameters {
+        return new InboxDocumentListParameters('creatiedatum', 'desc');
+    }
 }
