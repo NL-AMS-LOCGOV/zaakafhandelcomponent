@@ -44,10 +44,12 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     @Input() opschortReden: string;
     @Input() opschortDuur: number;
     @Input() opschortDatumTijd: string;
-    @Output() doOpschorting: EventEmitter<any> = new EventEmitter<any>();
     @Input() verlengReden: string;
     @Input() verlengDuur: string;
-    @Input() opschortenEnVerlengenReadonly: boolean;
+    @Input() actieOpschorten;
+    @Input() actieHervatten;
+    @Input() actieVerlengen;
+    @Output() doOpschorting: EventEmitter<any> = new EventEmitter<any>();
     @Output() doVerlenging: EventEmitter<any> = new EventEmitter<any>();
 
     showEinddatumGeplandIcon: boolean;

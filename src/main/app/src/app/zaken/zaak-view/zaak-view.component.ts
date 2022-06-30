@@ -160,7 +160,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.utilService.disableActionBar(!zaak.rechten.open);
+        this.utilService.disableActionBar(!zaak.acties.koppelenAanZaak);
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
@@ -314,55 +314,70 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.rechten.open) {
+        if (this.zaak.acties.toevoegenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
+        }
 
+        if (this.zaak.acties.creeerenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_MAKEN;
             }, 'note_add'));
+        }
 
+        if (this.zaak.acties.versturenEmail) {
             this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.MAIL_VERSTUREN;
             }, 'mail'));
+        }
 
+        if (this.zaak.acties.koppelenZaak) {
             this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
                 this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));
+        }
 
-            if (!this.zaak.ontvangstbevestigingVerstuurd && !this.zaak.heropend) {
-                this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
-                    this.actionsSidenav.open();
-                    this.action = SideNavAction.ONTVANGSTBEVESTIGING;
-                }, 'mark_email_read'));
-            }
+        if (this.zaak.acties.versturenOntvangstbevestiging) {
+            this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.ONTVANGSTBEVESTIGING;
+            }, 'mark_email_read'));
+        }
 
-            if (this.zaak.rechten.afbreekbaar && this.zaak.rechten.beeindigbaar && !this.zaak.heropend) {
-                this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
-            }
+        if (this.zaak.acties.afbreken) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+        }
 
-            if (this.zaak.heropend && this.zaak.rechten.beeindigbaar) {
-                this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
-            }
+        if (this.zaak.acties.afsluiten) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
+        }
 
-            const tail: MenuItem[] = [];
+        if (this.zaak.acties.heropenen) {
+            this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
+        }
 
-            if (!this.zaak.initiatorIdentificatie) {
-                tail.push(new HeaderMenuItem('initiator.toevoegen'));
+        const tail: MenuItem[] = [];
+        if (this.zaak.acties.toevoegenPersoon || this.zaak.acties.toevoegenBedrijf) {
+            tail.push(new HeaderMenuItem('initiator.toevoegen'));
+            if (this.zaak.acties.toevoegenPersoon) {
                 tail.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_PERSOON;
                 }, 'emoji_people'));
+            }
+            if (this.zaak.acties.toevoegenBedrijf) {
                 tail.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BEDRIJF;
                 }, 'business'));
             }
+        }
 
+        if (this.zaak.acties.startenPlanItems) {
             this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
                 const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
                 const humanTaskItems: PlanItem[] = planItems.filter(
@@ -377,20 +392,19 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         } else {
-            this.menu.push(
-                new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
+            this.menu = this.menu.concat(tail);
         }
     }
 
     private setupIndicaties(): void {
         this.indicaties = [];
-        if (this.zaak.indicatieOpschorting) {
+        if (this.zaak.isOpgeschort) {
             this.indicaties.push(new Indicatie('indicatieOpschorting', this.zaak.redenOpschorting));
         }
-        if (this.zaak.indicatieVerlenging) {
+        if (this.zaak.isVerlengd) {
             this.indicaties.push(new Indicatie('indicatieVerlenging', this.zaak.redenVerlenging));
         }
-        if (this.zaak.heropend) {
+        if (this.zaak.isHeropend) {
             this.indicaties.push(new Indicatie('indicatieHeropend', this.zaak.status.toelichting));
         }
         if (this.zaak.isDeelzaak) {
@@ -578,7 +592,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     editOpschorting(event: any): void {
         const zaakOpschortGegevens = new ZaakOpschortGegevens();
-        zaakOpschortGegevens.indicatieOpschorting = !this.zaak.indicatieOpschorting;
+        zaakOpschortGegevens.indicatieOpschorting = !this.zaak.isOpgeschort;
         zaakOpschortGegevens.einddatumGepland = event.einddatumGepland;
         zaakOpschortGegevens.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
         zaakOpschortGegevens.redenOpschorting = event.reden;
@@ -603,7 +617,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private loadOpschorting(): void {
-        if (this.zaak.indicatieOpschorting) {
+        if (this.zaak.isOpgeschort) {
             this.zakenService.readOpschortingZaak(this.zaak.uuid).subscribe(objectData => {
                 this.zaakOpschorting = objectData;
             });
@@ -824,17 +838,18 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     mailVerstuurd(): void {
         this.action = null;
         this.actionsSidenav.close();
+        this.updateZaak();
     }
 
-    ontvangstBevestigd(bevestigd: boolean): void {
+    ontvangstBevestigd(): void {
         this.action = null;
         this.actionsSidenav.close();
-        this.zaak.ontvangstbevestigingVerstuurd = bevestigd;
-        this.setupMenu();
+        this.updateZaak();
     }
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
         this.toegevoegdDocument = informatieobject;
+        this.updateZaak();
     }
 
     documentAanmakenStarten(redirectUrl: string): void {
