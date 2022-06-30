@@ -16,9 +16,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
-import org.apache.solr.client.solrj.request.schema.SchemaRequest;
-import org.apache.solr.common.params.CoreAdminParams;
-import org.apache.solr.common.util.NamedList;
+import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 public class SolrDeployer {
@@ -32,27 +30,44 @@ public class SolrDeployer {
     public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr", solrUrl)).build();
 
-        final CoreAdminRequest coreAdminRequest = new CoreAdminRequest();
-        coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
-        coreAdminRequest.setIndexInfoNeeded(false);
-
         try {
-            NamedList<Object> response = solrClient.request(coreAdminRequest);
-            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
 
-            SchemaRequest.Fields fields = new SchemaRequest.Fields();
-            solrClient = new HttpSolrClient.Builder(String.format("%s/solr/zac", solrUrl)).build();
-            response = solrClient.request(fields);
-            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+            final CoreAdminResponse response = CoreAdminRequest.getStatus("zac", solrClient);
+            if (response.getCoreStatus().get("zac") != null) {
+                System.out.println(">>> Core ZAC exists.");
+            }
+            if (response.getCoreStatus().get("zacx") == null) {
+                System.out.println(">>> Core ZACX does noet exist.");
+            }
 
-            final SchemaRequest schemaRequest = new SchemaRequest();
-            response = solrClient.request(fields);
-            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
 
-            fields = new SchemaRequest.Fields();
-            solrClient = new HttpSolrClient.Builder(String.format("%s/solr/zac", solrUrl)).build();
-            response = solrClient.request(fields);
-            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+//            CoreAdminRequest coreAdminRequest = new CoreAdminRequest();
+//            coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
+//            coreAdminRequest.setIndexInfoNeeded(true);
+//            CoreAdminResponse response = solrClient.request(coreAdminRequest);
+//            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+//
+//            coreAdminRequest.setCoreName("zacx");
+//            response = solrClient.request(coreAdminRequest);
+//            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+
+
+            // coreStatus = CoreAdminRequest.createCore("test", solrClient);
+
+
+//            solrClient = new HttpSolrClient.Builder(String.format("%s/solr/zac", solrUrl)).build();
+//            SchemaRequest.Fields fields = new SchemaRequest.Fields();
+//            response = solrClient.request(fields);
+//            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+//
+//            final SchemaRequest schemaRequest = new SchemaRequest();
+//            response = solrClient.request(fields);
+//            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
+//
+//            fields = new SchemaRequest.Fields();
+//            solrClient = new HttpSolrClient.Builder(String.format("%s/solr/zac", solrUrl)).build();
+//            response = solrClient.request(fields);
+//            response.forEach(((s, o) -> System.out.println(String.format("%s - %s", s, o))));
         } catch (final SolrServerException | IOException e) {
             throw new RuntimeException(e);
         }
