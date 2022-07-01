@@ -18,6 +18,8 @@ import java.util.UUID;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import net.atos.client.zgw.shared.model.Archiefnominatie;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 
@@ -513,5 +515,15 @@ public class Zaak {
     @JsonbTransient
     public boolean isVerlengd() {
         return verlenging != null && verlenging.getDuur() != null;
+    }
+
+    @JsonbTransient
+    public boolean isHoofdzaak() {
+        return CollectionUtils.isNotEmpty(deelzaken);
+    }
+
+    @JsonbTransient
+    public boolean isDeelzaak() {
+        return hoofdzaak != null;
     }
 }

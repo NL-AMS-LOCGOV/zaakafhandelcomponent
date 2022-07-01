@@ -64,18 +64,18 @@
             </div>
         </div>
         <div [fxFlex]="25" fxLayout.sm="row">
-            <div *ngIf="!readonly && !opschortenEnVerlengenReadonly" class="time-control">
+            <div *ngIf="actieVerlengen" class="time-control">
                 <button mat-icon-button color="primary" (click)="verlengen()" title="{{ 'actie.zaak.verlengen' | translate}}">
                     <mat-icon class="time-button">history</mat-icon>
                 </button>
             </div>
-            <div *ngIf="!opgeschort && !readonly && !opschortenEnVerlengenReadonly" class="play-control">
+            <div *ngIf="actieOpschorten" class="play-control">
                 <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
                     <mat-icon class="play-icon">play_arrow</mat-icon>
                     <mat-icon class="play-button">pause_circle_outline</mat-icon>
                 </button>
             </div>
-            <div *ngIf="opgeschort && !readonly" class="play-control">
+            <div *ngIf="actieHervatten" class="play-control">
                 <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
                     <mat-icon class="play-icon">pause</mat-icon>
                     <mat-icon class="play-button">play_circle_outline</mat-icon>

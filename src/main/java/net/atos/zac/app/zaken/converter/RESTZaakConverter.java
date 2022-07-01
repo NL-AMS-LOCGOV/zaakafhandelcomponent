@@ -6,16 +6,12 @@
 package net.atos.zac.app.zaken.converter;
 
 import static net.atos.client.zgw.shared.ZGWApiService.STATUSTYPE_HEROPEND_OMSCHRIJVING;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
-import java.net.URI;
 import java.time.Period;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-
-import org.apache.commons.collections4.CollectionUtils;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
@@ -37,9 +33,9 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
-import net.atos.zac.app.zaken.model.RESTZaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CaseVariablesService;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 
@@ -76,7 +72,7 @@ public class RESTZaakConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private RESTZaakRechtenConverter zaakRechtenConverter;
+    private RESTZaakActiesConverter actiesConverter;
 
     @Inject
     private VRLClientService vrlClientService;
@@ -89,6 +85,9 @@ public class RESTZaakConverter {
 
     @Inject
     private CaseVariablesService caseVariablesService;
+
+    @Inject
+    private PolicyService policyService;
 
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
@@ -114,12 +113,13 @@ public class RESTZaakConverter {
         restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
-        if (zaak.getOpschorting() != null) {
-            restZaak.indicatieOpschorting = zaak.getOpschorting().getIndicatie();
+        restZaak.isOpgeschort = zaak.isOpgeschort();
+        if (zaak.isOpgeschort()) {
             restZaak.redenOpschorting = zaak.getOpschorting().getReden();
         }
-        if (zaak.getVerlenging() != null) {
-            restZaak.indicatieVerlenging = zaak.getVerlenging().getDuur() != null;
+
+        restZaak.isVerlengd = zaak.isVerlengd();
+        if (zaak.isVerlengd()) {
             restZaak.duurVerlenging = PeriodUtil.format(zaak.getVerlenging().getDuur());
             restZaak.redenVerlenging = zaak.getVerlenging().getReden();
         }
@@ -156,12 +156,10 @@ public class RESTZaakConverter {
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 
-        restZaak.ontvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
-        restZaak.isHoofdzaak = CollectionUtils.isNotEmpty(zaak.getDeelzaken());
-        restZaak.isDeelzaak = zaak.getHoofdzaak() != null;
-
-        restZaak.heropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
-        restZaak.rechten = zaakRechtenConverter.convertToRESTZaakRechten(zaak, restZaak.heropend);
+        restZaak.isHoofdzaak = zaak.isHoofdzaak();
+        restZaak.isDeelzaak = zaak.isDeelzaak();
+        restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
+        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak));
 
         return restZaak;
     }
@@ -229,10 +227,5 @@ public class RESTZaakConverter {
             zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting, restZaakOpschortGegevens.redenOpschorting));
         }
         return zaak;
-    }
-
-    private RESTZaaktype getZaaktype(final URI zaaktypeURI) {
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeURI);
-        return zaaktypeConverter.convert(zaaktype);
     }
 }

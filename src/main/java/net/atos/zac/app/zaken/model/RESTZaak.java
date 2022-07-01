@@ -54,11 +54,11 @@ public class RESTZaak {
 
     public RESTGeometry zaakgeometrie;
 
-    public boolean indicatieOpschorting;
+    public boolean isOpgeschort;
 
     public String redenOpschorting;
 
-    public boolean indicatieVerlenging;
+    public boolean isVerlengd;
 
     public String redenVerlenging;
 
@@ -76,13 +76,11 @@ public class RESTZaak {
 
     public String initiatorIdentificatie;
 
-    public RESTZaakRechten rechten;
-
-    public boolean ontvangstbevestigingVerstuurd;
-
-    public boolean heropend;
+    public boolean isHeropend;
 
     public boolean isHoofdzaak;
 
     public boolean isDeelzaak;
+
+    public RESTZaakActies acties;
 }

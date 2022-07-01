@@ -13,7 +13,7 @@ import {ZaakEigenschap} from './zaak-eigenschap';
 import {User} from '../../identity/model/user';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
-import {ZaakRechten} from './zaak-rechten';
+import {ZaakActies} from './zaak-acties';
 
 export class Zaak {
     uuid: string;
@@ -36,9 +36,9 @@ export class Zaak {
     communicatiekanaal: Communicatiekanaal;
     vertrouwelijkheidaanduiding: string;
     zaakgeometrie: Geometry;
-    indicatieOpschorting: boolean;
+    isOpgeschort: boolean;
     redenOpschorting: string;
-    indicatieVerlenging: boolean;
+    isVerlengd: boolean;
     redenVerlenging: string;
     duurVerlenging: string;
     groep: Group;
@@ -46,10 +46,9 @@ export class Zaak {
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
-    rechten: ZaakRechten;
     initiatorIdentificatie: string; // BSN or Vestigingsnummer
-    ontvangstbevestigingVerstuurd: boolean;
-    heropend: boolean;
+    isHeropend: boolean;
     isHoofdzaak: boolean;
     isDeelzaak: boolean;
+    acties: ZaakActies;
 }

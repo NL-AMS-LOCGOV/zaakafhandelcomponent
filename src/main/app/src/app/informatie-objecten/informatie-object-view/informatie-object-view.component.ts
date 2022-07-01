@@ -143,7 +143,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
         // Als er wel een zaak gekoppeld is, dan moet deze niet gesloten zijn.
         // ToDo: Vervangen door Policy
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.zaak?.rechten.open && this.isWijzigenToegestaan) {
+        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.isWijzigenToegestaan) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
