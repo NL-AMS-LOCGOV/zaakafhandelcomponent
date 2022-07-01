@@ -8,6 +8,8 @@ package net.atos.zac.app.zaken.converter;
 import static net.atos.client.zgw.shared.ZGWApiService.STATUSTYPE_HEROPEND_OMSCHRIJVING;
 
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
+import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.policy.PolicyService;
@@ -125,7 +128,21 @@ public class RESTZaakConverter {
         }
 
         restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
-        restZaak.gerelateerdeZaken = gerelateerdeZaakConverter.getGerelateerdeZaken(zaak);
+
+        restZaak.gerelateerdeZaken = new ArrayList<>();
+        if (zaak.getHoofdzaak() != null) {
+            restZaak.gerelateerdeZaken.add(gerelateerdeZaakConverter.convert(zrcClientService.readZaak(zaak.getHoofdzaak()), RelatieType.HOOFDZAAK));
+        }
+        final List<Zaak> deelzaken = zaak.getDeelzaken().stream()
+                .map(zrcClientService::readZaak)
+                .toList();
+        deelzaken.stream()
+                .map(deelzaak -> gerelateerdeZaakConverter.convert(deelzaak, RelatieType.DEELZAAK))
+                .forEach(restZaak.gerelateerdeZaken::add);
+        zaak.getRelevanteAndereZaken().stream()
+                .map(gerelateerdeZaakConverter::convert)
+                .forEach(restZaak.gerelateerdeZaken::add);
+
         restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
 
         if (zaak.getKenmerken() != null) {
@@ -161,7 +178,8 @@ public class RESTZaakConverter {
         restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
 
         restZaak.acties = actiesConverter.convert(
-                policyService.readZaakActies(zaak, restZaak.isHeropend, restZaak.behandelaar != null ? restZaak.behandelaar.id : null));
+                policyService.readZaakActies(zaak, restZaak.isHeropend, restZaak.behandelaar != null ? restZaak.behandelaar.id : null,
+                                             deelzaken.stream().filter(Zaak::isOpen).findAny().isPresent()));
 
         return restZaak;
     }

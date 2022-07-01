@@ -29,7 +29,6 @@ import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
-import net.atos.zac.app.planitems.model.UserEventListenerActie;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
@@ -72,28 +71,31 @@ public class PlanItemsRESTService {
     private MailService mailService;
 
     @GET
-    @Path("zaak/{uuid}")
-    public List<RESTPlanItem> listPlanItemsForZaak(@PathParam("uuid") final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = caseService.listPlanItems(zaakUUID);
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        if (zaak.getDeelzaken().stream().anyMatch(uri -> zrcClientService.readZaak(uri).isOpen())) {
-            planItems.removeIf(planItem -> planItem.getPlanItemDefinitionId().equals(UserEventListenerActie.ZAAK_AFHANDELEN.toString()));
-        }
-        return planItemConverter.convertPlanItems(planItems, zaakUUID);
+    @Path("zaak/{uuid}/humanTaskPlanItems")
+    public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
+        final List<PlanItemInstance> humanTaskPlanItems = caseService.listHumanTaskPlanItems(zaakUUID);
+        return planItemConverter.convertPlanItems(humanTaskPlanItems, zaakUUID);
     }
 
     @GET
-    @Path("humanTask/{id}")
-    public RESTPlanItem readHumanTask(@PathParam("id") final String planItemId) {
-        final PlanItemInstance planItem = caseService.readOpenPlanItem(planItemId);
-        final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
-        return planItemConverter.convertHumanTask(planItem, zaakUuidForCase, humanTaskParameters);
+    @Path("zaak/{uuid}/userEventListenerPlanItems")
+    public List<RESTPlanItem> listUserEventListenerPlanItems(@PathParam("uuid") final UUID zaakUUID) {
+        final List<PlanItemInstance> userEventListenerPlanItems = caseService.listUserEventListenerPlanItems(zaakUUID);
+        return planItemConverter.convertPlanItems(userEventListenerPlanItems, zaakUUID);
+    }
+
+    @GET
+    @Path("humanTaskPlanItem/{id}")
+    public RESTPlanItem readHumanTaskPlanItem(@PathParam("id") final String planItemId) {
+        final PlanItemInstance humanTaskPlanItem = caseService.readOpenPlanItem(planItemId);
+        final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(humanTaskPlanItem);
+        return planItemConverter.convertHumanTask(humanTaskPlanItem, zaakUuidForCase, humanTaskParameters);
     }
 
     @PUT
-    @Path("doHumanTask")
-    public void doHumanTask(final RESTHumanTaskData humanTaskData) {
+    @Path("doHumanTaskPlanItem")
+    public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
@@ -109,8 +111,8 @@ public class PlanItemsRESTService {
     }
 
     @PUT
-    @Path("doUserEventListener")
-    public void doUserEventListener(final RESTUserEventListenerData userEventListenerData) {
+    @Path("doUserEventListenerPlanItem")
+    public void doUserEventListenerPlanItem(final RESTUserEventListenerData userEventListenerData) {
         switch (userEventListenerData.actie) {
             case INTAKE_AFRONDEN -> {
                 final PlanItemInstance planItemInstance = caseService.readOpenPlanItem(userEventListenerData.planItemInstanceId);
