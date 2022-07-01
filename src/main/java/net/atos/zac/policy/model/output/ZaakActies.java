@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.policy.model;
+package net.atos.zac.policy.model.output;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
@@ -60,20 +60,20 @@ public class ZaakActies {
             @JsonbProperty("afbreken") final boolean afbreken,
             @JsonbProperty("afsluiten") final boolean afsluiten,
             @JsonbProperty("heropenen") final boolean heropenen,
-            @JsonbProperty("creeerenDocument") final boolean creeerenDocument,
-            @JsonbProperty("toevoegenDocument") final boolean toevoegenDocument,
-            @JsonbProperty("ontkoppelenDocument") final boolean ontkoppelenDocument,
-            @JsonbProperty("koppelenZaak") final boolean koppelenZaak,
-            @JsonbProperty("koppelenAanZaak") final boolean koppelenAanZaak,
-            @JsonbProperty("versturenEmail") final boolean versturenEmail,
-            @JsonbProperty("versturenOntvangstbevestiging") final boolean versturenOntvangstbevestiging,
-            @JsonbProperty("toevoegenPersoon") final boolean toevoegenPersoon,
-            @JsonbProperty("toevoegenBedrijf") final boolean toevoegenBedrijf,
-            @JsonbProperty("verwijderenInitiator") final boolean verwijderenInitiator,
-            @JsonbProperty("wijzigenToekenning") final boolean wijzigenToekenning,
-            @JsonbProperty("wijzigenData") final boolean wijzigenData,
-            @JsonbProperty("wijzigenOverig") final boolean wijzigenOverig,
-            @JsonbProperty("startenPlanItems") final boolean startenPlanItems) {
+            @JsonbProperty("creeeren_document") final boolean creeerenDocument,
+            @JsonbProperty("toevoegen_document") final boolean toevoegenDocument,
+            @JsonbProperty("ontkoppelen_document") final boolean ontkoppelenDocument,
+            @JsonbProperty("koppelen_zaak") final boolean koppelenZaak,
+            @JsonbProperty("koppelen_aan_zaak") final boolean koppelenAanZaak,
+            @JsonbProperty("versturen_email") final boolean versturenEmail,
+            @JsonbProperty("versturen_ontvangstbevestiging") final boolean versturenOntvangstbevestiging,
+            @JsonbProperty("toevoegen_persoon") final boolean toevoegenPersoon,
+            @JsonbProperty("toevoegen_bedrijf") final boolean toevoegenBedrijf,
+            @JsonbProperty("verwijderen_initiator") final boolean verwijderenInitiator,
+            @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
+            @JsonbProperty("wijzigen_data") final boolean wijzigenData,
+            @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
+            @JsonbProperty("starten_plan_items") final boolean startenPlanItems) {
         this.opschorten = opschorten;
         this.verlengen = verlengen;
         this.hervatten = hervatten;
