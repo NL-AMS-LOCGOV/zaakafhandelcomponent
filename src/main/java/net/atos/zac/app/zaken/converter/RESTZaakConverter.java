@@ -159,7 +159,9 @@ public class RESTZaakConverter {
         restZaak.isHoofdzaak = zaak.isHoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
         restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
-        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak));
+
+        restZaak.acties = actiesConverter.convert(
+                policyService.readZaakActies(zaak, restZaak.isHeropend, restZaak.behandelaar != null ? restZaak.behandelaar.id : null));
 
         return restZaak;
     }
