@@ -173,7 +173,7 @@ public class RESTZaakConverter {
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 
-        restZaak.isHoofdzaak = zaak.isHoofdzaak();
+        restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
         restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
 

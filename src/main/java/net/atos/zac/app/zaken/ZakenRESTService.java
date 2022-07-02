@@ -12,10 +12,10 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -444,9 +444,12 @@ public class ZakenRESTService {
         final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak);
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak);
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUrl(), teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUrl(), koppelenAanZaak.getUuid());
         }
+
+        eventingService.send(ZAAK.updated(teKoppelenZaak.getUuid()));
+        eventingService.send(ZAAK.updated(koppelenAanZaak.getUuid()));
     }
 
     @PUT
@@ -555,17 +558,9 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final Zaak deelzaak) {
-        final Zaak hoofdzaakPatch = new Zaak();
-        hoofdzaakPatch.setDeelzaken(hoofdzaak.getDeelzaken() != null ? hoofdzaak.getDeelzaken() : new HashSet<>());
-        hoofdzaakPatch.getDeelzaken().add(deelzaak.getUrl());
-        zrcClientService.updateZaak(hoofdzaak.getUuid(), hoofdzaakPatch);
-
+    private void koppelHoofdEnDeelzaak(final URI hoofdzaakUrl, final UUID deelzaakUUID) {
         final Zaak deelzaakPatch = new Zaak();
-        deelzaakPatch.setHoofdzaak(hoofdzaak.getUrl());
-        zrcClientService.updateZaak(deelzaak.getUuid(), deelzaakPatch);
-
-        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
-        eventingService.send(ZAAK.updated(deelzaak.getUuid()));
+        deelzaakPatch.setHoofdzaak(hoofdzaakUrl);
+        zrcClientService.updateZaak(deelzaakUUID, deelzaakPatch);
     }
 }
