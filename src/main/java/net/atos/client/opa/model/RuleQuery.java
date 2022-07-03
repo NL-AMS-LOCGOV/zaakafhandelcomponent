@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.policy.model;
+package net.atos.client.opa.model;
 
 public class RuleQuery<T> {
 

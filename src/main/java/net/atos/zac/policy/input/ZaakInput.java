@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.policy.model.input;
+package net.atos.zac.policy.input;
 
 import net.atos.zac.authentication.LoggedInUser;
 
