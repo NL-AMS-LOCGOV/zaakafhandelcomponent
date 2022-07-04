@@ -28,14 +28,13 @@ public class PolicyService {
     @RestClient
     private OPAEvaluationClient evaluationClient;
 
-    public ZaakActies readZaakActies(final Zaak zaak, final boolean heropend, final String behandelaar) {
+    public ZaakActies readZaakActies(final Zaak zaak, final boolean heropend, final String behandelaar, final boolean openDeelzaken) {
         final ZaakData zaakData = new ZaakData();
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
-        zaakData.hoofdzaak = zaak.isHoofdzaak();
-        zaakData.deelzaak = zaak.isDeelzaak();
         zaakData.heropend = heropend;
         zaakData.behandelaar = behandelaar;
+        zaakData.openDeelzaken = openDeelzaken;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 }

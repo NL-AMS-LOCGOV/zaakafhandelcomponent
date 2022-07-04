@@ -518,7 +518,8 @@ public class Zaak {
     }
 
     @JsonbTransient
-    public boolean isHoofdzaak() {
+    // Niet hernoemen naar isHoofdzaak omdat anders het 'hoofdzaak' attribuut niet meer wordt omgezet naar JSON
+    public boolean is_Hoofdzaak() {
         return CollectionUtils.isNotEmpty(deelzaken);
     }
 

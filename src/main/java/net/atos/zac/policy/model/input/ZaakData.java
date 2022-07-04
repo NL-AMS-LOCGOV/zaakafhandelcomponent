@@ -13,9 +13,7 @@ public class ZaakData {
 
     public boolean opgeschort;
 
-    public boolean hoofdzaak;
-
-    public boolean deelzaak;
-
     public String behandelaar;
+
+    public boolean openDeelzaken;
 }

@@ -18,7 +18,7 @@ public class ZaakActies {
 
     private final boolean afbreken;
 
-    private final boolean afsluiten; // ToDo: Alle deelzaken moeten geslotenm zijn.
+    private final boolean afsluiten;
 
     private final boolean heropenen;
 

@@ -47,7 +47,7 @@ export class HumanTaskDoComponent implements OnInit {
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
-            this.planItemsService.doHumanTask(this.formulier.getHumanTaskData(formGroup)).subscribe(() => {
+            this.planItemsService.doHumanTaskPlanItem(this.formulier.getHumanTaskData(formGroup)).subscribe(() => {
                 this.done.emit();
             });
         } else { // cancel button clicked
