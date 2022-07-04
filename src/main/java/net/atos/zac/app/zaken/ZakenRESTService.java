@@ -16,10 +16,8 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -442,23 +440,16 @@ public class ZakenRESTService {
     @PATCH
     @Path("/zaak/koppel")
     public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
-        final Zaak teKoppelenZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
-
-        final Zaak bronZaakPatch = new Zaak();
-        final Zaak teKoppelenZaakPatch = new Zaak();
-
-        bronZaakPatch.setUrl(zaak.getUrl());
-        bronZaakPatch.setDeelzaken(zaak.getDeelzaken());
-        teKoppelenZaakPatch.setUrl(teKoppelenZaak.getUrl());
-        teKoppelenZaakPatch.setDeelzaken(teKoppelenZaak.getDeelzaken());
+        final Zaak teKoppelenZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
+        final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK ->
-                    koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), teKoppelenZaakPatch, zaak.getUuid(), bronZaakPatch);
-            case HOOFDZAAK ->
-                    koppelHoofdEnDeelzaak(zaak.getUuid(), bronZaakPatch, teKoppelenZaak.getUuid(), teKoppelenZaakPatch);
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUrl(), teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUrl(), koppelenAanZaak.getUuid());
         }
+
+        eventingService.send(ZAAK.updated(teKoppelenZaak.getUuid()));
+        eventingService.send(ZAAK.updated(koppelenAanZaak.getUuid()));
     }
 
     @PUT
@@ -567,16 +558,9 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final UUID hoofdzaakUuid, final Zaak hoofdzaak,
-            final UUID deelzaakUuid, final Zaak deelzaak) {
-        final Set<URI> deelzaken = hoofdzaak.getDeelzaken() != null ? hoofdzaak.getDeelzaken() : new HashSet<>();
-        deelzaken.add(deelzaak.getUrl());
-        hoofdzaak.setDeelzaken(deelzaken);
-        deelzaak.setHoofdzaak(hoofdzaak.getUrl());
-
-        zrcClientService.updateZaak(hoofdzaakUuid, hoofdzaak);
-        zrcClientService.updateZaak(deelzaakUuid, deelzaak);
-        eventingService.send(ZAAK.updated(deelzaakUuid));
-        eventingService.send(ZAAK.updated(hoofdzaakUuid));
+    private void koppelHoofdEnDeelzaak(final URI hoofdzaakUrl, final UUID deelzaakUUID) {
+        final Zaak deelzaakPatch = new Zaak();
+        deelzaakPatch.setHoofdzaak(hoofdzaakUrl);
+        zrcClientService.updateZaak(deelzaakUUID, deelzaakPatch);
     }
 }

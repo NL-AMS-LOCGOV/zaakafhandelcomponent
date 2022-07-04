@@ -12,6 +12,7 @@ import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIEN
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_TAAKDATA;
 import static net.atos.zac.flowable.cmmn.CreateHumanTaskInterceptor.VAR_TRANSIENT_ZAAK_UUID;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
+import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.HUMAN_TASK;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
 import java.util.Date;
@@ -58,10 +59,20 @@ public class CaseService {
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
-    public List<PlanItemInstance> listPlanItems(final UUID zaakUUID) {
-        final List<PlanItemInstance> planItems = listEnabledPlanItems(zaakUUID);
-        planItems.addAll(listAvailableUserEventListeners(zaakUUID));
-        return planItems;
+    public List<PlanItemInstance> listHumanTaskPlanItems(final UUID zaakUUID) {
+        return cmmnRuntimeService.createPlanItemInstanceQuery()
+                .caseVariableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
+                .planItemInstanceStateEnabled()
+                .planItemDefinitionType(HUMAN_TASK)
+                .list();
+    }
+
+    public List<PlanItemInstance> listUserEventListenerPlanItems(final UUID zaakUUID) {
+        return cmmnRuntimeService.createPlanItemInstanceQuery()
+                .caseVariableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
+                .planItemInstanceStateAvailable()
+                .planItemDefinitionType(USER_EVENT_LISTENER)
+                .list();
     }
 
     public void startCase(final String caseDefinitionKey, final Zaak zaak, final Zaaktype zaaktype) {
@@ -166,18 +177,4 @@ public class CaseService {
                 .singleResult();
     }
 
-    private List<PlanItemInstance> listEnabledPlanItems(final UUID zaakUUID) {
-        return cmmnRuntimeService.createPlanItemInstanceQuery()
-                .caseVariableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
-                .planItemInstanceStateEnabled()
-                .list();
-    }
-
-    private List<PlanItemInstance> listAvailableUserEventListeners(final UUID zaakUUID) {
-        return cmmnRuntimeService.createPlanItemInstanceQuery()
-                .caseVariableValueEquals(CaseVariablesService.VAR_ZAAK_UUID, zaakUUID)
-                .planItemInstanceStateAvailable()
-                .planItemDefinitionType(USER_EVENT_LISTENER)
-                .list();
-    }
 }

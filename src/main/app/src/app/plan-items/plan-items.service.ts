@@ -22,26 +22,32 @@ export class PlanItemsService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }
 
-    readHumanTask(id: string): Observable<PlanItem> {
-        return this.http.get<PlanItem>(`${this.basepath}/humanTask/${id}`).pipe(
+    readHumanTaskPlanItem(planItemId: string): Observable<PlanItem> {
+        return this.http.get<PlanItem>(`${this.basepath}/humanTaskPlanItem/${planItemId}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    listPlanItemsForZaak(uuid: string): Observable<PlanItem[]> {
-        return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${uuid}`).pipe(
+    listHumanTaskPlanItems(zaakUuid: string): Observable<PlanItem[]> {
+        return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${zaakUuid}/humanTaskPlanItems`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    doHumanTask(humanTaskData: HumanTaskData): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/doHumanTask`, humanTaskData).pipe(
+    listUserEventListenerPlanItems(zaakUuid: string): Observable<PlanItem[]> {
+        return this.http.get<PlanItem[]>(`${this.basepath}/zaak/${zaakUuid}/userEventListenerPlanItems`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    doUserEventListener(userEventListenerData: UserEventListenerData): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/doUserEventListener`, userEventListenerData).pipe(
+    doHumanTaskPlanItem(humanTaskData: HumanTaskData): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/doHumanTaskPlanItem`, humanTaskData).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    doUserEventListenerPlanItem(userEventListenerData: UserEventListenerData): Observable<void> {
+        return this.http.put<void>(`${this.basepath}/doUserEventListenerPlanItem`, userEventListenerData).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

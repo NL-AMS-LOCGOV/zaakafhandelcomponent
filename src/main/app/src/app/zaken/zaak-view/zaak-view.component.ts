@@ -13,7 +13,6 @@ import {TakenService} from '../../taken/taken.service';
 import {Zaak} from '../model/zaak';
 import {PlanItemsService} from '../../plan-items/plan-items.service';
 import {PlanItem} from '../../plan-items/model/plan-item';
-import {PlanItemType} from '../../plan-items/model/plan-item-type.enum';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
@@ -60,7 +59,7 @@ import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {Observable, of, share, Subscription} from 'rxjs';
+import {forkJoin, Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {Indicatie} from '../../shared/model/indicatie';
@@ -273,35 +272,34 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').maxlength(80).build());
     }
 
-    private createMenuItem(planItem: PlanItem): MenuItem {
-        switch (planItem.type) {
-            case PlanItemType.HumanTask:
-                return new ButtonMenuItem(planItem.naam, () => {
-                    if (!this.actiefPlanItem || this.actiefPlanItem.id !== planItem.id) {
-                        this.action = null;
-                        this.planItemsService.readHumanTask(planItem.id).subscribe(data => {
-                            this.actiefPlanItem = data;
-                            this.actionsSidenav.open();
-                            this.action = SideNavAction.TAAK_STARTEN;
-                        });
-                    } else {
-                        this.action = SideNavAction.TAAK_STARTEN;
-                        this.actionsSidenav.open();
-                    }
-                }, 'assignment');
-
-            case PlanItemType.UserEventListener:
-                return new ButtonMenuItem('planitem.' + planItem.userEventListenerActie, () =>
-                    this.openPlanItemStartenDialog(planItem), this.getIcon(planItem));
-            case PlanItemType.ProcessTask:
-                return new ButtonMenuItem(planItem.naam, () =>
-                    this.openPlanItemStartenDialog(planItem), 'launch');
+    private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {
+        if (userEventListenerPlanItem.userEventListenerActie === UserEventListenerActie.ZaakAfhandelen && !this.zaak.acties.afsluiten) {
+            return null;
+        } else {
+            return new ButtonMenuItem('planitem.' + userEventListenerPlanItem.userEventListenerActie, () =>
+                    this.openPlanItemStartenDialog(userEventListenerPlanItem),
+                this.getuserEventListenerPlanItemMenuItemIcon(userEventListenerPlanItem.userEventListenerActie));
         }
-        throw new Error(`Onbekend type: ${planItem.type}`);
     }
 
-    private getIcon(planItem: PlanItem): string {
-        switch (planItem.userEventListenerActie) {
+    private createHumanTaskPlanItemMenuItem(humanTaskPlanItem: PlanItem): MenuItem {
+        return new ButtonMenuItem(humanTaskPlanItem.naam, () => {
+            if (!this.actiefPlanItem || this.actiefPlanItem.id !== humanTaskPlanItem.id) {
+                this.action = null;
+                this.planItemsService.readHumanTaskPlanItem(humanTaskPlanItem.id).subscribe(data => {
+                    this.actiefPlanItem = data;
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.TAAK_STARTEN;
+                });
+            } else {
+                this.action = SideNavAction.TAAK_STARTEN;
+                this.actionsSidenav.open();
+            }
+        }, 'assignment');
+    }
+
+    private getuserEventListenerPlanItemMenuItemIcon(userEventListenerActie: UserEventListenerActie): string {
+        switch (userEventListenerActie) {
             case UserEventListenerActie.IntakeAfronden:
                 return 'thumbs_up_down';
             case UserEventListenerActie.ZaakAfhandelen:
@@ -352,7 +350,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
         }
 
-        if (this.zaak.acties.afsluiten) {
+        if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
         }
 
@@ -360,39 +358,44 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
         }
 
-        const tail: MenuItem[] = [];
+        if (this.zaak.acties.startenPlanItems) {
+            forkJoin({
+                userEventListenerPlanItems: this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
+                humanTaskPlanItems: this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid)
+            }).subscribe(planItems => {
+                if (planItems.userEventListenerPlanItems.length > 0) {
+                    this.menu = this.menu.concat(
+                        planItems.userEventListenerPlanItems.map(
+                            userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
+                        ).filter(menuItem => menuItem != null));
+                }
+                this.createInitiatorToevoegenMenuItems();
+                if (planItems.humanTaskPlanItems.length > 0) {
+                    this.menu.push(new HeaderMenuItem('actie.taak.starten'));
+                    this.menu = this.menu.concat(
+                        planItems.humanTaskPlanItems.map(humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
+                }
+            });
+        } else {
+            this.createInitiatorToevoegenMenuItems();
+        }
+    }
+
+    private createInitiatorToevoegenMenuItems(): void {
         if (this.zaak.acties.toevoegenPersoon || this.zaak.acties.toevoegenBedrijf) {
-            tail.push(new HeaderMenuItem('initiator.toevoegen'));
+            this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
             if (this.zaak.acties.toevoegenPersoon) {
-                tail.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
+                this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_PERSOON;
                 }, 'emoji_people'));
             }
             if (this.zaak.acties.toevoegenBedrijf) {
-                tail.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
+                this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BEDRIJF;
                 }, 'business'));
             }
-        }
-
-        if (this.zaak.acties.startenPlanItems) {
-            this.planItemsService.listPlanItemsForZaak(this.zaak.uuid).subscribe(planItems => {
-                const actieItems: PlanItem[] = planItems.filter(planItem => planItem.type !== PlanItemType.HumanTask);
-                const humanTaskItems: PlanItem[] = planItems.filter(
-                    planItem => planItem.type === PlanItemType.HumanTask);
-                if (actieItems.length > 0) {
-                    this.menu = this.menu.concat(actieItems.map(planItem => this.createMenuItem(planItem)));
-                }
-                this.menu = this.menu.concat(tail);
-                if (humanTaskItems.length > 0) {
-                    this.menu.push(new HeaderMenuItem('actie.taak.starten'));
-                    this.menu = this.menu.concat(humanTaskItems.map(planItem => this.createMenuItem(planItem)));
-                }
-            });
-        } else {
-            this.menu = this.menu.concat(tail);
         }
     }
 
@@ -487,7 +490,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
         userEventListenerData.zaakOntvankelijk = ontvankelijk;
         userEventListenerData.resultaatToelichting = toelichting;
-        return this.planItemsService.doUserEventListener(userEventListenerData);
+        return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
@@ -517,7 +520,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, planItemId, this.zaak.uuid);
         userEventListenerData.resultaattypeUuid = resultaattype.id;
         userEventListenerData.resultaatToelichting = resultaatToelichting;
-        return this.planItemsService.doUserEventListener(userEventListenerData);
+        return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 
     private openZaakAfbrekenDialog(): void {

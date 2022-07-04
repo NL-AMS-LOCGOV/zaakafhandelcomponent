@@ -53,13 +53,14 @@ verlengen {
 default afbreken := false
 afbreken {
     input.zaak.open == true
+    input.zaak.openDeelzaken == false
     input.zaak.heropend == false
 }
 
 default afsluiten := false
 afsluiten {
     input.zaak.open == true
-    input.zaak.heropend == true
+    input.zaak.openDeelzaken == false
 }
 
 default creeeren_document := false
