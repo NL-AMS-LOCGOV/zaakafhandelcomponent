@@ -168,6 +168,10 @@
                                                     [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                                                 <mat-icon>visibility</mat-icon>
                                             </button>
+                                            <button mat-flat-button (click)="startZaakOntkoppelenDialog(row)"
+                                                    [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.ontkoppelen' | translate }}">
+                                                <mat-icon>link_off</mat-icon>
+                                            </button>
                                         </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="gerelateerdeZaakColumns.concat(['url'])"></tr>

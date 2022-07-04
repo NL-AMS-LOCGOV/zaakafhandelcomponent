@@ -29,6 +29,7 @@ import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
 import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
 import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
+import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -237,4 +238,9 @@ export class ZakenService {
         );
     }
 
+    postOntkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
 }

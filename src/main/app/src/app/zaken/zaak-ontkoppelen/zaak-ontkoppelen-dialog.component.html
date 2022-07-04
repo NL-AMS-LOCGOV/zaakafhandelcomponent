@@ -1,0 +1,20 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 mat-dialog-title>{{'title.zaak.ontkoppelen' | translate }}</h1>
+
+<div mat-dialog-content>
+    <mfb-form-field [field]="redenFormField"></mfb-form-field>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="redenFormField && redenFormField.formControl.invalid || loading"
+            mat-button color="primary" (click)="ontkoppel()" id="zakenOntkoppelen_button">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.ontkoppelen' | translate}}
+    </button>
+    <button [disabled]="loading" autofocus mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+</div>

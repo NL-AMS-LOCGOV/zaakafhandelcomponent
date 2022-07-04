@@ -68,6 +68,9 @@ import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {ZaakRelatietype} from '../model/zaak-relatietype';
+import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
+import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
+import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -865,5 +868,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = null;
         this.actionsSidenav.close();
         this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
+    }
+
+    startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {
+        const zaakOntkoppelGegevens: ZaakOntkoppelGegevens = new ZaakOntkoppelGegevens();
+        zaakOntkoppelGegevens.bronZaakUuid = this.zaak.uuid;
+        zaakOntkoppelGegevens.identificatie = gerelateerdeZaak.identificatie;
+        zaakOntkoppelGegevens.zaakRelatietype = gerelateerdeZaak.relatieType;
+
+        this.dialog.open(ZaakOntkoppelenDialogComponent, {
+            data: zaakOntkoppelGegevens
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.zaak.ontkoppelen.uitgevoerd');
+            }
+        });
     }
 }

@@ -36,6 +36,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.client.zgw.zrc.model.ZaakHoofdzaakPatch;
+import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
+
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -444,12 +447,22 @@ public class ZakenRESTService {
         final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUrl(), teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUrl(), koppelenAanZaak.getUuid());
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
         }
+    }
 
-        eventingService.send(ZAAK.updated(teKoppelenZaak.getUuid()));
-        eventingService.send(ZAAK.updated(koppelenAanZaak.getUuid()));
+    @PATCH
+    @Path("/zaak/ontkoppel")
+    public void ontkoppel(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
+        final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(zaakOntkoppelGegevens.identificatie);
+
+        switch (zaakOntkoppelGegevens.zaakRelatietype) {
+            case DEELZAAK -> ontkoppelHoofdEnDeelzaak(ontkoppelenVanZaak.getUuid(),
+                                                      zaakOntkoppelGegevens.bronZaakUuid, zaakOntkoppelGegevens.reden);
+            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(zaakOntkoppelGegevens.bronZaakUuid,
+                                                       ontkoppelenVanZaak.getUuid(), zaakOntkoppelGegevens.reden);
+        }
     }
 
     @PUT
@@ -558,9 +571,15 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final URI hoofdzaakUrl, final UUID deelzaakUUID) {
-        final Zaak deelzaakPatch = new Zaak();
-        deelzaakPatch.setHoofdzaak(hoofdzaakUrl);
-        zrcClientService.updateZaak(deelzaakUUID, deelzaakPatch);
+    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
+        final ZaakHoofdzaakPatch deelzaak = new ZaakHoofdzaakPatch(hoofdzaak.getUrl());
+        zrcClientService.updateZaak(deelzaakUUID, deelzaak);
+        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
+    }
+
+    private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
+        final ZaakHoofdzaakPatch deelzaak = new ZaakHoofdzaakPatch(null);
+        zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
+        eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 }
