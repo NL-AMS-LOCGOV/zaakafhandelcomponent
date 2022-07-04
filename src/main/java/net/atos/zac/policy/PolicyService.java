@@ -11,12 +11,12 @@ import javax.inject.Inject;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.policy.model.RuleQuery;
-import net.atos.zac.policy.model.input.ZaakData;
-import net.atos.zac.policy.model.input.ZaakInput;
-import net.atos.zac.policy.model.output.ZaakActies;
+import net.atos.zac.policy.input.ZaakData;
+import net.atos.zac.policy.input.ZaakInput;
+import net.atos.zac.policy.output.ZaakActies;
 
 @ApplicationScoped
 public class PolicyService {

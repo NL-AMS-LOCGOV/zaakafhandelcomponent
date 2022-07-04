@@ -6,7 +6,7 @@
 package net.atos.zac.app.zaken.converter;
 
 import net.atos.zac.app.zaken.model.RESTZaakActies;
-import net.atos.zac.policy.model.output.ZaakActies;
+import net.atos.zac.policy.output.ZaakActies;
 
 public class RESTZaakActiesConverter {
 

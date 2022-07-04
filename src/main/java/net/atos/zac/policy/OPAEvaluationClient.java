@@ -13,10 +13,10 @@ import javax.ws.rs.Produces;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import net.atos.zac.policy.model.RuleQuery;
-import net.atos.zac.policy.model.RuleResponse;
-import net.atos.zac.policy.model.input.ZaakInput;
-import net.atos.zac.policy.model.output.ZaakActies;
+import net.atos.client.opa.model.RuleQuery;
+import net.atos.client.opa.model.RuleResponse;
+import net.atos.zac.policy.input.ZaakInput;
+import net.atos.zac.policy.output.ZaakActies;
 
 @RegisterRestClient(configKey = "OPA-Api-Client")
 @Path("v1/data/net/atos/zac")
