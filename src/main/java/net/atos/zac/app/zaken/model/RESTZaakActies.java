@@ -41,8 +41,6 @@ public class RESTZaakActies {
 
     public boolean wijzigenToekenning;
 
-    public boolean wijzigenData;
-
     public boolean wijzigenOverig;
 
     public boolean startenPlanItems;

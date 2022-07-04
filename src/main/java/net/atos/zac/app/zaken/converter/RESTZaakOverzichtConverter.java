@@ -62,13 +62,13 @@ public class RESTZaakOverzichtConverter {
             restZaakOverzicht.status = restZaakStatusConverter.convertToStatusOmschrijving(zaak.getStatus());
         }
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
         if (groep != null) {
             restZaakOverzicht.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
         }
 
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         if (behandelaar != null) {
             restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
         }

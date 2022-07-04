@@ -62,7 +62,7 @@ export class ZakenService {
         );
     }
 
-    partialUpdateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
+    updateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, new ZaakEditMetRedenGegevens(zaak, reden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

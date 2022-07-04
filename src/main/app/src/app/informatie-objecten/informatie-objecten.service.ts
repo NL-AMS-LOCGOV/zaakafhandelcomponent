@@ -67,7 +67,7 @@ export class InformatieObjectenService {
         );
     }
 
-    maakDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<DocumentCreatieResponse> {
+    createDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<DocumentCreatieResponse> {
         return this.http.post<DocumentCreatieResponse>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
@@ -79,7 +79,7 @@ export class InformatieObjectenService {
         );
     }
 
-    partialUpdateEnkelvoudigInformatieobject(documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens): Observable<EnkelvoudigInformatieobject> {
+    updateEnkelvoudigInformatieobject(documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens): Observable<EnkelvoudigInformatieobject> {
         return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/partialupdate`, documentNieuweVersieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

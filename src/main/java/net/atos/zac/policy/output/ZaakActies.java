@@ -47,8 +47,6 @@ public class ZaakActies {
 
     private final boolean wijzigenToekenning;
 
-    private final boolean wijzigenData;
-
     private final boolean wijzigenOverig;
 
     private final boolean startenPlanItems;
@@ -71,7 +69,6 @@ public class ZaakActies {
             @JsonbProperty("toevoegen_bedrijf") final boolean toevoegenBedrijf,
             @JsonbProperty("verwijderen_initiator") final boolean verwijderenInitiator,
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
-            @JsonbProperty("wijzigen_data") final boolean wijzigenData,
             @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
             @JsonbProperty("starten_plan_items") final boolean startenPlanItems) {
         this.opschorten = opschorten;
@@ -91,7 +88,6 @@ public class ZaakActies {
         this.toevoegenBedrijf = toevoegenBedrijf;
         this.verwijderenInitiator = verwijderenInitiator;
         this.wijzigenToekenning = wijzigenToekenning;
-        this.wijzigenData = wijzigenData;
         this.wijzigenOverig = wijzigenOverig;
         this.startenPlanItems = startenPlanItems;
     }
@@ -162,10 +158,6 @@ public class ZaakActies {
 
     public boolean getWijzigenToekenning() {
         return wijzigenToekenning;
-    }
-
-    public boolean getWijzigenData() {
-        return wijzigenData;
     }
 
     public boolean getWijzigenOverig() {

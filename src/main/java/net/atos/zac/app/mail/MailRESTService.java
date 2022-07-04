@@ -21,6 +21,8 @@ import com.mailjet.client.errors.MailjetException;
 import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.exception.ActieNietToegestaanExceptie;
 import net.atos.zac.util.ValidationUtil;
 
 @Singleton
@@ -35,27 +37,34 @@ public class MailRESTService {
     @Inject
     private CaseVariablesService caseVariablesService;
 
+    @Inject
+    private PolicyService policyService;
+
     @POST
     @Path("send/{zaakUuid}")
-    public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid,
-            final RESTMailObject restMailObject) throws MailjetException {
+    public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
+        checkActie(policyService.readZaakActies(zaakUuid).getVersturenEmail());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
                              restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
     }
 
     @POST
     @Path("acknowledge/{zaakUuid}")
-    public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid,
-            final RESTMailObject restMailObject) throws MailjetException {
+    public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
+        checkActie(policyService.readZaakActies(zaakUuid).getVersturenOntvangstbevestiging());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
         caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
+    }
+
+    private void checkActie(final boolean actie) {
+        if (!actie) {
+            throw new ActieNietToegestaanExceptie();
+        }
     }
 }

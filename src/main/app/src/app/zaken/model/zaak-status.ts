@@ -4,12 +4,6 @@
  */
 
 export class ZaakStatus {
-    toekenningsdatumTijd: string;
-    toelichting: string;
     naam: string;
-    naamGeneriek: string;
-    statusToelichting: string;
-    eindStatus: string;
-    informeren: boolean;
-    informerenStatusTekst: string;
+    toelichting: string;
 }

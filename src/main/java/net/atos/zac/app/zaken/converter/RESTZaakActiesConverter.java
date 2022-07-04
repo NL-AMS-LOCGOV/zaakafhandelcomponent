@@ -17,7 +17,7 @@ public class RESTZaakActiesConverter {
         restZaakActies.verlengen = zaakActies.getVerlengen();
         restZaakActies.hervatten = zaakActies.getHervatten();
         restZaakActies.afbreken = zaakActies.getAfbreken();
-        restZaakActies.afsluiten = zaakActies.getAfsluiten(); // ToDo: Alle deelzaken moeten geslotenm zijn.
+        restZaakActies.afsluiten = zaakActies.getAfsluiten();
         restZaakActies.heropenen = zaakActies.getHeropenen();
         restZaakActies.creeerenDocument = zaakActies.getCreeerenDocument();
         restZaakActies.toevoegenDocument = zaakActies.getToevoegenDocument();
@@ -30,7 +30,6 @@ public class RESTZaakActiesConverter {
         restZaakActies.toevoegenBedrijf = zaakActies.getToevoegenBedrijf();
         restZaakActies.verwijderenInitiator = zaakActies.getVerwijderenInitiator();
         restZaakActies.wijzigenToekenning = zaakActies.getWijzigenToekenning();
-        restZaakActies.wijzigenData = zaakActies.getWijzigenData();
         restZaakActies.wijzigenOverig = zaakActies.getWijzigenOverig();
         restZaakActies.startenPlanItems = zaakActies.getStartenPlanItems();
 

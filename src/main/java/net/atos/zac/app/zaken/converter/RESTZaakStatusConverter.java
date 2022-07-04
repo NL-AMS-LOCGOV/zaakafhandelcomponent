@@ -27,15 +27,9 @@ public class RESTZaakStatusConverter {
         if (statusURI != null) {
             final Status status = zrcClientService.readStatus(statusURI);
             final RESTZaakStatus restZaakStatus = new RESTZaakStatus();
-            restZaakStatus.toekenningsdatumTijd = status.getDatumStatusGezet();
             restZaakStatus.toelichting = status.getStatustoelichting();
             final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-            restZaakStatus.eindStatus = statustype.getEindstatus();
-            restZaakStatus.statusToelichting = statustype.getToelichting();
-            restZaakStatus.informeren = statustype.getInformeren();
-            restZaakStatus.informerenStatusTekst = statustype.getStatustekst();
             restZaakStatus.naam = statustype.getOmschrijving();
-            restZaakStatus.naamGeneriek = statustype.getOmschrijvingGeneriek();
             return restZaakStatus;
         } else {
             return null;

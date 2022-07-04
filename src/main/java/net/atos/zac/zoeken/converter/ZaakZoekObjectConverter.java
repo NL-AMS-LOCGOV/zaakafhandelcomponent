@@ -130,13 +130,13 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     }
 
     private User findBehandelaar(final Zaak zaak) {
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         return behandelaar != null ? identityService.readUser(behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 
 
     private Group findGroep(final Zaak zaak) {
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
         return groep != null ? identityService.readGroup(groep.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 

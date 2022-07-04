@@ -41,13 +41,13 @@ export class PlanItemsService {
     }
 
     doHumanTaskPlanItem(humanTaskData: HumanTaskData): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/doHumanTaskPlanItem`, humanTaskData).pipe(
+        return this.http.post<void>(`${this.basepath}/doHumanTaskPlanItem`, humanTaskData).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     doUserEventListenerPlanItem(userEventListenerData: UserEventListenerData): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/doUserEventListenerPlanItem`, userEventListenerData).pipe(
+        return this.http.post<void>(`${this.basepath}/doUserEventListenerPlanItem`, userEventListenerData).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

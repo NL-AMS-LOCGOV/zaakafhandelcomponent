@@ -153,12 +153,12 @@ public class DataConverter {
             zaakData.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toValue();
         }
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
         if (groep != null) {
             zaakData.groep = groep.getNaam();
         }
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         if (behandelaar != null) {
             zaakData.behandelaar = behandelaar.getNaam();
         }

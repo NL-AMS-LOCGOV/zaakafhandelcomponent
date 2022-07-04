@@ -20,7 +20,6 @@ zaak_acties := {
     "toevoegen_bedrijf": toevoegen_bedrijf,
     "verwijderen_initiator": verwijderen_initiator,
     "wijzigen_toekenning": wijzigen_toekenning,
-    "wijzigen_data": wijzigen_data,
     "wijzigen_overig": wijzigen_overig,
     "starten_plan_items": starten_plan_items
     }
@@ -109,11 +108,6 @@ verwijderen_initiator {
 
 default wijzigen_toekenning := false
 wijzigen_toekenning {
-    input.zaak.open == true
-}
-
-default wijzigen_data := false
-wijzigen_data {
     input.zaak.open == true
 }
 
