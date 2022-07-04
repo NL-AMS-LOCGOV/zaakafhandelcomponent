@@ -73,10 +73,11 @@ public class InboxDocumentenService {
         return resultList.isEmpty() ? null : resultList.get(0);
     }
 
-    public int count() {
+    public int count(final InboxDocumentListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> query = builder.createQuery(Long.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
+        query.where(getWhere(listParameters, root));
         query.select(builder.count(root));
         final Long result = entityManager.createQuery(query).getSingleResult();
         if (result == null) {

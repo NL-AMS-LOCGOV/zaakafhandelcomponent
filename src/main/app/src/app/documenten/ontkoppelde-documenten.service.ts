@@ -23,9 +23,7 @@ export class OntkoppeldeDocumentenService {
     }
 
     list(parameters: ListParameters): Observable<Resultaat<OntkoppeldDocument>> {
-        return this.http.get<Resultaat<OntkoppeldDocument>>(this.basepath, {
-            params: parameters as any
-        }).pipe(
+        return this.http.put<Resultaat<OntkoppeldDocument>>(this.basepath, parameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

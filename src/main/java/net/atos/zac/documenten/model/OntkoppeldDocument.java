@@ -25,6 +25,24 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(schema = SCHEMA, name = "sq_ontkoppeld_document", sequenceName = "sq_ontkoppeld_document", allocationSize = 1)
 public class OntkoppeldDocument {
 
+    /** Naam van property: {@link OntkoppeldDocument#titel} */
+    public static final String TITEL = "titel";
+
+    /** Naam van property: {@link OntkoppeldDocument#creatiedatum} */
+    public static final String CREATIEDATUM = "creatiedatum";
+
+    /** Naam van property: {@link OntkoppeldDocument#zaakID} */
+    public static final String ZAAK_ID = "zaakID";
+
+    /** Naam van property: {@link OntkoppeldDocument#ontkoppeldDoor} */
+    public static final String ONTKOPPELD_DOOR = "ontkoppeldDoor";
+
+    /** Naam van property: {@link OntkoppeldDocument#ontkoppeldOp} */
+    public static final String ONTKOPPELD_OP = "ontkoppeldOp";
+
+    /** Naam van property: {@link OntkoppeldDocument#reden} */
+    public static final String REDEN = "reden";
+
     @Id
     @GeneratedValue(generator = "sq_ontkoppeld_document", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_ontkoppeld_document")

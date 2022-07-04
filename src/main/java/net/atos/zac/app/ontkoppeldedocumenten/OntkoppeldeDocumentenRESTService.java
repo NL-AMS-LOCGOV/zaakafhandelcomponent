@@ -10,10 +10,9 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,6 +29,7 @@ import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentListPa
 import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
+import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -53,11 +53,12 @@ public class OntkoppeldeDocumentenRESTService {
     @Inject
     private RESTOntkoppeldDocumentListParametersConverter listParametersConverter;
 
-    @GET
+    @PUT
     @Path("")
-    public RESTResultaat<RESTOntkoppeldDocument> list(@BeanParam final RESTOntkoppeldDocumentListParameters listParameters) {
-        return new RESTResultaat<>(ontkoppeldDocumentConverter.convert(
-                ontkoppeldeDocumentenService.list(listParametersConverter.convert(listParameters))), ontkoppeldeDocumentenService.count());
+    public RESTResultaat<RESTOntkoppeldDocument> list(final RESTOntkoppeldDocumentListParameters restListParameters) {
+        final OntkoppeldDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
+        return new RESTResultaat<>(ontkoppeldDocumentConverter.convert(ontkoppeldeDocumentenService.list(listParameters)),
+                                   ontkoppeldeDocumentenService.count(listParameters));
     }
 
     @DELETE
