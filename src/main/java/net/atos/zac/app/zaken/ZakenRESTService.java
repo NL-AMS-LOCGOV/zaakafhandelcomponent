@@ -12,7 +12,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -35,6 +34,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
+import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -241,7 +244,8 @@ public class ZakenRESTService {
     @PATCH
     @Path("{uuid}/zaakgeometrie")
     public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID uuid, final RESTZaak restZaak) {
-        final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(uuid, restGeometryConverter.convert(restZaak.zaakgeometrie));
+        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(restGeometryConverter.convert(restZaak.zaakgeometrie));
+        final Zaak updatedZaak = zrcClientService.updateZaak(uuid, zaakGeometriePatch);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -439,17 +443,27 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("/zaak/koppel")
-    public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
+    public void koppelZaak(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
         final Zaak teKoppelenZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
         final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUrl(), teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUrl(), koppelenAanZaak.getUuid());
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
         }
+    }
 
-        eventingService.send(ZAAK.updated(teKoppelenZaak.getUuid()));
-        eventingService.send(ZAAK.updated(koppelenAanZaak.getUuid()));
+    @PATCH
+    @Path("/zaak/ontkoppel")
+    public void ontkoppelZaak(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
+        final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie);
+
+        switch (zaakOntkoppelGegevens.zaakRelatietype) {
+            case DEELZAAK -> ontkoppelHoofdEnDeelzaak(ontkoppelenVanZaak.getUuid(),
+                                                      zaakOntkoppelGegevens.teOntkoppelenZaakUUID, zaakOntkoppelGegevens.reden);
+            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(zaakOntkoppelGegevens.teOntkoppelenZaakUUID,
+                                                       ontkoppelenVanZaak.getUuid(), zaakOntkoppelGegevens.reden);
+        }
     }
 
     @PUT
@@ -558,9 +572,15 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final URI hoofdzaakUrl, final UUID deelzaakUUID) {
-        final Zaak deelzaakPatch = new Zaak();
-        deelzaakPatch.setHoofdzaak(hoofdzaakUrl);
-        zrcClientService.updateZaak(deelzaakUUID, deelzaakPatch);
+    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
+        zrcClientService.updateZaak(deelzaakUUID, deelzaak);
+        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
+    }
+
+    private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(null);
+        zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
+        eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 }
