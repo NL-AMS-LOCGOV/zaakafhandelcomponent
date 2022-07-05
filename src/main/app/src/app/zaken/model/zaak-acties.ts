@@ -21,7 +21,6 @@ export class ZaakActies {
     toevoegenBedrijf: boolean;
     verwijderenInitiator: boolean;
     wijzigenToekenning: boolean;
-    wijzigenData: boolean;
     wijzigenOverig: boolean;
     startenPlanItems: boolean;
 }

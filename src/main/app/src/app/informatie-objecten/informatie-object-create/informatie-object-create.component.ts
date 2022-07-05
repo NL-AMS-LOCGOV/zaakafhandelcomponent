@@ -57,7 +57,7 @@ export class InformatieObjectCreateComponent implements OnInit {
             documentCreatieGegeven.taskId = this.taskId;
             documentCreatieGegeven.informatieobjecttypeUUID = formGroup.controls['informatieobjectTypeUUID'].value.uuid;
             documentCreatieGegeven.titel = formGroup.controls['titel'].value;
-            this.informatieObjectenService.maakDocument(documentCreatieGegeven)
+            this.informatieObjectenService.createDocument(documentCreatieGegeven)
                 .subscribe((documentCreatieResponse) => {
                     if (documentCreatieResponse.redirectURL) {
                         this.redirectUrl.emit(documentCreatieResponse.redirectURL);

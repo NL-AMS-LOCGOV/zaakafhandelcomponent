@@ -29,6 +29,7 @@ import {ZaakZoekObject} from '../zoeken/model/zaken/zaak-zoek-object';
 import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
 import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
 import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
+import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -62,7 +63,7 @@ export class ZakenService {
         );
     }
 
-    partialUpdateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
+    updateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, new ZaakEditMetRedenGegevens(zaak, reden)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
@@ -231,10 +232,15 @@ export class ZakenService {
         );
     }
 
-    postKoppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
+    koppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
+    ontkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
 }

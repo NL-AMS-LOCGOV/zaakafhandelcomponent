@@ -186,7 +186,7 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
                 }
             });
 
-            this.informatieObjectenService.partialUpdateEnkelvoudigInformatieobject(nieuweVersie)
+            this.informatieObjectenService.updateEnkelvoudigInformatieobject(nieuweVersie)
                 .subscribe((document) => {
                     this.document.emit(document);
                     this.utilService.openSnackbar('msg.document.nieuwe.versie.toegevoegd');

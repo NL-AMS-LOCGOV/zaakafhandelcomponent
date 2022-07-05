@@ -126,7 +126,7 @@
                                                           [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
-                                                          [readonly]="!zaak.acties.wijzigenData"
+                                                          [readonly]="!zaak.acties.wijzigenOverig"
                                                           [actieOpschorten]="zaak.acties.opschorten"
                                                           [actieHervatten]="zaak.acties.hervatten"
                                                           [actieVerlengen]="zaak.acties.verlengen"
@@ -167,6 +167,10 @@
                                             <button mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
                                                     [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                                                 <mat-icon>visibility</mat-icon>
+                                            </button>
+                                            <button mat-flat-button (click)="startZaakOntkoppelenDialog(row)"
+                                                    [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.ontkoppelen' | translate }}">
+                                                <mat-icon>link_off</mat-icon>
                                             </button>
                                         </td>
                                     </ng-container>

@@ -68,6 +68,9 @@ import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {ZaakRelatietype} from '../model/zaak-relatietype';
+import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
+import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
+import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -588,7 +591,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         zaak.einddatumGepland = event.einddatumGepland;
         zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -662,7 +665,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = event[field].value ? event[field].value : event[field];
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -671,7 +674,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = value;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -865,5 +868,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.action = null;
         this.actionsSidenav.close();
         this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
+    }
+
+    startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {
+        const zaakOntkoppelGegevens: ZaakOntkoppelGegevens = new ZaakOntkoppelGegevens();
+        zaakOntkoppelGegevens.teOntkoppelenZaakUUID = this.zaak.uuid;
+        zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie = gerelateerdeZaak.identificatie;
+        zaakOntkoppelGegevens.zaakRelatietype = gerelateerdeZaak.relatieType;
+
+        this.dialog.open(ZaakOntkoppelenDialogComponent, {
+            data: zaakOntkoppelGegevens
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.zaak.ontkoppelen.uitgevoerd');
+            }
+        });
     }
 }
