@@ -6,20 +6,20 @@
 <div class="table-container">
     <div class="table-loading-shade" *ngIf="isLoadingResults"></div>
     <div class="table-wrapper">
-        <table mat-table [dataSource]="dataSource" matSort [matSortActive]="parameters.sort" matSortDisableClear [matSortDirection]="parameters.order">
+        <table mat-table [dataSource]="dataSource" matSort [matSortActive]="listParameters.sort" matSortDisableClear [matSortDirection]="listParameters.order">
             <ng-container matColumnDef="titel_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.titel" (changed)="parameters.titel = $event; filtersChanged()"></zac-tekst-filter>
+                    <zac-tekst-filter [value]="listParameters.titel" (changed)="listParameters.titel = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="creatiedatum_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-datum-filter label="creatiedatum" [range]="parameters.creatiedatum" (changed)="filtersChanged()"></zac-datum-filter>
+                    <zac-datum-filter label="creatiedatum" [range]="listParameters.creatiedatum" (changed)="filtersChanged()"></zac-datum-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="zaakID_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.zaakID" (changed)="parameters.zaakID = $event; filtersChanged()"></zac-tekst-filter>
+                    <zac-tekst-filter [value]="listParameters.zaakID" (changed)="listParameters.zaakID = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="ontkoppeldDoor_filter">
@@ -27,7 +27,7 @@
                     <mat-form-field appearance="standard">
                         <mat-select [compareWith]="compareUser"
                                     (selectionChange)="filtersChanged()" id="ontkoppeldDoor_filter" placeholder="{{'ontkoppeldDoor.-kies-' | translate }}"
-                                    [(ngModel)]="parameters.ontkoppeldDoor">
+                                    [(ngModel)]="listParameters.ontkoppeldDoor">
                             <mat-option>{{'ontkoppeldDoor.-kies-' | translate }}"</mat-option>
                             <mat-option *ngFor="let value of filterOntkoppeldDoor" [value]="value">{{ value.naam }}</mat-option>
                         </mat-select>
@@ -36,12 +36,12 @@
             </ng-container>
             <ng-container matColumnDef="ontkoppeldOp_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-datum-filter label="ontkoppeldOp" [range]="parameters.ontkoppeldOp" (changed)="filtersChanged()"></zac-datum-filter>
+                    <zac-datum-filter label="ontkoppeldOp" [range]="listParameters.ontkoppeldOp" (changed)="filtersChanged()"></zac-datum-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="reden_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.reden" (changed)="parameters.reden = $event; filtersChanged()"></zac-tekst-filter>
+                    <zac-tekst-filter [value]="listParameters.reden" (changed)="listParameters.reden = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
@@ -124,7 +124,7 @@
     </div>
     <mat-paginator #paginator
                    [pageIndex]="0"
-                   [pageSize]="parameters.maxResults"
+                   [pageSize]="listParameters.maxResults"
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    sticky>
     </mat-paginator>

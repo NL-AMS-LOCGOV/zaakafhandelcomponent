@@ -71,10 +71,10 @@ public class OntkoppeldeDocumentenRESTService {
         final List<String> ontkoppeldDoor = resultaat.getOntkoppeldDoorFilter();
         if (CollectionUtils.isEmpty(ontkoppeldDoor)) {
             if (restListParameters.ontkoppeldDoor != null) {
-                restOntkoppeldDocumentResultaat.setFilterOntkoppeldDoor(List.of(restListParameters.ontkoppeldDoor));
+                restOntkoppeldDocumentResultaat.filterOntkoppeldDoor = List.of(restListParameters.ontkoppeldDoor);
             }
         } else {
-            restOntkoppeldDocumentResultaat.setFilterOntkoppeldDoor(userConverter.convertUserIds(ontkoppeldDoor));
+            restOntkoppeldDocumentResultaat.filterOntkoppeldDoor = userConverter.convertUserIds(ontkoppeldDoor);
         }
         return restOntkoppeldDocumentResultaat;
     }

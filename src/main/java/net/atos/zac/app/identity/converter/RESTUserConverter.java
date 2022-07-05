@@ -6,7 +6,6 @@
 package net.atos.zac.app.identity.converter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -21,14 +20,13 @@ public class RESTUserConverter {
 
     public List<RESTUser> convertUsers(final List<User> users) {
         return users.stream()
-                .map(this::convertUser)
-                .collect(Collectors.toList());
+                .map(this::convertUser).toList();
     }
 
     public List<RESTUser> convertUserIds(final List<String> userIds) {
         return userIds.stream()
                 .map(this::convertUserId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public RESTUser convertUser(final User user) {

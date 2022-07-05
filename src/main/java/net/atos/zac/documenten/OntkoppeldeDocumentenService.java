@@ -36,6 +36,7 @@ import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
 import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.zoeken.model.DatumRange;
 
 
 @ApplicationScoped
@@ -145,29 +146,29 @@ public class OntkoppeldeDocumentenService {
             String reden = LIKE.formatted(listParameters.getReden().toLowerCase().replace(" ", "%"));
             predicates.add(builder.like(builder.lower(root.get(OntkoppeldDocument.REDEN)), reden));
         }
-        if (listParameters.getCreatiedatum() != null) {
-            if (listParameters.getCreatiedatum().van() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get(OntkoppeldDocument.CREATIEDATUM),
-                                                            DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().van())));
-            }
-            if (listParameters.getCreatiedatum().tot() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.CREATIEDATUM),
-                                                         DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().tot())));
-            }
-        }
-        if (listParameters.getOntkoppeldOp() != null) {
-            if (listParameters.getOntkoppeldOp().van() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
-                                                            DateTimeUtil.convertToDateTime(listParameters.getOntkoppeldOp().van())));
-            }
-            if (listParameters.getOntkoppeldOp().tot() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
-                                                         DateTimeUtil.convertToDateTime(listParameters.getOntkoppeldOp().tot()).plusDays(1).minusSeconds(1)));
-            }
-        }
+
         if (StringUtils.isNotBlank(listParameters.getOntkoppeldDoor())) {
             predicates.add(builder.equal(root.get(OntkoppeldDocument.ONTKOPPELD_DOOR), listParameters.getOntkoppeldDoor()));
         }
+        addDatumRangePredicates(listParameters.getCreatiedatum(), OntkoppeldDocument.CREATIEDATUM, predicates, root, builder);
+        addDatumRangePredicates(listParameters.getOntkoppeldOp(), OntkoppeldDocument.ONTKOPPELD_OP, predicates, root, builder);
+
         return builder.and(predicates.toArray(new Predicate[0]));
     }
+
+
+    private void addDatumRangePredicates(final DatumRange datumRange, final String veld, final List<Predicate> predicates,
+            final Root<OntkoppeldDocument> root, final CriteriaBuilder builder) {
+        if (datumRange != null) {
+            if (datumRange.van() != null) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get(veld),
+                                                            DateTimeUtil.convertToDateTime(datumRange.van())));
+            }
+            if (datumRange.tot() != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
+                                                         DateTimeUtil.convertToDateTime(datumRange.tot()).plusDays(1).minusSeconds(1)));
+            }
+        }
+    }
+
 }

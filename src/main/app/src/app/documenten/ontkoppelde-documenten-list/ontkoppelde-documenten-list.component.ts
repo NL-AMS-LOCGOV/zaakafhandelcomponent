@@ -36,7 +36,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     filterColumns: string[] = [
         'titel_filter', 'creatiedatum_filter', 'zaakID_filter', 'ontkoppeldDoor_filter', 'ontkoppeldOp_filter', 'reden_filter', 'actions_filter'
     ];
-    parameters: OntkoppeldDocumentListParameters;
+    listParameters: OntkoppeldDocumentListParameters;
     filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
 
@@ -49,7 +49,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.parameters = SessionStorageUtil.getItem('ontkoppeldeDocumenten', this.createDefaultParameters());
+        this.listParameters = SessionStorageUtil.getItem('ontkoppeldeDocumenten', this.createDefaultParameters());
     }
 
     ngAfterViewInit(): void {
@@ -60,12 +60,12 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
                 this.updateListParameters();
-                return this.service.list(this.parameters);
+                return this.service.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.parameters);
+                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
@@ -76,10 +76,10 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     updateListParameters(): void {
-        this.parameters.sort = this.sort.active;
-        this.parameters.order = this.sort.direction;
-        this.parameters.page = this.paginator.pageIndex;
-        this.parameters.maxResults = this.paginator.pageSize;
+        this.listParameters.sort = this.sort.active;
+        this.listParameters.order = this.sort.direction;
+        this.listParameters.page = this.paginator.pageIndex;
+        this.listParameters.maxResults = this.paginator.pageSize;
     }
 
     getDownloadURL(od: OntkoppeldDocument): string {
@@ -122,7 +122,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     resetSearch(): void {
-        this.parameters = this.createDefaultParameters();
+        this.listParameters = this.createDefaultParameters();
         this.filtersChanged();
     }
 
@@ -132,5 +132,5 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
-    };
+    }
 }
