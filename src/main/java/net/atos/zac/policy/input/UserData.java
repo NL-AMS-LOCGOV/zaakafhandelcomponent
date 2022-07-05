@@ -11,5 +11,5 @@ class UserData {
 
     public String id;
 
-    public Set<String> roles;
+    public Set<String> rollen;
 }

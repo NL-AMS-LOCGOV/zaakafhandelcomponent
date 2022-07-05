@@ -16,7 +16,7 @@ public class UserInput {
 
     public UserInput(final LoggedInUser loggedInUser) {
         userData.id = loggedInUser.getId();
-        userData.roles = loggedInUser.getRoles();
+        userData.rollen = loggedInUser.getRoles();
     }
 
     public UserData getUser() {
