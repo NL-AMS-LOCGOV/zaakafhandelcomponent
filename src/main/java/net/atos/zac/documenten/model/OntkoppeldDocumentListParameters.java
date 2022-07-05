@@ -5,24 +5,23 @@
 
 package net.atos.zac.documenten.model;
 
-import java.time.LocalDate;
-
 import net.atos.zac.shared.model.ListParameters;
+import net.atos.zac.zoeken.model.DatumRange;
 
 
 public class OntkoppeldDocumentListParameters extends ListParameters {
 
     private String titel;
 
-    private String identificatie;
+    private DatumRange creatiedatum;
 
-    private LocalDate creatiedatum;
+    private String zaakID;
 
     private String ontkoppeldDoor;
 
-    private String zaakId;
+    private DatumRange ontkoppeldOp;
 
-    private LocalDate ontkoppeldOp;
+    private String reden;
 
     public OntkoppeldDocumentListParameters() {
         super();
@@ -36,19 +35,19 @@ public class OntkoppeldDocumentListParameters extends ListParameters {
         this.titel = titel;
     }
 
-    public String getIdentificatie() {
-        return identificatie;
+    public String getReden() {
+        return reden;
     }
 
-    public void setIdentificatie(final String identificatie) {
-        this.identificatie = identificatie;
+    public void setReden(final String reden) {
+        this.reden = reden;
     }
 
-    public LocalDate getCreatiedatum() {
+    public DatumRange getCreatiedatum() {
         return creatiedatum;
     }
 
-    public void setCreatiedatum(final LocalDate creatiedatum) {
+    public void setCreatiedatum(final DatumRange creatiedatum) {
         this.creatiedatum = creatiedatum;
     }
 
@@ -60,19 +59,19 @@ public class OntkoppeldDocumentListParameters extends ListParameters {
         this.ontkoppeldDoor = ontkoppeldDoor;
     }
 
-    public String getZaakId() {
-        return zaakId;
+    public String getZaakID() {
+        return zaakID;
     }
 
-    public void setZaakId(final String zaakId) {
-        this.zaakId = zaakId;
+    public void setZaakID(final String zaakID) {
+        this.zaakID = zaakID;
     }
 
-    public LocalDate getOntkoppeldOp() {
+    public DatumRange getOntkoppeldOp() {
         return ontkoppeldOp;
     }
 
-    public void setOntkoppeldOp(final LocalDate ontkoppeldOp) {
+    public void setOntkoppeldOp(final DatumRange ontkoppeldOp) {
         this.ontkoppeldOp = ontkoppeldOp;
     }
 }

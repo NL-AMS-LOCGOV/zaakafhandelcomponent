@@ -6,21 +6,22 @@
 <div class="table-container">
     <div class="table-loading-shade" *ngIf="isLoadingResults"></div>
     <div class="table-wrapper">
-        <table mat-table [dataSource]="dataSource" matSort [matSortActive]="parameters.sort" matSortDisableClear [matSortDirection]="parameters.order">
+        <table mat-table [dataSource]="dataSource" matSort [matSortActive]="listParameters.sort" matSortDisableClear [matSortDirection]="listParameters.order">
 
             <ng-container matColumnDef="identificatie_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.identificatie" (changed)="parameters.identificatie = $event; filtersChanged()"></zac-tekst-filter>
+                    <zac-tekst-filter [value]="listParameters.identificatie"
+                                      (changed)="listParameters.identificatie = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="creatiedatum_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-datum-filter label="creatiedatum" [range]="parameters.creatiedatum" (changed)="filtersChanged()"></zac-datum-filter>
+                    <zac-datum-filter label="creatiedatum" [range]="listParameters.creatiedatum" (changed)="filtersChanged()"></zac-datum-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="titel_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.titel" (changed)="parameters.titel = $event; filtersChanged()"></zac-tekst-filter>
+                    <zac-tekst-filter [value]="listParameters.titel" (changed)="listParameters.titel = $event; filtersChanged()"></zac-tekst-filter>
                 </th>
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
@@ -88,7 +89,7 @@
     </div>
     <mat-paginator #paginator
                    [pageIndex]="0"
-                   [pageSize]="parameters.maxResults"
+                   [pageSize]="listParameters.maxResults"
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    sticky>
     </mat-paginator>

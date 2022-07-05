@@ -10,26 +10,31 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentListParametersConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocument;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentListParameters;
+import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentResultaat;
 import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
+import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
+import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -53,11 +58,25 @@ public class OntkoppeldeDocumentenRESTService {
     @Inject
     private RESTOntkoppeldDocumentListParametersConverter listParametersConverter;
 
-    @GET
+    @Inject
+    private RESTUserConverter userConverter;
+
+    @PUT
     @Path("")
-    public RESTResultaat<RESTOntkoppeldDocument> list(@BeanParam final RESTOntkoppeldDocumentListParameters listParameters) {
-        return new RESTResultaat<>(ontkoppeldDocumentConverter.convert(
-                ontkoppeldeDocumentenService.list(listParametersConverter.convert(listParameters))), ontkoppeldeDocumentenService.count());
+    public RESTResultaat<RESTOntkoppeldDocument> list(final RESTOntkoppeldDocumentListParameters restListParameters) {
+        final OntkoppeldDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
+        final OntkoppeldeDocumentenResultaat resultaat = ontkoppeldeDocumentenService.getResultaat(listParameters);
+        final RESTOntkoppeldDocumentResultaat restOntkoppeldDocumentResultaat =
+                new RESTOntkoppeldDocumentResultaat(ontkoppeldDocumentConverter.convert(resultaat.getItems()), resultaat.getCount());
+        final List<String> ontkoppeldDoor = resultaat.getOntkoppeldDoorFilter();
+        if (CollectionUtils.isEmpty(ontkoppeldDoor)) {
+            if (restListParameters.ontkoppeldDoor != null) {
+                restOntkoppeldDocumentResultaat.filterOntkoppeldDoor = List.of(restListParameters.ontkoppeldDoor);
+            }
+        } else {
+            restOntkoppeldDocumentResultaat.filterOntkoppeldDoor = userConverter.convertUserIds(ontkoppeldDoor);
+        }
+        return restOntkoppeldDocumentResultaat;
     }
 
     @DELETE

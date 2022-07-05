@@ -33,7 +33,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     @ViewChild(MatSort) sort: MatSort;
     displayedColumns: string[] = ['identificatie', 'creatiedatum', 'titel', 'actions'];
     filterColumns: string[] = ['identificatie_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
-    parameters: InboxDocumentListParameters;
+    listParameters: InboxDocumentListParameters;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private inboxDocumentenService: InboxDocumentenService,
@@ -45,7 +45,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.inboxDocumenten');
-        this.parameters = SessionStorageUtil.getItem('inboxDocumenten', this.getDefaultParameters());
+        this.listParameters = SessionStorageUtil.getItem('inboxDocumenten', this.createDefaultParameters());
     }
 
     ngAfterViewInit(): void {
@@ -55,12 +55,13 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
             switchMap(() => {
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
-                return this.inboxDocumentenService.list(this.getListParameters());
+                this.updateListParameters();
+                return this.inboxDocumentenService.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('inboxDocumenten', this.getListParameters());
+                SessionStorageUtil.setItem('inboxDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
@@ -69,12 +70,11 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    getListParameters(): InboxDocumentListParameters {
-        this.parameters.sort = this.sort.active;
-        this.parameters.order = this.sort.direction;
-        this.parameters.page = this.paginator.pageIndex;
-        this.parameters.maxResults = this.paginator.pageSize;
-        return this.parameters;
+    updateListParameters(): void {
+        this.listParameters.sort = this.sort.active;
+        this.listParameters.order = this.sort.direction;
+        this.listParameters.page = this.paginator.pageIndex;
+        this.listParameters.maxResults = this.paginator.pageSize;
     }
 
     getDownloadURL(od: InboxDocument): string {
@@ -117,11 +117,11 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     }
 
     resetSearch(): void {
-        this.parameters = this.getDefaultParameters();
+        this.listParameters = this.createDefaultParameters();
         this.filtersChanged();
     }
 
-    getDefaultParameters(): InboxDocumentListParameters {
+    createDefaultParameters(): InboxDocumentListParameters {
         return new InboxDocumentListParameters('creatiedatum', 'desc');
     }
 }

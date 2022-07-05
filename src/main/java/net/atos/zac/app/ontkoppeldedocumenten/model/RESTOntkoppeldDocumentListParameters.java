@@ -5,20 +5,20 @@
 
 package net.atos.zac.app.ontkoppeldedocumenten.model;
 
-import java.time.LocalDate;
-
+import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.shared.RESTListParameters;
+import net.atos.zac.app.zoeken.model.RESTDatumRange;
 
 public class RESTOntkoppeldDocumentListParameters extends RESTListParameters {
     public String titel;
 
-    public String identificatie;
+    public String reden;
 
-    public LocalDate creatiedatum;
+    public RESTDatumRange creatiedatum;
 
-    public String ontkoppeldDoor;
+    public RESTUser ontkoppeldDoor;
 
-    public String zaakId;
+    public RESTDatumRange ontkoppeldOp;
 
-    public LocalDate ontkoppeldOp;
+    public String zaakID;
 }

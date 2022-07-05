@@ -32,6 +32,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.InboxDocumentListParameters;
 import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.model.DatumRange;
 
 @ApplicationScoped
 @Transactional
@@ -73,10 +74,11 @@ public class InboxDocumentenService {
         return resultList.isEmpty() ? null : resultList.get(0);
     }
 
-    public int count() {
+    public int count(final InboxDocumentListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> query = builder.createQuery(Long.class);
         final Root<InboxDocument> root = query.from(InboxDocument.class);
+        query.where(getWhere(listParameters, root));
         query.select(builder.count(root));
         final Long result = entityManager.createQuery(query).getSingleResult();
         if (result == null) {
@@ -131,16 +133,21 @@ public class InboxDocumentenService {
             String titel = LIKE.formatted(listParameters.getTitel().toLowerCase().replace(" ", "%"));
             predicates.add(builder.like(builder.lower(root.get(InboxDocument.TITEL)), titel));
         }
-        if (listParameters.getCreatiedatum() != null) {
-            if (listParameters.getCreatiedatum().van() != null) {
+        addCreatiedatumPredicates(listParameters.getCreatiedatum(), predicates, root, builder);
+        return builder.and(predicates.toArray(new Predicate[0]));
+    }
+
+    private void addCreatiedatumPredicates(final DatumRange creatiedatum, final List<Predicate> predicates, final Root<InboxDocument> root,
+            final CriteriaBuilder builder) {
+        if (creatiedatum != null) {
+            if (creatiedatum.van() != null) {
                 predicates.add(builder.greaterThanOrEqualTo(root.get(InboxDocument.CREATIEDATUM),
-                                                            DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().van())));
+                                                            DateTimeUtil.convertToDateTime(creatiedatum.van())));
             }
-            if (listParameters.getCreatiedatum().tot() != null) {
+            if (creatiedatum.tot() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get(InboxDocument.CREATIEDATUM),
-                                                         DateTimeUtil.convertToDateTime(listParameters.getCreatiedatum().tot())));
+                                                         DateTimeUtil.convertToDateTime(creatiedatum.tot()).plusDays(1).minusSeconds(1)));
             }
         }
-        return builder.and(predicates.toArray(new Predicate[0]));
     }
 }

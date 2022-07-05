@@ -30,6 +30,7 @@ import net.atos.zac.app.inboxdocumenten.model.RESTInboxDocumentListParameters;
 import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
+import net.atos.zac.documenten.model.InboxDocumentListParameters;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -57,9 +58,10 @@ public class InboxDocumentenRESTService {
 
     @PUT
     @Path("")
-    public RESTResultaat<RESTInboxDocument> list(final RESTInboxDocumentListParameters listParameters) {
+    public RESTResultaat<RESTInboxDocument> list(final RESTInboxDocumentListParameters restListParameters) {
+        final InboxDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
         return new RESTResultaat<>(inboxDocumentConverter.convert(
-                inboxDocumentenService.list(listParametersConverter.convert(listParameters))), inboxDocumentenService.count());
+                inboxDocumentenService.list(listParameters)), inboxDocumentenService.count(listParameters));
     }
 
     @DELETE

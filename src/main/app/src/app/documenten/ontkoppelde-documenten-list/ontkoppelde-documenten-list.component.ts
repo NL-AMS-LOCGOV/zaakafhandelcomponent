@@ -6,12 +6,11 @@
 import {UtilService} from '../../core/service/util.service';
 import {OntkoppeldDocument} from '../model/ontkoppeld-document';
 import {OntkoppeldeDocumentenService} from '../ontkoppelde-documenten.service';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
-import {ListParameters} from '../../shared/model/list-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
@@ -20,6 +19,8 @@ import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-di
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
+import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-list-parameters';
+import {User} from '../../identity/model/user';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -32,7 +33,12 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     displayedColumns: string[] = ['titel', 'creatiedatum', 'zaakID', 'ontkoppeldDoor', 'ontkoppeldOp', 'reden', 'actions'];
-    defaults: ListParameters;
+    filterColumns: string[] = [
+        'titel_filter', 'creatiedatum_filter', 'zaakID_filter', 'ontkoppeldDoor_filter', 'ontkoppeldOp_filter', 'reden_filter', 'actions_filter'
+    ];
+    listParameters: OntkoppeldDocumentListParameters;
+    filterOntkoppeldDoor: User[] = [];
+    filterChange: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private service: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
@@ -43,44 +49,41 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.defaults = SessionStorageUtil.getItem('ontkoppeldeDocumenten', new ListParameters('ontkoppeldOp', 'desc')) as ListParameters;
+        this.listParameters = SessionStorageUtil.getItem('ontkoppeldeDocumenten', this.createDefaultParameters());
     }
 
     ngAfterViewInit(): void {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        merge(this.sort.sortChange, this.paginator.page).pipe(
+        merge(this.sort.sortChange, this.paginator.page, this.filterChange).pipe(
             startWith({}),
             switchMap(() => {
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
-                return this.service.list(this.getListParameters());
+                this.updateListParameters();
+                return this.service.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.getListParameters());
+                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
             this.paginator.length = data.totaal;
+            this.filterOntkoppeldDoor = data.filterOntkoppeldDoor;
             this.dataSource.data = data.resultaten;
         });
     }
 
-    getListParameters(): ListParameters {
-        const params = new ListParameters(this.sort.active, this.sort.direction);
-        params.page = this.paginator.pageIndex;
-        params.maxResults = this.paginator.pageSize;
-        return params;
+    updateListParameters(): void {
+        this.listParameters.sort = this.sort.active;
+        this.listParameters.order = this.sort.direction;
+        this.listParameters.page = this.paginator.pageIndex;
+        this.listParameters.maxResults = this.paginator.pageSize;
     }
 
     getDownloadURL(od: OntkoppeldDocument): string {
         return this.infoService.getDownloadURL(od.documentUUID);
-    }
-
-    reset(): void {
-        SessionStorageUtil.setItem('ontkoppeldeDocumenten', new ListParameters('documentID', 'desc'));
-        this.utilService.reloadRoute();
     }
 
     documentVerplaatsen(od: OntkoppeldDocument): void {
@@ -113,4 +116,21 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         return informatieobject;
     }
 
+    filtersChanged(): void {
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit();
+    }
+
+    resetSearch(): void {
+        this.listParameters = this.createDefaultParameters();
+        this.filtersChanged();
+    }
+
+    createDefaultParameters(): OntkoppeldDocumentListParameters {
+        return new OntkoppeldDocumentListParameters('ontkoppeldOp', 'desc');
+    }
+
+    compareUser = (user1: User, user2: User): boolean => {
+        return user1?.id === user2?.id;
+    }
 }
