@@ -119,7 +119,7 @@
                 </a>
             </mat-menu>
 
-            <button routerLink="/admin" id="admin_button" mat-icon-button
+            <button *ngIf="beherenActie" routerLink="/admin" id="admin_button" mat-icon-button
                     title="{{ 'actie.admin' | translate }}">
                 <mat-icon>settings</mat-icon>
             </button>

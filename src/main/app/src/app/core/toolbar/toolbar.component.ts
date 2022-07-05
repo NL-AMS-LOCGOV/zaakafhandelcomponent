@@ -16,6 +16,7 @@ import {WebsocketService} from '../websocket/websocket.service';
 import {WebsocketListener} from '../websocket/model/websocket-listener';
 import * as moment from 'moment';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {PolicyService} from '../../policy/policy.service';
 
 @Component({
     selector: 'zac-toolbar',
@@ -27,12 +28,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
     ingelogdeMedewerker: User;
+    beherenActie: boolean = false;
 
     private subscription$: Subscription;
     private signaleringListener: WebsocketListener;
 
     constructor(public utilService: UtilService, public navigation: NavigationService, private identityService: IdentityService,
-                private signaleringenService: SignaleringenService, private websocketService: WebsocketService) {
+                private signaleringenService: SignaleringenService, private websocketService: WebsocketService, private policyService: PolicyService) {
     }
 
     ngOnInit(): void {
@@ -43,7 +45,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
         });
-
+        this.policyService.readAppActies().subscribe(appActies => this.beherenActie = appActies.beheren);
         this.setSignaleringen();
     }
 

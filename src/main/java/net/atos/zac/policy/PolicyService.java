@@ -19,8 +19,10 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakData;
 import net.atos.zac.policy.input.ZaakInput;
+import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.ZaakActies;
 
 @ApplicationScoped
@@ -55,6 +57,10 @@ public class PolicyService {
         zaakData.behandelaar = behandelaar;
         zaakData.openDeelzaken = openDeelzaken;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+    }
+
+    public AppActies readAppActies() {
+        return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
     private String getBehandelaar(final Zaak zaak) {
