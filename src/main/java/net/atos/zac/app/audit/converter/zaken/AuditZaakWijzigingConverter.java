@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import net.atos.client.zgw.zrc.ZRCClientService;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +36,9 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
     @Inject
     private VRLClientService vrlClientService;
 
+    @Inject
+    private ZRCClientService zrcClientService;
+
     @Override
     public boolean supports(final ObjectType objectType) {
         return ObjectType.ZAAK == objectType;
@@ -53,6 +58,7 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         checkZaaktype(oud.getZaaktype(), nieuw.getZaaktype(), historieRegels);
         checkCommunicatieKanaal(oud.getCommunicatiekanaal(), nieuw.getCommunicatiekanaal(), historieRegels);
         checkZaakgeometrie(oud.getZaakgeometrie(), nieuw.getZaakgeometrie(), historieRegels);
+        checkHoofdzaak(oud.getHoofdzaak(), nieuw.getHoofdzaak(), historieRegels);
         checkAttribuut("vertrouwelijkheidaanduiding", oud.getVertrouwelijkheidaanduiding(), nieuw.getVertrouwelijkheidaanduiding(), historieRegels);
         checkAttribuut("registratiedatum", oud.getRegistratiedatum(), nieuw.getRegistratiedatum(), historieRegels);
         checkAttribuut("startdatum", oud.getStartdatum(), nieuw.getStartdatum(), historieRegels);
@@ -68,6 +74,12 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
     private void checkZaaktype(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
         if (ObjectUtils.notEqual(oud, nieuw)) {
             historieRegels.add(new RESTHistorieRegel("zaaktype", zaaktypeToWaarde(oud), zaaktypeToWaarde(nieuw)));
+        }
+    }
+
+    private void checkHoofdzaak(final URI oud, final URI nieuw, final List<RESTHistorieRegel> historieRegels) {
+        if (ObjectUtils.notEqual(oud, nieuw)) {
+            historieRegels.add(new RESTHistorieRegel("hoofdzaak", zaakToWaarde(oud), zaakToWaarde(nieuw)));
         }
     }
 
@@ -104,5 +116,14 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
 
     private String geoMetrieToWaarde(final Geometry geometry) {
         return geometry != null ? geometry.toString() : null;
+    }
+
+    private String zaakToWaarde(final URI zaakURI) {
+        if (zaakURI == null || StringUtils.isBlank(zaakURI.toString())) {
+            return null;
+        }
+
+        final Zaak zaak = zrcClientService.readZaak(zaakURI);
+        return zaak.getIdentificatie();
     }
 }

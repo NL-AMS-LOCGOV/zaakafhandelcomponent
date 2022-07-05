@@ -24,6 +24,7 @@ import {ZaakDocumentenComponent} from './zaak-documenten/zaak-documenten.compone
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZoekenModule} from '../zoeken/zoeken.module';
 import {ZaakKoppelenDialogComponent} from './zaak-koppelen/zaak-koppelen-dialog.component';
+import {ZaakOntkoppelenDialogComponent} from './zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import {ZaakKoppelenDialogComponent} from './zaak-koppelen/zaak-koppelen-dialog.
         ZakenAfgehandeldComponent,
         ZakenVerdelenDialogComponent,
         ZaakKoppelenDialogComponent,
+        ZaakOntkoppelenDialogComponent,
         ZakenVrijgevenDialogComponent,
         NotitiesComponent,
         LocatieZoekComponent,
