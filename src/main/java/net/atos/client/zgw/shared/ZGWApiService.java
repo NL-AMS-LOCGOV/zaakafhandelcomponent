@@ -131,19 +131,6 @@ public class ZGWApiService {
     }
 
     /**
-     * Create {@link Resultaat} for a given {@link Zaak} based on @link Zaak}.UUID, {@link Resultaattype}.UUID and with {@link Resultaat}.toelichting.
-     *
-     * @param zaakUUID             UUID of the {@link Zaak}.
-     * @param resultaattypeUUID    UUID of the {@link Resultaattype} of the required {@link Resultaat}.
-     * @param resultaatToelichting Toelichting for thew {@link Resultaat}.
-     * @return Created {@link Resultaat}.
-     */
-    public Resultaat createResultaatForZaak(final UUID zaakUUID, final UUID resultaattypeUUID, final String resultaatToelichting) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        return createResultaatForZaak(zaak, resultaattypeUUID, resultaatToelichting);
-    }
-
-    /**
      * End {@link Zaak}.
      * Creating a new Eind {@link Status} for the {@link Zaak}.
      * And calculating the archiverings parameters
@@ -190,6 +177,16 @@ public class ZGWApiService {
         createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, reden);
     }
 
+    public boolean isZaakHeropend(final Zaak zaak) {
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
+            return STATUSTYPE_HEROPEND_OMSCHRIJVING.equals(statustype.getOmschrijving());
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
@@ -221,11 +218,11 @@ public class ZGWApiService {
      * and {@link Zaak} with zaakUUID.
      * When the {@link EnkelvoudigInformatieobject} has no other related {@link ZaakInformatieobject}s then it is also deleted.
      *
-     * @param enkelvoudigInformatieObjectUUID UUID of a  {@link EnkelvoudigInformatieobject}
      * @param zaakUUID                        UUID of a {@link Zaak}
+     * @param enkelvoudigInformatieObjectUUID UUID of a  {@link EnkelvoudigInformatieobject}
      * @param toelichting                     Explanation why the {@link EnkelvoudigInformatieobject} is to be removed.
      */
-    public void removeEnkelvoudigInformatieObjectFromZaak(final UUID enkelvoudigInformatieObjectUUID, final UUID zaakUUID, final String toelichting) {
+    public void removeEnkelvoudigInformatieObjectFromZaak(final UUID zaakUUID, final UUID enkelvoudigInformatieObjectUUID, final String toelichting) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
@@ -242,22 +239,20 @@ public class ZGWApiService {
     /**
      * Find {@link RolOrganisatorischeEenheid} for {@link Zaak} with behandelaar {@link AardVanRol}.
      *
-     * @param zaakUrl {@link URI}
+     * @param zaak {@link Zaak}
      * @return {@link RolOrganisatorischeEenheid} or 'null'.
      */
-    public RolOrganisatorischeEenheid findGroepForZaak(final URI zaakUrl) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUrl);
+    public RolOrganisatorischeEenheid findGroepForZaak(final Zaak zaak) {
         return (RolOrganisatorischeEenheid) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.ORGANISATORISCHE_EENHEID);
     }
 
     /**
      * Find {@link RolMedewerker} for {@link Zaak} with behandelaar {@link AardVanRol}.
      *
-     * @param zaakUrl {@link URI}
+     * @param zaak {@link Zaak}
      * @return {@link RolMedewerker} or 'null'.
      */
-    public RolMedewerker findBehandelaarForZaak(final URI zaakUrl) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUrl);
+    public RolMedewerker findBehandelaarForZaak(final Zaak zaak) {
         return (RolMedewerker) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.MEDEWERKER);
     }
 
@@ -272,7 +267,6 @@ public class ZGWApiService {
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {
-        // In case of a 'date in future' exception during local development: subtract 10 seconds from now().
         final Status status = new Status(zaakURI, statustypeURI, ZonedDateTime.now());
         status.setStatustoelichting(toelichting);
         return zrcClientService.createStatus(status);
@@ -307,7 +301,7 @@ public class ZGWApiService {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID); // refetch to get the einddatum (the archiefnominatie has also been set)
         final Resultaattype resultaattype = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype());
         if (resultaattype.getArchiefactietermijn() != null) { // no idea what it means when there is no archiefactietermijn
-            final LocalDate brondatum = bepaalBrondatum(resultaattype, zaak);
+            final LocalDate brondatum = bepaalBrondatum(zaak, resultaattype);
             if (brondatum != null) {
                 final Zaak zaakPatch = new Zaak();
                 zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
@@ -316,7 +310,7 @@ public class ZGWApiService {
         }
     }
 
-    private LocalDate bepaalBrondatum(final Resultaattype resultaattype, final Zaak zaak) {
+    private LocalDate bepaalBrondatum(final Zaak zaak, final Resultaattype resultaattype) {
         final BrondatumArchiefprocedure brondatumArchiefprocedure = resultaattype.getBrondatumArchiefprocedure();
         if (brondatumArchiefprocedure != null) {
             switch (brondatumArchiefprocedure.getAfleidingswijze()) {

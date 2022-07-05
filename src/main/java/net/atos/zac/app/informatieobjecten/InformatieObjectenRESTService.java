@@ -34,12 +34,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
-
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-
-import net.atos.zac.event.EventingService;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -79,7 +73,12 @@ import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaskVariablesService;
+import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.exception.ActieNietToegestaanExceptie;
 import net.atos.zac.webdav.WebdavHelper;
 
 @Singleton
@@ -140,6 +139,9 @@ public class InformatieObjectenRESTService {
     @ActiveSession
     private Instance<HttpSession> httpSession;
 
+    @Inject
+    private PolicyService policyService;
+
     @GET
     @Path("informatieobject/{uuid}")
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid) {
@@ -187,6 +189,7 @@ public class InformatieObjectenRESTService {
             @QueryParam("taakObject") final boolean taakObject,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        checkActie(policyService.readZaakActies(zaak).getToevoegenDocument());
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieId);
         final EnkelvoudigInformatieobjectWithInhoud data = taakObject ?
                 restInformatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject, file) :
@@ -288,7 +291,7 @@ public class InformatieObjectenRESTService {
                 enkelvoudigInformatieObjectLockService.findLock(uuid);
 
         if (enkelvoudigInformatieObjectLock == null || enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())) {
-            zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(uuid, documentVerwijderenGegevens.zaakUuid,
+            zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(documentVerwijderenGegevens.zaakUuid, uuid,
                                                                     documentVerwijderenGegevens.reden);
         }
         return Response.noContent().build();
@@ -400,6 +403,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/documentcreatie")
     public RESTDocumentCreatieResponse createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
+        checkActie(policyService.readZaakActies(restDocumentCreatieGegevens.zaakUUID).getCreeerenDocument());
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(restDocumentCreatieGegevens.zaakUUID,
                                                                                             restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);
@@ -415,5 +419,11 @@ public class InformatieObjectenRESTService {
         final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
         zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieobjectConverter.convert(zaakInformatieObject)));
         return restList;
+    }
+
+    private void checkActie(final boolean actie) {
+        if (!actie) {
+            throw new ActieNietToegestaanExceptie();
+        }
     }
 }

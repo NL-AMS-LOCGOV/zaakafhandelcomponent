@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,6 +32,8 @@ import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.exception.ActieNietToegestaanExceptie;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -70,6 +72,9 @@ public class PlanItemsRESTService {
     @Inject
     private MailService mailService;
 
+    @Inject
+    private PolicyService policyService;
+
     @GET
     @Path("zaak/{uuid}/humanTaskPlanItems")
     public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
@@ -93,13 +98,14 @@ public class PlanItemsRESTService {
         return planItemConverter.convertHumanTask(humanTaskPlanItem, zaakUuidForCase, humanTaskParameters);
     }
 
-    @PUT
+    @POST
     @Path("doHumanTaskPlanItem")
     public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
+        final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
+        checkActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
-        final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         if (humanTaskData.taakStuurGegevens.sendMail) {
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
                                  humanTaskData.taakdata.get("body"), true, zaakUUID);
@@ -110,7 +116,7 @@ public class PlanItemsRESTService {
         indexeerService.addZaak(zaakUUID);
     }
 
-    @PUT
+    @POST
     @Path("doUserEventListenerPlanItem")
     public void doUserEventListenerPlanItem(final RESTUserEventListenerData userEventListenerData) {
         switch (userEventListenerData.actie) {
@@ -125,10 +131,18 @@ public class PlanItemsRESTService {
                 }
             }
             case ZAAK_AFHANDELEN -> {
-                zgwApiService.createResultaatForZaak(userEventListenerData.zaakUuid, userEventListenerData.resultaattypeUuid,
+                final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
+                checkActie(policyService.readZaakActies(zaak).getAfsluiten());
+                zgwApiService.createResultaatForZaak(zaak, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
             }
         }
         caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
+    }
+
+    private void checkActie(final boolean actie) {
+        if (!actie) {
+            throw new ActieNietToegestaanExceptie();
+        }
     }
 }

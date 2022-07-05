@@ -158,12 +158,12 @@ public class RESTZaakConverter {
 
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak.getUrl());
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
         if (groep != null) {
             restZaak.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
         }
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak.getUrl());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         if (behandelaar != null) {
             restZaak.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
         }
@@ -178,7 +178,8 @@ public class RESTZaakConverter {
         restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
 
         restZaak.acties = actiesConverter.convert(
-                policyService.readZaakActies(zaak, restZaak.isHeropend, restZaak.behandelaar != null ? restZaak.behandelaar.id : null,
+                policyService.readZaakActies(zaak, restZaak.isHeropend,
+                                             behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null,
                                              deelzaken.stream().filter(Zaak::isOpen).findAny().isPresent()));
 
         return restZaak;

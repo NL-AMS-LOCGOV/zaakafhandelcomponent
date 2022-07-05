@@ -591,7 +591,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         zaak.einddatumGepland = event.einddatumGepland;
         zaak.uiterlijkeEinddatumAfdoening = event.uiterlijkeEinddatumAfdoening;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -665,7 +665,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = event[field].value ? event[field].value : event[field];
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak, event.reden).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
@@ -674,7 +674,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         const zaak: Zaak = new Zaak();
         zaak[field] = value;
         this.websocketService.suspendListener(this.zaakListener);
-        this.zakenService.partialUpdateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
+        this.zakenService.updateZaak(this.zaak.uuid, zaak).subscribe(updatedZaak => {
             this.init(updatedZaak);
         });
     }
