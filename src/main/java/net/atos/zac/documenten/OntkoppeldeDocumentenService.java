@@ -33,6 +33,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
+import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.util.UriUtil;
 
@@ -65,7 +66,36 @@ public class OntkoppeldeDocumentenService {
         return ontkoppeldDocument;
     }
 
-    public List<OntkoppeldDocument> list(final OntkoppeldDocumentListParameters listParameters) {
+    public OntkoppeldeDocumentenResultaat getResultaat(final OntkoppeldDocumentListParameters listParameters) {
+        return new OntkoppeldeDocumentenResultaat(list(listParameters), count(listParameters), getOntkoppeldDoor(listParameters));
+    }
+
+    public OntkoppeldDocument read(final UUID enkelvoudiginformatieobjectUUID) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
+        final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
+        query.select(root).where(builder.equal(root.get("documentUUID"), enkelvoudiginformatieobjectUUID));
+        return entityManager.createQuery(query).getSingleResult();
+    }
+
+    public OntkoppeldDocument find(final long id) {
+        return entityManager.find(OntkoppeldDocument.class, id);
+    }
+
+    private int count(final OntkoppeldDocumentListParameters listParameters) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
+        query.select(builder.count(root));
+        query.where(getWhere(listParameters, root));
+        final Long result = entityManager.createQuery(query).getSingleResult();
+        if (result == null) {
+            return 0;
+        }
+        return result.intValue();
+    }
+
+    private List<OntkoppeldDocument> list(final OntkoppeldDocumentListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
@@ -85,29 +115,13 @@ public class OntkoppeldeDocumentenService {
         return emQuery.getResultList();
     }
 
-    public OntkoppeldDocument read(final UUID enkelvoudiginformatieobjectUUID) {
+    private List<String> getOntkoppeldDoor(final OntkoppeldDocumentListParameters listParameters) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<OntkoppeldDocument> query = builder.createQuery(OntkoppeldDocument.class);
+        final CriteriaQuery<String> query = builder.createQuery(String.class);
         final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
-        query.select(root).where(builder.equal(root.get("documentUUID"), enkelvoudiginformatieobjectUUID));
-        return entityManager.createQuery(query).getSingleResult();
-    }
-
-    public OntkoppeldDocument find(final long id) {
-        return entityManager.find(OntkoppeldDocument.class, id);
-    }
-
-    public int count(final OntkoppeldDocumentListParameters listParameters) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        final Root<OntkoppeldDocument> root = query.from(OntkoppeldDocument.class);
-        query.select(builder.count(root));
+        query.select(root.get(OntkoppeldDocument.ONTKOPPELD_DOOR)).distinct(true);
         query.where(getWhere(listParameters, root));
-        final Long result = entityManager.createQuery(query).getSingleResult();
-        if (result == null) {
-            return 0;
-        }
-        return result.intValue();
+        return entityManager.createQuery(query).getResultList();
     }
 
     public void delete(final Long id) {
@@ -148,7 +162,7 @@ public class OntkoppeldeDocumentenService {
             }
             if (listParameters.getOntkoppeldOp().tot() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get(OntkoppeldDocument.ONTKOPPELD_OP),
-                                                         DateTimeUtil.convertToDateTime(listParameters.getOntkoppeldOp().tot())));
+                                                         DateTimeUtil.convertToDateTime(listParameters.getOntkoppeldOp().tot()).plusDays(1).minusSeconds(1)));
             }
         }
         if (StringUtils.isNotBlank(listParameters.getOntkoppeldDoor())) {

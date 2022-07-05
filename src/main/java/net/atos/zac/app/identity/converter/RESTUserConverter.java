@@ -25,6 +25,12 @@ public class RESTUserConverter {
                 .collect(Collectors.toList());
     }
 
+    public List<RESTUser> convertUserIds(final List<String> userIds) {
+        return userIds.stream()
+                .map(this::convertUserId)
+                .collect(Collectors.toList());
+    }
+
     public RESTUser convertUser(final User user) {
         final RESTUser restUser = new RESTUser();
         restUser.id = user.getId();

@@ -3,25 +3,14 @@ package net.atos.zac.zoeken.model;
 import java.util.EnumMap;
 import java.util.List;
 
-public class ZoekResultaat<TYPE> {
+import net.atos.zac.shared.model.Resultaat;
 
-    final List<TYPE> items;
-
-    final long count;
+public class ZoekResultaat<TYPE> extends Resultaat<TYPE> {
 
     final EnumMap<FilterVeld, List<String>> filters = new EnumMap<>(FilterVeld.class);
 
     public ZoekResultaat(final List<TYPE> items, final long count) {
-        this.items = items;
-        this.count = count;
-    }
-
-    public List<TYPE> getItems() {
-        return items;
-    }
-
-    public long getCount() {
-        return count;
+        super(items, count);
     }
 
     public EnumMap<FilterVeld, List<String>> getFilters() {

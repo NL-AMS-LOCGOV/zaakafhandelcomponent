@@ -24,7 +24,14 @@
             </ng-container>
             <ng-container matColumnDef="ontkoppeldDoor_filter">
                 <th mat-header-cell *matHeaderCellDef>
-                    <zac-tekst-filter [value]="parameters.ontkoppeldeDoor" (changed)="parameters.ontkoppeldeDoor = $event; filtersChanged()"></zac-tekst-filter>
+                    <mat-form-field appearance="standard">
+                        <mat-select [compareWith]="compareUser"
+                                    (selectionChange)="filtersChanged()" id="ontkoppeldDoor_filter" placeholder="{{'ontkoppeldDoor.-kies-' | translate }}"
+                                    [(ngModel)]="parameters.ontkoppeldDoor">
+                            <mat-option>{{'ontkoppeldDoor.-kies-' | translate }}"</mat-option>
+                            <mat-option *ngFor="let value of filterOntkoppeldDoor" [value]="value">{{ value.naam }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </th>
             </ng-container>
             <ng-container matColumnDef="ontkoppeldOp_filter">

@@ -5,11 +5,12 @@
 
 import {SortDirection} from '@angular/material/sort';
 import {ListParameters} from '../../shared/model/list-parameters';
+import {User} from '../../identity/model/user';
 
 export class OntkoppeldDocumentListParameters extends ListParameters {
 
     zaakID: string;
-    ontkoppeldeDoor: string;
+    ontkoppeldDoor: User;
     ontkoppeldOp: { van: string, tot: string } = {van: null, tot: null};
     creatiedatum: { van: string, tot: string } = {van: null, tot: null};
     titel: string;

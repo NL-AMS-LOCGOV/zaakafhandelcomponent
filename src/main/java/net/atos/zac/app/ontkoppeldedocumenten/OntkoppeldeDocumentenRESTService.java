@@ -18,18 +18,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.converter.RESTOntkoppeldDocumentListParametersConverter;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocument;
 import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentListParameters;
+import net.atos.zac.app.ontkoppeldedocumenten.model.RESTOntkoppeldDocumentResultaat;
 import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
+import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -53,12 +58,25 @@ public class OntkoppeldeDocumentenRESTService {
     @Inject
     private RESTOntkoppeldDocumentListParametersConverter listParametersConverter;
 
+    @Inject
+    private RESTUserConverter userConverter;
+
     @PUT
     @Path("")
     public RESTResultaat<RESTOntkoppeldDocument> list(final RESTOntkoppeldDocumentListParameters restListParameters) {
         final OntkoppeldDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
-        return new RESTResultaat<>(ontkoppeldDocumentConverter.convert(ontkoppeldeDocumentenService.list(listParameters)),
-                                   ontkoppeldeDocumentenService.count(listParameters));
+        final OntkoppeldeDocumentenResultaat resultaat = ontkoppeldeDocumentenService.getResultaat(listParameters);
+        final RESTOntkoppeldDocumentResultaat restOntkoppeldDocumentResultaat =
+                new RESTOntkoppeldDocumentResultaat(ontkoppeldDocumentConverter.convert(resultaat.getItems()), resultaat.getCount());
+        final List<String> ontkoppeldDoor = resultaat.getOntkoppeldDoorFilter();
+        if (CollectionUtils.isEmpty(ontkoppeldDoor)) {
+            if (restListParameters.ontkoppeldDoor != null) {
+                restOntkoppeldDocumentResultaat.setFilterOntkoppeldDoor(List.of(restListParameters.ontkoppeldDoor));
+            }
+        } else {
+            restOntkoppeldDocumentResultaat.setFilterOntkoppeldDoor(userConverter.convertUserIds(ontkoppeldDoor));
+        }
+        return restOntkoppeldDocumentResultaat;
     }
 
     @DELETE

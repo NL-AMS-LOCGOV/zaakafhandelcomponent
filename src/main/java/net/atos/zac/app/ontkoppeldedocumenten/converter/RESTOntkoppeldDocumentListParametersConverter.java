@@ -21,7 +21,9 @@ public class RESTOntkoppeldDocumentListParametersConverter extends RESTListParam
             listParameters.setCreatiedatum(new DatumRange(restListParameters.creatiedatum.van, restListParameters.creatiedatum.tot));
         }
 
-        listParameters.setOntkoppeldDoor(restListParameters.ontkoppeldDoor);
+        if (restListParameters.ontkoppeldDoor != null) {
+            listParameters.setOntkoppeldDoor(restListParameters.ontkoppeldDoor.id);
+        }
 
         if (restListParameters.ontkoppeldOp != null && restListParameters.ontkoppeldOp.hasValue()) {
             listParameters.setOntkoppeldOp(new DatumRange(restListParameters.ontkoppeldOp.van, restListParameters.ontkoppeldOp.tot));

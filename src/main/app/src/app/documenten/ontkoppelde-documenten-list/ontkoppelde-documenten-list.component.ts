@@ -20,6 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-list-parameters';
+import {User} from '../../identity/model/user';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -36,6 +37,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         'titel_filter', 'creatiedatum_filter', 'zaakID_filter', 'ontkoppeldDoor_filter', 'ontkoppeldOp_filter', 'reden_filter', 'actions_filter'
     ];
     parameters: OntkoppeldDocumentListParameters;
+    filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private service: OntkoppeldeDocumentenService,
@@ -68,6 +70,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             })
         ).subscribe(data => {
             this.paginator.length = data.totaal;
+            this.filterOntkoppeldDoor = data.filterOntkoppeldDoor;
             this.dataSource.data = data.resultaten;
         });
     }
@@ -126,4 +129,8 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     createDefaultParameters(): OntkoppeldDocumentListParameters {
         return new OntkoppeldDocumentListParameters('ontkoppeldOp', 'desc');
     }
+
+    compareUser = (user1: User, user2: User): boolean => {
+        return user1?.id === user2?.id;
+    };
 }
