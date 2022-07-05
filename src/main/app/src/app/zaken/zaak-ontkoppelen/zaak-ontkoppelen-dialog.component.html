@@ -9,7 +9,7 @@
     <mfb-form-field [field]="redenFormField"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="redenFormField && redenFormField.formControl.invalid || loading"
+    <button [disabled]="redenFormField?.formControl.invalid || loading"
             mat-button color="primary" (click)="ontkoppel()" id="zakenOntkoppelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>

@@ -11,10 +11,10 @@ import javax.json.bind.annotation.JsonbProperty;
 /**
  * ZaakGeometry patch data
  */
-public class ZaakGeometriePatch {
+public class ZaakGeometriePatch extends Zaak {
 
     @JsonbProperty(nillable = true)
-    private Geometry zaakgeometrie;
+    private final Geometry zaakgeometrie;
 
     public ZaakGeometriePatch(final Geometry zaakgeometrie) {
         this.zaakgeometrie = zaakgeometrie;
@@ -22,9 +22,5 @@ public class ZaakGeometriePatch {
 
     public Geometry getZaakgeometrie() {
         return zaakgeometrie;
-    }
-
-    public void setZaakgeometrie(final Geometry zaakgeometrie) {
-        this.zaakgeometrie = zaakgeometrie;
     }
 }

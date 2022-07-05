@@ -872,8 +872,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     startZaakOntkoppelenDialog(gerelateerdeZaak: GerelateerdeZaak): void {
         const zaakOntkoppelGegevens: ZaakOntkoppelGegevens = new ZaakOntkoppelGegevens();
-        zaakOntkoppelGegevens.bronZaakUuid = this.zaak.uuid;
-        zaakOntkoppelGegevens.identificatie = gerelateerdeZaak.identificatie;
+        zaakOntkoppelGegevens.teOntkoppelenZaakUUID = this.zaak.uuid;
+        zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie = gerelateerdeZaak.identificatie;
         zaakOntkoppelGegevens.zaakRelatietype = gerelateerdeZaak.relatieType;
 
         this.dialog.open(ZaakOntkoppelenDialogComponent, {

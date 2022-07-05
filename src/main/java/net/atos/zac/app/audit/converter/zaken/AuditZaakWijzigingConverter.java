@@ -124,6 +124,6 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
         }
 
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
-        return zaak != null ? zaak.getIdentificatie() : null;
+        return zaak.getIdentificatie();
     }
 }

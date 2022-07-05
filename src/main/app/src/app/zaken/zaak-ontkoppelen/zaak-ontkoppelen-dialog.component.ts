@@ -39,7 +39,7 @@ export class ZaakOntkoppelenDialogComponent implements OnInit {
         this.dialogRef.disableClose = true;
         this.loading = true;
         this.data.reden = this.redenFormField.formControl.value;
-        this.zakenService.postOntkoppelZaak(this.data).subscribe(() => {
+        this.zakenService.ontkoppelZaak(this.data).subscribe(() => {
             this.dialogRef.close(true);
         });
     }

@@ -84,7 +84,7 @@ export class ZaakKoppelenDialogComponent implements OnInit {
         zaakKoppelGegevens.bronZaakUuid = zaak.uuid;
         zaakKoppelGegevens.identificatie = nieuweZaakID;
         zaakKoppelGegevens.relatieType = relatieType.value;
-        this.zakenService.postKoppelZaak(zaakKoppelGegevens).subscribe(() => {
+        this.zakenService.koppelZaak(zaakKoppelGegevens).subscribe(() => {
             this.dialogRef.close(true);
         });
     }

@@ -1,23 +1,21 @@
 package net.atos.client.zgw.zrc.model;
 
 import javax.json.bind.annotation.JsonbNillable;
+import javax.json.bind.annotation.JsonbProperty;
 
 import java.net.URI;
 
 @JsonbNillable
-public class ZaakHoofdzaakPatch extends Zaak {
+public class HoofdzaakPatch extends Zaak {
 
-    private URI hoofdzaak;
+    @JsonbProperty(nillable = true)
+    private final URI hoofdzaak;
 
-    public ZaakHoofdzaakPatch(final URI hoofdzaak) {
+    public HoofdzaakPatch(final URI hoofdzaak) {
         this.hoofdzaak = hoofdzaak;
     }
 
     public URI getHoofdzaak() {
         return hoofdzaak;
-    }
-
-    public void setHoofdzaak(final URI hoofdzaak) {
-        this.hoofdzaak = hoofdzaak;
     }
 }

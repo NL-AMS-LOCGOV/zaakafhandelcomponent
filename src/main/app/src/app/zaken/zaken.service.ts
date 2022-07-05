@@ -232,13 +232,13 @@ export class ZakenService {
         );
     }
 
-    postKoppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
+    koppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    postOntkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
+    ontkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );

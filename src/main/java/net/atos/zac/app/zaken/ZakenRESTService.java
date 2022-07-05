@@ -12,7 +12,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -36,7 +35,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.zrc.model.ZaakHoofdzaakPatch;
+import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
 
 import org.apache.commons.lang3.StringUtils;
@@ -244,7 +244,8 @@ public class ZakenRESTService {
     @PATCH
     @Path("{uuid}/zaakgeometrie")
     public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID uuid, final RESTZaak restZaak) {
-        final Zaak updatedZaak = zrcClientService.updateZaakGeometrie(uuid, restGeometryConverter.convert(restZaak.zaakgeometrie));
+        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(restGeometryConverter.convert(restZaak.zaakgeometrie));
+        final Zaak updatedZaak = zrcClientService.updateZaak(uuid, zaakGeometriePatch);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -442,7 +443,7 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("/zaak/koppel")
-    public void koppel(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
+    public void koppelZaak(final RESTZaakKoppelGegevens zaakKoppelGegevens) {
         final Zaak teKoppelenZaak = zrcClientService.readZaak(zaakKoppelGegevens.bronZaakUuid);
         final Zaak koppelenAanZaak = zrcClientService.readZaakByID(zaakKoppelGegevens.identificatie);
 
@@ -454,13 +455,13 @@ public class ZakenRESTService {
 
     @PATCH
     @Path("/zaak/ontkoppel")
-    public void ontkoppel(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
-        final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(zaakOntkoppelGegevens.identificatie);
+    public void ontkoppelZaak(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
+        final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie);
 
         switch (zaakOntkoppelGegevens.zaakRelatietype) {
             case DEELZAAK -> ontkoppelHoofdEnDeelzaak(ontkoppelenVanZaak.getUuid(),
-                                                      zaakOntkoppelGegevens.bronZaakUuid, zaakOntkoppelGegevens.reden);
-            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(zaakOntkoppelGegevens.bronZaakUuid,
+                                                      zaakOntkoppelGegevens.teOntkoppelenZaakUUID, zaakOntkoppelGegevens.reden);
+            case HOOFDZAAK -> ontkoppelHoofdEnDeelzaak(zaakOntkoppelGegevens.teOntkoppelenZaakUUID,
                                                        ontkoppelenVanZaak.getUuid(), zaakOntkoppelGegevens.reden);
         }
     }
@@ -572,13 +573,13 @@ public class ZakenRESTService {
     }
 
     private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
-        final ZaakHoofdzaakPatch deelzaak = new ZaakHoofdzaakPatch(hoofdzaak.getUrl());
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
         zrcClientService.updateZaak(deelzaakUUID, deelzaak);
         eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
     }
 
     private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
-        final ZaakHoofdzaakPatch deelzaak = new ZaakHoofdzaakPatch(null);
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(null);
         zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
         eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
