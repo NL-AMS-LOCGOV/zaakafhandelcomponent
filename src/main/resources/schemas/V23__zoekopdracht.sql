@@ -11,7 +11,7 @@ CREATE TABLE ${schema}.zoekopdracht
     actief            BOOLEAN NOT NULL DEFAULT FALSE,
     creatiedatum      DATE    NOT NULL,
     naam              VARCHAR NOT NULL,
-    json_zoekopdracht JSON    NOT NULL,
+    json_zoekopdracht VARCHAR NOT NULL,
     CONSTRAINT pk_zoekopdracht PRIMARY KEY (id_zoekopdracht)
 );
 
