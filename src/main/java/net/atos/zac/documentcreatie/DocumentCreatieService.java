@@ -8,6 +8,8 @@ package net.atos.zac.documentcreatie;
 import static java.lang.String.format;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 
+import java.time.LocalDate;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -32,6 +34,8 @@ import net.atos.zac.documentcreatie.model.WizardRequest;
 
 @ApplicationScoped
 public class DocumentCreatieService {
+
+    private static final String AUDIT_TOELICHTING = "Document gecreëerd in SmartDocuments";
 
     @Inject
     @RestClient
@@ -85,6 +89,8 @@ public class DocumentCreatieService {
         registratie.informatieobjecttype = ztcClientService.createUrlExternToInformatieobjecttype(documentCreatieGegevens.getInformatieobjecttype());
         registratie.titel = documentCreatieGegevens.getTitel();
         registratie.informatieobjectStatus = documentCreatieGegevens.getInformatieobjectStatus();
+        registratie.creatiedatum = LocalDate.now();
+        registratie.auditToelichting = AUDIT_TOELICHTING;
         return registratie;
     }
 }
