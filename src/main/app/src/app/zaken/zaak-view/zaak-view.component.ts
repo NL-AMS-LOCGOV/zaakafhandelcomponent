@@ -71,6 +71,7 @@ import {ZaakRelatietype} from '../model/zaak-relatietype';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
+import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -169,6 +170,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setupIndicaties();
         this.loadLocatie();
         this.loadOpschorting();
+        this.setPaginaLocatieInformatie(zaak.identificatie);
+    }
+
+    private setPaginaLocatieInformatie(zaakIdentificatie: string) {
+        PaginaLocatieUtil.actieveZaakViewIdentificatie = zaakIdentificatie;
     }
 
     private getIngelogdeMedewerker() {
@@ -206,6 +212,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
+        this.setPaginaLocatieInformatie(null);
         this.utilService.disableActionBar(false);
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
