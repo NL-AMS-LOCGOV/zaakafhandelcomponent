@@ -71,6 +71,7 @@ import {ZaakRelatietype} from '../model/zaak-relatietype';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
+import {UserEventListenerToelichting} from '../../plan-items/model/user-event-listener-toelichting';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -354,7 +355,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
+            this.menu.push(new ButtonMenuItem('actie.zaak.afhandelen', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
 
         if (this.zaak.acties.heropenen) {
@@ -568,20 +569,32 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private openZaakAfsluitenDialog(): void {
-        const dialogData = new DialogData([
-                new InputFormFieldBuilder().id('reden').label('actie.zaak.afsluiten.reden').validators(Validators.required).maxlength(100).build()],
-            (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['reden']).pipe(
-                tap(() => this.websocketService.suspendListener(this.zaakListener))
-            ));
+        this.planItemsService.getUserEventListenerPlanItemToelichting(this.zaak.uuid, UserEventListenerActie.ZaakAfhandelen)
+            .subscribe(zaakAfhandelToelichting => {
+            const dialogData = new DialogData([
+                    new SelectFormFieldBuilder().id('resultaattype')
+                                                .label('resultaat')
+                                                .optionLabel('naam')
+                                                .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                                .validators(Validators.required)
+                                                .build(),
+                    new InputFormFieldBuilder().id('toelichting')
+                                               .label('toelichting')
+                                               .maxlength(80)
+                                               .build()],
+                (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['toelichting'], results['resultaattype'].id).pipe(
+                    tap(() => this.websocketService.suspendListener(this.zaakListener))
+                ), null, zaakAfhandelToelichting.toelichting);
 
-        dialogData.confirmButtonActionKey = 'actie.zaak.afsluiten';
+            dialogData.confirmButtonActionKey = 'actie.zaak.afhandelen';
 
-        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
-            if (result) {
-                this.updateZaak();
-                this.loadTaken();
-                this.utilService.openSnackbar('msg.zaak.afgesloten');
-            }
+            this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
+                if (result) {
+                    this.updateZaak();
+                    this.loadTaken();
+                    this.utilService.openSnackbar('msg.zaak.afgesloten');
+                }
+            });
         });
     }
 

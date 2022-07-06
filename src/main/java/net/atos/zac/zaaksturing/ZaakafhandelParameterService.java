@@ -57,4 +57,8 @@ public class ZaakafhandelParameterService {
     public FormulierDefinitie readFormulierDefinitie(final UUID zaaktypeUUID, final String taskDefinitionKey) {
         return FormulierDefinitie.valueOf(beheerService.readHumanTaskParameters(zaaktypeUUID, taskDefinitionKey).getFormulierDefinitieID());
     }
+
+    public String readUserEventListenerPlanItemToelichting(final UUID zaaktypeUUID, final String planItemDefinitionId) {
+        return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItemDefinitionId).getToelichting();
+    }
 }
