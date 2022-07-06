@@ -14,5 +14,5 @@ default aanmaken_zaak := true
 
 default beheren:= false
 beheren {
-    rollen.beheerder in user.rollen
+    rollen.beheerder.id in user.rollen
 }
