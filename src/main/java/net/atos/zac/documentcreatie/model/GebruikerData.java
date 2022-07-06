@@ -7,5 +7,7 @@ package net.atos.zac.documentcreatie.model;
 
 public class GebruikerData {
 
+    public String id;
+
     public String naam;
 }

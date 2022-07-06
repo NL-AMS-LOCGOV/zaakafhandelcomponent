@@ -23,4 +23,6 @@ public class Registratie {
     public String bronorganisatie;
 
     public LocalDate creatiedatum;
+
+    public String auditToelichting;
 }
