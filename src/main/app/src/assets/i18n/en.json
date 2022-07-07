@@ -71,6 +71,7 @@
   " 3 ": ">>--> OVERIGE VELDEN <--<<",
   "initiator": "Applicant",
   "auteur": "Author",
+  "ondertekenen": "Sign document",
   "behandelaar": "Case handler",
   "bestandsnaam": "File name",
   "geslachtsnaam": "Gender name",
