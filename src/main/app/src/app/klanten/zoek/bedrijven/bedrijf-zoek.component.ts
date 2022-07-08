@@ -42,7 +42,7 @@ export class BedrijfZoekComponent implements OnInit {
 
     ngOnInit(): void {
         this.handelsnaamFormField = new InputFormFieldBuilder().id('handelsnaam').label('handelsnaam').maxlength(100)
-                                                               .build();
+                                                               .validators(CustomValidators.handelsnaam).build();
         this.kvkFormField = new InputFormFieldBuilder().id('kvknummer').label('kvknummer')
                                                        .validators(CustomValidators.kvk).maxlength(8).build();
         this.vestigingsnummerFormField = new InputFormFieldBuilder().id('vestigingsnummer').label('vestigingsnummer')

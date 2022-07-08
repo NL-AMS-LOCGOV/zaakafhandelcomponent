@@ -220,8 +220,8 @@ export class ZakenService {
         );
     }
 
-    afsluiten(uuid: string, afsluitenReden: string): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden)).pipe(
+    afsluiten(uuid: string, afsluitenReden: string, resultaattypeUuid: string): Observable<void> {
+        return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden, resultaattypeUuid)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

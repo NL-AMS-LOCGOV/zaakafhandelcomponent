@@ -129,6 +129,10 @@ public interface ZRCClient {
     @Path("resultaten")
     Resultaat resultaatCreate(final Resultaat resultaat);
 
+    @DELETE
+    @Path("resultaten/{uuid}")
+    Response resultaatDelete(@PathParam("uuid") final UUID uuid);
+
     @GET
     @Path("zaken/{zaak_uuid}/zaakeigenschappen")
     List<ZaakEigenschap> zaakeigenschapList(@PathParam("zaak_uuid") final UUID zaakUUID);
