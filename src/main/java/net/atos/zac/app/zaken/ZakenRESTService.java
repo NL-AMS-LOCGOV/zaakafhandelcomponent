@@ -35,10 +35,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
-import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
-import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -50,6 +46,7 @@ import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
+import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -59,12 +56,14 @@ import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
@@ -81,6 +80,7 @@ import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakKoppelGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakOpschorting;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
@@ -231,6 +231,7 @@ public class ZakenRESTService {
     @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
+        checkActie(policyService.isZaaktypeAllowed(restZaak.zaaktype.identificatie));
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
@@ -380,9 +381,9 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
-        return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
-                .map(zaaktypeConverter::convert)
-                .collect(Collectors.toList());
+        List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI());
+        zaaktypen = policyService.filterAllowedZaaktypen(zaaktypen);
+        return zaaktypen.stream().map(zaaktypeConverter::convert).toList();
     }
 
     @PUT
