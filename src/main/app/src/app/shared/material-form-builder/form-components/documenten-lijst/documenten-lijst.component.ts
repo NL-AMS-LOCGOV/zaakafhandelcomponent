@@ -21,7 +21,7 @@ import {TranslateService} from '@ngx-translate/core';
 export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     data: DocumentenLijstFormField;
-    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
+    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'ondertekenen', 'url'];
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
