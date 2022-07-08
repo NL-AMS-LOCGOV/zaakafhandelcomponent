@@ -1,6 +1,7 @@
 package net.atos.zac.zaak
 
 import future.keywords
+import data.net.atos.zac.rollen
 import input.zaak
 import input.user
 
@@ -70,7 +71,13 @@ toevoegen_document {
     zaak.open == true
 }
 
-default koppelen := true
+default koppelen := false
+koppelen {
+    zaak.open == true
+}
+koppelen {
+    rollen.recordmanager.id in user.rollen
+}
 
 default versturen_email := false
 versturen_email {
