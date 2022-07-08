@@ -19,6 +19,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
+
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -128,6 +130,21 @@ public class ZGWApiService {
     public Resultaat createResultaatForZaak(final Zaak zaak, final UUID resultaattypeUUID, final String resultaatToelichting) {
         final Resultaattype resultaattype = ztcClientService.readResultaattype(resultaattypeUUID);
         return createResultaat(zaak.getUrl(), resultaattype.getUrl(), resultaatToelichting);
+    }
+
+    /**
+     * Update {@link Resultaat} for a given {@link Zaak} based on {@link Resultaattype}.UUID and with {@link Resultaat}
+     * .toelichting.
+     *
+     * @param zaak                 {@link Zaak}
+     * @param resultaatTypeUuid    Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param reden                Reason of setting the {@link Resultaattype}
+     * @return Created {@link Resultaat}.
+     */
+    public Resultaat updateResultaatForZaak(final Zaak zaak, final UUID resultaatTypeUuid, final String reden) {
+        final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
+        zrcClientService.deleteResultaat(resultaat.getUuid());
+        return createResultaatForZaak(zaak, resultaatTypeUuid, reden);
     }
 
     /**
