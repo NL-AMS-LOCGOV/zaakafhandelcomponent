@@ -29,6 +29,7 @@ import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.policy.exception.PolicyException;
 import net.atos.zac.policy.input.EnkelvoudigInformatieobjectData;
 import net.atos.zac.policy.input.EnkelvoudigInformatieobjectInput;
 import net.atos.zac.policy.input.UserInput;
@@ -100,7 +101,7 @@ public class PolicyService {
 
     public static void assertActie(final boolean actie) {
         if (!actie) {
-            throw new RuntimeException("Actie niet toegestaan");
+            throw new PolicyException();
         }
     }
 

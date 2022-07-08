@@ -47,7 +47,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     infoObject: EnkelvoudigInformatieobject;
     laatsteVersieInfoObject: EnkelvoudigInformatieobject;
     zaakInformatieObjecten: ZaakInformatieobject[];
-    zaak?: Zaak;
+    zaak: Zaak;
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
