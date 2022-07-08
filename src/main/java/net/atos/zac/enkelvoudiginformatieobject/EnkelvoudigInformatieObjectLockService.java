@@ -1,7 +1,7 @@
 package net.atos.zac.enkelvoudiginformatieobject;
 
-import net.atos.client.zgw.drc.DRCClientService;
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -12,8 +12,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 
 @ApplicationScoped
 @Transactional
@@ -43,14 +43,11 @@ public class EnkelvoudigInformatieObjectLockService {
         return resultList.isEmpty() ? null : resultList.get(0);
     }
 
-    public void deleteLock(final UUID enkelvoudigInformatieObjectUUID, final String idUser) throws IllegalAccessException {
+    public void deleteLock(final UUID enkelvoudigInformatieObjectUUID) {
         final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock = findLock(enkelvoudigInformatieObjectUUID);
-        if (enkelvoudigInformatieObjectLock != null && enkelvoudigInformatieObjectLock.getUserId().equals(idUser)) {
-            drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID,
-                                                               enkelvoudigInformatieObjectLock.getLock());
+        if (enkelvoudigInformatieObjectLock != null) {
+            drcClientService.unlockEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID, enkelvoudigInformatieObjectLock.getLock());
             entityManager.remove(enkelvoudigInformatieObjectLock);
-        } else {
-            throw new IllegalAccessException("Niet toegestaan om document te wijzigen");
         }
     }
 }

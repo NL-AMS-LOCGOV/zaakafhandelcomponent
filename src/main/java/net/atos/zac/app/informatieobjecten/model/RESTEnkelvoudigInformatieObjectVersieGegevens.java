@@ -5,18 +5,19 @@
 
 package net.atos.zac.app.informatieobjecten.model;
 
-import net.atos.zac.app.configuratie.model.RESTTaal;
-
 import java.time.LocalDate;
+import java.util.UUID;
+
+import net.atos.zac.app.configuratie.model.RESTTaal;
 
 /**
  *
  */
 public class RESTEnkelvoudigInformatieObjectVersieGegevens {
 
-    public String uuid;
+    public UUID uuid;
 
-    public String zaakUuid;
+    public UUID zaakUuid;
 
     public String titel;
 

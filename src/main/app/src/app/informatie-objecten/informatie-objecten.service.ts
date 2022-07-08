@@ -85,7 +85,7 @@ export class InformatieObjectenService {
     }
 
     updateEnkelvoudigInformatieobject(documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens): Observable<EnkelvoudigInformatieobject> {
-        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/partialupdate`, documentNieuweVersieGegevens).pipe(
+        return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/update`, documentNieuweVersieGegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

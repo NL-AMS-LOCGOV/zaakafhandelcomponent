@@ -94,7 +94,6 @@ import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -312,8 +311,7 @@ public class ZakenRESTService {
     public void ontkoppelInformatieObject(final RESTDocumentOntkoppelGegevens ontkoppelGegevens) {
         final Zaak zaak = zrcClientService.readZaak(ontkoppelGegevens.zaakUUID);
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppelGegevens.documentUUID);
-        final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.findLock(informatieobject.getUUID());
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobject, lock != null ? lock.getUserId() : null, zaak).getKoppelen());
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobject, zaak).getKoppelen());
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setInformatieobject(informatieobject.getUrl());
         parameters.setZaak(zaak.getUrl());
@@ -433,6 +431,7 @@ public class ZakenRESTService {
     public void vrijgeven(final RESTZakenVerdeelGegevens verdeelGegevens) {
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
+            assertActie(policyService.readZaakActies(zaak).getWijzigenToekenning());
             zrcClientService.deleteRol(zaak.getUrl(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
         });
         indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).collect(Collectors.toList()), ZoekObjectType.ZAAK);
@@ -486,7 +485,8 @@ public class ZakenRESTService {
     @Path("/zaak/ontkoppel")
     public void ontkoppelZaak(final RESTZaakOntkoppelGegevens zaakOntkoppelGegevens) {
         final Zaak ontkoppelenVanZaak = zrcClientService.readZaakByID(zaakOntkoppelGegevens.ontkoppelenVanZaakIdentificatie);
-
+        assertActie(policyService.readZaakActies(ontkoppelenVanZaak).getKoppelen());
+        assertActie(policyService.readZaakActies(zaakOntkoppelGegevens.teOntkoppelenZaakUUID).getKoppelen());
         switch (zaakOntkoppelGegevens.zaakRelatietype) {
             case DEELZAAK -> ontkoppelHoofdEnDeelzaak(ontkoppelenVanZaak.getUuid(),
                                                       zaakOntkoppelGegevens.teOntkoppelenZaakUUID, zaakOntkoppelGegevens.reden);

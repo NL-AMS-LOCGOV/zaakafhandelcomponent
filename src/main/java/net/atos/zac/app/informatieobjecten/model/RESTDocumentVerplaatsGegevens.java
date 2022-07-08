@@ -5,15 +5,15 @@
 
 package net.atos.zac.app.informatieobjecten.model;
 
+import java.util.UUID;
+
 public class RESTDocumentVerplaatsGegevens {
 
     public final String INBOX_DOCUMENTEN = "inbox-documenten";
 
     public final String ONTKOPPELDE_DOCUMENTEN = "ontkoppelde-documenten";
 
-    public String documentUUID;
-
-    public String documentTitel;
+    public UUID documentUUID;
 
     public String bron;
 
