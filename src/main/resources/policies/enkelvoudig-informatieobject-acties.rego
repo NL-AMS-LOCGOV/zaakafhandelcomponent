@@ -25,7 +25,7 @@ default koppelen := false
 koppelen {
     zaak.open == true
     enkelvoudig_informatieobject.definitief == false
-    onvergendeld_of_vergrendeld_door_user == true
+    enkelvoudig_informatieobject.vergrendeld == false
 }
 koppelen {
     rollen.recordmanager.id in user.rollen
