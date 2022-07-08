@@ -64,8 +64,6 @@ public class ZGWApiService {
     // Page numbering in ZGW Api's starts with 1
     public static final int FIRST_PAGE_NUMBER_ZGW_APIS = 1;
 
-    public static final String STATUSTYPE_HEROPEND_OMSCHRIJVING = "Heropend";
-
     @Inject
     private ZTCClientService ztcClientService;
 
@@ -186,25 +184,6 @@ public class ZGWApiService {
     }
 
     /**
-     * Reopen {@link Zaak}. Creating a new Heropend {@link Status} for the {@link Zaak}.
-     *
-     * @param zaak {@link Zaak} welke heropend wordt
-     */
-    public void heropenZaak(final Zaak zaak, final String reden) {
-        createStatusForZaak(zaak, STATUSTYPE_HEROPEND_OMSCHRIJVING, reden);
-    }
-
-    public boolean isZaakHeropend(final Zaak zaak) {
-        if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-            return STATUSTYPE_HEROPEND_OMSCHRIJVING.equals(statustype.getOmschrijving());
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Create {@link EnkelvoudigInformatieobjectWithInhoud} and {@link ZaakInformatieobject} for {@link Zaak}.
      *
      * @param zaak                                   {@link Zaak}.
@@ -281,6 +260,15 @@ public class ZGWApiService {
     public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol, final BetrokkeneType betrokkeneType) {
         final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
         return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult().orElse(null);
+    }
+
+    public boolean matchZaakStatustypeOmschrijving(final Zaak zaak, final String statustypeOmschrijving) {
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            return ztcClientService.readStatustype(status.getStatustype()).getOmschrijving().equals(statustypeOmschrijving);
+        } else {
+            return false;
+        }
     }
 
     private Status createStatusForZaak(final URI zaakURI, final URI statustypeURI, final String toelichting) {

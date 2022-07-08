@@ -1,4 +1,4 @@
-package net.atos.zac
+package net.atos.zac.zaak
 
 import future.keywords
 import input.zaak
@@ -13,9 +13,7 @@ zaak_acties := {
     "heropenen": heropenen,
     "creeeren_document": creeeren_document,
     "toevoegen_document": toevoegen_document,
-    "ontkoppelen_document": ontkoppelen_document,
-    "koppelen_zaak": koppelen_zaak,
-    "koppelen_aan_zaak": koppelen_aan_zaak,
+    "koppelen": koppelen,
     "versturen_email": versturen_email,
     "versturen_ontvangstbevestiging": versturen_ontvangstbevestiging,
     "toevoegen_persoon": toevoegen_persoon,
@@ -24,7 +22,7 @@ zaak_acties := {
     "wijzigen_toekenning": wijzigen_toekenning,
     "wijzigen_overig": wijzigen_overig,
     "starten_plan_items": starten_plan_items
-    }
+}
 
 default heropenen := false
 heropenen {
@@ -54,14 +52,12 @@ verlengen {
 default afbreken := false
 afbreken {
     zaak.open == true
-    zaak.openDeelzaken == false
     zaak.heropend == false
 }
 
 default afsluiten := false
 afsluiten {
     zaak.open == true
-    zaak.openDeelzaken == false
 }
 
 default creeeren_document := false
@@ -74,14 +70,7 @@ toevoegen_document {
     zaak.open == true
 }
 
-default ontkoppelen_document := false
-ontkoppelen_document {
-    zaak.open == true
-}
-
-default koppelen_zaak := true
-
-default koppelen_aan_zaak := true
+default koppelen := true
 
 default versturen_email := false
 versturen_email {

@@ -26,14 +26,8 @@ public class ZaakActies {
 
     private final boolean toevoegenDocument;
 
-    // Het kunnen ontkoppelen of verplaatsen van een document behorende bij de zaak
-    private final boolean ontkoppelenDocument;
-
-    // Het kunnen koppelen van de huidige zaak aan een andere zaak
-    private final boolean koppelenZaak;
-
-    // Het kunnen koppelen van een document of andere zaak aan de huidige zaak
-    private final boolean koppelenAanZaak;
+    // (ont)koppelen aan een andere zaak of zaakobject.
+    private final boolean koppelen;
 
     private final boolean versturenEmail;
 
@@ -60,9 +54,7 @@ public class ZaakActies {
             @JsonbProperty("heropenen") final boolean heropenen,
             @JsonbProperty("creeeren_document") final boolean creeerenDocument,
             @JsonbProperty("toevoegen_document") final boolean toevoegenDocument,
-            @JsonbProperty("ontkoppelen_document") final boolean ontkoppelenDocument,
-            @JsonbProperty("koppelen_zaak") final boolean koppelenZaak,
-            @JsonbProperty("koppelen_aan_zaak") final boolean koppelenAanZaak,
+            @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("versturen_email") final boolean versturenEmail,
             @JsonbProperty("versturen_ontvangstbevestiging") final boolean versturenOntvangstbevestiging,
             @JsonbProperty("toevoegen_persoon") final boolean toevoegenPersoon,
@@ -79,9 +71,7 @@ public class ZaakActies {
         this.heropenen = heropenen;
         this.creeerenDocument = creeerenDocument;
         this.toevoegenDocument = toevoegenDocument;
-        this.ontkoppelenDocument = ontkoppelenDocument;
-        this.koppelenZaak = koppelenZaak;
-        this.koppelenAanZaak = koppelenAanZaak;
+        this.koppelen = koppelen;
         this.versturenEmail = versturenEmail;
         this.versturenOntvangstbevestiging = versturenOntvangstbevestiging;
         this.toevoegenPersoon = toevoegenPersoon;
@@ -124,10 +114,6 @@ public class ZaakActies {
         return toevoegenDocument;
     }
 
-    public boolean getOntkoppelenDocument() {
-        return ontkoppelenDocument;
-    }
-
     public boolean getVersturenEmail() {
         return versturenEmail;
     }
@@ -136,12 +122,8 @@ public class ZaakActies {
         return versturenOntvangstbevestiging;
     }
 
-    public boolean getKoppelenZaak() {
-        return koppelenZaak;
-    }
-
-    public boolean getKoppelenAanZaak() {
-        return koppelenAanZaak;
+    public boolean getKoppelen() {
+        return koppelen;
     }
 
     public boolean getToevoegenPersoon() {
