@@ -11,7 +11,6 @@ import {catchError} from 'rxjs/operators';
 import {PlanItem} from './model/plan-item';
 import {UserEventListenerData} from './model/user-event-listener-data';
 import {HumanTaskData} from './model/human-task-data';
-import {UserEventListenerToelichting} from './model/user-event-listener-toelichting';
 
 @Injectable({
     providedIn: 'root'
@@ -49,12 +48,6 @@ export class PlanItemsService {
 
     doUserEventListenerPlanItem(userEventListenerData: UserEventListenerData): Observable<void> {
         return this.http.post<void>(`${this.basepath}/doUserEventListenerPlanItem`, userEventListenerData).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
-        );
-    }
-
-    getUserEventListenerPlanItemToelichting(zaakUuid: string, planItemDefinitionId: string): Observable<UserEventListenerToelichting> {
-        return this.http.get<UserEventListenerToelichting>(`${this.basepath}/toelichting/${zaakUuid}/${planItemDefinitionId}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

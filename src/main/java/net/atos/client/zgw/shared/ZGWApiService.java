@@ -137,14 +137,14 @@ public class ZGWApiService {
      * .toelichting.
      *
      * @param zaak                 {@link Zaak}
-     * @param afsluitenGegevens    Containing the UUID and toelichting of the {@link Resultaattype} of the required
-     * {@link Resultaat}.
+     * @param resultaatTypeUuid    Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param reden                Reason of setting the {@link Resultaattype}
      * @return Created {@link Resultaat}.
      */
-    public Resultaat updateResultaatForZaak(final Zaak zaak, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
+    public Resultaat updateResultaatForZaak(final Zaak zaak, final UUID resultaatTypeUuid, final String reden) {
         final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
         zrcClientService.deleteResultaat(resultaat.getUuid());
-        return createResultaatForZaak(zaak, afsluitenGegevens.resultaattypeUuid, afsluitenGegevens.reden);
+        return createResultaatForZaak(zaak, resultaatTypeUuid, reden);
     }
 
     /**

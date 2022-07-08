@@ -19,9 +19,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.planitems.model.RESTUserEventListenerToelichting;
-import net.atos.zac.util.UriUtil;
-
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -141,20 +138,6 @@ public class PlanItemsRESTService {
             }
         }
         caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
-    }
-
-    @GET
-    @Path("toelichting/{uuid}/{planItemDefinitionId}")
-    public RESTUserEventListenerToelichting getUserEventListenerPlanItemToelichting(@PathParam("uuid") final UUID zaakUUID,
-            @PathParam("planItemDefinitionId") final String planItemDefinitionId) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaak.getZaaktype());
-        final String toelichting = zaakafhandelParameterService.readUserEventListenerPlanItemToelichting(zaaktypeUUID,
-                                                                                                         planItemDefinitionId);
-        final RESTUserEventListenerToelichting restUserEventListenerToelichting = new RESTUserEventListenerToelichting();
-        restUserEventListenerToelichting.toelichting = zaakafhandelParameterService
-                .readUserEventListenerPlanItemToelichting(zaaktypeUUID, planItemDefinitionId);
-        return restUserEventListenerToelichting;
     }
 
     private void checkActie(final boolean actie) {
