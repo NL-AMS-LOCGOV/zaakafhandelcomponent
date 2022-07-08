@@ -36,7 +36,10 @@ export class DialogComponent {
                         break;
                 }
             }
-            this.data.fn(results).subscribe(() => this.dialogRef.close(true), () => this.dialogRef.close(false));
+            this.data.fn(results).subscribe({
+                next: () => this.dialogRef.close(true),
+                error: () => this.dialogRef.close(false)
+            });
         } else {
             this.dialogRef.close(true);
         }
