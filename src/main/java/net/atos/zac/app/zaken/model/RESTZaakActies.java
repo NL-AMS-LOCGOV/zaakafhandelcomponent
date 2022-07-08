@@ -23,11 +23,7 @@ public class RESTZaakActies {
 
     public boolean toevoegenDocument;
 
-    public boolean ontkoppelenDocument;
-
-    public boolean koppelenZaak;
-
-    public boolean koppelenAanZaak;
+    public boolean koppelen;
 
     public boolean versturenEmail;
 

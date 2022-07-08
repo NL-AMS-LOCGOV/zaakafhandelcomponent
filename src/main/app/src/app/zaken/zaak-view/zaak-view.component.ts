@@ -163,7 +163,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.utilService.disableActionBar(!zaak.acties.koppelenAanZaak);
+        this.utilService.disableActionBar(!zaak.acties.koppelen);
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
@@ -343,7 +343,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'mail'));
         }
 
-        if (this.zaak.acties.koppelenZaak) {
+        if (this.zaak.acties.koppelen) {
             this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
                 this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));

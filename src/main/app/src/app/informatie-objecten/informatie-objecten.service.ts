@@ -31,8 +31,13 @@ export class InformatieObjectenService {
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService, private utilService: UtilService, private router: Router) {
     }
 
-    readEnkelvoudigInformatieobject(uuid: string): Observable<EnkelvoudigInformatieobject> {
-        return this.http.get<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/${uuid}`).pipe(
+    // Het EnkelvoudigInformatieobject kan opgehaald worden binnen de context van een specifieke zaak.
+    readEnkelvoudigInformatieobject(uuid: string, zaakUuid?: string): Observable<EnkelvoudigInformatieobject> {
+        let url = `${this.basepath}/informatieobject/${uuid}`;
+        if (zaakUuid) {
+            url = url.concat(`?zaak=${zaakUuid}`);
+        }
+        return this.http.get<EnkelvoudigInformatieobject>(url).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -111,12 +116,6 @@ export class InformatieObjectenService {
 
     unlockInformatieObject(uuid: string) {
         return this.http.post<void>(`${this.basepath}/informatieobject/${uuid}/unlock`, null).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
-        );
-    }
-
-    isWijzigenInformatieObjectToegestaan(uuid: string): Observable<boolean> {
-        return this.http.get<boolean>(`${this.basepath}/informatieobject/${uuid}/wijziging/toegestaan`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

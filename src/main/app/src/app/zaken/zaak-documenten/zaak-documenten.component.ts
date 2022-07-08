@@ -37,7 +37,6 @@ import {InformatieObjectVerplaatsService} from '../../informatie-objecten/inform
 export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
-    @Input() readonly: boolean;
 
     @Input() set documentToegevoegd(informatieobject: EnkelvoudigInformatieobject) {
         if (informatieobject) {
