@@ -11,7 +11,6 @@ import static net.atos.zac.app.planitems.model.PlanItemType.USER_EVENT_LISTENER;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -38,7 +37,7 @@ public class RESTPlanItemConverter {
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
     public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final UUID zaakUuid) {
-        return planItems.stream().map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid)).collect(Collectors.toList());
+        return planItems.stream().map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid)).toList();
     }
 
     public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid) {

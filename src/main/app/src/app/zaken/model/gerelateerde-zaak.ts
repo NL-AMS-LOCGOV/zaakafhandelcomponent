@@ -4,6 +4,7 @@
  */
 
 import {ZaakRelatietype} from './zaak-relatietype';
+import {ZaakActies} from './zaak-acties';
 
 export class GerelateerdeZaak {
     identificatie: string;
@@ -11,4 +12,5 @@ export class GerelateerdeZaak {
     statustypeOmschrijving: string;
     startdatum: string;
     relatieType: ZaakRelatietype;
+    acties: ZaakActies;
 }

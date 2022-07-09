@@ -7,6 +7,8 @@ package net.atos.zac.app.informatieobjecten.model;
 
 public class RESTEnkelvoudigInformatieobjectActies {
 
+    public boolean lezen;
+
     public boolean verwijderen;
 
     public boolean koppelen;

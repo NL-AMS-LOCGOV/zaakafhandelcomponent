@@ -7,6 +7,7 @@ import input.user
 import data.net.atos.zac.rollen
 
 enkelvoudig_informatieobject_acties := {
+    "lezen": lezen,
     "verwijderen": verwijderen,
     "koppelen": koppelen,
     "downloaden": downloaden,
@@ -15,6 +16,8 @@ enkelvoudig_informatieobject_acties := {
     "vergrendelen": vergrendelen,
     "ontgrendelen": ontgrendelen
 }
+
+default lezen := true
 
 default verwijderen := false
 verwijderen {

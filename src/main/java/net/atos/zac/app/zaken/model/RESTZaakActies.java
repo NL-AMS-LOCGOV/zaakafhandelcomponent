@@ -7,6 +7,8 @@ package net.atos.zac.app.zaken.model;
 
 public class RESTZaakActies {
 
+    public boolean lezen;
+
     public boolean opschorten;
 
     public boolean verlengen;
