@@ -1,4 +1,4 @@
-package net.atos.zac
+package net.atos.zac.app
 
 import future.keywords
 import input.zaak

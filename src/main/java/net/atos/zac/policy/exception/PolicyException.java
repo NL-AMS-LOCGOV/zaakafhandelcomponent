@@ -5,5 +5,5 @@
 
 package net.atos.zac.policy.exception;
 
-public class ActieNietToegestaanExceptie extends RuntimeException {
+public class PolicyException extends RuntimeException {
 }

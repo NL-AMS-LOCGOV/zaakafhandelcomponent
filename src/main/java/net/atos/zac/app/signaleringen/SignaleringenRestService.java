@@ -110,7 +110,7 @@ public class SignaleringenRestService {
                 .subjecttype(SignaleringSubject.INFORMATIEOBJECT);
         return signaleringenService.findSignaleringen(parameters).stream()
                 .map(signalering -> drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(signalering.getSubject())))
-                .map(restInformatieobjectConverter::convert)
+                .map(restInformatieobjectConverter::convertToREST)
                 .toList();
     }
 

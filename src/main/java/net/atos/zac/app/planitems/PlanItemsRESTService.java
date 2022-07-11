@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.planitems;
 
+import static net.atos.zac.policy.PolicyService.assertActie;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +35,6 @@ import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.exception.ActieNietToegestaanExceptie;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -103,7 +104,7 @@ public class PlanItemsRESTService {
     public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
-        checkActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
+        assertActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
@@ -132,17 +133,11 @@ public class PlanItemsRESTService {
             }
             case ZAAK_AFHANDELEN -> {
                 final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-                checkActie(policyService.readZaakActies(zaak).getAfsluiten());
+                policyService.valideerZaakAfsluiten(zaak);
                 zgwApiService.createResultaatForZaak(zaak, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
             }
         }
         caseService.startUserEventListener(userEventListenerData.planItemInstanceId);
-    }
-
-    private void checkActie(final boolean actie) {
-        if (!actie) {
-            throw new ActieNietToegestaanExceptie();
-        }
     }
 }

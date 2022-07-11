@@ -2,3 +2,4 @@ rollen.rego
 zaaktypen.rego
 app-acties.rego
 zaak-acties.rego
+enkelvoudig-informatieobject-acties.rego

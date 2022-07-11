@@ -4,5 +4,5 @@
  */
 
 export class ZaakAfsluitenGegevens {
-    constructor(public reden: string) {}
+    constructor(public reden: string, public resultaattypeUuid: string) {}
 }

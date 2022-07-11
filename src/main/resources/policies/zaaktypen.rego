@@ -1,4 +1,4 @@
-package net.atos.zac
+package net.atos.zac.zaaktype
 
 import future.keywords
 import data.net.atos.zac.rollen

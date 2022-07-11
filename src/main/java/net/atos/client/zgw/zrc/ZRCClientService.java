@@ -377,6 +377,10 @@ public class ZRCClientService {
         return zrcClient.resultaatCreate(resultaat);
     }
 
+    public void deleteResultaat(final UUID resultaatUUID) {
+        zrcClient.resultaatDelete(resultaatUUID);
+    }
+
     public Zaak createZaak(final Zaak zaak) {
         zgwClientHeadersFactory.setAuditToelichting(zaak.getToelichting());
         return zrcClient.zaakCreate(zaak);
