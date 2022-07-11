@@ -132,9 +132,9 @@ public class ZGWApiService {
      * Update {@link Resultaat} for a given {@link Zaak} based on {@link Resultaattype}.UUID and with {@link Resultaat}
      * .toelichting.
      *
-     * @param zaak                 {@link Zaak}
-     * @param resultaatTypeUuid    Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
-     * @param reden                Reason of setting the {@link Resultaattype}
+     * @param zaak              {@link Zaak}
+     * @param resultaatTypeUuid Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param reden             Reason of setting the {@link Resultaattype}
      * @return Created {@link Resultaat}.
      */
     public Resultaat updateResultaatForZaak(final Zaak zaak, final UUID resultaatTypeUuid, final String reden) {
