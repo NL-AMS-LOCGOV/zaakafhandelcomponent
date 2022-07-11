@@ -14,6 +14,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,6 +24,7 @@ import net.atos.zac.app.gebruikersvoorkeuren.converter.RESTZoekopdrachtConverter
 import net.atos.zac.app.gebruikersvoorkeuren.model.RESTZoekopdracht;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.gebruikersvoorkeuren.GebruikersvoorkeurenService;
+import net.atos.zac.gebruikersvoorkeuren.model.Werklijst;
 import net.atos.zac.gebruikersvoorkeuren.model.Zoekopdracht;
 import net.atos.zac.gebruikersvoorkeuren.model.ZoekopdrachtListParameters;
 
@@ -43,7 +45,7 @@ public class GebruikersvoorkeurenRESTService {
 
     @GET
     @Path("zoekopdracht/{lijstID}")
-    public List<RESTZoekopdracht> list(@PathParam("lijstID") final String lijstID) {
+    public List<RESTZoekopdracht> listZoekopdrachten(@PathParam("lijstID") final Werklijst lijstID) {
         final List<Zoekopdracht> zoekopdrachten = gebruikersvoorkeurenService.listZoekopdrachten(
                 new ZoekopdrachtListParameters(lijstID, loggedInUserInstance.get().getId()));
         return zoekopdrachtConverter.convert(zoekopdrachten);
@@ -51,14 +53,27 @@ public class GebruikersvoorkeurenRESTService {
 
     @DELETE
     @Path("zoekopdracht/{id}")
-    public void delete(@PathParam("id") final long id) {
+    public void deleteZoekopdracht(@PathParam("id") final long id) {
         gebruikersvoorkeurenService.deleteZoekopdracht(id);
     }
 
     @POST
     @Path("zoekopdracht")
-    public RESTZoekopdracht create(final RESTZoekopdracht restZoekopdracht) {
+    public RESTZoekopdracht createOrUpdateZoekopdracht(final RESTZoekopdracht restZoekopdracht) {
         final Zoekopdracht zoekopdracht = zoekopdrachtConverter.convert(restZoekopdracht);
         return zoekopdrachtConverter.convert(gebruikersvoorkeurenService.createZoekopdracht(zoekopdracht));
+    }
+
+    @PUT
+    @Path("zoekopdracht/actief")
+    public void setZoekopdrachtActief(final RESTZoekopdracht restZoekopdracht) {
+        final Zoekopdracht zoekopdracht = zoekopdrachtConverter.convert(restZoekopdracht);
+        gebruikersvoorkeurenService.setActief(zoekopdracht);
+    }
+
+    @DELETE
+    @Path("zoekopdracht/{werklijst}/actief")
+    public void removeZoekopdrachtActief(@PathParam("werklijst") final Werklijst werklijst) {
+        gebruikersvoorkeurenService.removeActief(new ZoekopdrachtListParameters(werklijst, loggedInUserInstance.get().getId()));
     }
 }
