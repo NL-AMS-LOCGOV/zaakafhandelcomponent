@@ -14,7 +14,6 @@ import {map, startWith} from 'rxjs/operators';
 import {UtilService} from '../../core/service/util.service';
 
 @Component({
-    selector: 'zac-zoekopdracht-save-dialog',
     templateUrl: './zoekopdracht-save-dialog.component.html',
     styleUrls: ['./zoekopdracht-save-dialog.component.less']
 })

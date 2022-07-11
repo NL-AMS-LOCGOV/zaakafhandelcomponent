@@ -29,6 +29,7 @@ import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
 import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -57,8 +58,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     constructor(private zakenService: ZakenService,
                 private zoekenService: ZoekenService,
                 public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog) {
-        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
+                private identityService: IdentityService,
+                private gebruikersvoorkeurenService: GebruikersvoorkeurenService,
+                public dialog: MatDialog) {
+        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
     ngOnInit(): void {
@@ -140,10 +143,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
-    }
-
-    resetSearch(): void {
-        this.dataSource.reset();
     }
 
     resetColumns(): void {

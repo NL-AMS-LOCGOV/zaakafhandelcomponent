@@ -12,3 +12,30 @@
     width: auto;
   }
 }
+
+.mat-column-url_filter {
+  width: 250px;
+
+  button {
+    min-width: 40px;
+
+    &:hover {
+      mat-icon {
+        color: #000;
+      }
+    }
+  }
+}
+
+::ng-deep.mat-menu-panel.filter-menu {
+  max-width: none;
+  min-width: 200px;
+
+  mat-icon {
+    margin: 0;
+
+    &:hover {
+      color: #ff4081;
+    }
+  }
+}
