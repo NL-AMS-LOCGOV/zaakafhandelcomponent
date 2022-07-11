@@ -39,4 +39,6 @@ public class RESTZaakOverzicht {
     public RESTZaakResultaat resultaat;
 
     public RESTOpenstaandeTaken openstaandeTaken;
+
+    public RESTZaakActies acties;
 }

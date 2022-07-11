@@ -13,6 +13,7 @@ public class RESTZaakActiesConverter {
     public RESTZaakActies convert(final ZaakActies zaakActies) {
         final RESTZaakActies restZaakActies = new RESTZaakActies();
 
+        restZaakActies.lezen = zaakActies.getLezen();
         restZaakActies.opschorten = zaakActies.getOpschorten();
         restZaakActies.verlengen = zaakActies.getVerlengen();
         restZaakActies.hervatten = zaakActies.getHervatten();

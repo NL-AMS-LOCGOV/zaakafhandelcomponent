@@ -5,11 +5,11 @@ alle_zaaktypen := { "-ALLE-ZAAKTYPEN-" }
 rollen := {
     "zaakbehandelaar": {
         "id": "zaakbehandelaar",
-        "zaaktypen": {"melding-klein-evenement"}
+        "zaaktypen": {"melding klein evenement"}
     },
     "werkverdeler": {
         "id": "werkverdeler",
-        "zaaktypen": {"melding-klein-evenement", "mor_anponiem"}
+        "zaaktypen": {"melding klein evenement", "MOR anoniem"}
     },
     "recordmanager": {
         "id": "recordmanager",

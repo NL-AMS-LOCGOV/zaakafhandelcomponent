@@ -8,7 +8,7 @@
         <mat-card-header>
             <mat-card-title>
                 {{'zaak' | translate}} {{zaak.identificatie}}
-                <button [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
+                <button *ngIf="zaak.acties.lezen" [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
                         mat-icon-button>
                     <mat-icon>visibility</mat-icon>
                 </button>

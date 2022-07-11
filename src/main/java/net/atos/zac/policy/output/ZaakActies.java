@@ -10,6 +10,8 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class ZaakActies {
 
+    private final boolean lezen;
+
     private final boolean opschorten;
 
     private final boolean verlengen;
@@ -46,7 +48,8 @@ public class ZaakActies {
     private final boolean startenPlanItems;
 
     @JsonbCreator
-    public ZaakActies(@JsonbProperty("opschorten") final boolean opschorten,
+    public ZaakActies(@JsonbProperty("lezen") final boolean lezen,
+            @JsonbProperty("opschorten") final boolean opschorten,
             @JsonbProperty("verlengen") final boolean verlengen,
             @JsonbProperty("hervatten") final boolean hervatten,
             @JsonbProperty("afbreken") final boolean afbreken,
@@ -63,6 +66,7 @@ public class ZaakActies {
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
             @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
             @JsonbProperty("starten_plan_items") final boolean startenPlanItems) {
+        this.lezen = lezen;
         this.opschorten = opschorten;
         this.verlengen = verlengen;
         this.hervatten = hervatten;
@@ -80,6 +84,10 @@ public class ZaakActies {
         this.wijzigenToekenning = wijzigenToekenning;
         this.wijzigenOverig = wijzigenOverig;
         this.startenPlanItems = startenPlanItems;
+    }
+
+    public boolean getLezen() {
+        return lezen;
     }
 
     public boolean getOpschorten() {

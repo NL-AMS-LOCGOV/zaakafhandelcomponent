@@ -4,6 +4,7 @@
  */
 
 export class ZaakActies {
+    lezen: boolean;
     opschorten: boolean;
     verlengen: boolean;
     hervatten: boolean;

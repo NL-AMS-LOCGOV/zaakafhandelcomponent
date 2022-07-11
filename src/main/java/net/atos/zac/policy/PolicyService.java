@@ -28,7 +28,10 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
+import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
@@ -63,6 +66,9 @@ public class PolicyService {
     private DRCClientService drcClientService;
 
     @Inject
+    private ZTCClientService ztcClientService;
+
+    @Inject
     private ZGWApiService zgwApiService;
 
     @Inject
@@ -72,25 +78,29 @@ public class PolicyService {
         return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
+    public ZaakActies readZaakActies(final UUID zaakUUID) {
+        return readZaakActies(zrcClientService.readZaak(zaakUUID));
+    }
+
     public ZaakActies readZaakActies(final Zaak zaak) {
         final ZaakData zaakData = createZaakData(zaak);
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
-    public ZaakActies readZaakActies(final UUID zaakUUID) {
-        return readZaakActies(zrcClientService.readZaak(zaakUUID));
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
+        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak));
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final boolean heropend, final String behandelaar) {
-        final ZaakData zaakData = createZaakData(zaak, heropend, behandelaar);
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+        final ZaakData zaakData = createZaakData(zaak, zaaktype, statustype, behandelaar);
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
             final EnkelvoudigInformatieObjectLock lock, final Zaak zaak) {
         final String vergrendeldDoor = lock != null ? lock.getUserId() : null;
-        final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData = createEnkelvoudigInformatieobjectData(enkelvoudigInformatieobject,
-                                                                                                                      vergrendeldDoor);
+        final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData =
+                createEnkelvoudigInformatieobjectData(enkelvoudigInformatieobject, vergrendeldDoor);
         final ZaakData zaakData = zaak != null ? createZaakData(zaak) : null;
         return evaluationClient.readEnkelvoudigInformatieobjectActies(new RuleQuery<>(
                 new EnkelvoudigInformatieobjectInput(loggedInUserInstance.get(), enkelvoudigInformatieobjectData, zaakData))).getResult();
@@ -114,8 +124,7 @@ public class PolicyService {
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID) {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
-        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject);
+        return readEnkelvoudigInformatieobjectActies(drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID));
     }
 
     public List<Zaaktype> filterAllowedZaaktypen(final List<Zaaktype> alleZaaktypen) {
@@ -151,19 +160,25 @@ public class PolicyService {
         return response.getResult().stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableSet());
     }
 
-    private ZaakData createZaakData(final Zaak zaak, final boolean heropend, final String behandelaar) {
+    private ZaakData createZaakData(final Zaak zaak) {
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
+        Statustype statustype = null;
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            statustype = ztcClientService.readStatustype(status.getStatustype());
+        }
+        return createZaakData(zaak, zaaktype, statustype, behandelaar);
+    }
+
+    private ZaakData createZaakData(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
         final ZaakData zaakData = new ZaakData();
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
-        zaakData.heropend = heropend;
-        zaakData.behandelaar = behandelaar;
+        zaakData.zaaktype = zaaktype.getOmschrijving();
+        zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
+        zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         return zaakData;
-    }
-
-    private ZaakData createZaakData(final Zaak zaak) {
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        return createZaakData(zaak, zgwApiService.matchZaakStatustypeOmschrijving(zaak, STATUSTYPE_OMSCHRIJVING_HEROPEND),
-                              behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null);
     }
 
     private EnkelvoudigInformatieobjectData createEnkelvoudigInformatieobjectData(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,

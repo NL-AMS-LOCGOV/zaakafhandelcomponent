@@ -10,6 +10,8 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class EnkelvoudigInformatieobjectActies {
 
+    private final boolean lezen;
+
     private final boolean verwijderen;
 
     // (ont)koppelen of verplaatsen van het enkelvoudig informatieobject
@@ -26,13 +28,15 @@ public class EnkelvoudigInformatieobjectActies {
     private final boolean ontgrendelen;
 
     @JsonbCreator
-    public EnkelvoudigInformatieobjectActies(@JsonbProperty("verwijderen") final boolean verwijderen,
+    public EnkelvoudigInformatieobjectActies(@JsonbProperty("lezen") final boolean lezen,
+            @JsonbProperty("verwijderen") final boolean verwijderen,
             @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("downloaden") final boolean downloaden,
             @JsonbProperty("toevoegen_nieuwe_versie") final boolean toevoegenNieuweVersie,
             @JsonbProperty("bewerken") final boolean bewerken,
             @JsonbProperty("vergrendelen") final boolean vergrendelen,
             @JsonbProperty("ontgrendelen") final boolean ontgrendelen) {
+        this.lezen = lezen;
         this.verwijderen = verwijderen;
         this.koppelen = koppelen;
         this.downloaden = downloaden;
@@ -40,6 +44,10 @@ public class EnkelvoudigInformatieobjectActies {
         this.bewerken = bewerken;
         this.vergrendelen = vergrendelen;
         this.ontgrendelen = ontgrendelen;
+    }
+
+    public boolean getLezen() {
+        return lezen;
     }
 
     public boolean getVerwijderen() {

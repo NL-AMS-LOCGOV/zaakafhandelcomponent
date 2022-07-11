@@ -40,7 +40,7 @@
                     <ng-container matColumnDef="url" stickyEnd>
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let row">
-                            <button mat-flat-button
+                            <button *ngIf="row.acties.lezen" mat-flat-button
                                     [routerLink]="this.taakModus ? ['/informatie-objecten', row.uuid] : ['/informatie-objecten', row.uuid, this.zaak.identificatie]"
                                     title="{{ 'actie.document.bekijken' | translate}}">
                                 <mat-icon>visibility</mat-icon>

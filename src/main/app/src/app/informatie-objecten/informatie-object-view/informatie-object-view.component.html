@@ -166,7 +166,8 @@
                         </mat-panel-title>
                         <mat-panel-description>
                             {{zaakInformatieobject.zaaktypeOmschrijving}}
-                            <button mat-flat-button [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
+                            <button *ngIf="zaakInformatieobject.zaakActies.lezen" mat-flat-button
+                                    [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
                                 <mat-icon>visibility</mat-icon>
                             </button>
                         </mat-panel-description>
