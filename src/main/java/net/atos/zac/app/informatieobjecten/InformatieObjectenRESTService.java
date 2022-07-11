@@ -147,24 +147,30 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}")
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (zaakUUID != null) {
             final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-            return restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject, zaak);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject, zaak);
         } else {
-            return restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
         }
+        assertActie(restEnkelvoudigInformatieobject.acties.lezen);
+        return restEnkelvoudigInformatieobject;
     }
 
     @GET
     @Path("informatieobject/versie/{uuid}/{versie}")
     public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobject(@PathParam("uuid") final UUID uuid, @PathParam("versie") final int versie) {
         final EnkelvoudigInformatieobject huidigeVersie = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (versie < huidigeVersie.getVersie()) {
             final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobjectVersie(uuid, versie);
-            return restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
         } else {
-            return restInformatieobjectConverter.convertToREST(huidigeVersie);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(huidigeVersie);
         }
+        assertActie(restEnkelvoudigInformatieobject.acties.lezen);
+        return restEnkelvoudigInformatieobject;
     }
 
     @PUT
@@ -263,12 +269,14 @@ public class InformatieObjectenRESTService {
     @Path("zaak/{uuid}")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
+        assertActie(policyService.readZaakActies(zaak).getLezen());
         return listEnkelvoudigInformatieobjectenVoorZaak(zaak.getUrl());
     }
 
     @GET
     @Path("informatieobject/{uuid}/zaken")
     public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getLezen());
         final List<RESTZaakInformatieobject> restList = new ArrayList<>();
         zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid))
                 .forEach(zaakInformatieobject -> restList.add(restZaakInformatieobjectConverter.convert(zaakInformatieobject)));
@@ -304,6 +312,7 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject).getDownloaden());
         try (final ByteArrayInputStream inhoud = (versie != null) ?
                 drcClientService.downloadEnkelvoudigInformatieobjectVersie(uuid, versie) :
                 drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
@@ -319,6 +328,7 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}/huidigeversie")
     public RESTEnkelvoudigInformatieObjectVersieGegevens readHuidigeVersieInformatieObject(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject).getLezen());
         return restInformatieobjectConverter.convertToRESTEnkelvoudigInformatieObjectVersieGegevens(enkelvoudigInformatieObject);
     }
 
@@ -375,8 +385,9 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("informatieobject/{uuid}/historie")
-    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
-        List<AuditTrailRegel> auditTrail = drcClientService.listAuditTrail(uuid);
+    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID enkelvoudigInformatieobjectUUID) {
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobjectUUID).getLezen());
+        List<AuditTrailRegel> auditTrail = drcClientService.listAuditTrail(enkelvoudigInformatieobjectUUID);
         return restHistorieRegelConverter.convert(auditTrail);
     }
 

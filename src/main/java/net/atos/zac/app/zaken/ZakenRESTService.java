@@ -203,18 +203,22 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaak/{uuid}")
-    public RESTZaak readZaak(@PathParam("uuid") final UUID uuid) {
-        final Zaak zaak = zrcClientService.readZaak(uuid);
+    public RESTZaak readZaak(@PathParam("uuid") final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final RESTZaak restZaak = zaakConverter.convert(zaak);
+        assertActie(restZaak.acties.lezen);
         deleteSignaleringen(zaak);
-        return zaakConverter.convert(zaak);
+        return restZaak;
     }
 
     @GET
     @Path("zaak/id/{identificatie}")
     public RESTZaak readZaakById(@PathParam("identificatie") final String identificatie) {
         final Zaak zaak = zrcClientService.readZaakByID(identificatie);
+        final RESTZaak restZaak = zaakConverter.convert(zaak);
+        assertActie(restZaak.acties.lezen);
         deleteSignaleringen(zaak);
-        return zaakConverter.convert(zaak);
+        return restZaak;
     }
 
     @POST
@@ -286,6 +290,7 @@ public class ZakenRESTService {
     @GET
     @Path("zaak/{uuid}/opschorting")
     public RESTZaakOpschorting readOpschortingZaak(@PathParam("uuid") final UUID zaakUUID) {
+        assertActie(policyService.readZaakActies(zaakUUID).getLezen());
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
         zaakOpschorting.vanafDatumTijd = caseVariablesService.findDatumtijdOpgeschort(zaakUUID);
         zaakOpschorting.duurDagen = caseVariablesService.findVerwachteDagenOpgeschort(zaakUUID);
@@ -522,8 +527,9 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaak/{uuid}/historie")
-    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID uuid) {
-        final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(uuid);
+    public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID zaakUUID) {
+        assertActie(policyService.readZaakActies(zaakUUID).getLezen());
+        final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(zaakUUID);
         return auditTrailConverter.convert(auditTrail);
     }
 

@@ -12,6 +12,7 @@ public class RESTEnkelvoudigInformatieobjectActiesConverter {
 
     public RESTEnkelvoudigInformatieobjectActies convert(final EnkelvoudigInformatieobjectActies acties) {
         final RESTEnkelvoudigInformatieobjectActies restActies = new RESTEnkelvoudigInformatieobjectActies();
+        restActies.lezen = acties.getLezen();
         restActies.bewerken = acties.getBewerken();
         restActies.koppelen = acties.getKoppelen();
         restActies.downloaden = acties.getDownloaden();

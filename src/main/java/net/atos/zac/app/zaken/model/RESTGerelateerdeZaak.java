@@ -18,4 +18,6 @@ public class RESTGerelateerdeZaak {
     public String statustypeOmschrijving;
 
     public LocalDate startdatum;
+
+    public RESTZaakActies acties;
 }
