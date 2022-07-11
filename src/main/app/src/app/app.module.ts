@@ -26,6 +26,7 @@ import {DocumentenModule} from './documenten/documenten.module';
 import {ActionBarComponent} from './core/actionbar/action-bar.component';
 import {SignaleringenModule} from './signaleringen/signaleringen.module';
 import {ZoekenModule} from './zoeken/zoeken.module';
+import {GebruikersvoorkeurenModule} from './gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -50,6 +51,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslateHttpLoader(http, '.
         SignaleringenModule,
         TakenModule,
         AdminModule,
+        GebruikersvoorkeurenModule,
         AppRoutingModule,
         TranslateModule.forRoot({
             loader: {

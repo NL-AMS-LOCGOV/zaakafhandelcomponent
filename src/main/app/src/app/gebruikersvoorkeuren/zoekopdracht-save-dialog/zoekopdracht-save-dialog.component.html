@@ -1,0 +1,32 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<h1 mat-dialog-title>{{'title.zoekopdrachten.opslaan' | translate}}</h1>
+
+<div mat-dialog-content>
+    <mat-form-field class="full-width" appearance="standard" floatLabel="always">
+        <mat-label>{{'zoekopdracht' | translate}}</mat-label>
+        <input type="text"
+               placeholder="{{'naam' | translate}}"
+               matInput
+               [formControl]="formControl"
+               [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{option}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="loading || !formControl.value" mat-button color="primary" (click)="opslaan()" id="opslaan_button">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{(isNew() ? "actie.toevoegen" : "actie.wijzigen") | translate}}
+    </button>
+    <button [disabled]="loading" mat-button (click)="close()"
+            id="dialogClose_button">{{'actie.annuleren' | translate}}</button>
+</div>

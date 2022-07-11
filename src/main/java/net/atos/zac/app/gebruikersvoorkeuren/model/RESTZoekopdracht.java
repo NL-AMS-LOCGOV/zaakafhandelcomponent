@@ -7,11 +7,13 @@ package net.atos.zac.app.gebruikersvoorkeuren.model;
 
 import java.time.LocalDate;
 
+import net.atos.zac.gebruikersvoorkeuren.model.Werklijst;
+
 public class RESTZoekopdracht {
 
-    public long id;
+    public Long id;
 
-    public String lijstID;
+    public Werklijst lijstID;
 
     public boolean actief;
 

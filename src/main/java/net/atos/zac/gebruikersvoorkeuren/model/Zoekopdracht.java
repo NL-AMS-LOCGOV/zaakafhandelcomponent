@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
-
 package net.atos.zac.gebruikersvoorkeuren.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
@@ -11,6 +10,8 @@ import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +31,9 @@ public class Zoekopdracht {
     /** Naam van property: {@link Zoekopdracht#lijstID} */
     public static final String LIJST_ID = "lijstID";
 
+    /** Naam van property: {@link Zoekopdracht#naam} */
+    public static final String NAAM = "naam";
+
     @Id
     @GeneratedValue(generator = "sq_zoekopdracht", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_zoekopdracht")
@@ -43,9 +47,10 @@ public class Zoekopdracht {
     @Column(name = "naam", nullable = false)
     private String naam;
 
-    @NotBlank
+    @NotNull
     @Column(name = "id_lijst", nullable = false)
-    private String lijstID;
+    @Enumerated(EnumType.STRING)
+    private Werklijst lijstID;
 
     @Column(name = "actief")
     private boolean actief;
@@ -82,11 +87,11 @@ public class Zoekopdracht {
         this.naam = naam;
     }
 
-    public String getLijstID() {
+    public Werklijst getLijstID() {
         return lijstID;
     }
 
-    public void setLijstID(final String lijstID) {
+    public void setLijstID(final Werklijst lijstID) {
         this.lijstID = lijstID;
     }
 
