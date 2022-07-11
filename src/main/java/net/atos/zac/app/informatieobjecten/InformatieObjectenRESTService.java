@@ -79,6 +79,7 @@ import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjec
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.webdav.WebdavHelper;
 
 @Singleton
@@ -215,16 +216,18 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("informatieobject/verplaats")
     public void verplaatsEnkelvoudigInformatieobject(final RESTDocumentVerplaatsGegevens documentVerplaatsGegevens) {
-        final UUID documentUUID = UUID.fromString(documentVerplaatsGegevens.documentUUID);
-        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUUID);
+        final UUID enkelvoudigInformatieobjectUUID = documentVerplaatsGegevens.documentUUID;
+        final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobject).getKoppelen());
+        assertActie(policyService.readZaakActies(nieuweZaak).getKoppelen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron, nieuweZaak.getIdentificatie());
         if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
-            final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(documentUUID);
+            final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.read(enkelvoudigInformatieobjectUUID);
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             ontkoppeldeDocumentenService.delete(ontkoppeldDocument.getId());
         } else if (documentVerplaatsGegevens.vanuitInboxDocumenten()) {
-            final InboxDocument inboxDocument = inboxDocumentenService.find(documentUUID);
+            final InboxDocument inboxDocument = inboxDocumentenService.find(enkelvoudigInformatieobjectUUID);
             zrcClientService.koppelInformatieobject(informatieobject, nieuweZaak, toelichting);
             inboxDocumentenService.delete(inboxDocument.getId());
         } else {
@@ -275,6 +278,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/edit")
     public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid, @Context final UriInfo uriInfo) {
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getBewerken());
         final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
         return Response.ok(redirectURI).build();
     }
@@ -290,13 +294,8 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
-        final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
-                enkelvoudigInformatieObjectLockService.findLock(uuid);
-
-        if (enkelvoudigInformatieObjectLock == null || enkelvoudigInformatieObjectLock.getUserId().equals(loggedInUserInstance.get().getId())) {
-            zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(documentVerwijderenGegevens.zaakUuid, uuid,
-                                                                    documentVerwijderenGegevens.reden);
-        }
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, documentVerwijderenGegevens.zaakUuid).getVerwijderen());
+        zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(documentVerwijderenGegevens.zaakUuid, uuid, documentVerwijderenGegevens.reden);
         return Response.noContent().build();
     }
 
@@ -324,51 +323,42 @@ public class InformatieObjectenRESTService {
     }
 
     @POST
-    @Path("/informatieobject/partialupdate")
-    public RESTEnkelvoudigInformatieobject partialUpdateEnkelvoudigInformatieObject(
-            final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens) throws IllegalAccessException {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
-                drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(restEnkelvoudigInformatieObjectVersieGegevens.uuid));
+    @Path("/informatieobject/update")
+    public RESTEnkelvoudigInformatieobject updateEnkelvoudigInformatieobject(
+            final RESTEnkelvoudigInformatieObjectVersieGegevens enkelvoudigInformatieObjectVersieGegevens) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
+                enkelvoudigInformatieObjectVersieGegevens.uuid);
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject).getToevoegenNieuweVersie());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         boolean tempLock = false;
 
         try {
-            final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
+            final EnkelvoudigInformatieObjectLock lock;
             if (enkelvoudigInformatieobject.getLocked()) {
-                enkelvoudigInformatieObjectLock =
-                        enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
+                lock = enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieobject.getUUID());
+                if (lock == null) {
+                    throw new FoutmeldingException("Document kan niet worden aangepast omdat het is gelocked met onbekende lock.");
+                }
             } else {
+                lock = enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(), loggedInUserId);
                 tempLock = true;
-                enkelvoudigInformatieObjectLock =
-                        enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieobject.getUUID(),
-                                                                          loggedInUserId);
             }
-
-            if (enkelvoudigInformatieObjectLock != null && enkelvoudigInformatieObjectLock.getUserId()
-                    .equals(loggedInUserId)) {
-                final RESTFileUpload file = (RESTFileUpload) httpSession.get()
-                        .getAttribute("FILE_" + restEnkelvoudigInformatieObjectVersieGegevens.zaakUuid);
-
-                final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.updateEnkelvoudigInformatieobject(
-                        enkelvoudigInformatieobject.getUUID(), restEnkelvoudigInformatieObjectVersieGegevens.toelichting,
-                        restInformatieobjectConverter.convert(restEnkelvoudigInformatieObjectVersieGegevens,
-                                                              enkelvoudigInformatieObjectLock.getLock(),
-                                                              file));
-
-                return restInformatieobjectConverter.convertToREST(returnObject);
-            }
+            final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + enkelvoudigInformatieObjectVersieGegevens.zaakUuid);
+            final EnkelvoudigInformatieobjectWithInhoudAndLock returnObject = drcClientService.updateEnkelvoudigInformatieobject(
+                    enkelvoudigInformatieobject.getUUID(), enkelvoudigInformatieObjectVersieGegevens.toelichting,
+                    restInformatieobjectConverter.convert(enkelvoudigInformatieObjectVersieGegevens, lock.getLock(), file));
+            return restInformatieobjectConverter.convertToREST(returnObject);
         } finally {
             if (tempLock) {
-                enkelvoudigInformatieObjectLockService.deleteLock(enkelvoudigInformatieobject.getUUID(), loggedInUserId);
+                enkelvoudigInformatieObjectLockService.deleteLock(enkelvoudigInformatieobject.getUUID());
             }
         }
-
-        throw new IllegalAccessException("Niet toegestaan om document te wijzigen");
     }
 
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid) {
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getVergrendelen());
         enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -377,12 +367,8 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid) {
-        try {
-            enkelvoudigInformatieObjectLockService.deleteLock(uuid, loggedInUserInstance.get().getId());
-        } catch (final IllegalAccessException e) {
-            Response.notModified().build();
-        }
-
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getOntgrendelen());
+        enkelvoudigInformatieObjectLockService.deleteLock(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }

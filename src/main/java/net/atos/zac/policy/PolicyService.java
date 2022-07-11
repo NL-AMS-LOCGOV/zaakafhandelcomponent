@@ -22,13 +22,17 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.policy.exception.PolicyException;
 import net.atos.zac.policy.input.EnkelvoudigInformatieobjectData;
 import net.atos.zac.policy.input.EnkelvoudigInformatieobjectInput;
@@ -56,7 +60,17 @@ public class PolicyService {
     private ZRCClientService zrcClientService;
 
     @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService lockService;
+
+    public AppActies readAppActies() {
+        return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+    }
 
     public ZaakActies readZaakActies(final Zaak zaak) {
         final ZaakData zaakData = createZaakData(zaak);
@@ -72,17 +86,36 @@ public class PolicyService {
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
-    public AppActies readAppActies() {
-        return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
-    }
-
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final String vergrendeldDoor, final Zaak zaak) {
+            final EnkelvoudigInformatieObjectLock lock, final Zaak zaak) {
+        final String vergrendeldDoor = lock != null ? lock.getUserId() : null;
         final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData = createEnkelvoudigInformatieobjectData(enkelvoudigInformatieobject,
                                                                                                                       vergrendeldDoor);
         final ZaakData zaakData = zaak != null ? createZaakData(zaak) : null;
         return evaluationClient.readEnkelvoudigInformatieobjectActies(new RuleQuery<>(
                 new EnkelvoudigInformatieobjectInput(loggedInUserInstance.get(), enkelvoudigInformatieobjectData, zaakData))).getResult();
+    }
+
+    public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID, final UUID zaakUUID) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, zaak);
+    }
+
+    public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
+            final Zaak zaak) {
+        final EnkelvoudigInformatieObjectLock lock = lockService.findLock(enkelvoudigInformatieobject.getUUID());
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lock, zaak);
+    }
+
+    public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        final EnkelvoudigInformatieObjectLock lock = lockService.findLock(enkelvoudigInformatieobject.getUUID());
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lock, null);
+    }
+
+    public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject);
     }
 
     public List<Zaaktype> filterAllowedZaaktypen(final List<Zaaktype> alleZaaktypen) {

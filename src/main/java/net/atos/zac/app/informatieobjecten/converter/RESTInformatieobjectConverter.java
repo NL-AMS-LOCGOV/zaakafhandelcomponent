@@ -122,7 +122,7 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
 
         restEnkelvoudigInformatieobject.acties = actiesConverter.convert(
-                policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock != null ? lock.getUserId() : null, zaak));
+                policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak));
 
         return restEnkelvoudigInformatieobject;
     }
@@ -192,7 +192,7 @@ public class RESTInformatieobjectConverter {
             final EnkelvoudigInformatieobject informatieobject) {
         final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens = new RESTEnkelvoudigInformatieObjectVersieGegevens();
 
-        restEnkelvoudigInformatieObjectVersieGegevens.uuid = UriUtil.uuidFromURI(informatieobject.getUrl()).toString();
+        restEnkelvoudigInformatieObjectVersieGegevens.uuid = UriUtil.uuidFromURI(informatieobject.getUrl());
 
         if (informatieobject.getStatus() != null) {
             restEnkelvoudigInformatieObjectVersieGegevens.status = informatieobject.getStatus().toValue();
