@@ -31,6 +31,7 @@ import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {PolicyService} from '../../policy/policy.service';
 import {ZakenActies} from '../../policy/model/zaken-acties';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -58,8 +59,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService) {
-        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
+                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService,
+                private gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
+        this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
     ngOnInit(): void {
@@ -145,10 +147,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
-    }
-
-    resetSearch(): void {
-        this.dataSource.reset();
     }
 
     resetColumns(): void {

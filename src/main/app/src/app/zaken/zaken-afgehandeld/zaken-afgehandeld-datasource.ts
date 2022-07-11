@@ -8,11 +8,17 @@ import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeke
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {MatDialog} from '@angular/material/dialog';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 export class ZakenAfgehandeldDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
 
-    constructor(zoekenService: ZoekenService, utilService: UtilService) {
-        super('zakenAfgehandeld', zoekenService, utilService);
+    constructor(zoekenService: ZoekenService,
+                gebruikersvoorkeurenService: GebruikersvoorkeurenService,
+                dialog: MatDialog,
+                utilService: UtilService) {
+        super(Werklijst.AFGEHANDELDE_ZAKEN, zoekenService, gebruikersvoorkeurenService, dialog, utilService);
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
