@@ -26,6 +26,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
     loading = true;
+    ondertekend: any[] = [];
 
     constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
         super();
@@ -54,7 +55,27 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     change($event: MatCheckboxChange, document): void {
         if ($event) {
             this.selection.toggle(document);
-            this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
+            this.setValue();
         }
+    }
+
+    setOndertekend($event: MatCheckboxChange, document): void {
+        if($event) {
+            const index = this.ondertekend.indexOf(document.uuid);
+            if(index > -1) {
+                this.ondertekend = this.ondertekend.slice(index, 1);
+            } else {
+                this.ondertekend.push(document.uuid);
+            }
+            document.ondertekend = !document.ondertekend;
+            this.setValue();
+        }
+    }
+
+    setValue() {
+        this.data.formControl.setValue({
+            selection: this.selection.selected.map(value => value.uuid).join(';'),
+            ondertekend: this.ondertekend.join(';')
+        })
     }
 }

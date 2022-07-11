@@ -55,7 +55,10 @@
                 <ng-container matColumnDef="ondertekenen">
                     <th mat-header-cell *matHeaderCellDef> {{'ondertekenen' | translate}} </th>
                     <td mat-cell *matCellDef="let document">
-                        <mat-checkbox [id]="document.id + '_checkbox'"></mat-checkbox>
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                                      (change)="setOndertekend($event, document)"
+                                      [checked]="document.ondertekend">
+                        </mat-checkbox>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="url" stickyEnd>
