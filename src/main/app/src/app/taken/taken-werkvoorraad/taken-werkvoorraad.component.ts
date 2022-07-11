@@ -30,6 +30,7 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -54,9 +55,9 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog,
+                private identityService: IdentityService, public dialog: MatDialog, private gebruikersvoorkeurenService: GebruikersvoorkeurenService,
                 private zoekenService: ZoekenService) {
-        this.dataSource = new TakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
+        this.dataSource = new TakenWerkvoorraadDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
     ngOnInit(): void {
@@ -68,7 +69,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-        this.dataSource.load();
+        // this.dataSource.load();
     }
 
     private getIngelogdeMedewerker() {

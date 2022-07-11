@@ -27,6 +27,7 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 
 import {TakenMijnDatasource} from './taken-mijn-datasource';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './taken-mijn.component.html',
@@ -49,9 +50,9 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog,
+                private identityService: IdentityService, public dialog: MatDialog, private gebruikersvoorkeurenService: GebruikersvoorkeurenService,
                 private zoekenService: ZoekenService) {
-        this.dataSource = new TakenMijnDatasource(this.zoekenService, this.utilService);
+        this.dataSource = new TakenMijnDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
     ngOnInit(): void {
@@ -80,10 +81,6 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
             ['groep', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
-    }
-
-    resetSearch(): void {
-        this.dataSource.reset();
     }
 
     resetColumns(): void {

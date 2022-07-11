@@ -22,6 +22,8 @@ import {ZoekVeld} from '../../zoeken/model/zoek-veld';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {FilterVeld} from '../../zoeken/model/filter-veld';
 import {DatumVeld} from '../../zoeken/model/datum-veld';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
     templateUrl: './zaken-mijn.component.html',
@@ -45,8 +47,9 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService) {
-        this.dataSource = new ZakenMijnDatasource(this.zoekenService, this.utilService);
+    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService,
+                private gebruikersvoorkeurenService: GebruikersvoorkeurenService, public dialog: MatDialog, public utilService: UtilService) {
+        this.dataSource = new ZakenMijnDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
     ngOnInit(): void {
@@ -81,10 +84,6 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
 
     isAfterDate(datum): boolean {
         return Conditionals.isOverschreden(datum);
-    }
-
-    resetSearch(): void {
-        this.dataSource.reset();
     }
 
     resetColumns(): void {

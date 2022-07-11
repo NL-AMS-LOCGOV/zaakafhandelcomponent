@@ -13,7 +13,6 @@ import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -21,6 +20,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-list-parameters';
 import {User} from '../../identity/model/user';
+import {ZoekopdrachtSaveDialogComponent} from '../../gebruikersvoorkeuren/zoekopdracht-save-dialog/zoekopdracht-save-dialog.component';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
+import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -39,17 +42,20 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     listParameters: OntkoppeldDocumentListParameters;
     filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
+    zoekopdrachten: Zoekopdracht[] = [];
+    actieveZoekopdracht: Zoekopdracht;
 
     constructor(private service: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
-                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
+                private gebruikersvoorkeurenService: GebruikersvoorkeurenService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.listParameters = SessionStorageUtil.getItem('ontkoppeldeDocumenten', this.createDefaultParameters());
+        this.loadZoekopdrachten();
     }
 
     ngAfterViewInit(): void {
@@ -65,7 +71,6 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
@@ -132,5 +137,51 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
+    };
+
+    saveSearch(): void {
+        const dialogRef = this.dialog.open(ZoekopdrachtSaveDialogComponent, {
+            data: {zoekopdrachten: this.zoekopdrachten, lijstID: Werklijst.ONTKOPPELDE_DOCUMENTEN, zoekopdracht: this.listParameters}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.loadZoekopdrachten();
+            }
+        });
+    }
+
+    loadZoekopdrachten(): void {
+        this.gebruikersvoorkeurenService.listZoekOpdrachten(Werklijst.ONTKOPPELDE_DOCUMENTEN).subscribe(zoekopdrachten => {
+            this.zoekopdrachten = zoekopdrachten;
+            this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
+            if (this.actieveZoekopdracht) {
+                this.listParameters = JSON.parse(this.actieveZoekopdracht.json);
+                this.filtersChanged();
+            } else {
+                this.listParameters = this.createDefaultParameters();
+                this.filtersChanged();
+            }
+        });
+    }
+
+    setActief(zoekopdracht: Zoekopdracht): void {
+        this.actieveZoekopdracht = zoekopdracht;
+        this.listParameters = JSON.parse(this.actieveZoekopdracht.json);
+        this.filtersChanged();
+        this.gebruikersvoorkeurenService.setZoekopdrachtActief(this.actieveZoekopdracht).subscribe();
+    }
+
+    deleteZoekopdracht($event: MouseEvent, zoekopdracht: Zoekopdracht): void {
+        $event.stopPropagation();
+        this.gebruikersvoorkeurenService.deleteZoekOpdrachten(zoekopdracht.id).subscribe(() => {
+            this.loadZoekopdrachten();
+        });
+    }
+
+    removeActief(): void {
+        this.actieveZoekopdracht = null;
+        this.gebruikersvoorkeurenService.removeZoekopdrachtActief(Werklijst.ONTKOPPELDE_DOCUMENTEN).subscribe();
+        this.listParameters = this.createDefaultParameters();
+        this.filtersChanged();
     }
 }

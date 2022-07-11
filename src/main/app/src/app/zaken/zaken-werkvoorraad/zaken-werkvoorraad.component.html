@@ -189,12 +189,33 @@
 
         <ng-container matColumnDef="url_filter" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-                <button mat-icon-button (click)="resetSearch()" title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="wisZoekopdracht_button">
-                    <mat-icon>search_off</mat-icon>
-                </button>
+                <div fxLayout="row">
+                    <read-more fxFlexAlign="center" fxFlex [text]="dataSource.actieveZoekopdracht?.naam" [maxLength]="70"></read-more>
+                    <button *ngIf="dataSource.zoekopdrachten.length && !dataSource.actieveZoekopdracht"
+                            mat-icon-button
+                            [matMenuTriggerFor]="filterMenu"
+                            title="{{ 'actie.zoekopdracht.filter' | translate }}" id="filterZoekopdrachtButton">
+                        <mat-icon>filter_list</mat-icon>
+                    </button>
+                    <button *ngIf="dataSource.actieveZoekopdracht" mat-icon-button (click)="dataSource.removeActief()"
+                            title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="clearZoekopdrachtButton">
+                        <mat-icon>filter_list_off</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="dataSource.saveSearch()"
+                            title="{{ 'actie.zoekopdracht.opslaan' | translate }}" id="saveZoekopdrachtButton">
+                        <mat-icon>star_outline</mat-icon>
+                    </button>
+                    <mat-menu class="filter-menu" #filterMenu="matMenu" fxLayout="row">
+                        <button (click)="dataSource.setActief(value)" mat-menu-item *ngFor="let value of dataSource.zoekopdrachten">
+                              <span fxFlexAlign="center" fxFlex>
+                                <read-more [text]="value.naam" [maxLength]="75"></read-more>
+                              </span>
+                            <mat-icon (click)="dataSource.deleteZoekopdracht($event, value)" fxFlexAlign="center" fxFlex="nogrow">highlight_off</mat-icon>
+                        </button>
+                    </mat-menu>
+                </div>
             </th>
         </ng-container>
-
         <ng-container matColumnDef="url" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
                 <button (click)="resetColumns()" title="{{ 'actie.kolommen.reset' | translate }}" mat-icon-button id="wisKolommen_button">
