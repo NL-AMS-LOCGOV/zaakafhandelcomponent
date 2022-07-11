@@ -45,6 +45,7 @@ import net.atos.zac.policy.input.ZaakInput;
 import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
 import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.ZakenActies;
 import net.atos.zac.shared.exception.FoutmeldingException;
 
 @ApplicationScoped
@@ -127,18 +128,33 @@ public class PolicyService {
         return readEnkelvoudigInformatieobjectActies(drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID));
     }
 
+    public ZakenActies readZakenActies() {
+        return evaluationClient.readZakenActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+    }
+
+    /**
+     * Get the set of allowed zaaktypen.
+     * Returns null if all zaaktypen are allowed.
+     *
+     * @return Set of allowed zaaktypen which may be empty. Or null indicating that all zaaktypen are allowed.
+     */
+    public Set<String> getAllowedZaaktypen() {
+        final Set<String> zaaktypen = readZaaktypen();
+        return zaaktypen.contains(ALLE_ZAAKTYPEN) ? null : zaaktypen;
+    }
+
     public List<Zaaktype> filterAllowedZaaktypen(final List<Zaaktype> alleZaaktypen) {
-        final Set<String> zaaktypeIdentificaties = readZaaktypeIdentificaties();
-        if (zaaktypeIdentificaties.contains(ALLE_ZAAKTYPEN)) {
+        final Set<String> zaaktypenAllowed = readZaaktypen();
+        if (zaaktypenAllowed.contains(ALLE_ZAAKTYPEN)) {
             return alleZaaktypen;
         } else {
-            return alleZaaktypen.stream().filter(zaaktype -> zaaktypeIdentificaties.contains(zaaktype.getIdentificatie())).toList();
+            return alleZaaktypen.stream().filter(zaaktype -> zaaktypenAllowed.contains(zaaktype.getOmschrijving())).toList();
         }
     }
 
-    public boolean isZaaktypeAllowed(final String zaaktypeIdentificatie) {
-        final Set<String> zaaktypeIdentificaties = readZaaktypeIdentificaties();
-        return zaaktypeIdentificaties.contains(ALLE_ZAAKTYPEN) || zaaktypeIdentificaties.contains(zaaktypeIdentificatie);
+    public boolean isZaaktypeAllowed(final String zaaktype) {
+        final Set<String> zaaktypenAllowed = readZaaktypen();
+        return zaaktypenAllowed.contains(ALLE_ZAAKTYPEN) || zaaktypenAllowed.contains(zaaktype);
     }
 
     public static void assertActie(final boolean actie) {
@@ -154,7 +170,7 @@ public class PolicyService {
         }
     }
 
-    private Set<String> readZaaktypeIdentificaties() {
+    private Set<String> readZaaktypen() {
         final RuleQuery<UserInput> query = new RuleQuery<>(new UserInput(loggedInUserInstance.get()));
         final RuleResponse<List<List<String>>> response = evaluationClient.readZaaktypen(query);
         return response.getResult().stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableSet());

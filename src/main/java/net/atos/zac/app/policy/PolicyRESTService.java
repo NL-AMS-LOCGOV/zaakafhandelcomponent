@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.zac.app.policy.model.RESTAppActies;
+import net.atos.zac.app.policy.model.RESTZakenActies;
 import net.atos.zac.policy.PolicyService;
 
 @Path("policy")
@@ -29,5 +30,11 @@ public class PolicyRESTService {
     @Path("appActies")
     public RESTAppActies readAppActies() {
         return new RESTAppActies(policyService.readAppActies());
+    }
+
+    @GET
+    @Path("zakenActies")
+    public RESTZakenActies readZakenActies() {
+        return new RESTZakenActies(policyService.readZakenActies());
     }
 }

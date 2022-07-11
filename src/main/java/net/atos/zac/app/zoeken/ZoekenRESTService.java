@@ -45,5 +45,4 @@ public class ZoekenRESTService {
         final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
         return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
     }
-
 }
