@@ -139,7 +139,7 @@
                     <button *ngIf="dataSource.zoekopdrachten.length && !dataSource.actieveZoekopdracht"
                             mat-icon-button
                             [matMenuTriggerFor]="filterMenu"
-                            title="{{ 'actie.zoekopdracht.filter' | translate }}" id="filterZoekopdrachtButton">
+                            title="{{ 'actie.zoekopdracht.selecteer' | translate }}" id="selecteerZoekopdrachtButton">
                         <mat-icon>filter_list</mat-icon>
                     </button>
                     <button *ngIf="dataSource.actieveZoekopdracht" mat-icon-button (click)="dataSource.removeActief()"
@@ -152,10 +152,12 @@
                     </button>
                     <mat-menu class="filter-menu" #filterMenu="matMenu" fxLayout="row">
                         <button (click)="dataSource.setActief(value)" mat-menu-item *ngFor="let value of dataSource.zoekopdrachten">
-                              <span fxFlexAlign="center" fxFlex>
-                                <read-more [text]="value.naam" [maxLength]="75"></read-more>
-                              </span>
-                            <mat-icon (click)="dataSource.deleteZoekopdracht($event, value)" fxFlexAlign="center" fxFlex="nogrow">highlight_off</mat-icon>
+                          <span fxFlexAlign="center" fxFlex>
+                            <read-more [text]="value.naam" [maxLength]="75"></read-more>
+                          </span>
+                            <mat-icon title="{{ 'actie.zoekopdracht.verwijderen' | translate }}" id="deleteZoekopdrachtButton"
+                                      (click)="dataSource.deleteZoekopdracht($event, value)" fxFlexAlign="center" fxFlex="nogrow">highlight_off
+                            </mat-icon>
                         </button>
                     </mat-menu>
                 </div>
