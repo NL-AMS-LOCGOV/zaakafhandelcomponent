@@ -45,7 +45,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     zoekopdrachten: Zoekopdracht[] = [];
     actieveZoekopdracht: Zoekopdracht;
 
-    constructor(private service: OntkoppeldeDocumentenService,
+    constructor(private ontkoppeldeDocumentenService: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
@@ -66,7 +66,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
                 this.updateListParameters();
-                return this.service.list(this.listParameters);
+                return this.ontkoppeldeDocumentenService.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
@@ -99,7 +99,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.document.verwijderen.bevestigen', {document: od.titel}),
-                this.service.delete(od)
+                this.ontkoppeldeDocumentenService.delete(od)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
