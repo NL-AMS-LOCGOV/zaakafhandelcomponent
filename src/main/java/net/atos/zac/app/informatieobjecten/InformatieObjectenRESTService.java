@@ -403,6 +403,16 @@ public class InformatieObjectenRESTService {
         return new RESTDocumentCreatieResponse(documentCreatieResponse.getRedirectUrl(), documentCreatieResponse.getMessage());
     }
 
+    @GET
+    @Path("informatieobject/{informatieObjectUuid}/zaken")
+    public List<String> listZaakIdentificatiesForInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
+        // ToDo: assert toevoegen
+        List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(
+                drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid));
+        return zaakInformatieobjects.stream()
+                .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).toList();
+    }
+
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {
         final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();

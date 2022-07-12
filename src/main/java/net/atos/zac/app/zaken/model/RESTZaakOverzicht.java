@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
@@ -18,7 +19,7 @@ public class RESTZaakOverzicht {
 
     public String omschrijving;
 
-    public String uuid;
+    public UUID uuid;
 
     public LocalDate startdatum;
 

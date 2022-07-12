@@ -182,12 +182,6 @@ export class ZakenService {
         );
     }
 
-    findZakenForInformatieobject(documentUUID: string): Observable<string[]> {
-        return this.http.get<string[]>(`${this.basepath}/zaken/informatieobject/${documentUUID}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
-        );
-    }
-
     toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht | ZaakZoekObject, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         if ('id' in zaak) {

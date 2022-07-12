@@ -34,10 +34,8 @@ public class RESTGerelateerdeZaakConverter {
 
     public RESTGerelateerdeZaak convert(final Zaak zaak, final RelatieType relatieType) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        Statustype statustype = null;
-        if (zaak.getStatus() != null) {
-            statustype = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype());
-        }
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype, statustype);
         final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
         restGerelateerdeZaak.identificatie = zaak.getIdentificatie();

@@ -105,7 +105,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         if (!this.taakModus) {
             informatieobject['loading'] = true;
             this.utilService.setLoading(true);
-            this.zakenService.findZakenForInformatieobject(informatieobject.uuid).pipe(
+            this.informatieObjectenService.listZaakIdentificatiesForInformatieobject(informatieobject.uuid).pipe(
                 map(zaakIDs => {
                     delete informatieobject['loading'];
                     this.utilService.setLoading(false);
