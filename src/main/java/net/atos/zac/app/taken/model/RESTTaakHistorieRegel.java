@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.taken.model;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import net.atos.client.zgw.shared.util.HistorieUtil;
@@ -29,7 +30,7 @@ public class RESTTaakHistorieRegel {
         this(attribuutLabel, (String) null, null);
     }
 
-    public RESTTaakHistorieRegel(final String attribuutLabel, final ZonedDateTime oudeWaarde, final ZonedDateTime nieuweWaarde) {
+    public RESTTaakHistorieRegel(final String attribuutLabel, final LocalDate oudeWaarde, final LocalDate nieuweWaarde) {
         this(attribuutLabel, HistorieUtil.toWaarde(oudeWaarde), HistorieUtil.toWaarde(nieuweWaarde));
     }
 }

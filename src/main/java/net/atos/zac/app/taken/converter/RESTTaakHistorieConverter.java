@@ -7,6 +7,7 @@ package net.atos.zac.app.taken.converter;
 
 import static javax.json.bind.annotation.JsonbDateFormat.TIME_IN_MILLIS;
 import static net.atos.zac.flowable.TaskService.USER_TASK_DESCRIPTION_CHANGED;
+import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToZonedDateTime;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
@@ -147,7 +148,7 @@ public class RESTTaakHistorieConverter {
     private RESTTaakHistorieRegel convertDuedateChanged(final String data) {
         final DuedateChangedData duedateChangedData = JSONB.fromJson(data, DuedateChangedData.class);
         return new RESTTaakHistorieRegel(STREEFDATUM_ATTRIBUUT_LABEL,
-                                         convertToZonedDateTime(duedateChangedData.previousDueDate),
-                                         convertToZonedDateTime(duedateChangedData.newDueDate));
+                                         convertToLocalDate(duedateChangedData.previousDueDate),
+                                         convertToLocalDate(duedateChangedData.newDueDate));
     }
 }
