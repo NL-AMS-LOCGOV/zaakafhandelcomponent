@@ -28,7 +28,6 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -181,8 +180,7 @@ public class PolicyService {
         final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         Statustype statustype = null;
         if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            statustype = ztcClientService.readStatustype(status.getStatustype());
+            statustype = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype());
         }
         return createZaakData(zaak, zaaktype, statustype, behandelaar);
     }

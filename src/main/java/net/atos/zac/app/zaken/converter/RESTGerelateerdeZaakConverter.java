@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RelevanteZaak;
-import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -17,6 +16,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.output.ZaakActies;
 
 public class RESTGerelateerdeZaakConverter {
 
@@ -33,19 +33,21 @@ public class RESTGerelateerdeZaakConverter {
     private PolicyService policyService;
 
     public RESTGerelateerdeZaak convert(final Zaak zaak, final RelatieType relatieType) {
-        final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
-        restGerelateerdeZaak.relatieType = relatieType;
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        restGerelateerdeZaak.zaaktypeOmschrijving = zaaktype.getOmschrijving();
-        Statustype statustype = null;
-        if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            statustype = ztcClientService.readStatustype(status.getStatustype());
-            restGerelateerdeZaak.statustypeOmschrijving = statustype.getOmschrijving();
-        }
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype, statustype);
+        final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
         restGerelateerdeZaak.identificatie = zaak.getIdentificatie();
-        restGerelateerdeZaak.startdatum = zaak.getStartdatum();
-        restGerelateerdeZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype));
+        restGerelateerdeZaak.relatieType = relatieType;
+        restGerelateerdeZaak.acties = actiesConverter.convert(zaakActies);
+        if (zaakActies.getLezen()) {
+            restGerelateerdeZaak.zaaktypeOmschrijving = zaaktype.getOmschrijving();
+            restGerelateerdeZaak.startdatum = zaak.getStartdatum();
+            if (statustype != null) {
+                restGerelateerdeZaak.statustypeOmschrijving = statustype.getOmschrijving();
+            }
+        }
         return restGerelateerdeZaak;
     }
 
