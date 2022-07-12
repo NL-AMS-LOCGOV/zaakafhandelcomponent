@@ -7,6 +7,8 @@ package net.atos.zac.app.zaken.model;
 
 public class RESTZaakActies {
 
+    public boolean lezen;
+
     public boolean opschorten;
 
     public boolean verlengen;
@@ -23,11 +25,7 @@ public class RESTZaakActies {
 
     public boolean toevoegenDocument;
 
-    public boolean ontkoppelenDocument;
-
-    public boolean koppelenZaak;
-
-    public boolean koppelenAanZaak;
+    public boolean koppelen;
 
     public boolean versturenEmail;
 

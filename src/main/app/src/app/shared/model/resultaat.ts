@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export interface Resultaat<TYPE> {
+export class Resultaat<TYPE> {
     resultaten: TYPE[];
     totaal: number;
     foutmelding: string;

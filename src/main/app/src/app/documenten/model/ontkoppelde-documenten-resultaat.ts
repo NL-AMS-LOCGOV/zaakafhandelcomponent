@@ -7,6 +7,6 @@ import {Resultaat} from '../../shared/model/resultaat';
 import {OntkoppeldDocument} from './ontkoppeld-document';
 import {User} from '../../identity/model/user';
 
-export interface OntkoppeldeDocumentenResultaat extends Resultaat<OntkoppeldDocument> {
+export class OntkoppeldeDocumentenResultaat extends Resultaat<OntkoppeldDocument> {
     filterOntkoppeldDoor: User[];
 }

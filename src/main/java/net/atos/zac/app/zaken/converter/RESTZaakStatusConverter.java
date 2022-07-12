@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import java.net.URI;
-
 import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -23,22 +21,10 @@ public class RESTZaakStatusConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public RESTZaakStatus convertToRESTZaakStatus(final URI statusURI) {
-        if (statusURI != null) {
-            final Status status = zrcClientService.readStatus(statusURI);
-            final RESTZaakStatus restZaakStatus = new RESTZaakStatus();
-            restZaakStatus.toelichting = status.getStatustoelichting();
-            final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-            restZaakStatus.naam = statustype.getOmschrijving();
-            return restZaakStatus;
-        } else {
-            return null;
-        }
-    }
-
-    public String convertToStatusOmschrijving(final URI statusURI) {
-        final Status status = zrcClientService.readStatus(statusURI);
-        final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-        return statustype.getOmschrijving();
+    public RESTZaakStatus convertToRESTZaakStatus(final Status status, final Statustype statustype) {
+        final RESTZaakStatus restZaakStatus = new RESTZaakStatus();
+        restZaakStatus.toelichting = status.getStatustoelichting();
+        restZaakStatus.naam = statustype.getOmschrijving();
+        return restZaakStatus;
     }
 }

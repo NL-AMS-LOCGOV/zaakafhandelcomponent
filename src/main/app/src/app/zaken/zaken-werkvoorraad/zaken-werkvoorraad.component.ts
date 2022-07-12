@@ -29,6 +29,8 @@ import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
 import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
+import {PolicyService} from '../../policy/policy.service';
+import {ZakenActies} from '../../policy/model/zaken-acties';
 import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
@@ -40,6 +42,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
+    acties: ZakenActies = new ZakenActies();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -55,12 +58,9 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService,
-                private zoekenService: ZoekenService,
-                public utilService: UtilService,
-                private identityService: IdentityService,
-                private gebruikersvoorkeurenService: GebruikersvoorkeurenService,
-                public dialog: MatDialog) {
+    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService,
+                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService,
+                private gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
     }
 
@@ -68,10 +68,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource.initColumns(this.defaultColumns());
+        this.policyService.readZakenActies().subscribe(acties => this.acties = acties);
     }
 
     defaultColumns(): Map<string, ColumnPickerValue> {
-        return new Map([
+        const columns = new Map([
             ['select', ColumnPickerValue.STICKY],
             ['zaak.identificatie', ColumnPickerValue.VISIBLE],
             ['status', ColumnPickerValue.VISIBLE],
@@ -88,6 +89,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
         ]);
+        if (!this.acties.verdelenEnVrijgeven) {
+            columns.delete('select');
+        }
+        return columns;
     }
 
     ngAfterViewInit(): void {
@@ -95,7 +100,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.table.dataSource = this.dataSource;
         this.dataSource.load();
     }
-
 
     private getIngelogdeMedewerker() {
         this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
@@ -166,7 +170,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(row: ZaakZoekObject): boolean {
-        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== row.behandelaarGebruikersnaam;
+        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== row.behandelaarGebruikersnaam;
     }
 
     openVerdelenScherm(): void {

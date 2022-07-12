@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.zaken.converter;
 
-import static net.atos.client.zgw.shared.ZGWApiService.STATUSTYPE_HEROPEND_OMSCHRIJVING;
+import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -24,20 +24,22 @@ import net.atos.client.zgw.zrc.model.Opschorting;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
+import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.configuratie.ConfiguratieService;
-import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
@@ -87,9 +89,6 @@ public class RESTZaakConverter {
     private RESTGeometryConverter restGeometryConverter;
 
     @Inject
-    private CaseVariablesService caseVariablesService;
-
-    @Inject
     private PolicyService policyService;
 
     public RESTZaak convert(final Zaak zaak) {
@@ -113,7 +112,13 @@ public class RESTZaakConverter {
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
         restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);
-        restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
+        Statustype statustype = null;
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            statustype = ztcClientService.readStatustype(status.getStatustype());
+            restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(status, statustype);
+        }
+
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         restZaak.isOpgeschort = zaak.isOpgeschort();
@@ -129,19 +134,7 @@ public class RESTZaakConverter {
 
         restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
 
-        restZaak.gerelateerdeZaken = new ArrayList<>();
-        if (zaak.getHoofdzaak() != null) {
-            restZaak.gerelateerdeZaken.add(gerelateerdeZaakConverter.convert(zrcClientService.readZaak(zaak.getHoofdzaak()), RelatieType.HOOFDZAAK));
-        }
-        final List<Zaak> deelzaken = zaak.getDeelzaken().stream()
-                .map(zrcClientService::readZaak)
-                .toList();
-        deelzaken.stream()
-                .map(deelzaak -> gerelateerdeZaakConverter.convert(deelzaak, RelatieType.DEELZAAK))
-                .forEach(restZaak.gerelateerdeZaken::add);
-        zaak.getRelevanteAndereZaken().stream()
-                .map(gerelateerdeZaakConverter::convert)
-                .forEach(restZaak.gerelateerdeZaken::add);
+        restZaak.gerelateerdeZaken = convertGerelateerdeZaken(zaak);
 
         restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
 
@@ -175,12 +168,8 @@ public class RESTZaakConverter {
 
         restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
-        restZaak.isHeropend = restZaak.status != null && restZaak.status.naam.equals(STATUSTYPE_HEROPEND_OMSCHRIJVING);
-
-        restZaak.acties = actiesConverter.convert(
-                policyService.readZaakActies(zaak, restZaak.isHeropend,
-                                             behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null,
-                                             deelzaken.stream().filter(Zaak::isOpen).findAny().isPresent()));
+        restZaak.isHeropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar));
 
         return restZaak;
     }
@@ -248,5 +237,20 @@ public class RESTZaakConverter {
             zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting, restZaakOpschortGegevens.redenOpschorting));
         }
         return zaak;
+    }
+
+    private List<RESTGerelateerdeZaak> convertGerelateerdeZaken(final Zaak zaak) {
+        final List<RESTGerelateerdeZaak> gerelateerdeZaken = new ArrayList<>();
+        if (zaak.getHoofdzaak() != null) {
+            gerelateerdeZaken.add(gerelateerdeZaakConverter.convert(zrcClientService.readZaak(zaak.getHoofdzaak()), RelatieType.HOOFDZAAK));
+        }
+        zaak.getDeelzaken().stream()
+                .map(zrcClientService::readZaak)
+                .map(deelzaak -> gerelateerdeZaakConverter.convert(deelzaak, RelatieType.DEELZAAK))
+                .forEach(gerelateerdeZaken::add);
+        zaak.getRelevanteAndereZaken().stream()
+                .map(gerelateerdeZaakConverter::convert)
+                .forEach(gerelateerdeZaken::add);
+        return gerelateerdeZaken;
     }
 }

@@ -24,7 +24,6 @@ import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {FileFormatUtil} from '../model/file-format';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
-import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieObjectVersieGegevens} from '../model/enkelvoudig-informatie-object-versie-gegevens';
 import {TranslateService} from '@ngx-translate/core';
@@ -38,7 +37,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
 import {Indicatie} from '../../shared/model/indicatie';
 import {IdentityService} from '../../identity/identity.service';
-import {combineLatestWith} from 'rxjs';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -47,17 +45,16 @@ import {combineLatestWith} from 'rxjs';
 export class InformatieObjectViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     infoObject: EnkelvoudigInformatieobject;
-    zaak: Zaak;
     laatsteVersieInfoObject: EnkelvoudigInformatieobject;
+    zaakInformatieObjecten: ZaakInformatieobject[];
+    zaak: Zaak;
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
     indicaties: Indicatie[];
     action: string;
     versieInformatie: string;
-    zaakInformatieObjecten: ZaakInformatieobject[];
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
-    isWijzigenToegestaan: boolean = false;
 
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     @ViewChild('actionsSidenav') actionsSidenav: MatSidenav;
@@ -81,12 +78,8 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.infoObject = data['informatieObject'];
             this.zaak = data['zaak'];
-            const readEnkelvoudigInformatieObject$ = this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid);
-            const isWijzigenToegestaan$ = this.informatieObjectenService.isWijzigenInformatieObjectToegestaan(this.infoObject.uuid);
-
-            readEnkelvoudigInformatieObject$.pipe(combineLatestWith(isWijzigenToegestaan$)).subscribe(([infoObject, isWijzigenToegestaan]) => {
+            this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid).subscribe(infoObject => {
                 this.laatsteVersieInfoObject = infoObject;
-                this.isWijzigenToegestaan = isWijzigenToegestaan;
                 this.toevoegenActies();
                 this.updateVersieInformatie();
                 this.loadZaakInformatieobjecten();
@@ -133,17 +126,15 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     private toevoegenActies() {
-        this.menu = [
-            new HeaderMenuItem('informatieobject'),
-            new HrefMenuItem('actie.downloaden',
-                this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie),
-                'save_alt')
-        ];
-        // Nieuwe versie en bewerken acties niet toegestaan indien de status definitief is
-        // en wanneer er geen zaak gekoppeld is bij bijvoorbeeld ontkoppelde en inbox documenten.
-        // Als er wel een zaak gekoppeld is, dan moet deze niet gesloten zijn.
-        // ToDo: Vervangen door Policy
-        if (this.laatsteVersieInfoObject.status !== InformatieobjectStatus.DEFINITIEF && this.isWijzigenToegestaan) {
+        this.menu = [new HeaderMenuItem('informatieobject')];
+
+        if (this.laatsteVersieInfoObject.acties.downloaden) {
+            this.menu.push(
+                new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie), 'save_alt')
+            );
+        }
+
+        if (this.laatsteVersieInfoObject.acties.toevoegenNieuweVersie) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -151,30 +142,32 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                     this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
                 });
             }, 'difference'));
-
-            if (FileFormatUtil.isOffice(this.infoObject.formaat)) {
-                this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
-                    this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid)
-                        .subscribe(url => {
-                            window.open(url);
-                        });
-                }, 'edit'));
-            }
-
-            if (this.infoObject.gelockedDoor) {
-                this.menu.push(new ButtonMenuItem('actie.unlock', () => {
-                    this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid)
-                        .subscribe(() => {});
-                }, 'lock_open'));
-            } else {
-                this.menu.push(new ButtonMenuItem('actie.lock', () => {
-                    this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid)
-                        .subscribe(() => {});
-                }, 'lock'));
-            }
         }
 
-        if (this.zaak && this.isWijzigenToegestaan) {
+        if (this.laatsteVersieInfoObject.acties.bewerken && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+            this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
+                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid)
+                    .subscribe(url => {
+                        window.open(url);
+                    });
+            }, 'edit'));
+        }
+
+        if (this.laatsteVersieInfoObject.acties.vergrendelen) {
+            this.menu.push(new ButtonMenuItem('actie.lock', () => {
+                this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid)
+                    .subscribe(() => {});
+            }, 'lock'));
+        }
+
+        if (this.laatsteVersieInfoObject.acties.ontgrendelen) {
+            this.menu.push(new ButtonMenuItem('actie.unlock', () => {
+                this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid)
+                    .subscribe(() => {});
+            }, 'lock_open'));
+        }
+
+        if (this.laatsteVersieInfoObject.acties.verwijderen) {
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
     }
@@ -195,13 +188,9 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         if (event) {
             console.log('callback loadInformatieObject: ' + event.key);
         }
-        const readEnkelvoudigInformatieObject$ = this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid);
-        const isWijzigenToegestaan$ = this.informatieObjectenService.isWijzigenInformatieObjectToegestaan(this.infoObject.uuid);
-
-        readEnkelvoudigInformatieObject$.pipe(combineLatestWith(isWijzigenToegestaan$)).subscribe(([infoObject, isWijzigenToegestaan]) => {
+        this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid).subscribe(infoObject => {
             this.infoObject = infoObject;
             this.laatsteVersieInfoObject = infoObject;
-            this.isWijzigenToegestaan = isWijzigenToegestaan;
             this.toevoegenActies();
             this.updateVersieInformatie();
             this.loadIndicaties();

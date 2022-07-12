@@ -13,6 +13,7 @@ public class RESTZaakActiesConverter {
     public RESTZaakActies convert(final ZaakActies zaakActies) {
         final RESTZaakActies restZaakActies = new RESTZaakActies();
 
+        restZaakActies.lezen = zaakActies.getLezen();
         restZaakActies.opschorten = zaakActies.getOpschorten();
         restZaakActies.verlengen = zaakActies.getVerlengen();
         restZaakActies.hervatten = zaakActies.getHervatten();
@@ -21,9 +22,7 @@ public class RESTZaakActiesConverter {
         restZaakActies.heropenen = zaakActies.getHeropenen();
         restZaakActies.creeerenDocument = zaakActies.getCreeerenDocument();
         restZaakActies.toevoegenDocument = zaakActies.getToevoegenDocument();
-        restZaakActies.ontkoppelenDocument = zaakActies.getOntkoppelenDocument();
-        restZaakActies.koppelenZaak = zaakActies.getKoppelenZaak();
-        restZaakActies.koppelenAanZaak = zaakActies.getKoppelenAanZaak();
+        restZaakActies.koppelen = zaakActies.getKoppelen();
         restZaakActies.versturenEmail = zaakActies.getVersturenEmail();
         restZaakActies.versturenOntvangstbevestiging = zaakActies.getVersturenOntvangstbevestiging();
         restZaakActies.toevoegenPersoon = zaakActies.getToevoegenPersoon();

@@ -342,6 +342,7 @@
   "actie.zaak.afbreken": "Abort case",
   "actie.zaak.afbreken.reden": "Reason why case is aborted",
   "actie.zaak.afbreken.reden.-kies-": "- Select a reason why case is aborted -",
+  "actie.zaak.afhandelen": "Close case",
   "actie.zaak.afsluiten": "Close case",
   "actie.zaak.afsluiten.reden": "Reason why case is closed",
   "actie.zaak.bekijken": "View case",

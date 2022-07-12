@@ -15,5 +15,5 @@ public class ZaakData {
 
     public String behandelaar;
 
-    public boolean openDeelzaken;
+    public String zaaktype;
 }

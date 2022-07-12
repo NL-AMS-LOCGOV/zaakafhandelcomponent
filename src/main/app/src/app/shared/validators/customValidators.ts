@@ -15,6 +15,7 @@ export class CustomValidators {
     static bsnOrVesPrefixed = CustomValidators.bsnOfVestigingVFn(true);
     static email = CustomValidators.emailVFn(false);
     static emails = CustomValidators.emailVFn(true);
+    static handelsnaam = CustomValidators.handelsnaamVFn();
 
     private static postcodeRegex = /^[1-9][0-9]{3}(?!sa|sd|ss)[a-z]{2}$/i;
 
@@ -24,6 +25,7 @@ export class CustomValidators {
     private static EMAIL = CustomValidators.LCL + '(\\.' + CustomValidators.LCL + ')*@' + CustomValidators.LBL + '(\\.' + CustomValidators.LBL + ')+';
     private static emailRegex = new RegExp('^' + CustomValidators.EMAIL + '$');
     private static emailsRegex = new RegExp('^(' + CustomValidators.EMAIL + ')(;//s*' + CustomValidators.EMAIL + ')*$');
+    private static handelsnaamRegex = new RegExp('[*()]+');
 
     private static bsnVFn(allowPrefix = false): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
@@ -105,6 +107,18 @@ export class CustomValidators {
 
     private static isValidVestigingsnummer(nummer: string): boolean {
         return !(isNaN(Number(nummer)) || nummer.length !== 12);
+    }
+
+    private static handelsnaamVFn(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            if (!control.value) {
+                return null;
+            }
+            const val = control.value;
+            if (CustomValidators.handelsnaamRegex.test(val)) {
+                return {handelsnaam: true};
+            }
+        };
     }
 
     private static getValue(control: AbstractControl, allowPrefix = false) {

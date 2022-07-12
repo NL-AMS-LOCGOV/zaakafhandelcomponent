@@ -71,6 +71,7 @@ import {ZaakRelatietype} from '../model/zaak-relatietype';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
+import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -162,13 +163,18 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.utilService.disableActionBar(!zaak.acties.koppelenAanZaak);
+        this.utilService.disableActionBar(!zaak.acties.koppelen);
         this.loadHistorie();
         this.setEditableFormFields();
         this.setupMenu();
         this.setupIndicaties();
         this.loadLocatie();
         this.loadOpschorting();
+        this.setPaginaLocatieInformatie(zaak.identificatie);
+    }
+
+    private setPaginaLocatieInformatie(zaakIdentificatie: string) {
+        PaginaLocatieUtil.actieveZaakViewIdentificatie = zaakIdentificatie;
     }
 
     private getIngelogdeMedewerker() {
@@ -206,6 +212,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
+        this.setPaginaLocatieInformatie(null);
         this.utilService.disableActionBar(false);
         this.websocketService.removeListener(this.zaakListener);
         this.websocketService.removeListener(this.zaakRollenListener);
@@ -336,7 +343,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'mail'));
         }
 
-        if (this.zaak.acties.koppelenZaak) {
+        if (this.zaak.acties.koppelen) {
             this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
                 this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));
@@ -354,7 +361,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
 
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'close'));
+            this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
 
         if (this.zaak.acties.heropenen) {
@@ -569,8 +576,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private openZaakAfsluitenDialog(): void {
         const dialogData = new DialogData([
-                new InputFormFieldBuilder().id('reden').label('actie.zaak.afsluiten.reden').validators(Validators.required).maxlength(100).build()],
-            (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['reden']).pipe(
+                new SelectFormFieldBuilder().id('resultaattype')
+                                            .label('resultaat')
+                                            .optionLabel('naam')
+                                            .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                            .validators(Validators.required)
+                                            .build(),
+                new InputFormFieldBuilder().id('toelichting')
+                                           .label('toelichting')
+                                           .maxlength(80)
+                                           .build()],
+            (results: any[]) => this.zakenService.afsluiten(this.zaak.uuid, results['toelichting'], results['resultaattype'].id).pipe(
                 tap(() => this.websocketService.suspendListener(this.zaakListener))
             ));
 

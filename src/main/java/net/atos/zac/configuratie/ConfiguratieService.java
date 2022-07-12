@@ -75,6 +75,8 @@ public class ConfiguratieService {
 
     public static final String TAAL_NEDERLANDS = "dut"; // ISO 639-2/B
 
+    public static final String STATUSTYPE_OMSCHRIJVING_HEROPEND = "Heropend";
+
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject
     @ConfigProperty(name = "CONTEXT_URL")

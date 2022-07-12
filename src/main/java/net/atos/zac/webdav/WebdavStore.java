@@ -13,10 +13,6 @@ import java.util.UUID;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.http.HttpSession;
 
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
-
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,6 +22,8 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.zac.authentication.SecurityUtil;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
@@ -120,15 +118,11 @@ public class WebdavStore implements IWebdavStore {
                 return drcClientService.updateEnkelvoudigInformatieobject(
                         webdavGegevens.enkelvoudigInformatieibjectUUID(), TOELICHTING,
                         enkelvoudigInformatieobjectWithInhoudAndLock).getBestandsomvang();
-            } catch (final IOException e) {
-                throw new RuntimeException(e);
+            } catch (final IOException ioException) {
+                throw new RuntimeException(ioException);
             } finally {
                 if (tempLock) {
-                    try {
-                        enkelvoudigInformatieObjectLockService.deleteLock(webdavGegevens.enkelvoudigInformatieibjectUUID(),
-                                                                          webdavGegevens.loggedInUser().getId());
-                    } catch (IllegalAccessException ignored) {
-                    }
+                    enkelvoudigInformatieObjectLockService.deleteLock(webdavGegevens.enkelvoudigInformatieibjectUUID());
                 }
                 fileStoredObjectMap.remove(token);
             }

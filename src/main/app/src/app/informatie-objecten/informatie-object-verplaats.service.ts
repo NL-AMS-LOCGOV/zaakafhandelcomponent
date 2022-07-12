@@ -13,6 +13,7 @@ import {ActionIcon} from '../shared/edit/action-icon';
 import {UtilService} from '../core/service/util.service';
 import {Router} from '@angular/router';
 import {InformatieObjectenService} from './informatie-objecten.service';
+import {PaginaLocatieUtil} from '../locatie/pagina-locatie.util';
 
 @Injectable({
     providedIn: 'root'
@@ -59,7 +60,7 @@ export class InformatieObjectVerplaatsService {
             SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
         }
         const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.bron,
-            new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document));
+            new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document.bron));
         this.utilService.addAction(action);
     }
 
@@ -68,15 +69,7 @@ export class InformatieObjectVerplaatsService {
         SessionStorageUtil.setItem('teVerplaatsenDocumenten', documenten.filter(document => document.documentUUID !== documentVerplaatsGegevens.documentUUID));
     }
 
-    private pathContains(path: string): boolean {
-        return this.router.url.indexOf(path) !== -1;
-    }
-
-    private isZaakTonen(): boolean {
-        return this.pathContains('zaken/ZAAK-');
-    }
-
-    private isVerplaatsenToegestaan(gegevens: DocumentVerplaatsGegevens): boolean {
-        return this.isZaakTonen() && !this.pathContains(`zaken/${gegevens.bron}`);
+    private isVerplaatsenToegestaan(zaakIdentificatie: string): boolean {
+        return PaginaLocatieUtil.actieveZaakViewIdentificatie && PaginaLocatieUtil.actieveZaakViewIdentificatie !== zaakIdentificatie;
     }
 }

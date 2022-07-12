@@ -4,6 +4,7 @@
  */
 
 export class ZaakActies {
+    lezen: boolean;
     opschorten: boolean;
     verlengen: boolean;
     hervatten: boolean;
@@ -12,9 +13,7 @@ export class ZaakActies {
     heropenen: boolean;
     creeerenDocument: boolean;
     toevoegenDocument: boolean;
-    ontkoppelenDocument: boolean;
-    koppelenZaak: boolean;
-    koppelenAanZaak: boolean;
+    koppelen: boolean;
     versturenEmail: boolean;
     versturenOntvangstbevestiging: boolean;
     toevoegenPersoon: boolean;

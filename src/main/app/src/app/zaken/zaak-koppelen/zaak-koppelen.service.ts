@@ -14,6 +14,7 @@ import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog.component';
 import {UtilService} from '../../core/service/util.service';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
+import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 
 @Injectable({
     providedIn: 'root'
@@ -57,7 +58,7 @@ export class ZaakKoppelenService {
             SessionStorageUtil.setItem('teKoppelenZaken', teKoppelenZaken);
         }
         const action: ActionBarAction = new ActionBarAction(zaak.identificatie, 'zaak', zaak.identificatie,
-            new ActionIcon('link', editAction), dismiss, () => this.isKoppelenToegestaan(zaak));
+            new ActionIcon('link', editAction), dismiss, () => this.isKoppelenToegestaan(zaak.identificatie));
         this.utilService.addAction(action);
     }
 
@@ -76,15 +77,7 @@ export class ZaakKoppelenService {
         SessionStorageUtil.setItem('teKoppelenZaken', zaken.filter(_zaak => _zaak.uuid !== zaak.uuid));
     }
 
-    private pathContains(path: string): boolean {
-        return this.router.url.indexOf(path) !== -1;
-    }
-
-    private isZaakTonen(): boolean {
-        return this.pathContains('zaken/ZAAK-');
-    }
-
-    private isKoppelenToegestaan(zaak: Zaak): boolean {
-        return this.isZaakTonen() && !this.pathContains(`zaken/${zaak.identificatie}`);
+    private isKoppelenToegestaan(zaakIdentificatie: string): boolean {
+        return PaginaLocatieUtil.actieveZaakViewIdentificatie && PaginaLocatieUtil.actieveZaakViewIdentificatie !== zaakIdentificatie;
     }
 }

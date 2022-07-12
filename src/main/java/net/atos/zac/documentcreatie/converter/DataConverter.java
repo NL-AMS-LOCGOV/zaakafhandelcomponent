@@ -115,6 +115,7 @@ public class DataConverter {
 
     private GebruikerData createGebruikerData(final LoggedInUser loggedInUser) {
         final GebruikerData gebruikerData = new GebruikerData();
+        gebruikerData.id = loggedInUser.getId();
         gebruikerData.naam = loggedInUser.getFullName();
         return gebruikerData;
     }
