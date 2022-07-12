@@ -27,17 +27,17 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
 
     zoekopdrachten: Zoekopdracht[] = [];
     actieveZoekopdracht: Zoekopdracht;
-    filtersChangedSubscription: Subscription;
+    filtersChangedSubscription$: Subscription;
 
     constructor(private gebruikersvoorkeurenService: GebruikersvoorkeurenService, private dialog: MatDialog) { }
 
     ngOnDestroy(): void {
-        this.filtersChangedSubscription.unsubscribe();
+        this.filtersChangedSubscription$.unsubscribe();
     }
 
     ngOnInit(): void {
         this.loadZoekopdrachten();
-        this.filtersChangedSubscription = this.filtersChanged.subscribe(() => {
+        this.filtersChangedSubscription$ = this.filtersChanged.subscribe(() => {
             this.clearActief();
         });
     }
@@ -50,14 +50,6 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
             if (result) {
                 this.loadZoekopdrachten();
             }
-        });
-    }
-
-    loadZoekopdrachten(): void {
-        this.gebruikersvoorkeurenService.listZoekOpdrachten(this.werklijst).subscribe(zoekopdrachten => {
-            this.zoekopdrachten = zoekopdrachten;
-            this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
-            this.zoekopdracht.emit(this.actieveZoekopdracht);
         });
     }
 
@@ -80,5 +72,13 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         if (emit) {
             this.zoekopdracht.emit(this.actieveZoekopdracht);
         }
+    }
+
+    private loadZoekopdrachten(): void {
+        this.gebruikersvoorkeurenService.listZoekOpdrachten(this.werklijst).subscribe(zoekopdrachten => {
+            this.zoekopdrachten = zoekopdrachten;
+            this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
+            this.zoekopdracht.emit(this.actieveZoekopdracht);
+        });
     }
 }
