@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
 import javax.json.bind.annotation.JsonbDateFormat;
 
 import org.flowable.task.api.history.HistoricTaskLogEntry;
@@ -21,22 +22,26 @@ import org.flowable.task.api.history.HistoricTaskLogEntryType;
 
 import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
 import net.atos.zac.flowable.TaskService;
+import net.atos.zac.identity.IdentityService;
 
 public class RESTTaakHistorieConverter {
 
-    private static final String CREATED_ATTRIBUUT_LABEL = "Aangemaakt";
+    private static final String CREATED_ATTRIBUUT_LABEL = "aangemaakt";
 
-    private static final String COMPLETED_ATTRIBUUT_LABEL = "Afgerond";
+    private static final String COMPLETED_ATTRIBUUT_LABEL = "afgerond";
 
-    private static final String GROEP_ATTRIBUUT_LABEL = "Groep";
+    private static final String GROEP_ATTRIBUUT_LABEL = "groep";
 
-    private static final String BEHANDELAAR_ATTRIBUUT_LABEL = "Behandelaar";
+    private static final String BEHANDELAAR_ATTRIBUUT_LABEL = "behandelaar";
 
-    private static final String TOELICHTING_ATTRIBUUT_LABEL = "Toelichting";
+    private static final String TOELICHTING_ATTRIBUUT_LABEL = "toelichting";
 
-    private static final String AANGEMAAKT_DOOR_ATTRIBUUT_LABEL = "Aangemaakt door";
+    private static final String AANGEMAAKT_DOOR_ATTRIBUUT_LABEL = "aangemaaktDoor";
 
-    private static final String STREEFDATUM_ATTRIBUUT_LABEL = "Streefdatum";
+    private static final String STREEFDATUM_ATTRIBUUT_LABEL = "streefdatum";
+
+    @Inject
+    private IdentityService identityService;
 
     public List<RESTTaakHistorieRegel> convert(final List<HistoricTaskLogEntry> historicTaskLogEntries) {
         return historicTaskLogEntries.stream()
@@ -80,43 +85,58 @@ public class RESTTaakHistorieConverter {
 
     private RESTTaakHistorieRegel convertDescriptionChanged(final String data) {
         final TaskService.TaskDescriptionChangedData descriptionChangedData = JSONB.fromJson(data, TaskService.TaskDescriptionChangedData.class);
-        return new RESTTaakHistorieRegel(TOELICHTING_ATTRIBUUT_LABEL, descriptionChangedData.previousDescription(), descriptionChangedData.newDescription());
+        return new RESTTaakHistorieRegel(TOELICHTING_ATTRIBUUT_LABEL,
+                                         descriptionChangedData.previousDescription(),
+                                         descriptionChangedData.newDescription());
     }
 
     public static class IdentityLinkData {
-
         public String groupId;
+    }
+
+    private String getGroupName(final String groepId) {
+        return groepId == null ? null : identityService.readGroup(groepId).getName();
     }
 
     private RESTTaakHistorieRegel convertIdentityLinkAdded(final String data) {
         final IdentityLinkData identityLinkData = JSONB.fromJson(data, IdentityLinkData.class);
-        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL, null, identityLinkData.groupId);
+        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL,
+                                         null,
+                                         getGroupName(identityLinkData.groupId));
     }
 
     private RESTTaakHistorieRegel convertIdentityLinkRemoved(final String data) {
         final IdentityLinkData identityLinkData = JSONB.fromJson(data, IdentityLinkData.class);
-        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL, identityLinkData.groupId, null);
+        return new RESTTaakHistorieRegel(GROEP_ATTRIBUUT_LABEL,
+                                         getGroupName(identityLinkData.groupId),
+                                         null);
     }
 
     public static class AssigneeChangedData {
-
         public String newAssigneeId;
 
         public String previousAssigneeId;
     }
 
+    private String getMedewerkerFullName(final String medewerkerId) {
+        return medewerkerId == null ? null : identityService.readUser(medewerkerId).getFullName();
+    }
+
     private RESTTaakHistorieRegel convertAssigneeChanged(final String data) {
         final AssigneeChangedData assigneeChangedData = JSONB.fromJson(data, AssigneeChangedData.class);
-        return new RESTTaakHistorieRegel(BEHANDELAAR_ATTRIBUUT_LABEL, assigneeChangedData.previousAssigneeId, assigneeChangedData.newAssigneeId);
+        return new RESTTaakHistorieRegel(BEHANDELAAR_ATTRIBUUT_LABEL,
+                                         getMedewerkerFullName(assigneeChangedData.previousAssigneeId),
+                                         getMedewerkerFullName(assigneeChangedData.newAssigneeId));
     }
 
     private RESTTaakHistorieRegel convertOwnerChanged(final String data) {
         final AssigneeChangedData assigneeChangedData = JSONB.fromJson(data, AssigneeChangedData.class);
-        return new RESTTaakHistorieRegel(AANGEMAAKT_DOOR_ATTRIBUUT_LABEL, assigneeChangedData.previousAssigneeId, assigneeChangedData.newAssigneeId);
+        return new RESTTaakHistorieRegel(AANGEMAAKT_DOOR_ATTRIBUUT_LABEL,
+                                         getMedewerkerFullName(assigneeChangedData.previousAssigneeId),
+                                         getMedewerkerFullName(assigneeChangedData.newAssigneeId));
     }
 
     public static class DuedateChangedData {
-
         @JsonbDateFormat(TIME_IN_MILLIS)
         public Date newDueDate;
 
@@ -126,6 +146,8 @@ public class RESTTaakHistorieConverter {
 
     private RESTTaakHistorieRegel convertDuedateChanged(final String data) {
         final DuedateChangedData duedateChangedData = JSONB.fromJson(data, DuedateChangedData.class);
-        return new RESTTaakHistorieRegel(STREEFDATUM_ATTRIBUUT_LABEL, duedateChangedData.previousDueDate.toString(), duedateChangedData.newDueDate.toString());
+        return new RESTTaakHistorieRegel(STREEFDATUM_ATTRIBUUT_LABEL,
+                                         convertToZonedDateTime(duedateChangedData.previousDueDate),
+                                         convertToZonedDateTime(duedateChangedData.newDueDate));
     }
 }
