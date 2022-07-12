@@ -73,9 +73,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     }
 
     setValue() {
-        this.data.formControl.setValue({
+        this.data.formControl.setValue(JSON.stringify({
             selection: this.selection.selected.map(value => value.uuid).join(';'),
             ondertekend: this.ondertekend.join(';')
-        })
+        }))
     }
 }

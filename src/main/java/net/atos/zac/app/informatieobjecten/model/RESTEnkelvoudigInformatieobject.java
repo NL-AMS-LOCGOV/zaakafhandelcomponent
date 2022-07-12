@@ -61,4 +61,6 @@ public class RESTEnkelvoudigInformatieobject {
     public RESTUser gelockedDoor;
 
     public RESTEnkelvoudigInformatieobjectActies acties;
+
+    public Boolean ondertekend;
 }
