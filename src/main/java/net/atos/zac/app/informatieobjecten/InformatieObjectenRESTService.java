@@ -12,7 +12,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATI
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -149,12 +149,10 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (zaakUUID != null) {
-            final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject, zaak);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject, zrcClientService.readZaak(zaakUUID));
         } else {
             restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
         }
-        assertActie(restEnkelvoudigInformatieobject.acties.lezen);
         return restEnkelvoudigInformatieobject;
     }
 
@@ -164,12 +162,10 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject huidigeVersie = drcClientService.readEnkelvoudigInformatieobject(uuid);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject;
         if (versie < huidigeVersie.getVersie()) {
-            final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobjectVersie(uuid, versie);
-            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(enkelvoudigInformatieObject);
+            restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(drcClientService.readEnkelvoudigInformatieobjectVersie(uuid, versie));
         } else {
             restEnkelvoudigInformatieobject = restInformatieobjectConverter.convertToREST(huidigeVersie);
         }
-        assertActie(restEnkelvoudigInformatieobject.acties.lezen);
         return restEnkelvoudigInformatieobject;
     }
 
@@ -177,17 +173,14 @@ public class InformatieObjectenRESTService {
     @Path("informatieobjectenList")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
         if (zoekParameters.zaakUUID != null) {
-            final Zaak zaak = zrcClientService.readZaak(zoekParameters.zaakUUID);
-            return listEnkelvoudigInformatieobjectenVoorZaak(zaak.getUrl());
+            return listEnkelvoudigInformatieobjectenVoorZaak(zrcClientService.readZaak(zoekParameters.zaakUUID));
         } else if (zoekParameters.zaakURI != null) {
-            return listEnkelvoudigInformatieobjectenVoorZaak(zoekParameters.zaakURI);
+            return listEnkelvoudigInformatieobjectenVoorZaak(zrcClientService.readZaak(zoekParameters.zaakURI));
         } else if (zoekParameters.UUIDs != null) {
-            final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
-            for (UUID uuid : zoekParameters.UUIDs) {
-                final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-                restList.add(restInformatieobjectConverter.convertToREST(informatieobject));
-            }
-            return restList;
+            return Arrays.stream(zoekParameters.UUIDs)
+                    .map(drcClientService::readEnkelvoudigInformatieobject)
+                    .map(restInformatieobjectConverter::convertToREST)
+                    .toList();
         }
         throw new IllegalStateException("Zoekparameters hebben geen waarde");
     }
@@ -269,18 +262,15 @@ public class InformatieObjectenRESTService {
     @Path("zaak/{uuid}")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(@PathParam("uuid") final UUID uuid) {
         final Zaak zaak = zrcClientService.readZaak(uuid);
-        assertActie(policyService.readZaakActies(zaak).getLezen());
-        return listEnkelvoudigInformatieobjectenVoorZaak(zaak.getUrl());
+        return listEnkelvoudigInformatieobjectenVoorZaak(zaak);
     }
 
     @GET
     @Path("informatieobject/{uuid}/zaken")
     public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
         assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getLezen());
-        final List<RESTZaakInformatieobject> restList = new ArrayList<>();
-        zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid))
-                .forEach(zaakInformatieobject -> restList.add(restZaakInformatieobjectConverter.convert(zaakInformatieobject)));
-        return restList;
+        return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid)).stream()
+                .map(restZaakInformatieobjectConverter::convert).toList();
     }
 
     @GET
@@ -406,19 +396,18 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{informatieObjectUuid}/zaken")
     public List<String> listZaakIdentificatiesForInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
-        // ToDo: assert toevoegen
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobjectUuid).getLezen());
         List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(
                 drcClientService.readEnkelvoudigInformatieobject(informatieobjectUuid));
         return zaakInformatieobjects.stream()
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).toList();
     }
 
-    private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI) {
-        final List<RESTEnkelvoudigInformatieobject> restList = new ArrayList<>();
+    private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final Zaak zaak) {
+        assertActie(policyService.readZaakActies(zaak).getLezen());
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setZaak(zaakURI);
+        parameters.setZaak(zaak.getUrl());
         final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
-        zaakInformatieobjects.forEach(zaakInformatieObject -> restList.add(restInformatieobjectConverter.convertToREST(zaakInformatieObject)));
-        return restList;
+        return zaakInformatieobjects.stream().map(restInformatieobjectConverter::convertToREST).toList();
     }
 }

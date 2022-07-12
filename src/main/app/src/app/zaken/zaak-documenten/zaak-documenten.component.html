@@ -30,7 +30,7 @@
                             <ng-container
                                     *ngIf="column == 'status'">{{(row[column] ? 'informatieobject.status.' + row[column] : '')|translate | empty}}</ng-container>
                             <ng-container
-                                    *ngIf="column == 'vertrouwelijkheidaanduiding'">{{'vertrouwelijkheidaanduiding.' + row[column]|translate | empty}}</ng-container>
+                                    *ngIf="column == 'vertrouwelijkheidaanduiding'">{{(row[column] ? 'vertrouwelijkheidaanduiding.' + row[column] : '')|translate | empty}}</ng-container>
                             <ng-container *ngIf="column == 'creatiedatum'">{{row[column] | datum | empty}}</ng-container>
                             <ng-container *ngIf="column == 'registratiedatumTijd'">{{row[column] | datum:'short' | empty}}</ng-container>
                             <ng-container *ngIf="column == 'auteur'">{{row[column]| empty}}</ng-container>

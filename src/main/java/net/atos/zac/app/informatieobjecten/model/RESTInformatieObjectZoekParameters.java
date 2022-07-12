@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.UUID;
 
 public class RESTInformatieObjectZoekParameters {
+
     public URI zaakURI;
 
     public UUID zaakUUID;

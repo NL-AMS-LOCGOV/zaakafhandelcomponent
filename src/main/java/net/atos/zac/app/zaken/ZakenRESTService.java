@@ -243,7 +243,7 @@ public class ZakenRESTService {
     @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
-        assertActie(policyService.isZaaktypeAllowed(restZaak.zaaktype.identificatie));
+        assertActie(policyService.isZaaktypeAllowed(restZaak.zaaktype.omschrijving));
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
