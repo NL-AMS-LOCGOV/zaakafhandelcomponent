@@ -4,5 +4,10 @@
  */
 
 export class AppActies {
-    constructor(public aanmakenZaak: boolean, public beheren: boolean) {}
+    aanmakenZaak = false;
+    beheren = false;
+    zoeken = false;
+    zaken = false;
+    taken = false;
+    documenten = false;
 }

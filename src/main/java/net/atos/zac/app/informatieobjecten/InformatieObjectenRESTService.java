@@ -12,7 +12,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATI
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -177,10 +176,7 @@ public class InformatieObjectenRESTService {
         } else if (zoekParameters.zaakURI != null) {
             return listEnkelvoudigInformatieobjectenVoorZaak(zrcClientService.readZaak(zoekParameters.zaakURI));
         } else if (zoekParameters.UUIDs != null) {
-            return Arrays.stream(zoekParameters.UUIDs)
-                    .map(drcClientService::readEnkelvoudigInformatieobject)
-                    .map(restInformatieobjectConverter::convertToREST)
-                    .toList();
+            return restInformatieobjectConverter.convertToREST(zoekParameters.UUIDs);
         }
         throw new IllegalStateException("Zoekparameters hebben geen waarde");
     }

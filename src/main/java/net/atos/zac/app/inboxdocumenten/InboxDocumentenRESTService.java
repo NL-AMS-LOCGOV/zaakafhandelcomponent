@@ -31,6 +31,7 @@ import net.atos.zac.app.shared.RESTResultaat;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.documenten.model.InboxDocument;
 import net.atos.zac.documenten.model.InboxDocumentListParameters;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -54,11 +55,15 @@ public class InboxDocumentenRESTService {
     @Inject
     private RESTInboxDocumentListParametersConverter listParametersConverter;
 
+    @Inject
+    private PolicyService policyService;
+
     private static final Logger LOG = Logger.getLogger(InboxDocumentenRESTService.class.getName());
 
     @PUT
     @Path("")
     public RESTResultaat<RESTInboxDocument> list(final RESTInboxDocumentListParameters restListParameters) {
+        PolicyService.assertActie(policyService.readAppActies().getDocumenten());
         final InboxDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
         return new RESTResultaat<>(inboxDocumentConverter.convert(
                 inboxDocumentenService.list(listParameters)), inboxDocumentenService.count(listParameters));
@@ -67,6 +72,7 @@ public class InboxDocumentenRESTService {
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
+        PolicyService.assertActie(policyService.readAppActies().getDocumenten());
         final InboxDocument inboxDocument = inboxDocumentenService.find(id);
         if (inboxDocument == null) {
             return; // reeds verwijderd

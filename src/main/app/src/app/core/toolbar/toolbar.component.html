@@ -14,7 +14,7 @@
                 <mat-icon mat-list-icon>home</mat-icon>
             </button>
 
-            <button mat-mini-fab
+            <button *ngIf="this.acties.zoeken" mat-mini-fab
                     (click)="zoekenClicked.emit()"
                     color="primary"
                     title="{{ 'actie.zoeken' | translate }}">
@@ -27,12 +27,12 @@
                 <mat-icon>arrow_back</mat-icon>
             </button>
 
-            <button routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
+            <button *ngIf="this.acties.aanmakenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
                     title="{{ 'actie.zaak.aanmaken' | translate }}" aria-label="Zaak toevoegen">
                 <mat-icon>create_new_folder</mat-icon>
             </button>
 
-            <button [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
+            <button *ngIf="this.acties.zaken" [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor zaken">
                 {{'zaken' |translate }}
@@ -56,7 +56,7 @@
                 </button>
             </mat-menu>
 
-            <button [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
+            <button *ngIf="this.acties.taken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor taken">
                 {{'taken' |translate }}
@@ -75,7 +75,7 @@
                 </button>
             </mat-menu>
 
-            <button [matMenuTriggerFor]="documentenMenu" id="documenten_button" mat-flat-button
+            <button *ngIf="this.acties.documenten" [matMenuTriggerFor]="documentenMenu" id="documenten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor documenten">
                 {{'documenten' |translate }}
@@ -119,7 +119,7 @@
                 </a>
             </mat-menu>
 
-            <button *ngIf="beherenActie" routerLink="/admin" id="admin_button" mat-icon-button
+            <button *ngIf="this.acties.beheren" routerLink="/admin" id="admin_button" mat-icon-button
                     title="{{ 'actie.admin' | translate }}">
                 <mat-icon>settings</mat-icon>
             </button>

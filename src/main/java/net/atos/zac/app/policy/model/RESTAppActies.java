@@ -13,8 +13,21 @@ public class RESTAppActies {
 
     public final boolean beheren;
 
+    public final boolean zoeken;
+
+    public final boolean zaken;
+
+    public final boolean taken;
+
+    public final boolean documenten;
+
+
     public RESTAppActies(final AppActies appActies) {
-        this.aanmakenZaak = appActies.isAanmakenZaak();
-        this.beheren = appActies.isBeheren();
+        this.aanmakenZaak = appActies.getAanmakenZaak();
+        this.beheren = appActies.getBeheren();
+        this.zoeken = appActies.getZoeken();
+        this.zaken = appActies.getZaken();
+        this.taken = appActies.getTaken();
+        this.documenten = appActies.getDocumenten();
     }
 }
