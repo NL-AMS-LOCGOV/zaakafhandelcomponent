@@ -46,33 +46,10 @@
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
-                    <div fxLayout="row">
-                        <read-more fxFlexAlign="center" fxFlex [text]="actieveZoekopdracht?.naam" [maxLength]="70"></read-more>
-                        <button *ngIf="zoekopdrachten.length && !actieveZoekopdracht"
-                                mat-icon-button
-                                [matMenuTriggerFor]="filterMenu"
-                                title="{{ 'actie.zoekopdracht.selecteer' | translate }}" id="selecteerZoekopdrachtButton">
-                            <mat-icon>filter_list</mat-icon>
-                        </button>
-                        <button *ngIf="actieveZoekopdracht" mat-icon-button (click)="removeActief()"
-                                title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="clearZoekopdrachtButton">
-                            <mat-icon>filter_list_off</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="saveSearch()"
-                                title="{{ 'actie.zoekopdracht.opslaan' | translate }}" id="saveZoekopdrachtButton">
-                            <mat-icon>star_outline</mat-icon>
-                        </button>
-                        <mat-menu class="filter-menu" #filterMenu="matMenu" fxLayout="row">
-                            <button (click)="setActief(value)" mat-menu-item *ngFor="let value of zoekopdrachten">
-                          <span fxFlexAlign="center" fxFlex>
-                            <read-more [text]="value.naam" [maxLength]="75"></read-more>
-                          </span>
-                                <mat-icon title="{{ 'actie.zoekopdracht.verwijderen' | translate }}" id="deleteZoekopdrachtButton"
-                                          (click)="deleteZoekopdracht($event, value)" fxFlexAlign="center" fxFlex="nogrow">highlight_off
-                                </mat-icon>
-                            </button>
-                        </mat-menu>
-                    </div>
+                    <zac-zoekopdracht [werklijst]="werklijst"
+                                      [zoekParameters]="listParameters"
+                                      [filtersChanged]="clearZoekopdracht"
+                                      (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
                 </th>
             </ng-container>
             <ng-container matColumnDef="titel">
