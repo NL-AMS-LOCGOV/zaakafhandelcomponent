@@ -20,10 +20,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-list-parameters';
 import {User} from '../../identity/model/user';
-import {ZoekopdrachtSaveDialogComponent} from '../../gebruikersvoorkeuren/zoekopdracht-save-dialog/zoekopdracht-save-dialog.component';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
-import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -42,20 +40,19 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     listParameters: OntkoppeldDocumentListParameters;
     filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
-    zoekopdrachten: Zoekopdracht[] = [];
-    actieveZoekopdracht: Zoekopdracht;
+    clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
+    werklijst = Werklijst.ONTKOPPELDE_DOCUMENTEN;
 
     constructor(private service: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
-                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
-                private gebruikersvoorkeurenService: GebruikersvoorkeurenService) { }
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.loadZoekopdrachten();
+        this.listParameters = this.createDefaultParameters();
     }
 
     ngAfterViewInit(): void {
@@ -123,12 +120,28 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     filtersChanged(): void {
         this.paginator.pageIndex = 0;
+        this.clearZoekopdracht.emit();
         this.filterChange.emit();
     }
 
     resetSearch(): void {
         this.listParameters = this.createDefaultParameters();
-        this.filtersChanged();
+        this.sort.active = this.listParameters.sort;
+        this.sort.direction = this.listParameters.order;
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit();
+    }
+
+    zoekopdrachtChanged(actieveZoekopdracht: Zoekopdracht): void {
+        if (actieveZoekopdracht) {
+            this.listParameters = JSON.parse(actieveZoekopdracht.json);
+            this.sort.active = this.listParameters.sort;
+            this.sort.direction = this.listParameters.order;
+            this.paginator.pageIndex = 0;
+            this.filterChange.emit();
+        } else {
+            this.resetSearch();
+        }
     }
 
     createDefaultParameters(): OntkoppeldDocumentListParameters {
@@ -138,50 +151,4 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
     };
-
-    saveSearch(): void {
-        const dialogRef = this.dialog.open(ZoekopdrachtSaveDialogComponent, {
-            data: {zoekopdrachten: this.zoekopdrachten, lijstID: Werklijst.ONTKOPPELDE_DOCUMENTEN, zoekopdracht: this.listParameters}
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.loadZoekopdrachten();
-            }
-        });
-    }
-
-    loadZoekopdrachten(): void {
-        this.gebruikersvoorkeurenService.listZoekOpdrachten(Werklijst.ONTKOPPELDE_DOCUMENTEN).subscribe(zoekopdrachten => {
-            this.zoekopdrachten = zoekopdrachten;
-            this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
-            if (this.actieveZoekopdracht) {
-                this.listParameters = JSON.parse(this.actieveZoekopdracht.json);
-                this.filtersChanged();
-            } else {
-                this.listParameters = this.createDefaultParameters();
-                this.filtersChanged();
-            }
-        });
-    }
-
-    setActief(zoekopdracht: Zoekopdracht): void {
-        this.actieveZoekopdracht = zoekopdracht;
-        this.listParameters = JSON.parse(this.actieveZoekopdracht.json);
-        this.filtersChanged();
-        this.gebruikersvoorkeurenService.setZoekopdrachtActief(this.actieveZoekopdracht).subscribe();
-    }
-
-    deleteZoekopdracht($event: MouseEvent, zoekopdracht: Zoekopdracht): void {
-        $event.stopPropagation();
-        this.gebruikersvoorkeurenService.deleteZoekOpdrachten(zoekopdracht.id).subscribe(() => {
-            this.loadZoekopdrachten();
-        });
-    }
-
-    removeActief(): void {
-        this.actieveZoekopdracht = null;
-        this.gebruikersvoorkeurenService.removeZoekopdrachtActief(Werklijst.ONTKOPPELDE_DOCUMENTEN).subscribe();
-        this.listParameters = this.createDefaultParameters();
-        this.filtersChanged();
-    }
 }

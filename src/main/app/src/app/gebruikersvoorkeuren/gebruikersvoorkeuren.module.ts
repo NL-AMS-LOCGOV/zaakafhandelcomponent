@@ -6,10 +6,15 @@
 import {NgModule} from '@angular/core';
 import {SharedModule} from '../shared/shared.module';
 import {ZoekopdrachtSaveDialogComponent} from './zoekopdracht-save-dialog/zoekopdracht-save-dialog.component';
+import {ZoekopdrachtComponent} from './zoekopdracht/zoekopdracht.component';
 
 @NgModule({
     declarations: [
-        ZoekopdrachtSaveDialogComponent
+        ZoekopdrachtSaveDialogComponent,
+        ZoekopdrachtComponent
+    ],
+    exports: [
+        ZoekopdrachtComponent
     ],
     imports: [
         SharedModule
