@@ -8,8 +8,6 @@ import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeke
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
-import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
-import {MatDialog} from '@angular/material/dialog';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 /**
@@ -18,10 +16,8 @@ import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 export class TakenWerkvoorraadDatasource extends ZoekenTableDataSource<TaakZoekObject> {
 
     constructor(zoekenService: ZoekenService,
-                gebruikersvoorkeurenService: GebruikersvoorkeurenService,
-                dialog: MatDialog,
                 utilService: UtilService) {
-        super(Werklijst.WERKVOORRAAD_TAKEN, zoekenService, gebruikersvoorkeurenService, dialog, utilService);
+        super(Werklijst.WERKVOORRAAD_TAKEN, zoekenService, utilService);
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {

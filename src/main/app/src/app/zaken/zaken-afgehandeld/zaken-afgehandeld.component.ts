@@ -22,8 +22,6 @@ import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {FilterVeld} from '../../zoeken/model/filter-veld';
 import {DatumVeld} from '../../zoeken/model/datum-veld';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
-import {MatDialog} from '@angular/material/dialog';
-import {GebruikersvoorkeurenService} from '../../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -47,9 +45,8 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService,
-                public dialog: MatDialog, private gebruikersvoorkeurenService: GebruikersvoorkeurenService) {
-        this.dataSource = new ZakenAfgehandeldDatasource(this.zoekenService, this.gebruikersvoorkeurenService, this.dialog, this.utilService);
+    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService) {
+        this.dataSource = new ZakenAfgehandeldDatasource(this.zoekenService, this.utilService);
     }
 
     ngOnInit(): void {
@@ -90,7 +87,6 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     }
 
     filtersChange(): void {
-        this.paginator.pageIndex = 0;
-        this.dataSource.load();
+        this.dataSource.filtersChanged();
     }
 }
