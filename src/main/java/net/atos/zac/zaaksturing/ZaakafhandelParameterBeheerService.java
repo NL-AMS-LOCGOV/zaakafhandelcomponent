@@ -89,9 +89,7 @@ public class ZaakafhandelParameterBeheerService {
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
-            throw new RuntimeException(
-                    String.format("No HumanTaskParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaaktypeUUID.toString(),
-                                  planitemDefinitionID));
+            return null;
         }
     }
 

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
 public class RESTHumanTaskParametersConverter {
@@ -41,7 +40,6 @@ public class RESTHumanTaskParametersConverter {
         final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
         restHumanTaskParameters.id = humanTaskParameters.getId();
         restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(humanTaskParameters.getGroepID());
-        restHumanTaskParameters.formulierDefinitie = FormulierDefinitie.valueOf(humanTaskParameters.getFormulierDefinitieID());
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
         restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
         return restHumanTaskParameters;
@@ -64,7 +62,6 @@ public class RESTHumanTaskParametersConverter {
         humanTaskParameters.setId(restHumanTaskParameters.id);
         humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
         humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
-        humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitie.toString());
         if (restHumanTaskParameters.defaultGroep != null) {
             humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
         }

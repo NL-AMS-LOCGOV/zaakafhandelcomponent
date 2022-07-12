@@ -106,7 +106,8 @@ public class PlanItemsRESTService {
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         assertActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
-        final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
+        final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
+                DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
                                  humanTaskData.taakdata.get("body"), true, zaakUUID);
