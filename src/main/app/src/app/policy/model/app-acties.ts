@@ -4,19 +4,10 @@
  */
 
 export class AppActies {
-    aanmakenZaak: boolean;
-    beheren: boolean;
-    zoeken: boolean;
-    zaken: boolean;
-    taken: boolean;
-    documenten: boolean;
-
-    constructor() {
-        this.aanmakenZaak = false;
-        this.beheren = false;
-        this.zoeken = false;
-        this.zaken = false;
-        this.taken = false;
-        this.documenten = false;
-    }
+    aanmakenZaak = false;
+    beheren = false;
+    zoeken = false;
+    zaken = false;
+    taken = false;
+    documenten = false;
 }

@@ -8,6 +8,9 @@ package net.atos.zac.app.informatieobjecten.converter;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -254,5 +257,12 @@ public class RESTInformatieobjectConverter {
         }
 
         return enkelvoudigInformatieobjectWithInhoudAndLock;
+    }
+
+    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs) {
+        return Arrays.stream(enkelvoudigInformatieobjectUUIDs)
+                .map(drcClientService::readEnkelvoudigInformatieobject)
+                .map(this::convertToREST)
+                .toList();
     }
 }

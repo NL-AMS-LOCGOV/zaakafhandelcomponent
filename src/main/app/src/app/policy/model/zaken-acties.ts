@@ -9,11 +9,6 @@
  */
 
 export class ZakenActies {
-    verdelenEnVrijgeven: boolean;
-    toekennenAanMijzelf: boolean;
-
-    constructor() {
-        this.verdelenEnVrijgeven = false;
-        this.toekennenAanMijzelf = false;
-    }
+    verdelenEnVrijgeven = false;
+    toekennenAanMijzelf = false;
 }
