@@ -6,6 +6,7 @@
 package net.atos.zac.zoeken;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
 import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
 import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
 
@@ -46,6 +47,8 @@ public class ZoekenService {
 
     private static final String NON_EXISTING_ZAAKTYPE = "-NON-EXISTING-ZAAKTYPE-";
 
+    private static final String ZAAKTYPE_OMSCHRIJVING_VELD = "zaaktypeOmschrijving";
+
     @Inject
     private PolicyService policyService;
 
@@ -59,10 +62,7 @@ public class ZoekenService {
     public ZoekResultaat<? extends ZoekObject> zoek(final ZoekParameters zoekParameters) {
         final SolrQuery query = new SolrQuery("*:*");
 
-        if (zoekParameters.getType() == ZoekObjectType.ZAAK) {
-            // ToDo: #1290
-            applyAllowedZaaktypenPolicy(query);
-        }
+        applyAllowedZaaktypenPolicy(query);
 
         if (zoekParameters.getType() != null) {
             query.addFilterQuery(format("type:%s", zoekParameters.getType().toString()));
@@ -146,11 +146,13 @@ public class ZoekenService {
     private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
         final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
         if (allowedZaaktypen != null) {
+            final String zaaktypeExpressie;
             if (allowedZaaktypen.isEmpty()) {
-                query.addFilterQuery(format("%s:\"%s\"", FilterVeld.ZAAK_ZAAKTYPE.getVeld(), NON_EXISTING_ZAAKTYPE));
+                zaaktypeExpressie = NON_EXISTING_ZAAKTYPE;
             } else {
-                allowedZaaktypen.stream().forEach(zaaktype -> query.addFilterQuery(format("%s:\"%s\"", FilterVeld.ZAAK_ZAAKTYPE.getVeld(), zaaktype)));
+                zaaktypeExpressie = allowedZaaktypen.stream().collect(joining(" OR "));
             }
+            query.addFilterQuery(format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktypeExpressie));
         }
     }
 }
