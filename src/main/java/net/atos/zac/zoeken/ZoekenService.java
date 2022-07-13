@@ -150,7 +150,7 @@ public class ZoekenService {
             if (allowedZaaktypen.isEmpty()) {
                 zaaktypeExpressie = NON_EXISTING_ZAAKTYPE;
             } else {
-                zaaktypeExpressie = allowedZaaktypen.stream().collect(joining(" OR "));
+                zaaktypeExpressie = allowedZaaktypen.stream().collect(joining("\" OR \""));
             }
             query.addFilterQuery(format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktypeExpressie));
         }
