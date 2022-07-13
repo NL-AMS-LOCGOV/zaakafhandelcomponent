@@ -5,6 +5,8 @@
 
 package net.atos.zac.zoeken;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
 import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
 import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
 
@@ -13,9 +15,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
@@ -26,6 +30,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.SorteerVeld;
@@ -40,26 +45,35 @@ public class ZoekenService {
 
     private static final String SOLR_CORE = "zac";
 
+    private static final String NON_EXISTING_ZAAKTYPE = "-NON-EXISTING-ZAAKTYPE-";
+
+    private static final String ZAAKTYPE_OMSCHRIJVING_VELD = "zaaktypeOmschrijving";
+
+    @Inject
+    private PolicyService policyService;
+
     private SolrClient solrClient;
 
     public ZoekenService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
-        solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
+        solrClient = new HttpSolrClient.Builder(format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
     public ZoekResultaat<? extends ZoekObject> zoek(final ZoekParameters zoekParameters) {
         final SolrQuery query = new SolrQuery("*:*");
 
+        applyAllowedZaaktypenPolicy(query);
+
         if (zoekParameters.getType() != null) {
-            query.addFilterQuery(String.format("type:%s", zoekParameters.getType().toString()));
+            query.addFilterQuery(format("type:%s", zoekParameters.getType().toString()));
         }
 
         zoekParameters.getZoeken().forEach((zoekVeld, tekst) -> {
             if (StringUtils.isNotBlank(tekst)) {
                 if (zoekVeld == ZoekVeld.ZAAK_IDENTIFICATIE || zoekVeld == ZoekVeld.TAAK_ZAAK_ID) {
-                    query.addFilterQuery(String.format("%s:(*%s*)", zoekVeld.getVeld(), tekst));
+                    query.addFilterQuery(format("%s:(*%s*)", zoekVeld.getVeld(), tekst));
                 } else {
-                    query.addFilterQuery(String.format("%s:(%s)", zoekVeld.getVeld(), tekst));
+                    query.addFilterQuery(format("%s:(%s)", zoekVeld.getVeld(), tekst));
                 }
 
             }
@@ -68,26 +82,26 @@ public class ZoekenService {
         zoekParameters.getDatums().forEach((datumVeld, datum) -> {
             if (datum != null) {
                 query.addFilterQuery(
-                        String.format("%s:[%s TO %s]", datumVeld.getVeld(),
-                                      datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
-                                      datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
+                        format("%s:[%s TO %s]", datumVeld.getVeld(),
+                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
+                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
             }
         });
 
         zoekParameters.getBeschikbareFilters()
-                .forEach(facetVeld -> query.addFacetField(String.format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
+                .forEach(facetVeld -> query.addFacetField(format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
         zoekParameters.getFilters().forEach((filter, waarde) -> {
             if (LEEG.is(waarde)) {
-                query.addFilterQuery(String.format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
+                query.addFilterQuery(format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
             } else if (NIET_LEEG.is(waarde)) {
-                query.addFilterQuery(String.format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
+                query.addFilterQuery(format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
             } else {
-                query.addFilterQuery(String.format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                query.addFilterQuery(format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
             }
         });
 
-        zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(String.format("%s:\"%s\"", veld, waarde)));
+        zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
         query.setFacetMissing(true);
@@ -126,6 +140,19 @@ public class ZoekenService {
             return zoekResultaat;
         } catch (final IOException | SolrServerException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
+        final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
+        if (allowedZaaktypen != null) {
+            final String zaaktypeExpressie;
+            if (allowedZaaktypen.isEmpty()) {
+                zaaktypeExpressie = NON_EXISTING_ZAAKTYPE;
+            } else {
+                zaaktypeExpressie = allowedZaaktypen.stream().collect(joining("\" OR \""));
+            }
+            query.addFilterQuery(format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktypeExpressie));
         }
     }
 }

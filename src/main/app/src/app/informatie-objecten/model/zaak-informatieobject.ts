@@ -4,6 +4,7 @@
  */
 
 import {ZaakStatus} from '../../zaken/model/zaak-status';
+import {ZaakActies} from '../../zaken/model/zaak-acties';
 
 export class ZaakInformatieobject {
     zaakIdentificatie: string;
@@ -11,4 +12,5 @@ export class ZaakInformatieobject {
     zaakStartDatum: string;
     zaakEinddatumGepland: string;
     zaaktypeOmschrijving: string;
+    zaakActies: ZaakActies;
 }

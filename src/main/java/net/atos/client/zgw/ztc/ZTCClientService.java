@@ -213,6 +213,19 @@ public class ZTCClientService implements Caching {
     }
 
     /**
+     * Find {@link Roltype} of {@link Zaaktype} and {@link AardVanRol}.
+     * returns null if the {@link Resultaattype} can not be found
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @param aardVanRol  {@link AardVanRol}.
+     * @return {@link Roltype} or NULL
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
+    public Roltype findRoltype(final URI zaaktypeURI, final AardVanRol aardVanRol) {
+        return ztcClient.roltypeList(new RoltypeListParameters(zaaktypeURI, aardVanRol)).getSingleResult().orElse(null);
+    }
+
+    /**
      * Read {@link Roltype} of {@link Zaaktype} and {@link AardVanRol}.
      * Throws a RuntimeException if the {@link Resultaattype} can not be read.
      *

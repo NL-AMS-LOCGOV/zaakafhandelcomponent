@@ -16,6 +16,9 @@ import {ZoekParameters} from '../../../zoeken/model/zoek-parameters';
 import {ZoekenService} from '../../../zoeken/zoeken.service';
 import {UtilService} from '../../../core/service/util.service';
 import {ZoekObject} from '../../../zoeken/model/zoek-object';
+import {Werklijst} from '../../../gebruikersvoorkeuren/model/werklijst';
+import {Zoekopdracht} from '../../../gebruikersvoorkeuren/model/zoekopdracht';
+import {EventEmitter} from '@angular/core';
 
 export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
@@ -24,6 +27,8 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
     totalItems: number = 0;
     paginator: MatPaginator;
     sort: MatSort;
+
+    filtersChanged$ = new EventEmitter<void>();
 
     private tableSubject = new BehaviorSubject<ZoekObject[]>([]);
     private _defaultColumns: Map<string, ColumnPickerValue>;
@@ -34,20 +39,21 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
     private _detailExpandColumns: Array<string>;
     private subscriptions$: Subscription[] = [];
 
-    protected constructor(private tableName: string, private zoekenService: ZoekenService, private utilService: UtilService) {
+    protected constructor(public werklijst: Werklijst,
+                          private zoekenService: ZoekenService,
+                          private utilService: UtilService) {
         super();
-        this.zoekParameters = SessionStorageUtil.getItem(`${tableName}Zoekparameters`, new ZoekParameters());
+        this.zoekParameters = new ZoekParameters();
     }
 
     protected abstract initZoekparameters(zoekParameters: ZoekParameters): void;
 
-    private _getZoekParameters(): ZoekParameters {
+    private updateZoekParameters(): ZoekParameters {
         this.initZoekparameters(this.zoekParameters);
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = this.sort.active;
-        SessionStorageUtil.setItem(this.tableName + 'Zoekparameters', this.zoekParameters);
         return this.zoekParameters;
     }
 
@@ -70,7 +76,7 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
 
     load(): void {
         this.utilService.setLoading(true);
-        this.zoekenService.list(this._getZoekParameters())
+        this.zoekenService.list(this.updateZoekParameters())
             .pipe(
                 finalize(() => this.utilService.setLoading(false))
             ).subscribe(zaakResponse => {
@@ -107,7 +113,7 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
      * @param defaultColumns available columns
      */
     initColumns(defaultColumns: Map<string, ColumnPickerValue>): void {
-        const key = this.tableName + 'Columns';
+        const key = this.werklijst + 'Columns';
         const columnsString = JSON.stringify(Array.from(defaultColumns.entries()));
         const sessionColumns: string = SessionStorageUtil.getItem(key, columnsString);
         const columns: Map<string, ColumnPickerValue> = new Map(JSON.parse(sessionColumns));
@@ -143,6 +149,12 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
         this.load();
     }
 
+    filtersChanged() {
+        this.paginator.pageIndex = 0;
+        this.filtersChanged$.emit();
+        this.load();
+    }
+
     private storeColumns(columns: Map<string, ColumnPickerValue>): void {
         const columnsString = JSON.stringify(Array.from(columns.entries()));
         SessionStorageUtil.setItem(this._sessionKey, columnsString);
@@ -167,5 +179,16 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
 
     get data(): OBJECT[] {
         return this.tableSubject.value as OBJECT[];
+    }
+
+    zoekopdrachtChanged(actieveZoekopdracht: Zoekopdracht): void {
+        if (actieveZoekopdracht) {
+            this.zoekParameters = JSON.parse(actieveZoekopdracht.json);
+            this.sort.active = this.zoekParameters.sorteerVeld;
+            this.sort.direction = this.zoekParameters.sorteerRichting;
+            this.load();
+        } else {
+            this.reset();
+        }
     }
 }

@@ -24,10 +24,12 @@ import net.atos.client.zgw.zrc.model.Opschorting;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Verlenging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
@@ -110,7 +112,13 @@ public class RESTZaakConverter {
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
         restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);
-        restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(zaak.getStatus());
+        Statustype statustype = null;
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            statustype = ztcClientService.readStatustype(status.getStatustype());
+            restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(status, statustype);
+        }
+
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         restZaak.isOpgeschort = zaak.isOpgeschort();
@@ -160,11 +168,8 @@ public class RESTZaakConverter {
 
         restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
-        restZaak.isHeropend = restZaak.status != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(restZaak.status.naam);
-
-        restZaak.acties = actiesConverter.convert(
-                policyService.readZaakActies(zaak, restZaak.isHeropend,
-                                             behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null));
+        restZaak.isHeropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar));
 
         return restZaak;
     }

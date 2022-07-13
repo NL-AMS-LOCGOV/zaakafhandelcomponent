@@ -7,6 +7,7 @@ import input.user
 import data.net.atos.zac.rollen
 
 enkelvoudig_informatieobject_acties := {
+    "lezen": lezen,
     "verwijderen": verwijderen,
     "koppelen": koppelen,
     "downloaden": downloaden,
@@ -15,6 +16,8 @@ enkelvoudig_informatieobject_acties := {
     "vergrendelen": vergrendelen,
     "ontgrendelen": ontgrendelen
 }
+
+default lezen := true
 
 default verwijderen := false
 verwijderen {
@@ -37,14 +40,14 @@ default toevoegen_nieuwe_versie := false
 toevoegen_nieuwe_versie {
     zaak.open == true
     enkelvoudig_informatieobject.definitief == false
-    onvergendeld_of_vergrendeld_door_user == true
+    onvergrendeld_of_vergrendeld_door_user == true
 }
 
 default bewerken := false
 bewerken {
     zaak.open == true
     enkelvoudig_informatieobject.definitief == false
-    onvergendeld_of_vergrendeld_door_user == true
+    onvergrendeld_of_vergrendeld_door_user == true
 }
 
 default vergrendelen := false
@@ -63,11 +66,11 @@ ontgrendelen {
     rollen.recordmanager.id in user.rollen
 }
 
-default onvergendeld_of_vergrendeld_door_user := false
-onvergendeld_of_vergrendeld_door_user {
+default onvergrendeld_of_vergrendeld_door_user := false
+onvergrendeld_of_vergrendeld_door_user {
     enkelvoudig_informatieobject.vergrendeld == false
 }
-onvergendeld_of_vergrendeld_door_user {
+onvergrendeld_of_vergrendeld_door_user {
     enkelvoudig_informatieobject.vergrendeld == true
     enkelvoudig_informatieobject.vergrendeld_door == user.id
 }

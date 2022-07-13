@@ -6,7 +6,6 @@
 package net.atos.zac.app.admin.model;
 
 import net.atos.zac.app.identity.model.RESTGroup;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 public class RESTHumanTaskParameters {
 
@@ -14,13 +13,7 @@ public class RESTHumanTaskParameters {
 
     public RESTPlanItemDefinition planItemDefinition;
 
-    public FormulierDefinitie formulierDefinitie;
-
     public Integer doorlooptijd;
 
     public RESTGroup defaultGroep;
-
-    public RESTHumanTaskParameters() {
-    }
-
 }

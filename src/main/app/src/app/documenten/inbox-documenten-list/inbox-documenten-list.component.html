@@ -26,9 +26,10 @@
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
-                    <button mat-icon-button (click)="resetSearch()" title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="wisZoekopdracht_button">
-                        <mat-icon>search_off</mat-icon>
-                    </button>
+                    <zac-zoekopdracht [werklijst]="werklijst"
+                                      [zoekParameters]="listParameters"
+                                      [filtersChanged]="clearZoekopdracht"
+                                      (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
                 </th>
             </ng-container>
 
@@ -50,8 +51,7 @@
             </ng-container>
 
             <ng-container matColumnDef="actions" stickyEnd>
-                <th mat-header-cell *matHeaderCellDef>
-                </th>
+                <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let row">
                     <button mat-flat-button [routerLink]="['/informatie-objecten', row.enkelvoudiginformatieobjectUUID]"
                             title="{{ 'actie.document.bekijken' | translate}}">

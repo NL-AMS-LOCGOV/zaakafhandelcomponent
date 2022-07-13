@@ -8,28 +8,22 @@ package net.atos.zac.gebruikersvoorkeuren.model;
 
 public class ZoekopdrachtListParameters {
 
-    public ZoekopdrachtListParameters(final String lijstID, final String medewerkerID) {
+    private final Werklijst lijstID;
+
+    private final String medewerkerID;
+
+    public ZoekopdrachtListParameters(final Werklijst lijstID, final String medewerkerID) {
         this.lijstID = lijstID;
         this.medewerkerID = medewerkerID;
     }
 
-    private String lijstID;
 
-    private String medewerkerID;
-
-    public String getLijstID() {
+    public Werklijst getLijstID() {
         return lijstID;
-    }
-
-    public void setLijstID(final String lijstID) {
-        this.lijstID = lijstID;
     }
 
     public String getMedewerkerID() {
         return medewerkerID;
     }
 
-    public void setMedewerkerID(final String medewerkerID) {
-        this.medewerkerID = medewerkerID;
-    }
 }

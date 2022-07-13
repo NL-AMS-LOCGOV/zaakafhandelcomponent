@@ -22,7 +22,9 @@ import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakInput;
 import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
+import net.atos.zac.policy.output.TakenActies;
 import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.ZakenActies;
 
 @RegisterRestClient(configKey = "OPA-Api-Client")
 @Path("v1/data/net/atos/zac")
@@ -44,4 +46,12 @@ public interface OPAEvaluationClient {
     @POST
     @Path("enkelvoudiginformatieobject/enkelvoudig_informatieobject_acties")
     RuleResponse<EnkelvoudigInformatieobjectActies> readEnkelvoudigInformatieobjectActies(final RuleQuery<EnkelvoudigInformatieobjectInput> query);
+
+    @POST
+    @Path("zaken/zaken_acties")
+    RuleResponse<ZakenActies> readZakenActies(final RuleQuery<UserInput> query);
+
+    @POST
+    @Path("taken/taken_acties")
+    RuleResponse<TakenActies> readTakenActies(final RuleQuery<UserInput> query);
 }

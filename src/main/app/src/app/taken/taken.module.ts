@@ -15,6 +15,7 @@ import {TakenVerdelenDialogComponent} from './taken-verdelen-dialog/taken-verdel
 import {TakenVrijgevenDialogComponent} from './taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 import {InformatieObjectenModule} from '../informatie-objecten/informatie-objecten.module';
 import {ZoekenModule} from '../zoeken/zoeken.module';
+import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import {ZoekenModule} from '../zoeken/zoeken.module';
         TakenRoutingModule,
         ZakenModule,
         InformatieObjectenModule,
-        ZoekenModule
+        ZoekenModule,
+        GebruikersvoorkeurenModule
     ]
 })
 export class TakenModule {

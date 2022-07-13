@@ -103,12 +103,15 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         zaakZoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
 
-        final Status status = zrcClientService.readStatus(zaak.getStatus());
-        final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
-        zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
-        zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
-        zaakZoekObject.setStatusToelichting(status.getStatustoelichting());
-        zaakZoekObject.setStatusDatumGezet(DateTimeConverterUtil.convertToDate(status.getDatumStatusGezet()));
+        if (zaak.getStatus() != null) {
+            final Status status = zrcClientService.readStatus(zaak.getStatus());
+            zaakZoekObject.setStatusToelichting(status.getStatustoelichting());
+            zaakZoekObject.setStatusDatumGezet(DateTimeConverterUtil.convertToDate(status.getDatumStatusGezet()));
+            final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
+            zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
+            zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
+        }
+
         zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));
 
         if (zaak.getResultaat() != null) {

@@ -8,11 +8,13 @@ import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeke
 import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 export class TakenMijnDatasource extends ZoekenTableDataSource<TaakZoekObject> {
 
-    constructor(zoekenService: ZoekenService, utilService: UtilService) {
-        super('takenMijn', zoekenService, utilService);
+    constructor(zoekenService: ZoekenService,
+                utilService: UtilService) {
+        super(Werklijst.MIJN_TAKEN, zoekenService, utilService);
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {

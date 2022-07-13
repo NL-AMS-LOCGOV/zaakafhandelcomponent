@@ -12,7 +12,6 @@ import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -20,6 +19,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {InboxDocument} from '../model/inbox-document';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {InboxDocumentListParameters} from '../model/inbox-document-list-parameters';
+import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 @Component({
     templateUrl: './inbox-documenten-list.component.html',
@@ -35,6 +36,8 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     filterColumns: string[] = ['identificatie_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
     listParameters: InboxDocumentListParameters;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
+    clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
+    werklijst = Werklijst.INBOX_DOCUMENTEN;
 
     constructor(private inboxDocumentenService: InboxDocumentenService,
                 private infoService: InformatieObjectenService,
@@ -44,8 +47,8 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
                 private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
+        this.listParameters = this.createDefaultParameters();
         this.utilService.setTitle('title.documenten.inboxDocumenten');
-        this.listParameters = SessionStorageUtil.getItem('inboxDocumenten', this.createDefaultParameters());
     }
 
     ngAfterViewInit(): void {
@@ -61,7 +64,6 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('inboxDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
@@ -113,15 +115,31 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
 
     filtersChanged(): void {
         this.paginator.pageIndex = 0;
+        this.clearZoekopdracht.emit();
         this.filterChange.emit();
     }
 
     resetSearch(): void {
         this.listParameters = this.createDefaultParameters();
-        this.filtersChanged();
+        this.sort.active = this.listParameters.sort;
+        this.sort.direction = this.listParameters.order;
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit();
     }
 
     createDefaultParameters(): InboxDocumentListParameters {
         return new InboxDocumentListParameters('creatiedatum', 'desc');
+    }
+
+    zoekopdrachtChanged(actieveZoekopdracht: Zoekopdracht): void {
+        if (actieveZoekopdracht) {
+            this.listParameters = JSON.parse(actieveZoekopdracht.json);
+            this.sort.active = this.listParameters.sort;
+            this.sort.direction = this.listParameters.order;
+            this.paginator.pageIndex = 0;
+            this.filterChange.emit();
+        } else {
+            this.resetSearch();
+        }
     }
 }

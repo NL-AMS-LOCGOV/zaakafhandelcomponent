@@ -7,6 +7,7 @@ package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
@@ -66,6 +67,7 @@ import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -126,9 +128,13 @@ public class TakenRESTService {
     @Inject
     private RESTTaakHistorieConverter taakHistorieConverter;
 
+    @Inject
+    private PolicyService policyService;
+
     @GET
     @Path("werkvoorraad")
     public TableResponse<RESTTaak> listWerkvoorraadTaken(@Context final HttpServletRequest request) {
+        assertActie(policyService.readAppActies().getTaken());
         final TableRequest tableState = TableRequest.getTableState(request);
         final Set<String> loggedInUserGroupIds = loggedInUserInstance.get().getGroupIds();
         final List<Task> tasks = taskService.listOpenTasksAssignedToGroups(loggedInUserGroupIds,
@@ -142,6 +148,7 @@ public class TakenRESTService {
     @GET
     @Path("mijn")
     public TableResponse<RESTTaak> listMijnTaken(@Context final HttpServletRequest request) {
+        assertActie(policyService.readAppActies().getTaken());
         final TableRequest tableState = TableRequest.getTableState(request);
         final String loggedInUserId = loggedInUserInstance.get().getId();
         final List<Task> tasks = taskService.listOpenTasksAssignedToUser(loggedInUserId,
@@ -183,7 +190,8 @@ public class TakenRESTService {
 
     @PUT
     @Path("verdelen")
-    public void allocateTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+    public void verdelen(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
@@ -194,7 +202,8 @@ public class TakenRESTService {
 
     @PUT
     @Path("vrijgeven")
-    public void releaseTaak(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+    public void vrijgeven(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
+        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, null, task.zaakUuid);
@@ -212,6 +221,7 @@ public class TakenRESTService {
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+        assertActie(policyService.readTakenActies().getToekennenAanMijzelf());
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convertTaskForOpenCase(task);

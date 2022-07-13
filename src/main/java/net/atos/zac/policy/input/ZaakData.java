@@ -14,4 +14,6 @@ public class ZaakData {
     public boolean opgeschort;
 
     public String behandelaar;
+
+    public String zaaktype;
 }

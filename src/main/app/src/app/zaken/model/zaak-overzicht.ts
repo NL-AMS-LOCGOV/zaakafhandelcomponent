@@ -5,6 +5,7 @@
 
 import {User} from '../../identity/model/user';
 import {ZaakResultaat} from './zaak-resultaat';
+import {ZaakActies} from './zaak-acties';
 
 export class ZaakOverzicht {
     identificatie: string;
@@ -17,4 +18,5 @@ export class ZaakOverzicht {
     behandelaar: User;
     uiterlijkeDatumAfdoening: string;
     resultaat: ZaakResultaat;
+    acties: ZaakActies;
 }

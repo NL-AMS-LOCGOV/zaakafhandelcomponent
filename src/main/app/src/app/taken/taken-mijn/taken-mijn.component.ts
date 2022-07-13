@@ -10,7 +10,6 @@ import {detailExpand} from '../../shared/animations/animations';
 import {ColumnPickerValue} from '../../shared/dynamic-table/column-picker/column-picker-value';
 import {UtilService} from '../../core/service/util.service';
 import {IdentityService} from '../../identity/identity.service';
-import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -49,8 +48,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog,
-                private zoekenService: ZoekenService) {
+                private identityService: IdentityService, private zoekenService: ZoekenService) {
         this.dataSource = new TakenMijnDatasource(this.zoekenService, this.utilService);
     }
 
@@ -82,16 +80,11 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         ]);
     }
 
-    resetSearch(): void {
-        this.dataSource.reset();
-    }
-
     resetColumns(): void {
         this.dataSource.resetColumns();
     }
 
     filtersChange(): void {
-        this.paginator.pageIndex = 0;
-        this.dataSource.load();
+        this.dataSource.filtersChanged();
     }
 }

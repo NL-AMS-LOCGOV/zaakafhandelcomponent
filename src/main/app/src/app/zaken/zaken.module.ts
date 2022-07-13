@@ -25,6 +25,7 @@ import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraa
 import {ZoekenModule} from '../zoeken/zoeken.module';
 import {ZaakKoppelenDialogComponent} from './zaak-koppelen/zaak-koppelen-dialog.component';
 import {ZaakOntkoppelenDialogComponent} from './zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
+import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 
 @NgModule({
     declarations: [
@@ -53,7 +54,8 @@ import {ZaakOntkoppelenDialogComponent} from './zaak-ontkoppelen/zaak-ontkoppele
         InformatieObjectenModule,
         PlanItemsModule,
         MailModule,
-        ZoekenModule
+        ZoekenModule,
+        GebruikersvoorkeurenModule
     ]
 })
 export class ZakenModule {

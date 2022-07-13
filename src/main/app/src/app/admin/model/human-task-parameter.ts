@@ -8,7 +8,6 @@ import {PlanItemDefinition} from './plan-item-definition';
 
 export class HumanTaskParameter {
     planItemDefinition: PlanItemDefinition;
-    formulierDefinitie: string;
     defaultGroep: Group;
     doorlooptijd: number;
 }

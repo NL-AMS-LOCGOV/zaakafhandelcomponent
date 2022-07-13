@@ -16,7 +16,7 @@ import net.atos.zac.app.identity.model.RESTUser;
  */
 public class RESTEnkelvoudigInformatieobject {
 
-    public String uuid;
+    public UUID uuid;
 
     public String identificatie;
 

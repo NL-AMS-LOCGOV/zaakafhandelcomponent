@@ -4,6 +4,7 @@
  */
 
 export class EnkelvoudigInformatieobjectActies {
+    lezen: boolean;
     verwijderen: boolean;
     koppelen: boolean;
     downloaden: boolean;

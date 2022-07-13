@@ -19,8 +19,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -134,9 +132,9 @@ public class ZGWApiService {
      * Update {@link Resultaat} for a given {@link Zaak} based on {@link Resultaattype}.UUID and with {@link Resultaat}
      * .toelichting.
      *
-     * @param zaak                 {@link Zaak}
-     * @param resultaatTypeUuid    Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
-     * @param reden                Reason of setting the {@link Resultaattype}
+     * @param zaak              {@link Zaak}
+     * @param resultaatTypeUuid Containing the UUID of the {@link Resultaattype} of the required {@link Resultaat}.
+     * @param reden             Reason of setting the {@link Resultaattype}
      * @return Created {@link Resultaat}.
      */
     public Resultaat updateResultaatForZaak(final Zaak zaak, final UUID resultaatTypeUuid, final String reden) {
@@ -253,21 +251,20 @@ public class ZGWApiService {
     }
 
     public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
-        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl())).getSingleResult().orElse(null);
+        final Roltype roltype = ztcClientService.findRoltype(zaak.getZaaktype(), aardVanRol);
+        if (roltype != null) {
+            return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl())).getSingleResult().orElse(null);
+        } else {
+            return null;
+        }
     }
 
     public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol, final BetrokkeneType betrokkeneType) {
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), aardVanRol);
-        return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult().orElse(null);
-    }
-
-    public boolean matchZaakStatustypeOmschrijving(final Zaak zaak, final String statustypeOmschrijving) {
-        if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            return ztcClientService.readStatustype(status.getStatustype()).getOmschrijving().equals(statustypeOmschrijving);
+        final Roltype roltype = ztcClientService.findRoltype(zaak.getZaaktype(), aardVanRol);
+        if (roltype != null) {
+            return zrcClientService.listRollen(new RolListParameters(zaak.getUrl(), roltype.getUrl(), betrokkeneType)).getSingleResult().orElse(null);
         } else {
-            return false;
+            return null;
         }
     }
 

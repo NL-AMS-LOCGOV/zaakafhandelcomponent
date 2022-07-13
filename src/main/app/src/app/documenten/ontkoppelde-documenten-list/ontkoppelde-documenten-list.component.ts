@@ -13,7 +13,6 @@ import {merge} from 'rxjs';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -21,6 +20,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-list-parameters';
 import {User} from '../../identity/model/user';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -39,8 +40,10 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     listParameters: OntkoppeldDocumentListParameters;
     filterOntkoppeldDoor: User[] = [];
     filterChange: EventEmitter<void> = new EventEmitter<void>();
+    clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
+    werklijst = Werklijst.ONTKOPPELDE_DOCUMENTEN;
 
-    constructor(private service: OntkoppeldeDocumentenService,
+    constructor(private ontkoppeldeDocumentenService: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
@@ -49,7 +52,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.listParameters = SessionStorageUtil.getItem('ontkoppeldeDocumenten', this.createDefaultParameters());
+        this.listParameters = this.createDefaultParameters();
     }
 
     ngAfterViewInit(): void {
@@ -60,12 +63,11 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
                 this.isLoadingResults = true;
                 this.utilService.setLoading(true);
                 this.updateListParameters();
-                return this.service.list(this.listParameters);
+                return this.ontkoppeldeDocumentenService.list(this.listParameters);
             }),
             map(data => {
                 this.isLoadingResults = false;
                 this.utilService.setLoading(false);
-                SessionStorageUtil.setItem('ontkoppeldeDocumenten', this.listParameters);
                 return data;
             })
         ).subscribe(data => {
@@ -94,7 +96,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         this.dialog.open(ConfirmDialogComponent, {
             data: new ConfirmDialogData(
                 this.translate.instant('msg.document.verwijderen.bevestigen', {document: od.titel}),
-                this.service.delete(od)
+                this.ontkoppeldeDocumentenService.delete(od)
             )
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -118,12 +120,28 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     filtersChanged(): void {
         this.paginator.pageIndex = 0;
+        this.clearZoekopdracht.emit();
         this.filterChange.emit();
     }
 
     resetSearch(): void {
         this.listParameters = this.createDefaultParameters();
-        this.filtersChanged();
+        this.sort.active = this.listParameters.sort;
+        this.sort.direction = this.listParameters.order;
+        this.paginator.pageIndex = 0;
+        this.filterChange.emit();
+    }
+
+    zoekopdrachtChanged(actieveZoekopdracht: Zoekopdracht): void {
+        if (actieveZoekopdracht) {
+            this.listParameters = JSON.parse(actieveZoekopdracht.json);
+            this.sort.active = this.listParameters.sort;
+            this.sort.direction = this.listParameters.order;
+            this.paginator.pageIndex = 0;
+            this.filterChange.emit();
+        } else {
+            this.resetSearch();
+        }
     }
 
     createDefaultParameters(): OntkoppeldDocumentListParameters {
@@ -132,5 +150,5 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     compareUser = (user1: User, user2: User): boolean => {
         return user1?.id === user2?.id;
-    }
+    };
 }

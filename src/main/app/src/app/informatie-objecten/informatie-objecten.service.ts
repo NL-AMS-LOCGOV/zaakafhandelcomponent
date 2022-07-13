@@ -160,4 +160,10 @@ export class InformatieObjectenService {
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
+
+    listZaakIdentificatiesForInformatieobject(documentUUID: string): Observable<string[]> {
+        return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaken`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
 }

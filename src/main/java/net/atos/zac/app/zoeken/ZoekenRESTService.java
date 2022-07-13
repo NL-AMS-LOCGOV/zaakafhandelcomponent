@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.zoeken;
 
+import static net.atos.zac.policy.PolicyService.assertActie;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -18,6 +20,7 @@ import net.atos.zac.app.zoeken.converter.RESTZoekResultaatConverter;
 import net.atos.zac.app.zoeken.model.AbstractRESTZoekObject;
 import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.app.zoeken.model.RESTZoekResultaat;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.zoeken.ZoekenService;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
@@ -38,12 +41,19 @@ public class ZoekenRESTService {
     @Inject
     private RESTZoekResultaatConverter ZoekResultaatConverter;
 
+    @Inject
+    private PolicyService policyService;
+
     @PUT
     @Path("list")
-    public RESTZoekResultaat<? extends AbstractRESTZoekObject> listZoekResultaat(final RESTZoekParameters restZaakParameters) {
-        final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZaakParameters);
+    public RESTZoekResultaat<? extends AbstractRESTZoekObject> list(final RESTZoekParameters restZoekParameters) {
+        switch (restZoekParameters.type) {
+            case ZAAK -> assertActie(policyService.readAppActies().getZaken());
+            case TAAK -> assertActie(policyService.readAppActies().getTaken());
+            default -> assertActie(policyService.readAppActies().getZoeken());
+        }
+        final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZoekParameters);
         final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
-        return ZoekResultaatConverter.convert(zoekResultaat, restZaakParameters);
+        return ZoekResultaatConverter.convert(zoekResultaat, restZoekParameters);
     }
-
 }

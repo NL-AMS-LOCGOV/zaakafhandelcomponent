@@ -82,16 +82,11 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
         return Conditionals.isOverschreden(datum);
     }
 
-    resetSearch(): void {
-        this.dataSource.reset();
-    }
-
     resetColumns(): void {
         this.dataSource.resetColumns();
     }
 
     filtersChange(): void {
-        this.paginator.pageIndex = 0;
-        this.dataSource.load();
+        this.dataSource.filtersChanged();
     }
 }

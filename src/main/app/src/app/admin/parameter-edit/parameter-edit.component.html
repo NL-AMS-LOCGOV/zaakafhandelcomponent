@@ -89,16 +89,6 @@
                                 </mat-expansion-panel-header>
                                 <div fxLayout="row wrap">
                                     <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
-                                        <mat-label>{{'formulierDefinitie' | translate}}</mat-label>
-                                        <mat-select placeholder="{{'formulierDefinitie.-kies-' | translate}}"
-                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'formulierDefinitie')" [compareWith]="compareObject">
-                                            <mat-option *ngFor="let formDef of formulierDefinities | async"
-                                                        [value]="formDef">{{ 'formulierDefinitie.' + formDef | translate }}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                                <div fxLayout="row wrap">
-                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'groep' | translate}}</mat-label>
                                         <mat-select placeholder="{{'groep.-geen-' | translate}}"
                                                     [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')" [compareWith]="compareObject">

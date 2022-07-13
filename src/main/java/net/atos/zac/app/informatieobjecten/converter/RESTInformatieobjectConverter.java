@@ -8,6 +8,9 @@ package net.atos.zac.app.informatieobjecten.converter;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -36,6 +39,7 @@ import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockS
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieobjectConverter {
@@ -83,47 +87,49 @@ public class RESTInformatieobjectConverter {
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject, final Zaak zaak) {
+        final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
+                enkelvoudigInformatieObject.getUUID()) : null;
+        final EnkelvoudigInformatieobjectActies acties = policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = new RESTEnkelvoudigInformatieobject();
-        restEnkelvoudigInformatieobject.uuid = UriUtil.uuidFromURI(enkelvoudigInformatieObject.getUrl()).toString();
+        restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
-        restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
-        restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
-                .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
-        restEnkelvoudigInformatieobject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
-        if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
-            restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
+        restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
+        if (acties.getLezen()) {
+            restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
+            restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
+                    .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
+            restEnkelvoudigInformatieobject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
+            if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
+                restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
+            }
+            restEnkelvoudigInformatieobject.auteur = enkelvoudigInformatieObject.getAuteur();
+            if (enkelvoudigInformatieObject.getStatus() != null) {
+                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus().toString();
+            }
+            restEnkelvoudigInformatieobject.formaat = enkelvoudigInformatieObject.getFormaat();
+            final RESTTaal taal = restTaalConverter.convert(enkelvoudigInformatieObject.getTaal());
+            if (taal != null) {
+                restEnkelvoudigInformatieobject.taal = taal.naam;
+            }
+            restEnkelvoudigInformatieobject.versie = enkelvoudigInformatieObject.getVersie();
+            restEnkelvoudigInformatieobject.registratiedatumTijd = enkelvoudigInformatieObject.getBeginRegistratie();
+            restEnkelvoudigInformatieobject.bestandsnaam = enkelvoudigInformatieObject.getBestandsnaam();
+            if (enkelvoudigInformatieObject.getLink() != null) {
+                restEnkelvoudigInformatieobject.link = enkelvoudigInformatieObject.getLink().toString();
+            }
+            restEnkelvoudigInformatieobject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
+            restEnkelvoudigInformatieobject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
+            restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
+            if (lock != null) {
+                restEnkelvoudigInformatieobject.gelockedDoor = restUserConverter.convertUser(identityService.readUser(lock.getUserId()));
+            }
+            restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
+            restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
+                    enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
+            restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
+        } else {
+            restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getIdentificatie();
         }
-        restEnkelvoudigInformatieobject.auteur = enkelvoudigInformatieObject.getAuteur();
-        if (enkelvoudigInformatieObject.getStatus() != null) {
-            restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus().toString();
-        }
-        restEnkelvoudigInformatieobject.formaat = enkelvoudigInformatieObject.getFormaat();
-        final RESTTaal taal = restTaalConverter.convert(enkelvoudigInformatieObject.getTaal());
-        if (taal != null) {
-            restEnkelvoudigInformatieobject.taal = taal.naam;
-        }
-        restEnkelvoudigInformatieobject.versie = enkelvoudigInformatieObject.getVersie();
-        restEnkelvoudigInformatieobject.registratiedatumTijd = enkelvoudigInformatieObject.getBeginRegistratie();
-        restEnkelvoudigInformatieobject.bestandsnaam = enkelvoudigInformatieObject.getBestandsnaam();
-        if (enkelvoudigInformatieObject.getLink() != null) {
-            restEnkelvoudigInformatieobject.link = enkelvoudigInformatieObject.getLink().toString();
-        }
-        restEnkelvoudigInformatieobject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
-        restEnkelvoudigInformatieobject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
-        restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
-        EnkelvoudigInformatieObjectLock lock = null;
-        if (enkelvoudigInformatieObject.getLocked()) {
-            lock = enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObject.getUUID());
-            restEnkelvoudigInformatieobject.gelockedDoor = restUserConverter.convertUser(identityService.readUser(lock.getUserId()));
-        }
-        restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
-        restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
-                enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
-        restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
-
-        restEnkelvoudigInformatieobject.acties = actiesConverter.convert(
-                policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak));
-
         return restEnkelvoudigInformatieobject;
     }
 
@@ -251,5 +257,12 @@ public class RESTInformatieobjectConverter {
         }
 
         return enkelvoudigInformatieobjectWithInhoudAndLock;
+    }
+
+    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs) {
+        return Arrays.stream(enkelvoudigInformatieobjectUUIDs)
+                .map(drcClientService::readEnkelvoudigInformatieobject)
+                .map(this::convertToREST)
+                .toList();
     }
 }

@@ -58,7 +58,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
 
     caseDefinitions: Observable<CaseDefinition[]>;
-    formulierDefinities: Observable<string[]>;
     groepen: Observable<Group[]>;
     medewerkers: Observable<User[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
@@ -80,7 +79,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
         this.medewerkers = identityService.listUsers();
-        this.formulierDefinities = adminService.listFormulierDefinities();
     }
 
     ngOnInit(): void {
@@ -157,7 +155,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     isHumanTaskParameterValid(humanTaskParameter: HumanTaskParameter): boolean {
         return this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid &&
-            this.getHumanTaskControl(humanTaskParameter, 'formulierDefinitie').valid &&
             this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid;
     }
 
@@ -169,8 +166,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.humanTaskFormGroup = this.formBuilder.group({});
         this.humanTaskParameters.forEach(parameter => {
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__formulierDefinitie',
-                new FormControl(parameter.formulierDefinitie, [Validators.required]));
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
                 new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
         });
@@ -270,7 +265,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
         this.humanTaskParameters.forEach(param => {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
-            param.formulierDefinitie = this.getHumanTaskControl(param, 'formulierDefinitie').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;

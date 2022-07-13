@@ -5,11 +5,8 @@
 
 package net.atos.zac.app.admin;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,7 +34,6 @@ import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
@@ -177,17 +173,6 @@ public class ZaakafhandelParametersRESTService {
     @Path("resultaten/{zaaktypeUUID}")
     public List<RESTZaakResultaattype> listZaakResultaten(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
         return zaakResultaattypeConverter.convertResultaattypes(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
-    }
-
-    /**
-     * Retrieve all FORMULIER_VERWIJZINGen that can be linked to a HUMAN_TASK_PLAN_ITEM
-     *
-     * @return lijst of FORMULIER_VERWIJZINGen
-     */
-    @GET
-    @Path("formulierDefinities")
-    public List<String> listFormulierDefinities() {
-        return Arrays.stream(FormulierDefinitie.values()).map(Objects::toString).collect(Collectors.toList());
     }
 
     private List<Zaaktype> listZaaktypes() {

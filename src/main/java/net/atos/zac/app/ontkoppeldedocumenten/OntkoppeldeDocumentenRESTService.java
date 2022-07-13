@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.ontkoppeldedocumenten;
 
+import static net.atos.zac.policy.PolicyService.assertActie;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ import net.atos.zac.documenten.OntkoppeldeDocumentenService;
 import net.atos.zac.documenten.model.OntkoppeldDocument;
 import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
 import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 
 @Singleton
@@ -61,9 +64,13 @@ public class OntkoppeldeDocumentenRESTService {
     @Inject
     private RESTUserConverter userConverter;
 
+    @Inject
+    private PolicyService policyService;
+
     @PUT
     @Path("")
     public RESTResultaat<RESTOntkoppeldDocument> list(final RESTOntkoppeldDocumentListParameters restListParameters) {
+        assertActie(policyService.readAppActies().getDocumenten());
         final OntkoppeldDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
         final OntkoppeldeDocumentenResultaat resultaat = ontkoppeldeDocumentenService.getResultaat(listParameters);
         final RESTOntkoppeldDocumentResultaat restOntkoppeldDocumentResultaat =
@@ -82,6 +89,7 @@ public class OntkoppeldeDocumentenRESTService {
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
+        assertActie(policyService.readAppActies().getDocumenten());
         final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
         if (ontkoppeldDocument == null) {
             return; // reeds verwijderd

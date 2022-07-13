@@ -46,9 +46,10 @@
             </ng-container>
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
-                    <button mat-icon-button (click)="resetSearch()" title="{{ 'actie.zoekopdracht.wissen' | translate }}">
-                        <mat-icon>search_off</mat-icon>
-                    </button>
+                    <zac-zoekopdracht [werklijst]="werklijst"
+                                      [zoekParameters]="listParameters"
+                                      [filtersChanged]="clearZoekopdracht"
+                                      (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
                 </th>
             </ng-container>
             <ng-container matColumnDef="titel">

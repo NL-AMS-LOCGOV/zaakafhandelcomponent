@@ -170,6 +170,9 @@
 
     <field name="informatieobject_titel" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_beschrijving" type="text_nl" indexed="true" stored="true"/>
+    <field name="informatieobject_zaaktypeUuid" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_zaakId" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
@@ -281,6 +284,19 @@
     <copyField source="zaak_registratiedatum" dest="created"/>
     <copyField source="taak_creatiedatum" dest="created"/>
     <copyField source="informatieobject_registratiedatum" dest="created"/>
+
+    <copyField source="zaak_zaaktypeUuid" dst="zaaktypeUuid"/>
+    <copyField source="taak_zaaktypeUuid" dst="zaaktypeUuid"/>
+    <copyField source="informatieobject_zaaktypeUuid" dst="zaaktypeUuid"/>
+
+    <copyField source="zaak_zaaktypeIdentificatie" dst="zaaktypeIdentificatie"/>
+    <copyField source="taak_zaaktypeIdentificatie" dst="zaaktypeIdentificatie"/>
+    <copyField source="informatieobject_zaaktypeIdentificatie" dst="zaaktypeIdentificatie"/>
+
+    <copyField source="zaak_zaaktypeOmschrijving" dst="zaaktypeOmschrijving"/>
+    <copyField source="taak_zaaktypeOmschrijving" dst="zaaktypeOmschrijving"/>
+    <copyField source="informatieobject_zaaktypeOmschrijving" dst="zaaktypeOmschrijving"/>
+
 
     <!--  Above, multiple source fields are copied to the [text] field.
          Another way to map multiple source fields to the same

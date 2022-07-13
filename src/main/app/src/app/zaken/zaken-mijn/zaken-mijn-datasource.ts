@@ -8,14 +8,16 @@ import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeke
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
+import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 
 /**
  * Datasource voor de mijn zaken. Via deze class wordt de data voor de tabel opgehaald
  */
 export class ZakenMijnDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
 
-    constructor(zoekenService: ZoekenService, utilService: UtilService) {
-        super('zakenMijn', zoekenService, utilService);
+    constructor(zoekenService: ZoekenService,
+                utilService: UtilService) {
+        super(Werklijst.MIJN_ZAKEN, zoekenService, utilService);
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
