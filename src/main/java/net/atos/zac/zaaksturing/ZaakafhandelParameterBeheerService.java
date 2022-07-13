@@ -75,7 +75,7 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public HumanTaskParameters readHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
+    public HumanTaskParameters findHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
         final Root<HumanTaskParameters> queryRoot = query.from(HumanTaskParameters.class);
@@ -89,9 +89,7 @@ public class ZaakafhandelParameterBeheerService {
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
-            throw new RuntimeException(
-                    String.format("No HumanTaskParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaaktypeUUID.toString(),
-                                  planitemDefinitionID));
+            return null;
         }
     }
 

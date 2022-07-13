@@ -40,10 +40,6 @@ public class HumanTaskParameters {
     @Column(name = "id_planitem_definition", nullable = false)
     private String planItemDefinitionID;
 
-    @NotBlank
-    @Column(name = "id_formulier_definition", nullable = false)
-    private String formulierDefinitieID;
-
     @Column(name = "id_groep", nullable = false)
     private String groepID;
 
@@ -73,14 +69,6 @@ public class HumanTaskParameters {
 
     public void setPlanItemDefinitionID(final String planItemDefinitionID) {
         this.planItemDefinitionID = planItemDefinitionID;
-    }
-
-    public String getFormulierDefinitieID() {
-        return formulierDefinitieID;
-    }
-
-    public void setFormulierDefinitieID(final String formulierDefinitieID) {
-        this.formulierDefinitieID = formulierDefinitieID;
     }
 
     public String getGroepID() {

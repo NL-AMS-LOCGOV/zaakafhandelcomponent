@@ -15,7 +15,6 @@ import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -36,10 +35,10 @@ public class ZaakafhandelParameterService {
         return beheerService.readZaakafhandelParameters(zaakTypeUUID);
     }
 
-    public HumanTaskParameters readHumanTaskParameters(final PlanItemInstance planItem) {
+    public HumanTaskParameters findHumanTaskParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
-            return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
+            return beheerService.findHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         } else {
             final HumanTaskParameters parameters = new HumanTaskParameters();
             parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
@@ -52,9 +51,5 @@ public class ZaakafhandelParameterService {
     public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
-    }
-
-    public FormulierDefinitie readFormulierDefinitie(final UUID zaaktypeUUID, final String taskDefinitionKey) {
-        return FormulierDefinitie.valueOf(beheerService.readHumanTaskParameters(zaaktypeUUID, taskDefinitionKey).getFormulierDefinitieID());
     }
 }

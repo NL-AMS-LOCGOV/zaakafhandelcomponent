@@ -17,6 +17,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
+
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.Task;
@@ -29,7 +31,6 @@ import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskVariablesService;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 
 /**
  *
@@ -47,9 +48,6 @@ public class RESTTaakConverter {
 
     @Inject
     private RESTUserConverter medewerkerConverter;
-
-    @Inject
-    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     private TaskVariablesService taskVariablesService;
@@ -145,7 +143,7 @@ public class RESTTaakConverter {
         restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
         restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
         restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
-        restTaak.formulierDefinitie = zaakafhandelParameterService.readFormulierDefinitie(zaaktypeUUID, taskInfo.getTaskDefinitionKey());
+        restTaak.formulierDefinitie = HumanTaskFormulierKoppeling.readFormulierDefinitie(taskInfo.getTaskDefinitionKey());
         return restTaak;
     }
 

@@ -95,7 +95,7 @@ public class PlanItemsRESTService {
     public RESTPlanItem readHumanTaskPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance humanTaskPlanItem = caseService.readOpenPlanItem(planItemId);
         final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(humanTaskPlanItem);
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(humanTaskPlanItem);
         return planItemConverter.convertHumanTask(humanTaskPlanItem, zaakUuidForCase, humanTaskParameters);
     }
 
@@ -105,8 +105,9 @@ public class PlanItemsRESTService {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         assertActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.readHumanTaskParameters(planItem);
-        final Date streefdatum = humanTaskParameters.getDoorlooptijd() != null ? DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
+        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(planItem);
+        final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
+                DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
                                  humanTaskData.taakdata.get("body"), true, zaakUUID);
