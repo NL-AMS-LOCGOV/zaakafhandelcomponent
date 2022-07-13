@@ -58,7 +58,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
 
     caseDefinitions: Observable<CaseDefinition[]>;
-    formulierDefinities: Observable<string[]>;
     groepen: Observable<Group[]>;
     medewerkers: Observable<User[]>;
     zaakResultaten: Observable<ZaakResultaat[]>;
@@ -80,7 +79,6 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
         this.medewerkers = identityService.listUsers();
-        this.formulierDefinities = adminService.listFormulierDefinities();
     }
 
     ngOnInit(): void {

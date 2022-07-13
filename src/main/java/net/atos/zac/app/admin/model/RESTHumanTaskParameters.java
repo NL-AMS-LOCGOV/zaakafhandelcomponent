@@ -16,8 +16,4 @@ public class RESTHumanTaskParameters {
     public Integer doorlooptijd;
 
     public RESTGroup defaultGroep;
-
-    public RESTHumanTaskParameters() {
-    }
-
 }

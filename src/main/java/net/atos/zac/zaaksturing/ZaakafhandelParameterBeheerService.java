@@ -75,7 +75,7 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public HumanTaskParameters readHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
+    public HumanTaskParameters findHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
         final Root<HumanTaskParameters> queryRoot = query.from(HumanTaskParameters.class);

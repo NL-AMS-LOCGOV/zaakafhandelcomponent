@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import net.atos.zac.app.planitems.model.FormulierKoppeling;
+import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -47,8 +47,6 @@ public class RESTPlanItemConverter {
         restPlanItem.naam = planItem.getName();
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
-        restPlanItem.formulierDefinitie =
-                FormulierKoppeling.readFormulierDefinitie(planItem.getPlanItemDefinitionId());
         if (restPlanItem.type == USER_EVENT_LISTENER) {
             restPlanItem.userEventListenerActie = UserEventListenerActie.valueOf(planItem.getPlanItemDefinitionId());
             restPlanItem.toelichting = zaakafhandelParameterService.readUserEventParameters(planItem).getToelichting();
@@ -58,6 +56,8 @@ public class RESTPlanItemConverter {
 
     public RESTPlanItem convertHumanTask(final PlanItemInstance planItem, final UUID zaakUuid, final HumanTaskParameters parameters) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem, zaakUuid);
+        restPlanItem.formulierDefinitie =
+                HumanTaskFormulierKoppeling.readFormulierDefinitie(planItem.getPlanItemDefinitionId());
         if (parameters != null) {
             restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
         }

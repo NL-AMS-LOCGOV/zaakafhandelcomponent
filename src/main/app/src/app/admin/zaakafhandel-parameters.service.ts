@@ -65,12 +65,6 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    listFormulierDefinities(): Observable<string[]> {
-        return this.http.get<string[]>(`${this.basepath}/formulierDefinities`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
-        );
-    }
-
     updateZaakafhandelparameters(zaakafhandelparameters: ZaakafhandelParameters): Observable<void> {
         return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))

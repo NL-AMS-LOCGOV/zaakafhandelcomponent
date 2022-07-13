@@ -35,10 +35,10 @@ public class ZaakafhandelParameterService {
         return beheerService.readZaakafhandelParameters(zaakTypeUUID);
     }
 
-    public HumanTaskParameters readHumanTaskParameters(final PlanItemInstance planItem) {
+    public HumanTaskParameters findHumanTaskParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
-            return beheerService.readHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
+            return beheerService.findHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
         } else {
             final HumanTaskParameters parameters = new HumanTaskParameters();
             parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
