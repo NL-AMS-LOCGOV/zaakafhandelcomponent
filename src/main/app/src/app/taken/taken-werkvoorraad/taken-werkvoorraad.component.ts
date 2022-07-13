@@ -30,6 +30,8 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
+import {TakenActies} from '../../policy/model/taken-acties';
+import {PolicyService} from '../../policy/policy.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -40,6 +42,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<TaakZoekObject>(true, []);
     dataSource: TakenWerkvoorraadDatasource;
+    acties = new TakenActies();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
@@ -54,7 +57,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog, private zoekenService: ZoekenService) {
+                private identityService: IdentityService, public dialog: MatDialog, private zoekenService: ZoekenService,
+                private policyService: PolicyService) {
         this.dataSource = new TakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
@@ -62,6 +66,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
         this.dataSource.initColumns(this.defaultColumns());
+        this.policyService.readTakenActies().subscribe(acties => this.acties = acties);
     }
 
     ngAfterViewInit(): void {
@@ -77,7 +82,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(taakZoekObject: TaakZoekObject): boolean {
-        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
+        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
     }
 
     assignToMe(taakZoekObject: TaakZoekObject, event): void {
@@ -161,7 +166,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     defaultColumns(): Map<string, ColumnPickerValue> {
-        return new Map([
+        const columns = new Map([
             ['select', ColumnPickerValue.STICKY],
             ['naam', ColumnPickerValue.VISIBLE],
             ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
@@ -173,6 +178,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['behandelaar', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
+        if (!this.acties.verdelenEnVrijgeven) {
+            columns.delete('select');
+        }
+        return columns;
     }
 
     pageChange(): void {

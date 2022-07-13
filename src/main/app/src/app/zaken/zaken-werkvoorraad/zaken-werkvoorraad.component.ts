@@ -41,7 +41,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
-    acties: ZakenActies = new ZakenActies();
+    acties = new ZakenActies();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -166,8 +166,8 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         });
     }
 
-    showAssignToMe(row: ZaakZoekObject): boolean {
-        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== row.behandelaarGebruikersnaam;
+    showAssignToMe(zaakZoekObject: ZaakZoekObject): boolean {
+        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== zaakZoekObject.behandelaarGebruikersnaam;
     }
 
     openVerdelenScherm(): void {

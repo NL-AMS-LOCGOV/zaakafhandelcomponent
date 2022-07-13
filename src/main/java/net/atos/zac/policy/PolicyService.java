@@ -43,6 +43,7 @@ import net.atos.zac.policy.input.ZaakData;
 import net.atos.zac.policy.input.ZaakInput;
 import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
+import net.atos.zac.policy.output.TakenActies;
 import net.atos.zac.policy.output.ZaakActies;
 import net.atos.zac.policy.output.ZakenActies;
 import net.atos.zac.shared.exception.FoutmeldingException;
@@ -129,6 +130,10 @@ public class PolicyService {
 
     public ZakenActies readZakenActies() {
         return evaluationClient.readZakenActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+    }
+
+    public TakenActies readTakenActies() {
+        return evaluationClient.readTakenActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
     /**
