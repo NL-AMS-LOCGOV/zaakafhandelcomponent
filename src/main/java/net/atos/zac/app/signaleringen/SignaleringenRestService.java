@@ -98,7 +98,7 @@ public class SignaleringenRestService {
                 .subjecttype(SignaleringSubject.TAAK);
         return signaleringenService.findSignaleringen(parameters).stream()
                 .map(signalering -> taskService.readTask(signalering.getSubject()))
-                .map(restTaakConverter::convertTask)
+                .map(task -> restTaakConverter.convert(task, true))
                 .toList();
     }
 

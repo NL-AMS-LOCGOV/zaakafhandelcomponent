@@ -178,7 +178,7 @@ public class InformatieObjectenRESTService {
         } else if (zoekParameters.UUIDs != null) {
             return restInformatieobjectConverter.convertToREST(zoekParameters.UUIDs);
         }
-        throw new IllegalStateException("Zoekparameters hebben geen waarde");
+            throw new IllegalStateException("Zoekparameters hebben geen waarde");
     }
 
     @POST
@@ -252,13 +252,6 @@ public class InformatieObjectenRESTService {
     public Response uploadFile(@PathParam("uuid") final UUID uuid, @MultipartForm final RESTFileUpload data) {
         httpSession.get().setAttribute("FILE_" + uuid, data);
         return Response.ok("\"Success\"").build();
-    }
-
-    @GET
-    @Path("zaak/{uuid}")
-    public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(@PathParam("uuid") final UUID uuid) {
-        final Zaak zaak = zrcClientService.readZaak(uuid);
-        return listEnkelvoudigInformatieobjectenVoorZaak(zaak);
     }
 
     @GET

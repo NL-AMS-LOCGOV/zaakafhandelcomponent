@@ -69,17 +69,17 @@ export class Goedkeuren extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.GOEDKEUREN)
                                         .label(fields.GOEDKEUREN)
-                                        .value(this.isAfgerond() && goedkeurenDataElement ?
+                                        .value(this.readonly && goedkeurenDataElement ?
                                             this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement)
                                         .options(this.getGoedkeurenOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond())
+                                        .readonly(this.readonly)
                                         .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
                                            .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond())
+                                           .readonly(this.readonly)
                                            .maxlength(1000)
                                            .build()]
         );

@@ -12,7 +12,6 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
@@ -54,14 +53,11 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         taakZoekObject.setToelichting(taskInfo.getDescription());
 
         if (taskInfo.getAssignee() != null) {
-            taakZoekObject.setStatus(TaakStatus.TOEGEKEND);
             final User user = identityService.readUser(taskInfo.getAssignee());
             taakZoekObject.setBehandelaarNaam(user.getFullName());
             taakZoekObject.setBehandelaarGebruikersnaam(user.getId());
-        } else {
-            taakZoekObject.setStatus(TaakStatus.NIET_TOEGEKEND);
         }
-
+        taakZoekObject.setStatus(taskService.getTaakStatus(taskInfo));
         final String groupID = extractGroupId(taskInfo.getIdentityLinks());
         if (groupID != null) {
             final Group group = identityService.readGroup(groupID);

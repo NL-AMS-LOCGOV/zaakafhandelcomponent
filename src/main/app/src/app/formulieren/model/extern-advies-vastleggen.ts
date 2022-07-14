@@ -64,7 +64,7 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
                                            .label(fields.EXTERNADVIES)
                                            .value(this.getDataElement(fields.EXTERNADVIES))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond())
+                                           .readonly(this.readonly)
                                            .maxlength(1000).build()]
         );
     }
