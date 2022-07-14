@@ -10,4 +10,5 @@ export class Zaaktype {
     omschrijving: string;
     referentieproces: string;
     servicenorm: boolean;
+    versiedatum: string;
 }

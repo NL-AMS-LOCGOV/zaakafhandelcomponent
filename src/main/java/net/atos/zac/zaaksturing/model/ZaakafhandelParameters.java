@@ -7,6 +7,7 @@ package net.atos.zac.zaaksturing.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,15 +27,21 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Entity
 @Table(schema = SCHEMA, name = "zaakafhandelparameters")
 @SequenceGenerator(schema = SCHEMA, name = "sq_zaakafhandelparameters", sequenceName = "sq_zaakafhandelparameters", allocationSize = 1)
 public class ZaakafhandelParameters {
 
-    /**
-     * Naam van property: {@link ZaakafhandelParameters#zaakTypeUUID}
-     */
+    /** Naam van property: {@link ZaakafhandelParameters#zaakTypeUUID} */
     public static final String ZAAKTYPE_UUID = "zaakTypeUUID";
+
+    /** Naam van property: {@link ZaakafhandelParameters#zaaktypeOmschrijving} */
+    public static final String ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+
+    /** Naam van property: {@link ZaakafhandelParameters#creatiedatum} */
+    public static final String CREATIEDATUM = "creatiedatum";
 
     @Id
     @GeneratedValue(generator = "sq_zaakafhandelparameters", strategy = GenerationType.SEQUENCE)
@@ -46,10 +53,12 @@ public class ZaakafhandelParameters {
     private UUID zaakTypeUUID;
 
     @NotBlank
+    @Column(name = "zaaktype_omschrijving", nullable = false)
+    private String zaaktypeOmschrijving;
+
     @Column(name = "id_case_definition", nullable = false)
     private String caseDefinitionID;
 
-    @NotBlank
     @Column(name = "id_groep", nullable = false)
     private String groepID;
 
@@ -64,6 +73,9 @@ public class ZaakafhandelParameters {
 
     @Column(name = "niet_ontvankelijk_resultaattype_uuid")
     private UUID nietOntvankelijkResultaattype;
+
+    @Column(name = "creatiedatum", nullable = false)
+    private ZonedDateTime creatiedatum;
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -194,5 +206,31 @@ public class ZaakafhandelParameters {
         userEventListenerParameters.setZaakafhandelParameters(this);
         userEventListenerParametersCollection.add(userEventListenerParameters);
     }
+
+    public String getZaaktypeOmschrijving() {
+        return zaaktypeOmschrijving;
+    }
+
+    public void setZaaktypeOmschrijving(final String zaaktypeOmschrijving) {
+        this.zaaktypeOmschrijving = zaaktypeOmschrijving;
+    }
+
+    public ZonedDateTime getCreatiedatum() {
+        return creatiedatum;
+    }
+
+    public void setCreatiedatum(final ZonedDateTime creatiedatum) {
+        this.creatiedatum = creatiedatum;
+    }
+
+    /**
+     * Geeft aan dat er voldoende gegevens zijn ingevuld om een zaak te starten
+     *
+     * @return true indien er een zaak kan worden gestart
+     */
+    public boolean isValide() {
+        return StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(caseDefinitionID) && nietOntvankelijkResultaattype != null;
+    }
+
 }
 

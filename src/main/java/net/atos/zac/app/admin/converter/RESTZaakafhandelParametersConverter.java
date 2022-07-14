@@ -51,6 +51,8 @@ public class RESTZaakafhandelParametersConverter {
         restZaakafhandelParameters.defaultBehandelaar = userConverter.convertUserId(zaakafhandelParameters.getGebruikersnaamMedewerker());
         restZaakafhandelParameters.einddatumGeplandWaarschuwing = zaakafhandelParameters.getEinddatumGeplandWaarschuwing();
         restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = zaakafhandelParameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
+        restZaakafhandelParameters.creatiedatum = zaakafhandelParameters.getCreatiedatum();
+        restZaakafhandelParameters.valide = zaakafhandelParameters.isValide();
         if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
             restZaakafhandelParameters.zaakNietOntvankelijkResultaat = zaakResultaattypeConverter.convertResultaattype(
                     ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
@@ -73,6 +75,7 @@ public class RESTZaakafhandelParametersConverter {
         final ZaakafhandelParameters zaakafhandelParameters = new ZaakafhandelParameters();
         zaakafhandelParameters.setId(restZaakafhandelParameters.id);
         zaakafhandelParameters.setZaakTypeUUID(restZaakafhandelParameters.zaaktype.uuid);
+        zaakafhandelParameters.setZaaktypeOmschrijving(restZaakafhandelParameters.zaaktype.omschrijving);
         zaakafhandelParameters.setCaseDefinitionID(restZaakafhandelParameters.caseDefinition.key);
         zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroep.id);
         zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
