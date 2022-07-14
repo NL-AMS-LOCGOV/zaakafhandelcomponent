@@ -75,7 +75,7 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
-    public ZaakafhandelParameters findRecentsteZaakafhandelParameters(final String zaaktypeOmschrijving) {
+    public ZaakafhandelParameters readRecentsteZaakafhandelParameters(final String zaaktypeOmschrijving) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
@@ -169,7 +169,7 @@ public class ZaakafhandelParameterBeheerService {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUri);
         if (!zaaktype.getConcept()) {
             final String omschrijving = zaaktype.getOmschrijving();
-            final ZaakafhandelParameters vorigeZaakafhandelparameters = findRecentsteZaakafhandelParameters(omschrijving);
+            final ZaakafhandelParameters vorigeZaakafhandelparameters = readRecentsteZaakafhandelParameters(omschrijving);
             final ZaakafhandelParameters nieuweZaakafhandelParameters = new ZaakafhandelParameters();
             nieuweZaakafhandelParameters.setZaakTypeUUID(UriUtil.uuidFromURI(zaaktype.getUrl()));
             nieuweZaakafhandelParameters.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
@@ -182,44 +182,75 @@ public class ZaakafhandelParameterBeheerService {
             nieuweZaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(
                     vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
 
-            final HashSet<HumanTaskParameters> humanTaskParametersCollection = new HashSet<>();
-            vorigeZaakafhandelparameters.getHumanTaskParametersCollection().forEach(humanTaskParameters -> {
-                final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
-                nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
-                nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
-                nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
-                humanTaskParametersCollection.add(nieuweHumanTaskParameters);
-            });
-            nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);
-
-            final HashSet<UserEventListenerParameters> userEventListenerParametersCollection = new HashSet<>();
-            vorigeZaakafhandelparameters.getUserEventListenerParametersCollection().forEach(userEventListenerParameters -> {
-                final UserEventListenerParameters nieuweUserEventListenerParameters = new UserEventListenerParameters();
-                nieuweUserEventListenerParameters.setPlanItemDefinitionID(userEventListenerParameters.getPlanItemDefinitionID());
-                nieuweUserEventListenerParameters.setToelichting(userEventListenerParameters.getToelichting());
-                userEventListenerParametersCollection.add(nieuweUserEventListenerParameters);
-            });
-            nieuweZaakafhandelParameters.setUserEventListenerParametersCollection(userEventListenerParametersCollection);
-
-            final List<Resultaattype> nieuweResultaattypen = zaaktype.getResultaattypen().stream().map(rt -> ztcClientService.readResultaattype(rt)).toList();
-            nieuweZaakafhandelParameters.setNietOntvankelijkResultaattype(
-                    mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen, vorigeZaakafhandelparameters.getNietOntvankelijkResultaattype()));
-
-            final HashSet<ZaakbeeindigParameter> zaakbeeindigParametersCollection = new HashSet<>();
-            vorigeZaakafhandelparameters.getZaakbeeindigParameters().forEach(vorigeZaakbeeindigParameter -> {
-                final UUID nieuwResultaattypeUUID = mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen,
-                                                                                              vorigeZaakbeeindigParameter.getResultaattype());
-                if (nieuwResultaattypeUUID != null) {
-                    final ZaakbeeindigParameter nieuweZaakbeeindigParameters = new ZaakbeeindigParameter();
-                    nieuweZaakbeeindigParameters.setZaakbeeindigReden(vorigeZaakbeeindigParameter.getZaakbeeindigReden());
-                    nieuweZaakbeeindigParameters.setResultaattype(nieuwResultaattypeUUID);
-                    zaakbeeindigParametersCollection.add(nieuweZaakbeeindigParameters);
-                }
-            });
-            nieuweZaakafhandelParameters.setZaakbeeindigParameters(zaakbeeindigParametersCollection);
-
+            mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
+            mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
+            mapZaakbeeindigGegevens(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters, zaaktype);
             createZaakafhandelParameters(nieuweZaakafhandelParameters);
         }
+    }
+
+    /**
+     * Kopieren van de HumanTaskParameters van de oude ZaakafhandelParameters naar de nieuw ZaakafhandelParameters
+     *
+     * @param vorigeZaakafhandelparameters bron
+     * @param nieuweZaakafhandelParameters bestemming
+     */
+    private void mapHumanTaskParameters(final ZaakafhandelParameters vorigeZaakafhandelparameters, final ZaakafhandelParameters nieuweZaakafhandelParameters) {
+        final HashSet<HumanTaskParameters> humanTaskParametersCollection = new HashSet<>();
+        vorigeZaakafhandelparameters.getHumanTaskParametersCollection().forEach(humanTaskParameters -> {
+            final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
+            nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
+            nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
+            nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
+            humanTaskParametersCollection.add(nieuweHumanTaskParameters);
+        });
+        nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);
+    }
+
+    /**
+     * Kopieren van de UserEventListenerParameters van de oude ZaakafhandelParameters naar de nieuw ZaakafhandelParameters
+     *
+     * @param vorigeZaakafhandelparameters bron
+     * @param nieuweZaakafhandelParameters bestemming
+     */
+    private void mapUserEventListenerParameters(final ZaakafhandelParameters vorigeZaakafhandelparameters,
+            final ZaakafhandelParameters nieuweZaakafhandelParameters) {
+        final HashSet<UserEventListenerParameters> userEventListenerParametersCollection = new HashSet<>();
+        vorigeZaakafhandelparameters.getUserEventListenerParametersCollection().forEach(userEventListenerParameters -> {
+            final UserEventListenerParameters nieuweUserEventListenerParameters = new UserEventListenerParameters();
+            nieuweUserEventListenerParameters.setPlanItemDefinitionID(userEventListenerParameters.getPlanItemDefinitionID());
+            nieuweUserEventListenerParameters.setToelichting(userEventListenerParameters.getToelichting());
+            userEventListenerParametersCollection.add(nieuweUserEventListenerParameters);
+        });
+        nieuweZaakafhandelParameters.setUserEventListenerParametersCollection(userEventListenerParametersCollection);
+    }
+
+    /**
+     * Kopieren van de ZaakbeeindigGegevens van de oude ZaakafhandelParameters naar de nieuw ZaakafhandelParameters
+     *
+     * @param vorigeZaakafhandelparameters bron
+     * @param nieuweZaakafhandelParameters bestemming
+     * @param nieuwZaaktype                het nieuwe zaaktype om de resultaten van te lezen
+     */
+    private void mapZaakbeeindigGegevens(final ZaakafhandelParameters vorigeZaakafhandelparameters,
+            final ZaakafhandelParameters nieuweZaakafhandelParameters, final Zaaktype nieuwZaaktype) {
+
+        final List<Resultaattype> nieuweResultaattypen = nieuwZaaktype.getResultaattypen().stream().map(rt -> ztcClientService.readResultaattype(rt)).toList();
+        nieuweZaakafhandelParameters.setNietOntvankelijkResultaattype(
+                mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen, vorigeZaakafhandelparameters.getNietOntvankelijkResultaattype()));
+
+        final HashSet<ZaakbeeindigParameter> zaakbeeindigParametersCollection = new HashSet<>();
+        vorigeZaakafhandelparameters.getZaakbeeindigParameters().forEach(vorigeZaakbeeindigParameter -> {
+            final UUID nieuwResultaattypeUUID = mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen,
+                                                                                          vorigeZaakbeeindigParameter.getResultaattype());
+            if (nieuwResultaattypeUUID != null) {
+                final ZaakbeeindigParameter nieuweZaakbeeindigParameters = new ZaakbeeindigParameter();
+                nieuweZaakbeeindigParameters.setZaakbeeindigReden(vorigeZaakbeeindigParameter.getZaakbeeindigReden());
+                nieuweZaakbeeindigParameters.setResultaattype(nieuwResultaattypeUUID);
+                zaakbeeindigParametersCollection.add(nieuweZaakbeeindigParameters);
+            }
+        });
+        nieuweZaakafhandelParameters.setZaakbeeindigParameters(zaakbeeindigParametersCollection);
     }
 
     private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen, final UUID vorigResultaattypeUUID) {
