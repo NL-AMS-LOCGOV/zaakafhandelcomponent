@@ -23,4 +23,10 @@ public class RESTZaaktype {
     public boolean servicenorm;
 
     public LocalDate versiedatum;
+
+    public LocalDate beginGeldigheid;
+
+    public LocalDate eindeGeldigheid;
+
+    public boolean nuGeldig;
 }

@@ -555,6 +555,10 @@ public class Zaaktype {
         return versiedatum;
     }
 
+    public boolean isNuGeldig() {
+        return beginGeldigheid.isBefore(LocalDate.now().plusDays(1)) && (eindeGeldigheid == null || eindeGeldigheid.isAfter(LocalDate.now()));
+    }
+
     public void setVersiedatum(final LocalDate versiedatum) {
         this.versiedatum = versiedatum;
     }
