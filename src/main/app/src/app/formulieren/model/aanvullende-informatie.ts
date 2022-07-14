@@ -83,7 +83,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
                                            .label(fields.OPMERKINGEN)
                                            .value(this.getDataElement(fields.OPMERKINGEN))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond())
+                                           .readonly(this.readonly)
                                            .maxlength(1000)
                                            .build()],
             [
@@ -95,16 +95,16 @@ export class AanvullendeInformatie extends AbstractFormulier {
                 new DateFormFieldBuilder().id(fields.DATUMGELEVERD)
                                           .label(fields.DATUMGELEVERD)
                                           .value(this.getDataElement(fields.DATUMGELEVERD))
-                                          .readonly(this.isAfgerond())
+                                          .readonly(this.readonly)
                                           .build()
             ],
             [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
                                         .label(fields.AANVULLENDE_INFORMATIE)
-                                        .value(this.isAfgerond() && aanvullendeInformatieDataElement ?
+                                        .value(this.readonly && aanvullendeInformatieDataElement ?
                                             this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement)
                                         .options(this.getAanvullendeInformatieOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond())
+                                        .readonly(this.readonly)
                                         .build()]
         );
     }
@@ -114,7 +114,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
     }
 
     getBehandelTitel(): string {
-        if (this.isAfgerond()) {
+        if (this.readonly) {
             return this.translate.instant('title.taak.aanvullende-informatie.raadplegen');
         } else {
             return this.translate.instant('title.taak.aanvullende-informatie.behandelen');

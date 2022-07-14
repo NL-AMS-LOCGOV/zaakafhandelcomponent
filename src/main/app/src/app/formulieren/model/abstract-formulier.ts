@@ -30,7 +30,7 @@ export abstract class AbstractFormulier {
     taak: Taak;
     abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
     dataElementen: {};
-    afgerond: boolean;
+    readonly: boolean;
     form: Array<AbstractFormField[]>;
     disablePartialSave: boolean = false;
     taakDocumenten: EnkelvoudigInformatieobject[];
@@ -46,23 +46,23 @@ export abstract class AbstractFormulier {
         this._initStartForm();
     }
 
-    initBehandelForm(afgerond: boolean) {
+    initBehandelForm(readonly: boolean) {
         this.form = [];
-        this.afgerond = afgerond;
+        this.readonly = readonly;
         this._initBehandelForm();
         this.refreshTaakdocumenten();
     }
 
-    abstract _initStartForm();
+    protected abstract _initStartForm();
 
-    abstract _initBehandelForm();
+    protected abstract _initBehandelForm();
 
-    getStartTitel(): string {
+    protected getStartTitel(): string {
         return this.translate.instant(`title.taak.starten`, {taak: this.taakNaam});
     }
 
     getBehandelTitel(): string {
-        if (this.isAfgerond()) {
+        if (this.readonly) {
             return this.translate.instant(`title.taak.raadplegen`, {taak: this.taak.naam});
         } else {
             return this.translate.instant(`title.taak.behandelen`, {taak: this.taak.naam});
@@ -83,7 +83,7 @@ export abstract class AbstractFormulier {
         return this.taak;
     }
 
-    getDataElement(key: string): any {
+    protected getDataElement(key: string): any {
         if (this.dataElementen && this.dataElementen.hasOwnProperty(key)) {
             return this.dataElementen[key];
         }
@@ -150,13 +150,5 @@ export abstract class AbstractFormulier {
             opmerking: formGroup.controls[this.taakinformatieMapping.opmerking]?.value,
             bijlagen: this.getDocumentInformatie()
         };
-    }
-
-    isAfgerond(): boolean {
-        return this.afgerond;
-    }
-
-    doDisablePartialSave(): void {
-        this.disablePartialSave = true;
     }
 }

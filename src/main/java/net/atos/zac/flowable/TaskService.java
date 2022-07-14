@@ -5,6 +5,9 @@
 
 package net.atos.zac.flowable;
 
+import static net.atos.zac.app.taken.model.TaakStatus.AFGEROND;
+import static net.atos.zac.app.taken.model.TaakStatus.NIET_TOEGEKEND;
+import static net.atos.zac.app.taken.model.TaakStatus.TOEGEKEND;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.util.ArrayList;
@@ -12,7 +15,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -37,6 +39,7 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskLogEntry;
 
 import net.atos.zac.app.taken.model.TaakSortering;
+import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.shared.model.SorteerRichting;
 
 @ApplicationScoped
@@ -59,23 +62,8 @@ public class TaskService {
 
     public record TaskDescriptionChangedData(String newDescription, String previousDescription) {}
 
-    public List<Task> listOpenTasksAssignedToUser(final String userid, final TaakSortering sortering, final SorteerRichting direction,
-            final int firstResult, final int maxResults) {
-        return createOpenTasksQueryWithSorting(sortering, direction)
-                .taskAssignee(userid)
-                .listPage(firstResult, maxResults);
-    }
-
     public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
-    }
-
-    public List<Task> listOpenTasksAssignedToGroups(final Set<String> groupIds, final TaakSortering sortering, final SorteerRichting direction,
-            final int firstResult, final int maxResults) {
-        return createOpenTasksQueryWithSorting(sortering, direction)
-                .taskCandidateGroupIn(groupIds)
-                .ignoreAssigneeValue()
-                .listPage(firstResult, maxResults);
     }
 
     public List<Task> listOpenTasksDueNow() {
@@ -92,23 +80,8 @@ public class TaskService {
                 .list();
     }
 
-    public List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
-        final List<TaskInfo> tasks = new ArrayList<>();
-        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
-        if (caseInstance != null) {
-            tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
-            tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
-        }
-        return tasks;
-    }
-
-    public List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
-        final HistoricCaseInstance historicCaseInstance = caseService.findClosedCase(zaakUUID);
-        if (historicCaseInstance != null) {
-            return listClosedTasksForCase(historicCaseInstance.getId());
-        } else {
-            return Collections.emptyList();
-        }
+    public List<? extends TaskInfo> listTasksForCase(final UUID zaakUUID) {
+        return caseService.isOpenCase(zaakUUID) ? listTasksForOpenCase(zaakUUID) : listTasksForClosedCase(zaakUUID);
     }
 
     public List<Task> listOpenTasks(final UUID zaakUUID) {
@@ -138,6 +111,25 @@ public class TaskService {
                     .count();
         } else {
             return 0;
+        }
+    }
+
+    private List<TaskInfo> listTasksForOpenCase(final UUID zaakUUID) {
+        final List<TaskInfo> tasks = new ArrayList<>();
+        final CaseInstance caseInstance = caseService.findOpenCase(zaakUUID);
+        if (caseInstance != null) {
+            tasks.addAll(listOpenTasksForCase(caseInstance.getId()));
+            tasks.addAll(listClosedTasksForCase(caseInstance.getId()));
+        }
+        return tasks;
+    }
+
+    private List<HistoricTaskInstance> listTasksForClosedCase(final UUID zaakUUID) {
+        final HistoricCaseInstance historicCaseInstance = caseService.findClosedCase(zaakUUID);
+        if (historicCaseInstance != null) {
+            return listClosedTasksForCase(historicCaseInstance.getId());
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -195,14 +187,6 @@ public class TaskService {
         return readClosedTask(taskId);
     }
 
-    public int countOpenTasksAssignedToUser(final String userId) {
-        return (int) cmmnTaskService.createTaskQuery().taskAssignee(userId).count();
-    }
-
-    public int countOpenTasksAssignedToGroups(final Set<String> groupIds) {
-        return (int) cmmnTaskService.createTaskQuery().taskCandidateGroupIn(groupIds).ignoreAssigneeValue().count();
-    }
-
     /**
      * Assign task to user.
      * When the userId is null the task is released.
@@ -238,6 +222,10 @@ public class TaskService {
         cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
 
         return readOpenTask(taskId);
+    }
+
+    public TaakStatus getTaakStatus(final TaskInfo taskInfo) {
+        return taskInfo instanceof Task ? (taskInfo.getAssignee() == null ? NIET_TOEGEKEND : TOEGEKEND) : AFGEROND;
     }
 
     private Task findOpenTask(final String taskId) {

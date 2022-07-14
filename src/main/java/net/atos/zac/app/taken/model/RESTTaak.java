@@ -52,4 +52,6 @@ public class RESTTaak {
     public Map<String, String> taakinformatie;
 
     public List<UUID> taakdocumenten;
+
+    public RESTTaakActies acties;
 }
