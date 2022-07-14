@@ -96,8 +96,13 @@ public class PolicyService {
         return readZaakActies(zrcClientService.readZaak(zaakUUID));
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak) {
-        final ZaakData zaakData = createZaakData(zaak);
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+        final ZaakData zaakData = new ZaakData();
+        zaakData.open = zaak.isOpen();
+        zaakData.opgeschort = zaak.isOpgeschort();
+        zaakData.zaaktype = zaaktype.getOmschrijving();
+        zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
+        zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
@@ -105,19 +110,24 @@ public class PolicyService {
         return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak));
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
-        final ZaakData zaakData = createZaakData(zaak, zaaktype, statustype, behandelaar);
-        return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+    public ZaakActies readZaakActies(final Zaak zaak) {
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
             final EnkelvoudigInformatieObjectLock lock, final Zaak zaak) {
-        final String vergrendeldDoor = lock != null ? lock.getUserId() : null;
-        final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData =
-                createEnkelvoudigInformatieobjectData(enkelvoudigInformatieobject, vergrendeldDoor);
-        final ZaakData zaakData = zaak != null ? createZaakData(zaak) : null;
-        return evaluationClient.readEnkelvoudigInformatieobjectActies(new RuleQuery<>(
-                new EnkelvoudigInformatieobjectInput(loggedInUserInstance.get(), enkelvoudigInformatieobjectData, zaakData))).getResult();
+        final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData = new EnkelvoudigInformatieobjectData();
+        enkelvoudigInformatieobjectData.definitief = enkelvoudigInformatieobject.getStatus() == DEFINITIEF;
+        enkelvoudigInformatieobjectData.vergrendeld = enkelvoudigInformatieobject.getLocked();
+        enkelvoudigInformatieobjectData.vergrendeldDoor = lock != null ? lock.getUserId() : null;
+        if (zaak != null) {
+            enkelvoudigInformatieobjectData.zaakOpen = zaak.isOpen();
+            enkelvoudigInformatieobjectData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
+        }
+        return evaluationClient.readEnkelvoudigInformatieobjectActies(
+                new RuleQuery<>(new EnkelvoudigInformatieobjectInput(loggedInUserInstance.get(), enkelvoudigInformatieobjectData))).getResult();
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID, final UUID zaakUUID) {
@@ -128,25 +138,15 @@ public class PolicyService {
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
             final Zaak zaak) {
-        final EnkelvoudigInformatieObjectLock lock = lockService.findLock(enkelvoudigInformatieobject.getUUID());
-        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lock, zaak);
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), zaak);
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        final EnkelvoudigInformatieObjectLock lock = lockService.findLock(enkelvoudigInformatieobject.getUUID());
-        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lock, null);
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), null);
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID) {
         return readEnkelvoudigInformatieobjectActies(drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID));
-    }
-
-    public TaakActies readTaakActies(final String taskId) {
-        return readTaakActies(taskService.readTask(taskId));
-    }
-
-    public TaakActies readTaakActies(final TaskInfo taskInfo) {
-        return readTaakActies(taskInfo, taskService.getTaakStatus(taskInfo), caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
     }
 
     public TaakActies readTaakActies(final TaskInfo taskInfo, final TaakStatus taakStatus, final String zaaktypeOmschrijving) {
@@ -155,6 +155,14 @@ public class PolicyService {
         taakData.afgerond = taakStatus == TaakStatus.AFGEROND;
         taakData.zaaktype = zaaktypeOmschrijving;
         return evaluationClient.readTaakActies(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
+    }
+
+    public TaakActies readTaakActies(final TaskInfo taskInfo) {
+        return readTaakActies(taskInfo, taskService.getTaakStatus(taskInfo), caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
+    }
+
+    public TaakActies readTaakActies(final String taskId) {
+        return readTaakActies(taskService.readTask(taskId));
     }
 
     public ZakenActies readZakenActies() {
@@ -209,32 +217,4 @@ public class PolicyService {
         return response.getResult().stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableSet());
     }
 
-    private ZaakData createZaakData(final Zaak zaak) {
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        Statustype statustype = null;
-        if (zaak.getStatus() != null) {
-            statustype = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype());
-        }
-        return createZaakData(zaak, zaaktype, statustype, behandelaar);
-    }
-
-    private ZaakData createZaakData(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
-        final ZaakData zaakData = new ZaakData();
-        zaakData.open = zaak.isOpen();
-        zaakData.opgeschort = zaak.isOpgeschort();
-        zaakData.zaaktype = zaaktype.getOmschrijving();
-        zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
-        zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
-        return zaakData;
-    }
-
-    private EnkelvoudigInformatieobjectData createEnkelvoudigInformatieobjectData(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final String vergrendeldDoor) {
-        final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData = new EnkelvoudigInformatieobjectData();
-        enkelvoudigInformatieobjectData.definitief = enkelvoudigInformatieobject.getStatus() == DEFINITIEF;
-        enkelvoudigInformatieobjectData.vergrendeld = enkelvoudigInformatieobject.getLocked();
-        enkelvoudigInformatieobjectData.vergrendeldDoor = vergrendeldDoor;
-        return enkelvoudigInformatieobjectData;
-    }
 }
