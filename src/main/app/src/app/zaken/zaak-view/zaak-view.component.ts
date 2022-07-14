@@ -392,15 +392,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createInitiatorToevoegenMenuItems(): void {
-        if (this.zaak.acties.toevoegenPersoon || this.zaak.acties.toevoegenBedrijf) {
+        if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) {
             this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
-            if (this.zaak.acties.toevoegenPersoon) {
+            if (this.zaak.acties.toevoegenInitiatorPersoon) {
                 this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_PERSOON;
                 }, 'emoji_people'));
             }
-            if (this.zaak.acties.toevoegenBedrijf) {
+            if (this.zaak.acties.toevoegenInitiatorBedrijf) {
                 this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BEDRIJF;

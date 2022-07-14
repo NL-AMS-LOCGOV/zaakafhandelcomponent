@@ -25,9 +25,12 @@ public class RESTZaakActiesConverter {
         restZaakActies.koppelen = zaakActies.getKoppelen();
         restZaakActies.versturenEmail = zaakActies.getVersturenEmail();
         restZaakActies.versturenOntvangstbevestiging = zaakActies.getVersturenOntvangstbevestiging();
-        restZaakActies.toevoegenPersoon = zaakActies.getToevoegenPersoon();
-        restZaakActies.toevoegenBedrijf = zaakActies.getToevoegenBedrijf();
+        restZaakActies.toevoegenInitiatorPersoon = zaakActies.getToevoegenInitiatorPersoon();
+        restZaakActies.toevoegenInitiatorBedrijf = zaakActies.getToevoegenInitiatorBedrijf();
         restZaakActies.verwijderenInitiator = zaakActies.getVerwijderenInitiator();
+        restZaakActies.toevoegenBetrokkenePersoon = zaakActies.getToevoegenBetrokkenePersoon();
+        restZaakActies.toevoegenBetrokkeneBedrijf = zaakActies.getToevoegenBetrokkeneBedrijf();
+        restZaakActies.verwijderenBetrokkene = zaakActies.getVerwijderenBetrokkene();
         restZaakActies.wijzigenToekenning = zaakActies.getWijzigenToekenning();
         restZaakActies.wijzigenOverig = zaakActies.getWijzigenOverig();
         restZaakActies.startenPlanItems = zaakActies.getStartenPlanItems();

@@ -227,7 +227,7 @@ public class ZakenRESTService {
     public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         final ZaakActies zaakActies = policyService.readZaakActies(zaak);
-        assertActie(zaakActies.getToevoegenBedrijf() || zaakActies.getToevoegenPersoon());
+        assertActie(zaakActies.getToevoegenInitiatorBedrijf() || zaakActies.getToevoegenInitiatorPersoon());
         addInitiator(gegevens.betrokkeneIdentificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
     }
 
@@ -570,11 +570,11 @@ public class ZakenRESTService {
     private void addInitiator(final String identificatienummer, final Zaak zaak, String toelichting) {
         switch (identificatienummer.length()) {
             case 9 -> {
-                assertActie(policyService.readZaakActies(zaak).getToevoegenPersoon());
+                assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorPersoon());
                 addInitiatorBurger(identificatienummer, zaak, toelichting);
             }
             case 12 -> {
-                assertActie(policyService.readZaakActies(zaak).getToevoegenBedrijf());
+                assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorBedrijf());
                 addInitiatorBedrijf(identificatienummer, zaak, toelichting);
             }
             default -> throw new IllegalStateException("Unexpected value: '%s'" + identificatienummer);
