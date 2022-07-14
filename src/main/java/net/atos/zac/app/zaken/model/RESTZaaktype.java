@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.zaken.model;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class RESTZaaktype {
@@ -20,4 +21,6 @@ public class RESTZaaktype {
     public String referentieproces;
 
     public boolean servicenorm;
+
+    public LocalDate versiedatum;
 }

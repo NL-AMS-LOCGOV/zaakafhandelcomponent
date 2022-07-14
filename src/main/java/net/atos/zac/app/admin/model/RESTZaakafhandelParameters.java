@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class RESTZaakafhandelParameters {
 
     public Integer uiterlijkeEinddatumAfdoeningWaarschuwing;
 
+    public ZonedDateTime creatiedatum;
+
     public RESTZaakResultaattype zaakNietOntvankelijkResultaat;
+
+    public boolean valide;
 
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
 

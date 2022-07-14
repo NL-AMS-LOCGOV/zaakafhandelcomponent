@@ -6,13 +6,19 @@
 package net.atos.zac.zaaksturing;
 
 import static net.atos.zac.util.ValidationUtil.valideerObject;
+import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.CREATIEDATUM;
+import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_UUID;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -24,6 +30,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Resultaattype;
+import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.util.ValidationUtil;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
@@ -38,10 +48,14 @@ public class ZaakafhandelParameterBeheerService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
+    @Inject
+    private ZTCClientService ztcClientService;
+
     public ZaakafhandelParameters createZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.getUserEventListenerParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.setCreatiedatum(ZonedDateTime.now());
         entityManager.persist(zaakafhandelParameters);
         return zaakafhandelParameters;
     }
@@ -61,9 +75,24 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
+    public ZaakafhandelParameters findRecentsteZaakafhandelParameters(final String zaaktypeOmschrijving) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
+        final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
+        query.select(root).where(builder.equal(root.get(ZAAKTYPE_OMSCHRIJVING), zaaktypeOmschrijving));
+        query.orderBy(builder.desc(root.get(CREATIEDATUM)));
+        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).setMaxResults(1).getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return new ZaakafhandelParameters();
+        }
+    }
+
     public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         valideerObject(zaakafhandelParameters);
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.setCreatiedatum(entityManager.find(ZaakafhandelParameters.class, zaakafhandelParameters.getId()).getCreatiedatum());
         return entityManager.merge(zaakafhandelParameters);
     }
 
@@ -71,6 +100,7 @@ public class ZaakafhandelParameterBeheerService {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
+        query.orderBy(builder.desc(root.get("id")));
         query.select(root);
         return entityManager.createQuery(query).getResultList();
     }
@@ -128,5 +158,77 @@ public class ZaakafhandelParameterBeheerService {
                 .findAny().orElseThrow(() -> new RuntimeException(
                         String.format("No ZaakbeeindigParameter found for zaaktypeUUID: '%s' and zaakbeeindigRedenId: '%d'", zaaktypeUUID.toString(),
                                       zaakbeeindigRedenId)));
+    }
+
+    /**
+     * Zaaktype is aangepast, indien geen concept, dan de zaakafhandelparameters van de vorige versie zoveel mogelijk overnemen
+     *
+     * @param zaaktypeUri uri van het nieuwe zaaktype
+     */
+    public void zaaktypeAangepast(final URI zaaktypeUri) {
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUri);
+        if (!zaaktype.getConcept()) {
+            final String omschrijving = zaaktype.getOmschrijving();
+            final ZaakafhandelParameters vorigeZaakafhandelparameters = findRecentsteZaakafhandelParameters(omschrijving);
+            final ZaakafhandelParameters nieuweZaakafhandelParameters = new ZaakafhandelParameters();
+            nieuweZaakafhandelParameters.setZaakTypeUUID(UriUtil.uuidFromURI(zaaktype.getUrl()));
+            nieuweZaakafhandelParameters.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
+            nieuweZaakafhandelParameters.setCaseDefinitionID(vorigeZaakafhandelparameters.getCaseDefinitionID());
+            nieuweZaakafhandelParameters.setGroepID(vorigeZaakafhandelparameters.getGroepID());
+            nieuweZaakafhandelParameters.setGebruikersnaamMedewerker(vorigeZaakafhandelparameters.getGebruikersnaamMedewerker());
+            if (zaaktype.isServicenormBeschikbaar()) {
+                nieuweZaakafhandelParameters.setEinddatumGeplandWaarschuwing(vorigeZaakafhandelparameters.getEinddatumGeplandWaarschuwing());
+            }
+            nieuweZaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(
+                    vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+
+            final HashSet<HumanTaskParameters> humanTaskParametersCollection = new HashSet<>();
+            vorigeZaakafhandelparameters.getHumanTaskParametersCollection().forEach(humanTaskParameters -> {
+                final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
+                nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
+                nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
+                nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
+                humanTaskParametersCollection.add(nieuweHumanTaskParameters);
+            });
+            nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);
+
+            final HashSet<UserEventListenerParameters> userEventListenerParametersCollection = new HashSet<>();
+            vorigeZaakafhandelparameters.getUserEventListenerParametersCollection().forEach(userEventListenerParameters -> {
+                final UserEventListenerParameters nieuweUserEventListenerParameters = new UserEventListenerParameters();
+                nieuweUserEventListenerParameters.setPlanItemDefinitionID(userEventListenerParameters.getPlanItemDefinitionID());
+                nieuweUserEventListenerParameters.setToelichting(userEventListenerParameters.getToelichting());
+                userEventListenerParametersCollection.add(nieuweUserEventListenerParameters);
+            });
+            nieuweZaakafhandelParameters.setUserEventListenerParametersCollection(userEventListenerParametersCollection);
+
+            final List<Resultaattype> nieuweResultaattypen = zaaktype.getResultaattypen().stream().map(rt -> ztcClientService.readResultaattype(rt)).toList();
+            nieuweZaakafhandelParameters.setNietOntvankelijkResultaattype(
+                    mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen, vorigeZaakafhandelparameters.getNietOntvankelijkResultaattype()));
+
+            final HashSet<ZaakbeeindigParameter> zaakbeeindigParametersCollection = new HashSet<>();
+            vorigeZaakafhandelparameters.getZaakbeeindigParameters().forEach(vorigeZaakbeeindigParameter -> {
+                final UUID nieuwResultaattypeUUID = mapVorigResultaattypeOpNieuwResultaattype(nieuweResultaattypen,
+                                                                                              vorigeZaakbeeindigParameter.getResultaattype());
+                if (nieuwResultaattypeUUID != null) {
+                    final ZaakbeeindigParameter nieuweZaakbeeindigParameters = new ZaakbeeindigParameter();
+                    nieuweZaakbeeindigParameters.setZaakbeeindigReden(vorigeZaakbeeindigParameter.getZaakbeeindigReden());
+                    nieuweZaakbeeindigParameters.setResultaattype(nieuwResultaattypeUUID);
+                    zaakbeeindigParametersCollection.add(nieuweZaakbeeindigParameters);
+                }
+            });
+            nieuweZaakafhandelParameters.setZaakbeeindigParameters(zaakbeeindigParametersCollection);
+
+            createZaakafhandelParameters(nieuweZaakafhandelParameters);
+        }
+    }
+
+    private UUID mapVorigResultaattypeOpNieuwResultaattype(final List<Resultaattype> nieuweResultaattypen, final UUID vorigResultaattypeUUID) {
+        if (vorigResultaattypeUUID == null) {
+            return null;
+        }
+        final Resultaattype vorigResultaattype = ztcClientService.readResultaattype(vorigResultaattypeUUID);
+        return nieuweResultaattypen.stream()
+                .filter(resultaattype -> resultaattype.getOmschrijving().equals(vorigResultaattype.getOmschrijving())).findAny()
+                .map(resultaattype -> UriUtil.uuidFromURI(resultaattype.getUrl())).orElse(null);
     }
 }

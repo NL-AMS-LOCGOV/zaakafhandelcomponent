@@ -17,10 +17,12 @@ export class ZaakafhandelParameters {
     caseDefinition: CaseDefinition;
     defaultBehandelaar: User;
     defaultGroep: Group;
+    creatiedatum: string;
     einddatumGeplandWaarschuwing: number;
     uiterlijkeEinddatumAfdoeningWaarschuwing: number;
     zaakNietOntvankelijkResultaat: ZaakResultaat;
     humanTaskParameters: HumanTaskParameter[];
     userEventListenerParameters: UserEventListenerParameter[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];
+    valide: boolean;
 }
