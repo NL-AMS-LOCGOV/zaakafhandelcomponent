@@ -16,6 +16,7 @@ import static net.atos.zac.notificaties.Resource.ROL;
 import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
 import static net.atos.zac.notificaties.Resource.ZAAKINFORMATIEOBJECT;
+import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
 
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zoeken.IndexeerService;
 
 /**
@@ -67,6 +69,9 @@ public class NotificatieReceiver {
     @Inject
     private InboxDocumentenService inboxDocumentenService;
 
+    @Inject
+    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+
     @POST
     public Response notificatieReceive(final Notificatie notificatie) {
         LOG.info(() -> String
@@ -80,8 +85,17 @@ public class NotificatieReceiver {
             handleProductAanvraag(notificatie);
             handleIndexering(notificatie);
             handleInboxDocumenten(notificatie);
+            handleZaaktype(notificatie);
         }
         return noContent().build();
+    }
+
+    private void handleZaaktype(final Notificatie notificatie) {
+        if (notificatie.getResource() == ZAAKTYPE) {
+            if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                zaakafhandelParameterBeheerService.zaaktypeAangepast(notificatie.getResourceUrl());
+            }
+        }
     }
 
     private void handleCaches(final Notificatie notificatie) {

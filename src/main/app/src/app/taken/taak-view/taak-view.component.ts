@@ -25,7 +25,6 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {User} from '../../identity/model/user';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {TaakStatus} from '../model/taak-status.enum';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
 import {TranslateService} from '@ngx-translate/core';
@@ -99,7 +98,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.removeListener(this.taakListener);
     }
 
-    initTaakGegevens(taak: Taak): void {
+    private initTaakGegevens(taak: Taak): void {
         this.menu = [];
         this.taak = taak;
         this.loadHistorie();
@@ -107,13 +106,13 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.setupMenu();
     }
 
-    init(taak: Taak): void {
+    private init(taak: Taak): void {
         this.initTaakGegevens(taak);
         this.createTaakForm(taak);
     }
 
-    createTaakForm(taak: Taak): void {
-        if (TaakStatus.Afgerond !== this.taak.status) {
+    private createTaakForm(taak: Taak): void {
+        if (this.taak.acties.wijzigenFormulier) {
             this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
         } else {
             this.formConfig = null;
@@ -126,7 +125,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.utilService.setTitle('title.taak', {taak: this.formulier.getBehandelTitel()});
     }
 
-    setEditableFormFields(): void {
+    private setEditableFormFields(): void {
         this.editFormFields.set('behandelaar',
             new AutocompleteFormFieldBuilder().id('behandelaar')
                                               .label('behandelaar')
@@ -145,18 +144,21 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                                           .value(this.taak.toelichting)
                                           .maxlength(1000)
                                           .build());
+
         this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (!this.isAfgerond()) {
+        if (this.taak.acties.toevoegenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
+        }
 
+        if (this.taak.acties.creeerenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_MAKEN;
@@ -239,13 +241,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }));
     }
 
-    afronden = (): void => {
-        this.takenService.complete(this.taak).subscribe(taak => {
-            this.utilService.openSnackbar('msg.taak.afgerond');
-            this.init(taak);
-        });
-    };
-
     private getIngelogdeMedewerker() {
         this.identityService.readLoggedInUser().subscribe(ingelogdeMedewerker => {
             this.ingelogdeMedewerker = ingelogdeMedewerker;
@@ -263,14 +258,6 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
             this.init(this.taak);
         });
-    }
-
-    isAfgerond() {
-        return this.taak.status === TaakStatus.Afgerond;
-    }
-
-    updateMargins(): void {
-        setTimeout(() => this.sideNavContainer.updateContentMargins(), 250);
     }
 
     updateTaakdocumenten(informatieobject: EnkelvoudigInformatieobject) {

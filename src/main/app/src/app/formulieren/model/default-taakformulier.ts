@@ -42,7 +42,7 @@ export class DefaultTaakformulier extends AbstractFormulier {
                                            .build()],
             [new TextareaFormFieldBuilder().id(fields.AFHANDELING).label(fields.AFHANDELING)
                                            .value(this.getDataElement(fields.AFHANDELING))
-                                           .validators(Validators.required).readonly(this.isAfgerond()).maxlength(1000)
+                                           .validators(Validators.required).readonly(this.readonly).maxlength(1000)
                                            .build()]
         );
     }

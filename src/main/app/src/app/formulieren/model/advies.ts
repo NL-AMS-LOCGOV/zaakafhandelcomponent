@@ -67,17 +67,17 @@ export class Advies extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.ADVIES)
                                         .label(fields.ADVIES)
-                                        .value(this.isAfgerond() && adviesDataElement ?
+                                        .value(this.readonly && adviesDataElement ?
                                             this.translate.instant(adviesDataElement) : adviesDataElement)
                                         .options(this.getAdviesOpties())
                                         .validators(Validators.required)
-                                        .readonly(this.isAfgerond())
+                                        .readonly(this.readonly)
                                         .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
                                            .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
-                                           .readonly(this.isAfgerond())
+                                           .readonly(this.readonly)
                                            .maxlength(1000)
                                            .build()]
         );

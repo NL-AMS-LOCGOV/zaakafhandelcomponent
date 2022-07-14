@@ -6,7 +6,6 @@
 import {PlanItem} from '../plan-items/model/plan-item';
 import {AbstractFormulier} from './model/abstract-formulier';
 import {Taak} from '../taken/model/taak';
-import {TaakStatus} from '../taken/model/taak-status.enum';
 import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {HumanTaskData} from '../plan-items/model/human-task-data';
 import {DividerFormFieldBuilder} from '../shared/material-form-builder/form-components/divider/divider-form-field-builder';
@@ -39,7 +38,7 @@ export class FormulierBuilder {
     behandelForm(taak: Taak): FormulierBuilder {
         this._formulier.taak = taak;
         this._formulier.dataElementen = taak.taakdata;
-        this._formulier.initBehandelForm(TaakStatus.Afgerond === taak.status);
+        this._formulier.initBehandelForm(!taak.acties.wijzigenFormulier);
         return this;
     }
 
