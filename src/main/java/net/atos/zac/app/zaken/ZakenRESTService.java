@@ -106,7 +106,6 @@ import net.atos.zac.policy.output.ZaakActies;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
-import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zoeken.IndexeerService;
@@ -384,11 +383,11 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaaktypes")
-    public List<RESTZaaktype> listZaaktypesVoorCreateZaak() {
+    public List<RESTZaaktype> listZaaktypes() {
         List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
                 .filter(zaaktype -> !zaaktype.getConcept())
                 .filter(Zaaktype::isNuGeldig)
-                .filter(zaaktype -> zaakafhandelParameterBeheerService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaaktype.getUrl())).isValide())
+                .filter(zaaktype -> zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktype.getUUID()).isValide())
                 .toList();
         zaaktypen = policyService.filterAllowedZaaktypen(zaaktypen);
         return zaaktypen.stream().map(zaaktypeConverter::convert).toList();

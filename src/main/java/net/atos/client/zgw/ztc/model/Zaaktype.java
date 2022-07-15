@@ -10,11 +10,14 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
+import net.atos.client.zgw.shared.util.URIUtil;
 
 /**
  *
@@ -555,11 +558,17 @@ public class Zaaktype {
         return versiedatum;
     }
 
+    public void setVersiedatum(final LocalDate versiedatum) {
+        this.versiedatum = versiedatum;
+    }
+
+    @JsonbTransient
     public boolean isNuGeldig() {
         return beginGeldigheid.isBefore(LocalDate.now().plusDays(1)) && (eindeGeldigheid == null || eindeGeldigheid.isAfter(LocalDate.now()));
     }
 
-    public void setVersiedatum(final LocalDate versiedatum) {
-        this.versiedatum = versiedatum;
+    @JsonbTransient
+    public UUID getUUID() {
+        return URIUtil.parseUUIDFromResourceURI(url);
     }
 }
