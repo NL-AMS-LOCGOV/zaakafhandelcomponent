@@ -31,11 +31,17 @@ public class RESTZaakActies {
 
     public boolean versturenOntvangstbevestiging;
 
-    public boolean toevoegenPersoon;
+    public boolean toevoegenInitiatorPersoon;
 
-    public boolean toevoegenBedrijf;
+    public boolean toevoegenInitiatorBedrijf;
 
     public boolean verwijderenInitiator;
+
+    public boolean toevoegenBetrokkenePersoon;
+
+    public boolean toevoegenBetrokkeneBedrijf;
+
+    public boolean verwijderenBetrokkene;
 
     public boolean wijzigenToekenning;
 

@@ -13,6 +13,11 @@ public class EnkelvoudigInformatieobjectData {
 
     public boolean vergrendeld;
 
+    public String zaaktype;
+
     @JsonbProperty("vergrendeld_door")
     public String vergrendeldDoor;
+
+    @JsonbProperty("zaak_open")
+    public boolean zaakOpen;
 }

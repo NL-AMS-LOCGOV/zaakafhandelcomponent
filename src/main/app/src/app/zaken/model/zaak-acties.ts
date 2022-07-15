@@ -16,9 +16,12 @@ export class ZaakActies {
     koppelen: boolean;
     versturenEmail: boolean;
     versturenOntvangstbevestiging: boolean;
-    toevoegenPersoon: boolean;
-    toevoegenBedrijf: boolean;
+    toevoegenInitiatorPersoon: boolean;
+    toevoegenInitiatorBedrijf: boolean;
     verwijderenInitiator: boolean;
+    toevoegenBetrokkenePersoon: boolean;
+    toevoegenBetrokkeneBedrijf: boolean;
+    verwijderenBetrokkene: boolean;
     wijzigenToekenning: boolean;
     wijzigenOverig: boolean;
     startenPlanItems: boolean;
