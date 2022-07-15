@@ -40,7 +40,6 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.zac.aanvraag.ProductAanvraag;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.documentcreatie.model.AanvragerData;
@@ -175,7 +174,7 @@ public class DataConverter {
     }
 
     private AanvragerData createAanvragerData(final Zaak zaak) {
-        final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
         if (initiator != null) {
             return convertToAanvragerData(initiator);
         } else {

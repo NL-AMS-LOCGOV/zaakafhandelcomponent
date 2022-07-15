@@ -250,6 +250,10 @@ public class ZGWApiService {
         return (RolMedewerker) findRolForZaak(zaak, AardVanRol.BEHANDELAAR, BetrokkeneType.MEDEWERKER);
     }
 
+    public Rol<?> findInitiatorForZaak(final Zaak zaak) {
+        return findRolForZaak(zaak, AardVanRol.INITIATOR);
+    }
+
     public Rol<?> findRolForZaak(final Zaak zaak, final AardVanRol aardVanRol) {
         final Roltype roltype = ztcClientService.findRoltype(zaak.getZaaktype(), aardVanRol);
         if (roltype != null) {
