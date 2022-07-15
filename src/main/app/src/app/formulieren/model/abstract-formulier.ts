@@ -18,6 +18,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {map} from 'rxjs/operators';
 
 export abstract class AbstractFormulier {
 
@@ -103,7 +104,6 @@ export abstract class AbstractFormulier {
             [new DocumentenLijstFieldBuilder().id(AbstractFormulier.BIJLAGEN_FIELD)
                                               .label(AbstractFormulier.BIJLAGEN_FIELD)
                                               .documenten(this.getTaakdocumenten())
-                                              .ondertekend(JSON.parse(this.dataElementen['bijlagen']).ondertekend)
                                               .readonly(true)
                                               .build()]);
 
@@ -122,7 +122,13 @@ export abstract class AbstractFormulier {
             });
         }
 
-        return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+        return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(
+            map(arr => arr.map(enkelvoudigInformatieObject => {
+                const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
+                enkelvoudigInformatieObject.ondertekend = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1;
+                return enkelvoudigInformatieObject;
+            }))
+        );
     }
 
     private getDocumentInformatie() {
