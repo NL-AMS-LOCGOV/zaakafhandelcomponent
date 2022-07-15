@@ -28,6 +28,7 @@ import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -92,18 +93,20 @@ public class PolicyService {
         return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
-    public ZaakActies readZaakActies(final UUID zaakUUID) {
-        return readZaakActies(zrcClientService.readZaak(zaakUUID));
-    }
-
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar,
+            final Rol<?> initiator) {
         final ZaakData zaakData = new ZaakData();
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
         zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        zaakData.initiator = initiator != null;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+    }
+
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+        return readZaakActies(zaak, zaaktype, statustype, behandelaar, zgwApiService.findInitiatorForZaak(zaak));
     }
 
     public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
@@ -114,6 +117,10 @@ public class PolicyService {
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
+    }
+
+    public ZaakActies readZaakActies(final UUID zaakUUID) {
+        return readZaakActies(zrcClientService.readZaak(zaakUUID));
     }
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,

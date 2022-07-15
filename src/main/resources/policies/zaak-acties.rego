@@ -24,7 +24,7 @@ zaak_acties := {
     "verwijderen_initiator": verwijderen_initiator,
     "toevoegen_betrokkene_persoon": toevoegen_betrokkene_persoon,
     "toevoegen_betrokkene_bedrijf": toevoegen_betrokkene_bedrijf,
-    "verwijderen_betrokkene_": verwijderen_betrokkene_,
+    "verwijderen_betrokkene": verwijderen_betrokkene,
     "wijzigen_toekenning": wijzigen_toekenning,
     "wijzigen_overig": wijzigen_overig,
     "starten_plan_items": starten_plan_items
@@ -114,18 +114,21 @@ versturen_ontvangstbevestiging {
 default toevoegen_initiator_persoon := false
 toevoegen_initiator_persoon {
     zaak.open == true
+    zaak.initiator == false
     zaaktype_allowed == true
 }
 
 default toevoegen_initiator_bedrijf := false
 toevoegen_initiator_bedrijf {
     zaak.open == true
+    zaak.initiator == false
     zaaktype_allowed == true
 }
 
 default verwijderen_initiator := false
 verwijderen_initiator {
     zaak.open == true
+    zaak.initiator == true
     zaaktype_allowed == true
 }
 
@@ -141,8 +144,8 @@ toevoegen_betrokkene_bedrijf {
     zaaktype_allowed == true
 }
 
-default verwijderen_betrokkene_ := false
-verwijderen_initiator {
+default verwijderen_betrokkene := false
+verwijderen_betrokkene {
     zaak.open == true
     zaaktype_allowed == true
 }
