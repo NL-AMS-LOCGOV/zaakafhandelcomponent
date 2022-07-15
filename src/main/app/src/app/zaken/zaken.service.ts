@@ -154,17 +154,17 @@ export class ZakenService {
         );
     }
 
-    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string): Observable<void> {
+    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string): Observable<Zaak> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
-        return this.http.post<void>(`${this.basepath}/initiator`, gegevens).pipe(
+        return this.http.post<Zaak>(`${this.basepath}/initiator`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    deleteInitiator(zaak: Zaak): Observable<void> {
-        return this.http.delete<void>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
+    deleteInitiator(zaak: Zaak): Observable<Zaak> {
+        return this.http.delete<Zaak>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

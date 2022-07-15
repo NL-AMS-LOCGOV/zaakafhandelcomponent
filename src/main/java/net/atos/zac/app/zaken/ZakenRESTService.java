@@ -224,20 +224,22 @@ public class ZakenRESTService {
 
     @POST
     @Path("initiator")
-    public void createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
+    public RESTZaak createInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         final ZaakActies zaakActies = policyService.readZaakActies(zaak);
         assertActie(zaakActies.getToevoegenInitiatorBedrijf() || zaakActies.getToevoegenInitiatorPersoon());
         addInitiator(gegevens.betrokkeneIdentificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
+        return zaakConverter.convert(zaak);
     }
 
     @DELETE
     @Path("{uuid}/initiator")
-    public void deleteInitiator(@PathParam("uuid") final UUID zaakUUID) {
+    public RESTZaak deleteInitiator(@PathParam("uuid") final UUID zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertActie(policyService.readZaakActies(zaak).getVerwijderenInitiator());
-        final Rol<?> initiator = zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR);
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
         zrcClientService.deleteRol(zaak.getUrl(), initiator.getBetrokkeneType(), INITIATOR_VERWIJDER_REDEN);
+        return zaakConverter.convert(zaak);
     }
 
     @POST

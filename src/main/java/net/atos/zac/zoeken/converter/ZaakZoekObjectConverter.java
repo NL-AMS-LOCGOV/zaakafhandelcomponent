@@ -15,7 +15,6 @@ import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -68,7 +67,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
-        zaakZoekObject.setInitiatorIdentificatie(zgwApiService.findRolForZaak(zaak, AardVanRol.INITIATOR));
+        zaakZoekObject.setInitiatorIdentificatie(zgwApiService.findInitiatorForZaak(zaak));
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
         final CommunicatieKanaal kanaal = findCommunicatieKanaal(zaak);
