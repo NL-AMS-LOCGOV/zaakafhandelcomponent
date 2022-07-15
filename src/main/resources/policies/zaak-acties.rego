@@ -19,9 +19,12 @@ zaak_acties := {
     "koppelen": koppelen,
     "versturen_email": versturen_email,
     "versturen_ontvangstbevestiging": versturen_ontvangstbevestiging,
-    "toevoegen_persoon": toevoegen_persoon,
-    "toevoegen_bedrijf": toevoegen_bedrijf,
+    "toevoegen_initiator_persoon": toevoegen_initiator_persoon,
+    "toevoegen_initiator_bedrijf": toevoegen_initiator_bedrijf,
     "verwijderen_initiator": verwijderen_initiator,
+    "toevoegen_betrokkene_persoon": toevoegen_betrokkene_persoon,
+    "toevoegen_betrokkene_bedrijf": toevoegen_betrokkene_bedrijf,
+    "verwijderen_betrokkene_": verwijderen_betrokkene_,
     "wijzigen_toekenning": wijzigen_toekenning,
     "wijzigen_overig": wijzigen_overig,
     "starten_plan_items": starten_plan_items
@@ -108,19 +111,37 @@ versturen_ontvangstbevestiging {
     zaaktype_allowed == true
 }
 
-default toevoegen_persoon := false
-toevoegen_persoon {
+default toevoegen_initiator_persoon := false
+toevoegen_initiator_persoon {
     zaak.open == true
     zaaktype_allowed == true
 }
 
-default toevoegen_bedrijf := false
-toevoegen_bedrijf {
+default toevoegen_initiator_bedrijf := false
+toevoegen_initiator_bedrijf {
     zaak.open == true
     zaaktype_allowed == true
 }
 
 default verwijderen_initiator := false
+verwijderen_initiator {
+    zaak.open == true
+    zaaktype_allowed == true
+}
+
+default toevoegen_betrokkene_persoon := false
+toevoegen_betrokkene_persoon {
+    zaak.open == true
+    zaaktype_allowed == true
+}
+
+default toevoegen_betrokkene_bedrijf := false
+toevoegen_betrokkene_bedrijf {
+    zaak.open == true
+    zaaktype_allowed == true
+}
+
+default verwijderen_betrokkene_ := false
 verwijderen_initiator {
     zaak.open == true
     zaaktype_allowed == true

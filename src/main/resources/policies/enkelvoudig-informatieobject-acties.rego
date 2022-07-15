@@ -4,7 +4,6 @@ import future.keywords
 import data.net.atos.zac.rollen
 import data.net.atos.zac.alle_zaaktypen
 import input.user
-import input.zaak
 import input.enkelvoudig_informatieobject
 
 enkelvoudig_informatieobject_acties := {
@@ -20,10 +19,6 @@ enkelvoudig_informatieobject_acties := {
 
 default lezen := false
 lezen {
-    not zaak
-}
-lezen {
-    zaak
     zaaktype_allowed
 }
 
@@ -34,7 +29,6 @@ verwijderen {
 
 default koppelen := false
 koppelen {
-    zaak.open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.definitief == false
     enkelvoudig_informatieobject.vergrendeld == false
@@ -45,16 +39,12 @@ koppelen {
 
 default downloaden := false
 downloaden {
-    not zaak
-}
-downloaden {
-    zaak
     zaaktype_allowed
 }
 
 default toevoegen_nieuwe_versie := false
 toevoegen_nieuwe_versie {
-    zaak.open == true
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
@@ -62,7 +52,7 @@ toevoegen_nieuwe_versie {
 
 default bewerken := false
 bewerken {
-    zaak.open == true
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
@@ -70,7 +60,7 @@ bewerken {
 
 default vergrendelen := false
 vergrendelen {
-    zaak.open == true
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.vergrendeld == false
     enkelvoudig_informatieobject.definitief == false
@@ -97,6 +87,9 @@ onvergrendeld_of_vergrendeld_door_user {
 
 default zaaktype_allowed := false
 zaaktype_allowed {
+    not enkelvoudig_informatieobject.zaaktype
+}
+zaaktype_allowed {
     some rol
     rollen[rol].id in user.rollen
     alle_zaaktypen == rollen[rol].zaaktypen
@@ -104,6 +97,6 @@ zaaktype_allowed {
 zaaktype_allowed {
     some rol
     rollen[rol].id in user.rollen
-    zaak.zaaktype in rollen[rol].zaaktypen
+    enkelvoudig_informatieobject.zaaktype in rollen[rol].zaaktypen
 }
 

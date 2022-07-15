@@ -9,14 +9,13 @@ import javax.json.bind.annotation.JsonbProperty;
 
 import net.atos.zac.authentication.LoggedInUser;
 
-public class EnkelvoudigInformatieobjectInput extends ZaakInput {
+public class EnkelvoudigInformatieobjectInput extends UserInput {
 
     @JsonbProperty("enkelvoudig_informatieobject")
     private final EnkelvoudigInformatieobjectData enkelvoudigInformatieobject;
 
-    public EnkelvoudigInformatieobjectInput(final LoggedInUser loggedInUser, final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData,
-            final ZaakData zaakData) {
-        super(loggedInUser, zaakData);
+    public EnkelvoudigInformatieobjectInput(final LoggedInUser loggedInUser, final EnkelvoudigInformatieobjectData enkelvoudigInformatieobjectData) {
+        super(loggedInUser);
         enkelvoudigInformatieobject = enkelvoudigInformatieobjectData;
     }
 

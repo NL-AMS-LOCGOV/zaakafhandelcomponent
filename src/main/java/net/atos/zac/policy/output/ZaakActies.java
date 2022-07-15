@@ -35,11 +35,17 @@ public class ZaakActies {
 
     private final boolean versturenOntvangstbevestiging;
 
-    private final boolean toevoegenPersoon;
+    private final boolean toevoegenInitiatorPersoon;
 
-    private final boolean toevoegenBedrijf;
+    private final boolean toevoegenInitiatorBedrijf;
 
     private final boolean verwijderenInitiator;
+
+    private final boolean toevoegenBetrokkenePersoon;
+
+    private final boolean toevoegenBetrokkeneBedrijf;
+
+    private final boolean verwijderenBetrokkene;
 
     private final boolean wijzigenToekenning;
 
@@ -60,9 +66,12 @@ public class ZaakActies {
             @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("versturen_email") final boolean versturenEmail,
             @JsonbProperty("versturen_ontvangstbevestiging") final boolean versturenOntvangstbevestiging,
-            @JsonbProperty("toevoegen_persoon") final boolean toevoegenPersoon,
-            @JsonbProperty("toevoegen_bedrijf") final boolean toevoegenBedrijf,
+            @JsonbProperty("toevoegen_initiator_persoon") final boolean toevoegenInitiatorPersoon,
+            @JsonbProperty("toevoegen_initiator_bedrijf") final boolean toevoegenInitiatorBedrijf,
             @JsonbProperty("verwijderen_initiator") final boolean verwijderenInitiator,
+            @JsonbProperty("toevoegen_betrokkene_persoon") final boolean toevoegenBetrokkenePersoon,
+            @JsonbProperty("toevoegen_betrokkene_bedrijf") final boolean toevoegenBetrokkeneBedrijf,
+            @JsonbProperty("verwijderen_betrokkene") final boolean verwijderenBetrokkene,
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
             @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
             @JsonbProperty("starten_plan_items") final boolean startenPlanItems) {
@@ -78,9 +87,12 @@ public class ZaakActies {
         this.koppelen = koppelen;
         this.versturenEmail = versturenEmail;
         this.versturenOntvangstbevestiging = versturenOntvangstbevestiging;
-        this.toevoegenPersoon = toevoegenPersoon;
-        this.toevoegenBedrijf = toevoegenBedrijf;
+        this.toevoegenInitiatorPersoon = toevoegenInitiatorPersoon;
+        this.toevoegenInitiatorBedrijf = toevoegenInitiatorBedrijf;
         this.verwijderenInitiator = verwijderenInitiator;
+        this.toevoegenBetrokkenePersoon = toevoegenBetrokkenePersoon;
+        this.toevoegenBetrokkeneBedrijf = toevoegenBetrokkeneBedrijf;
+        this.verwijderenBetrokkene = verwijderenBetrokkene;
         this.wijzigenToekenning = wijzigenToekenning;
         this.wijzigenOverig = wijzigenOverig;
         this.startenPlanItems = startenPlanItems;
@@ -134,16 +146,28 @@ public class ZaakActies {
         return koppelen;
     }
 
-    public boolean getToevoegenPersoon() {
-        return toevoegenPersoon;
+    public boolean getToevoegenInitiatorPersoon() {
+        return toevoegenInitiatorPersoon;
     }
 
-    public boolean getToevoegenBedrijf() {
-        return toevoegenBedrijf;
+    public boolean getToevoegenInitiatorBedrijf() {
+        return toevoegenInitiatorBedrijf;
     }
 
     public boolean getVerwijderenInitiator() {
         return verwijderenInitiator;
+    }
+
+    public boolean getToevoegenBetrokkenePersoon() {
+        return toevoegenBetrokkenePersoon;
+    }
+
+    public boolean getToevoegenBetrokkeneBedrijf() {
+        return toevoegenBetrokkeneBedrijf;
+    }
+
+    public boolean getVerwijderenBetrokkene() {
+        return verwijderenBetrokkene;
     }
 
     public boolean getWijzigenToekenning() {
