@@ -103,6 +103,7 @@ export abstract class AbstractFormulier {
             [new DocumentenLijstFieldBuilder().id(AbstractFormulier.BIJLAGEN_FIELD)
                                               .label(AbstractFormulier.BIJLAGEN_FIELD)
                                               .documenten(this.getTaakdocumenten())
+                                              .ondertekend(JSON.parse(this.dataElementen['bijlagen']).ondertekend)
                                               .readonly(true)
                                               .build()]);
 

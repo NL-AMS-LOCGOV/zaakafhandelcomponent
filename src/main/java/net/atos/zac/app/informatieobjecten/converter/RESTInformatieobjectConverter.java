@@ -21,6 +21,7 @@ import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.drc.model.Ondertekening;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -94,6 +95,8 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
+        final Ondertekening ondertekening = enkelvoudigInformatieObject.getOndertekening();
+        restEnkelvoudigInformatieobject.ondertekend = ondertekening.getDatum() != null && ondertekening.getSoort() != null;
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()

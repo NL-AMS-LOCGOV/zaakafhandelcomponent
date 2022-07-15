@@ -219,6 +219,7 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
+        //TODO: Sign Documents
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = taskService.completeTask(restTaak.id);

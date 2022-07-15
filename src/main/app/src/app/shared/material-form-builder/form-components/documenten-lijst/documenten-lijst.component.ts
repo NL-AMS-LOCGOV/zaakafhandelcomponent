@@ -41,6 +41,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
                 document['viewLink'] = `/informatie-objecten/${document.uuid}`;
                 document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
+                if(document.ondertekend) {
+                    this.ondertekend.push(document.uuid);
+                }
             }
             this.dataSource.data = documenten;
             this.loading = false;
@@ -63,7 +66,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         if($event) {
             const index = this.ondertekend.indexOf(document.uuid);
             if(index > -1) {
-                this.ondertekend = this.ondertekend.slice(index, 1);
+                this.ondertekend.splice(index, 1);
             } else {
                 this.ondertekend.push(document.uuid);
             }
