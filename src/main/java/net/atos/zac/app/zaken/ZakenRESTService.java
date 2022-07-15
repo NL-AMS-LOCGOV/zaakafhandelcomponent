@@ -384,7 +384,11 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
-        List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI());
+        List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
+                .filter(zaaktype -> !zaaktype.getConcept())
+                .filter(Zaaktype::isNuGeldig)
+                .filter(zaaktype -> zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktype.getUUID()).isValide())
+                .toList();
         zaaktypen = policyService.filterAllowedZaaktypen(zaaktypen);
         return zaaktypen.stream().map(zaaktypeConverter::convert).toList();
     }
