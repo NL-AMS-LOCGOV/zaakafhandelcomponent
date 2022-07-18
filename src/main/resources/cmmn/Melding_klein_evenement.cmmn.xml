@@ -30,7 +30,7 @@
                         </flowable:field>
                     </flowable:planItemLifecycleListener>
                 </extensionElements>
-                <planItem id="planItem1" name="Aanvullende info" definitionRef="AANVULLENDE_INFO">
+                <planItem id="planItem1" name="Aanvullende informatie" definitionRef="AANVULLENDE_INFORMATIE">
                     <itemControl>
                         <repetitionRule flowable:counterVariable="repetitionCounter">
                             <extensionElements></extensionElements>
@@ -58,7 +58,7 @@
                         <standardEvent>occur</standardEvent>
                     </planItemOnPart>
                 </sentry>
-                <humanTask id="AANVULLENDE_INFO" name="Aanvullende info" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                <humanTask id="AANVULLENDE_INFORMATIE" name="Aanvullende informatie" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
                     <extensionElements>
                         <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
                     </extensionElements>
