@@ -5,19 +5,20 @@
 
 package net.atos.zac.app.planitems.model;
 
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
-
 import java.util.Arrays;
+
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 public enum HumanTaskFormulierKoppeling {
 
-    AANVULLENDE_INFORMATIE("aamvullende_info", FormulierDefinitie.AANVULLENDE_INFORMATIE),
-    GOEDKEUREN("goedkeuren", FormulierDefinitie.GOEDKEUREN),
-    ADVIES_INTERN("advies_intern", FormulierDefinitie.ADVIES),
-    ADVIES_EXTERN("advies_extern", FormulierDefinitie.EXTERN_ADVIES_VASTLEGGEN),
+    AANVULLENDE_INFORMATIE("AANVULLENDE_INFORMATIE", FormulierDefinitie.AANVULLENDE_INFORMATIE),
+    GOEDKEUREN("GOEDKEUREN", FormulierDefinitie.GOEDKEUREN),
+    ADVIES_INTERN("ADVIES_INTERN", FormulierDefinitie.ADVIES),
+    ADVIES_EXTERN("ADVIES_EXTERN", FormulierDefinitie.EXTERN_ADVIES_VASTLEGGEN),
     DEFAULT("", FormulierDefinitie.DEFAULT_TAAKFORMULIER);
 
     private final String planItemDefinitionId;
+
     private final FormulierDefinitie formulierDefinitie;
 
     HumanTaskFormulierKoppeling(final String planItemDefinitionId, final FormulierDefinitie formulierDefinitie) {
