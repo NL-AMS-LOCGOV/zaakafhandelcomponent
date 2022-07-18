@@ -47,10 +47,13 @@ public class ZoekenRESTService {
     @PUT
     @Path("list")
     public RESTZoekResultaat<? extends AbstractRESTZoekObject> list(final RESTZoekParameters restZoekParameters) {
-        switch (restZoekParameters.type) {
-            case ZAAK -> assertActie(policyService.readAppActies().getZaken());
-            case TAAK -> assertActie(policyService.readAppActies().getTaken());
-            default -> assertActie(policyService.readAppActies().getZoeken());
+        if (restZoekParameters.type != null) {
+            switch (restZoekParameters.type) {
+                case ZAAK -> assertActie(policyService.readAppActies().getZaken());
+                case TAAK -> assertActie(policyService.readAppActies().getTaken());
+            }
+        } else {
+            assertActie(policyService.readAppActies().getZoeken());
         }
         final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZoekParameters);
         final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);
