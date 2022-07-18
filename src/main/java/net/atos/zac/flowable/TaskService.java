@@ -8,7 +8,7 @@ package net.atos.zac.flowable;
 import static net.atos.zac.app.taken.model.TaakStatus.AFGEROND;
 import static net.atos.zac.app.taken.model.TaakStatus.NIET_TOEGEKEND;
 import static net.atos.zac.app.taken.model.TaakStatus.TOEGEKEND;
-import static net.atos.zac.util.JsonbUtil.JSONB;
+import static net.atos.zac.util.JsonbUtil.FIELD_VISIBILITY_STRATEGY;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.bind.annotation.JsonbCreator;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +61,10 @@ public class TaskService {
     @Inject
     private CaseService caseService;
 
-    public record TaskDescriptionChangedData(String newDescription, String previousDescription) {}
+    public record TaskDescriptionChangedData(String previousDescription, String newDescription) {
+        @JsonbCreator
+        public TaskDescriptionChangedData {}
+    }
 
     public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
@@ -173,10 +177,12 @@ public class TaskService {
         final Task originalTask = readOpenTask(task.getId());
         cmmnTaskService.saveTask(task);
         if (!StringUtils.equals(originalTask.getDescription(), task.getDescription())) {
-            final TaskDescriptionChangedData descriptionChangedData = new TaskDescriptionChangedData(originalTask.getDescription(), task.getDescription());
+            final TaskDescriptionChangedData descriptionChangedData =
+                    new TaskDescriptionChangedData(originalTask.getDescription() != null ? originalTask.getDescription() : "",
+                                                   task.getDescription() != null ? task.getDescription() : "");
             cmmnHistoryService.createHistoricTaskLogEntryBuilder(originalTask)
                     .type(USER_TASK_DESCRIPTION_CHANGED)
-                    .data(JSONB.toJson(descriptionChangedData))
+                    .data(FIELD_VISIBILITY_STRATEGY.toJson(descriptionChangedData))
                     .create();
         }
         return readOpenTask(task.getId());
