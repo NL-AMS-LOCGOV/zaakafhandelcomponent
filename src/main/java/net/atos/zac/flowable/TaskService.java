@@ -8,7 +8,7 @@ package net.atos.zac.flowable;
 import static net.atos.zac.app.taken.model.TaakStatus.AFGEROND;
 import static net.atos.zac.app.taken.model.TaakStatus.NIET_TOEGEKEND;
 import static net.atos.zac.app.taken.model.TaakStatus.TOEGEKEND;
-import static net.atos.zac.util.JsonbUtil.JSONB_WITH_VISIBILITY_STRATEGY;
+import static net.atos.zac.util.JsonbUtil.FIELD_VISIBILITY_STRATEGY;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -182,7 +182,7 @@ public class TaskService {
                                                    task.getDescription() != null ? task.getDescription() : "");
             cmmnHistoryService.createHistoricTaskLogEntryBuilder(originalTask)
                     .type(USER_TASK_DESCRIPTION_CHANGED)
-                    .data(JSONB_WITH_VISIBILITY_STRATEGY.toJson(descriptionChangedData))
+                    .data(FIELD_VISIBILITY_STRATEGY.toJson(descriptionChangedData))
                     .create();
         }
         return readOpenTask(task.getId());
