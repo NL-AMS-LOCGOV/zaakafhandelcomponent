@@ -27,6 +27,12 @@
                                 <mat-icon *ngIf="indicatie.info">info_outline</mat-icon>
                             </mat-chip>
                         </ng-container>
+                        <ng-container *ngIf="infoObject.ondertekend">
+                            <mat-chip [color]="'primary'" selected [matTooltip]="'ondertekend'">
+                                {{'ondertekend' | translate}}
+                                <mat-icon>info_outline</mat-icon>
+                            </mat-chip>
+                        </ng-container>
                     </mat-chip-list>
                 </mat-card-header>
                 <mat-card-content>

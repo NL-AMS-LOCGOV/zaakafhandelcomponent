@@ -345,8 +345,6 @@ public class TakenRESTService {
                 .forEach(uuid -> {
                     final EnkelvoudigInformatieobject enkelvoudigInformatieObject =
                             drcClientService.readEnkelvoudigInformatieobject(uuid);
-                    enkelvoudigInformatieObject
-                            .setOndertekening(new Ondertekening(OndertekeningSoort.DIGITAAL, LocalDate.now()));
                     final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens =
                             restInformatieobjectConverter.convertToRESTEnkelvoudigInformatieObjectVersieGegevens(enkelvoudigInformatieObject);
                     final EnkelvoudigInformatieObjectLock lock;
@@ -369,6 +367,8 @@ public class TakenRESTService {
                                     restEnkelvoudigInformatieObjectVersieGegevens,
                                     lock.getLock(),
                                     file);
+                    enkelvoudigInformatieobjectWithInhoudAndLock
+                            .setOndertekening(new Ondertekening(OndertekeningSoort.DIGITAAL, LocalDate.now()));
 
                     drcClientService.updateEnkelvoudigInformatieobject(
                             uuid,
