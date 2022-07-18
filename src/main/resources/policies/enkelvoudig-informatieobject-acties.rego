@@ -44,7 +44,7 @@ downloaden {
 
 default toevoegen_nieuwe_versie := false
 toevoegen_nieuwe_versie {
-    zaak_open
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
@@ -52,7 +52,7 @@ toevoegen_nieuwe_versie {
 
 default bewerken := false
 bewerken {
-    zaak_open
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
@@ -60,7 +60,7 @@ bewerken {
 
 default vergrendelen := false
 vergrendelen {
-    zaak_open
+    enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
     enkelvoudig_informatieobject.vergrendeld == false
     enkelvoudig_informatieobject.definitief == false
@@ -100,10 +100,3 @@ zaaktype_allowed {
     enkelvoudig_informatieobject.zaaktype in rollen[rol].zaaktypen
 }
 
-default zaak_open := false
-zaak_open {
-    enkelvoudig_informatieobject.zaak_open == true
-}
-zaak_open {
-    not enkelvoudig_informatieobject.zaak_open
-}

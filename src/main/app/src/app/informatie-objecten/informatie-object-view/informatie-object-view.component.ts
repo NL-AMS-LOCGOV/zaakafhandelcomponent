@@ -146,7 +146,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
         if (this.laatsteVersieInfoObject.acties.bewerken && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
-                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid)
+                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak.uuid)
                     .subscribe(url => {
                         window.open(url);
                     });

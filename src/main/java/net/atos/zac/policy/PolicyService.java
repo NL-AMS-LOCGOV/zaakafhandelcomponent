@@ -148,6 +148,12 @@ public class PolicyService {
         return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), zaak);
     }
 
+    public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
+            final UUID zaakUUID) {
+        return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()),
+                                                     zrcClientService.readZaak(zaakUUID));
+    }
+
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), null);
     }
