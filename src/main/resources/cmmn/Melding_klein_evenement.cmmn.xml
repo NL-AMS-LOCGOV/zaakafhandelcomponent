@@ -4,7 +4,7 @@
              xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" targetNamespace="http://www.flowable.org/casedef" exporter="Flowable Open Source Modeler"
              exporterVersion="6.7.0">
     <case id="melding-klein-evenement" name="Melding klein evenement" flowable:initiatorVariableName="initiator">
-        <casePlanModel id="melding_klein_evenement" name="Melding klein evenement" flowable:formFieldValidation="true" autoComplete="true">
+        <casePlanModel id="MELDING_KLEIN_EVENEMENT" name="Melding klein evenement" flowable:formFieldValidation="true" autoComplete="true">
             <planItem id="planItem4" name="Intake" definitionRef="INTAKE">
                 <itemControl>
                     <requiredRule></requiredRule>
@@ -30,7 +30,7 @@
                         </flowable:field>
                     </flowable:planItemLifecycleListener>
                 </extensionElements>
-                <planItem id="planItem1" name="Aanvullende info" definitionRef="aamvullende_info">
+                <planItem id="planItem1" name="Aanvullende info" definitionRef="AANVULLENDE_INFO">
                     <itemControl>
                         <repetitionRule flowable:counterVariable="repetitionCounter">
                             <extensionElements></extensionElements>
@@ -42,7 +42,7 @@
                     <entryCriterion id="sid-0700C5A6-BA3E-4056-930E-91A2B5E8C59C" sentryRef="sentry1"></entryCriterion>
                 </planItem>
                 <planItem id="planItem2" name="Intake afronden" definitionRef="INTAKE_AFRONDEN"></planItem>
-                <planItem id="planItem3" name="Intake Gereed" definitionRef="intake_gereed">
+                <planItem id="planItem3" name="Intake Gereed" definitionRef="INTAKE_GEREED">
                     <itemControl>
                         <requiredRule></requiredRule>
                     </itemControl>
@@ -58,14 +58,14 @@
                         <standardEvent>occur</standardEvent>
                     </planItemOnPart>
                 </sentry>
-                <humanTask id="aamvullende_info" name="Aanvullende info" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                <humanTask id="AANVULLENDE_INFO" name="Aanvullende info" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
                     <extensionElements>
                         <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
                     </extensionElements>
                 </humanTask>
                 <userEventListener id="INTAKE_AFRONDEN" name="Intake afronden"
                                    flowable:availableCondition="${planItemInstances.currentStage().active().count() == 0}"></userEventListener>
-                <milestone id="intake_gereed" name="Intake Gereed"></milestone>
+                <milestone id="INTAKE_GEREED" name="Intake Gereed"></milestone>
             </stage>
             <stage id="IN_BEHANDELING" name="In behandeling" autoComplete="true" flowable:displayOrder="2">
                 <extensionElements>
@@ -76,7 +76,7 @@
                         </flowable:field>
                     </flowable:planItemLifecycleListener>
                 </extensionElements>
-                <planItem id="planItem5" name="Goedkeuren" definitionRef="goedkeuren">
+                <planItem id="planItem5" name="Goedkeuren" definitionRef="GOEDKEUREN">
                     <itemControl>
                         <repetitionRule flowable:counterVariable="repetitionCounter">
                             <extensionElements></extensionElements>
@@ -87,7 +87,7 @@
                     </itemControl>
                     <entryCriterion id="sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6" sentryRef="sentry3"></entryCriterion>
                 </planItem>
-                <planItem id="planItem6" name="Advies intern" definitionRef="advies_intern">
+                <planItem id="planItem6" name="Advies intern" definitionRef="ADVIES_INTERN">
                     <itemControl>
                         <repetitionRule flowable:counterVariable="repetitionCounter">
                             <extensionElements></extensionElements>
@@ -98,14 +98,14 @@
                     </itemControl>
                     <entryCriterion id="sid-1B17B0E5-B175-4854-8307-B84576CF8925" sentryRef="sentry4"></entryCriterion>
                 </planItem>
-                <planItem id="planItem7" name="Behandeling gereed" definitionRef="behandeling_gereed">
+                <planItem id="planItem7" name="Behandeling gereed" definitionRef="BEHANDELING_GEREED">
                     <itemControl>
                         <requiredRule></requiredRule>
                     </itemControl>
                     <entryCriterion id="sid-520E91D7-66C5-41F7-A7C6-C8A094F4DE19" sentryRef="sentry6"></entryCriterion>
                 </planItem>
                 <planItem id="planItem8" name="Zaak afhandelen" definitionRef="ZAAK_AFHANDELEN"></planItem>
-                <planItem id="planItem9" name="Advies extern" definitionRef="advies_extern">
+                <planItem id="planItem9" name="Advies extern" definitionRef="ADVIES_EXTERN">
                     <itemControl>
                         <repetitionRule flowable:counterVariable="repetitionCounter">
                             <extensionElements></extensionElements>
@@ -136,20 +136,20 @@
                         <condition><![CDATA[${true}]]></condition>
                     </ifPart>
                 </sentry>
-                <humanTask id="goedkeuren" name="Goedkeuren" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                <humanTask id="GOEDKEUREN" name="Goedkeuren" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
                     <extensionElements>
                         <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
                     </extensionElements>
                 </humanTask>
-                <humanTask id="advies_intern" name="Advies intern" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                <humanTask id="ADVIES_INTERN" name="Advies intern" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
                     <extensionElements>
                         <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
                     </extensionElements>
                 </humanTask>
-                <milestone id="behandeling_gereed" name="Behandeling gereed"></milestone>
+                <milestone id="BEHANDELING_GEREED" name="Behandeling gereed"></milestone>
                 <userEventListener id="ZAAK_AFHANDELEN" name="Zaak afhandelen"
                                    flowable:availableCondition="${planItemInstances.currentStage().active().count() == 0}"></userEventListener>
-                <humanTask id="advies_extern" name="Advies extern" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
+                <humanTask id="ADVIES_EXTERN" name="Advies extern" flowable:assignee="${initiator}" flowable:formFieldValidation="true">
                     <extensionElements>
                         <modeler:flowable-idm-initiator xmlns:modeler="http://flowable.org/modeler"><![CDATA[true]]></modeler:flowable-idm-initiator>
                     </extensionElements>
@@ -159,7 +159,7 @@
     </case>
     <cmmndi:CMMNDI>
         <cmmndi:CMMNDiagram id="CMMNDiagram_melding-klein-evenement">
-            <cmmndi:CMMNShape id="CMMNShape_melding_klein_evenement" cmmnElementRef="melding_klein_evenement">
+            <cmmndi:CMMNShape id="CMMNShape_MELDING_KLEIN_EVENEMENT" cmmnElementRef="MELDING_KLEIN_EVENEMENT">
                 <dc:Bounds height="610.0" width="725.514099048668" x="15.0" y="75.0"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
@@ -180,11 +180,11 @@
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_planItem3" cmmnElementRef="planItem3">
-                <dc:Bounds height="54.0" width="146.0" x="45.0" y="210.0"></dc:Bounds>
+                <dc:Bounds height="54.0" width="146.0" x="46.194369772296014" y="210.0"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D" cmmnElementRef="sid-1B9AADF1-46DC-4800-9889-8A2EC0DDCA2D">
-                <dc:Bounds height="22.0" width="14.0" x="106.30804529820928" y="198.01379469697522"></dc:Bounds>
+                <dc:Bounds height="22.0" width="14.0" x="107.50241507050528" y="198.01379469697522"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_planItem10" cmmnElementRef="planItem10">
@@ -196,11 +196,11 @@
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_planItem5" cmmnElementRef="planItem5">
-                <dc:Bounds height="80.0" width="100.0" x="556.386107191426" y="476.5778079397513"></dc:Bounds>
+                <dc:Bounds height="80.0" width="100.0" x="556.386107191426" y="472.0"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6" cmmnElementRef="sid-F2F8E8AB-3D75-4282-942F-8C93585D5CA6">
-                <dc:Bounds height="22.0" width="14.0" x="549.0500471168326" y="508.82529568649943"></dc:Bounds>
+                <dc:Bounds height="22.0" width="14.0" x="549.0500471168326" y="504.247487746748"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_planItem6" cmmnElementRef="planItem6">
@@ -224,11 +224,11 @@
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_planItem9" cmmnElementRef="planItem9">
-                <dc:Bounds height="80.0" width="100.0" x="389.9999999999999" y="465.0"></dc:Bounds>
+                <dc:Bounds height="80.0" width="100.0" x="390.0" y="467.45308605749744"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNShape id="CMMNShape_sid-C78C6F29-4CC5-4ABB-B181-BE1FBF298CA5" cmmnElementRef="sid-C78C6F29-4CC5-4ABB-B181-BE1FBF298CA5">
-                <dc:Bounds height="22.0" width="14.0" x="382.13250845844846" y="496.45308605749744"></dc:Bounds>
+                <dc:Bounds height="22.0" width="14.0" x="382.13250845844857" y="498.9061721149949"></dc:Bounds>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNShape>
             <cmmndi:CMMNEdge id="CMMNEdge_sid-901162BF-7AD3-4E6B-8906-F0FEB6E1C232" cmmnElementRef="planItem4"
@@ -247,8 +247,8 @@
                     <flowable:docker type="source" x="15.497999999999994" y="15.500999999999998"></flowable:docker>
                     <flowable:docker type="target" x="7.0" y="11.0"></flowable:docker>
                 </di:extension>
-                <di:waypoint x="113.50454114113171" y="150.95191321238548"></di:waypoint>
-                <di:waypoint x="113.34493787870241" y="198.0720342804081"></di:waypoint>
+                <di:waypoint x="113.75572804751022" y="150.95061418862073"></di:waypoint>
+                <di:waypoint x="114.36375783441443" y="198.1669215266653"></di:waypoint>
                 <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
             </cmmndi:CMMNEdge>
             <cmmndi:CMMNEdge id="CMMNEdge_sid-2EB7621E-74A7-4888-A70E-1F9A2E0C26E3" cmmnElementRef="planItem8"
