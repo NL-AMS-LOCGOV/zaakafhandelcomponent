@@ -12,7 +12,16 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +40,27 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.Gson;
+
+import com.google.gson.JsonElement;
+
+import net.atos.client.zgw.drc.DRCClientService;
+
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.drc.model.Lock;
+import net.atos.client.zgw.drc.model.Ondertekening;
+import net.atos.client.zgw.drc.model.OndertekeningSoort;
+
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
+
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -121,6 +151,12 @@ public class TakenRESTService {
 
     @Inject
     private PolicyService policyService;
+
+    @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @GET
     @Path("zaak/{zaakUUID}")
@@ -213,20 +249,21 @@ public class TakenRESTService {
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         assertActie(policyService.readTaakActies(restTaak.id).getWijzigenOverig());
-        final String loggedInUserId = loggedInUserInstance.get().getId();
-        if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
-            taskService.assignTaskToUser(restTaak.id, loggedInUserId);
-        }
-
-        createDocuments(restTaak);
-        //TODO: Sign Documents
-        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
-        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
-        final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
-        indexeerService.addZaak(restTaak.zaakUuid);
-        eventingService.send(TAAK.updated(task));
-        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
-        return taakConverter.convert(task, true);
+//        final String loggedInUserId = loggedInUserInstance.get().getId();
+//        if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
+//            taskService.assignTaskToUser(restTaak.id, loggedInUserId);
+//        }
+//
+//        createDocuments(restTaak);
+        signDocuments(restTaak);
+//        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
+//        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
+//        final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
+//        indexeerService.addZaak(restTaak.zaakUuid);
+//        eventingService.send(TAAK.updated(task));
+//        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
+//        return taakConverter.convert(task, true);
+        return null;
     }
 
     @POST
@@ -297,5 +334,49 @@ public class TakenRESTService {
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(zaakUuid));
+    }
+
+    private void signDocuments(final RESTTaak restTaak) {
+        Arrays.stream(new Gson().fromJson(restTaak.taakdata.get("bijlagen"), JsonElement.class) //TODO: Fix magic string?
+                .getAsJsonObject()
+                .get("ondertekend")
+                .getAsString()
+                .split(";"))
+                .map(UUID::fromString)
+                .forEach(uuid -> {
+                    final EnkelvoudigInformatieobject enkelvoudigInformatieObject =
+                            drcClientService.readEnkelvoudigInformatieobject(uuid);
+                    enkelvoudigInformatieObject
+                            .setOndertekening(new Ondertekening(OndertekeningSoort.DIGITAAL, LocalDate.now()));
+                    final RESTEnkelvoudigInformatieObjectVersieGegevens restEnkelvoudigInformatieObjectVersieGegevens =
+                            restInformatieobjectConverter.convertToRESTEnkelvoudigInformatieObjectVersieGegevens(enkelvoudigInformatieObject);
+                    final EnkelvoudigInformatieObjectLock lock;
+                    if(enkelvoudigInformatieObject.getLocked()) {
+                        lock = enkelvoudigInformatieObjectLockService.findLock(uuid);
+                    } else {
+                        lock = enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
+                    }
+                    RESTFileUpload file = new RESTFileUpload();
+                    String targetPath = enkelvoudigInformatieObject.getInhoud().getPath();
+                    InputStream fileStream = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
+                    try {
+                        File targetFile = new File(targetPath);
+                        Files.copy(fileStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        //TODO: Proper error handling
+                    }
+                    final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock =
+                            restInformatieobjectConverter.convert(
+                                    restEnkelvoudigInformatieObjectVersieGegevens,
+                                    lock.getLock(),
+                                    file);
+
+                    drcClientService.updateEnkelvoudigInformatieobject(
+                            uuid,
+                            "Door ondertekenen",
+                            enkelvoudigInformatieobjectWithInhoudAndLock
+                    );
+                });
+
     }
 }

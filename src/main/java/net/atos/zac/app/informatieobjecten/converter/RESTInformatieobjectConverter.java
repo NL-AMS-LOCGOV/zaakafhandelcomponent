@@ -227,10 +227,10 @@ public class RESTInformatieobjectConverter {
         enkelvoudigInformatieobjectWithInhoudAndLock.setLock(lock);
 
         if (restEnkelvoudigInformatieObjectVersieGegevens.status != null) {
-            enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(InformatieobjectStatus.valueOf(restEnkelvoudigInformatieObjectVersieGegevens.status));
+            enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(InformatieobjectStatus.fromValue(restEnkelvoudigInformatieObjectVersieGegevens.status));
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding != null) {
-            enkelvoudigInformatieobjectWithInhoudAndLock.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.valueOf(
+            enkelvoudigInformatieobjectWithInhoudAndLock.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(
                     restEnkelvoudigInformatieObjectVersieGegevens.vertrouwelijkheidaanduiding));
         }
         if (restEnkelvoudigInformatieObjectVersieGegevens.beschrijving != null) {
