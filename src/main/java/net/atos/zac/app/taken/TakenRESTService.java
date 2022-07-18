@@ -249,21 +249,20 @@ public class TakenRESTService {
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
         assertActie(policyService.readTaakActies(restTaak.id).getWijzigenOverig());
-//        final String loggedInUserId = loggedInUserInstance.get().getId();
-//        if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
-//            taskService.assignTaskToUser(restTaak.id, loggedInUserId);
-//        }
-//
-//        createDocuments(restTaak);
+        final String loggedInUserId = loggedInUserInstance.get().getId();
+        if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
+            taskService.assignTaskToUser(restTaak.id, loggedInUserId);
+        }
+
+        createDocuments(restTaak);
         signDocuments(restTaak);
-//        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
-//        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
-//        final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
-//        indexeerService.addZaak(restTaak.zaakUuid);
-//        eventingService.send(TAAK.updated(task));
-//        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
-//        return taakConverter.convert(task, true);
-        return null;
+        taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
+        taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
+        final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
+        indexeerService.addZaak(restTaak.zaakUuid);
+        eventingService.send(TAAK.updated(task));
+        eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
+        return taakConverter.convert(task, true);
     }
 
     @POST

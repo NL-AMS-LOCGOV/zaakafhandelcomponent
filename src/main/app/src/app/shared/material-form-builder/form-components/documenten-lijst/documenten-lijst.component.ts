@@ -46,6 +46,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 }
             }
             this.dataSource.data = documenten;
+            this.setValue();
             this.loading = false;
         });
     }
@@ -79,6 +80,6 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         this.data.formControl.setValue(JSON.stringify({
             selection: this.selection.selected.map(value => value.uuid).join(';'),
             ondertekend: this.ondertekend.join(';')
-        }))
+        }));
     }
 }
