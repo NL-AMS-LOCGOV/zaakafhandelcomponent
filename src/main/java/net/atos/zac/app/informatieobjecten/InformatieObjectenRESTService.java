@@ -255,7 +255,7 @@ public class InformatieObjectenRESTService {
     }
 
     @GET
-    @Path("informatieobject/{uuid}/zaken")
+    @Path("informatieobject/{uuid}/zaakinformatieobjecten")
     public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
         assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getLezen());
         return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid)).stream()
@@ -264,8 +264,9 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("informatieobject/{uuid}/edit")
-    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid, @Context final UriInfo uriInfo) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getBewerken());
+    public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID,
+            @Context final UriInfo uriInfo) {
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getBewerken());
         final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
         return Response.ok(redirectURI).build();
     }
@@ -317,7 +318,8 @@ public class InformatieObjectenRESTService {
             final RESTEnkelvoudigInformatieObjectVersieGegevens enkelvoudigInformatieObjectVersieGegevens) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieObjectVersieGegevens.uuid);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject).getToevoegenNieuweVersie());
+        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, enkelvoudigInformatieObjectVersieGegevens.zaakUuid)
+                            .getToevoegenNieuweVersie());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         boolean tempLock = false;
 
@@ -383,7 +385,7 @@ public class InformatieObjectenRESTService {
     }
 
     @GET
-    @Path("informatieobject/{informatieObjectUuid}/zaken")
+    @Path("informatieobject/{informatieObjectUuid}/zaakidentificaties")
     public List<String> listZaakIdentificatiesForInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
         assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobjectUuid).getLezen());
         List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(

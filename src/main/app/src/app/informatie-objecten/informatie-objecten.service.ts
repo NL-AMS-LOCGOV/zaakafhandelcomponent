@@ -97,7 +97,7 @@ export class InformatieObjectenService {
     }
 
     listZaakInformatieobjecten(uuid: string): Observable<ZaakInformatieobject[]> {
-        return this.http.get<ZaakInformatieobject[]>(`${this.basepath}/informatieobject/${uuid}/zaken`).pipe(
+        return this.http.get<ZaakInformatieobject[]>(`${this.basepath}/informatieobject/${uuid}/zaakinformatieobjecten`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -142,8 +142,8 @@ export class InformatieObjectenService {
         );
     }
 
-    editEnkelvoudigInformatieObjectInhoud(uuid: string): Observable<string> {
-        return this.http.get<string>(`${this.basepath}/informatieobject/${uuid}/edit`).pipe(
+    editEnkelvoudigInformatieObjectInhoud(uuid: string, zaakUuid: string): Observable<string> {
+        return this.http.get<string>(`${this.basepath}/informatieobject/${uuid}/edit?zaak=${zaakUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -162,7 +162,7 @@ export class InformatieObjectenService {
     }
 
     listZaakIdentificatiesForInformatieobject(documentUUID: string): Observable<string[]> {
-        return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaken`).pipe(
+        return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaakidentificaties`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
