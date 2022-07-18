@@ -124,6 +124,9 @@ export abstract class AbstractFormulier {
 
         return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(
             map(arr => arr.map(enkelvoudigInformatieObject => {
+                if(!this.dataElementen['bijlagen']) {
+                    return enkelvoudigInformatieObject;
+                }
                 const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
                 enkelvoudigInformatieObject.ondertekend = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1;
                 return enkelvoudigInformatieObject;
