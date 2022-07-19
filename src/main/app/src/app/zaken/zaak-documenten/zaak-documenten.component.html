@@ -5,8 +5,11 @@
 
 <div fxLayout>
     <mat-card fxFlex="calc(100%-20px)">
-        <mat-card-header>
+        <mat-card-header fxLayout="row">
             <mat-card-title>{{'enkelvoudigInformatieObjecten'| translate}}</mat-card-title>
+            <mat-slide-toggle [(ngModel)]="toonGekoppeldeZaakDocumenten" color="primary" fxLayout="row"
+                              id="gekoppeldeZaakDocumentenToon_toggle"
+                              (change)="toggleGekoppeldeZaakDocumenten()">{{ 'toonGekoppeldeZaakDocumenten' | translate }}</mat-slide-toggle>
         </mat-card-header>
         <mat-card-content>
             <div class="table-wrapper">
@@ -23,9 +26,11 @@
                     </ng-container>
 
                     <ng-container [matColumnDef]="column"
-                                  *ngFor="let column of [ 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur']">
+                                  *ngFor="let column of [ 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur']">
                         <th mat-sort-header mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
                         <td mat-cell *matCellDef="let row">
+                            <ng-container *ngIf="column == 'zaakIdentificatie'">{{row[column] | empty}}</ng-container>
+                            <ng-container *ngIf="column == 'relatieType'">{{row[column] | empty}}</ng-container>
                             <ng-container *ngIf="column == 'informatieobjectTypeOmschrijving'">{{row[column]|translate | empty}}</ng-container>
                             <ng-container
                                     *ngIf="column == 'status'">{{(row[column] ? 'informatieobject.status.' + row[column] : '')|translate | empty}}</ng-container>
@@ -66,9 +71,9 @@
                         </td>
                     </ng-container>
                     <tr mat-header-row
-                        *matHeaderRowDef="['titel','informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url']"></tr>
+                        *matHeaderRowDef="documentColumns"></tr>
                     <tr mat-row
-                        *matRowDef="let row; columns: ['titel','informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];"
+                        *matRowDef="let row; columns: documentColumns;"
                         [class.expanded-row]="documentPreviewRow === row"></tr>
                     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="collapsed-row document-preview"></tr>
 

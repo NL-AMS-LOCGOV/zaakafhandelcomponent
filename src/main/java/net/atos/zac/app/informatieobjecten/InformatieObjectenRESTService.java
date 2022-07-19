@@ -12,6 +12,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATI
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +34,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import net.atos.zac.app.informatieobjecten.model.RESTGekoppeldeZaakEnkelvoudigInformatieObject;
+
+import net.atos.zac.app.zaken.model.RelatieType;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -393,10 +398,44 @@ public class InformatieObjectenRESTService {
     }
 
     private List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjectenVoorZaak(final Zaak zaak) {
-        assertActie(policyService.readZaakActies(zaak).getLezen());
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setZaak(zaak.getUrl());
         final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
         return zaakInformatieobjects.stream().map(restInformatieobjectConverter::convertToREST).toList();
+    }
+
+    private List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(
+            final Zaak zaak, final RelatieType relatieType) {
+        final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
+        parameters.setZaak(zaak.getUrl());
+        final List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(parameters);
+        return zaakInformatieobjects.stream().map(infoObject -> restInformatieobjectConverter.convertToREST(infoObject, relatieType, zaak)).toList();
+    }
+
+    @GET
+    @Path("informatieobject/gekoppelde/{zaakUUID}")
+    public List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakInformatieObjecten(@PathParam("zaakUUID") UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> enkelvoudigInformatieobjectList = new ArrayList<>();
+
+        zaak.getDeelzaken().forEach(deelZaakUri -> {
+            final Zaak deelZaak = zrcClientService.readZaak(deelZaakUri);
+            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(deelZaak,
+                                                                                                    RelatieType.DEELZAAK));
+        });
+
+        if (zaak.getHoofdzaak() != null) {
+            final Zaak hoofdZaak = zrcClientService.readZaak(zaak.getHoofdzaak());
+            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(hoofdZaak,
+                                                                                                    RelatieType.HOOFDZAAK));
+        }
+
+        zaak.getRelevanteAndereZaken().forEach(relevanteZaakUri -> {
+            final Zaak relevanteZaak = zrcClientService.readZaak(relevanteZaakUri.getUrl());
+            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(relevanteZaak,
+                                                                    RelatieType.valueOf(relevanteZaakUri.getAardRelatie().toValue())));
+        });
+
+        return enkelvoudigInformatieobjectList;
     }
 }

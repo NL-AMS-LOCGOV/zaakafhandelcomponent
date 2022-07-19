@@ -20,6 +20,7 @@ import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-inf
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
 import {DocumentCreatieResponse} from './model/document-creatie-response';
 import {DocumentVerwijderenGegevens} from './model/document-verwijderen-gegevens';
+import {GekoppeldeZaakEnkelvoudigInformatieobject} from './model/gekoppelde.zaak.enkelvoudig.informatieobject';
 
 @Injectable({
     providedIn: 'root'
@@ -163,6 +164,12 @@ export class InformatieObjectenService {
 
     listZaakIdentificatiesForInformatieobject(documentUUID: string): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaken`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listGekoppeldeZaakInformatieObjecten(zaakUUID: string): Observable<GekoppeldeZaakEnkelvoudigInformatieobject[]> {
+        return this.http.get<GekoppeldeZaakEnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobject/gekoppelde/${zaakUUID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
