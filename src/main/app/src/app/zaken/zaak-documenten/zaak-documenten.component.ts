@@ -27,6 +27,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {detailExpand} from '../../shared/animations/animations';
 import {Observable, share} from 'rxjs';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
+import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -45,12 +46,15 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     taakModus: boolean;
+    toonGekoppeldeZaakDocumenten = false;
+    documentColumns = ['titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
     informatieObjecten$: Observable<EnkelvoudigInformatieobject[]>;
 
-    enkelvoudigInformatieObjecten: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
+    enkelvoudigInformatieObjecten: MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject> =
+        new MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject>();
     documentPreviewRow: EnkelvoudigInformatieobject | null;
 
     private zaakDocumentenListener: WebsocketListener;
@@ -150,4 +154,23 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         return FileFormatUtil.isPreviewAvailable(formaat);
     }
 
+    toggleGekoppeldeZaakDocumenten() {
+        if (this.toonGekoppeldeZaakDocumenten) {
+            this.ophalenGekoppeldeZaakDocumenten();
+        } else {
+            this.documentColumns = ['titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+            this.loadInformatieObjecten();
+        }
+    }
+
+    ophalenGekoppeldeZaakDocumenten() {
+        this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.taakModus ? this.zaakUUID : this.zaak.uuid)
+            .subscribe(gekoppeldeInformatieObjecten => {
+                if (gekoppeldeInformatieObjecten) {
+                    this.documentColumns = ['titel','zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+                    gekoppeldeInformatieObjecten.forEach(gekoppeldeInformatieObject =>
+                        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, gekoppeldeInformatieObject]);
+                }
+            });
+    }
 }

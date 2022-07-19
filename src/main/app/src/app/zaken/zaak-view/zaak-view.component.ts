@@ -436,6 +436,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     openPlanItemStartenDialog(planItem: PlanItem): void {
+        this.actionsSidenav.close();
         this.websocketService.doubleSuspendListener(this.zaakListener);
         const userEventListenerDialog = this.createUserEventListenerDialog(planItem);
         this.dialog.open(userEventListenerDialog.dialogComponent, {
@@ -535,6 +536,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private openZaakAfbrekenDialog(): void {
+        this.actionsSidenav.close();
         const dialogData = new DialogData([
                 new SelectFormFieldBuilder().id('reden')
                                             .label('actie.zaak.afbreken.reden')
@@ -576,6 +578,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private openZaakAfsluitenDialog(): void {
+        this.actionsSidenav.close();
         const dialogData = new DialogData([
                 new SelectFormFieldBuilder().id('resultaattype')
                                             .label('resultaat')
