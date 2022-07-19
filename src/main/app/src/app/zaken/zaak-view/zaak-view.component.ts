@@ -828,11 +828,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     betrokkeneGeselecteerd(betrokkene: Klant): void {
-        // TODO
+        // TODO #1325
     }
 
     deleteBetrokkene(): void {
-        // TODO
+        // TODO #1325
     }
 
     assignTaskToMe(taak: Taak, $event) {

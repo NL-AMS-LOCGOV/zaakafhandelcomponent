@@ -8,14 +8,16 @@ import {Klant} from '../../model/klant';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
+import {ZaakActies} from '../../../zaken/model/zaak-acties';
 
 @Component({
-    selector: 'zac-betrokkene-zoek',
-    templateUrl: './betrokkene-zoek.component.html',
-    styleUrls: ['./betrokkene-zoek.component.less']
+    selector: 'zac-klant-zoek',
+    templateUrl: './klant-zoek.component.html',
+    styleUrls: ['./klant-zoek.component.less']
 })
-export class BetrokkeneZoekComponent implements OnInit {
+export class KlantZoekComponent implements OnInit {
     @Input() initiator: boolean;
+    @Input() acties: ZaakActies;
     @Output() klant = new EventEmitter<Klant>();
     betrokkeneType: SelectFormField;
 
@@ -32,11 +34,11 @@ export class BetrokkeneZoekComponent implements OnInit {
 
     }
 
-    betrokkeneGeselecteerd(betrokkene: Klant): void {
+    klantGeselecteerd(klant: Klant): void {
         if (this.initiator) {
-            this.klant.emit(betrokkene);
+            this.klant.emit(klant);
         } else {
-            // TODO
+            // TODO #1325
         }
     }
 }

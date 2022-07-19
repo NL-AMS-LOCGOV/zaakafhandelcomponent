@@ -29,6 +29,7 @@ import {Klant} from '../../klanten/model/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
+import {ZaakActies} from '../model/zaak-acties';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -40,6 +41,7 @@ export class ZaakCreateComponent implements OnInit {
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     action: string;
+    acties: ZaakActies;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
 
@@ -52,6 +54,11 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // Dummy policy acties, since there is no way yet to get acties for a new not yet existing case.
+        this.acties = new ZaakActies();
+        this.acties.toevoegenInitiatorPersoon = true;
+        this.acties.toevoegenInitiatorBedrijf = true;
+
         this.initiatorToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
         this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
@@ -105,8 +112,11 @@ export class ZaakCreateComponent implements OnInit {
                                                        .label('locatie')
                                                        .maxlength(100)
                                                        .build();
-
-        this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum, this.locatieField], [tussenTitel],
+        const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
+        if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
+            zaaktypeEnInitiator.push(this.initiatorField);
+        }
+        this.createZaakFields = [[titel], zaaktypeEnInitiator, [startdatum, registratiedatum, this.locatieField], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
 
     }
