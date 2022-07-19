@@ -478,6 +478,9 @@
   "initiator.toevoegen": "Add initiator",
   "initiator.toevoegen.persoon": "Add person",
   "initiator.toevoegen.bedrijf": "Add Company",
+  "ondertekeningssoort.analoog": "analog",
+  "ondertekeningssoort.digitaal": "digital",
+  "ondertekeningssoort.pli": "pki",
   "HOOFDVESTIGING": "Main establishment",
   "NEVENVESTIGING": "Branch establishment",
   "RECHTSPERSOON": "Legal entity"
