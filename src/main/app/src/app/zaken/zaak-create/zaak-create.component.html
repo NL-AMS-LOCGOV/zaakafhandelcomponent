@@ -4,8 +4,7 @@
   -->
 <mat-sidenav-container autosize>
     <mat-sidenav #actionsSideNav mode="over" position="end" [ngSwitch]="action">
-        <zac-persoon-zoek *ngSwitchCase="'ZOEK_PERSOON'" (persoon)="initiatorGeselecteerd($event)"></zac-persoon-zoek>
-        <zac-bedrijf-zoek *ngSwitchCase="'ZOEK_BEDRIJF'" (bedrijf)="initiatorGeselecteerd($event)"></zac-bedrijf-zoek>
+        <zac-klant-zoek *ngSwitchCase="'ZOEK_INITIATOR'" (klant)="initiatorGeselecteerd($event)" [acties]="acties" [initiator]="true"></zac-klant-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
     </mat-sidenav>
     <div class="content">

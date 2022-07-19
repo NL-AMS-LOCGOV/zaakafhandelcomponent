@@ -29,6 +29,7 @@ import {Klant} from '../../klanten/model/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
+import {ZaakActies} from '../model/zaak-acties';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -40,11 +41,11 @@ export class ZaakCreateComponent implements OnInit {
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     action: string;
+    acties: ZaakActies;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
 
-    private persoonToevoegenIcon = new ActionIcon('emoji_people', new Subject<void>());
-    private bedrijfToevoegenIcon = new ActionIcon('business', new Subject<void>());
+    private initiatorToevoegenIcon = new ActionIcon('person_add_alt_1', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
     private locatie: AddressResult;
@@ -53,8 +54,12 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.persoonToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_PERSOON));
-        this.bedrijfToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_BEDRIJF));
+        // Dummy policy acties, since there is no way yet to get acties for a new not yet existing case.
+        this.acties = new ZaakActies();
+        this.acties.toevoegenInitiatorPersoon = true;
+        this.acties.toevoegenInitiatorBedrijf = true;
+
+        this.initiatorToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
         this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
         this.utilService.setTitle('title.zaak.aanmaken');
@@ -82,9 +87,10 @@ export class ZaakCreateComponent implements OnInit {
                                                            .value(moment()).build();
 
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
-                                                         .icons([this.bedrijfToevoegenIcon, this.persoonToevoegenIcon])
+                                                         .icon(this.initiatorToevoegenIcon)
                                                          .label('initiator')
-                                                         .validators(CustomValidators.bsnOrVesPrefixed).maxlength(70)
+                                                         .validators(CustomValidators.bsnOrVesPrefixed)
+                                                         .maxlength(70)
                                                          .build();
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
@@ -101,10 +107,16 @@ export class ZaakCreateComponent implements OnInit {
         const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)
                                                           .build();
 
-        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie').icon(this.locatieToevoegenIcon)
-                                                       .label('locatie').maxlength(100).build();
-
-        this.createZaakFields = [[titel], [zaaktype, this.initiatorField], [startdatum, registratiedatum, this.locatieField], [tussenTitel],
+        this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie')
+                                                       .icon(this.locatieToevoegenIcon)
+                                                       .label('locatie')
+                                                       .maxlength(100)
+                                                       .build();
+        const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
+        if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
+            zaaktypeEnInitiator.push(this.initiatorField);
+        }
+        this.createZaakFields = [[titel], zaaktypeEnInitiator, [startdatum, registratiedatum, this.locatieField], [tussenTitel],
             [communicatiekanaal, vertrouwelijkheidaanduiding], [omschrijving], [toelichting]];
 
     }

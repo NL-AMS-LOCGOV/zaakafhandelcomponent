@@ -4,6 +4,11 @@
   -->
 
 <div class="form">
+    <div *ngIf="betrokkeneTypeField" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
+        <div fxFlex="100">
+            <mfb-form-field [field]="betrokkeneTypeField"></mfb-form-field>
+        </div>
+    </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
         <div fxFlex="100">
             <mfb-form-field [field]="kvkFormField"></mfb-form-field>

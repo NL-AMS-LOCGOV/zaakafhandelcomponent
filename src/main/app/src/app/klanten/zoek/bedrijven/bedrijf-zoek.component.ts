@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
@@ -13,6 +13,7 @@ import {Bedrijf} from '../../model/bedrijven/bedrijf';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-parameters';
 import {KlantenService} from '../../klanten.service';
+import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -20,6 +21,7 @@ import {KlantenService} from '../../klanten.service';
     styleUrls: ['./bedrijf-zoek.component.less']
 })
 export class BedrijfZoekComponent implements OnInit {
+    @Input() betrokkeneTypeField: SelectFormField;
     @Output() bedrijf = new EventEmitter<Bedrijf>();
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
     foutmelding: string;
@@ -67,7 +69,7 @@ export class BedrijfZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid) {
+        if (!this.formGroup.valid || (this.betrokkeneTypeField && !this.betrokkeneTypeField.formControl.valid)) {
             return false;
         }
 

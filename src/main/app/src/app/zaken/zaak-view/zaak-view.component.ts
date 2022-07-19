@@ -392,19 +392,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createInitiatorToevoegenMenuItems(): void {
-        if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) {
-            this.menu.push(new HeaderMenuItem('initiator.toevoegen'));
-            if (this.zaak.acties.toevoegenInitiatorPersoon) {
-                this.menu.push(new ButtonMenuItem('initiator.toevoegen.persoon', () => {
+        if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf ||
+            this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf) {
+            this.menu.push(new HeaderMenuItem('betrokkenen'));
+            if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) {
+                this.menu.push(new ButtonMenuItem('actie.initiator.toevoegen', () => {
                     this.actionsSidenav.open();
-                    this.action = SideNavAction.ZOEK_PERSOON;
-                }, 'emoji_people'));
+                    this.action = SideNavAction.ZOEK_INITIATOR;
+                }, 'person_add_alt_1'));
             }
-            if (this.zaak.acties.toevoegenInitiatorBedrijf) {
-                this.menu.push(new ButtonMenuItem('initiator.toevoegen.bedrijf', () => {
+            if (this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf) {
+                this.menu.push(new ButtonMenuItem('actie.betrokkene.toevoegen', () => {
                     this.actionsSidenav.open();
-                    this.action = SideNavAction.ZOEK_BEDRIJF;
-                }, 'business'));
+                    this.action = SideNavAction.ZOEK_BETROKKENE;
+                }, 'group_add'));
             }
         }
     }
@@ -824,6 +825,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
         });
 
+    }
+
+    betrokkeneGeselecteerd(betrokkene: Klant): void {
+        // TODO #1325
+    }
+
+    deleteBetrokkene(): void {
+        // TODO #1325
     }
 
     assignTaskToMe(taak: Taak, $event) {
