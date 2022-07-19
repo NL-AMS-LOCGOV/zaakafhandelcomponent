@@ -29,8 +29,8 @@
                         </ng-container>
                         <ng-container *ngIf="infoObject.ondertekening">
                             <mat-chip [color]="'primary'" selected
-                                      [matTooltip]="infoObject.ondertekening.datum + ' - ' +
-                                        ('ondertekeningssoort.' + infoObject.ondertekening.soort | translate)">
+                                      [matTooltip]="('ondertekeningssoort.' + infoObject.ondertekening.soort | translate)
+                                        + ' - ' + infoObject.ondertekening.datum">
                                 {{'ondertekend' | translate}}
                                 <mat-icon>info_outline</mat-icon>
                             </mat-chip>

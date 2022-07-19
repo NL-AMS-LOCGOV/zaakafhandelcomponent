@@ -479,9 +479,9 @@
   "initiator.toevoegen": "Initiator toevoegen",
   "initiator.toevoegen.persoon": "Persoon toevoegen",
   "initiator.toevoegen.bedrijf": "Bedrijf toevoegen",
-  "ondertekeningssoort.analoog": "analoog",
-  "ondertekeningssoort.digitaal": "digitaal",
-  "ondertekeningssoort.pli": "pki",
+  "ondertekeningssoort.analoog": "Analoog",
+  "ondertekeningssoort.digitaal": "Digitaal",
+  "ondertekeningssoort.pli": "PKI",
   "HOOFDVESTIGING": "Hoofdvestiging",
   "NEVENVESTIGING": "Nevenvestiging",
   "RECHTSPERSOON": "Rechtspersoon"
