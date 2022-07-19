@@ -27,8 +27,8 @@
                                 <mat-icon *ngIf="indicatie.info">info_outline</mat-icon>
                             </mat-chip>
                         </ng-container>
-                        <ng-container *ngIf="infoObject.ondertekend">
-                            <mat-chip [color]="'primary'" selected [matTooltip]="'ondertekend'">
+                        <ng-container *ngIf="infoObject.ondertekening">
+                            <mat-chip [color]="'primary'" selected [matTooltip]="infoObject.ondertekening.datum + ' - ' + infoObject.ondertekening.soort">
                                 {{'ondertekend' | translate}}
                                 <mat-icon>info_outline</mat-icon>
                             </mat-chip>

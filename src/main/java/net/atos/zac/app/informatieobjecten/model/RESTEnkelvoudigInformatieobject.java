@@ -62,5 +62,5 @@ public class RESTEnkelvoudigInformatieobject {
 
     public RESTEnkelvoudigInformatieobjectActies acties;
 
-    public Boolean ondertekend;
+    public RESTOndertekening ondertekening;
 }

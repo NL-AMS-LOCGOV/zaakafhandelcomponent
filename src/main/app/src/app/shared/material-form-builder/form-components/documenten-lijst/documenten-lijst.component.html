@@ -57,7 +57,7 @@
                     <td mat-cell *matCellDef="let document">
                         <mat-checkbox (click)="$event.stopPropagation()"
                                       (change)="setOndertekend($event, document)"
-                                      [checked]="document.ondertekend">
+                                      [checked]="!!document.ondertekening">
                         </mat-checkbox>
                     </td>
                 </ng-container>

@@ -128,7 +128,9 @@ export abstract class AbstractFormulier {
                     return enkelvoudigInformatieObject;
                 }
                 const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
-                enkelvoudigInformatieObject.ondertekend = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1;
+                enkelvoudigInformatieObject.ondertekening = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1
+                        ? { datum: new Date().toISOString().split('T')[0], soort: 'digitaal' }
+                        : undefined;
                 return enkelvoudigInformatieObject;
             }))
         );

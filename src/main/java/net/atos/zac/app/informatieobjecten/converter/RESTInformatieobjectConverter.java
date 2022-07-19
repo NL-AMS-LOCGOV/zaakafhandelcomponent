@@ -33,6 +33,7 @@ import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObjectVersieGegevens;
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
+import net.atos.zac.app.informatieobjecten.model.RESTOndertekening;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -96,7 +97,9 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
         final Ondertekening ondertekening = enkelvoudigInformatieObject.getOndertekening();
-        restEnkelvoudigInformatieobject.ondertekend = ondertekening.getDatum() != null && ondertekening.getSoort() != null;
+        restEnkelvoudigInformatieobject.ondertekening = new RESTOndertekening();
+        restEnkelvoudigInformatieobject.ondertekening.datum = ondertekening.getDatum();
+        restEnkelvoudigInformatieobject.ondertekening.soort = ondertekening.getSoort();
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
