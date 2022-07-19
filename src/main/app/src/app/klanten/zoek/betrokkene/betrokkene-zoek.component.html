@@ -1,0 +1,36 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<mat-tab-group *ngIf="initiator">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>emoji_people</mat-icon>
+            {{'actie.initiator.toevoegen.persoon' | translate}}
+        </ng-template>
+        <zac-persoon-zoek (persoon)="betrokkeneGeselecteerd($event)"></zac-persoon-zoek>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>business</mat-icon>
+            {{'actie.initiator.toevoegen.bedrijf' | translate}}
+        </ng-template>
+        <zac-bedrijf-zoek (bedrijf)="betrokkeneGeselecteerd($event)"></zac-bedrijf-zoek>
+    </mat-tab>
+</mat-tab-group>
+<mat-tab-group *ngIf="!initiator">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>emoji_people</mat-icon>
+            {{'actie.betrokkene.toevoegen.persoon' | translate}}
+        </ng-template>
+        <zac-persoon-zoek (persoon)="betrokkeneGeselecteerd($event)" [betrokkeneTypeField]="betrokkeneType"></zac-persoon-zoek>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>business</mat-icon>
+            {{'actie.betrokkene.toevoegen.bedrijf' | translate}}
+        </ng-template>
+        <zac-bedrijf-zoek (bedrijf)="betrokkeneGeselecteerd($event)" [betrokkeneTypeField]="betrokkeneType"></zac-bedrijf-zoek>
+    </mat-tab>
+</mat-tab-group>

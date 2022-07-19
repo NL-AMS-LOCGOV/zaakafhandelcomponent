@@ -11,19 +11,22 @@ import {PersoonZoekComponent} from './zoek/personen/persoon-zoek.component';
 import {BedrijfZoekComponent} from './zoek/bedrijven/bedrijf-zoek.component';
 import {PersoonsgegevensComponent} from './persoonsgegevens/persoonsgegevens.component';
 import {BedrijfsgegevensComponent} from './bedrijfsgegevens/bedrijfsgegevens.component';
+import {BetrokkeneZoekComponent} from './zoek/betrokkene/betrokkene-zoek.component';
 
 @NgModule({
     declarations: [
         BedrijfZoekComponent,
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
-        PersoonsgegevensComponent
+        PersoonsgegevensComponent,
+        BetrokkeneZoekComponent
     ],
     exports: [
         BedrijfZoekComponent,
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
-        PersoonsgegevensComponent
+        PersoonsgegevensComponent,
+        BetrokkeneZoekComponent
     ],
     imports: [
         SharedModule
