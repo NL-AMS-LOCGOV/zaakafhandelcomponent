@@ -1,0 +1,1675 @@
+openapi: 3.0.0
+
+# Server specificatie
+servers:
+  - description: LVBAG - ACCEPTATIE
+    url: https://api.bag.acceptatie.kadaster.nl/esd/huidigebevragingen/v1
+  - description: LVBAG - PRODUCTIE
+    url: https://api.bag.kadaster.nl/esd/huidigebevragingen/v1
+
+# API specificatie - algemeen
+info:
+  title: Huidige bevragingen API
+  description: "Deze API levert actuele gegevens over adressen, adresseerbare objecten en panden. Actueel betekent in deze API `zonder eindstatus`. De bron voor deze API is de basisregistratie adressen en gebouwen (BAG)."
+  version: "1.5.0"
+  termsOfService: https://zakelijk.kadaster.nl/algemene-voorwaarden
+  contact:
+    name: Kadaster - Beheerder Landelijke Voorziening BAG
+    email: bag@kadaster.nl
+    url: https://zakelijk.kadaster.nl/bag
+  license:
+    name: European Union Public License, version 1.2 (EUPL-1.2)
+    url: https://eupl.eu/1.2/nl/
+
+security:
+  - apiKeyBAG: [ ]
+
+paths:
+
+  /adressen/zoek:
+    get:
+      deprecated: true
+      security:
+        - apiKeyBAG: [ ]
+      operationId: zoek
+      tags:
+        - Adres
+      summary: '"fuzzy" zoeken van adressen'
+      description: "Free query zoeken van adressen met postcode, woonplaats, straatnaam, huisnummer, huisletter, huisnummertoevoeging. Delen van de adressen in het antwoord matchen exact met jouw invoer. Je vindt een adres door de zoekresultaatidentificatie uit het antwoord te gebruiken in get/adressen"
+      parameters:
+        - $ref: '#/components/parameters/zoek'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/page'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            X-Pagination-Page:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Page'
+            X-Pagination-Limit:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Limit'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ZoekResultaatHalCollectie'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /adressen:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegAdressen
+      tags:
+        - Adres
+      summary: "vindt adressen"
+      description: >-
+        Vind een actueel adres met:
+
+        1. Een pandidentificatie of
+
+        2. Een adresseerbaarobjectidentificatie of
+
+        3. Een postcode, huisnummer en optioneel huisletter, huisnummertoevoeging en/of exacteMatch.
+
+        4. Een zoekterm.
+
+
+        Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien,
+        zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature).
+
+        Gebruik de expand-parameter als je het antwoord wil uitbreiden met (delen van) de gerelateerde resources nummeraanduiding, woonplaats en openbare ruimte,
+        zie [functionele specificaties expand-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/expand.feature).
+
+        Gebruik de exacteMatch parameter als je alleen resultaten wilt ontvangen die exact overeenkomen met de opgegeven zoek criteria,
+        zie [functionele specificaties exacteMatch-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BAG-bevragen/blob/v1.2.0/features/exacte_match.feature).
+        Je kunt adresseerbare objecten niet expanden als je tegelijkertijd de query parameter adresseerbaarObjectIdentificatie gebruikt.
+      parameters:
+        - $ref: '#/components/parameters/pandIdentificatie-query'
+        - $ref: '#/components/parameters/adresseerbaarObjectIdentificatie-query'
+        - $ref: '#/components/parameters/zoekresultaatIdentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/expand'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/page'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/postcode'
+        - $ref: '#/components/parameters/huisnummer'
+        - $ref: '#/components/parameters/huisletter'
+        - $ref: '#/components/parameters/huisnummertoevoeging'
+        - $ref: '#/components/parameters/exacteMatch'
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            X-Pagination-Page:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Page'
+            X-Pagination-Limit:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Limit'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AdresHalCollectie'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /adressen/{nummeraanduidingidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegAdresMetNumId
+      tags:
+        - Adres
+      summary: "levert een adres"
+      description: >-
+        Raadpleeg een actueel adres met de nummeraanduidingidentificatie.
+
+        Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien,
+        zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature).
+
+        Gebruik de expand-parameter als je het antwoord wil uitbreiden met (delen van) de gerelateerde resources nummeraanduiding, woonplaats, openbare ruimte, adresseerbaarobject,
+        zie [functionele specificaties expand-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/expand.feature).
+      parameters:
+        - $ref: '#/components/parameters/nummeraanduidingidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/expand'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AdresHal'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /adresseerbareobjecten/{adresseerbaarobjectidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegAdresseerbaarobject
+      tags:
+        - Adresseerbaar object
+      summary: "levert een verblijfsobject, standplaats of ligplaats"
+      description: "Raadpleeg een actueel adresseerbaar object met de identificatie. Dit is de identificatie van een verblijfsobject, ligplaats of standplaats. Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature). Gebruik de expand-parameter als je het antwoord wil uitbreiden met (delen van) de gerelateerde resources adres en pand, zie [functionele specificaties expand-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/expand.feature)."
+      parameters:
+        - $ref: '#/components/parameters/adresseerbaarobjectidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/expand'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/acceptCrs'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            Content-Crs:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/contentCrs'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AdresseerbaarObjectHal'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '412':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/412'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /adresseerbareobjecten:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegAdresseerbareobjecten
+      tags:
+        - Adresseerbaar object
+      summary: "vindt verblijfsobjecten, ligplaatsen, standplaatsen"
+      description: >-
+        Zoek actuele adresseerbare objecten (verblijfsobjecten, standplaatsen of ligplaatsen) met:
+
+        1. een nummeraanduidingidentificatie of
+
+        2. een pandidentificatie of
+
+        3. een lijst met pandidentificaties of
+
+        4. een geometrische contour (rechthoek) in combinatie met status geconstateerd, oppervlakte, gebruiksdoel en/of type.
+
+
+        Het zoeken van adresseerbare objecten met een oppervlakte en een type=ligplaats of type=standplaats wordt niet ondersteund en levert een foutmelding.
+
+        Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie
+        [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature).
+
+        Gebruik de expand-parameter als je het antwoord wil uitbreiden met (delen van) de gerelateerde resources adres en pand, zie
+        [functionele specificaties expand-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/expand.feature).
+        Je kunt panden niet expanden als je tegelijkertijd de query parameter pandIdentificatie(s) gebruikt.
+      parameters:
+        - $ref: '#/components/parameters/nummeraanduidingIdentificatie-query'
+        - $ref: '#/components/parameters/deprecated-pandIdentificatie-query'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/expand'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/acceptCrs'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/page'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/pandIdentificaties'
+        - $ref: '#/components/parameters/geconstateerd'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/gebruiksdoelen'
+        - $ref: '#/components/parameters/bbox'
+        - $ref: '#/components/parameters/oppervlakte'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/contentCrs'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            X-Pagination-Page:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Page'
+            X-Pagination-Limit:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Limit'
+            Content-Crs:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/contentCrs'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AdresseerbaarobjectHalCollectie'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '412':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/412'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /woonplaatsen/{woonplaatsidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegWoonplaats
+      tags:
+        - Adres
+      summary: "levert BAG details van een woonplaats"
+      description: "Raadpleeg een actuele woonplaats met de identificatie. Een woonplaats is een gedeelte van het grondgebied van de gemeente met een naam. Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature). Gebruik de expand-parameter als je het antwoord wil uitbreiden met de gerelateerde resource geometrie, zie [functionele specificaties expand-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/expand.feature)."
+      parameters:
+        - $ref: '#/components/parameters/woonplaatsidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/expand'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/acceptCrs'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            Content-Crs:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/contentCrs'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/WoonplaatsHal'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '412':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/412'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /openbareruimten/{openbareruimteidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegOpenbareRuimte
+      tags:
+        - Adres
+      summary: "levert BAG detals van een openbare ruimte"
+      description: "Raadpleeg een actuele openbare ruimte met de identificatie. Een openbare ruimte is een buitenruimte met een naam die binnen één woonplaats ligt, bijvoorbeeld een straat of een plein. Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature)."
+      parameters:
+        - $ref: '#/components/parameters/openbareruimteidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/OpenbareRuimteHalBasis'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /nummeraanduidingen/{nummeraanduidingidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegNummeraanduiding
+      tags:
+        - Adres
+      summary: "levert BAG details van een nummeraanduiding"
+      description: "Raadpleeg een actuele nummeraanduiding met de identificatie. Een nummeraanduiding is een postcode, huisnummer met evt een huisletter en huisnummertoevoeging die hoort bij een verblijfsobject, een standplaats of een ligplaats. Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature)."
+      parameters:
+        - $ref: '#/components/parameters/nummeraanduidingidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/NummeraanduidingHalBasis'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /panden/{pandidentificatie}:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegPand
+      tags:
+        - Pand
+      summary: "levert een pand"
+      description: "Raadpleeg een actueel pand met de identificatie. Een pand is een bouwkundige, constructief zelfstandige eenheid die direct en duurzaam met de aarde is verbonden en betreedbaar en afsluitbaar is. Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature)."
+      parameters:
+        - $ref: '#/components/parameters/pandidentificatie'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/acceptCrs'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            Content-Crs:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/contentCrs'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PandHalBasis'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '404':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/404'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '412':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/412'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+  /panden:
+    get:
+      security:
+        - apiKeyBAG: [ ]
+      operationId: raadpleegPanden
+      tags:
+        - Pand
+      summary: "vindt panden"
+      description: >-
+        Zoek actuele panden:
+
+        1. met de identificatie van een adresseerbaar object of
+
+        2. met de identificatie van een nummeraanduiding of
+
+        3. met een locatie (punt) of
+
+        4. binnen een geometrische contour (rechthoek) die voldoen aan de opgegeven status, geconstateerd of bouwjaar.
+
+
+        Gebruik de fields-parameter als je alleen specifieke velden in het antwoord wil zien, zie
+        [functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-common/blob/v1.3.0/features/fields.feature).
+      parameters:
+        - $ref: '#/components/parameters/adresseerbaarObjectIdentificatie-query'
+        - $ref: '#/components/parameters/nummeraanduidingIdentificatie-query'
+        - $ref: '#/components/parameters/locatie-query'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/fields'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/acceptCrs'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/contentCrs'
+        - $ref: '#/components/parameters/bbox'
+        - $ref: '#/components/parameters/statusPand'
+        - $ref: '#/components/parameters/geconstateerd'
+        - $ref: '#/components/parameters/bouwjaar'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/page'
+        - $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: "Geslaagd"
+          headers:
+            api-version:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/api_version'
+            warning:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/warning'
+            X-Pagination-Page:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Page'
+            X-Pagination-Limit:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/X_Pagination_Limit'
+            Content-Crs:
+              $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/headers/contentCrs'
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PandHalCollectie'
+        '400':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/400'
+        '401':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/401'
+        '403':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/403'
+        '406':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/406'
+        '412':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/412'
+        '500':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/500'
+        '503':
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/503'
+        default:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/responses/default'
+
+components:
+
+  securitySchemes:
+
+    apiKeyBAG:
+      type: apiKey
+      name: X-Api-Key
+      in: header
+      description: "De API-key die je hebt gekregen dient bij elke request via de `X-Api-Key` request header meegestuurd te worden. Indien deze niet juist wordt meegestuurd, of het een ongeldige key betreft, zul je de foutmelding `403 Forbidden` terugkrijgen."
+
+  parameters:
+
+    # Opsomming van request parameters - ?='...' parameters (by name) - specificatie bij operation zelf.
+    zoek:
+      description: "Zoekterm op postcode, woonplaats, straatnaam, huisnummer, huisletter, huisnummertoevoeging."
+      name: zoek
+      in: query
+      required: true
+      schema:
+        type: string
+
+    q:
+      description: "Zoekterm op postcode, woonplaats, straatnaam, huisnummer, huisletter, huisnummertoevoeging."
+      name: q
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 255
+
+    zoekresultaatIdentificatie:
+      deprecated: true
+      description: "De identificatie van een zoekresultaat van het endpoint get /adressen/zoek."
+      name: zoekresultaatIdentificatie
+      in: query
+      required: false
+      schema:
+        type: string
+
+    locatie-query:
+      description: >-
+        Coördinaten van een locatie die als query-parameter gebruikt wordt om een object te zoeken.
+        Let op, explode is false dus het formaat is ?locatie=196733.51,439931.89
+      name: locatie
+      in: query
+      required: false
+      explode: false
+      schema:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: number
+        example: [ 196733.51, 439931.89 ]
+
+    nummeraanduidingIdentificatie-query:
+      description: "Identificatie van een nummeraanduiding uit de BAG. Deze is 16 cijfers lang."
+      name: nummeraanduidingIdentificatie
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226200000038923'
+
+    pandIdentificatie-query:
+      description: "Identificatie van een pand uit de BAG. Deze is 16 cijfers lang."
+      name: pandIdentificatie
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226100000008856'
+
+    deprecated-pandIdentificatie-query:
+      deprecated: true
+      description: "Identificatie van een pand uit de BAG. Deze is 16 cijfers lang."
+      name: pandIdentificatie
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226100000008856'
+
+    adresseerbaarObjectIdentificatie-query:
+      description: "De identificatie van een adresseerbaar object uit de BAG. Deze is 16 cijfers lang en kan een verblijfsobject, een standplaats of een ligplaats zijn."
+      name: adresseerbaarObjectIdentificatie
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226010000038820'
+
+    postcode:
+      description: "Postcode van het adres."
+      name: postcode
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[1-9]{1}[0-9]{3}[ ]{0,1}[a-zA-Z]{2}$'
+      examples:
+        zonderSpatie:
+          value: '6922KZ'
+        metSpatie:
+          value: '6922 KZ'
+
+    huisnummer:
+      description: "Huisnummer van het adres."
+      name: huisnummer
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 99999
+        example: 1
+
+    huisnummertoevoeging:
+      description: >-
+        Een toevoeging (in de vorm van maximaal 4 cijfers of letters) aan een huisnummer of een combinatie van huisnummer en huisletter van het adres.
+        Bijvoorbeeld:
+        Bij het adres: Belgiëlaan 1 A2, 2391 PH  HAZERSWOUDE-DORP, is 1 het huisnummer, A de huisletter en 2 de huisnummertoevoeging.
+      name: huisnummertoevoeging
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[0-9a-zA-Z]{1,4}$'
+        example: 'bis'
+
+    huisletter:
+      description: >-
+        Een toevoeging (in de vorm van een letter) aan een huisnummer van het adres.
+        Bijvoorbeeld:
+        Bij adres: Belgiëlaan 1 A2, 2391 PH  HAZERSWOUDE-DORP, is 1 het huisnummer en A de huisletter.
+      name: huisletter
+      in: query
+      required: false
+      schema:
+        type: string
+        pattern: '^[a-zA-Z]{1}$'
+        example: 'A'
+
+    exacteMatch:
+      description: >-
+        Geeft aan of de resultaten van de zoekopdracht exact overeen moeten komen met de opgegeven parameters,
+        zie [functionele specificatie exacte match](https://github.com/lvbag/BAG-API/blob/master/Features/exacte_match.feature).
+      name: exacteMatch
+      in: query
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+
+    pandIdentificaties:
+      description: "Een lijst met identificaties van panden uit de BAG."
+      name: pandIdentificaties
+      in: query
+      required: false
+      schema:
+        type: array
+        minItems: 1
+        items:
+          type: string
+          pattern: '^[0-9]{16}$'
+        example: [ '0226100000008856' ]
+      explode: false
+
+    geconstateerd:
+      description: 'Geeft aan of naar geconstateerde objecten moet worden gezocht.'
+      name: geconstateerd
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+    statusPand:
+      description: "Status van het pand."
+      name: statusPand
+      in: query
+      required: false
+      schema:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/components/schemas/StatusPandEnum'
+
+    bouwjaar:
+      description: >-
+        Bouwjaar van het pand.
+        Geeft het minimale en/of maximale bouwjaar aan van het pand waarnaar moet worden gezocht.
+        Een bouwjaar is een natuurlijk getal tussen 0 (minimaal) en 9999 (maximaal).
+        Bv: bouwjaar[min]=1970&bouwjaar[max]=2010
+      name: bouwjaar
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/BouwjaarFilter'
+      explode: true
+      style: deepObject
+
+    type:
+      description: "Geeft aan of het adresseerbaar object een ligplaats, standplaats of verblijfsobject is."
+      name: type
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/TypeAdresseerbaarObjectEnum'
+
+    gebruiksdoelen:
+      description: >-
+        De gebruiksdoelen van het verblijfsobject zoals in de vergunning is opgenomen of bij constatering is vastgesteld.
+        Als een verblijfsobject één van de gebruiksdoelen in deze lijst heeft, dan wordt het verblijfsobject in het zoekresultaat meegenomen.
+      name: gebruiksdoelen
+      in: query
+      required: false
+      schema:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/components/schemas/GebruiksdoelEnum'
+
+    oppervlakte:
+      name: oppervlakte
+      description: >-
+        Geef de minimale en maximale oppervlakte op waarbinnen je wilt zoeken (in m2).
+        Alleen verblijfsobjecten hebben een oppervlakte en kunnen met deze parameter worden gevonden.
+        Ligplaatsen en standplaatsen hebben geen oppervlakte en kunnen met deze parameter niet worden gevonden.
+        De oppervlakte van een verblijfsobject is een natuurlijk getal tussen 1 (minimaal) en 999999 (maximaal).
+        Het is niet toegestaan voor min een grotere waarde op te geven dan voor max.
+        Is min > max dan treedt een foutmelding op.
+        Bv: oppervlakte[min]=100&oppervlakte[max]=200
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/OppervlakteFilter'
+      style: deepObject
+      explode: true
+
+    bbox:
+      description: >-
+        Rechthoek waarbinnen het object dat je zoekt valt.
+        Objecten die de rand van de rechthoek raken of kruisen worden in het zoekresultaat meegenomen.
+        Voor een definitie van bbox, zie [OGC API Features specificatie - bbox definitie](https://docs.opengeospatial.org/is/17-069r3/17-069r3.html#ats_core_fc-bbox-definition).
+        In tegenstelling tot wat er in de OGC API Features specificatie staat, wordt hier geen bbox-crs parameter maar de contentCrs parameter gebruikt om aan te geven in welk CRS de coördinaten van de bbox zijn.
+        Daarnaast kan er alleen met 2D coördinaten worden gezocht.
+        De oppervlakte van de bounding box mag maximaal 250 duizend vierkante meter zijn.
+      name: bbox
+      in: query
+      required: false
+      schema:
+        type: array
+        minItems: 4
+        maxItems: 4
+        items:
+          type: number
+        example: [ 196733.510, 439931.890, 196833.510, 440031.890 ]
+      explode: false
+
+    # Opsomming van path parameters - /{...} - specificatie bij operation zelf.
+    nummeraanduidingidentificatie:
+      description: "Identificatie van een nummeraanduiding uit de BAG. Deze is 16 cijfers lang."
+      name: nummeraanduidingidentificatie
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226200000038923'
+
+    adresseerbaarobjectidentificatie:
+      description: "De identificatie van een adresserbaar object uit de BAG. Deze is 16 cijfers lang en kan een verblijfsobject, een standplaats of een ligplaats zijn."
+      name: adresseerbaarobjectidentificatie
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226010000038820'
+
+    pandidentificatie:
+      description: "Identificatie van een pand uit de BAG. Deze is 16 cijfers lang."
+      name: pandidentificatie
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226100000008856'
+
+    woonplaatsidentificatie:
+      description: "De identificatie van een woonplaats."
+      name: woonplaatsidentificatie
+      in: path
+      required: true
+      schema:
+        description: "Deze wordt gebruikt in de operation, bv. /woonplaatsen/0123. Waarde: 0001-9999."
+        type: string
+        pattern: '^[0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]|[0-9][1-9][0-9]{2}|[1-9][0-9]{3}$'
+        example: '2096'
+
+    openbareruimteidentificatie:
+      description: "Identificatie van een object uit de BAG. Deze is 16 cijfers lang."
+      name: openbareruimteidentificatie
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9]{16}$'
+        example: '0226300000136166'
+
+  schemas:
+
+    ZoekResultaat:
+      deprecated: true
+      type: object
+      description: "Resultaat van een zoekoperatie dat je kunt gebruiken om een adres te vinden met /adressen."
+      properties:
+        omschrijving:
+          description: "Omschrijving van het zoekresultaat"
+          type: string
+        identificatie:
+          description: "Identificatie van het zoekresultaat"
+          type: string
+
+    ZoekResultaatHal:
+      deprecated: true
+      allOf:
+        - $ref: '#/components/schemas/ZoekResultaat'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/ZoekResultaatLinks'
+    ZoekResultaatLinks:
+      deprecated: true
+      type: object
+      properties:
+        adres:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+    ZoekResultaatHalCollectie:
+      deprecated: true
+      type: object
+      description: "Resultaten als lijst."
+      properties:
+        _links:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalPaginationLinksMetLast'
+        _embedded:
+          $ref: '#/components/schemas/ZoekResultaatHalCollectieEmbedded'
+    ZoekResultaatHalCollectieEmbedded:
+      deprecated: true
+      type: object
+      properties:
+        zoekresultaten:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoekResultaatHal'
+
+    BouwjaarFilter:
+      type: object
+      description: |
+        "Zoek binnen een bereik van de opgegeven minimumwaarde tot maximumwaarde.
+        De opgegeven minimumwaarde moet lager zijn dan de opgegeven maximumwaarde."
+      properties:
+        min:
+          type: integer
+          minimum: 0
+          maximum: 9999
+          description: "Zoek naar waarden groter of gelijk aan de opgegeven waarde."
+        max:
+          type: integer
+          minimum: 0
+          maximum: 9999
+          description: "Zoek naar waarden kleiner dan de opgegeven waarde."
+
+    OppervlakteFilter:
+      type: object
+      description: |
+        "Zoek binnen een bereik van de opgegeven minimumwaarde tot maximumwaarde.
+        De opgegeven minimumwaarde moet lager zijn dan de opgegeven maximumwaarde."
+      properties:
+        min:
+          type: integer
+          minimum: 1
+          maximum: 999999
+          description: "Zoek naar waarden groter of gelijk aan de opgegeven waarde."
+        max:
+          type: integer
+          minimum: 1
+          maximum: 999999
+          description: "Zoek naar waarden kleiner dan de opgegeven waarde."
+
+    Adres:
+      type: object
+      description: "Eigenschappen van het adres die kunnen worden hergebruikt in andere API's met adresgegevens."
+      properties:
+        straat:
+          title: openbareruimte naam
+          description: "Een naam die door de gemeente aan een openbare ruimte is gegeven."
+          type: string
+          example: 'Laan van de landinrichtingscommissie Duiven-Westervoort'
+        huisnummer:
+          description: "Een nummer dat door de gemeente aan een adresseerbaar object is gegeven."
+          type: integer
+          example: 1
+        huisletter:
+          description: "Een toevoeging aan een huisnummer in de vorm van een letter die door de gemeente aan een adresseerbaar object is gegeven."
+          type: string
+          example: 'A'
+        huisnummertoevoeging:
+          description: "Een toevoeging aan een huisnummer of een combinatie van huisnummer en huisletter die door de gemeente aan een adresseerbaar object is gegeven."
+          type: string
+          example: 'bis'
+        postcode:
+          description: "De door PostNL vastgestelde code die bij een bepaalde combinatie van een straatnaam en een huisnummer hoort."
+          type: string
+          example: '6922KZ'
+        woonplaats:
+          description: "Een woonplaats is een gedeelte van het grondgebied van de gemeente met een naam."
+          title: woonplaats naam
+          type: string
+          example: 'Duiven'
+    AdresUitgebreid:
+      allOf:
+        - $ref: "#/components/schemas/Adres"
+        - description: "Het adres is de benaming van een locatie bestaande uit straatnaam, huisnummer, (mogelijk met huisletter, huisnummertoevoeging, postcode) en woonplaatsnaam. Dit is de vereenvoudigde samenstelling van de officiële naamgeving gebaseerd op woonplaats, openbare ruimte en nummeraanduiding."
+          properties:
+            adresregel1:
+              type: "string"
+              description: "De eerste regel van het adres zoals deze gebruikt kan worden in postadressering."
+              example: "Ln vd l D-Westervoort 1"
+            adresregel2:
+              type: "string"
+              description: "De tweede regel van het adres zoals deze gebruikt kan worden in postadressering."
+              example: "6922 KZ  DUIVEN"
+            korteNaam:
+              description: "De officiële openbareruimtenaam of een verkorte versie. Beiden hebben maximaal 24 tekens."
+              type: string
+              maxLength: 24
+              example: 'Ln vd l D-Westervoort'
+            nummeraanduidingIdentificatie:
+              type: string
+              description: "Fungeert ook als identificatie van het adres."
+              example: '0226200000038923'
+            openbareRuimteIdentificatie:
+              type: string
+              example: '0226300000136166'
+            woonplaatsIdentificatie:
+              type: string
+              example: '2096'
+            adresseerbaarObjectIdentificatie:
+              type: string
+              example: '0226010000038820'
+            pandIdentificaties:
+              description: "Identificatie(s) van het pand of de panden waar het verblijfsobject deel van is."
+              type: array
+              items:
+                type: string
+              example: [ '0226100000008856' ]
+            isNevenadres:
+              description: "Indicatie dat dit adres een nevenadres is van een adresseerbaar object. Het adres is een hoofdadres als deze indicatie niet wordt meegeleverd."
+              type: boolean
+            geconstateerd:
+              description: "Indicatie dat dit adres in de registratie is opgenomen door een feitelijke constatering, zonder dat er sprake was van een brondocument/vergunning. Het adres is mogelijk illegaal."
+              type: boolean
+            mogelijkOnjuist:
+              $ref: '#/components/schemas/AdresMogelijkOnjuist'
+              description: "Bij het controleren of een property mogelijkOnjuist is kan het zijn dat er meerdere indicaties voor een property opgenomen zijn. In dat geval zijn er meerdere indicaties waarvan de naam begint met de property-naam."
+    AdresMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        adresregel1:
+          type: boolean
+        adresregel2:
+          type: boolean
+        korteNaam:
+          type: boolean
+        straat:
+          type: boolean
+        huisnummer:
+          type: boolean
+        huisletter:
+          type: boolean
+        huisnummertoevoeging:
+          type: boolean
+        postcode:
+          type: boolean
+        woonplaats:
+          type: boolean
+        nummeraanduidingIdentificatie:
+          type: boolean
+        openbareRuimteIdentificatie:
+          type: boolean
+        woonplaatsIdentificatie:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Geometrie of woonplaatsgrens is mogelijk onjuist, waardoor gaten of overlappingen ontstaan in de registratie van woonplaatsen. Gevolg kan zijn dat een object in een verkeerde woonplaats, in twee woonplaatsen, of in geen enkele woonplaats ligt."
+    AdresHal:
+      allOf:
+        - $ref: '#/components/schemas/AdresHalBasis'
+        - properties:
+            _embedded:
+              $ref: '#/components/schemas/AdresEmbedded'
+    AdresHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/AdresUitgebreid'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/AdresLinks'
+    AdresHalCollectie:
+      type: object
+      properties:
+        _links:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalPaginationLinksMetLast'
+        _embedded:
+          $ref: '#/components/schemas/AdresHalCollectieEmbedded'
+    AdresHalCollectieEmbedded:
+      type: object
+      properties:
+        adressen:
+          items:
+            $ref: '#/components/schemas/AdresHal'
+          type: array
+    AdresLinks:
+      type: object
+      properties:
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+        openbareRuimte:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan het adres gerelateerde openbare ruimte."
+        nummeraanduiding:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan het adres gerelateerde nummeraanduiding. Het (boolean) attribuut nevenadres van Adres geeft aan of het hier een hoofd- of nevenadres betreft."
+        woonplaats:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan het adres gerelateerde woonplaats."
+        adresseerbaarObject:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan het adres gerelateerde ligplaats, standplaats of verblijfsobject."
+        panden:
+          description: "Het/de aan het adres gerelateerde pand(en)."
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+    AdresEmbedded:
+      type: object
+      properties:
+        openbareRuimte:
+          $ref: '#/components/schemas/OpenbareRuimteHalBasis'
+        nummeraanduiding:
+          $ref: '#/components/schemas/NummeraanduidingHalBasis'
+        woonplaats:
+          $ref: '#/components/schemas/WoonplaatsHalBasis'
+        adresseerbaarObject:
+          $ref: '#/components/schemas/AdresseerbaarObjectHalBasis'
+
+    AdresseerbaarObject:
+      type: object
+      description: "Een adresseerbaarobject is een standplaats, ligplaats of verblijfsobject."
+      properties:
+        identificatie:
+          description: "Dit is de identificatie van een verblijfsobject, standplaats of ligplaats."
+          type: string
+          example: "0226010000038820"
+        domein:
+          type: "string"
+          description: "Het domein waartoe de identificatie behoort."
+        type:
+          $ref: '#/components/schemas/TypeAdresseerbaarObjectEnum'
+          title: adresseerbaarObjectType
+        documentdatum:
+          description: "De vaststellingsdatum van het brondocument dat de basis is voor opname, wijziging of een verwijdering van een object."
+          example: "2019-11-22"
+          format: date
+          type: string
+        documentnummer:
+          description: "De unieke aanduiding van het brondocument op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van een woonplaats heeft plaatsgevonden, binnen een gemeente. Alle karakters uit de MES-1 karakterset zijn toegestaan."
+          example: "19SZ2048"
+          type: string
+        gebruiksdoelen:
+          items:
+            $ref: '#/components/schemas/GebruiksdoelEnum'
+          type: array
+        geconstateerd:
+          description: "Indicatie dat een standplaats, ligplaats of verblijfsobject in de registratie is opgenomen door een feitelijke constatering, zonder dat er een brondocument aan ten grondslag ligt. Het adresseerbaar object is mogelijk illegaal."
+          type: boolean
+        geometrie:
+          $ref: '#/components/schemas/PuntOfVlak'
+        pandIdentificaties:
+          description: "Identificatie(s) van het pand of de panden waar het verblijfsobject deel van is."
+          type: array
+          items:
+            type: string
+          example: [ '0226100000008856' ]
+        nummeraanduidingIdentificaties:
+          description: "Identificatie(s) van de hoofd- en nevenadressen van de standplaats, ligplaats of verblijfsobject."
+          type: array
+          items:
+            $ref: "#/components/schemas/NummeraanduidingIdentificatiesArray"
+        oppervlakte:
+          type: integer
+        status:
+          $ref: '#/components/schemas/AdresseerbaarObjectStatusEnum'
+        mogelijkOnjuist:
+          $ref: '#/components/schemas/AdresseerbaarObjectMogelijkOnjuist'
+    AdresseerbaarObjectHal:
+      allOf:
+        - $ref: '#/components/schemas/AdresseerbaarObjectHalBasis'
+        - properties:
+            _embedded:
+              $ref: '#/components/schemas/AdresseerbaarObjectEmbedded'
+    AdresseerbaarObjectHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/AdresseerbaarObject'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/AdresseerbaarObjectLinks'
+    AdresseerbaarObjectMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        gebruiksdoelen:
+          type: boolean
+        geometrie:
+          type: boolean
+        nummeraanduidingIdentificaties:
+          type: boolean
+        pandIdentificaties:
+          type: boolean
+        oppervlakte:
+          type: boolean
+        status:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Locatie/contour mogelijk onjuist."
+    AdresseerbaarObjectEmbedded:
+      type: object
+      properties:
+        adressen:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/AdresHalBasis'
+        panden:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/PandHalBasis'
+    AdresseerbaarObjectLinks:
+      type: object
+      properties:
+        adressen:
+          description: "Link(s) naar het hoofdadres en waar van toepassing de nevenadressen van het adresseerbaar object."
+          items:
+            $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          type: array
+        panden:
+          description: "Link(s) naar het pand of de panden waar het adresseerbaar object deel van uitmaakt."
+          items:
+            $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          type: array
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+    AdresseerbaarobjectHalCollectie:
+      type: object
+      properties:
+        _embedded:
+          $ref: '#/components/schemas/AdresseerbaarobjectHalCollectieEmbedded'
+        _links:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalPaginationLinksMetLast'
+    AdresseerbaarobjectHalCollectieEmbedded:
+      type: object
+      properties:
+        adresseerbareObjecten:
+          items:
+            $ref: '#/components/schemas/AdresseerbaarObjectHal'
+          type: array
+    AdresseerbaarObjectStatusEnum:
+      type: string
+      enum:
+        # Ligplaats / standplaats huidige statussen
+        - 'Plaats aangewezen'
+        # Verblijfsobject huidige statussen
+        - 'Verblijfsobject gevormd'
+        - 'Verblijfsobject in gebruik (niet ingemeten)'
+        - 'Verblijfsobject in gebruik'
+        - 'Verbouwing verblijfsobject'
+        - 'Verblijfsobject buiten gebruik'
+    GebruiksdoelEnum:
+      type: string
+      enum:
+        - 'woonfunctie'
+        - 'bijeenkomstfunctie'
+        - 'celfunctie'
+        - 'gezondheidszorgfunctie'
+        - 'industriefunctie'
+        - 'kantoorfunctie'
+        - 'logiesfunctie'
+        - 'onderwijsfunctie'
+        - 'sportfunctie'
+        - 'winkelfunctie'
+        - 'overige gebruiksfunctie'
+
+    OpenbareRuimte:
+      type: object
+      description: "Een buitenruimte met een naam die binnen één woonplaats ligt, bijvoorbeeld een straat of een plein."
+      properties:
+        identificatie:
+          type: string
+        domein:
+          type: "string"
+          description: "Het domein waartoe de identificatie behoort."
+        naam:
+          title: openbare ruimte naam
+          description: "De naam die door de gemeente aan een openbare ruimte is gegeven."
+          type: string
+          example: 'Laan van de landinrichtingscommissie Duiven-Westervoort'
+        type:
+          $ref: '#/components/schemas/TypeOpenbareRuimteEnum'
+        status:
+          $ref: '#/components/schemas/StatusNaamgevingEnum'
+        korteNaam:
+          description: "De officiële openbareruimtenaam of een verkorte versie. Beiden hebben maximaal 24 tekens."
+          type: string
+          maxLength: 24
+          example: 'Ln vd l D-Westervoort'
+        geconstateerd:
+          description: "Indicator dat een openbare ruimte in de registratie is opgenomen door een feitelijke constatering, zonder dat er een brondocument aan ten grondslag ligt. De openbare ruimte is mogelijk illegaal."
+          type: boolean
+        documentdatum:
+          description: "De vaststellingsdatum van het brondocument dat de basis is voor opname, wijziging of een verwijdering van een object."
+          type: string
+          format: date
+          example: '2010-02-09'
+        documentnummer:
+          description: "De unieke aanduiding van het brondocument op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van een woonplaats heeft plaatsgevonden, binnen een gemeente. Alle karakters uit de MES-1 karakterset zijn toegestaan."
+          type: string
+          example: 'BAG-21'
+        woonplaatsIdentificatie:
+          type: string
+          description: "Een openbare ruimte ligt in een woonplaats."
+          example: '2096'
+        mogelijkOnjuist:
+          $ref: '#/components/schemas/OpenbareRuimteMogelijkOnjuist'
+    OpenbareRuimteMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        naam:
+          type: boolean
+        korteNaam:
+          type: boolean
+        type:
+          type: boolean
+        status:
+          type: boolean
+        woonplaatsIdentificatie:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Openbare ruimtenaam komt mogelijk niet overeen met de vermelding in het straatnaambesluit."
+    OpenbareRuimteHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/OpenbareRuimte'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/OpenbareRuimteLinks'
+
+    OpenbareRuimteLinks:
+      type: object
+      properties:
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+        woonplaats:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan de openbare ruimte gerelateerde woonplaats (link)."
+
+    Nummeraanduiding:
+      type: object
+      description: "Een postcode, huisnummer met mogelijk een huisletter en huisnummertoevoeging die hoort bij een verblijfsobject, een standplaats of een ligplaats."
+      properties:
+        identificatie:
+          type: string
+        domein:
+          type: "string"
+          description: "Het domein waartoe de identificatie behoort."
+        huisnummer:
+          description: "Nummer dat door de gemeente aan een adresseerbaar object is gegeven."
+          type: integer
+          example: 1
+        huisletter:
+          description: "Toevoeging aan een huisnummer in de vorm van een letter die door de gemeente aan een adresseerbaar object is gegeven."
+          type: string
+          example: 'A'
+        huisnummertoevoeging:
+          description: "Toevoeging aan een huisnummer of een combinatie van huisnummer en huisletter die door de gemeente aan een adresseerbaar object is gegeven."
+          type: string
+          example: 'bis'
+        postcode:
+          description: "Door PostNL vastgestelde code die bij een bepaalde combinatie van een straatnaam en een huisnummer hoort."
+          type: string
+          example: '6922KZ'
+        status:
+          $ref: '#/components/schemas/StatusNaamgevingEnum'
+        geconstateerd:
+          description: "Indicator dat de nummeraanduiding in de registratie is opgenomen door een feitelijke constatering, zonder dat er sprake was van een brondocument/vergunning. De nummeraanduiding is mogelijk illegaal."
+          type: boolean
+        documentdatum:
+          description: "De vaststellingsdatum van het brondocument dat de basis is voor opname, wijziging of een verwijdering van een object."
+          type: string
+          format: date
+          example: '2019-11-25'
+        documentnummer:
+          description: "Identificatie van het brondocument dat ten grondslag ligt aan de opname, mutatie of een verwijdering van gegevens."
+          type: string
+          example: 'Duiven 25112019'
+        woonplaatsIdentificatie:
+          type: string
+          description: "Een nummeraanduiding ligt in een woonplaats."
+          example: '2096'
+        openbareRuimteIdentificatie:
+          type: string
+          description: "Een nummeraanduiding ligt aan een openbare ruimte."
+          example: '0226300000136166'
+        mogelijkOnjuist:
+          $ref: '#/components/schemas/NummeraanduidingMogelijkOnjuist'
+    NummeraanduidingIdentificatiesArray:
+      type: object
+      properties:
+        nummeraanduidingIdentificatie:
+          type: string
+          example: '0226200000038923'
+        isNevenadres:
+          type: boolean
+    NummeraanduidingMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        huisnummer:
+          type: boolean
+        huisletter:
+          type: boolean
+        huisnummertoevoeging:
+          type: boolean
+        postcode:
+          type: boolean
+        status:
+          type: boolean
+        woonplaatsIdentificatie:
+          type: boolean
+        openbareRuimteIdentificatie:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Woonplaats bestaat mogelijk niet."
+    NummeraanduidingHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/Nummeraanduiding'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/NummeraanduidingLinks'
+
+    NummeraanduidingLinks:
+      type: object
+      properties:
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+        adres:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "Het aan de nummeraanduiding gerelateerde adres (link)."
+        openbareRuimte:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan de nummeraanduiding gerelateerde openbareruimte (link)."
+        woonplaats:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+          description: "De aan het openbareruimte gerelateerde woonplaats (link)."
+
+    Woonplaats:
+      type: object
+      description: "Een woonplaats is een gedeelte van het grondgebied van de gemeente met een naam."
+      properties:
+        identificatie:
+          type: string
+        domein:
+          type: "string"
+          description: "Het domein waartoe de identificatie behoort."
+        naam:
+          description: "De naam van de woonplaats."
+          type: string
+          example: 'Duiven'
+        status:
+          $ref: '#/components/schemas/StatusWoonplaatsEnum'
+          description: "De fase van de levenscyclus van een woonplaats, waarin de betreffende woonplaats zich bevindt."
+        geconstateerd:
+          description: "Indicator dat de woonplaats in de registratie is opgenomen door een feitelijke constatering, zonder dat er een brondocument aan ten grondslag ligt. De woonplaats is mogelijk illegaal."
+          type: boolean
+        documentdatum:
+          description: "De vaststellingsdatum van het brondocument dat de basis is voor opname, wijziging of een verwijdering van een object."
+          type: string
+          format: date
+          example: '2009-02-09'
+        documentnummer:
+          description: "De unieke aanduiding van het brondocument op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van een woonplaats heeft plaatsgevonden, binnen een gemeente. Alle karakters uit de MES-1 karakterset zijn toegestaan."
+          type: string
+          example: '09.0898'
+        mogelijkOnjuist:
+          $ref: "#/components/schemas/WoonplaatsMogelijkOnjuist"
+    WoonplaatsMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        naam:
+          type: boolean
+        geometrie:
+          type: boolean
+        status:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Woonplaats bestaat mogelijk niet."
+    WoonplaatsHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/Woonplaats'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/WoonplaatsLinks'
+    WoonplaatsHal:
+      allOf:
+        - $ref: '#/components/schemas/WoonplaatsHalBasis'
+        - properties:
+            _embedded:
+              $ref: '#/components/schemas/WoonplaatsEmbedded'
+    WoonplaatsLinks:
+      type: object
+      properties:
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+
+    WoonplaatsEmbedded:
+      type: object
+      properties:
+        geometrie:
+          $ref: '#/components/schemas/VlakOfMultivlak'
+
+    Pand:
+      type: object
+      description: "Een pand is een bouwkundige, constructief zelfstandige eenheid die direct en duurzaam met de aarde is verbonden en betreedbaar en afsluitbaar is."
+      properties:
+        identificatie:
+          type: string
+          description: "De unieke aanduiding van een pand. Elk pand waarvan gegevens zijn opgenomen in de BAG wordt uniek aangeduid door middel van een identificatiecode."
+        domein:
+          type: "string"
+          description: "Het domein waartoe de identificatie behoort."
+        geometrie:
+          $ref: 'http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/polygonGeoJSON.yaml'
+          description: "De minimaal tweedimensionale geometrische representatie van het bovenzicht van de omtrekken van een pand."
+        oorspronkelijkBouwjaar:
+          description: "Het jaar waarin een pand oorspronkelijk als bouwkundig gereed is opgeleverd. Door de gemeente wordt een inschatting gemaakt van het bouwjaar, en aangepast als het pand wordt opgeleverd. Wijzigingen aan een pand na oplevering leiden niet tot wijziging van het bouwjaar."
+          type: integer
+          example: 1991
+        status:
+          $ref: '#/components/schemas/StatusPandEnum'
+          description: "Een codering van de verschillende waarden die de status van een pand kan aannemen."
+        geconstateerd:
+          description: "Indicatie dat het pand in de registratie is opgenomen door een feitelijke constatering, zonder dat er sprake was van een brondocument/vergunning. Het pand is mogelijk illegaal."
+          type: boolean
+        documentdatum:
+          description: "De vaststellingsdatum van het brondocument dat de basis is voor opname, wijziging of een verwijdering van een object."
+          type: string
+          format: date
+          example: '2009-05-12'
+        documentnummer:
+          description: "De unieke aanduiding van het brondocument op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van een woonplaats heeft plaatsgevonden, binnen een gemeente. Alle karakters uit de MES-1 karakterset zijn toegestaan."
+          type: string
+          example: '09.BW.0273'
+        adresseerbaarObjectIdentificaties:
+          type: array
+          items:
+            type: string
+          example: [ '0226010000038820' ]
+        nummeraanduidingIdentificaties:
+          description: "Identificatie(s) van de hoofd- en nevenadressen van het pand."
+          items:
+            $ref: "#/components/schemas/NummeraanduidingIdentificatiesArray"
+          type: array
+        mogelijkOnjuist:
+          $ref: '#/components/schemas/PandMogelijkOnjuist'
+    PandMogelijkOnjuist:
+      type: object
+      description: "Wanneer true is de waarde mogelijk onjuist en wordt juistheid op dit moment onderzocht. Zie toelichting."
+      properties:
+        geometrie:
+          type: boolean
+        oorspronkelijkBouwjaar:
+          type: boolean
+        status:
+          type: boolean
+        toelichting:
+          type: array
+          items:
+            type: string
+            example: "Mogelijk is de bouw al gereed of is het pand niet gerealiseerd."
+    PandHalBasis:
+      allOf:
+        - $ref: '#/components/schemas/Pand'
+        - properties:
+            _links:
+              $ref: '#/components/schemas/PandLinks'
+
+    PandLinks:
+      type: object
+      properties:
+        self:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+        adressen:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+        adresseerbareObjecten:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalLink'
+
+    PandHalCollectie:
+      type: object
+      properties:
+        _links:
+          $ref: 'https://raw.githubusercontent.com/VNG-Realisatie/Haal-Centraal-common/v1.3.0/api-specificatie/common.yaml#/components/schemas/HalPaginationLinksMetLast'
+        _embedded:
+          $ref: '#/components/schemas/PandHalCollectieEmbedded'
+    PandHalCollectieEmbedded:
+      type: object
+      properties:
+        panden:
+          type: array
+          items:
+            $ref: '#/components/schemas/PandHalBasis'
+
+    StatusNaamgevingEnum:
+      description: "Een aanduiding van alle waarden die de status van een openbare ruimte of een nummeraanduiding kan aannemen."
+      type: string
+      enum:
+        - 'Naamgeving uitgegeven'
+    StatusPandEnum:
+      type: string
+      enum:
+        - 'Bouwvergunning verleend'
+        - 'Bouw gestart'
+        - 'Pand in gebruik (niet ingemeten)'
+        - 'Pand in gebruik'
+        - 'Verbouwing pand'
+        - 'Sloopvergunning verleend'
+        - 'Pand buiten gebruik'
+    StatusWoonplaatsEnum:
+      description: "Een aanduiding van alle waarden die de status van een woonplaats kan aannemen."
+      type: string
+      enum:
+        - 'Woonplaats aangewezen'
+    TypeAdresseerbaarObjectEnum:
+      type: string
+      enum:
+        - 'verblijfsobject'
+        - 'standplaats'
+        - 'ligplaats'
+    TypeOpenbareRuimteEnum:
+      description: "Een codering van de verschillende waarden die de typering van een openbare ruimte kan aannemen."
+      type: string
+      enum:
+        - 'Weg'
+        - 'Water'
+        - 'Spoorbaan'
+        - 'Terrein'
+        - 'Kunstwerk'
+        - 'Landschappelijk gebied'
+        - 'Administratief gebied'
+
+    PuntOfVlak:
+      type: object
+      description: "Een samengesteld geometriegegevenstype waarbij wordt afgedwongen dat voor de geometrie een keuze gemaakt moet worden tussen een punt of een vlak."
+      properties:
+        punt:
+          $ref: 'http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/pointGeoJSON.yaml'
+        vlak:
+          $ref: 'http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/polygonGeoJSON.yaml'
+    VlakOfMultivlak:
+      type: object
+      description: "Een samengesteld geometriegegevenstype waarbij wordt afgedwongen dat voor de geometrie een keuze gemaakt moet worden tussen een vlak (GM_Surface) of een multivlak (GM_MultiSurface)."
+      properties:
+        vlak:
+          $ref: 'http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/polygonGeoJSON.yaml'
+        multivlak:
+          $ref: 'http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/multipolygonGeoJSON.yaml'
