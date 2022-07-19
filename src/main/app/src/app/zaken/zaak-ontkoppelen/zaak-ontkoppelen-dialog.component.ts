@@ -9,6 +9,7 @@ import {ZakenService} from '../zaken.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
+import {Validators} from '@angular/forms';
 
 @Component({
     templateUrl: 'zaak-ontkoppelen-dialog.component.html'
@@ -32,6 +33,7 @@ export class ZaakOntkoppelenDialogComponent implements OnInit {
         this.redenFormField = new TextareaFormFieldBuilder().id('reden')
                                                             .label('reden')
                                                             .maxlength(100)
+                                                            .validators(Validators.required)
                                                             .build();
     }
 
