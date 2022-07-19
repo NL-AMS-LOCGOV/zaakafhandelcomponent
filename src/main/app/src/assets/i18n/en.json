@@ -145,6 +145,7 @@
   "afhandeling": "Handling",
   "toolbar.profiel": "Profile",
   "toonAfgerondeTaken": "Show finished tasks",
+  "toonGekoppeldeZaakDocumenten": "Show linked case documents",
   "type": "Type",
   "type.-geen-": "- No type -",
   "verloopt.over.dag": "1 day",
@@ -480,7 +481,7 @@
   "initiator.toevoegen.bedrijf": "Add Company",
   "ondertekeningssoort.analoog": "Analog",
   "ondertekeningssoort.digitaal": "Digital",
-  "ondertekeningssoort.pli": "PKI",
+  "ondertekeningssoort.pki": "PKI",
   "HOOFDVESTIGING": "Main establishment",
   "NEVENVESTIGING": "Branch establishment",
   "RECHTSPERSOON": "Legal entity"

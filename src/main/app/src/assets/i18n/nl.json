@@ -146,6 +146,7 @@
   "afhandeling": "Afhandeling",
   "toolbar.profiel": "Profiel",
   "toonAfgerondeTaken": "Toon afgeronde taken",
+  "toonGekoppeldeZaakDocumenten": "Toon gekoppelde zaak documenten",
   "type": "Type",
   "type.-geen-": "- Geen type -",
   "uitkomst": "Uitkomst",
@@ -481,7 +482,7 @@
   "initiator.toevoegen.bedrijf": "Bedrijf toevoegen",
   "ondertekeningssoort.analoog": "Analoog",
   "ondertekeningssoort.digitaal": "Digitaal",
-  "ondertekeningssoort.pli": "PKI",
+  "ondertekeningssoort.pki": "PKI",
   "HOOFDVESTIGING": "Hoofdvestiging",
   "NEVENVESTIGING": "Nevenvestiging",
   "RECHTSPERSOON": "Rechtspersoon"

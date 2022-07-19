@@ -34,7 +34,9 @@ import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObject
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTOndertekening;
+import net.atos.zac.app.informatieobjecten.model.RESTGekoppeldeZaakEnkelvoudigInformatieObject;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
+import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
@@ -80,8 +82,7 @@ public class RESTInformatieobjectConverter {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
                 zaakInformatieObject.getInformatieobject());
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaakUUID());
-        final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = convertToREST(enkelvoudigInformatieObject, zaak);
-        return restEnkelvoudigInformatieobject;
+        return convertToREST(enkelvoudigInformatieObject, zaak);
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject) {
@@ -270,5 +271,57 @@ public class RESTInformatieobjectConverter {
                 .map(drcClientService::readEnkelvoudigInformatieobject)
                 .map(this::convertToREST)
                 .toList();
+    }
+
+    public RESTGekoppeldeZaakEnkelvoudigInformatieObject convertToREST(
+            final ZaakInformatieobject zaakInformatieObject, final RelatieType relatieType, final Zaak zaak) {
+        final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
+                zaakInformatieObject.getInformatieobject());
+        final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
+                enkelvoudigInformatieObject.getUUID()) : null;
+        final EnkelvoudigInformatieobjectActies acties = policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak);
+        final RESTGekoppeldeZaakEnkelvoudigInformatieObject restEnkelvoudigInformatieobject = new RESTGekoppeldeZaakEnkelvoudigInformatieObject();
+        restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
+        restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
+        restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
+        if (acties.getLezen()) {
+            restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
+            restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
+                    .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
+            restEnkelvoudigInformatieobject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
+            if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
+                restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
+            }
+            restEnkelvoudigInformatieobject.auteur = enkelvoudigInformatieObject.getAuteur();
+            if (enkelvoudigInformatieObject.getStatus() != null) {
+                restEnkelvoudigInformatieobject.status = enkelvoudigInformatieObject.getStatus().toString();
+            }
+            restEnkelvoudigInformatieobject.formaat = enkelvoudigInformatieObject.getFormaat();
+            final RESTTaal taal = restTaalConverter.convert(enkelvoudigInformatieObject.getTaal());
+            if (taal != null) {
+                restEnkelvoudigInformatieobject.taal = taal.naam;
+            }
+            restEnkelvoudigInformatieobject.versie = enkelvoudigInformatieObject.getVersie();
+            restEnkelvoudigInformatieobject.registratiedatumTijd = enkelvoudigInformatieObject.getBeginRegistratie();
+            restEnkelvoudigInformatieobject.bestandsnaam = enkelvoudigInformatieObject.getBestandsnaam();
+            if (enkelvoudigInformatieObject.getLink() != null) {
+                restEnkelvoudigInformatieobject.link = enkelvoudigInformatieObject.getLink().toString();
+            }
+            restEnkelvoudigInformatieobject.beschrijving = enkelvoudigInformatieObject.getBeschrijving();
+            restEnkelvoudigInformatieobject.ontvangstdatum = enkelvoudigInformatieObject.getOntvangstdatum();
+            restEnkelvoudigInformatieobject.verzenddatum = enkelvoudigInformatieObject.getVerzenddatum();
+            if (lock != null) {
+                restEnkelvoudigInformatieobject.gelockedDoor = restUserConverter.convertUser(identityService.readUser(lock.getUserId()));
+            }
+            restEnkelvoudigInformatieobject.bestandsomvang = enkelvoudigInformatieObject.getBestandsomvang();
+            restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
+                    enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
+            restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
+            restEnkelvoudigInformatieobject.relatieType = relatieType;
+            restEnkelvoudigInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
+        } else {
+            restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getIdentificatie();
+        }
+        return restEnkelvoudigInformatieobject;
     }
 }
