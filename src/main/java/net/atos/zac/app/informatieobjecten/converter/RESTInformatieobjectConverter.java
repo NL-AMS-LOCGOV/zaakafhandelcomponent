@@ -76,6 +76,10 @@ public class RESTInformatieobjectConverter {
     @Inject
     private PolicyService policyService;
 
+    public List<RESTEnkelvoudigInformatieobject> convertToREST(final List<ZaakInformatieobject> zaakInformatieobjecten) {
+        return zaakInformatieobjecten.stream().map(this::convertToREST).toList();
+    }
+
     public RESTEnkelvoudigInformatieobject convertToREST(final ZaakInformatieobject zaakInformatieObject) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
                 zaakInformatieObject.getInformatieobject());
