@@ -139,7 +139,7 @@ public class PolicyService {
 
     public EnkelvoudigInformatieobjectActies readEnkelvoudigInformatieobjectActies(final UUID enkelvoudigInformatieobjectUUID, final UUID zaakUUID) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        final Zaak zaak = zaakUUID != null ? zrcClientService.readZaak(zaakUUID) : null;
         return readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, zaak);
     }
 

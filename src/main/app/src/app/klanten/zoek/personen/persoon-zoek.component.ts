@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -13,6 +13,7 @@ import {KlantenService} from '../../klanten.service';
 import {Persoon} from '../../model/personen/persoon';
 import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
+import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -20,6 +21,7 @@ import {CustomValidators} from '../../../shared/validators/customValidators';
     styleUrls: ['./persoon-zoek.component.less']
 })
 export class PersoonZoekComponent implements OnInit {
+    @Input() betrokkeneTypeField: SelectFormField;
     @Output() persoon = new EventEmitter<Persoon>();
     foutmelding: string;
     bsnFormField: AbstractFormField;
@@ -63,7 +65,7 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid) {
+        if (!this.formGroup.valid || (this.betrokkeneTypeField && !this.betrokkeneTypeField.formControl.valid)) {
             return false;
         }
         const bsn = this.bsnFormField.formControl.value;
