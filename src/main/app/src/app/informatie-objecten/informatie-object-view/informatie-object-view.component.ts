@@ -146,7 +146,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
         if (this.laatsteVersieInfoObject.acties.bewerken && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
-                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak.uuid)
+                this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(url => {
                         window.open(url);
                     });
@@ -155,14 +155,14 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
         if (this.laatsteVersieInfoObject.acties.vergrendelen) {
             this.menu.push(new ButtonMenuItem('actie.lock', () => {
-                this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid)
+                this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
             }, 'lock'));
         }
 
         if (this.laatsteVersieInfoObject.acties.ontgrendelen) {
             this.menu.push(new ButtonMenuItem('actie.unlock', () => {
-                this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid)
+                this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
             }, 'lock_open'));
         }

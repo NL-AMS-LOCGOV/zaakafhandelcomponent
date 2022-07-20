@@ -34,11 +34,7 @@ export class InformatieObjectenService {
 
     // Het EnkelvoudigInformatieobject kan opgehaald worden binnen de context van een specifieke zaak.
     readEnkelvoudigInformatieobject(uuid: string, zaakUuid?: string): Observable<EnkelvoudigInformatieobject> {
-        let url = `${this.basepath}/informatieobject/${uuid}`;
-        if (zaakUuid) {
-            url = url.concat(`?zaak=${zaakUuid}`);
-        }
-        return this.http.get<EnkelvoudigInformatieobject>(url).pipe(
+        return this.http.get<EnkelvoudigInformatieobject>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}`, zaakUuid)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -109,14 +105,14 @@ export class InformatieObjectenService {
         );
     }
 
-    lockInformatieObject(uuid: string) {
-        return this.http.post<void>(`${this.basepath}/informatieobject/${uuid}/lock`, null).pipe(
+    lockInformatieObject(uuid: string, zaakUuid: string) {
+        return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/lock`, zaakUuid), null).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
-    unlockInformatieObject(uuid: string) {
-        return this.http.post<void>(`${this.basepath}/informatieobject/${uuid}/unlock`, null).pipe(
+    unlockInformatieObject(uuid: string, zaakUuid: string) {
+        return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/unlock`, zaakUuid), null).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -144,7 +140,7 @@ export class InformatieObjectenService {
     }
 
     editEnkelvoudigInformatieObjectInhoud(uuid: string, zaakUuid: string): Observable<string> {
-        return this.http.get<string>(`${this.basepath}/informatieobject/${uuid}/edit?zaak=${zaakUuid}`).pipe(
+        return this.http.get<string>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid)).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
@@ -172,5 +168,13 @@ export class InformatieObjectenService {
         return this.http.get<GekoppeldeZaakEnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobject/gekoppelde/${zaakUUID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
+    }
+
+    private addZaakParameter(url: string, zaakUuid: string): string {
+        if (zaakUuid) {
+            return url.concat(`?zaak=${zaakUuid}`);
+        } else {
+            return url;
+        }
     }
 }

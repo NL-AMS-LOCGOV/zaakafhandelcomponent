@@ -8,6 +8,7 @@ package net.atos.zac.app.zaken.converter;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.AardRelatie;
 import net.atos.client.zgw.zrc.model.RelevanteZaak;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -53,10 +54,14 @@ public class RESTGerelateerdeZaakConverter {
 
     public RESTGerelateerdeZaak convert(final RelevanteZaak relevanteZaak) {
         final Zaak zaak = zrcClientService.readZaak(relevanteZaak.getUrl());
-        return switch (relevanteZaak.getAardRelatie()) {
-            case VERVOLG -> convert(zaak, RelatieType.VERVOLG);
-            case ONDERWERP -> convert(zaak, RelatieType.RELEVANT);
-            case BIJDRAGE -> convert(zaak, RelatieType.BIJDRAGE);
+        return convert(zaak, convertToRelatieType(relevanteZaak.getAardRelatie()));
+    }
+
+    public RelatieType convertToRelatieType(final AardRelatie aardRelatie) {
+        return switch (aardRelatie) {
+            case VERVOLG -> RelatieType.VERVOLG;
+            case BIJDRAGE -> RelatieType.BIJDRAGE;
+            case ONDERWERP -> RelatieType.RELEVANT;
         };
     }
 }
