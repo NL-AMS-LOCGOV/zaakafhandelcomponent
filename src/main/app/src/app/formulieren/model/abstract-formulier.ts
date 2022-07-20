@@ -19,6 +19,7 @@ import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {map} from 'rxjs/operators';
+import * as moment from 'moment';
 
 export abstract class AbstractFormulier {
 
@@ -132,7 +133,7 @@ export abstract class AbstractFormulier {
                 // Voeg een mock-ondertekening toe om de 'ondertekend'-checkbox te checken obv de taakdata
                 const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
                 enkelvoudigInformatieObject.ondertekening = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1
-                        ? { datum: new Date().toISOString().split('T')[0], soort: 'digitaal' }
+                        ? { datum: moment.unix(Date.now()), soort: 'digitaal' }
                         : { datum: null, soort: null };
                 return enkelvoudigInformatieObject;
             }))

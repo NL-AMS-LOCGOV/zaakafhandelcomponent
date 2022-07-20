@@ -1,9 +1,11 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {Moment} from 'moment';
+
 export class Ondertekening {
-    datum: string;
+    datum: Moment;
     soort: string;
 }

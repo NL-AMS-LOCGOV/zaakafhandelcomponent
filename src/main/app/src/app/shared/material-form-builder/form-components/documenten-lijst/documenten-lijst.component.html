@@ -52,7 +52,7 @@
                     <th mat-header-cell *matHeaderCellDef> {{'grootte' | translate}} (MB)</th>
                     <td mat-cell *matCellDef="let document"> {{document.bestandsomvang / (1024 * 1024) | number}} </td>
                 </ng-container>
-                <ng-container matColumnDef="ondertekenen">
+                <ng-container matColumnDef="ondertekening">
                     <th mat-header-cell *matHeaderCellDef> {{'actie.document.ondertekenen' | translate}} </th>
                     <td mat-cell *matCellDef="let document">
                         <mat-checkbox (click)="$event.stopPropagation()"

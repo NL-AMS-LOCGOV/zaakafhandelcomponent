@@ -123,7 +123,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         this.indicaties = [];
         this.indicaties.push(new Indicatie('indicatieVergrendeld',
             this.translate.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})));
-        console.warn(this.infoObject);
         if(this.infoObject.ondertekening) {
             this.indicaties.push(new Indicatie('indicatieOndertekend',
                 this.translate.instant('ondertekeningssoort.' + this.infoObject.ondertekening.soort),
