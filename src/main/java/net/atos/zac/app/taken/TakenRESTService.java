@@ -359,11 +359,11 @@ public class TakenRESTService {
                         lock = enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
                     }
                     RESTFileUpload file = new RESTFileUpload();
-                    String targetPath = enkelvoudigInformatieObject.getInhoud().getPath();
                     InputStream fileStream = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
                     try {
-                        File targetFile = new File(targetPath);
-                        Files.copy(fileStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        file.file = fileStream.readAllBytes();
+                        file.fileSize = enkelvoudigInformatieObject.getBestandsomvang();
+                        file.filename = enkelvoudigInformatieObject.getBestandsnaam();
                     } catch (IOException e) {
                         throw new RuntimeException(e.getMessage(), e); //invalid file
                     }
