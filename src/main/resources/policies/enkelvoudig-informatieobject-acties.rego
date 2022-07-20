@@ -57,6 +57,9 @@ bewerken {
     enkelvoudig_informatieobject.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
+bewerken {
+    rollen.recordmanager.id in user.rollen
+}
 
 default vergrendelen := false
 vergrendelen {
