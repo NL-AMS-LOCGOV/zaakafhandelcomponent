@@ -32,5 +32,5 @@ export class EnkelvoudigInformatieobject {
     indicatieGebruiksrecht: boolean;
     gelockedDoor: User;
     acties: EnkelvoudigInformatieobjectActies;
-    ondertekening?: Ondertekening;
+    ondertekening: Ondertekening|null;
 }

@@ -102,9 +102,11 @@ public class RESTInformatieobjectConverter {
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
         restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
         final Ondertekening ondertekening = enkelvoudigInformatieObject.getOndertekening();
-        restEnkelvoudigInformatieobject.ondertekening = new RESTOndertekening();
-        restEnkelvoudigInformatieobject.ondertekening.datum = ondertekening.getDatum();
-        restEnkelvoudigInformatieobject.ondertekening.soort = ondertekening.getSoort();
+        if(ondertekening.getDatum() != null && ondertekening.getSoort() != null) {
+            restEnkelvoudigInformatieobject.ondertekening = new RESTOndertekening();
+            restEnkelvoudigInformatieobject.ondertekening.datum = ondertekening.getDatum();
+            restEnkelvoudigInformatieobject.ondertekening.soort = ondertekening.getSoort();
+        }
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()

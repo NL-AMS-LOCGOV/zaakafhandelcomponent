@@ -124,13 +124,16 @@ export abstract class AbstractFormulier {
 
         return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(
             map(arr => arr.map(enkelvoudigInformatieObject => {
+                // Als de taakdata geen bijlagen veld bevat
                 if(!this.dataElementen['bijlagen']) {
                     return enkelvoudigInformatieObject;
                 }
+                // Als de bijlagen.ondertekend array de waarde enkelvoudigInformatieObject.uuid bevat
+                // Voeg een mock-ondertekening toe om de 'ondertekend'-checkbox te checken obv de taakdata
                 const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
                 enkelvoudigInformatieObject.ondertekening = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1
                         ? { datum: new Date().toISOString().split('T')[0], soort: 'digitaal' }
-                        : undefined;
+                        : { datum: null, soort: null };
                 return enkelvoudigInformatieObject;
             }))
         );
