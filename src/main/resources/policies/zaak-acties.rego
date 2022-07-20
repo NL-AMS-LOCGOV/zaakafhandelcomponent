@@ -159,7 +159,6 @@ wijzigen_toekenning {
 default starten_plan_items := false
 starten_plan_items {
     zaak.open == true
-    zaak.behandelaar == user.id
     zaaktype_allowed == true
 }
 
