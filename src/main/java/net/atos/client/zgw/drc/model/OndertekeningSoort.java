@@ -15,11 +15,11 @@ import net.atos.client.zgw.shared.model.AbstractEnum;
 @JsonbTypeAdapter(OndertekeningSoort.Adapter.class)
 public enum OndertekeningSoort implements AbstractEnum<OndertekeningSoort> {
 
-    ANALOOG("analoog"),
+    ANALOOG("ANALOOG"),
 
-    DIGITAAL("digitaal"),
+    DIGITAAL("DIGITAAL"),
 
-    PKI("pki");
+    PKI("PKI");
 
     private final String value;
 

@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -336,9 +337,13 @@ public class TakenRESTService {
     }
 
     private void signDocuments(final RESTTaak restTaak) {
-        Arrays.stream(new Gson().fromJson(restTaak.taakdata.get("bijlagen"), JsonElement.class) //TODO: Fix magic string?
+        final String TAAKDATA_BIJLAGEN_FIELD = "bijlagen";
+        final String TAAKDATA_BIJLAGEN_ONDERTEKEND_PROPERTY = "ondertekend";
+        final String UPDATE_ONDERTEKENING_TOELICHTING = "Door ondertekenen";
+
+        Arrays.stream(new Gson().fromJson(restTaak.taakdata.get(TAAKDATA_BIJLAGEN_FIELD), JsonElement.class)
                 .getAsJsonObject()
-                .get("ondertekend")
+                .get(TAAKDATA_BIJLAGEN_ONDERTEKEND_PROPERTY)
                 .getAsString()
                 .split(";"))
                 .map(UUID::fromString)
@@ -360,7 +365,7 @@ public class TakenRESTService {
                         File targetFile = new File(targetPath);
                         Files.copy(fileStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        //TODO: Proper error handling
+                        throw new RuntimeException(e.getMessage(), e); //invalid file
                     }
                     final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock =
                             restInformatieobjectConverter.convert(
@@ -372,7 +377,7 @@ public class TakenRESTService {
 
                     drcClientService.updateEnkelvoudigInformatieobject(
                             uuid,
-                            "Door ondertekenen",
+                            UPDATE_ONDERTEKENING_TOELICHTING,
                             enkelvoudigInformatieobjectWithInhoudAndLock
                     );
                 });
