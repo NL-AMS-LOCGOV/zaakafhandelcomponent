@@ -20,8 +20,6 @@ public class ZaakZoekObject implements ZoekObject {
 
     public static final String EINDSTATUS_FIELD = "zaak_statusEindstatus";
 
-    public static final String
-
     @Field
     private String id;
 

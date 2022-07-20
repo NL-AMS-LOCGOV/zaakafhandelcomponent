@@ -39,7 +39,6 @@ public class RESTZoekParametersConverter {
         }
 
         if (restZoekParameters.alleenAfgeslotenZaken) {
-            zoekParameters.addFilterQuery(ZaakZoekObject.AFGEHANDELD_FIELD, BooleanUtils.TRUE);
             zoekParameters.addFilterQuery(ZaakZoekObject.EINDSTATUS_FIELD, BooleanUtils.TRUE);
         }
 
