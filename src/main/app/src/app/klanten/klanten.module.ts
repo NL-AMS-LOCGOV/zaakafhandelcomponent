@@ -11,7 +11,7 @@ import {PersoonZoekComponent} from './zoek/personen/persoon-zoek.component';
 import {BedrijfZoekComponent} from './zoek/bedrijven/bedrijf-zoek.component';
 import {PersoonsgegevensComponent} from './persoonsgegevens/persoonsgegevens.component';
 import {BedrijfsgegevensComponent} from './bedrijfsgegevens/bedrijfsgegevens.component';
-import {KlantZoekComponent} from './zoek/klant/klant-zoek.component';
+import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
 
 @NgModule({
     declarations: [

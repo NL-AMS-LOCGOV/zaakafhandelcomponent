@@ -85,6 +85,8 @@
   "inschrijfadres": "Inschrijfadres",
   "vestigingsadres": "Vestigingsadres",
   "betrokkenen": "Betrokkenen",
+  "betrokkeneRoltype": "Betrokkenheid",
+  "betrokkeneRoltype.-kies-": "Kies de soort betrokkenheid",
   "bronorganisatie": "Bronorganisatie",
   "communicatiekanaal": "Communicatiekanaal",
   "communicatiekanaal.-geen-": "- Geen communicatiekanaal -",

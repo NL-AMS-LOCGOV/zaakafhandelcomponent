@@ -9,6 +9,7 @@ import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form
 import {Validators} from '@angular/forms';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {ZaakActies} from '../../../zaken/model/zaak-acties';
+import {KlantenService} from '../../klanten.service';
 
 @Component({
     selector: 'zac-klant-zoek',
@@ -18,19 +19,20 @@ import {ZaakActies} from '../../../zaken/model/zaak-acties';
 export class KlantZoekComponent implements OnInit {
     @Input() initiator: boolean;
     @Input() acties: ZaakActies;
+    @Input() zaaktypeUUID: string;
     @Output() klant = new EventEmitter<Klant>();
-    betrokkeneType: SelectFormField;
+    betrokkeneRoltype: SelectFormField;
 
-    constructor() {
+    constructor(private klantenService: KlantenService) {
     }
 
     ngOnInit(): void {
-        this.betrokkeneType = new SelectFormFieldBuilder().id('betrokkeneType')
-                                                          .label('betrokkeneType')
-                                                          .optionLabel('naam')
-                                                          .options(['TODO'])
-                                                          .validators(Validators.required)
-                                                          .build();
+        this.betrokkeneRoltype = new SelectFormFieldBuilder().id('betrokkeneType')
+                                                             .label('betrokkeneRoltype')
+                                                             .optionLabel('naam')
+                                                             .options(this.klantenService.listBetrokkeneRoltypen(this.zaaktypeUUID))
+                                                             .validators(Validators.required)
+                                                             .build();
 
     }
 

@@ -21,7 +21,7 @@ import {SelectFormField} from '../../../shared/material-form-builder/form-compon
     styleUrls: ['./persoon-zoek.component.less']
 })
 export class PersoonZoekComponent implements OnInit {
-    @Input() betrokkeneTypeField: SelectFormField;
+    @Input() betrokkeneRoltypeField: SelectFormField;
     @Output() persoon = new EventEmitter<Persoon>();
     foutmelding: string;
     bsnFormField: AbstractFormField;
@@ -65,7 +65,7 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid || (this.betrokkeneTypeField && !this.betrokkeneTypeField.formControl.valid)) {
+        if (!this.formGroup.valid || (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid)) {
             return false;
         }
         const bsn = this.bsnFormField.formControl.value;

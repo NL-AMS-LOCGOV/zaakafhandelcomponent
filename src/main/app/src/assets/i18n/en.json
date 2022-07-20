@@ -85,6 +85,8 @@
   "inschrijfadres": "Registration address",
   "vestigingsadres": "Establishment address",
   "betrokkenen": "Involved",
+  "betrokkeneRoltype": "Involvement",
+  "betrokkeneRoltype.-kies-": "Select the kind of involvement",
   "bronorganisatie": "Source organization",
   "communicatiekanaal": "Communication channel",
   "communicatiekanaal.-geen-": "- No communication channel -",
