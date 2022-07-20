@@ -4,12 +4,13 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Klant} from '../../model/klant';
+import {Klant} from '../../model/klanten/klant';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {ZaakActies} from '../../../zaken/model/zaak-acties';
 import {KlantenService} from '../../klanten.service';
+import {KlantGegevens} from '../../model/klanten/klant-gegevens';
 
 @Component({
     selector: 'zac-klant-zoek',
@@ -20,7 +21,7 @@ export class KlantZoekComponent implements OnInit {
     @Input() initiator: boolean;
     @Input() acties: ZaakActies;
     @Input() zaaktypeUUID: string;
-    @Output() klant = new EventEmitter<Klant>();
+    @Output() klantGegevens = new EventEmitter<KlantGegevens>();
     betrokkeneRoltype: SelectFormField;
 
     constructor(private klantenService: KlantenService) {
@@ -37,10 +38,10 @@ export class KlantZoekComponent implements OnInit {
     }
 
     klantGeselecteerd(klant: Klant): void {
-        if (this.initiator) {
-            this.klant.emit(klant);
-        } else {
-            // TODO #1325
+        const klantGegevens: KlantGegevens = new KlantGegevens(klant);
+        if (!this.initiator) {
+            klantGegevens.betrokkeneRoltype = this.betrokkeneRoltype.formControl.value;
         }
+        this.klantGegevens.emit(klantGegevens);
     }
 }

@@ -46,7 +46,7 @@ import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-comp
 import {Validators} from '@angular/forms';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
-import {Klant} from '../../klanten/model/klant';
+import {Klant} from '../../klanten/model/klanten/klant';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {AddressResult, LocationService} from '../../shared/location/location.service';
 import {GeometryType} from '../model/geometryType';
@@ -72,6 +72,7 @@ import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
+import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -827,8 +828,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     }
 
-    betrokkeneGeselecteerd(betrokkene: Klant): void {
-        // TODO #1325
+    betrokkeneGeselecteerd(betrokkene: KlantGegevens): void {
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        this.actionsSidenav.close();
+        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant.identificatie, betrokkene.betrokkeneRoltype)
+            .subscribe(zaak => {
+                this.zaak = zaak;
+                this.utilService.openSnackbar('msg.betrokkene.toegevoegd', {roltype: betrokkene.betrokkeneRoltype.naam});
+                this.loadHistorie();
+            });
     }
 
     deleteBetrokkene(): void {

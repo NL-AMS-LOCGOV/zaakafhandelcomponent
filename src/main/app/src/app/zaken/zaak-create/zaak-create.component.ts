@@ -25,7 +25,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
-import {Klant} from '../../klanten/model/klant';
+import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
