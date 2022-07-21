@@ -106,6 +106,8 @@ public class RESTInformatieobjectConverter {
             restEnkelvoudigInformatieobject.ondertekening = new RESTOndertekening();
             restEnkelvoudigInformatieobject.ondertekening.datum = ondertekening.getDatum();
             restEnkelvoudigInformatieobject.ondertekening.soort = ondertekening.getSoort();
+        } else {
+            restEnkelvoudigInformatieobject.ondertekening = null;
         }
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();

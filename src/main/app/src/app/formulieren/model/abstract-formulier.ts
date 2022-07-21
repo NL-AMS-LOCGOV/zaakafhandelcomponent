@@ -132,9 +132,10 @@ export abstract class AbstractFormulier {
                 // Als de bijlagen.ondertekend array de waarde enkelvoudigInformatieObject.uuid bevat
                 // Voeg een mock-ondertekening toe om de 'ondertekend'-checkbox te checken obv de taakdata
                 const ondertekend = JSON.parse(this.dataElementen['bijlagen']).ondertekend;
+                //TODO: Check of dit niet met een boolean kan - dit soort dummy object is niet wenselijk
                 enkelvoudigInformatieObject.ondertekening = ondertekend.indexOf(enkelvoudigInformatieObject.uuid) > -1
                         ? { datum: moment.unix(Date.now()), soort: 'digitaal' }
-                        : { datum: null, soort: null };
+                        : null;
                 return enkelvoudigInformatieObject;
             }))
         );
