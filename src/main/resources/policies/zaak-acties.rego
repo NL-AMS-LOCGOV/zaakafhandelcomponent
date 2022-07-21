@@ -108,6 +108,7 @@ versturen_email {
 default versturen_ontvangstbevestiging := false
 versturen_ontvangstbevestiging {
     zaak.open == true
+    zaak.heropend == false
     zaaktype_allowed == true
 }
 
