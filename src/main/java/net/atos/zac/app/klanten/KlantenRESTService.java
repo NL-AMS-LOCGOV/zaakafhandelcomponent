@@ -8,7 +8,9 @@ package net.atos.zac.app.klanten;
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -49,6 +51,14 @@ import net.atos.zac.app.shared.RESTResultaat;
 public class KlantenRESTService {
 
     private static final Logger LOG = Logger.getLogger(KlantenRESTService.class.getName());
+
+    public static final Set<AardVanRol> betrokkenen;
+
+    static {
+        betrokkenen = EnumSet.allOf(AardVanRol.class);
+        betrokkenen.remove(AardVanRol.INITIATOR);
+        betrokkenen.remove(AardVanRol.BEHANDELAAR);
+    }
 
     @Inject
     private BRPClientService brpClientService;
@@ -112,7 +122,7 @@ public class KlantenRESTService {
     public List<RESTRoltype> listBetrokkeneRoltypen(@PathParam("zaaktypeUuid") final UUID zaaktype) {
         return roltypeConverter.convert(
                 ztcClientService.listRoltypen(ztcClientService.readZaaktype(zaaktype).getUrl()).stream()
-                        .filter(roltype -> AardVanRol.getBetrokkenen().contains(roltype.getOmschrijvingGeneriek()))
+                        .filter(roltype -> betrokkenen.contains(roltype.getOmschrijvingGeneriek()))
                         .sorted(Comparator.comparing(Roltype::getOmschrijving)));
     }
 }

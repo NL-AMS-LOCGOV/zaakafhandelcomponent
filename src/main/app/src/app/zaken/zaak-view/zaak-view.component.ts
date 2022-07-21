@@ -73,6 +73,7 @@ import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
+import {ZaakBetrokkene} from '../model/zaak-betrokkene';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -100,6 +101,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
+    betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
+    betrokkenenColumns: string[] = ['roltype', 'type', 'identificatie'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
@@ -166,6 +169,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.zaak = zaak;
         this.utilService.disableActionBar(!zaak.acties.koppelen);
         this.loadHistorie();
+        this.loadBetrokkenen();
         this.setEditableFormFields();
         this.setupMenu();
         this.setupIndicaties();
@@ -715,6 +719,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    private loadBetrokkenen(): void {
+        this.zakenService.listBetrokkenenVoorZaak(this.zaak.uuid).subscribe(betrokkenen => {
+            this.betrokkenen.data = betrokkenen;
+        });
+    }
+
     editZaakLocatie(): void {
         this.action = SideNavAction.ZOEK_LOCATIE;
         this.actionsSidenav.open();
@@ -836,6 +846,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.zaak = zaak;
                 this.utilService.openSnackbar('msg.betrokkene.toegevoegd', {roltype: betrokkene.betrokkeneRoltype.naam});
                 this.loadHistorie();
+                this.loadBetrokkenen();
             });
     }
 

@@ -68,8 +68,10 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
+import net.atos.zac.app.klanten.KlantenRESTService;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
+import net.atos.zac.app.zaken.converter.RESTZaakBetrokkeneConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
@@ -78,6 +80,7 @@ import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
+import net.atos.zac.app.zaken.model.RESTZaakBetrokkene;
 import net.atos.zac.app.zaken.model.RESTZaakBetrokkeneGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakEditMetRedenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakHeropenenGegevens;
@@ -169,6 +172,9 @@ public class ZakenRESTService {
 
     @Inject
     private RESTHistorieRegelConverter auditTrailConverter;
+
+    @Inject
+    private RESTZaakBetrokkeneConverter zaakBetrokkeneConverter;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -548,6 +554,16 @@ public class ZakenRESTService {
         assertActie(policyService.readZaakActies(zaakUUID).getLezen());
         final List<AuditTrailRegel> auditTrail = zrcClientService.listAuditTrail(zaakUUID);
         return auditTrailConverter.convert(auditTrail);
+    }
+
+    @GET
+    @Path("zaak/{uuid}/betrokkene")
+    public List<RESTZaakBetrokkene> listBetrokkenen(@PathParam("uuid") final UUID zaakUUID) {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        assertActie(policyService.readZaakActies(zaakUUID).getLezen());
+        return zaakBetrokkeneConverter.convert(
+                zrcClientService.listRollen(zaak.getUrl()).stream()
+                        .filter(rol -> KlantenRESTService.betrokkenen.contains(AardVanRol.fromValue(rol.getOmschrijvingGeneriek()))));
     }
 
     @GET

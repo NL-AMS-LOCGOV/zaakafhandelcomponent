@@ -253,8 +253,30 @@
                         </mat-tab>
 
                         <mat-tab label="{{'betrokkenen' | translate}}">
-                            <div id="betrokkenen_tab" class="table-wrapper">
-                                <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                            <div id="betrokkenen_tab" class="table-wrapper betrokkenen-table">
+                                <table mat-table [dataSource]="betrokkenen" matSort>
+                                    <ng-container matColumnDef="roltype">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'roltype' | translate }} </th>
+                                        <td mat-cell *matCellDef="let betrokkene">
+                                            <read-more [text]="betrokkene.roltype" [maxLength]="20"></read-more>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="type">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'betrokkenetype' | translate }} </th>
+                                        <td mat-cell *matCellDef="let betrokkene">
+                                            {{ 'betrokkenetype.' + betrokkene.type | translate }}
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="identificatie">
+                                        <th mat-header-cell *matHeaderCellDef> {{ 'identificatie' | translate }} </th>
+                                        <td mat-cell *matCellDef="let betrokkene">
+                                            <read-more [text]="betrokkene.identificatie" [maxLength]="20"></read-more>
+                                        </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="betrokkenenColumns; sticky: true"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: betrokkenenColumns;"></tr>
+                                </table>
+                                <p *ngIf="betrokkenen.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
