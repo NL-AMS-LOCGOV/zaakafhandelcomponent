@@ -30,6 +30,7 @@ import {ZaakHeropenenGegevens} from './model/zaak-heropenen-gegevens';
 import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
 import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
 import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
+import {Roltype} from '../klanten/model/klanten/roltype';
 
 @Injectable({
     providedIn: 'root'
@@ -86,7 +87,6 @@ export class ZakenService {
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
-
 
     listZaakWaarschuwingen(): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/waarschuwing`).pipe(
@@ -165,6 +165,16 @@ export class ZakenService {
 
     deleteInitiator(zaak: Zaak): Observable<Zaak> {
         return this.http.delete<Zaak>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    createBetrokkene(zaak: Zaak, betrokkeneIdentificatie: string, roltype: Roltype): Observable<Zaak> {
+        const gegevens = new ZaakBetrokkeneGegevens();
+        gegevens.zaakUUID = zaak.uuid;
+        gegevens.roltypeUUID = roltype.uuid;
+        gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
+        return this.http.post<Zaak>(`${this.basepath}/betrokkene`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }

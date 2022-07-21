@@ -241,6 +241,29 @@ public class ZTCClientService implements Caching {
     }
 
     /**
+     * Read {@link Roltype}s of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link Roltype}s.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
+    public List<Roltype> listRoltypen(final URI zaaktypeURI) {
+        return ztcClient.roltypeList(new RoltypeListParameters(zaaktypeURI)).getResults();
+    }
+
+    /**
+     * Read {@link Roltype} via its UUID.
+     * Throws a RuntimeException if the {@link Roltype} can not be read.
+     *
+     * @param roltypeUUID UUID of {@link Roltype}.
+     * @return {@link Roltype}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_ROLTYPE)
+    public Roltype readRoltype(final UUID roltypeUUID) {
+        return ztcClient.roltypeRead(roltypeUUID);
+    }
+
+    /**
      * Read {@link Informatieobjecttype} via its URI.
      * Throws a RuntimeException if the {@link Informatieobjecttype} can not be read.
      *

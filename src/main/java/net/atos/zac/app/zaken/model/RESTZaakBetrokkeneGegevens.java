@@ -11,5 +11,7 @@ public class RESTZaakBetrokkeneGegevens {
 
     public UUID zaakUUID;
 
+    public UUID roltypeUUID;
+
     public String betrokkeneIdentificatie;
 }

@@ -6,6 +6,8 @@
 export class ZaakBetrokkeneGegevens {
     zaakUUID: string;
 
+    roltypeUUID?: string;
+
     betrokkeneType: string;
 
     betrokkeneIdentificatie: string;

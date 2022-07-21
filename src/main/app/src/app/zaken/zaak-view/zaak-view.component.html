@@ -8,17 +8,34 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-klant-zoek *ngSwitchCase="'ZOEK_INITIATOR'" (klant)="initiatorGeselecteerd($event)" [acties]="zaak.acties" [initiator]="true"></zac-klant-zoek>
-        <zac-klant-zoek *ngSwitchCase="'ZOEK_BETROKKENE'" (klant)="betrokkeneGeselecteerd($event)" [acties]="zaak.acties"></zac-klant-zoek>
-        <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'" [huidigeLocatie]="zaakLocatie" (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
-        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav" [zaak]="zaak"
+        <zac-klant-zoek *ngSwitchCase="'ZOEK_INITIATOR'"
+                        (klantGegevens)="initiatorGeselecteerd($event.klant)"
+                        [acties]="zaak.acties"
+                        [initiator]="true"></zac-klant-zoek>
+        <zac-klant-zoek *ngSwitchCase="'ZOEK_BETROKKENE'"
+                        (klantGegevens)="betrokkeneGeselecteerd($event)"
+                        [acties]="zaak.acties"
+                        [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-zoek>
+        <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'"
+                          [huidigeLocatie]="zaakLocatie"
+                          (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
+        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'"
+                                   [sideNav]="actionsSidenav"
+                                   [zaak]="zaak"
                                    (document)="documentToegevoegd($event)"></zac-informatie-object-add>
-        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'" [sideNav]="actionsSidenav" [zaakUUID]="zaak.uuid"
+        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'"
+                                      [sideNav]="actionsSidenav"
+                                      [zaakUUID]="zaak.uuid"
                                       (redirectUrl)="documentAanmakenStarten($event)"
                                       (melding)="documentAanmakenNietMogelijk($event)"></zac-informatie-object-create>
-        <zac-human-task-do *ngSwitchCase="'TAAK_STARTEN'" (done)="taakGestart()" [planItem]="actiefPlanItem"></zac-human-task-do>
-        <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'" (mailVerstuurd)="mailVerstuurd()" [zaak]="zaak"></zac-mail-create>
-        <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'" (ontvangstBevestigd)="ontvangstBevestigd()"
+        <zac-human-task-do *ngSwitchCase="'TAAK_STARTEN'"
+                           (done)="taakGestart()"
+                           [planItem]="actiefPlanItem"></zac-human-task-do>
+        <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'"
+                         (mailVerstuurd)="mailVerstuurd()"
+                         [zaak]="zaak"></zac-mail-create>
+        <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'"
+                                  (ontvangstBevestigd)="ontvangstBevestigd()"
                                   [zaak]="zaak"></zac-ontvangstbevestiging>
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">

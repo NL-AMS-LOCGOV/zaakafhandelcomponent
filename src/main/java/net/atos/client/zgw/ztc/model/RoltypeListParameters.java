@@ -25,7 +25,6 @@ public class RoltypeListParameters extends AbstractZTCListParameters {
      */
     private AardVanRol omschrijvingGeneriek;
 
-
     public RoltypeListParameters(final URI zaaktype) {
         this.zaaktype = zaaktype;
     }
@@ -45,6 +44,6 @@ public class RoltypeListParameters extends AbstractZTCListParameters {
 
     @QueryParam("omschrijvingGeneriek")
     public String getOmschrijvingGeneriek() {
-        return omschrijvingGeneriek.toValue();
+        return omschrijvingGeneriek == null ? null : omschrijvingGeneriek.toValue();
     }
 }

@@ -5,6 +5,10 @@
 
 package net.atos.client.zgw.ztc.model;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import net.atos.client.zgw.shared.model.AbstractEnum;
@@ -24,7 +28,16 @@ public enum AardVanRol implements AbstractEnum<AardVanRol> {
     ZAAKCOORDINATOR("zaakcoordinator"),
     MEDE_INITIATOR("mede_initiator");
 
+    private static Set<AardVanRol> betrokkenen;
+
     private final String value;
+
+    static {
+        final EnumSet<AardVanRol> betrokkenen = EnumSet.allOf(AardVanRol.class);
+        betrokkenen.remove(INITIATOR);
+        betrokkenen.remove(BEHANDELAAR);
+        AardVanRol.betrokkenen = Collections.unmodifiableSet(betrokkenen);
+    }
 
     AardVanRol(final String value) {
         this.value = value;
@@ -39,8 +52,11 @@ public enum AardVanRol implements AbstractEnum<AardVanRol> {
         return AbstractEnum.fromValue(values(), value);
     }
 
-    static class Adapter extends AbstractEnum.Adapter<AardVanRol> {
+    public static Set<AardVanRol> getBetrokkenen() {
+        return betrokkenen;
+    }
 
+    static class Adapter extends AbstractEnum.Adapter<AardVanRol> {
         @Override
         protected AardVanRol[] getEnums() {
             return values();

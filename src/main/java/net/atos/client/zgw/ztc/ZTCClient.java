@@ -75,6 +75,10 @@ public interface ZTCClient {
     Results<Resultaattype> resultaattypeList(@BeanParam final ResultaattypeListParameters parameters);
 
     @GET
+    @Path("roltypen/{uuid}")
+    Roltype roltypeRead(@PathParam("uuid") final UUID uuid);
+
+    @GET
     @Path("roltypen")
     Results<Roltype> roltypeList(@BeanParam final RoltypeListParameters parameters);
 

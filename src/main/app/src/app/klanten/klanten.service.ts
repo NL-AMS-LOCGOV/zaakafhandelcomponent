@@ -13,6 +13,7 @@ import {Persoon} from './model/personen/persoon';
 import {ListBedrijvenParameters} from './model/bedrijven/list-bedrijven-parameters';
 import {Bedrijf} from './model/bedrijven/bedrijf';
 import {Resultaat} from '../shared/model/resultaat';
+import {Roltype} from './model/klanten/roltype';
 
 @Injectable({
     providedIn: 'root'
@@ -48,4 +49,9 @@ export class KlantenService {
         );
     }
 
+    listBetrokkeneRoltypen(zaaktypeUuid: string): Observable<Roltype[]> {
+        return this.http.get<Roltype[]>(`${this.basepath}/roltype/${zaaktypeUuid}/betrokkene`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
 }

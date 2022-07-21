@@ -6,9 +6,13 @@
 package net.atos.client.zgw.ztc.model;
 
 import java.net.URI;
+import java.util.UUID;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
+
+import net.atos.client.zgw.shared.util.URIUtil;
 
 /**
  *
@@ -88,5 +92,10 @@ public class Roltype {
 
     public void setOmschrijvingGeneriek(final AardVanRol omschrijvingGeneriek) {
         this.omschrijvingGeneriek = omschrijvingGeneriek;
+    }
+
+    @JsonbTransient
+    public UUID getUUID() {
+        return URIUtil.parseUUIDFromResourceURI(getUrl());
     }
 }

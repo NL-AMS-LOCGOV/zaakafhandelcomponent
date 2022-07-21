@@ -7,6 +7,9 @@ package net.atos.zac.app.klanten;
 
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -26,10 +29,15 @@ import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.app.klanten.converter.RESTBedrijfConverter;
 import net.atos.zac.app.klanten.converter.RESTPersoonConverter;
+import net.atos.zac.app.klanten.converter.RESTRoltypeConverter;
 import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
+import net.atos.zac.app.klanten.model.klant.RESTRoltype;
 import net.atos.zac.app.klanten.model.personen.RESTListPersonenParameters;
 import net.atos.zac.app.klanten.model.personen.RESTPersoon;
 import net.atos.zac.app.shared.RESTResultaat;
@@ -49,11 +57,16 @@ public class KlantenRESTService {
     private KVKClientService kvkClientService;
 
     @Inject
+    private ZTCClientService ztcClientService;
+
+    @Inject
     private RESTPersoonConverter persoonConverter;
 
     @Inject
     private RESTBedrijfConverter bedrijfConverter;
 
+    @Inject
+    private RESTRoltypeConverter roltypeConverter;
 
     @GET
     @Path("persoon/{bsn}")
@@ -92,5 +105,14 @@ public class KlantenRESTService {
             LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
             return new RESTResultaat<>(e.getMessage());
         }
+    }
+
+    @GET
+    @Path("roltype/{zaaktypeUuid}/betrokkene")
+    public List<RESTRoltype> listBetrokkeneRoltypen(@PathParam("zaaktypeUuid") final UUID zaaktype) {
+        return roltypeConverter.convert(
+                ztcClientService.listRoltypen(ztcClientService.readZaaktype(zaaktype).getUrl()).stream()
+                        .filter(roltype -> AardVanRol.getBetrokkenen().contains(roltype.getOmschrijvingGeneriek()))
+                        .sorted(Comparator.comparing(Roltype::getOmschrijving)));
     }
 }

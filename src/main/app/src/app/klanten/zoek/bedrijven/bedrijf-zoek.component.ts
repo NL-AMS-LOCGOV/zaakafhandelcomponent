@@ -21,7 +21,7 @@ import {SelectFormField} from '../../../shared/material-form-builder/form-compon
     styleUrls: ['./bedrijf-zoek.component.less']
 })
 export class BedrijfZoekComponent implements OnInit {
-    @Input() betrokkeneTypeField: SelectFormField;
+    @Input() betrokkeneRoltypeField: SelectFormField;
     @Output() bedrijf = new EventEmitter<Bedrijf>();
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
     foutmelding: string;
@@ -69,7 +69,7 @@ export class BedrijfZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid || (this.betrokkeneTypeField && !this.betrokkeneTypeField.formControl.valid)) {
+        if (!this.formGroup.valid || (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid)) {
             return false;
         }
 
