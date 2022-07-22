@@ -180,6 +180,12 @@ export class ZakenService {
         );
     }
 
+    deleteBetrokkene(uuid: string): Observable<Zaak> {
+        return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${uuid}`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
     updateZaakGeometrie(uuid: string, zaak: Zaak): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaakgeometrie`, zaak).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
