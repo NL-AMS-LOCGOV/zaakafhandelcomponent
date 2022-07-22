@@ -113,6 +113,10 @@ public class PolicyService {
         return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak));
     }
 
+    public ZaakActies readZaakActies(final Zaak zaak, final Statustype statustype) {
+        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
+    }
+
     public ZaakActies readZaakActies(final Zaak zaak) {
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;

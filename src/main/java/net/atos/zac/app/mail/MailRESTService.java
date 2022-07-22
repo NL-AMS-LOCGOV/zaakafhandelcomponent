@@ -67,18 +67,15 @@ public class MailRESTService {
     @POST
     @Path("acknowledge/{zaakUuid}")
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
-        assertActie(policyService.readZaakActies(zaakUuid).getVersturenOntvangstbevestiging());
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        assertActie(policyService.readZaakActies(zaak, statustype).getVersturenOntvangstbevestiging());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
 
-        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        Statustype statustype = null;
-        if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            statustype = ztcClientService.readStatustype(status.getStatustype());
-        }
         if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
             return;
         }
