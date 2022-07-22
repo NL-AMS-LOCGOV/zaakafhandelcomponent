@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
+import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.zac.app.audit.converter.AbstractAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
@@ -26,12 +27,10 @@ public class AuditRolWijzigingConverter extends AbstractAuditWijzigingConverter<
     }
 
     private String toAttribuutLabel(final AuditWijziging<Rol> wijziging) {
-        return switch (wijziging.getOud() != null ? wijziging.getOud().getBetrokkeneType() : wijziging.getNieuw().getBetrokkeneType()) {
-            case NATUURLIJK_PERSOON -> "persoon";
-            case NIET_NATUURLIJK_PERSOON, VESTIGING -> "bedrijf";
-            case ORGANISATORISCHE_EENHEID -> "groep";
-            case MEDEWERKER -> "behandelaar";
-        };
+        final BetrokkeneType betrokkeneType = wijziging.getOud() != null
+                ? wijziging.getOud().getBetrokkeneType()
+                : wijziging.getNieuw().getBetrokkeneType();
+        return "betrokkenetype." + betrokkeneType.name();
     }
 
     private String toWaarde(final Rol<?> rol) {
