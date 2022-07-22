@@ -4,7 +4,7 @@
  */
 
 export class ZaakBetrokkene {
-    id: string;
+    rolid: string;
     roltype: string;
     type: string;
     identificatie: string;

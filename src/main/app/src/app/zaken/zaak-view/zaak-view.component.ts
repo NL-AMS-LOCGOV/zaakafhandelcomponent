@@ -102,7 +102,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
-    betrokkenenColumns: string[] = ['roltype', 'type', 'identificatie'];
+    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();

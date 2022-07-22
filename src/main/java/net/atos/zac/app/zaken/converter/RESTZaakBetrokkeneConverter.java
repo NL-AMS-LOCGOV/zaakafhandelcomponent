@@ -20,7 +20,7 @@ public class RESTZaakBetrokkeneConverter {
 
     public RESTZaakBetrokkene convert(final Rol<?> rol) {
         final RESTZaakBetrokkene betrokkene = new RESTZaakBetrokkene();
-        betrokkene.id = rol.getUuid().toString();
+        betrokkene.rolid = rol.getUuid().toString();
         betrokkene.roltype = rol.getOmschrijving();
         betrokkene.type = rol.getBetrokkeneType().name();
         switch (rol.getBetrokkeneType()) {

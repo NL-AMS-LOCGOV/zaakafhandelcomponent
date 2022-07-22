@@ -7,7 +7,7 @@ package net.atos.zac.app.zaken.model;
 
 public class RESTZaakBetrokkene {
 
-    public String id;
+    public String rolid;
 
     public String roltype;
 
