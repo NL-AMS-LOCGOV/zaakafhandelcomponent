@@ -21,8 +21,9 @@ import {TranslateService} from '@ngx-translate/core';
 export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     data: DocumentenLijstFormField;
-    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'url'];
+    columns: string[] = ['select', 'titel', 'documentType', 'status', 'versie', 'auteur', 'creatiedatum', 'bestandsomvang', 'ondertekenen', 'url'];
     selection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
+    teOndertekenenSelection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
     loading = true;
@@ -35,13 +36,23 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         if (this.data.readonly) {
             this.columns.splice(this.columns.indexOf('select'), 1);
         }
+        if (!this.data.ondertekenen) {
+            this.columns.splice(this.columns.indexOf('ondertekenen'), 1);
+        }
         this.data.documenten$.subscribe(documenten => {
             for (const document of documenten) {
                 document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
                 document['viewLink'] = `/informatie-objecten/${document.uuid}`;
                 document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
+                if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid)) {
+                    this.teOndertekenenSelection.toggle(document);
+                }
             }
             this.dataSource.data = documenten;
+            this.data.formControl.setValue(JSON.stringify({
+                selection: documenten.map(value => value.uuid).join(';'),
+                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
+            }));
             this.loading = false;
         });
     }
@@ -51,10 +62,27 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    change($event: MatCheckboxChange, document): void {
+    updateSelected($event: MatCheckboxChange, document): void {
         if ($event) {
             this.selection.toggle(document);
-            this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
+            this.data.formControl.setValue(JSON.stringify({
+                selection: this.selection.selected.map(value => value.uuid).join(';'),
+                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
+            }));
         }
+    }
+
+    updateTeOndertekenen($event: MatCheckboxChange, document): void {
+        if ($event) {
+            this.saveChanges(this.teOndertekenenSelection, document);
+        }
+    }
+
+    saveChanges(selectionModel: SelectionModel<EnkelvoudigInformatieobject>, document): void {
+        selectionModel.toggle(document);
+        this.data.formControl.setValue(JSON.stringify({
+            selection: this.dataSource.data.map(value => value.uuid).join(';'),
+            ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
+        }));
     }
 }

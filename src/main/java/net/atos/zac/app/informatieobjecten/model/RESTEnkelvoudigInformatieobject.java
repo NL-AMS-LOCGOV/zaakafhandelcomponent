@@ -56,6 +56,8 @@ public class RESTEnkelvoudigInformatieobject {
 
     public String link;
 
+    public RESTOndertekening ondertekening;
+
     public boolean indicatieGebruiksrecht;
 
     public RESTUser gelockedDoor;

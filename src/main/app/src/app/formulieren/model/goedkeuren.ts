@@ -65,6 +65,8 @@ export class Goedkeuren extends AbstractFormulier {
             [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
                                               .label(fields.RELEVANTE_DOCUMENTEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
+                                              .documentenChecked(this.getDocumentenChecked(fields.RELEVANTE_DOCUMENTEN))
+                                              .ondertekenen(true)
                                               .readonly(true)
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.GOEDKEUREN)
@@ -89,10 +91,20 @@ export class Goedkeuren extends AbstractFormulier {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            zoekParameters.UUIDs = dataElement.split(';');
-            return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
-        } else {
-            return of([]);
+            if (JSON.parse(dataElement)?.selection) {
+                zoekParameters.UUIDs = JSON.parse(dataElement).selection?.split(';');
+                return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+            }
+        }
+        return of([]);
+    }
+
+    getDocumentenChecked(field: string): string[] {
+        const dataElement = this.getDataElement(field);
+        if (dataElement) {
+            if (JSON.parse(dataElement)?.ondertekenen) {
+                return JSON.parse(dataElement)?.ondertekenen.split(';');
+            }
         }
     }
 

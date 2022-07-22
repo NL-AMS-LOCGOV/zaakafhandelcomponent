@@ -6,6 +6,7 @@
 import {FileFormat} from './file-format';
 import {User} from '../../identity/model/user';
 import {EnkelvoudigInformatieobjectActies} from './enkelvoudig-informatieobject-acties';
+import {EnkelvoudigInformatieobjectOndertekening} from './enkelvoudig-informatieobject-ondertekening';
 
 export class EnkelvoudigInformatieobject {
     uuid: string;
@@ -28,6 +29,7 @@ export class EnkelvoudigInformatieobject {
     bestandsnaam: string;
     bestandsomvang: number;
     link: string;
+    ondertekening: EnkelvoudigInformatieobjectOndertekening;
     indicatieGebruiksrecht: boolean;
     gelockedDoor: User;
     acties: EnkelvoudigInformatieobjectActies;

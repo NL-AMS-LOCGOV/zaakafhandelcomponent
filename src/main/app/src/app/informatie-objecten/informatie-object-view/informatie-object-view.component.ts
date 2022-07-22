@@ -121,8 +121,14 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     private loadIndicaties() {
         this.indicaties = [];
-        this.indicaties.push(new Indicatie('indicatieVergrendeld',
-            this.translate.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})));
+        if (this.infoObject.gelockedDoor) {
+            this.indicaties.push(new Indicatie('indicatieVergrendeld',
+                this.translate.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})));
+        }
+        if (this.infoObject.ondertekening) {
+            this.indicaties.push(new Indicatie('indicatieOndertekend',
+                this.infoObject.ondertekening.soort + ' - ' + this.infoObject.ondertekening.datum));
+        }
     }
 
     private toevoegenActies() {

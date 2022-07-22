@@ -12,8 +12,11 @@ import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
@@ -30,6 +33,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.uuid.impl.UUIDUtil;
+
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.drc.model.Ondertekening;
+import net.atos.client.zgw.drc.model.OndertekeningSoort;
+
+import net.atos.zac.app.taken.model.DocumentLijstData;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
@@ -103,6 +119,12 @@ public class TakenRESTService {
     @Inject
     @ActiveSession
     private Instance<HttpSession> httpSession;
+
+    @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @Inject
     private RESTInformatieobjectConverter restInformatieobjectConverter;
@@ -219,6 +241,7 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
+        ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata);
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
@@ -278,6 +301,51 @@ public class TakenRESTService {
                 restTaak.taakdata.replace(key, UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString());
                 httpSession.removeAttribute(fileKey);
             }
+        }
+    }
+
+    private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
+        if (taakdata.containsKey("relevanteDocumenten")) {
+            final DocumentLijstData documentLijstData;
+            try {
+                documentLijstData = new ObjectMapper().readValue(taakdata.get("relevanteDocumenten"),
+                                                                 DocumentLijstData.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e.getMessage(), e); //invalid form-group data
+            }
+
+            Arrays.stream(documentLijstData.ondertekenen.split(";")).forEach(uuid -> {
+                if (StringUtils.isEmpty(uuid)) {
+                    return;
+                }
+                final UUID enkelvoudigInformatieObjectUUID = UUIDUtil.uuid(uuid);
+                boolean tempLock = false;
+                try {
+                    final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock =
+                            new EnkelvoudigInformatieobjectWithInhoudAndLock();
+                    final Ondertekening ondertekening = new Ondertekening(OndertekeningSoort.DIGITAAL, LocalDate.now());
+                    enkelvoudigInformatieobjectWithInhoudAndLock.setOndertekening(ondertekening);
+                    enkelvoudigInformatieobjectWithInhoudAndLock.setStatus(InformatieobjectStatus.DEFINITIEF);
+
+                    EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock =
+                            enkelvoudigInformatieObjectLockService.findLock(enkelvoudigInformatieObjectUUID);
+                    if (enkelvoudigInformatieObjectLock == null) {
+                        tempLock = true;
+                        enkelvoudigInformatieObjectLock =
+                                enkelvoudigInformatieObjectLockService.createLock(enkelvoudigInformatieObjectUUID,
+                                                                                  loggedInUserInstance.get().getId());
+                    }
+
+                    enkelvoudigInformatieobjectWithInhoudAndLock.setLock(enkelvoudigInformatieObjectLock.getLock());
+                    drcClientService.updateEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID,
+                                                                       "Door ondertekenen",
+                                                                       enkelvoudigInformatieobjectWithInhoudAndLock);
+                } finally {
+                    if (tempLock) {
+                        enkelvoudigInformatieObjectLockService.deleteLock(enkelvoudigInformatieObjectUUID);
+                    }
+                }
+            });
         }
     }
 
