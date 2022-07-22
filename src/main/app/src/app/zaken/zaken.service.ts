@@ -31,6 +31,7 @@ import {ZaakAfsluitenGegevens} from './model/zaak-afsluiten-gegevens';
 import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
 import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
 import {Roltype} from '../klanten/model/klanten/roltype';
+import {ZaakBetrokkene} from './model/zaak-betrokkene';
 
 @Injectable({
     providedIn: 'root'
@@ -208,6 +209,12 @@ export class ZakenService {
 
     listHistorieVoorZaak(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/zaak/${uuid}/historie`).pipe(
+            catchError(err => this.foutAfhandelingService.redirect(err))
+        );
+    }
+
+    listBetrokkenenVoorZaak(uuid: string): Observable<ZaakBetrokkene[]> {
+        return this.http.get<ZaakBetrokkene[]>(`${this.basepath}/zaak/${uuid}/betrokkene`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
