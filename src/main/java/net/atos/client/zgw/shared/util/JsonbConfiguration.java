@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.client.zgw.zrc.util;
+package net.atos.client.zgw.shared.util;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.ext.ContextResolver;
 
-import net.atos.client.zgw.shared.util.URIJsonbDeserializer;
+import net.atos.client.zgw.zrc.util.GeometryJsonbDeserializer;
+import net.atos.client.zgw.zrc.util.RolJsonbDeserializer;
 
 public class JsonbConfiguration implements ContextResolver<Jsonb> {
 

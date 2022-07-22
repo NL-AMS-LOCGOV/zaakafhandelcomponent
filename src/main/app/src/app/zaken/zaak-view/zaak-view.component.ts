@@ -102,7 +102,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
-    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie'];
+    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie', 'rolid'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
@@ -835,7 +835,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 });
             }
         });
-
     }
 
     betrokkeneGeselecteerd(betrokkene: KlantGegevens): void {
@@ -850,8 +849,24 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             });
     }
 
-    deleteBetrokkene(): void {
-        // TODO #1325
+    deleteBetrokkene(betrokkene: ZaakBetrokkene): void {
+        this.websocketService.suspendListener(this.zaakRollenListener);
+        const betrokkeneIdentificatie: string = betrokkene.roltype + ' ' + betrokkene.identificatie;
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('msg.betrokkene.ontkoppelen.bevestigen', {betrokkene: betrokkeneIdentificatie}),
+                this.zakenService.deleteBetrokkene(betrokkene.rolid)
+            )
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.utilService.openSnackbar('msg.betrokkene.ontkoppelen.uitgevoerd', {betrokkene: betrokkeneIdentificatie});
+                this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
+                    this.zaak = zaak;
+                    this.loadHistorie();
+                    this.loadBetrokkenen();
+                });
+            }
+        });
     }
 
     assignTaskToMe(taak: Taak, $event) {

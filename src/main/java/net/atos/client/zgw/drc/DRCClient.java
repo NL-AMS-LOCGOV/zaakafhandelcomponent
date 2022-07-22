@@ -40,8 +40,8 @@ import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.JsonbConfiguration;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
-import net.atos.client.zgw.zrc.util.JsonbConfiguration;
 
 /**
  *
