@@ -65,6 +65,9 @@ public class RESTInformatieobjectConverter {
     private RESTUserConverter restUserConverter;
 
     @Inject
+    private RESTOndertekeningConverter restOndertekeningConverter;
+
+    @Inject
     private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
 
     @Inject
@@ -132,6 +135,11 @@ public class RESTInformatieobjectConverter {
             restEnkelvoudigInformatieobject.informatieobjectTypeOmschrijving = ztcClientService.readInformatieobjecttype(
                     enkelvoudigInformatieObject.getInformatieobjecttype()).getOmschrijving();
             restEnkelvoudigInformatieobject.informatieobjectTypeUUID = enkelvoudigInformatieObject.getInformatieobjectTypeUUID();
+            if (enkelvoudigInformatieObject.getOndertekening() != null && enkelvoudigInformatieObject.getOndertekening().getSoort() != null &&
+                    enkelvoudigInformatieObject.getOndertekening().getDatum() != null) {
+                restEnkelvoudigInformatieobject.ondertekening =
+                        restOndertekeningConverter.convert(enkelvoudigInformatieObject.getOndertekening());
+            }
         } else {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getIdentificatie();
         }

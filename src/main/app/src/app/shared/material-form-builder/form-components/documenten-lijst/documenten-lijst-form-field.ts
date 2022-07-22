@@ -12,6 +12,9 @@ export class DocumentenLijstFormField extends AbstractFormField {
 
     fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten$: Observable<EnkelvoudigInformatieobject[]>;
+    documentenCheckedVoorOndertekenen: string[];
+    ondertekenen: boolean;
+
 
     constructor() {
         super();
