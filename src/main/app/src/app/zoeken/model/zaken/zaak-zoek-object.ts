@@ -20,7 +20,6 @@ export class ZaakZoekObject implements ZoekObject {
     communicatiekanaal: string;
     vertrouwelijkheidaanduiding: string;
     afgehandeld: boolean;
-    groepID: string;
     groepNaam: string;
     behandelaarNaam: string;
     behandelaarGebruikersnaam: string;
@@ -31,12 +30,8 @@ export class ZaakZoekObject implements ZoekObject {
     redenVerlenging: string;
     redenOpschorting: string;
     zaaktypeUuid: string;
-    zaaktypeIdentificatie: string;
     zaaktypeOmschrijving: string;
     resultaattypeOmschrijving: string;
     resultaatToelichting: string;
-    statusEindstatus: boolean;
     statustypeOmschrijving: string;
-    statusDatumGezet: string;
-    statusToelichting: string;
 }

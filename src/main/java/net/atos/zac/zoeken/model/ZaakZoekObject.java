@@ -18,6 +18,8 @@ public class ZaakZoekObject implements ZoekObject {
 
     public static final String BEHANDELAAR_ID_FIELD = "zaak_behandelaarGebruikersnaam";
 
+    public static final String EINDSTATUS_FIELD = "zaak_statusEindstatus";
+
     @Field
     private String id;
 
@@ -105,7 +107,7 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_resultaatToelichting")
     private String resultaatToelichting;
 
-    @Field("zaak_statusEindstatus")
+    @Field(EINDSTATUS_FIELD)
     private boolean statusEindstatus;
 
     @Field("zaak_statustypeOmschrijving")
