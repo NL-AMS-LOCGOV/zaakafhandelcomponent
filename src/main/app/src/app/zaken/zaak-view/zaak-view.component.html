@@ -16,6 +16,8 @@
                         (klantGegevens)="betrokkeneGeselecteerd($event)"
                         [acties]="zaak.acties"
                         [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-zoek>
+        <zac-bag-zoek *ngSwitchCase="'ZOEK_BAG_OBJECT'"
+                      (bagObject)="bagObjectGeselecteerd($event)"></zac-bag-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'"
                           [huidigeLocatie]="zaakLocatie"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>

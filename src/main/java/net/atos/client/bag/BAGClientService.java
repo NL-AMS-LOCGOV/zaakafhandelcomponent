@@ -5,20 +5,22 @@
 
 package net.atos.client.bag;
 
-import java.util.logging.Logger;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import net.atos.client.bag.model.AdresHalCollectie;
+import net.atos.client.bag.model.RaadpleegAdressenParameters;
+
 @ApplicationScoped
 public class BAGClientService {
-
-    private static final Logger LOG = Logger.getLogger(BAGClientService.class.getName());
 
     @Inject
     @RestClient
     private AdresApiClient adresApiClient;
 
+    public AdresHalCollectie raadpleegAdressen(final RaadpleegAdressenParameters raadpleegAdressenParameters) {
+        return adresApiClient.raadpleegAdressen(raadpleegAdressenParameters);
+    }
 }
