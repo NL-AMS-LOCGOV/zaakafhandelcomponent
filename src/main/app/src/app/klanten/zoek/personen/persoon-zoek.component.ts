@@ -81,7 +81,7 @@ export class PersoonZoekComponent implements OnInit {
         return this.formGroup.value as ListPersonenParameters;
     }
 
-    zoekPersonen() {
+    zoekPersonen(): void {
         this.loading = true;
         this.personen.data = [];
         this.klantenService.listPersonen(this.createListPersonenParameters()).subscribe(personen => {

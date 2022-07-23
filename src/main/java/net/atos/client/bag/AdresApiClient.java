@@ -19,6 +19,7 @@ package net.atos.client.bag;
 
 import java.time.temporal.ChronoUnit;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -38,6 +39,7 @@ import net.atos.client.bag.model.AdresHalCollectie;
 import net.atos.client.bag.model.CrsEnum;
 import net.atos.client.bag.model.NummeraanduidingHalBasis;
 import net.atos.client.bag.model.OpenbareRuimteHalBasis;
+import net.atos.client.bag.model.RaadpleegAdressenParameters;
 import net.atos.client.bag.model.WoonplaatsHal;
 import net.atos.client.bag.model.ZoekResultaatHalCollectie;
 import net.atos.client.bag.util.BAGClientHeadersFactory;
@@ -76,13 +78,7 @@ public interface AdresApiClient {
      */
     @GET
     @Path("adressen")
-    AdresHalCollectie raadpleegAdressen(@QueryParam("pandIdentificatie") String pandIdentificatie,
-            @QueryParam("adresseerbaarObjectIdentificatie") String adresseerbaarObjectIdentificatie,
-            @QueryParam("zoekresultaatIdentificatie") String zoekresultaatIdentificatie, @QueryParam("expand") String expand,
-            @QueryParam("fields") String fields, @QueryParam("page") @DefaultValue("1") Integer page,
-            @QueryParam("pageSize") @DefaultValue("20") Integer pageSize, @QueryParam("postcode") String postcode, @QueryParam("huisnummer") Integer huisnummer,
-            @QueryParam("huisletter") String huisletter, @QueryParam("huisnummertoevoeging") String huisnummertoevoeging,
-            @QueryParam("exacteMatch") @DefaultValue("false") Boolean exacteMatch, @QueryParam("q") String q);
+    AdresHalCollectie raadpleegAdressen(@BeanParam final RaadpleegAdressenParameters parameters);
 
     /**
      * levert BAG details van een nummeraanduiding

@@ -74,6 +74,10 @@ import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppel
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
 import {ZaakBetrokkene} from '../model/zaak-betrokkene';
+import {Nummeraanduiding} from '../../bag/model/nummeraanduiding';
+import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
+import {BAGObjecttype} from '../../bag/model/bagobjecttype';
+import {BAGService} from '../../bag/bag.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -136,7 +140,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private dialog: MatDialog,
                 private translate: TranslateService,
                 private locationService: LocationService,
-                private zaakKoppelenService: ZaakKoppelenService) {
+                private zaakKoppelenService: ZaakKoppelenService,
+                private bagService: BAGService) {
         super();
     }
 
@@ -384,7 +389,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                             userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                         ).filter(menuItem => menuItem != null));
                 }
-                this.createInitiatorToevoegenMenuItems();
+                this.createRelatiesToevoegenMenuItems();
                 if (planItems.humanTaskPlanItems.length > 0) {
                     this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                     this.menu = this.menu.concat(
@@ -392,11 +397,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         } else {
-            this.createInitiatorToevoegenMenuItems();
+            this.createRelatiesToevoegenMenuItems();
         }
     }
 
-    private createInitiatorToevoegenMenuItems(): void {
+    private createRelatiesToevoegenMenuItems(): void {
         if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf ||
             this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf) {
             this.menu.push(new HeaderMenuItem('betrokkenen'));
@@ -413,6 +418,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'group_add'));
             }
         }
+        this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
+            this.actionsSidenav.open();
+            this.action = SideNavAction.ZOEK_BAG_OBJECT;
+        }, 'person_add_alt_1'));
+
     }
 
     private setupIndicaties(): void {
@@ -848,6 +858,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.loadHistorie();
                 this.loadBetrokkenen();
             });
+    }
+
+    bagObjectGeselecteerd(nummeraanduiding: Nummeraanduiding): void {
+        this.websocketService.suspendListener(this.zaakListener);
+        this.actionsSidenav.close();
+        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, nummeraanduiding.url, BAGObjecttype.NUMMERAANDUIDING)).subscribe(() => {
+            this.utilService.openSnackbar('msg.bagobject.toegevoegd');
+            this.loadHistorie();
+        });
     }
 
     deleteBetrokkene(): void {
