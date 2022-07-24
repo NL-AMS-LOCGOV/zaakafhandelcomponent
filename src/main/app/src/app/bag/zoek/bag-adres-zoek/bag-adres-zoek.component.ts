@@ -5,29 +5,29 @@
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
-import {Nummeraanduiding} from '../../model/nummeraanduiding';
+import {Adres} from '../../model/adres';
 import {MatTableDataSource} from '@angular/material/table';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
-import {ListNummeraanduidingenParameters} from '../../model/list-nummeraanduidingen-parameters';
+import {ListAdressenParameters} from '../../model/list-adressen-parameters';
 
 @Component({
-    selector: 'zac-bag-zoek',
-    templateUrl: './bag-zoek.component.html',
-    styleUrls: ['./bag-zoek.component.less']
+    selector: 'zac-bag-adres-zoek',
+    templateUrl: './bag-adres-zoek.component.html',
+    styleUrls: ['./bag-adres-zoek.component.less']
 })
-export class BagZoekComponent implements OnInit {
+export class BagAdresZoekComponent implements OnInit {
 
-    @Output() bagObject = new EventEmitter<Nummeraanduiding>();
+    @Output() bagObject = new EventEmitter<Adres>();
 
     postcodeFormField: AbstractFormField;
     huisnummerFormField: AbstractFormField;
-    nummeraanduidingen: MatTableDataSource<Nummeraanduiding> = new MatTableDataSource<Nummeraanduiding>();
+    adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
     loading = false;
     formGroup: FormGroup;
-    nummeraanduidingColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats', 'acties'];
+    adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats', 'acties'];
 
     constructor(private bagService: BAGService, private formBuilder: FormBuilder) { }
 
@@ -51,18 +51,18 @@ export class BagZoekComponent implements OnInit {
         return this.formGroup.valid;
     }
 
-    zoekNummeraanduidingen(): void {
+    zoekAdres(): void {
         this.loading = true;
-        this.nummeraanduidingen.data = [];
-        this.bagService.listNummeraanduidingen(
-            new ListNummeraanduidingenParameters(this.postcodeFormField.formControl.value, this.huisnummerFormField.formControl.value))
-            .subscribe(nummeraanduidingen => {
-                this.nummeraanduidingen.data = nummeraanduidingen.resultaten;
+        this.adressen.data = [];
+        this.bagService.listAdressen(
+            new ListAdressenParameters(this.postcodeFormField.formControl.value, this.huisnummerFormField.formControl.value))
+            .subscribe(adressen => {
+                this.adressen.data = adressen.resultaten;
                 this.loading = false;
             });
     }
 
-    selectNummeraanduiding(nummeraanduiding: Nummeraanduiding): void {
-        this.bagObject.emit(nummeraanduiding);
+    selectAdres(adres: Adres): void {
+        this.bagObject.emit(adres);
     }
 }

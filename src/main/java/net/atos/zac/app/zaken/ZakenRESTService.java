@@ -558,7 +558,7 @@ public class ZakenRESTService {
 
     @GET
     @Path("zaak/{uuid}/betrokkene")
-    public List<RESTZaakBetrokkene> listBetrokkenen(@PathParam("uuid") final UUID zaakUUID) {
+    public List<RESTZaakBetrokkene> listBetrokkenenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
         assertActie(policyService.readZaakActies(zaakUUID).getLezen());
         return zaakBetrokkeneConverter.convert(
                 zrcClientService.listRollen(zaakUUID).stream()

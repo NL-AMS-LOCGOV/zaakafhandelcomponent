@@ -7,7 +7,7 @@ package net.atos.zac.app.bag.model;
 
 import java.net.URI;
 
-public class RESTNummeraanduiding {
+public class RESTAdres {
 
     public URI url;
 

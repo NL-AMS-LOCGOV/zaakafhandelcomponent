@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ListNummeraanduidingenParameters {
+export class ListAdressenParameters {
     constructor(public postcode: string, public huisnummer: number) {}
 }

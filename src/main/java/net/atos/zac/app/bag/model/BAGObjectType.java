@@ -6,5 +6,5 @@
 package net.atos.zac.app.bag.model;
 
 public enum BAGObjectType {
-    NUMMERAANDUIDING;
+    ADRES;
 }

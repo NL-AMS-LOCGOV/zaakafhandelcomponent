@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.bag.model;
 
-public class RESTListNummeraanduidingenParameters {
+public class RESTListAdressenParameters {
 
     public String postcode;
 

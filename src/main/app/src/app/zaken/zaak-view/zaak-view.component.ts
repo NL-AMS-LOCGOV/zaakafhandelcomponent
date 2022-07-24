@@ -74,7 +74,7 @@ import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppel
 import {PaginaLocatieUtil} from '../../locatie/pagina-locatie.util';
 import {KlantGegevens} from '../../klanten/model/klanten/klant-gegevens';
 import {ZaakBetrokkene} from '../model/zaak-betrokkene';
-import {Nummeraanduiding} from '../../bag/model/nummeraanduiding';
+import {Adres} from '../../bag/model/adres';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
@@ -107,6 +107,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
     betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie'];
+    adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
+    adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
     notitieType = NotitieType.ZAAK;
     editFormFields: Map<string, any> = new Map<string, any>();
@@ -175,6 +177,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.utilService.disableActionBar(!zaak.acties.koppelen);
         this.loadHistorie();
         this.loadBetrokkenen();
+        this.loadAdressen();
         this.setEditableFormFields();
         this.setupMenu();
         this.setupIndicaties();
@@ -420,7 +423,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
         this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
             this.actionsSidenav.open();
-            this.action = SideNavAction.ZOEK_BAG_OBJECT;
+            this.action = SideNavAction.ZOEK_BAG_ADRES;
         }, 'person_add_alt_1'));
 
     }
@@ -735,6 +738,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
+    private loadAdressen(): void {
+        this.bagService.listAdressenVoorZaak(this.zaak.uuid).subscribe(adressen => {
+            this.adressen.data = adressen;
+        });
+    }
+
     editZaakLocatie(): void {
         this.action = SideNavAction.ZOEK_LOCATIE;
         this.actionsSidenav.open();
@@ -860,12 +869,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             });
     }
 
-    bagObjectGeselecteerd(nummeraanduiding: Nummeraanduiding): void {
+    adresGeselecteerd(adres: Adres): void {
         this.websocketService.suspendListener(this.zaakListener);
         this.actionsSidenav.close();
-        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, nummeraanduiding.url, BAGObjecttype.NUMMERAANDUIDING)).subscribe(() => {
+        this.bagService.createBAGObject(new BAGObjectGegevens(this.zaak.uuid, adres.url, BAGObjecttype.ADRES)).subscribe(() => {
             this.utilService.openSnackbar('msg.bagobject.toegevoegd');
             this.loadHistorie();
+            this.loadAdressen();
         });
     }
 

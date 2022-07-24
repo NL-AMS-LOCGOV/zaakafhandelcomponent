@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class Nummeraanduiding {
+export class Adres {
     url: string;
     postcode: string;
     huisnummer: string;

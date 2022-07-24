@@ -233,11 +233,11 @@ public class ZRCClientService {
     /**
      * List instances of {@link Zaakobject} filtered by {@link ZaakobjectListParameters}.
      *
-     * @param filter {@link ZaakobjectListParameters}.
+     * @param zaakobjectListParameters {@link ZaakobjectListParameters}.
      * @return List of {@link Zaakobject} instances.
      */
-    public Results<Zaakobject> listZaakobjecten(final ZaakobjectListParameters filter) {
-        return zrcClient.zaakobjectList(filter);
+    public Results<Zaakobject> listZaakobjecten(final ZaakobjectListParameters zaakobjectListParameters) {
+        return zrcClient.zaakobjectList(zaakobjectListParameters);
     }
 
     /**

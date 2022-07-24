@@ -86,6 +86,7 @@
   "gemeenteCode": "Municipality code",
   "inschrijfadres": "Registration address",
   "vestigingsadres": "Establishment address",
+  "bagobjecten": "BAG objects",
   "betrokkenen": "Involved",
   "betrokkeneRoltype": "Involvement",
   "betrokkeneRoltype.-kies-": "Select the kind of involvement",

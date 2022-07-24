@@ -4,6 +4,6 @@
  */
 
 export enum BAGObjecttype {
-    NUMMERAANDUIDING = 'NUMMERAANDUIDING'
+    ADRES = 'ADRES'
 }
 
