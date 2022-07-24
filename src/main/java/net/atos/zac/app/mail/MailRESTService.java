@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.mail;
 
+import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
 import java.util.UUID;
@@ -20,6 +21,11 @@ import javax.ws.rs.core.MediaType;
 
 import com.mailjet.client.errors.MailjetException;
 
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Status;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
@@ -41,6 +47,12 @@ public class MailRESTService {
     @Inject
     private PolicyService policyService;
 
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
+    private ZTCClientService ztcClientService;
+
     @POST
     @Path("send/{zaakUuid}")
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
@@ -55,11 +67,18 @@ public class MailRESTService {
     @POST
     @Path("acknowledge/{zaakUuid}")
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
-        assertActie(policyService.readZaakActies(zaakUuid).getVersturenOntvangstbevestiging());
+        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        assertActie(policyService.readZaakActies(zaak, statustype).getVersturenOntvangstbevestiging());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
+
+        if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
+            return;
+        }
         caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
     }
 }
