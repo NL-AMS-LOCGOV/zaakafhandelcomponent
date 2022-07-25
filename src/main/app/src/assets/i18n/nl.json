@@ -393,7 +393,7 @@
   " 7 ": ">>--> MELDINGEN <--<<",
   "msg.advies.behandelen": "De behandelaar van de zaak vraagt om een advies.<br> Beoordeel de vraag en eventueel de documenten en geef je advies met daarbij een toelichting.",
   "msg.bagobject.toegevoegd": "BAG object is toegevoegd",
-  "msg.bagobject.koppelen.bevestigen": "BAG object koppelen aan de zaak?<br><br><b>LET OP:</b> Een eenmaal gekoppeld BAG object kan niet meer worden ontkoppeld!",
+  "msg.bagobject.koppelen.bevestigen": "BAG object koppelen aan de zaak?<br><br><b>LET OP:</b> Een eenmaal gekoppeld BAG object kan alleen door functioneel beheer worden ontkoppeld!",
   "msg.betrokkene.ontkoppelen.bevestigen": "De {{roltype}} ontkoppelen van de zaak?",
   "msg.betrokkene.ontkoppelen.uitgevoerd": "De {{roltype}} is ontkoppeld van de zaak",
   "msg.betrokkene.toegevoegd": "De {{roltype}} is toegevoegd",
