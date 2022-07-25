@@ -31,8 +31,6 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public boolean afgehandeld;
 
-    public String groepID;
-
     public String groepNaam;
 
     public String behandelaarNaam;
@@ -53,21 +51,13 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public String zaaktypeUuid;
 
-    public String zaaktypeIdentificatie;
-
     public String zaaktypeOmschrijving;
 
     public String resultaattypeOmschrijving;
 
     public String resultaatToelichting;
 
-    public boolean statusEindstatus;
-
     public String statustypeOmschrijving;
-
-    public LocalDate statusDatumGezet;
-
-    public String statusToelichting;
 
     public long aantalOpenstaandeTaken;
 
