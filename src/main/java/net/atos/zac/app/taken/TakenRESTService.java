@@ -7,6 +7,7 @@ package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
+import static net.atos.zac.configuratie.ConfiguratieService.TAAK_ELEMENT_RELEVANTE_DOCUMENTEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
@@ -305,10 +306,10 @@ public class TakenRESTService {
     }
 
     private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
-        if (taakdata.containsKey("relevanteDocumenten")) {
+        if (taakdata.containsKey(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN) && taakdata.get(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN) != null) {
             final DocumentLijstData documentLijstData;
             try {
-                documentLijstData = new ObjectMapper().readValue(taakdata.get("relevanteDocumenten"),
+                documentLijstData = new ObjectMapper().readValue(taakdata.get(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN),
                                                                  DocumentLijstData.class);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e.getMessage(), e); //invalid form-group data

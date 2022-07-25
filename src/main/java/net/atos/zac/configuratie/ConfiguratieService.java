@@ -77,6 +77,8 @@ public class ConfiguratieService {
 
     public static final String STATUSTYPE_OMSCHRIJVING_HEROPEND = "Heropend";
 
+    public static final String TAAK_ELEMENT_RELEVANTE_DOCUMENTEN = "relevanteDocumenten";
+
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject
     @ConfigProperty(name = "CONTEXT_URL")

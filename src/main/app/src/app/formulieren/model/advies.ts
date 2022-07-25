@@ -87,11 +87,13 @@ export class Advies extends AbstractFormulier {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            zoekParameters.UUIDs = dataElement.split(';');
-            return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
-        } else {
-            return of([]);
+            const selection = JSON.parse(dataElement)?.selection;
+            if (selection) {
+                zoekParameters.UUIDs = selection?.split(';');
+                return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
+            }
         }
+        return of([]);
     }
 
     getAdviesOpties(): Observable<string[]> {
