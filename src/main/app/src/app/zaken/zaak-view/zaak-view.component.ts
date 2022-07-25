@@ -424,7 +424,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
             this.actionsSidenav.open();
             this.action = SideNavAction.ZOEK_BAG_ADRES;
-        }, 'person_add_alt_1'));
+        }, 'add_home_work'));
 
     }
 
