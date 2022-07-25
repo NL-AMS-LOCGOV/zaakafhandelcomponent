@@ -12,6 +12,9 @@ import {CustomValidators} from '../../../shared/validators/customValidators';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BAGService} from '../../bag.service';
 import {ListAdressenParameters} from '../../model/list-adressen-parameters';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../../shared/confirm-dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'zac-bag-adres-zoek',
@@ -29,7 +32,7 @@ export class BagAdresZoekComponent implements OnInit {
     formGroup: FormGroup;
     adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats', 'acties'];
 
-    constructor(private bagService: BAGService, private formBuilder: FormBuilder) { }
+    constructor(private bagService: BAGService, private formBuilder: FormBuilder, private dialog: MatDialog, private translate: TranslateService) { }
 
     ngOnInit(): void {
         this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
@@ -63,6 +66,13 @@ export class BagAdresZoekComponent implements OnInit {
     }
 
     selectAdres(adres: Adres): void {
-        this.bagObject.emit(adres);
+        this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogData(
+                this.translate.instant('msg.bagobject.koppelen.bevestigen'))
+        }).afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+                this.bagObject.emit(adres);
+            }
+        });
     }
 }
