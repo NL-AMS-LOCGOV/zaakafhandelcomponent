@@ -32,6 +32,7 @@ import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
 import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.JsonbConfiguration;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -44,7 +45,6 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
-import net.atos.client.zgw.zrc.util.JsonbConfiguration;
 
 /**
  *
@@ -108,6 +108,10 @@ public interface ZRCClient {
     @DELETE
     @Path("rollen/{uuid}")
     Response rolDelete(@PathParam("uuid") final UUID uuid);
+
+    @GET
+    @Path("rollen/{uuid}")
+    Rol<?> rolRead(@PathParam("uuid") final UUID uuid);
 
     @GET
     @Path("zaakinformatieobjecten")

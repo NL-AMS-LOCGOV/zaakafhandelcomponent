@@ -45,7 +45,7 @@ export class ZaakCreateComponent implements OnInit {
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
 
-    private initiatorToevoegenIcon = new ActionIcon('person_add_alt_1', new Subject<void>());
+    private initiatorToevoegenIcon = new ActionIcon('person', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', new Subject<void>());
 
     private locatie: AddressResult;
