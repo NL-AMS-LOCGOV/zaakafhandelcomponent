@@ -65,8 +65,10 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.dataSource.initColumns(this.defaultColumns());
-        this.policyService.readZakenActies().subscribe(acties => this.acties = acties);
+        this.policyService.readZakenActies().subscribe(acties => {
+            this.acties = acties;
+            this.dataSource.initColumns(this.defaultColumns());
+        });
     }
 
     defaultColumns(): Map<string, ColumnPickerValue> {
