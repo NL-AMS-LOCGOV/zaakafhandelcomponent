@@ -7,7 +7,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ZaakViewComponent} from './zaak-view/zaak-view.component';
 import {ZaakCreateComponent} from './zaak-create/zaak-create.component';
-import {ZaakResolver} from './zaak.resolver';
+import {ZaakIdentificatieResolver} from './zaak-identificatie-resolver.service';
 import {ZakenWerkvoorraadComponent} from './zaken-werkvoorraad/zaken-werkvoorraad.component';
 import {ZakenMijnComponent} from './zaken-mijn/zaken-mijn.component';
 import {ZakenAfgehandeldComponent} from './zaken-afgehandeld/zaken-afgehandeld.component';
@@ -20,7 +20,7 @@ const routes: Routes = [
             {path: 'werkvoorraad', component: ZakenWerkvoorraadComponent},
             {path: 'create', component: ZaakCreateComponent},
             {path: 'afgehandeld', component: ZakenAfgehandeldComponent},
-            {path: ':zaakIdentificatie', component: ZaakViewComponent, resolve: {zaak: ZaakResolver}}
+            {path: ':zaakIdentificatie', component: ZaakViewComponent, resolve: {zaak: ZaakIdentificatieResolver}}
         ]
     }
 ];

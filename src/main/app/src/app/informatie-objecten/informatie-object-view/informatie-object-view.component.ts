@@ -205,7 +205,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     haalVersieOp(versie: number) {
         this.websocketService.removeListener(this.documentListener);
-        this.router.navigate(['/informatie-objecten/', this.infoObject.uuid, versie, this.zaak.identificatie]);
+        this.router.navigate(['/informatie-objecten', this.infoObject.uuid, versie, this.zaak.uuid]);
     }
 
     versieToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {

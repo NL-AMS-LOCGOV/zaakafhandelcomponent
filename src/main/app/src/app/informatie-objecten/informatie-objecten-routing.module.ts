@@ -7,7 +7,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {InformatieObjectViewComponent} from './informatie-object-view/informatie-object-view.component';
 import {InformatieObjectResolver} from './informatie-object.resolver';
-import {ZaakResolver} from '../zaken/zaak.resolver';
+import {ZaakUuidResolver} from '../zaken/zaak-uuid.resolver';
 
 const routes: Routes = [
     {
@@ -18,14 +18,14 @@ const routes: Routes = [
                 resolve: {informatieObject: InformatieObjectResolver}
             },
             {
-                path: ':uuid/:zaakIdentificatie',
+                path: ':uuid/:zaakUuid',
                 component: InformatieObjectViewComponent,
-                resolve: {informatieObject: InformatieObjectResolver, zaak: ZaakResolver}
+                resolve: {informatieObject: InformatieObjectResolver, zaak: ZaakUuidResolver}
             },
             {
-                path: ':uuid/:versie/:zaakIdentificatie',
+                path: ':uuid/:versie/:zaakUuid',
                 component: InformatieObjectViewComponent,
-                resolve: {informatieObject: InformatieObjectResolver, zaak: ZaakResolver}
+                resolve: {informatieObject: InformatieObjectResolver, zaak: ZaakUuidResolver}
             }
         ]
     }
