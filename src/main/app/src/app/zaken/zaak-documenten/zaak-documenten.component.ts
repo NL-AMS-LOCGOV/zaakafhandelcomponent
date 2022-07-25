@@ -70,8 +70,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     ngOnInit(): void {
         this.taakModus = !!this.zaakUUID;
 
-        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN,
-            this.taakModus ? this.zaakUUID : this.zaak.uuid,
+        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.getZaakUuid(),
             (event) => this.loadInformatieObjecten(event));
 
         this.loadInformatieObjecten();
@@ -90,7 +89,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-        zoekParameters.zaakUUID = this.taakModus ? this.zaakUUID : this.zaak.uuid;
+        zoekParameters.zaakUUID = this.getZaakUuid();
 
         this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(share());
 
@@ -164,13 +163,17 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     ophalenGekoppeldeZaakDocumenten() {
-        this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.taakModus ? this.zaakUUID : this.zaak.uuid)
+        this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.getZaakUuid())
             .subscribe(gekoppeldeInformatieObjecten => {
                 if (gekoppeldeInformatieObjecten) {
-                    this.documentColumns = ['titel','zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+                    this.documentColumns = ['titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
                     gekoppeldeInformatieObjecten.forEach(gekoppeldeInformatieObject =>
                         this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, gekoppeldeInformatieObject]);
                 }
             });
+    }
+
+    getZaakUuid(): string {
+        return this.taakModus ? this.zaakUUID : this.zaak.uuid;
     }
 }
