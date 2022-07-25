@@ -91,8 +91,9 @@ export class Goedkeuren extends AbstractFormulier {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            if (JSON.parse(dataElement)?.selection) {
-                zoekParameters.UUIDs = JSON.parse(dataElement).selection?.split(';');
+            const selection = JSON.parse(dataElement)?.selection;
+            if (selection) {
+                zoekParameters.UUIDs = selection?.split(';');
                 return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
             }
         }
