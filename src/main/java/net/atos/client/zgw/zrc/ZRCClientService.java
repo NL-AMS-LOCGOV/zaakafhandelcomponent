@@ -26,8 +26,12 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.shared.exception.FoutExceptionMapper;
+import net.atos.client.zgw.shared.exception.RuntimeExceptionMapper;
+import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
+import net.atos.client.zgw.shared.util.JsonbConfiguration;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Resultaat;
@@ -78,14 +82,27 @@ public class ZRCClientService {
         return createRol(rol, null);
     }
 
-    private Rol<?> createRol(final Rol<?> rol, final String toelichting) {
+    /**
+     * Create {@link Rol}.
+     *
+     * @param rol         {@link Rol}/
+     * @param toelichting de toelichting
+     * @return Created {@link Rol}.
+     */
+    public Rol<?> createRol(final Rol<?> rol, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return zrcClient.rolCreate(rol);
     }
 
-    private void deleteRol(final Rol<?> rol, final String toelichting) {
+    /**
+     * Delete {@link Rol}.
+     *
+     * @param rolUUID     uuid van de {@link Rol}/
+     * @param toelichting de toelichting
+     */
+    public void deleteRol(final UUID rolUUID, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
-        zrcClient.rolDelete(rol.getUuid());
+        zrcClient.rolDelete(rolUUID);
     }
 
     /**
@@ -195,6 +212,17 @@ public class ZRCClientService {
      */
     public Rol<?> readRol(final URI rolURI) {
         return createInvocationBuilder(rolURI).get(Rol.class);
+    }
+
+    /**
+     * Read {@link Rol} via its UUID.
+     * Throws a RuntimeException if the {@link Rol} can not be read.
+     *
+     * @param rolUUID UUID of {@link Rol}.
+     * @return {@link Rol}. Never NULL!
+     */
+    public Rol<?> readRol(final UUID rolUUID) {
+        return zrcClient.rolRead(rolUUID);
     }
 
     /**
@@ -400,7 +428,7 @@ public class ZRCClientService {
         current.stream()
                 .filter(oud -> rollen.stream()
                         .noneMatch(oud::equalBetrokkeneRol))
-                .forEach(rol -> deleteRol(rol, toelichting));
+                .forEach(rol -> deleteRol(rol.getUuid(), toelichting));
     }
 
     private void deleteUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
@@ -408,7 +436,7 @@ public class ZRCClientService {
                 .filter(oud -> rollen.stream()
                         .filter(oud::equalBetrokkeneRol)
                         .anyMatch(nieuw -> !nieuw.equals(oud)))
-                .forEach(rol -> deleteRol(rol, toelichting));
+                .forEach(rol -> deleteRol(rol.getUuid(), toelichting));
     }
 
     private void createUpdatedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
@@ -428,6 +456,10 @@ public class ZRCClientService {
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
         return ClientFactory.create().target(uri)
+                .register(FoutExceptionMapper.class)
+                .register(ValidatieFoutExceptionMapper.class)
+                .register(RuntimeExceptionMapper.class)
+                .register(JsonbConfiguration.class)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, zgwClientHeadersFactory.generateJWTToken())
                 .header(ZRCClient.ACCEPT_CRS, ZRCClient.ACCEPT_CRS_VALUE)
