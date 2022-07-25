@@ -262,6 +262,16 @@ public class ZakenRESTService {
         return zaakConverter.convert(zaak);
     }
 
+    @DELETE
+    @Path("betrokkene/{uuid}")
+    public RESTZaak deleteBetrokkene(@PathParam("uuid") final UUID betrokkeneUUID) {
+        final Rol<?> rol = zrcClientService.readRol(betrokkeneUUID);
+        final Zaak zaak = zrcClientService.readZaak(rol.getZaak());
+        assertActie(policyService.readZaakActies(zaak).getVerwijderenBetrokkene());
+        zrcClientService.deleteRol(betrokkeneUUID, BETROKKENE_VERWIJDER_REDEN);
+        return zaakConverter.convert(zaak);
+    }
+
     @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
@@ -634,12 +644,12 @@ public class ZakenRESTService {
 
     private void addBetrokkenBurger(final Roltype roltype, final String bsn, final Zaak zaak, String toelichting) {
         RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
-        zrcClientService.createRol(rol);
+        zrcClientService.createRol(rol, BETROKKENE_TOEVOEGEN_REDEN);
     }
 
     private void addBetrokkenBedrijf(final Roltype initiator, final String vestigingsnummer, final Zaak zaak, String toelichting) {
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
-        zrcClientService.createRol(rol);
+        zrcClientService.createRol(rol, BETROKKENE_TOEVOEGEN_REDEN);
     }
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {
