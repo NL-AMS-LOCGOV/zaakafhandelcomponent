@@ -180,8 +180,8 @@ export class ZakenService {
         );
     }
 
-    deleteBetrokkene(uuid: string): Observable<Zaak> {
-        return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${uuid}`).pipe(
+    deleteBetrokkene(rolUUID: string): Observable<Zaak> {
+        return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${rolUUID}`).pipe(
             catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
