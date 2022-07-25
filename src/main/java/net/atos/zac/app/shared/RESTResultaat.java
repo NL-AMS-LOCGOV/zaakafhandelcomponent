@@ -11,6 +11,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 
 public class RESTResultaat<TYPE> {
+
     Collection<TYPE> resultaten;
 
     long totaal;
