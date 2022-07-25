@@ -65,8 +65,10 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.dataSource.initColumns(this.defaultColumns());
-        this.policyService.readTakenActies().subscribe(acties => this.acties = acties);
+        this.policyService.readTakenActies().subscribe(acties => {
+            this.acties = acties;
+            this.dataSource.initColumns(this.defaultColumns());
+        });
     }
 
     ngAfterViewInit(): void {
