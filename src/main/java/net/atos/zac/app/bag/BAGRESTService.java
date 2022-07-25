@@ -6,6 +6,7 @@
 package net.atos.zac.app.bag;
 
 import static net.atos.client.zgw.zrc.model.Objecttype.ADRES;
+import static net.atos.zac.policy.PolicyService.assertActie;
 
 import java.net.URI;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import net.atos.zac.app.bag.model.RESTAdres;
 import net.atos.zac.app.bag.model.RESTBAGObjectGegevens;
 import net.atos.zac.app.bag.model.RESTListAdressenParameters;
 import net.atos.zac.app.shared.RESTResultaat;
+import net.atos.zac.policy.PolicyService;
 
 @Path("bag")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -50,6 +52,9 @@ public class BAGRESTService {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private PolicyService policyService;
 
     @PUT
     @Path("adres")
@@ -72,6 +77,7 @@ public class BAGRESTService {
     @Path("")
     public void createBAGObject(final RESTBAGObjectGegevens bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
+        assertActie(policyService.readZaakActies(zaak).getToevoegenBAGObject());
         final Zaakobject zaakobject = new Zaakobject();
         zaakobject.setZaak(zaak.getUrl());
         zaakobject.setObject(bagObjectGegevens.bagObject);
@@ -83,7 +89,9 @@ public class BAGRESTService {
     @Path("/adres/zaak/{uuid}")
     public List<RESTAdres> listAdressenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
-        zaakobjectListParameters.setZaak(zrcClientService.readZaak(zaakUUID).getUrl());
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        assertActie(policyService.readZaakActies(zaakUUID).getLezen());
+        zaakobjectListParameters.setZaak(zaak.getUrl());
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {
             return zaakobjecten.getResults().stream()

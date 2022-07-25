@@ -25,6 +25,7 @@ public class RESTZaakActiesConverter {
         restZaakActies.koppelen = zaakActies.getKoppelen();
         restZaakActies.versturenEmail = zaakActies.getVersturenEmail();
         restZaakActies.versturenOntvangstbevestiging = zaakActies.getVersturenOntvangstbevestiging();
+        restZaakActies.toevoegenBAGObject = zaakActies.getToevoegenBAGObject();
         restZaakActies.toevoegenInitiatorPersoon = zaakActies.getToevoegenInitiatorPersoon();
         restZaakActies.toevoegenInitiatorBedrijf = zaakActies.getToevoegenInitiatorBedrijf();
         restZaakActies.verwijderenInitiator = zaakActies.getVerwijderenInitiator();

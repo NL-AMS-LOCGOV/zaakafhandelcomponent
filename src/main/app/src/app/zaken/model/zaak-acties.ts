@@ -17,6 +17,7 @@ export class ZaakActies {
     versturenEmail: boolean;
     versturenOntvangstbevestiging: boolean;
     toevoegenInitiatorPersoon: boolean;
+    toevoegenBAGObject: boolean;
     toevoegenInitiatorBedrijf: boolean;
     verwijderenInitiator: boolean;
     toevoegenBetrokkenePersoon: boolean;

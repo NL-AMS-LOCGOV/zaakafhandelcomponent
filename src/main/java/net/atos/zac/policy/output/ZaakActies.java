@@ -35,6 +35,8 @@ public class ZaakActies {
 
     private final boolean versturenOntvangstbevestiging;
 
+    private final boolean toevoegenBAGObject;
+
     private final boolean toevoegenInitiatorPersoon;
 
     private final boolean toevoegenInitiatorBedrijf;
@@ -66,6 +68,7 @@ public class ZaakActies {
             @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("versturen_email") final boolean versturenEmail,
             @JsonbProperty("versturen_ontvangstbevestiging") final boolean versturenOntvangstbevestiging,
+            @JsonbProperty("toevoegen_bag_object") final boolean toevoegenBAGObject,
             @JsonbProperty("toevoegen_initiator_persoon") final boolean toevoegenInitiatorPersoon,
             @JsonbProperty("toevoegen_initiator_bedrijf") final boolean toevoegenInitiatorBedrijf,
             @JsonbProperty("verwijderen_initiator") final boolean verwijderenInitiator,
@@ -87,6 +90,7 @@ public class ZaakActies {
         this.koppelen = koppelen;
         this.versturenEmail = versturenEmail;
         this.versturenOntvangstbevestiging = versturenOntvangstbevestiging;
+        this.toevoegenBAGObject = toevoegenBAGObject;
         this.toevoegenInitiatorPersoon = toevoegenInitiatorPersoon;
         this.toevoegenInitiatorBedrijf = toevoegenInitiatorBedrijf;
         this.verwijderenInitiator = verwijderenInitiator;
@@ -144,6 +148,10 @@ public class ZaakActies {
 
     public boolean getKoppelen() {
         return koppelen;
+    }
+
+    public boolean getToevoegenBAGObject() {
+        return toevoegenBAGObject;
     }
 
     public boolean getToevoegenInitiatorPersoon() {

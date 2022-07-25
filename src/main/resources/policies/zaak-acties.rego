@@ -19,6 +19,7 @@ zaak_acties := {
     "koppelen": koppelen,
     "versturen_email": versturen_email,
     "versturen_ontvangstbevestiging": versturen_ontvangstbevestiging,
+    "toevoegen_bag_object": toevoegen_bag_object,
     "toevoegen_initiator_persoon": toevoegen_initiator_persoon,
     "toevoegen_initiator_bedrijf": toevoegen_initiator_bedrijf,
     "verwijderen_initiator": verwijderen_initiator,
@@ -109,6 +110,12 @@ default versturen_ontvangstbevestiging := false
 versturen_ontvangstbevestiging {
     zaak.open == true
     zaak.heropend == false
+    zaaktype_allowed == true
+}
+
+default toevoegen_bag_object := false
+toevoegen_bag_object {
+    zaak.open == true
     zaaktype_allowed == true
 }
 

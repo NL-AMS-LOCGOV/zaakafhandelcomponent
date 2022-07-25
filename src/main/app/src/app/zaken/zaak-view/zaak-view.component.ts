@@ -421,11 +421,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }, 'group_add'));
             }
         }
-        this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
-            this.actionsSidenav.open();
-            this.action = SideNavAction.ZOEK_BAG_ADRES;
-        }, 'add_home_work'));
-
+        if (this.zaak.acties.toevoegenBAGObject) {
+            this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.ZOEK_BAG_ADRES;
+            }, 'add_home_work'));
+        }
     }
 
     private setupIndicaties(): void {
