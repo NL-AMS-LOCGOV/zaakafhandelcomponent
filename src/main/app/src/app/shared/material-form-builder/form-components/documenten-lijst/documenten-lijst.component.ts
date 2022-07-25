@@ -49,10 +49,12 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 }
             }
             this.dataSource.data = documenten;
-            this.data.formControl.setValue(JSON.stringify({
-                selection: documenten.map(value => value.uuid).join(';'),
-                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
-            }));
+            if (this.teOndertekenenSelection.selected.length > 0 || documenten.length > 0) {
+                this.data.formControl.setValue(JSON.stringify({
+                    selection: documenten.map(value => value.uuid).join(';'),
+                    ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
+                }));
+            }
             this.loading = false;
         });
     }
@@ -74,15 +76,11 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     updateTeOndertekenen($event: MatCheckboxChange, document): void {
         if ($event) {
-            this.saveChanges(this.teOndertekenenSelection, document);
+            this.teOndertekenenSelection.toggle(document);
+            this.data.formControl.setValue(JSON.stringify({
+                selection: this.dataSource.data.map(value => value.uuid).join(';'),
+                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
+            }));
         }
-    }
-
-    saveChanges(selectionModel: SelectionModel<EnkelvoudigInformatieobject>, document): void {
-        selectionModel.toggle(document);
-        this.data.formControl.setValue(JSON.stringify({
-            selection: this.dataSource.data.map(value => value.uuid).join(';'),
-            ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
-        }));
     }
 }
