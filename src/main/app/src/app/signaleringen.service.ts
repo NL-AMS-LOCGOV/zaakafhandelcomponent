@@ -33,25 +33,25 @@ export class SignaleringenService {
 
     listDashboardSignaleringTypen(): Observable<SignaleringType[]> {
         return this.http.get<SignaleringType[]>(`${this.basepath}/typen/dashboard`).pipe(
-            catchError((err) => this.foutAfhandelingService.redirect(err))
+            catchError((err) => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZakenSignalering(signaleringType: SignaleringType): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/zaken/${signaleringType}`).pipe(
-            catchError((err) => this.foutAfhandelingService.redirect(err))
+            catchError((err) => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listTakenSignalering(signaleringType: SignaleringType): Observable<Taak[]> {
         return this.http.get<Taak[]>(`${this.basepath}/taken/${signaleringType}`).pipe(
-            catchError((err) => this.foutAfhandelingService.redirect(err))
+            catchError((err) => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listInformatieobjectenSignalering(signaleringType: SignaleringType): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjecten/${signaleringType}`).pipe(
-            catchError((err) => this.foutAfhandelingService.redirect(err))
+            catchError((err) => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 

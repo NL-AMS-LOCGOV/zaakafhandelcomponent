@@ -22,13 +22,13 @@ export class ConfiguratieService {
 
     listTalen(): Observable<Taal[]> {
         return this.http.get<Taal[]>(`${this.basepath}/talen`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     defaultTaal(): Observable<Taal> {
         return this.http.get<Taal>(`${this.basepath}/talen/default`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

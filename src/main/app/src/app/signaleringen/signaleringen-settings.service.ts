@@ -22,13 +22,13 @@ export class SignaleringenSettingsService {
 
     list(): Observable<SignaleringSettings[]> {
         return this.http.get<SignaleringSettings[]>(`${this.basepath}/instellingen`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     put(instellingen: SignaleringSettings): Observable<void> {
         return this.http.put<void>(`${this.basepath}/instellingen`, instellingen).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }
