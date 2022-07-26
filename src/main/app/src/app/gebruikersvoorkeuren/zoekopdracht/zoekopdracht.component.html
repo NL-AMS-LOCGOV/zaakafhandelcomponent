@@ -4,29 +4,55 @@
   -->
 
 <div fxLayout="row">
-    <read-more fxFlexAlign="center" fxFlex [text]="actieveZoekopdracht?.naam" [maxLength]="70"></read-more>
-    <button *ngIf="zoekopdrachten.length && !actieveZoekopdracht"
-            mat-icon-button
-            [matMenuTriggerFor]="filterMenu"
-            title="{{ 'actie.zoekopdracht.selecteer' | translate }}" id="selecteerZoekopdrachtButton">
-        <mat-icon>filter_alt</mat-icon>
-    </button>
-    <button *ngIf="actieveZoekopdracht" mat-icon-button (click)="clearActief(true)"
-            title="{{ 'actie.zoekopdracht.wissen' | translate }}" id="clearZoekopdrachtButton">
-        <mat-icon>filter_alt_off</mat-icon>
-    </button>
-    <button mat-icon-button (click)="saveSearch()"
-            title="{{ 'actie.zoekopdracht.opslaan' | translate }}" id="saveZoekopdrachtButton">
-        <mat-icon *ngIf="!actieveZoekopdracht">star_outline</mat-icon>
-        <mat-icon *ngIf="actieveZoekopdracht">star</mat-icon>
+    <read-more class="filter-naam" fxFlexAlign="center" fxFlex [text]="actieveZoekopdracht?.naam" [maxLength]="75"></read-more>
+    <div *ngIf="!zoekopdrachten.length" class="filter-control">
+        <button [disabled]="!actieveFilters"
+                mat-icon-button (click)="clearActief(true)" id="clearZoekopdrachtButton1">
+            <mat-icon [ngClass]="actieveFilters ? 'filter-icon' : 'material-icons-outlined'">
+                filter_alt
+            </mat-icon>
+            <mat-icon *ngIf="actieveFilters"
+                      class="filter-button"
+                      title="{{ 'actie.zoekopdracht.wissen' | translate }}">
+                filter_alt_off
+            </mat-icon>
+        </button>
+    </div>
+    <div *ngIf="zoekopdrachten.length" class="filter-control">
+        <button *ngIf="!actieveZoekopdracht && !actieveFilters"
+                mat-icon-button [matMenuTriggerFor]="filterMenu" id="selecteerZoekopdrachtButton">
+            <mat-icon class="material-icons-outlined"
+                      title="{{ 'actie.zoekopdracht.selecteer' | translate }}">
+                filter_alt
+            </mat-icon>
+        </button>
+        <button *ngIf="actieveZoekopdracht || actieveFilters"
+                mat-icon-button (click)="clearActief(true)" id="clearZoekopdrachtButton2">
+            <mat-icon class="filter-icon">
+                filter_alt
+            </mat-icon>
+            <mat-icon class="filter-button"
+                      title="{{ 'actie.zoekopdracht.wissen' | translate }}">
+                filter_alt_off
+            </mat-icon>
+        </button>
+    </div>
+    <button [disabled]="actieveZoekopdracht!=null"
+            mat-icon-button (click)="saveSearch()" id="saveZoekopdrachtButton">
+        <mat-icon title="{{ (actieveZoekopdracht ? actieveZoekopdracht.naam: 'actie.zoekopdracht.opslaan') | translate }}">
+            {{ actieveZoekopdracht ? 'star' : 'star_outline' }}
+        </mat-icon>
     </button>
     <mat-menu class="filter-menu" #filterMenu="matMenu" fxLayout="row">
-        <button (click)="setActief(value)" mat-menu-item *ngFor="let value of zoekopdrachten">
+        <button *ngFor="let value of zoekopdrachten"
+                mat-menu-item (click)="setActief(value)" id="selecteerZoekopdracht">
                               <span fxFlexAlign="center" fxFlex>
                                 <read-more [text]="value.naam" [maxLength]="75"></read-more>
                               </span>
-            <mat-icon title="{{ 'actie.zoekopdracht.verwijderen' | translate }}" id="deleteZoekopdrachtButton"
-                      (click)="deleteZoekopdracht($event, value)" fxFlexAlign="center" fxFlex="nogrow">highlight_off
+            <mat-icon fxFlexAlign="center" fxFlex="nogrow"
+                      (click)="deleteZoekopdracht($event, value)" id="deleteZoekopdracht"
+                      title="{{ 'actie.zoekopdracht.verwijderen' | translate }}">
+                delete
             </mat-icon>
         </button>
     </mat-menu>
