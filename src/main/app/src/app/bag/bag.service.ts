@@ -24,19 +24,19 @@ export class BAGService {
 
     listAdressen(listAdressenParameters: ListAdressenParameters): Observable<Resultaat<Adres>> {
         return this.http.put<Resultaat<Adres>>(`${this.basepath}/adres`, listAdressenParameters).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     createBAGObject(bagObjectGegevens: BAGObjectGegevens): Observable<void> {
         return this.http.post<void>(`${this.basepath}`, bagObjectGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listAdressenVoorZaak(zaakUuid: string): Observable<Adres[]> {
         return this.http.get<Adres[]>(`${this.basepath}/adres/zaak/${zaakUuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 }
