@@ -24,7 +24,7 @@ export class ZoekenService {
 
     list(zoekParameters: ZoekParameters): Observable<ZoekResultaat<ZoekObject>> {
         return this.http.put<ZoekResultaat<ZoekObject>>(`${this.basepath}/list`, zoekParameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

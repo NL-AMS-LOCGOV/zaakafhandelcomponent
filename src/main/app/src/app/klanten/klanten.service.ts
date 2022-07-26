@@ -27,31 +27,31 @@ export class KlantenService {
 
     readPersoon(bsn: string): Observable<Persoon> {
         return this.http.get<Persoon>(`${this.basepath}/persoon/${bsn}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readBedrijf(vestigingsnummer: string): Observable<Bedrijf> {
         return this.http.get<Bedrijf>(`${this.basepath}/bedrijf/${vestigingsnummer}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listPersonen(listPersonenParameters: ListPersonenParameters): Observable<Resultaat<Persoon>> {
         return this.http.put<Resultaat<Persoon>>(`${this.basepath}/personen`, listPersonenParameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listBedrijven(listBedrijvenParameters: ListBedrijvenParameters): Observable<Resultaat<Bedrijf>> {
         return this.http.put<Resultaat<Bedrijf>>(`${this.basepath}/bedrijven`, listBedrijvenParameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listBetrokkeneRoltypen(zaaktypeUuid: string): Observable<Roltype[]> {
         return this.http.get<Roltype[]>(`${this.basepath}/roltype/${zaaktypeUuid}/betrokkene`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

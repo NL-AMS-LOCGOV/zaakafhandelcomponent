@@ -49,55 +49,55 @@ export class ZakenService {
 
     readZaak(uuid: string): Observable<Zaak> {
         return this.http.get<Zaak>(`${this.basepath}/zaak/${uuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readZaakByID(id: string): Observable<Zaak> {
         return this.http.get<Zaak>(`${this.basepath}/zaak/id/${id}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     createZaak(zaak: Zaak): Observable<Zaak> {
         return this.http.post<Zaak>(`${this.basepath}/zaak`, zaak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     updateZaak(uuid: string, zaak: Zaak, reden?: string): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}`, new ZaakEditMetRedenGegevens(zaak, reden)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readOpschortingZaak(uuid: string): Observable<ZaakOpschorting> {
         return this.http.get<ZaakOpschorting>(`${this.basepath}/zaak/${uuid}/opschorting`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     opschortenZaak(uuid: string, zaakOpschortGegevens: ZaakOpschortGegevens): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${uuid}/opschorting`, zaakOpschortGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     verlengenZaak(zaakUUID: string, zaakVerlengGegevens: ZaakVerlengGegevens): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/zaak/${zaakUUID}/verlenging`, zaakVerlengGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakWaarschuwingen(): Observable<ZaakOverzicht[]> {
         return this.http.get<ZaakOverzicht[]>(`${this.basepath}/waarschuwing`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaaktypes(): Observable<Zaaktype[]> {
         return this.http.get<Zaaktype[]>(`${this.basepath}/zaaktypes`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -108,7 +108,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -119,7 +119,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, toekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -131,7 +131,7 @@ export class ZakenService {
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -141,7 +141,7 @@ export class ZakenService {
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/vrijgeven`, verdeelGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -151,7 +151,7 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/mij`, toekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -160,13 +160,13 @@ export class ZakenService {
         gegevens.zaakUUID = zaak.uuid;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
         return this.http.post<Zaak>(`${this.basepath}/initiator`, gegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     deleteInitiator(zaak: Zaak): Observable<Zaak> {
         return this.http.delete<Zaak>(`${this.basepath}/${zaak.uuid}/initiator`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -176,26 +176,26 @@ export class ZakenService {
         gegevens.roltypeUUID = roltype.uuid;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
         return this.http.post<Zaak>(`${this.basepath}/betrokkene`, gegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     deleteBetrokkene(rolUUID: string): Observable<Zaak> {
         return this.http.delete<Zaak>(`${this.basepath}/betrokkene/${rolUUID}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     updateZaakGeometrie(uuid: string, zaak: Zaak): Observable<Zaak> {
         return this.http.patch<Zaak>(`${this.basepath}/${uuid}/zaakgeometrie`, zaak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     ontkoppelInformatieObject(zaakUUID: string, documentUUID: string, reden: string): Observable<void> {
         const gegevens = new DocumentOntkoppelGegevens(zaakUUID, documentUUID, reden);
         return this.http.put<void>(`${this.basepath}/zaakinformatieobjecten/ontkoppel`, gegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -209,55 +209,55 @@ export class ZakenService {
         toekennenGegevens.reden = reden;
 
         return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, toekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listHistorieVoorZaak(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/zaak/${uuid}/historie`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listBetrokkenenVoorZaak(uuid: string): Observable<ZaakBetrokkene[]> {
         return this.http.get<ZaakBetrokkene[]>(`${this.basepath}/zaak/${uuid}/betrokkene`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     afbreken(uuid: string, beeindigReden: ZaakbeeindigReden): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afbreken`, new ZaakAfbrekenGegevens(beeindigReden.id)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     heropenen(uuid: string, heropenReden: string): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/heropenen`, new ZaakHeropenenGegevens(heropenReden)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     afsluiten(uuid: string, afsluitenReden: string, resultaattypeUuid: string): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden, resultaattypeUuid)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listCommunicatiekanalen(): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/communicatiekanalen`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     koppelZaak(zaakKoppelGegevens: ZaakKoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/koppel`, zaakKoppelGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     ontkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

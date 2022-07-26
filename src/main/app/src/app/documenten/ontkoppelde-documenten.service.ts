@@ -24,7 +24,7 @@ export class OntkoppeldeDocumentenService {
 
     list(parameters: ListParameters): Observable<OntkoppeldeDocumentenResultaat> {
         return this.http.put<OntkoppeldeDocumentenResultaat>(this.basepath, parameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 

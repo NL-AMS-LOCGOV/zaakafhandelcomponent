@@ -25,49 +25,49 @@ export class ZaakafhandelParametersService {
 
     listZaakafhandelParameters(): Observable<ZaakafhandelParameters[]> {
         return this.http.get<ZaakafhandelParameters[]>(`${this.basepath}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readZaakafhandelparameters(zaaktypeUuid: string): Observable<ZaakafhandelParameters> {
         return this.http.get<ZaakafhandelParameters>(`${this.basepath}/${zaaktypeUuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakbeeindigRedenen(): Observable<ZaakbeeindigReden[]> {
         return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakbeeindigRedenenForZaaktype(zaaktypeUuid: string): Observable<ZaakbeeindigReden[]> {
         return this.http.get<ZaakbeeindigReden[]>(`${this.basepath}/zaakbeeindigRedenen/${zaaktypeUuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakResultaten(zaaktypeUuid: string): Observable<ZaakResultaat[]> {
         return this.http.get<ZaakResultaat[]>(`${this.basepath}/resultaten/${zaaktypeUuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listCaseDefinitions(): Observable<CaseDefinition[]> {
         return this.http.get<CaseDefinition[]>(`${this.basepath}/caseDefinition`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readCaseDefinition(key: string): Observable<CaseDefinition> {
         return this.http.get<CaseDefinition>(`${this.basepath}/caseDefinition/${key}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     updateZaakafhandelparameters(zaakafhandelparameters: ZaakafhandelParameters): Observable<void> {
         return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

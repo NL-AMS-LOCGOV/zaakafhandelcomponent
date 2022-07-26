@@ -33,31 +33,31 @@ export class TakenService {
 
     readTaak(id: string): Observable<Taak> {
         return this.http.get<Taak>(`${this.basepath}/${id}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listTakenVoorZaak(uuid: string): Observable<Taak[]> {
         return this.http.get<Taak[]>(`${this.basepath}/zaak/${uuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listHistorieVoorTaak(id: string): Observable<TaakHistorieRegel[]> {
         return this.http.get<TaakHistorieRegel[]>(`${this.basepath}/${id}/historie`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     assign(taak: Taak): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/assign`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     assignGroup(taak: Taak): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/assign/group`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -66,25 +66,25 @@ export class TakenService {
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUuid;
         return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     update(taak: Taak): Observable<Taak> {
         return this.http.patch<Taak>(`${this.basepath}`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     updateTaakdata(taak: Taak): Observable<Taak> {
         return this.http.put<Taak>(`${this.basepath}/taakdata`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     complete(taak: Taak): Observable<Taak> {
         return this.http.patch<Taak>(`${this.basepath}/complete`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -93,7 +93,7 @@ export class TakenService {
         taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
         return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -101,7 +101,7 @@ export class TakenService {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
         taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         return this.http.put<void>(`${this.basepath}/vrijgeven`, taakBody).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
