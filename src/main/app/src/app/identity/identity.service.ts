@@ -24,19 +24,19 @@ export class IdentityService {
 
     listGroups(): Observable<Group[]> {
         return this.http.get<Group[]>(`${this.basepath}/groups`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listUsersInGroup(groupId: string): Observable<User[]> {
         return this.http.get<User[]>(`${this.basepath}/groups/${groupId}/users`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     listUsers(): Observable<User[]> {
         return this.http.get<User[]>(`${this.basepath}/users`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
@@ -49,7 +49,7 @@ export class IdentityService {
             tap(user => {
                 SessionStorageUtil.setItem('loggedInUser', user);
             }),
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 }

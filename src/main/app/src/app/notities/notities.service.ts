@@ -23,25 +23,25 @@ export class NotitieService {
     listNotities(type: string, uuid: string): Observable<Notitie[]> {
 
         return this.http.get<Notitie[]>(`${this.basepath}/${type}/${uuid}`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     createNotitie(notitie: Notitie): Observable<Notitie> {
         return this.http.post<Notitie>(`${this.basepath}`, notitie).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     updateNotitie(notitie: Notitie): Observable<Notitie> {
         return this.http.patch<Notitie>(`${this.basepath}`, notitie).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     deleteNotitie(id: number): Observable<any> {
         return this.http.delete(`${this.basepath}/${id}`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 }
