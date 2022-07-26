@@ -22,13 +22,13 @@ export class MailService {
 
     sendMail(zaakUuid: string, mailObject: MailObject): Observable<any> {
         return this.http.post<number>(`${this.basepath}/send/${zaakUuid}`, mailObject).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     sendAcknowledgeReceipt(zaakUuid: string, mailObject: MailObject): Observable<any> {
         return this.http.post<number>(`${this.basepath}/acknowledge/${zaakUuid}`, mailObject).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 }

@@ -23,13 +23,13 @@ export class PolicyService {
 
     readAppActies(): Observable<AppActies> {
         return this.http.get<AppActies>(`${this.basepath}/appActies`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 
     readZakenActies(): Observable<ZakenActies> {
         return this.http.get<ZakenActies>(`${this.basepath}/zakenActies`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 

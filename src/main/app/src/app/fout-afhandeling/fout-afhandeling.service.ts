@@ -40,7 +40,7 @@ export class FoutAfhandelingService {
         }).afterClosed();
     }
 
-    private redirect(err: HttpErrorResponse): Observable<never> {
+    public redirect(err: HttpErrorResponse): Observable<never> {
         this.foutmelding = err.message;
         if (err.error instanceof ErrorEvent) {
             // Client-side
