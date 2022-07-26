@@ -24,31 +24,31 @@ export class GebruikersvoorkeurenService {
 
     listZoekOpdrachten(werklijst: Werklijst): Observable<Zoekopdracht[]> {
         return this.http.get<Zoekopdracht[]>(`${this.basepath}/zoekopdracht/${werklijst}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     createOrUpdateZoekOpdrachten(zoekopdracht: Zoekopdracht): Observable<Zoekopdracht> {
         return this.http.post<Zoekopdracht>(`${this.basepath}/zoekopdracht`, zoekopdracht).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     deleteZoekOpdrachten(id: number): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/zoekopdracht/${id}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     setZoekopdrachtActief(zoekopdracht: Zoekopdracht): Observable<void> {
         return this.http.put<void>(`${this.basepath}/zoekopdracht/actief`, zoekopdracht).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     removeZoekopdrachtActief(werklijst: Werklijst): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/zoekopdracht/${werklijst}/actief`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 }

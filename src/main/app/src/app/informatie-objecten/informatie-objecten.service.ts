@@ -35,25 +35,25 @@ export class InformatieObjectenService {
     // Het EnkelvoudigInformatieobject kan opgehaald worden binnen de context van een specifieke zaak.
     readEnkelvoudigInformatieobject(uuid: string, zaakUuid?: string): Observable<EnkelvoudigInformatieobject> {
         return this.http.get<EnkelvoudigInformatieobject>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}`, zaakUuid)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readEnkelvoudigInformatieobjectVersie(uuid: string, versie: number): Observable<EnkelvoudigInformatieobject> {
         return this.http.get<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/versie/${uuid}/${versie}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listInformatieobjecttypes(zaakTypeID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/${zaakTypeID}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listInformatieobjecttypesForZaak(zaakUUID): Observable<Informatieobjecttype[]> {
         return this.http.get<Informatieobjecttype[]>(`${this.basepath}/informatieobjecttypes/zaak/${zaakUUID}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -65,55 +65,55 @@ export class InformatieObjectenService {
                 taakObject: taakObject
             }
         }).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     createDocument(documentCreatieGegevens: DocumentCreatieGegevens): Observable<DocumentCreatieResponse> {
         return this.http.post<DocumentCreatieResponse>(`${this.basepath}/documentcreatie`, documentCreatieGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     readHuidigeVersieEnkelvoudigInformatieObject(uuid: string): Observable<EnkelvoudigInformatieObjectVersieGegevens> {
         return this.http.get<EnkelvoudigInformatieObjectVersieGegevens>(`${this.basepath}/informatieobject/${uuid}/huidigeversie`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     updateEnkelvoudigInformatieobject(documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens): Observable<EnkelvoudigInformatieobject> {
         return this.http.post<EnkelvoudigInformatieobject>(`${this.basepath}/informatieobject/update`, documentNieuweVersieGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listEnkelvoudigInformatieobjecten(zoekParameters: EnkelvoudigInformatieObjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakInformatieobjecten(uuid: string): Observable<ZaakInformatieobject[]> {
         return this.http.get<ZaakInformatieobject[]>(`${this.basepath}/informatieobject/${uuid}/zaakinformatieobjecten`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listHistorie(uuid: string): Observable<HistorieRegel[]> {
         return this.http.get<HistorieRegel[]>(`${this.basepath}/informatieobject/${uuid}/historie`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     lockInformatieObject(uuid: string, zaakUuid: string) {
         return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/lock`, zaakUuid), null).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     unlockInformatieObject(uuid: string, zaakUuid: string) {
         return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/unlock`, zaakUuid), null).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
@@ -135,38 +135,38 @@ export class InformatieObjectenService {
         }
 
         return this.http.get(url, {responseType: 'blob'}).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     editEnkelvoudigInformatieObjectInhoud(uuid: string, zaakUuid: string): Observable<string> {
         return this.http.get<string>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/edit`, zaakUuid)).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     postVerplaatsDocument(documentVerplaatsGegevens: DocumentVerplaatsGegevens, nieuweZaakID: string): Observable<void> {
         documentVerplaatsGegevens.nieuweZaakID = nieuweZaakID;
         return this.http.post<void>(`${this.basepath}/informatieobject/verplaats`, documentVerplaatsGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     deleteEnkelvoudigInformatieObject(uuid: string, zaakUuid: string, reden: string): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/informatieobject/${uuid}`, {body: new DocumentVerwijderenGegevens(zaakUuid, reden)}).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listZaakIdentificatiesForInformatieobject(documentUUID: string): Observable<string[]> {
         return this.http.get<string[]>(`${this.basepath}/informatieobject/${documentUUID}/zaakidentificaties`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
     listGekoppeldeZaakInformatieObjecten(zaakUUID: string): Observable<GekoppeldeZaakEnkelvoudigInformatieobject[]> {
         return this.http.get<GekoppeldeZaakEnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobject/gekoppelde/${zaakUUID}`).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 

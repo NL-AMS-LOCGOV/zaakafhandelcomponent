@@ -9,9 +9,12 @@ import {SharedModule} from '../shared/shared.module';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {FoutAfhandelingRoutingModule} from './fout-afhandeling-routing.module';
 import {FoutAfhandelingComponent} from './fout-afhandeling.component';
+import {FoutDialogComponent} from './dialog/fout-dialog.component';
 
 @NgModule({
-    declarations: [FoutAfhandelingComponent],
+    declarations: [
+        FoutAfhandelingComponent,
+        FoutDialogComponent],
     exports: [
         FoutAfhandelingComponent
     ],

@@ -24,7 +24,7 @@ export class InboxDocumentenService {
 
     list(parameters: ListParameters): Observable<Resultaat<InboxDocument>> {
         return this.http.put<Resultaat<InboxDocument>>(this.basepath, parameters).pipe(
-            catchError(err => this.foutAfhandelingService.redirect(err))
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 

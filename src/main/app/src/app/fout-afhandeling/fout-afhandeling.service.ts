@@ -9,6 +9,8 @@ import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
+import {MatDialog} from '@angular/material/dialog';
+import {FoutDialogComponent} from './dialog/fout-dialog.component';
 
 @Injectable({
     providedIn: 'root'
@@ -20,10 +22,25 @@ export class FoutAfhandelingService {
     stack: string;
     exception: string;
 
-    constructor(private router: Router, private snackbar: MatSnackBar, private translate: TranslateService) {
+    constructor(private router: Router, private snackbar: MatSnackBar,
+                private translate: TranslateService, private dialog: MatDialog) {
     }
 
-    public redirect(err: HttpErrorResponse): Observable<never> {
+    public foutAfhandelen(err: HttpErrorResponse): Observable<any> {
+        if (err.status === 400) {
+            return this.openFoutDialog(err);
+        } else {
+            return this.redirect(err);
+        }
+    }
+
+    private openFoutDialog(err: HttpErrorResponse): Observable<any> {
+        return this.dialog.open(FoutDialogComponent, {
+            data: err.error,
+        }).afterClosed();
+    }
+
+    private redirect(err: HttpErrorResponse): Observable<never> {
         this.foutmelding = err.message;
         if (err.error instanceof ErrorEvent) {
             // Client-side
