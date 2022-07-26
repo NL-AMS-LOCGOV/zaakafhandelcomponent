@@ -31,6 +31,8 @@ public class RESTZaakActies {
 
     public boolean versturenOntvangstbevestiging;
 
+    public boolean toevoegenBAGObject;
+
     public boolean toevoegenInitiatorPersoon;
 
     public boolean toevoegenInitiatorBedrijf;
