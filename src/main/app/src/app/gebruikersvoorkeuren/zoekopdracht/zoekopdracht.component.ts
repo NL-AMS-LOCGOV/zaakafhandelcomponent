@@ -27,6 +27,7 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
 
     zoekopdrachten: Zoekopdracht[] = [];
     actieveZoekopdracht: Zoekopdracht;
+    actieveFilters: boolean;
     filtersChangedSubscription$: Subscription;
 
     constructor(private gebruikersvoorkeurenService: GebruikersvoorkeurenService, private dialog: MatDialog) { }
@@ -42,6 +43,41 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         });
     }
 
+    private heeftZoekParameters(): boolean {
+        const parameters: any = this.zoekParameters;
+        if (parameters != null) {
+            if (parameters.zoeken) {
+                for (const field in parameters.zoeken) {
+                    if (parameters.zoeken.hasOwnProperty(field)) {
+                        if (parameters.zoeken[field] != null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (parameters.filters) {
+                for (const field in parameters.filters) {
+                    if (parameters.filters.hasOwnProperty(field)) {
+                        if (parameters.filters[field] != null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (parameters.datums) {
+                for (const field in parameters.datums) {
+                    if (parameters.datums.hasOwnProperty(field)) {
+                        const datum = parameters.datums[field];
+                        if (datum.van != null || datum.tot != null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     saveSearch(): void {
         const dialogRef = this.dialog.open(ZoekopdrachtSaveDialogComponent, {
             data: {zoekopdrachten: this.zoekopdrachten, lijstID: this.werklijst, zoekopdracht: this.zoekParameters}
@@ -55,6 +91,7 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
 
     setActief(zoekopdracht: Zoekopdracht): void {
         this.actieveZoekopdracht = zoekopdracht;
+        this.actieveFilters = true;
         this.zoekopdracht.emit(this.actieveZoekopdracht);
         this.gebruikersvoorkeurenService.setZoekopdrachtActief(this.actieveZoekopdracht).subscribe();
     }
@@ -70,7 +107,10 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         this.actieveZoekopdracht = null;
         this.gebruikersvoorkeurenService.removeZoekopdrachtActief(this.werklijst).subscribe();
         if (emit) {
+            this.actieveFilters = false;
             this.zoekopdracht.emit(this.actieveZoekopdracht);
+        } else {
+            this.actieveFilters = this.heeftZoekParameters();
         }
     }
 
@@ -78,6 +118,7 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         this.gebruikersvoorkeurenService.listZoekOpdrachten(this.werklijst).subscribe(zoekopdrachten => {
             this.zoekopdrachten = zoekopdrachten;
             this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
+            this.actieveFilters = this.heeftZoekParameters();
             this.zoekopdracht.emit(this.actieveZoekopdracht);
         });
     }

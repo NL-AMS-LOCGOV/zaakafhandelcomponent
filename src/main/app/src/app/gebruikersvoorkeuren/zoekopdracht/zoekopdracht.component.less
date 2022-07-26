@@ -3,3 +3,27 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+.filter-naam {
+  text-align: right;
+}
+
+.filter-control {
+  &:hover {
+    .filter-icon {
+      visibility: hidden;
+    }
+
+    .filter-button {
+      visibility: visible;
+    }
+  }
+
+  .filter-icon {
+    visibility: visible;
+  }
+
+  .filter-button {
+    visibility: hidden;
+    margin-left: -24px;
+  }
+}
