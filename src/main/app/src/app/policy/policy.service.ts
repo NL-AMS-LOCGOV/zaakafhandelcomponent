@@ -35,7 +35,7 @@ export class PolicyService {
 
     readTakenActies(): Observable<TakenActies> {
         return this.http.get<TakenActies>(`${this.basepath}/takenActies`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+            catchError(err => this.foutAfhandelingService.redirect(err))
         );
     }
 }
