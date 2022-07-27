@@ -173,7 +173,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['naam', ColumnPickerValue.VISIBLE],
             ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['creatiedatum', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],
             ['dagenTotStreefdatum', ColumnPickerValue.HIDDEN],
             ['groep', ColumnPickerValue.VISIBLE],
