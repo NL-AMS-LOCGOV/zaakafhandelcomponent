@@ -12,5 +12,4 @@ public class RESTTaakToekennenGegevens {
     public String taakId;
 
     public UUID zaakUuid;
-
 }

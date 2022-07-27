@@ -146,13 +146,13 @@ public class ZoekenService {
     private void applyAllowedZaaktypenPolicy(final SolrQuery query) {
         final Set<String> allowedZaaktypen = policyService.getAllowedZaaktypen();
         if (allowedZaaktypen != null) {
-            final String zaaktypeExpressie;
             if (allowedZaaktypen.isEmpty()) {
-                zaaktypeExpressie = NON_EXISTING_ZAAKTYPE;
+                query.addFilterQuery(format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, NON_EXISTING_ZAAKTYPE));
             } else {
-                zaaktypeExpressie = allowedZaaktypen.stream().collect(joining("\" OR \""));
+                query.addFilterQuery(allowedZaaktypen.stream()
+                                             .map(zaaktype -> format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktype))
+                                             .collect(joining(" OR ")));
             }
-            query.addFilterQuery(format("%s:\"%s\"", ZAAKTYPE_OMSCHRIJVING_VELD, zaaktypeExpressie));
         }
     }
 }

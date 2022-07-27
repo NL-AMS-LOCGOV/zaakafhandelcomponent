@@ -92,8 +92,8 @@
                                                           [reasonField]="editFormFields.get('reden')"
                                                           [readonly]="!zaak.acties.wijzigenToekenning"
                                                           (onSave)="editBehandelaar($event)"
-                                                          [showAssignToMe]="showAssignToMe(zaak)"
-                                                          (onAssignToMe)="assignToMe($event)"></zac-edit-behandelaar>
+                                                          [showAssignToMe]="showAssignZaakToMe(zaak)"
+                                                          (onAssignToMe)="assignZaakToMe($event)"></zac-edit-behandelaar>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -408,16 +408,16 @@
                             </ng-container>
                             <ng-container matColumnDef="id" stickyEnd id="taakButtons">
                                 <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let taak">
-                                    <button mat-flat-button [routerLink]="['/taken', taak.data.id]"
+                                <td mat-cell *matCellDef="let row">
+                                    <button *ngIf="row.data.acties.lezen" mat-flat-button [routerLink]="['/taken', row.data.id]"
                                             (click)="$event.stopPropagation()"
-                                            [id]="'taakBekijken_' + taak.data.id +'_button'"
+                                            [id]="'taakBekijken_' + row.data.id +'_button'"
                                             title="{{ 'actie.taak.bekijken' | translate }}">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
-                                            [id]="'kenTaakAanMijToe_' + taak.data.id +'_button'"
-                                            (click)="assignTaskToMe(taak.data, $event)" *ngIf="showAssignToMe(taak.data)">
+                                            [id]="'kenTaakAanMijToe_' + row.data.id +'_button'"
+                                            (click)="assignTaakToMe(row.data, $event)" *ngIf="showAssignTaakToMe(row.data)">
                                         <mat-icon>person_add_alt_1</mat-icon>
                                     </button>
                                 </td>

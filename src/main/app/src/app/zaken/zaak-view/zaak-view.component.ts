@@ -37,7 +37,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {DialogData} from '../../shared/dialog/dialog-data';
-import {TaakStatus} from '../../taken/model/taak-status.enum';
 import {TranslateService} from '@ngx-translate/core';
 import {KlantenService} from '../../klanten/klanten.service';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
@@ -799,11 +798,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.allTakenExpanded = filter.length === 0;
     }
 
-    showAssignToMe(zaakOrTaak: Zaak | Taak): boolean {
-        return this.ingelogdeMedewerker.id !== zaakOrTaak.behandelaar?.id && zaakOrTaak.status !== TaakStatus.Afgerond;
+    showAssignZaakToMe(zaak: Zaak): boolean {
+        return zaak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== zaak.behandelaar?.id;
     }
 
-    assignToMe(event: any): void {
+    showAssignTaakToMe(taak: Taak): boolean {
+        return taak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
+    }
+
+    assignZaakToMe(event: any): void {
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.init(zaak);
@@ -899,7 +902,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    assignTaskToMe(taak: Taak, $event) {
+    assignTaakToMe(taak: Taak, $event) {
         $event.stopPropagation();
 
         this.websocketService.suspendListener(this.zaakTakenListener);
