@@ -134,7 +134,8 @@ public class PlanItemsRESTService {
             }
             case ZAAK_AFHANDELEN -> {
                 final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-                policyService.valideerZaakAfsluiten(zaak);
+                assertActie(policyService.readZaakActies(zaak).getAfsluiten());
+                policyService.valideerAlleDeelzakenGesloten(zaak);
                 zgwApiService.createResultaatForZaak(zaak, userEventListenerData.resultaattypeUuid,
                                                      userEventListenerData.resultaatToelichting);
             }

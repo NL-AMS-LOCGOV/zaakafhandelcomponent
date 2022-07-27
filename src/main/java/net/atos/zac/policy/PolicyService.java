@@ -221,9 +221,8 @@ public class PolicyService {
         }
     }
 
-    public void valideerZaakAfsluiten(final Zaak zaak) {
-        assertActie(readZaakActies(zaak).getAfsluiten());
-        if (zaak.getDeelzaken().stream().map(zrcClientService::readZaak).filter(Zaak::isOpen).findAny().isPresent()) {
+    public void valideerAlleDeelzakenGesloten(final Zaak zaak) {
+        if (zaak.getDeelzaken().stream().map(zrcClientService::readZaak).anyMatch(Zaak::isOpen)) {
             throw new FoutmeldingException("Zaak kan niet worden afgesloten want er zijn nog openstaande deelzaken.");
         }
     }

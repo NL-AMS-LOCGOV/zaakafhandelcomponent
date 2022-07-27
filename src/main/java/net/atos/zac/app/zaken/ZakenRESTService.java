@@ -476,6 +476,7 @@ public class ZakenRESTService {
     public void afbreken(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfbrekenGegevens afbrekenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertActie(policyService.readZaakActies(zaak).getAfbreken());
+        policyService.valideerAlleDeelzakenGesloten(zaak);
         final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameterBeheerService.readZaakbeeindigParameter(
                 uuidFromURI(zaak.getZaaktype()), afbrekenGegevens.zaakbeeindigRedenId);
         zgwApiService.createResultaatForZaak(zaak, zaakbeeindigParameter.getResultaattype(), zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
@@ -497,6 +498,7 @@ public class ZakenRESTService {
     public void afsluiten(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertActie(policyService.readZaakActies(zaak).getAfsluiten());
+        policyService.valideerAlleDeelzakenGesloten(zaak);
         zgwApiService.updateResultaatForZaak(zaak, afsluitenGegevens.resultaattypeUuid, afsluitenGegevens.reden);
         zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
     }
