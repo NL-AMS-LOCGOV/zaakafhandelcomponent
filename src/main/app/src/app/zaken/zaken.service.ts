@@ -170,10 +170,11 @@ export class ZakenService {
         );
     }
 
-    createBetrokkene(zaak: Zaak, betrokkeneIdentificatie: string, roltype: Roltype): Observable<Zaak> {
+    createBetrokkene(zaak: Zaak, betrokkeneIdentificatie: string, roltype: Roltype, roltoelichting: string): Observable<Zaak> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
         gegevens.roltypeUUID = roltype.uuid;
+        gegevens.roltoelichting = roltoelichting;
         gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
         return this.http.post<Zaak>(`${this.basepath}/betrokkene`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))

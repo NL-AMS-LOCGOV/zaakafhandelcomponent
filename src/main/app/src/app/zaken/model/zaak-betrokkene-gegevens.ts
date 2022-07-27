@@ -8,9 +8,9 @@ export class ZaakBetrokkeneGegevens {
 
     roltypeUUID?: string;
 
+    roltoelichting: string;
+
     betrokkeneType: string;
 
     betrokkeneIdentificatie: string;
-
-    reden: string;
 }

@@ -6,6 +6,7 @@
 export class ZaakBetrokkene {
     rolid: string;
     roltype: string;
+    roltoelichting: string;
     type: string;
     identificatie: string;
 }

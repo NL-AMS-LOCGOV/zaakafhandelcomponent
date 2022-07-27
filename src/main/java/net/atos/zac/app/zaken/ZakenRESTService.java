@@ -129,8 +129,6 @@ public class ZakenRESTService {
 
     public static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String BETROKKENE_TOEVOEGEN_REDEN = "Betrokkene toegevoegd door de medewerker tijdens het behandelen van de zaak";
-
     public static final String OPSCHORTING = "Opschorting";
 
     public static final String HERVATTING = "Hervatting";
@@ -258,7 +256,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         final ZaakActies zaakActies = policyService.readZaakActies(zaak);
         assertActie(zaakActies.getToevoegenBetrokkeneBedrijf() || zaakActies.getToevoegenBetrokkenePersoon());
-        addBetrokkene(gegevens.roltypeUUID, gegevens.betrokkeneIdentificatie, zaak);
+        addBetrokkene(gegevens.roltypeUUID, gegevens.betrokkeneIdentificatie, gegevens.roltoelichting, zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -627,16 +625,16 @@ public class ZakenRESTService {
         }
     }
 
-    private void addBetrokkene(final UUID roltype, final String identificatienummer, final Zaak zaak) {
+    private void addBetrokkene(final UUID roltype, final String identificatienummer, final String toelichting, final Zaak zaak) {
         final Roltype betrokkene = ztcClientService.readRoltype(roltype);
         switch (identificatienummer.length()) {
             case 9 -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkenePersoon());
-                addBetrokkenBurger(betrokkene, identificatienummer, zaak, BETROKKENE_TOEVOEGEN_REDEN);
+                addBetrokkenBurger(betrokkene, identificatienummer, zaak, toelichting);
             }
             case 12 -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkeneBedrijf());
-                addBetrokkenBedrijf(betrokkene, identificatienummer, zaak, BETROKKENE_TOEVOEGEN_REDEN);
+                addBetrokkenBedrijf(betrokkene, identificatienummer, zaak, toelichting);
             }
             default -> throw new IllegalStateException("Unexpected value: '%s'" + identificatienummer);
         }
@@ -644,12 +642,12 @@ public class ZakenRESTService {
 
     private void addBetrokkenBurger(final Roltype roltype, final String bsn, final Zaak zaak, String toelichting) {
         RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
-        zrcClientService.createRol(rol, BETROKKENE_TOEVOEGEN_REDEN);
+        zrcClientService.createRol(rol, toelichting);
     }
 
     private void addBetrokkenBedrijf(final Roltype initiator, final String vestigingsnummer, final Zaak zaak, String toelichting) {
         RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
-        zrcClientService.createRol(rol, BETROKKENE_TOEVOEGEN_REDEN);
+        zrcClientService.createRol(rol, toelichting);
     }
 
     private int verlengOpenTaken(final UUID zaakUUID, final int duurDagen) {

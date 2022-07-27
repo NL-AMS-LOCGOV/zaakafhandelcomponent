@@ -105,7 +105,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
     betrokkenen: MatTableDataSource<ZaakBetrokkene> = new MatTableDataSource<ZaakBetrokkene>();
-    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie', 'rolid'];
+    betrokkenenColumns: string[] = ['roltype', 'betrokkenetype', 'betrokkeneidentificatie', 'roltoelichting', 'rolid'];
     adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
     adressenColumns: string[] = ['straat', 'huisnummer', 'postcode', 'woonplaats'];
     gerelateerdeZaakColumns: string[] = ['identificatie', 'zaaktypeOmschrijving', 'statustypeOmschrijving', 'startdatum', 'relatieType'];
@@ -863,7 +863,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     betrokkeneGeselecteerd(betrokkene: KlantGegevens): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant.identificatie, betrokkene.betrokkeneRoltype)
+        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant.identificatie, betrokkene.betrokkeneRoltype, betrokkene.betrokkeneToelichting)
             .subscribe(zaak => {
                 this.zaak = zaak;
                 this.utilService.openSnackbar('msg.betrokkene.toegevoegd', {roltype: betrokkene.betrokkeneRoltype.naam});

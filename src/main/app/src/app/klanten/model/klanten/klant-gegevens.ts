@@ -8,4 +8,5 @@ export class KlantGegevens {
 
     klant: Klant;
     betrokkeneRoltype?: Roltype;
+    betrokkeneToelichting?: string;
 }

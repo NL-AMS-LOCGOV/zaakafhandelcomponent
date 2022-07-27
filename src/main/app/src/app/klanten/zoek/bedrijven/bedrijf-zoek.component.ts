@@ -14,6 +14,7 @@ import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form
 import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-parameters';
 import {KlantenService} from '../../klanten.service';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
+import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -22,6 +23,7 @@ import {SelectFormField} from '../../../shared/material-form-builder/form-compon
 })
 export class BedrijfZoekComponent implements OnInit {
     @Input() betrokkeneRoltypeField: SelectFormField;
+    @Input() betrokkeneToelichtingField: InputFormField;
     @Output() bedrijf = new EventEmitter<Bedrijf>();
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
     foutmelding: string;

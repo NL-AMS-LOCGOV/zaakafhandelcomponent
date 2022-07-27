@@ -5,8 +5,11 @@
 
 <div class="form">
     <div *ngIf="betrokkeneRoltypeField" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
+        <div fxFlex="33">
             <mfb-form-field [field]="betrokkeneRoltypeField"></mfb-form-field>
+        </div>
+        <div fxFlex="66">
+            <mfb-form-field [field]="betrokkeneToelichtingField"></mfb-form-field>
         </div>
     </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
