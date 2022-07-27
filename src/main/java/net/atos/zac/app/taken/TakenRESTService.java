@@ -35,19 +35,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.uuid.impl.UUIDUtil;
-
-import net.atos.client.zgw.drc.DRCClientService;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
-import net.atos.client.zgw.drc.model.InformatieobjectStatus;
-import net.atos.client.zgw.drc.model.Ondertekening;
-import net.atos.client.zgw.drc.model.OndertekeningSoort;
-
-import net.atos.zac.app.taken.model.DocumentLijstData;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
-
-import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -57,8 +44,14 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.uuid.impl.UUIDUtil;
 
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.drc.model.Ondertekening;
+import net.atos.client.zgw.drc.model.OndertekeningSoort;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -67,6 +60,7 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConvert
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.converter.RESTTaakHistorieConverter;
+import net.atos.zac.app.taken.model.DocumentLijstData;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
@@ -74,6 +68,8 @@ import net.atos.zac.app.taken.model.RESTTaakToekennenGegevens;
 import net.atos.zac.app.taken.model.RESTTaakVerdelenGegevens;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
+import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
@@ -205,7 +201,8 @@ public class TakenRESTService {
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        assertActie(policyService.readTakenActies().getToekennenAanMijzelf());
+        assertActie(policyService.readTakenActies().getToekennenAanMijzelf() ||
+                            policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convert(task, true);
