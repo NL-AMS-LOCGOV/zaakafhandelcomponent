@@ -335,18 +335,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.acties.toevoegenDocument) {
-            this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
+        if (this.zaak.acties.versturenOntvangstbevestiging) {
+            this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
-            }, 'upload_file'));
-        }
-
-        if (this.zaak.acties.creeerenDocument) {
-            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_MAKEN;
-            }, 'note_add'));
+                this.action = SideNavAction.ONTVANGSTBEVESTIGING;
+            }, 'mark_email_read'));
         }
 
         if (this.zaak.acties.versturenEmail) {
@@ -356,21 +349,24 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'mail'));
         }
 
+        if (this.zaak.acties.creeerenDocument) {
+            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_MAKEN;
+            }, 'note_add'));
+        }
+
+        if (this.zaak.acties.toevoegenDocument) {
+            this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+            }, 'upload_file'));
+        }
+
         if (this.zaak.acties.koppelen) {
             this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
                 this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
             }, 'account_tree'));
-        }
-
-        if (this.zaak.acties.versturenOntvangstbevestiging) {
-            this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.ONTVANGSTBEVESTIGING;
-            }, 'mark_email_read'));
-        }
-
-        if (this.zaak.acties.afbreken) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
         }
 
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
@@ -392,6 +388,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                             userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                         ).filter(menuItem => menuItem != null));
                 }
+                if (this.zaak.acties.afbreken) {
+                    this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+                }
                 this.createRelatiesToevoegenMenuItems();
                 if (planItems.humanTaskPlanItems.length > 0) {
                     this.menu.push(new HeaderMenuItem('actie.taak.starten'));
@@ -400,6 +399,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 }
             });
         } else {
+            if (this.zaak.acties.afbreken) {
+                this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+            }
             this.createRelatiesToevoegenMenuItems();
         }
     }
