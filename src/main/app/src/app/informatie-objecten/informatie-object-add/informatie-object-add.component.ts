@@ -114,7 +114,7 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                                                                  .build();
 
         const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
-                                                  .validators(Validators.required)
+                                                  .validators(Validators.required, Validators.pattern('\\S.*'))
                                                   .value(this.ingelogdeMedewerker.naam)
                                                   .maxlength(50)
                                                   .build();
