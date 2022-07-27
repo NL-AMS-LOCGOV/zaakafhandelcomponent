@@ -6,11 +6,11 @@
 export class ZaakBetrokkeneGegevens {
     zaakUUID: string;
 
-    roltypeUUID?: string;
+    roltypeUUID: string;
+
+    roltoelichting: string;
 
     betrokkeneType: string;
 
     betrokkeneIdentificatie: string;
-
-    reden: string;
 }

@@ -11,6 +11,8 @@ import {SelectFormField} from '../../../shared/material-form-builder/form-compon
 import {ZaakActies} from '../../../zaken/model/zaak-acties';
 import {KlantenService} from '../../klanten.service';
 import {KlantGegevens} from '../../model/klanten/klant-gegevens';
+import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
+import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     selector: 'zac-klant-zoek',
@@ -23,6 +25,7 @@ export class KlantZoekComponent implements OnInit {
     @Input() zaaktypeUUID: string;
     @Output() klantGegevens = new EventEmitter<KlantGegevens>();
     betrokkeneRoltype: SelectFormField;
+    betrokkeneToelichting: InputFormField;
 
     constructor(private klantenService: KlantenService) {
     }
@@ -34,13 +37,18 @@ export class KlantZoekComponent implements OnInit {
                                                              .options(this.klantenService.listBetrokkeneRoltypen(this.zaaktypeUUID))
                                                              .validators(Validators.required)
                                                              .build();
-
+        this.betrokkeneToelichting = new InputFormFieldBuilder().id('betrokkenToelichting')
+                                                                .label('toelichting')
+                                                                .validators(Validators.required)
+                                                                .maxlength(75)
+                                                                .build();
     }
 
     klantGeselecteerd(klant: Klant): void {
         const klantGegevens: KlantGegevens = new KlantGegevens(klant);
         if (!this.initiator) {
             klantGegevens.betrokkeneRoltype = this.betrokkeneRoltype.formControl.value;
+            klantGegevens.betrokkeneToelichting = this.betrokkeneToelichting.formControl.value;
         }
         this.klantGegevens.emit(klantGegevens);
     }

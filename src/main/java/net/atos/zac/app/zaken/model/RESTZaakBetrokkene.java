@@ -11,6 +11,8 @@ public class RESTZaakBetrokkene {
 
     public String roltype;
 
+    public String roltoelichting;
+
     public String type;
 
     public String identificatie;

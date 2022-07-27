@@ -2,10 +2,8 @@ import {Klant} from './klant';
 import {Roltype} from './roltype';
 
 export class KlantGegevens {
-    constructor(klant: Klant) {
-        this.klant = klant;
-    }
+    constructor(public klant: Klant) {}
 
-    klant: Klant;
-    betrokkeneRoltype?: Roltype;
+    betrokkeneRoltype: Roltype;
+    betrokkeneToelichting: string;
 }

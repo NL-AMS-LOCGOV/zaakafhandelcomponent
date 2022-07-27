@@ -22,6 +22,7 @@ public class RESTZaakBetrokkeneConverter {
         final RESTZaakBetrokkene betrokkene = new RESTZaakBetrokkene();
         betrokkene.rolid = rol.getUuid().toString();
         betrokkene.roltype = rol.getOmschrijving();
+        betrokkene.roltoelichting = rol.getRoltoelichting();
         betrokkene.type = rol.getBetrokkeneType().name();
         switch (rol.getBetrokkeneType()) {
             case NATUURLIJK_PERSOON -> {
