@@ -102,7 +102,7 @@ export class ZaakCreateComponent implements OnInit {
                                                                         .optionLabel('label')
                                                                         .options(vertrouwelijkheidaanduidingen).build();
 
-        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(100)
+        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(80)
                                                         .build();
         const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)
                                                           .build();
