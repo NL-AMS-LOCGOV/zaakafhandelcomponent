@@ -72,7 +72,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
             ['naam', ColumnPickerValue.VISIBLE],
             ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-            ['creatiedatumTijd', ColumnPickerValue.VISIBLE],
+            ['creatiedatum', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],
             ['dagenTotStreefdatum', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.VISIBLE],

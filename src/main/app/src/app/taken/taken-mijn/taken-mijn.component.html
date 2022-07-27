@@ -48,15 +48,15 @@
             <td mat-cell *matCellDef="let row">{{ row.zaaktypeOmschrijving | empty }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="creatiedatumTijd_filter">
+        <ng-container matColumnDef="creatiedatum_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="startdatum"
+                <zac-datum-filter label="creatiedatum"
                                   [range]="dataSource.zoekParameters.datums[DatumVeld.TAAK_CREATIEDATUM]" (changed)="filtersChange()">
                 </zac-datum-filter>
             </th>
         </ng-container>
-        <ng-container matColumnDef="creatiedatumTijd">
-            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.TAAK_CREATIEDATUM">{{ 'startdatum' | translate }}</th>
+        <ng-container matColumnDef="creatiedatum">
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="SorteerVeld.TAAK_CREATIEDATUM">{{ 'creatiedatum' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.creatiedatum | datum | empty }}</td>
         </ng-container>
 
@@ -130,8 +130,8 @@
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="'streefdatum'" [value]="row.streefdatum | datum" [icon]="streefdatumIcon"
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
-                            <zac-static-text *ngSwitchCase="'creatiedatumTijd'" [value]="row.creatiedatumTijd | datum"
-                                             fxFlex="33" label="'startdatum'"></zac-static-text>
+                            <zac-static-text *ngSwitchCase="'creatiedatum'" [value]="row.creatiedatum | datum"
+                                             fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="'groep'" [value]="row.groepNaam"
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="'status'" [value]="row.statustypeOmschrijving"
