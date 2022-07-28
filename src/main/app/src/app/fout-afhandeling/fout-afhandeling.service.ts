@@ -35,9 +35,11 @@ export class FoutAfhandelingService {
     }
 
     private openFoutDialog(err: HttpErrorResponse): Observable<any> {
-        return this.dialog.open(FoutDialogComponent, {
+        this.dialog.open(FoutDialogComponent, {
             data: err.error,
-        }).afterClosed();
+        });
+
+        return throwError(() => 'Fout!' );
     }
 
     private redirect(err: HttpErrorResponse): Observable<never> {
