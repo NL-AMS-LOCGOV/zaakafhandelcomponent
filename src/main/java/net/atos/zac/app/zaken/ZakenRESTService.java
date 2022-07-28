@@ -207,9 +207,6 @@ public class ZakenRESTService {
     @Inject
     private PolicyService policyService;
 
-    @Inject
-    private EnkelvoudigInformatieObjectLockService enkelvoudigInformatieObjectLockService;
-
     @GET
     @Path("zaak/{uuid}")
     public RESTZaak readZaak(@PathParam("uuid") final UUID zaakUUID) {
