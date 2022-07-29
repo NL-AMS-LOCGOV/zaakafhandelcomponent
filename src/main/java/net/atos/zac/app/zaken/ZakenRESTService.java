@@ -37,6 +37,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.client.zgw.zrc.model.ToelichtingPrefix;
+
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -357,7 +359,9 @@ public class ZakenRESTService {
                                   ontkoppelGegevens.documentUUID));
         }
         zaakInformatieobjecten.forEach(zaakInformatieobject ->
-                                               zrcClientService.unlinkZaakInformatieobject(zaakInformatieobject.getUuid(), ontkoppelGegevens.reden));
+                                               zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
+                                                                                           ontkoppelGegevens.reden,
+                                                                                           ToelichtingPrefix.ONTKOPPELD));
         if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
             ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }
