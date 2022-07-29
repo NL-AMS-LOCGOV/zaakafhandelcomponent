@@ -112,6 +112,7 @@ export class ZaakCreateComponent implements OnInit {
                                                        .label('locatie')
                                                        .maxlength(100)
                                                        .build();
+        this.locatieField.formControl.disable({onlySelf: true});
         const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
         if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
             zaaktypeEnInitiator.push(this.initiatorField);
@@ -136,7 +137,7 @@ export class ZaakCreateComponent implements OnInit {
                     zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
                 }
 
-                if (key === 'zaakgeometrie' && formGroup.controls[key].value) {
+                if (key === 'zaakgeometrie' && this.locatie != null) {
                     zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
                 }
             });
