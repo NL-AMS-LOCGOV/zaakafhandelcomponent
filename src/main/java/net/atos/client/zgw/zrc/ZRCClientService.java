@@ -136,6 +136,10 @@ public class ZRCClientService {
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
+    public void ontkoppelZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
+        deleteZaakInformatieobject(zaakInformatieobjectUuid, String.format("Ontkoppeld: %s", toelichting));
+    }
+
     /**
      * Read {@link Zaak} via its UUID.
      * Throws a RuntimeException if the {@link Zaak} can not be read.
