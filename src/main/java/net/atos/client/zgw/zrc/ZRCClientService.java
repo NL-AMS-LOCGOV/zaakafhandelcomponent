@@ -136,7 +136,7 @@ public class ZRCClientService {
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
-    public void ontkoppelZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
+    public void unlinkZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
         deleteZaakInformatieobject(zaakInformatieobjectUuid, String.format("Ontkoppeld: %s", toelichting));
     }
 
