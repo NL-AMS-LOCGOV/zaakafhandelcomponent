@@ -19,8 +19,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import net.atos.client.zgw.zrc.model.ToelichtingPrefix;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -226,7 +224,7 @@ public class ZGWApiService {
                 .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
                 .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
                                                                                              toelichting,
-                                                                                             ToelichtingPrefix.VERWIJDERD));
+                                                                                             "Verwijderd: "));
 
         // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
         if (!zaakInformatieobjecten.stream().filter(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID)).findAny().isPresent()) {

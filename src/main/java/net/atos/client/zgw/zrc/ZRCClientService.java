@@ -21,8 +21,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import net.atos.client.zgw.zrc.model.ToelichtingPrefix;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -133,8 +131,9 @@ public class ZRCClientService {
      *
      * @param zaakInformatieobjectUuid uuid
      */
-    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting, final ToelichtingPrefix toelichtingPrefix) {
-        zgwClientHeadersFactory.setAuditToelichting(String.format("%s: %s", toelichtingPrefix.toValue(), toelichting));
+    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting,
+            final String toelichtingPrefix) {
+        zgwClientHeadersFactory.setAuditToelichting(String.format("%s%s", toelichtingPrefix, toelichting));
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
@@ -373,7 +372,7 @@ public class ZRCClientService {
 
         final String toelichting = "%s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
-        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, ToelichtingPrefix.VERPLAATST);
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst: ");
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }

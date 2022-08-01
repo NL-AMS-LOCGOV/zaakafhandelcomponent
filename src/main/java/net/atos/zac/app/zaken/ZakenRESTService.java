@@ -37,8 +37,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.zrc.model.ToelichtingPrefix;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -98,7 +96,6 @@ import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -361,7 +358,7 @@ public class ZakenRESTService {
         zaakInformatieobjecten.forEach(zaakInformatieobject ->
                                                zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
                                                                                            ontkoppelGegevens.reden,
-                                                                                           ToelichtingPrefix.ONTKOPPELD));
+                                                                                           "Ontkoppeld: "));
         if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
             ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }
