@@ -96,7 +96,6 @@ import net.atos.zac.app.zaken.model.RESTZakenVerdeelGegevens;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.OntkoppeldeDocumentenService;
-import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -357,7 +356,9 @@ public class ZakenRESTService {
                                   ontkoppelGegevens.documentUUID));
         }
         zaakInformatieobjecten.forEach(zaakInformatieobject ->
-                                               zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(), ontkoppelGegevens.reden));
+                                               zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
+                                                                                           ontkoppelGegevens.reden,
+                                                                                           "Ontkoppeld: "));
         if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
             ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }

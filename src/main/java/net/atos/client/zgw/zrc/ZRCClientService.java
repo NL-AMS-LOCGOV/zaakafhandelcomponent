@@ -131,8 +131,9 @@ public class ZRCClientService {
      *
      * @param zaakInformatieobjectUuid uuid
      */
-    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting) {
-        zgwClientHeadersFactory.setAuditToelichting(toelichting);
+    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting,
+            final String toelichtingPrefix) {
+        zgwClientHeadersFactory.setAuditToelichting(String.format("%s%s", toelichtingPrefix, toelichting));
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
@@ -369,9 +370,9 @@ public class ZRCClientService {
         nieuweZaakInformatieObject.setBeschrijving(oudeZaakInformatieobject.getBeschrijving());
 
 
-        final String toelichting = "Verplaatst: %s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
+        final String toelichting = "%s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
-        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting);
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst: ");
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }
