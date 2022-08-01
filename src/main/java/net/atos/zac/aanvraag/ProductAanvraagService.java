@@ -63,7 +63,7 @@ public class ProductAanvraagService {
     @Inject
     private KVKClientService kvkClientService;
 
-    public void createZaak(final URI productAanvraagUrl) {
+    public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
 

@@ -128,7 +128,7 @@ public class NotificatieReceiver {
         if (notificatie.getResource() == OBJECT && notificatie.getAction() == CREATE &&
                 notificatie.getProperties().containsKey(PRODUCT_AANVRAAG_KENMERK_KEY) &&
                 notificatie.getProperties().containsValue(PRODUCT_AANVRAAG_KENMERK_VALUE)) {
-            productAanvraagService.createZaak(notificatie.getResourceUrl());
+            productAanvraagService.verwerkProductAanvraag(notificatie.getResourceUrl());
         }
     }
 
