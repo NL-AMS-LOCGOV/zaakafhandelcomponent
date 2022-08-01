@@ -564,9 +564,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build()],
-            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
-                tap(() => this.websocketService.suspendListener(this.zaakListener))
-            ));
+            (results: any[]) => {
+                    this.websocketService.tripleSuspendListener(this.zaakListener);
+                    return this.zakenService.afbreken(this.zaak.uuid, results['reden']);
+                }
+            );
 
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 

@@ -176,6 +176,12 @@ export class WebsocketService implements OnDestroy {
         this.suspendListener(listener);
     }
 
+    public tripleSuspendListener(listener: WebsocketListener) {
+        this.suspendListener(listener);
+        this.suspendListener(listener);
+        this.suspendListener(listener);
+    }
+
     public removeListener(listener: WebsocketListener): void {
         if (listener) {
             this.removeCallback(listener);
