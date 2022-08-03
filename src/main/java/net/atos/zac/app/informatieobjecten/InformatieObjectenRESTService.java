@@ -9,13 +9,17 @@ import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAA
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -33,6 +37,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -309,6 +314,37 @@ public class InformatieObjectenRESTService {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GET
+    @Path("/informatieobject/download/zip")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response readFilesAsZip(@QueryParam("uuids") final String uuids) {
+        final List<String> enkelvoudigInformatieObjectUUIDS = Arrays.stream(uuids.split(",")).toList();
+
+        StreamingOutput streamingOutput = outputStream -> {
+            ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream));
+            enkelvoudigInformatieObjectUUIDS.forEach(stringUuid -> {
+                final UUID uuid = UUID.fromString(stringUuid);
+                final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+                final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
+                final ZipEntry zipEntry = new ZipEntry(enkelvoudigInformatieobject.getBestandsnaam());
+                try {
+                    zipOutputStream.putNextEntry(zipEntry);
+                    zipOutputStream.write(inhoud.readAllBytes());
+                    zipOutputStream.closeEntry();
+                } catch (final IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            zipOutputStream.close();
+            outputStream.flush();
+            outputStream.close();
+        };
+
+        return Response.ok(streamingOutput)
+                .header("Content-Disposition","attachment; filename=\"file.zip\"")
+                .build();
     }
 
     @GET
