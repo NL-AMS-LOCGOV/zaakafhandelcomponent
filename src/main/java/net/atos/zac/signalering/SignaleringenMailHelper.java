@@ -58,8 +58,9 @@ public class SignaleringenMailHelper {
         switch (signalering.getTargettype()) {
             case GROUP -> {
                 final Group group = identityService.readGroup(signalering.getTarget());
-                // TODO return group name and E-Mail address when and if available
-                return null;
+                if (group.getEmail() != null) {
+                    return new SignaleringTarget.Mail(group.getName(), group.getEmail());
+                }
             }
             case USER -> {
                 final User user = identityService.readUser(signalering.getTarget());
