@@ -322,22 +322,23 @@ public class InformatieObjectenRESTService {
     public Response readFilesAsZip(@QueryParam("uuids") final String uuids) {
         final List<String> enkelvoudigInformatieObjectUUIDS = Arrays.stream(uuids.split(",")).toList();
 
-        StreamingOutput streamingOutput = outputStream -> {
-            ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream));
-            enkelvoudigInformatieObjectUUIDS.forEach(stringUuid -> {
-                final UUID uuid = UUID.fromString(stringUuid);
-                final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-                final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
-                final ZipEntry zipEntry = new ZipEntry(enkelvoudigInformatieobject.getBestandsnaam());
-                try {
-                    zipOutputStream.putNextEntry(zipEntry);
-                    zipOutputStream.write(inhoud.readAllBytes());
-                    zipOutputStream.closeEntry();
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            zipOutputStream.close();
+        final StreamingOutput streamingOutput = outputStream -> {
+            try (ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream))) {
+                enkelvoudigInformatieObjectUUIDS.forEach(stringUuid -> {
+                    final UUID uuid = UUID.fromString(stringUuid);
+                    final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
+                            uuid);
+                    final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
+                    final ZipEntry zipEntry = new ZipEntry(enkelvoudigInformatieobject.getBestandsnaam());
+                    try {
+                        zipOutputStream.putNextEntry(zipEntry);
+                        zipOutputStream.write(inhoud.readAllBytes());
+                        zipOutputStream.closeEntry();
+                    } catch (final IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
             outputStream.flush();
             outputStream.close();
         };
