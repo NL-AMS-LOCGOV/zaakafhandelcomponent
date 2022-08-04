@@ -317,6 +317,7 @@
   "actie.document.verwijderen.reden": "Reden waarom document wordt verwijderd",
   "actie.document.bekijken": "Document bekijken",
   "actie.downloaden": "Downloaden",
+  "actie.downloaden.zip": "Downloaden als zip",
   "actie.initiator.toevoegen": "Initiator toevoegen",
   "actie.initiator.toevoegen.persoon": "Persoon toevoegen als initiator",
   "actie.initiator.toevoegen.bedrijf": "Bedrijf toevoegen als initiator",
