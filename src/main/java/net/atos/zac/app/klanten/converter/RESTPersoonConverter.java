@@ -110,6 +110,7 @@ public class RESTPersoonConverter {
                              Objects.toString(verblijfplaats.getHuisnummer(), null),
                              verblijfplaats.getHuisnummertoevoeging(),
                              verblijfplaats.getHuisletter(),
+                             verblijfplaats.getPostcode(),
                              verblijfplaats.getWoonplaats())
                     .filter(StringUtils::isNotBlank)
                     .collect(Collectors.joining(" "));
