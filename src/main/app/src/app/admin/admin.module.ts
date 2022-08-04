@@ -9,6 +9,7 @@ import {SharedModule} from '../shared/shared.module';
 import {ParametersComponent} from './parameters/parameters.component';
 import {AdminRoutingModule} from './admin-routing.module';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
+import {ZoekenModule} from '../zoeken/zoeken.module';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import {ParameterEditComponent} from './parameter-edit/parameter-edit.component'
     exports: [],
     imports: [
         SharedModule,
+        ZoekenModule,
         AdminRoutingModule
     ]
 })

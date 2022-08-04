@@ -11,16 +11,16 @@
         <mat-card>
             <mat-card-content>
                 <div class="table-wrapper historie">
-                    <table mat-table [dataSource]="parameters" matSort>
+                    <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort">
                         <ng-container matColumnDef="valide">
-                            <th mat-header-cell *matHeaderCellDef></th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header="valide"></th>
                             <td mat-cell *matCellDef="let row">
                                 <mat-icon *ngIf="row.valide" color="primary">check_circle_outline</mat-icon>
                                 <mat-icon *ngIf="!row.valide" color="warn">error_outline</mat-icon>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="omschrijving">
-                            <th mat-header-cell *matHeaderCellDef> {{'zaaktypeOmschrijving' | translate}} </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'zaaktypeOmschrijving' | translate}} </th>
                             <td mat-cell *matCellDef="let row">
                                 <read-more [text]="row.zaaktype.omschrijving" [maxLength]="100"></read-more>
                             </td>
@@ -32,7 +32,7 @@
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="model">
-                            <th mat-header-cell *matHeaderCellDef> {{'caseDefinition' | translate}} </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'caseDefinition' | translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.caseDefinition | empty:'naam'}} </td>
                         </ng-container>
                         <ng-container matColumnDef="groep">
@@ -47,11 +47,18 @@
                             <th mat-header-cell *matHeaderCellDef> {{'creatiedatum' | translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.creatiedatum | datum:'short' }} </td>
                         </ng-container>
-                        <ng-container matColumnDef="geldigheid">
-                            <th mat-header-cell *matHeaderCellDef> {{'geldig' | translate}} </th>
-                            <td mat-cell *matCellDef="let row"> {{row.zaaktype.nuGeldig ? ('actie.ja' | translate) : ('actie.nee' | translate)}}
-                                ({{row.zaaktype.beginGeldigheid | datum}} / {{row.zaaktype.eindeGeldigheid | datum | empty}})
-                            </td>
+                        <ng-container matColumnDef="geldig">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'geldig' | translate}} </th>
+                            <td mat-cell
+                                *matCellDef="let row"> {{row.zaaktype.nuGeldig ? ('actie.ja' | translate) : ('actie.nee' | translate)}}                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="beginGeldigheid">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'begin.geldigheid' | translate}} </th>
+                            <td mat-cell *matCellDef="let row">{{row.zaaktype.beginGeldigheid | datum}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="eindeGeldigheid">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'einde.geldigheid' | translate}} </th>
+                            <td mat-cell *matCellDef="let row">{{row.zaaktype.eindeGeldigheid | datum | empty}}</td>
                         </ng-container>
                         <ng-container matColumnDef="url" stickyEnd>
                             <th mat-header-cell *matHeaderCellDef></th>
@@ -63,9 +70,11 @@
                             </td>
                         </ng-container>
                         <tr mat-header-row
-                            *matHeaderRowDef="['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum', 'geldigheid', 'url']; sticky: true"></tr>
+                            *matHeaderRowDef="['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum', 'geldig',
+                            'beginGeldigheid', 'eindeGeldigheid', 'url']; sticky: true"></tr>
                         <tr mat-row
-                            *matRowDef="let row; columns: ['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum','geldigheid', 'url'];"></tr>
+                            *matRowDef="let row; columns: ['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum','geldig',
+                            'beginGeldigheid', 'eindeGeldigheid', 'url'];"></tr>
                     </table>
                     <p *ngIf="parameters.data.length === 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                     <p *ngIf="parameters.data.length === 0 && loading">{{'msg.loading' | translate}}</p>

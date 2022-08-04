@@ -12,6 +12,6 @@ export class Zaaktype {
     servicenorm: boolean;
     versiedatum: string;
     beginGeldigheid: string;
-    eindGeldigheid: string;
+    eindeGeldigheid: string;
     nuGeldig: boolean;
 }

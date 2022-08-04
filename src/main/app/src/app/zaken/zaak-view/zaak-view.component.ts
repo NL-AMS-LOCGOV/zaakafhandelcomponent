@@ -126,7 +126,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
 
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild('historieSort') historieSort: MatSort;
+    @ViewChild('takenSort') takenSort: MatSort;
 
     constructor(private informatieObjectenService: InformatieObjectenService,
                 private takenService: TakenService,
@@ -208,6 +209,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     return item.data[property];
             }
         };
+        this.takenDataSource.sort = this.takenSort;
 
         this.historie.sortingDataAccessor = (item, property) => {
             switch (property) {
@@ -219,7 +221,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     return item[property];
             }
         };
-        this.historie.sort = this.sort;
+        this.historie.sort = this.historieSort;
     }
 
     ngOnDestroy(): void {
