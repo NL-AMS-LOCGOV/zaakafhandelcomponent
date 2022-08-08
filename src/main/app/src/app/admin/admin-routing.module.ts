@@ -8,11 +8,13 @@ import {RouterModule, Routes} from '@angular/router';
 import {ParametersComponent} from './parameters/parameters.component';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZaakafhandelParametersResolver} from './zaakafhandel-parameters-resolver.service';
+import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
 
 const routes: Routes = [
     {
         path: 'admin', children: [
             {path: '', redirectTo: 'parameters', pathMatch: 'full'},
+            {path: 'groepen', component: GroepSignaleringenComponent},
             {path: 'parameters', component: ParametersComponent},
             {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}}
         ]

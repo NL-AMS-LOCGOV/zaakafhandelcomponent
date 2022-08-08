@@ -4,40 +4,36 @@
  */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
-import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
-import {ViewComponent} from '../../shared/abstract-view/view-component';
+import {AdminComponent} from '../admin/admin.component';
 
 @Component({
     templateUrl: './parameters.component.html',
     styleUrls: ['./parameters.component.less']
 })
-export class ParametersComponent extends ViewComponent implements OnInit {
+export class ParametersComponent extends AdminComponent implements OnInit {
 
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
 
-    menu: MenuItem[] = [];
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
     loading: boolean = false;
 
     constructor(private zaakafhandelParametersService: ZaakafhandelParametersService, public utilService: UtilService) {
-        super();
+        super(utilService);
     }
 
     ngOnInit(): void {
-        this.menu = [];
-        this.menu.push(new HeaderMenuItem('actie.admin'));
-        this.utilService.setTitle('title.parameters');
+        this.setupMenu('title.parameters');
         this.getZaakafhandelParameters();
     }
 
     private getZaakafhandelParameters(): void {
+        this.loading = true;
         this.zaakafhandelParametersService.listZaakafhandelParameters().subscribe(parameters => {
             this.loading = false;
             this.parameters.data = parameters;

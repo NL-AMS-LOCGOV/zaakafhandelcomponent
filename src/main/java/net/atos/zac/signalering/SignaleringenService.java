@@ -270,6 +270,7 @@ public class SignaleringenService {
         final Map<SignaleringType.Type, SignaleringInstellingen> map = findInstellingen(parameters).stream()
                 .collect(Collectors.toMap(instellingen -> instellingen.getType().getType(), Function.identity()));
         Arrays.stream(SignaleringType.Type.values())
+                .filter(type -> type.isTarget(parameters.getOwnertype()))
                 .filter(type -> !map.containsKey(type))
                 .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(), parameters.getOwner())));
         return map.values().stream()

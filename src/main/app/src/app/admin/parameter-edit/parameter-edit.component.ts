@@ -16,29 +16,25 @@ import {IdentityService} from '../../identity/identity.service';
 import {User} from '../../identity/model/user';
 import {HumanTaskParameter} from '../model/human-task-parameter';
 import {MatSelectChange} from '@angular/material/select';
-import {HeaderMenuItem} from '../../shared/side-nav/menu-item/header-menu-item';
-import {LinkMenuItem} from '../../shared/side-nav/menu-item/link-menu-item';
-import {MenuItem} from '../../shared/side-nav/menu-item/menu-item';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakbeeindigParameter} from '../model/zaakbeeindig-parameter';
 import {ZaakbeeindigReden} from '../model/zaakbeeindig-reden';
 import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
-import {ViewComponent} from '../../shared/abstract-view/view-component';
 import {UserEventListenerParameter} from '../model/user-event-listener-parameter';
 import {ZaaknietontvankelijkReden} from '../model/zaaknietontvankelijk-reden';
 import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-parameter';
+import {AdminComponent} from '../admin/admin.component';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
     styleUrls: ['./parameter-edit.component.less']
 })
-export class ParameterEditComponent extends ViewComponent implements OnInit {
+export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     @ViewChild('sideNavContainer') sideNavContainer: MatSidenavContainer;
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
-    menu: MenuItem[] = [];
 
     parameters: ZaakafhandelParameters;
     humanTaskParameters: HumanTaskParameter[] = [];
@@ -64,7 +60,7 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
-        super();
+        super(utilService);
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
@@ -82,15 +78,8 @@ export class ParameterEditComponent extends ViewComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.utilService.setTitle('title.parameters.wijzigen');
-        this.setupMenu();
+        this.setupMenu('title.parameters.wijzigen');
         this.createForm();
-    }
-
-    setupMenu() {
-        this.menu = [];
-        this.menu.push(new HeaderMenuItem('title.parameters'));
-        this.menu.push(new LinkMenuItem('parameters', '/admin/parameters', 'tune'));
     }
 
     readPlanItemDefinitions(event: MatSelectChange): void {
