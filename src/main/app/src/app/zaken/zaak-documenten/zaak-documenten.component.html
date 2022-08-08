@@ -60,6 +60,7 @@
                     <ng-container matColumnDef="url" stickyEnd>
                         <th mat-header-cell *matHeaderCellDef>
                             <button mat-flat-button
+                                    id="downloadZip_button"
                                     (click)="downloadAlsZip()"
                                     [disabled]="downloadAlsZipSelection.isEmpty()"
                                     title="{{ 'actie.downloaden.zip' | translate}}">
