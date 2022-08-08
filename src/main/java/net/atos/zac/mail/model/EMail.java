@@ -23,12 +23,16 @@ public class EMail {
     @JsonbProperty("Subject")
     private String onderwerp;
 
+    @JsonbProperty("Attachments")
+    private List<Attachment> attachments;
+
     public EMail(final String body, final Verstuurder verstuurder, final List<Ontvanger> ontvangers,
-            final String onderwerp) {
+            final String onderwerp, final List<Attachment> attachments) {
         this.body = "<pre>" + body + "</pre>";
         this.verstuurder = verstuurder;
         this.ontvangers = ontvangers;
         this.onderwerp = onderwerp;
+        this.attachments = attachments;
     }
 
     public String getBody() {
@@ -61,5 +65,13 @@ public class EMail {
 
     public void setOnderwerp(final String onderwerp) {
         this.onderwerp = onderwerp;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(final List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

@@ -23,6 +23,8 @@ import {IdentityService} from '../../identity/identity.service';
 import {MailService} from '../mail.service';
 import {MailObject} from '../model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Component({
     selector: 'zac-mail-create',
@@ -54,6 +56,9 @@ export class MailCreateComponent implements OnInit {
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
+        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekparameters.zaakUUID = this.zaak.uuid;
+        const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
                                                      .validators(Validators.required, CustomValidators.emails)
                                                      .maxlength(200).build();
@@ -61,7 +66,9 @@ export class MailCreateComponent implements OnInit {
                                                      .maxlength(100).build();
         const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required)
                                                    .maxlength(1000).build();
-        this.fields = [[ontvanger], [onderwerp], [body]];
+        const bijlagen = new DocumentenLijstFieldBuilder().id('bijlagen').label('bijlagen')
+                                          .documenten(documenten).build();
+        this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -70,6 +77,7 @@ export class MailCreateComponent implements OnInit {
             mailObject.ontvanger = formGroup.controls['ontvanger'].value;
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
+            mailObject.bijlagen = JSON.parse(formGroup.controls['bijlagen'].value)?.selection;
             mailObject.createDocumentFromMail = true;
 
             this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {
