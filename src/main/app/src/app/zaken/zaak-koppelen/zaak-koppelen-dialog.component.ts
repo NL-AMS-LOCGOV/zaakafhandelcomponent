@@ -51,11 +51,11 @@ export class ZaakKoppelenDialogComponent implements OnInit {
             this.teKoppelenZaak = teKoppelenZaak;
 
             if (!bronZaak.isDeelzaak && !teKoppelenZaak.isHoofdzaak && !teKoppelenZaak.isDeelzaak) {
-                this.koppelKeuzes.push({label: 'Hoofdzaak', value: 'HOOFDZAAK'});
+                this.koppelKeuzes.push({label: bronZaak.identificatie + ' wordt de Hoofdzaak', value: 'HOOFDZAAK'});
             }
 
             if (!bronZaak.isDeelzaak && !bronZaak.isHoofdzaak && !teKoppelenZaak.isDeelzaak) {
-                this.koppelKeuzes.push({label: 'Deelzaak', value: 'DEELZAAK'});
+                this.koppelKeuzes.push({label: bronZaak.identificatie + ' wordt de Deelzaak', value: 'DEELZAAK'});
             }
 
             if (this.koppelKeuzes.length > 0) {

@@ -7,13 +7,13 @@
     <mat-list>
         <mat-list-item *ngFor="let action of actions">
             <div mat-line>
-                <span class="entity-type">{{action.entityType | uppercase}} </span>
+                <span class="entity-type">{{'action.entityType.' + action.entityType | translate}} </span>
                 <span>{{action.text}}</span>
             </div>
             <div class="sub-text" mat-line>{{action.subText}}</div>
             <div fxFlex fxLayoutAlign="end center">
                 <button mat-icon-button color="primary"
-                        title="{{'actie.uitvoeren' | translate}}"
+                        title="{{action.action.title + (action.actionEnabled() ? '' : '.disabled') | translate}}"
                         [disabled]="!action.actionEnabled() || actionBarDisabled"
                         (click)="actionTextClicked(action)">
                     <mat-icon>{{action.action.icon}}</mat-icon>

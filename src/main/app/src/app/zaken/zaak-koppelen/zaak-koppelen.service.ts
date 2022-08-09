@@ -57,8 +57,8 @@ export class ZaakKoppelenService {
         if (!onInit) {
             SessionStorageUtil.setItem('teKoppelenZaken', teKoppelenZaken);
         }
-        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, 'zaak', zaak.identificatie,
-            new ActionIcon('link', editAction), dismiss, () => this.isKoppelenToegestaan(zaak.identificatie));
+        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, 'ZAAK', zaak.identificatie,
+            new ActionIcon('link', 'actie.zaak.koppelen', editAction), dismiss, () => this.isKoppelenToegestaan(zaak.identificatie));
         this.utilService.addAction(action);
     }
 
