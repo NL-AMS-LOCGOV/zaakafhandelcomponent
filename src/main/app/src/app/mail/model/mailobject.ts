@@ -8,4 +8,5 @@ export class MailObject {
     onderwerp: string;
     body: string;
     createDocumentFromMail: boolean;
+    bijlagen: string;
 }

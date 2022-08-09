@@ -192,6 +192,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
             uuids.push(document.uuid);
         });
 
+        this.downloadAlsZipSelection.clear();
+
         return this.informatieObjectenService.getZIPDownload(uuids).subscribe(response => {
             const blob = new Blob([response], {type: 'application/zip'});
             const url = window.URL.createObjectURL(blob);

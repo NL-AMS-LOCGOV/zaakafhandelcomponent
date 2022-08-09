@@ -49,7 +49,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 }
             }
             this.dataSource.data = documenten;
-            if (this.teOndertekenenSelection.selected.length > 0 || documenten.length > 0) {
+            if (this.data.ondertekenen && (this.teOndertekenenSelection.selected.length > 0 || documenten.length > 0)) {
                 this.data.formControl.setValue(JSON.stringify({
                     selection: documenten.map(value => value.uuid).join(';'),
                     ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')

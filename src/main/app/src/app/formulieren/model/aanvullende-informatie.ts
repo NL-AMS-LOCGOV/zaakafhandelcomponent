@@ -17,6 +17,8 @@ import {TakenService} from '../../taken/taken.service';
 import * as moment from 'moment/moment';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {HiddenFormFieldBuilder} from '../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
@@ -40,7 +42,8 @@ export class AanvullendeInformatie extends AbstractFormulier {
         DATUMGEVRAAGD: 'datumGevraagd',
         DATUMGELEVERD: 'datumGeleverd',
         OPMERKINGEN: 'opmerkingen',
-        AANVULLENDE_INFORMATIE: 'aanvullendeInformatie'
+        AANVULLENDE_INFORMATIE: 'aanvullendeInformatie',
+        BIJLAGEN: 'bijlagen'
     };
 
     taakinformatieMapping = {
@@ -56,6 +59,9 @@ export class AanvullendeInformatie extends AbstractFormulier {
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
         this.humanTaskData.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
+        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekparameters.zaakUUID = this.zaakUuid;
+        const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
             [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
@@ -63,7 +69,9 @@ export class AanvullendeInformatie extends AbstractFormulier {
             [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
                                            .validators(Validators.required).maxlength(1000).build()],
             [new HiddenFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
-                                         .build()]
+                                         .build()],
+            [new DocumentenLijstFieldBuilder().id(fields.BIJLAGEN).label(fields.BIJLAGEN)
+                                              .documenten(documenten).build()]
         );
     }
 

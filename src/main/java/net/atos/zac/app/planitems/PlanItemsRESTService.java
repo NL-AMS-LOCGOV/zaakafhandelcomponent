@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.planitems;
 
+import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
 import java.util.Date;
@@ -20,6 +21,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.atos.zac.app.taken.model.DocumentLijstData;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -109,8 +115,19 @@ public class PlanItemsRESTService {
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
+            String bijlagen = null;
+            if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
+                try {
+                    final DocumentLijstData documentLijstData =
+                            new ObjectMapper().readValue(humanTaskData.taakdata.get(BIJLAGEN), DocumentLijstData.class);
+                    bijlagen = documentLijstData != null ? documentLijstData.selection : null;
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e.getMessage(), e); //invalid form-group data
+                }
+            }
+
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
-                                 humanTaskData.taakdata.get("body"), true, zaakUUID);
+                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaakUUID);
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
