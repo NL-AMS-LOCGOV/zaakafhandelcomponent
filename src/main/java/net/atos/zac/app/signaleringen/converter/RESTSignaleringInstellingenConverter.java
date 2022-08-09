@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.signaleringen.converter;
 
+import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +29,7 @@ public class RESTSignaleringInstellingenConverter {
         restInstellingen.id = instellingen.getId();
         restInstellingen.type = instellingen.getType().getType();
         restInstellingen.subjecttype = instellingen.getType().getSubjecttype();
-        if (instellingen.getType().getType().isDashboard()) {
+        if (instellingen.getType().getType().isDashboard() && instellingen.getOwnerType() != GROUP) {
             restInstellingen.dashboard = instellingen.isDashboard();
         }
         if (instellingen.getType().getType().isMail()) {
@@ -37,13 +39,15 @@ public class RESTSignaleringInstellingenConverter {
     }
 
     public List<RESTSignaleringInstellingen> convert(final Collection<SignaleringInstellingen> instellingen) {
-        return instellingen.stream().map(this::convert).collect(Collectors.toList());
+        return instellingen.stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
     }
 
     public SignaleringInstellingen convert(final RESTSignaleringInstellingen restInstellingen, final Group group) {
         final SignaleringInstellingen instellingen = signaleringenService.readInstellingenGroup(restInstellingen.type, group.getId());
-        instellingen.setDashboard(restInstellingen.dashboard);
-        instellingen.setMail(restInstellingen.mail);
+        instellingen.setDashboard(false);
+        instellingen.setMail(instellingen.getType().getType().isMail() && restInstellingen.mail);
         return instellingen;
     }
 

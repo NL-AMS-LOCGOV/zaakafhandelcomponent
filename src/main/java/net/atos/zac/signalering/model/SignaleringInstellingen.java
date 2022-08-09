@@ -5,6 +5,8 @@
 
 package net.atos.zac.signalering.model;
 
+import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
+import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import javax.persistence.Column;
@@ -94,8 +96,8 @@ public class SignaleringInstellingen {
         this.medewerker = medewerker;
     }
 
-    public String getOwner() {
-        return medewerker != null ? medewerker : groep;
+    public SignaleringTarget getOwnerType() {
+        return groep != null ? GROUP : medewerker != null ? USER : null;
     }
 
     public boolean isDashboard() {
@@ -125,6 +127,6 @@ public class SignaleringInstellingen {
 
     @Override
     public String toString() {
-        return String.format("%s-signaleringinstellingen voor %s", getType(), getOwner());
+        return String.format("%s-signaleringinstellingen voor %s", getType(), groep != null ? groep : medewerker);
     }
 }

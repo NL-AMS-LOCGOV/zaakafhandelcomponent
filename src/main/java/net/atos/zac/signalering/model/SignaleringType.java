@@ -5,7 +5,15 @@
 
 package net.atos.zac.signalering.model;
 
+import static net.atos.zac.signalering.model.SignaleringTarget.GROUP;
+import static net.atos.zac.signalering.model.SignaleringTarget.USER;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,11 +59,11 @@ public class SignaleringType implements Comparable<SignaleringType> {
      * !! Don't forget to add a new enum value to signaleringtype table and to add the translation !!
      */
     public enum Type {
-        ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd."),
-        ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet."),
-        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum." + SEPARATOR + "Uw zaak nadert de fatale datum."),
-        TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet."),
-        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.") {
+        ZAAK_DOCUMENT_TOEGEVOEGD("Zaakdocument toegevoegd", "Er is een document aan uw zaak toegevoegd.", USER),
+        ZAAK_OP_NAAM("Zaak op naam", "Er is een zaak op uw naam gezet.", USER, GROUP),
+        ZAAK_VERLOPEND("Zaak verloopt", "Uw zaak nadert de streefdatum." + SEPARATOR + "Uw zaak nadert de fatale datum.", USER),
+        TAAK_OP_NAAM("Taak op naam", "Er is een taak op uw naam gezet.", USER),
+        TAAK_VERLOPEN("Taak verloopt", "Uw taak heeft de streefdatum bereikt.", USER) {
             @Override
             public boolean isDashboard() {
                 // This one has no dashboard card
@@ -67,9 +75,12 @@ public class SignaleringType implements Comparable<SignaleringType> {
 
         private final String bericht;
 
-        Type(final String naam, final String bericht) {
+        private final Set<SignaleringTarget> targets;
+
+        Type(final String naam, final String bericht, SignaleringTarget... targets) {
             this.naam = naam;
             this.bericht = bericht;
+            this.targets = Collections.unmodifiableSet(Arrays.stream(targets).collect(Collectors.toCollection(() -> EnumSet.noneOf(SignaleringTarget.class))));
         }
 
         public String getNaam() {
@@ -79,6 +90,8 @@ public class SignaleringType implements Comparable<SignaleringType> {
         public String getBericht() {
             return bericht;
         }
+
+        public boolean isTarget(final SignaleringTarget target) {return targets.contains(target);}
 
         public boolean isDashboard() {
             return true;
