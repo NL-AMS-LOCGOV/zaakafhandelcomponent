@@ -10,6 +10,7 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +193,7 @@ public class SignaleringenService {
             final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
             final String subject = signaleringenMailHelper.formatSubject(type, link);
             final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
-            mailService.sendMail(to, subject, body);
+            mailService.sendMail(to, subject, body, Collections.emptyList());
         }
     }
 

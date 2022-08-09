@@ -22,6 +22,8 @@ import {FormConfig} from '../../shared/material-form-builder/model/form-config';
 import {Zaak} from '../../zaken/model/zaak';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {TranslateService} from '@ngx-translate/core';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -50,6 +52,10 @@ export class OntvangstbevestigingComponent implements OnInit {
     ngOnInit(): void {
         this.formConfig = new FormConfigBuilder().saveText('actie.versturen').cancelText('actie.annuleren').build();
 
+        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekparameters.zaakUUID = this.zaak.uuid;
+        const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+
         const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
             {zaakIdentificatie: this.zaak.identificatie});
 
@@ -72,8 +78,12 @@ export class OntvangstbevestigingComponent implements OnInit {
                                                    .validators(Validators.required)
                                                    .maxlength(1000)
                                                    .build();
+        const bijlagen = new DocumentenLijstFieldBuilder().id('bijlagen')
+                                                          .label('bijlagen')
+                                                          .documenten(documenten)
+                                                          .build();
 
-        this.fields = [[ontvanger], [onderwerp], [body]];
+        this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
 
     }
 
@@ -83,6 +93,7 @@ export class OntvangstbevestigingComponent implements OnInit {
             mailObject.ontvanger = formGroup.controls['ontvanger'].value;
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
+            mailObject.bijlagen = JSON.parse(formGroup.controls['bijlagen'].value)?.selection;
             mailObject.createDocumentFromMail = true;
 
             this.mailService.sendAcknowledgeReceipt(this.zaak.uuid, mailObject).subscribe(() => {

@@ -22,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import com.mailjet.client.errors.MailjetException;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
@@ -60,8 +59,9 @@ public class MailRESTService {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp,
-                             restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
+
+        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaakUuid);
     }
 
     @POST
@@ -74,7 +74,8 @@ public class MailRESTService {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body, restMailObject.createDocumentFromMail, zaakUuid);
+        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaakUuid);
 
         if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
             return;

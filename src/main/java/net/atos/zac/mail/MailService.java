@@ -8,8 +8,13 @@ package net.atos.zac.mail;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -19,6 +24,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import com.fasterxml.uuid.impl.UUIDUtil;
+
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.zac.mail.model.Attachment;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import com.mailjet.client.ClientOptions;
@@ -63,14 +75,18 @@ public class MailService {
     private ZRCClientService zrcClientService;
 
     @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
     private final ClientOptions clientOptions = ClientOptions.builder().apiKey(MAILJET_API_KEY).apiSecretKey(MAILJET_API_SECRET_KEY).build();
 
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public boolean sendMail(final Ontvanger ontvanger, final String onderwerp, final String body) {
-        final EMail eMail = new EMail(body, new Verstuurder(), List.of(ontvanger), onderwerp);
+    public boolean sendMail(final Ontvanger ontvanger, final String onderwerp, final String body,
+            final List<Attachment> bijlagen) {
+        final EMail eMail = new EMail(body, new Verstuurder(), List.of(ontvanger), onderwerp, bijlagen);
         final MailjetRequest request = new MailjetRequest(Emailv31.resource)
                 .setBody(JSONB.toJson(new EMails(List.of(eMail))));
         try {
@@ -86,8 +102,11 @@ public class MailService {
     }
 
     public boolean sendMail(final String ontvanger, final String onderwerp, final String body,
-            final boolean createDocumentFromMail, final UUID zaakUuid) {
-        final boolean sent = sendMail(new Ontvanger(ontvanger), onderwerp, body);
+            final String bijlagen, final boolean createDocumentFromMail, final UUID zaakUuid) {
+
+        final List<Attachment> attachments = getBijlagen(bijlagen);
+
+        final boolean sent = sendMail(new Ontvanger(ontvanger), onderwerp, body, attachments);
         if (sent && createDocumentFromMail) {
             createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
         }
@@ -125,5 +144,27 @@ public class MailService {
         return zaaktype.getInformatieobjecttypen().stream()
                 .map(ztcClientService::readInformatieobjecttype)
                 .filter(infoObject -> infoObject.getOmschrijving().equals("e-mail")).findFirst().orElseThrow();
+    }
+
+    private List<Attachment> getBijlagen(final String bijlagenString) {
+        final List<UUID> bijlagen = new ArrayList<>();
+        if (StringUtils.isNotEmpty(bijlagenString)) {
+            Arrays.stream(bijlagenString.split(";")).forEach(uuidString -> bijlagen.add(UUIDUtil.uuid(uuidString)));
+        } else {
+            return Collections.emptyList();
+        }
+
+        final List<Attachment> attachments = new ArrayList<>();
+        bijlagen.forEach(uuid -> {
+            final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+            final ByteArrayInputStream byteArrayInputStream = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
+            final Attachment attachment = new Attachment(enkelvoudigInformatieobject.getFormaat(),
+                                                         enkelvoudigInformatieobject.getBestandsnaam(),
+                                                         new String(Base64.getEncoder()
+                                                                            .encode(byteArrayInputStream.readAllBytes())));
+            attachments.add(attachment);
+        });
+
+        return attachments;
     }
 }
