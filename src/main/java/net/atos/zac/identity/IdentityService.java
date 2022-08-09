@@ -134,9 +134,10 @@ public class IdentityService {
     }
 
     private Group convertToGroup(final Attributes attributes) {
+        final String dummy = "groepb".equals(readAttributeToString(attributes, GROUP_ID_ATTRIBUTE)) ? "gmnlesuite@gmail.com" : null;
         return new Group(readAttributeToString(attributes, GROUP_ID_ATTRIBUTE),
                          readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE),
-                         attributes.get("cn").toString().equals("groepa") ? "robert.verboom@atos.net" : null);
+                         dummy);
         // TODO #109 readAttributeToString(attributes,GROUP_MAIL_ATTRIBUTE)
     }
 
