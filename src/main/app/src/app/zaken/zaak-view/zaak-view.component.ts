@@ -564,11 +564,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                             .options(this.zaakafhandelParametersService.listZaakbeeindigRedenenForZaaktype(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build()],
-            (results: any[]) => {
-                    this.websocketService.tripleSuspendListener(this.zaakListener);
-                    return this.zakenService.afbreken(this.zaak.uuid, results['reden']);
-                }
-            );
+            (results: any[]) => this.zakenService.afbreken(this.zaak.uuid, results['reden']).pipe(
+                tap(() => this.websocketService.suspendListener(this.zaakListener))
+            ));
 
         dialogData.confirmButtonActionKey = 'actie.zaak.afbreken';
 
@@ -935,7 +933,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     taakGestart(): void {
-        this.websocketService.suspendListener(this.zaakTakenListener);
         this.actiefPlanItem = null;
         this.actionsSidenav.close();
         this.updateZaak();
