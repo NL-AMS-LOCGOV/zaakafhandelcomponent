@@ -18,7 +18,9 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
@@ -35,6 +37,10 @@ import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
  */
 @ApplicationScoped
 public class DRCClientService {
+
+    @Inject
+    @ConfigProperty(name = "ZGW_API_CLIENT_MP_REST_URL")
+    private String getZgwApiClientMpRestUrl;
 
     @Inject
     @RestClient
@@ -167,6 +173,11 @@ public class DRCClientService {
 
     private String generateLockId(final UUID enkelvoudigInformatieobjectUUID, final String lockOwner) {
         return enkelvoudigInformatieobjectUUID.toString() + ';' + lockOwner;
+    }
+
+    public URI createEnkelvoudigInformatieObjectURL(final UUID enkelvoudigInformatieObjectUrl) {
+        return UriBuilder.fromUri(getZgwApiClientMpRestUrl).path(DRCClient.class)
+                .path(DRCClient.class, "enkelvoudigInformatieobjectRead").build(enkelvoudigInformatieObjectUrl);
     }
 
     private Invocation.Builder createInvocationBuilder(final URI uri) {
