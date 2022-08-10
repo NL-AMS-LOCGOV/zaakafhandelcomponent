@@ -48,6 +48,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     taakModus: boolean;
+    selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
     documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
 
@@ -193,6 +194,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         });
 
         this.downloadAlsZipSelection.clear();
+        this.selectAll = false;
 
         return this.informatieObjectenService.getZIPDownload(uuids).subscribe(response => {
             const blob = new Blob([response], {type: 'application/zip'});
@@ -202,6 +204,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     updateAll($event: MatCheckboxChange) {
+        this.selectAll = !this.selectAll;
         if ($event) {
             this.enkelvoudigInformatieObjecten.data.forEach(document => {
                 $event.checked ? this.downloadAlsZipSelection.select(document) :

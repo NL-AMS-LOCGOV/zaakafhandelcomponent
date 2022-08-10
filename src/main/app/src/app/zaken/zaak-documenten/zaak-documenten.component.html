@@ -19,7 +19,8 @@
                     <ng-container matColumnDef="downloaden">
                         <th mat-header-cell *matHeaderCellDef>
                             <mat-checkbox (click)="$event.stopPropagation()"
-                                          (change)="updateAll($event)">
+                                          (change)="updateAll($event)"
+                                          [checked]="selectAll">
                             </mat-checkbox>
                         </th>
                         <td mat-cell *matCellDef="let document">
