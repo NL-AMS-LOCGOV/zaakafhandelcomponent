@@ -5,6 +5,10 @@
 
 package net.atos.zac.app.klanten.model.bedrijven;
 
+import static net.atos.zac.app.klanten.model.IdentificatieType.RSIN;
+import static net.atos.zac.app.klanten.model.IdentificatieType.VN;
+
+import net.atos.zac.app.klanten.model.IdentificatieType;
 import net.atos.zac.app.klanten.model.RESTKlant;
 
 public class RESTBedrijf extends RESTKlant {
@@ -24,8 +28,13 @@ public class RESTBedrijf extends RESTKlant {
     public String type;
 
     @Override
+    public IdentificatieType getIdentificatieType() {
+        return vestigingsnummer != null ? VN : rsin != null ? RSIN : null;
+    }
+
+    @Override
     public String getIdentificatie() {
-        return vestigingsnummer;
+        return vestigingsnummer != null ? vestigingsnummer : rsin;
     }
 
     @Override

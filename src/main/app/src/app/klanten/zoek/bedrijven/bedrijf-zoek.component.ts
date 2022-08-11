@@ -35,6 +35,7 @@ export class BedrijfZoekComponent implements OnInit {
 
     kvkFormField: AbstractFormField;
     vestigingsnummerFormField: AbstractFormField;
+    rsinFormField: AbstractFormField;
     handelsnaamFormField: AbstractFormField;
     typeFormField: AbstractFormField;
     postcodeFormField: AbstractFormField;
@@ -51,7 +52,10 @@ export class BedrijfZoekComponent implements OnInit {
                                                        .validators(CustomValidators.kvk).maxlength(8).build();
         this.vestigingsnummerFormField = new InputFormFieldBuilder().id('vestigingsnummer').label('vestigingsnummer')
                                                                     .validators(CustomValidators.vestigingsnummer)
-                                                                    .maxlength(100).build();
+                                                                    .maxlength(12).build();
+        this.rsinFormField = new InputFormFieldBuilder().id('rsin').label('rsin')
+                                                        .validators(CustomValidators.rsin)
+                                                        .maxlength(9).build();
         this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
                                                             .validators(CustomValidators.postcode).maxlength(7).build();
         this.typeFormField = new SelectFormFieldBuilder().id('type').label('type').options(this.types).build();
@@ -63,6 +67,7 @@ export class BedrijfZoekComponent implements OnInit {
             kvkNummer: this.kvkFormField.formControl,
             handelsnaam: this.handelsnaamFormField.formControl,
             vestigingsnummer: this.vestigingsnummerFormField.formControl,
+            rsin: this.rsinFormField.formControl,
             postcode: this.postcodeFormField.formControl,
             huisnummer: this.huisnummerFormField.formControl,
             plaats: this.plaatsFormField.formControl,
@@ -71,17 +76,20 @@ export class BedrijfZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid || (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid)) {
+        if (!this.formGroup.valid ||
+            (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid) ||
+            (this.betrokkeneToelichtingField && !this.betrokkeneToelichtingField.formControl.valid)) {
             return false;
         }
 
         const kvkNummer = this.kvkFormField.formControl.value;
         const handelsnaam = this.handelsnaamFormField.formControl.value;
         const vestigingsnummer = this.vestigingsnummerFormField.formControl.value;
+        const rsin = this.rsinFormField.formControl.value;
         const postcode = this.postcodeFormField.formControl.value;
         const huisnummer = this.huisnummerFormField.formControl.value;
 
-        return postcode ? huisnummer : huisnummer ? postcode : kvkNummer || handelsnaam || vestigingsnummer;
+        return kvkNummer || handelsnaam || vestigingsnummer || rsin || (postcode && huisnummer);
     }
 
     createListParameters(): ListBedrijvenParameters {

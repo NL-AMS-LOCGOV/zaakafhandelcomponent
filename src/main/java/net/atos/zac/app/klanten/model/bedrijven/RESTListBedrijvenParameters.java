@@ -11,6 +11,8 @@ public class RESTListBedrijvenParameters {
 
     public String vestigingsnummer;
 
+    public String rsin;
+
     public String handelsnaam;
 
     public String postcode;

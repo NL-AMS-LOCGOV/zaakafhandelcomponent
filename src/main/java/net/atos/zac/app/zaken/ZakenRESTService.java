@@ -14,6 +14,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.client.kvk.KVKClientService;
+import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.drc.DRCClientService;
@@ -69,6 +72,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.KlantenRESTService;
+import net.atos.zac.app.klanten.model.IdentificatieType;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakBetrokkeneConverter;
@@ -142,6 +146,9 @@ public class ZakenRESTService {
 
     @Inject
     private ZGWApiService zgwApiService;
+
+    @Inject
+    private KVKClientService kvkClientService;
 
     @Inject
     private RESTZaakConverter zaakConverter;
@@ -232,7 +239,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         final ZaakActies zaakActies = policyService.readZaakActies(zaak);
         assertActie(zaakActies.getToevoegenInitiatorBedrijf() || zaakActies.getToevoegenInitiatorPersoon());
-        addInitiator(gegevens.betrokkeneIdentificatie, zaak);
+        addInitiator(gegevens.betrokkeneIdentificatieType, gegevens.betrokkeneIdentificatie, zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -252,7 +259,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
         final ZaakActies zaakActies = policyService.readZaakActies(zaak);
         assertActie(zaakActies.getToevoegenBetrokkeneBedrijf() || zaakActies.getToevoegenBetrokkenePersoon());
-        addBetrokkene(gegevens.roltypeUUID, gegevens.betrokkeneIdentificatie, gegevens.roltoelichting, zaak);
+        addBetrokkene(gegevens.roltypeUUID, gegevens.betrokkeneIdentificatieType, gegevens.betrokkeneIdentificatie, gegevens.roltoelichting, zaak);
         return zaakConverter.convert(zaak);
     }
 
@@ -273,7 +280,7 @@ public class ZakenRESTService {
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
-            addInitiator(restZaak.initiatorIdentificatie, nieuweZaak);
+            addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, nieuweZaak);
         }
         return zaakConverter.convert(nieuweZaak);
     }
@@ -610,43 +617,61 @@ public class ZakenRESTService {
                         .subject(zaak));
     }
 
-    private void addInitiator(final String identificatienummer, final Zaak zaak) {
+    private void addInitiator(final IdentificatieType identificatieType, final String identificatie, final Zaak zaak) {
         final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
-        switch (identificatienummer.length()) {
-            case 9 -> {
+        switch (identificatieType) {
+            case BSN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorPersoon());
-                addBetrokkenBurger(initiator, identificatienummer, zaak, INITIATOR_TOEVOEGEN_REDEN);
+                addBetrokkenNatuurlijkPersoon(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
             }
-            case 12 -> {
+            case VN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorBedrijf());
-                addBetrokkenBedrijf(initiator, identificatienummer, zaak, INITIATOR_TOEVOEGEN_REDEN);
+                addBetrokkenVestiging(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
             }
-            default -> throw new IllegalStateException("Unexpected value: '%s'" + identificatienummer);
+            case RSIN -> {
+                assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorBedrijf());
+                addBetrokkenVestigingExtern(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
+            }
+            default -> throw new IllegalStateException(String.format("Unexpected value: %s '%s'", identificatieType, identificatie));
         }
     }
 
-    private void addBetrokkene(final UUID roltype, final String identificatienummer, final String toelichting, final Zaak zaak) {
+    private void addBetrokkene(final UUID roltype, IdentificatieType identificatieType, final String identificatie, final String toelichting,
+            final Zaak zaak) {
         final Roltype betrokkene = ztcClientService.readRoltype(roltype);
-        switch (identificatienummer.length()) {
-            case 9 -> {
+        switch (identificatieType) {
+            case BSN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkenePersoon());
-                addBetrokkenBurger(betrokkene, identificatienummer, zaak, toelichting);
+                addBetrokkenNatuurlijkPersoon(betrokkene, identificatie, zaak, toelichting);
             }
-            case 12 -> {
+            case VN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkeneBedrijf());
-                addBetrokkenBedrijf(betrokkene, identificatienummer, zaak, toelichting);
+                addBetrokkenVestiging(betrokkene, identificatie, zaak, toelichting);
             }
-            default -> throw new IllegalStateException("Unexpected value: '%s'" + identificatienummer);
+            case RSIN -> {
+                assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkeneBedrijf());
+                addBetrokkenVestigingExtern(betrokkene, identificatie, zaak, toelichting);
+            }
+            default -> throw new IllegalStateException(String.format("Unexpected value: %s '%s'", identificatieType, identificatie));
         }
     }
 
-    private void addBetrokkenBurger(final Roltype roltype, final String bsn, final Zaak zaak, String toelichting) {
-        RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
+    private void addBetrokkenNatuurlijkPersoon(final Roltype roltype, final String bsn, final Zaak zaak, String toelichting) {
+        final RolNatuurlijkPersoon rol = new RolNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting, new NatuurlijkPersoon(bsn));
         zrcClientService.createRol(rol, toelichting);
     }
 
-    private void addBetrokkenBedrijf(final Roltype initiator, final String vestigingsnummer, final Zaak zaak, String toelichting) {
-        RolVestiging rol = new RolVestiging(zaak.getUrl(), initiator.getUrl(), toelichting, new Vestiging(vestigingsnummer));
+    private void addBetrokkenVestiging(final Roltype roltype, final String vestigingsnummer, final Zaak zaak, String toelichting) {
+        final RolVestiging rol = new RolVestiging(zaak.getUrl(), roltype.getUrl(), toelichting, new Vestiging(vestigingsnummer));
+        zrcClientService.createRol(rol, toelichting);
+    }
+
+    private void addBetrokkenVestigingExtern(final Roltype roltype, final String rsin, final Zaak zaak, String toelichting) {
+        final ResultaatItem vestiging = kvkClientService.findVestigingOnRsin(rsin);
+        final URI vestigingUrl = URI.create(vestiging.getLinks().stream()
+                                                    .filter(link -> "vestigingsprofiel".equals(link.getProfile()))
+                                                    .findAny().orElseThrow().getHref());
+        final RolVestiging rol = new RolVestiging(zaak.getUrl(), roltype.getUrl(), toelichting, vestigingUrl);
         zrcClientService.createRol(rol, toelichting);
     }
 
