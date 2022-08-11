@@ -32,6 +32,8 @@ import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.flowable.TaskService;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringSubject;
@@ -55,6 +57,9 @@ public class SignaleringenRestService {
 
     @Inject
     private DRCClientService drcClientService;
+
+    @Inject
+    private IdentityService identityService;
 
     @Inject
     private RESTZaakOverzichtConverter restZaakOverzichtConverter;
@@ -116,7 +121,7 @@ public class SignaleringenRestService {
 
     @GET
     @Path("/instellingen")
-    public List<RESTSignaleringInstellingen> listSignaleringInstellingen() {
+    public List<RESTSignaleringInstellingen> listUserSignaleringInstellingen() {
         final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get());
         return restSignaleringInstellingenConverter.convert(
                 signaleringenService.listInstellingen(parameters));
@@ -124,9 +129,26 @@ public class SignaleringenRestService {
 
     @PUT
     @Path("/instellingen")
-    public void updateSignaleringInstellingen(final RESTSignaleringInstellingen restInstellingen) {
+    public void updateUserSignaleringInstellingen(final RESTSignaleringInstellingen restInstellingen) {
         signaleringenService.createUpdateOrDeleteInstellingen(
                 restSignaleringInstellingenConverter.convert(restInstellingen, loggedInUserInstance.get()));
+    }
+
+    @GET
+    @Path("group/{groupId}/instellingen")
+    public List<RESTSignaleringInstellingen> listGroupSignaleringInstellingen(@PathParam("groupId") final String groupId) {
+        final Group group = identityService.readGroup(groupId);
+        final SignaleringInstellingenZoekParameters parameters = new SignaleringInstellingenZoekParameters(group);
+        return restSignaleringInstellingenConverter.convert(
+                signaleringenService.listInstellingen(parameters));
+    }
+
+    @PUT
+    @Path("group/{groupId}/instellingen")
+    public void updateGroupSignaleringInstellingen(@PathParam("groupId") final String groupId, final RESTSignaleringInstellingen restInstellingen) {
+        final Group group = identityService.readGroup(groupId);
+        signaleringenService.createUpdateOrDeleteInstellingen(
+                restSignaleringInstellingenConverter.convert(restInstellingen, group));
     }
 
     @GET

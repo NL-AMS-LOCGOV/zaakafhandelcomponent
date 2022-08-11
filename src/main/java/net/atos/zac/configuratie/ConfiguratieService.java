@@ -79,6 +79,8 @@ public class ConfiguratieService {
 
     public static final String TAAK_ELEMENT_RELEVANTE_DOCUMENTEN = "relevanteDocumenten";
 
+    public static final String BIJLAGEN = "bijlagen";
+
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject
     @ConfigProperty(name = "CONTEXT_URL")

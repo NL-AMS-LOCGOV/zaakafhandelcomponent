@@ -15,6 +15,22 @@
             <div class="table-wrapper">
                 <table mat-table [dataSource]="enkelvoudigInformatieObjecten" matSort #documentenTable matSortDisableClear="true"
                        matSortActive="registratiedatumTijd" matSortDirection="asc" multiTemplateDataRows>
+
+                    <ng-container matColumnDef="downloaden">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                          (change)="updateAll($event)"
+                                          [checked]="selectAll">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let document">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                          (change)="updateSelected($event, document)"
+                                          [checked]="downloadAlsZipSelection.isSelected(document)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
                     <ng-container matColumnDef="titel">
                         <th mat-sort-header mat-header-cell *matHeaderCellDef> {{'titel' | translate}} </th>
                         <td mat-cell *matCellDef="let row" (click)="documentPreviewRow = documentPreviewRow === row ? null : row"
@@ -43,7 +59,16 @@
                     </ng-container>
 
                     <ng-container matColumnDef="url" stickyEnd>
-                        <th mat-header-cell *matHeaderCellDef></th>
+                        <th mat-header-cell *matHeaderCellDef>
+                            <button mat-flat-button
+                                    id="downloadZip_button"
+                                    (click)="downloadAlsZip()"
+                                    [disabled]="downloadAlsZipSelection.isEmpty()"
+                                    title="{{ 'actie.downloaden.zip' | translate}}">
+                                <mat-icon>folder_zip</mat-icon>
+                                {{downloadAlsZipSelection.selected.length}}
+                            </button>
+                        </th>
                         <td mat-cell *matCellDef="let row">
                             <button *ngIf="row.acties.lezen" mat-flat-button
                                     [routerLink]="['/informatie-objecten', row.uuid, this.getZaakUuid()]"

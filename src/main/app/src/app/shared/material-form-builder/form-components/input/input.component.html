@@ -5,7 +5,9 @@
 
 <mat-form-field appearance="fill" class="full-width">
 
-    <button *ngFor="let icon of data.icons" mat-icon-button type="button" matSuffix
+    <button *ngFor="let icon of data.icons"
+            mat-icon-button type="button" matSuffix
+            title="{{icon.title | translate}}"
             (click)="icon.iconClicked.next(null)">
         <mat-icon>{{icon.icon}}</mat-icon>
     </button>

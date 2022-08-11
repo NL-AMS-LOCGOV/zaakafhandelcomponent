@@ -10,9 +10,11 @@ import {ParametersComponent} from './parameters/parameters.component';
 import {AdminRoutingModule} from './admin-routing.module';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZoekenModule} from '../zoeken/zoeken.module';
+import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
 
 @NgModule({
     declarations: [
+        GroepSignaleringenComponent,
         ParametersComponent,
         ParameterEditComponent
     ],

@@ -12,4 +12,6 @@ public class RESTMailObject {
     public String body;
 
     public boolean createDocumentFromMail;
+
+    public String bijlagen;
 }

@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import org.flowable.task.api.TaskInfo;
 
-import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.Rol;
@@ -60,7 +59,7 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
     @Override
     public void onFire(final @ObservesAsync SignaleringEvent<?> event) {
         try {
-            final Signalering signalering = buildSignalering(signaleringenService.signaleringInstance(event.getObjectType()), event);
+            final Signalering signalering = buildSignalering(event);
             if (signalering != null && signaleringenService.isNecessary(signalering, event.getActor())) {
                 final SignaleringInstellingen subscriptions = signaleringenService.readInstellingen(signalering);
                 if (subscriptions.isDashboard()) {
@@ -75,33 +74,68 @@ public class SignaleringEventObserver extends AbstractEventObserver<SignaleringE
         }
     }
 
-    private Signalering buildSignalering(final Signalering signalering, final SignaleringEvent<?> event) {
+    private Signalering getInstance(final SignaleringEvent<?> event) {
+        return signaleringenService.signaleringInstance(event.getObjectType());
+    }
+
+    private Signalering getSignaleringVoorRol(final SignaleringEvent<?> event, final Zaak subject, final Rol<?> rol) {
+        final Signalering signalering = getInstance(event);
+        signalering.setSubject(subject);
+        return addTarget(signalering, rol);
+    }
+
+    private Signalering getSignaleringVoorMedewerker(final SignaleringEvent<?> event, final Zaak subject, final RolMedewerker rol) {
+        return getSignaleringVoorRol(event, subject, rol);
+    }
+
+    private Signalering getSignaleringVoorGroup(final SignaleringEvent<?> event, final Zaak subject, final RolOrganisatorischeEenheid rol) {
+        if (getRolBehandelaarMedewerker(subject).isEmpty()) {
+            return getSignaleringVoorRol(event, subject, rol);
+        }
+        return null;
+    }
+
+    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final Zaak subject) {
+        final Optional<Rol<?>> behandelaar = getRolBehandelaarMedewerker(subject);
+        if (behandelaar.isPresent()) {
+            return getSignaleringVoorRol(event, subject, behandelaar.get());
+        }
+        return null;
+    }
+
+    private Signalering getSignaleringVoorBehandelaar(final SignaleringEvent<?> event, final TaskInfo subject) {
+        if (subject.getAssignee() != null) {
+            final Signalering signalering = getInstance(event);
+            signalering.setSubject(subject);
+            return addTarget(signalering, subject);
+        }
+        return null;
+    }
+
+    private Signalering buildSignalering(final SignaleringEvent<?> event) {
         switch (event.getObjectType()) {
             case ZAAK_DOCUMENT_TOEGEVOEGD -> {
                 final Zaak subject = zrcClientService.readZaak((URI) event.getObjectId());
-                final Optional<Rol<?>> behandelaar = getRolBehandelaarMedewerker(subject);
-                if (behandelaar.isPresent()) {
-                    signalering.setSubject(subject);
-                    return addTarget(signalering, behandelaar.get());
-                }
+                return getSignaleringVoorBehandelaar(event, subject);
             }
             case ZAAK_OP_NAAM -> {
                 final Rol<?> rol = zrcClientService.readRol((URI) event.getObjectId());
-                // ZAAK_OP_NAAM for groep targets also works but for now we only need ZAAK_OP_NAAM for behandelaar targets
-                if (rol.getBetrokkeneType() == BetrokkeneType.MEDEWERKER) { // So ignore the event when the betrokkene is not a MEDEWERKER
+                if (AardVanRol.fromValue(rol.getOmschrijvingGeneriek()) == AardVanRol.BEHANDELAAR) {
                     final Zaak subject = zrcClientService.readZaak(rol.getZaak());
-                    if (URIUtil.equals(rol.getRoltype(), getRoltypeBehandelaar(subject).getUrl())) {
-                        signalering.setSubject(subject);
-                        return addTarget(signalering, rol);
+                    switch (rol.getBetrokkeneType()) {
+                        case MEDEWERKER -> {
+                            return getSignaleringVoorMedewerker(event, subject, (RolMedewerker) rol);
+                        }
+                        case ORGANISATORISCHE_EENHEID -> {
+                            return getSignaleringVoorGroup(event, subject, (RolOrganisatorischeEenheid) rol);
+                        }
+                        default -> LOG.warning(String.format("unexpected BetrokkeneType %s", rol.getBetrokkeneType()));
                     }
                 }
             }
             case TAAK_OP_NAAM -> {
                 final TaskInfo subject = taskService.readOpenTask((String) event.getObjectId());
-                if (subject.getAssignee() != null) {
-                    signalering.setSubject(subject);
-                    return addTarget(signalering, subject);
-                }
+                return getSignaleringVoorBehandelaar(event, subject);
             }
             case ZAAK_VERLOPEND, TAAK_VERLOPEN -> {
                 // These are NOT event driven and should not show up here

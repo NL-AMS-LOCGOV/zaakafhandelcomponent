@@ -59,8 +59,8 @@ export class InformatieObjectVerplaatsService {
         if (!onInit) {
             SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
         }
-        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'document', document.bron,
-            new ActionIcon('content_paste_go', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document.bron));
+        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'DOCUMENT', document.bron,
+            new ActionIcon('content_paste_go', 'actie.document.verplaatsen', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document.bron));
         this.utilService.addAction(action);
     }
 

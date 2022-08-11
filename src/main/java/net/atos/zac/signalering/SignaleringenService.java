@@ -10,6 +10,7 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +193,7 @@ public class SignaleringenService {
             final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
             final String subject = signaleringenMailHelper.formatSubject(type, link);
             final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
-            mailService.sendMail(to, subject, body);
+            mailService.sendMail(to, subject, body, Collections.emptyList());
         }
     }
 
@@ -270,6 +271,7 @@ public class SignaleringenService {
         final Map<SignaleringType.Type, SignaleringInstellingen> map = findInstellingen(parameters).stream()
                 .collect(Collectors.toMap(instellingen -> instellingen.getType().getType(), Function.identity()));
         Arrays.stream(SignaleringType.Type.values())
+                .filter(type -> type.isTarget(parameters.getOwnertype()))
                 .filter(type -> !map.containsKey(type))
                 .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(), parameters.getOwner())));
         return map.values().stream()

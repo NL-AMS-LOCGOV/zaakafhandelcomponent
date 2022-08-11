@@ -48,6 +48,8 @@ public class IdentityService {
 
     private static final String GROUP_NAME_ATTRIBUTE = "description";
 
+    private static final String GROUP_MAIL_ATTRIBUTE = "mail";
+
     private static final String[] GROUP_ATTRIBUTES = {GROUP_ID_ATTRIBUTE, GROUP_NAME_ATTRIBUTE};
 
     private static final String GROUP_MEMBER_ATTRIBUTE = "uniqueMember";
@@ -132,8 +134,11 @@ public class IdentityService {
     }
 
     private Group convertToGroup(final Attributes attributes) {
+        final String dummy = "groepb".equals(readAttributeToString(attributes, GROUP_ID_ATTRIBUTE)) ? "gmnlesuite@gmail.com" : null;
         return new Group(readAttributeToString(attributes, GROUP_ID_ATTRIBUTE),
-                         readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE));
+                         readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE),
+                         dummy);
+        // TODO #109 readAttributeToString(attributes,GROUP_MAIL_ATTRIBUTE)
     }
 
     private List<String> convertToMembers(final Attributes attributes) {

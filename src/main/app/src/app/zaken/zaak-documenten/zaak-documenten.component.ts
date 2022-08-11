@@ -28,6 +28,8 @@ import {detailExpand} from '../../shared/animations/animations';
 import {Observable, share} from 'rxjs';
 import {InformatieObjectVerplaatsService} from '../../informatie-objecten/informatie-object-verplaats.service';
 import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
+import {SelectionModel} from '@angular/cdk/collections';
+import {MatCheckboxChange} from '@angular/material/checkbox';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -46,8 +48,9 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     taakModus: boolean;
+    selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
-    documentColumns = ['titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
@@ -56,6 +59,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     enkelvoudigInformatieObjecten: MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject> =
         new MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject>();
     documentPreviewRow: EnkelvoudigInformatieobject | null;
+    downloadAlsZipSelection = new SelectionModel<GekoppeldeZaakEnkelvoudigInformatieobject>(true, []);
 
     private zaakDocumentenListener: WebsocketListener;
 
@@ -157,7 +161,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         if (this.toonGekoppeldeZaakDocumenten) {
             this.ophalenGekoppeldeZaakDocumenten();
         } else {
-            this.documentColumns = ['titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+            this.documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
             this.loadInformatieObjecten();
         }
     }
@@ -166,7 +170,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.getZaakUuid())
             .subscribe(gekoppeldeInformatieObjecten => {
                 if (gekoppeldeInformatieObjecten) {
-                    this.documentColumns = ['titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+                    this.documentColumns = ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
                     gekoppeldeInformatieObjecten.forEach(gekoppeldeInformatieObject =>
                         this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, gekoppeldeInformatieObject]);
                 }
@@ -175,5 +179,37 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     getZaakUuid(): string {
         return this.taakModus ? this.zaakUUID : this.zaak.uuid;
+    }
+
+    updateSelected($event: MatCheckboxChange, document): void {
+        if ($event) {
+            this.downloadAlsZipSelection.toggle(document);
+        }
+    }
+
+    downloadAlsZip() {
+        const uuids: string[] = [];
+        this.downloadAlsZipSelection.selected.forEach(document => {
+            uuids.push(document.uuid);
+        });
+
+        this.downloadAlsZipSelection.clear();
+        this.selectAll = false;
+
+        return this.informatieObjectenService.getZIPDownload(uuids).subscribe(response => {
+            const blob = new Blob([response], {type: 'application/zip'});
+            const url = window.URL.createObjectURL(blob);
+            window.open(url);
+        });
+    }
+
+    updateAll($event: MatCheckboxChange) {
+        this.selectAll = !this.selectAll;
+        if ($event) {
+            this.enkelvoudigInformatieObjecten.data.forEach(document => {
+                $event.checked ? this.downloadAlsZipSelection.select(document) :
+                    this.downloadAlsZipSelection.deselect(document);
+            });
+        }
     }
 }
