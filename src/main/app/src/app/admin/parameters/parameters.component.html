@@ -12,6 +12,58 @@
             <mat-card-content>
                 <div class="table-wrapper historie">
                     <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort">
+                        <ng-container matColumnDef="valide_filter">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <zac-facet-filter label="valide"
+                                                  [selected]="filterParameters.valide"
+                                                  [opties]="['Valide', 'Niet valide']"
+                                                  (changed)="filterParameters.valide = $event;  applyFilter()">
+                                </zac-facet-filter>
+                            </th>
+                        </ng-container>
+                        <ng-container matColumnDef="omschrijving_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="doel_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="model_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="groep_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="behandelaar_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="creatiedatum_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+                        <ng-container matColumnDef="geldig_filter">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <zac-facet-filter label="geldig"
+                                                  [selected]="filterParameters.geldig"
+                                                  [opties]="['Ja', 'Nee']"
+                                                  (changed)="filterParameters.geldig = $event;  applyFilter()">
+                                </zac-facet-filter>
+                            </th>
+                        </ng-container>
+                        <ng-container matColumnDef="beginGeldigheid_filter">
+                            <th mat-header-cell *matHeaderCellDef="let row">
+                                <zac-datum-filter label="beginGeldigheid" [range]="filterParameters.beginGeldigheid"
+                                                  (changed)="applyFilter()"></zac-datum-filter>
+                            </th>
+                        </ng-container>
+                        <ng-container matColumnDef="eindeGeldigheid_filter">
+                            <th mat-header-cell *matHeaderCellDef="let row">
+                                <zac-datum-filter label="eindeGeldigheid" [range]="filterParameters.eindeGeldigheid"
+                                                  (changed)="applyFilter()"></zac-datum-filter>
+                            </th>
+                        </ng-container>
+                        <ng-container matColumnDef="url_filter">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                        </ng-container>
+
                         <ng-container matColumnDef="valide">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header="valide"></th>
                             <td mat-cell *matCellDef="let row">
@@ -50,7 +102,7 @@
                         <ng-container matColumnDef="geldig">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'geldig' | translate}} </th>
                             <td mat-cell
-                                *matCellDef="let row"> {{row.zaaktype.nuGeldig ? ('actie.ja' | translate) : ('actie.nee' | translate)}}                            </td>
+                                *matCellDef="let row"> {{row.zaaktype.nuGeldig ? ('actie.ja' | translate) : ('actie.nee' | translate)}}</td>
                         </ng-container>
                         <ng-container matColumnDef="beginGeldigheid">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'begin.geldigheid' | translate}} </th>
@@ -69,9 +121,13 @@
                                 </button>
                             </td>
                         </ng-container>
+
                         <tr mat-header-row
                             *matHeaderRowDef="['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum', 'geldig',
                             'beginGeldigheid', 'eindeGeldigheid', 'url']; sticky: true"></tr>
+                        <tr mat-header-row *matHeaderRowDef="['valide_filter','omschrijving_filter', 'doel_filter', 'model_filter', 'groep_filter',
+                        'behandelaar_filter', 'creatiedatum_filter', 'geldig_filter', 'beginGeldigheid_filter', 'eindeGeldigheid_filter', 'url_filter'];
+                        sticky: true"></tr>
                         <tr mat-row
                             *matRowDef="let row; columns: ['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum','geldig',
                             'beginGeldigheid', 'eindeGeldigheid', 'url'];"></tr>
