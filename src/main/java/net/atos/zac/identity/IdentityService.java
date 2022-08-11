@@ -138,7 +138,7 @@ public class IdentityService {
         return new Group(readAttributeToString(attributes, GROUP_ID_ATTRIBUTE),
                          readAttributeToString(attributes, GROUP_NAME_ATTRIBUTE),
                          dummy);
-        // TODO #109 readAttributeToString(attributes,GROUP_MAIL_ATTRIBUTE)
+        // TODO #1454 readAttributeToString(attributes,GROUP_MAIL_ATTRIBUTE)
     }
 
     private List<String> convertToMembers(final Attributes attributes) {
