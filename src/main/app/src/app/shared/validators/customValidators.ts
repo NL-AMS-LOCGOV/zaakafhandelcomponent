@@ -8,11 +8,10 @@ import {AbstractControl, ValidatorFn} from '@angular/forms';
 export class CustomValidators {
 
     static postcode = CustomValidators.postcodeVFn();
-    static bsn = CustomValidators.bsnVFn(false);
+    static bsn = CustomValidators.bsnVFn();
     static kvk = CustomValidators.kvkVFn();
     static vestigingsnummer = CustomValidators.vestigingsnummerVFn();
-    static bsnPrefixed = CustomValidators.bsnVFn(true);
-    static bsnOrVesPrefixed = CustomValidators.bsnOfVestigingVFn(true);
+    static rsin = CustomValidators.rsinVFn();
     static email = CustomValidators.emailVFn(false);
     static emails = CustomValidators.emailVFn(true);
     static handelsnaam = CustomValidators.handelsnaamVFn();
@@ -27,45 +26,63 @@ export class CustomValidators {
     private static emailsRegex = new RegExp('^(' + CustomValidators.EMAIL + ')(;//s*' + CustomValidators.EMAIL + ')*$');
     private static handelsnaamRegex = new RegExp('[*()]+');
 
-    private static bsnVFn(allowPrefix = false): ValidatorFn {
+    private static bsnVFn(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
-            const bsn = this.getValue(control, allowPrefix);
-            if (bsn === null) {
+            if (!control.value) {
                 return null;
             }
-            if (!this.isValidBSN(bsn)) {
+            const val = control.value;
+            if (!this.isValidBSN(val)) {
                 return {bsn: true};
             }
         };
     }
 
-    private static bsnOfVestigingVFn(allowPrefix = false): ValidatorFn {
-        return (control: AbstractControl): { [key: string]: boolean } | null => {
-            const value = this.getValue(control, allowPrefix);
-            if (value === null) {
-                return null;
-            }
-            if (!(this.isValidBSN(value) || this.isValidVestigingsnummer(value))) { return {bsnOrVestiging: true}; }
-        };
+    private static isValidBSN(bsn: string): boolean {
+        if (isNaN(Number(bsn)) || bsn.length !== 9) {
+            return false;
+        }
+        let checksum: number = 0;
+        for (let i = 0; i < 8; i++) {
+            checksum += (Number(bsn.charAt(i)) * (9 - i));
+        }
+        checksum -= Number(bsn.charAt(8));
+        return checksum % 11 === 0;
     }
 
     private static kvkVFn(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
-            const kvk = this.getValue(control, false);
-            if (kvk === null) {
+            if (!control.value) {
                 return null;
             }
-            return isNaN(Number(kvk)) || kvk.length !== 8 ? {kvk: true} : null;
+            const val = control.value;
+            if (isNaN(Number(val)) || val.length !== 8) {
+                return {kvk: true};
+            }
         };
     }
 
     static vestigingsnummerVFn(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: boolean } | null => {
-            const nummer = this.getValue(control, false);
-            if (nummer === null) {
+            if (!control.value) {
                 return null;
             }
-            return isNaN(Number(nummer)) || nummer.length !== 12 ? {vestigingsnummer: true} : null;
+            const val = control.value;
+            if (isNaN(Number(val)) || val.length !== 12) {
+                return {vestigingsnummer: true};
+            }
+        };
+    }
+
+    static rsinVFn(): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: boolean } | null => {
+            if (!control.value) {
+                return null;
+            }
+            const val = control.value;
+            if (isNaN(Number(val)) || val.length !== 9) {
+                return {rsin: true};
+            }
         };
     }
 
@@ -87,26 +104,12 @@ export class CustomValidators {
                 return null;
             }
             const val = control.value;
-            if (multi ? !CustomValidators.emailsRegex.test(val) : !CustomValidators.emailRegex.test(val)) {
+            if (multi
+                ? !CustomValidators.emailsRegex.test(val)
+                : !CustomValidators.emailRegex.test(val)) {
                 return {email: true};
             }
         };
-    }
-
-    private static isValidBSN(bsn: string): boolean {
-        if (isNaN(Number(bsn)) || bsn.length !== 9) {
-            return false;
-        }
-        let checksum: number = 0;
-        for (let i = 0; i < 8; i++) {
-            checksum += (Number(bsn.charAt(i)) * (9 - i));
-        }
-        checksum -= Number(bsn.charAt(8));
-        return checksum % 11 === 0;
-    }
-
-    private static isValidVestigingsnummer(nummer: string): boolean {
-        return !(isNaN(Number(nummer)) || nummer.length !== 12);
     }
 
     private static handelsnaamVFn(): ValidatorFn {
@@ -120,18 +123,4 @@ export class CustomValidators {
             }
         };
     }
-
-    private static getValue(control: AbstractControl, allowPrefix = false) {
-        if (!control.value) {
-            return null;
-        }
-        const val = control.value;
-        if (allowPrefix) {
-            const prefix = val.indexOf('|');
-            return val.substring(0, prefix !== -1 ? prefix : val.length).trim();
-        } else {
-            return control.value;
-        }
-    }
-
 }

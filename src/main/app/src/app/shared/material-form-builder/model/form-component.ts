@@ -51,8 +51,8 @@ export abstract class FormComponent {
             return this.labeled('msg.error.invalid.kvk', {});
         } else if (formControl.hasError('vestigingsnummer')) {
             return this.labeled('msg.error.invalid.vestigingsnummer', {});
-        } else if (formControl.hasError('bsnOrVestiging')) {
-            return this.labeled('msg.error.invalid.bsnOrVes', {});
+        } else if (formControl.hasError('rsin')) {
+            return this.labeled('msg.error.invalid.rsin', {});
         } else if (formControl.hasError('postcode')) {
             return this.labeled('msg.error.invalid.postcode', {});
         } else {

@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.klanten.model.personen;
 
+import static net.atos.zac.app.klanten.model.IdentificatieType.BSN;
+
+import net.atos.zac.app.klanten.model.IdentificatieType;
 import net.atos.zac.app.klanten.model.RESTKlant;
 
 public class RESTPersoon extends RESTKlant {
@@ -18,6 +21,11 @@ public class RESTPersoon extends RESTKlant {
     public String geboortedatum;
 
     public String inschrijfadres;
+
+    @Override
+    public IdentificatieType getIdentificatieType() {
+        return bsn != null ? BSN : null;
+    }
 
     @Override
     public String getIdentificatie() {

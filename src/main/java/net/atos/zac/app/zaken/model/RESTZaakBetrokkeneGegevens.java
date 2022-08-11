@@ -7,6 +7,8 @@ package net.atos.zac.app.zaken.model;
 
 import java.util.UUID;
 
+import net.atos.zac.app.klanten.model.IdentificatieType;
+
 public class RESTZaakBetrokkeneGegevens {
 
     public UUID zaakUUID;
@@ -14,6 +16,8 @@ public class RESTZaakBetrokkeneGegevens {
     public UUID roltypeUUID;
 
     public String roltoelichting;
+
+    public IdentificatieType betrokkeneIdentificatieType;
 
     public String betrokkeneIdentificatie;
 }

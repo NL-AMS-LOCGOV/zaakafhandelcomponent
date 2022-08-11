@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.app.klanten.model.IdentificatieType;
 
 public class RESTZaak {
 
@@ -73,6 +74,8 @@ public class RESTZaak {
     public List<RESTZaakKenmerk> kenmerken;
 
     public List<RESTZaakEigenschap> eigenschappen;
+
+    public IdentificatieType initiatorIdentificatieType;
 
     public String initiatorIdentificatie;
 

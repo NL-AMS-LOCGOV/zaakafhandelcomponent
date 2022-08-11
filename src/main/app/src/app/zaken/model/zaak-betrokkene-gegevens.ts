@@ -10,7 +10,7 @@ export class ZaakBetrokkeneGegevens {
 
     roltoelichting: string;
 
-    betrokkeneType: string;
+    betrokkeneIdentificatieType: string;
 
     betrokkeneIdentificatie: string;
 }

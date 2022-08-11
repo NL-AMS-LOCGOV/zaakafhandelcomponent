@@ -33,6 +33,9 @@ public class RESTBedrijfConverter {
         if (StringUtils.isNotBlank(restListParameters.vestigingsnummer)) {
             zoekenParameters.setVestigingsnummer(restListParameters.vestigingsnummer);
         }
+        if (StringUtils.isNotBlank(restListParameters.rsin)) {
+            zoekenParameters.setRsin(restListParameters.rsin);
+        }
         if (StringUtils.isNotBlank(restListParameters.handelsnaam)) {
             zoekenParameters.setHandelsnaam(restListParameters.handelsnaam);
         }

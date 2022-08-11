@@ -834,7 +834,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     initiatorGeselecteerd(initiator: Klant): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createInitiator(this.zaak, initiator.identificatie)
+        this.zakenService.createInitiator(this.zaak, initiator)
             .subscribe(zaak => {
                 this.zaak = zaak;
                 this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: zaak.initiatorIdentificatie});
@@ -865,7 +865,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     betrokkeneGeselecteerd(betrokkene: KlantGegevens): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant.identificatie, betrokkene.betrokkeneRoltype, betrokkene.betrokkeneToelichting)
+        this.zakenService.createBetrokkene(this.zaak, betrokkene.klant, betrokkene.betrokkeneRoltype, betrokkene.betrokkeneToelichting)
             .subscribe(zaak => {
                 this.zaak = zaak;
                 this.utilService.openSnackbar('msg.betrokkene.toegevoegd', {roltype: betrokkene.betrokkeneRoltype.naam});

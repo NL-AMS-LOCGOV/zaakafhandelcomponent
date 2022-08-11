@@ -13,6 +13,7 @@ export class Bedrijf implements Klant {
     adres: string;
     postcode: string;
     type: string;
+    identificatieType: string;
     identificatie: string;
     naam: string;
 }
