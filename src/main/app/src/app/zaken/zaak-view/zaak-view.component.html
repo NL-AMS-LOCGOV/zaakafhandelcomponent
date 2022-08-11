@@ -200,7 +200,7 @@
 
                         <mat-tab label="{{'historie' | translate}}">
                             <div id="historie_tab" class="table-wrapper historie-table">
-                                <table mat-table [dataSource]="historie" matSort>
+                                <table mat-table [dataSource]="historie" matSort #historieSort="matSort">
                                     <ng-container matColumnDef="datum">
                                         <th *matHeaderCellDef mat-header-cell mat-sort-header> {{'datum' | translate}} </th>
                                         <td *matCellDef="let regel" mat-cell>
@@ -375,7 +375,7 @@
                 </mat-card-header>
                 <mat-card-content>
                     <div class="table-wrapper">
-                        <table mat-table [dataSource]="takenDataSource" matSort multiTemplateDataRows>
+                        <table mat-table [dataSource]="takenDataSource" matSort multiTemplateDataRows #takenSort="matSort">
                             <ng-container matColumnDef="collapse">
                                 <th mat-header-cell *matHeaderCellDef>
                                     <mat-icon *ngIf="!allTakenExpanded" (click)="expandTaken(true)">expand_more</mat-icon>

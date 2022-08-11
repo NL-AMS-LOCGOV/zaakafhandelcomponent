@@ -9,6 +9,7 @@ import {SharedModule} from '../shared/shared.module';
 import {ParametersComponent} from './parameters/parameters.component';
 import {AdminRoutingModule} from './admin-routing.module';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
+import {ZoekenModule} from '../zoeken/zoeken.module';
 import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
 
 @NgModule({
@@ -20,6 +21,7 @@ import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleri
     exports: [],
     imports: [
         SharedModule,
+        ZoekenModule,
         AdminRoutingModule
     ]
 })
