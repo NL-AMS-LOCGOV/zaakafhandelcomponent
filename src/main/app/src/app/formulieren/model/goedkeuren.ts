@@ -23,7 +23,8 @@ export class Goedkeuren extends AbstractFormulier {
         TOELICHTING: 'toelichtingGoedkeuring',
         VRAAG: 'vraag',
         GOEDKEUREN: 'goedkeuren',
-        RELEVANTE_DOCUMENTEN: 'relevanteDocumenten'
+        RELEVANTE_DOCUMENTEN: 'relevanteDocumenten',
+        ONDERTEKENEN: 'ondertekenen'
     };
 
     taakinformatieMapping = {
@@ -62,10 +63,10 @@ export class Goedkeuren extends AbstractFormulier {
                                            .label(fields.VRAAG)
                                            .value(this.getDataElement(fields.VRAAG))
                                            .build()],
-            [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
-                                              .label(fields.RELEVANTE_DOCUMENTEN)
+            [new DocumentenLijstFieldBuilder().id(fields.ONDERTEKENEN)
+                                              .label(fields.ONDERTEKENEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                              .documentenChecked(this.getDocumentenChecked(fields.RELEVANTE_DOCUMENTEN))
+                                              .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
                                               .ondertekenen(true)
                                               .readonly(true)
                                               .build()],
@@ -91,9 +92,8 @@ export class Goedkeuren extends AbstractFormulier {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
             const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            const selection = JSON.parse(dataElement)?.selection;
-            if (selection) {
-                zoekParameters.UUIDs = selection?.split(';');
+            if (dataElement) {
+                zoekParameters.UUIDs = dataElement.split(';');
                 return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
             }
         }
@@ -103,9 +103,7 @@ export class Goedkeuren extends AbstractFormulier {
     getDocumentenChecked(field: string): string[] {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
-            if (JSON.parse(dataElement)?.ondertekenen) {
-                return JSON.parse(dataElement)?.ondertekenen.split(';');
-            }
+            return dataElement.split(';');
         }
     }
 

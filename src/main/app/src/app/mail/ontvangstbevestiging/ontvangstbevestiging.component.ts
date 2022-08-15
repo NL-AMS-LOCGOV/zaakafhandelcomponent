@@ -93,7 +93,7 @@ export class OntvangstbevestigingComponent implements OnInit {
             mailObject.ontvanger = formGroup.controls['ontvanger'].value;
             mailObject.onderwerp = formGroup.controls['onderwerp'].value;
             mailObject.body = formGroup.controls['body'].value;
-            mailObject.bijlagen = JSON.parse(formGroup.controls['bijlagen'].value)?.selection;
+            mailObject.bijlagen = formGroup.controls['bijlagen'].value;
             mailObject.createDocumentFromMail = true;
 
             this.mailService.sendAcknowledgeReceipt(this.zaak.uuid, mailObject).subscribe(() => {

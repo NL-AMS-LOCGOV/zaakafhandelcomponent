@@ -135,13 +135,15 @@ export abstract class AbstractFormulier {
     }
 
     private getDataElementen(formGroup: FormGroup): {} {
-        const dataElementen: {} = {};
+        if (!this.dataElementen) {
+            this.dataElementen = {};
+        }
         Object.keys(formGroup.controls).forEach((key) => {
             if (key !== AbstractFormulier.TOEKENNING_FIELD) {
-                dataElementen[key] = formGroup.controls[key]?.value;
+                this.dataElementen[key] = formGroup.controls[key]?.value;
             }
         });
-        return dataElementen;
+        return this.dataElementen;
     }
 
     private getTaakinformatie(formGroup: FormGroup): Taakinformatie {

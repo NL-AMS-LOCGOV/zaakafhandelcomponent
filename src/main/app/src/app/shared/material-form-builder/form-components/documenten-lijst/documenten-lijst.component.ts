@@ -49,11 +49,8 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 }
             }
             this.dataSource.data = documenten;
-            if (this.data.ondertekenen && (this.teOndertekenenSelection.selected.length > 0 || documenten.length > 0)) {
-                this.data.formControl.setValue(JSON.stringify({
-                    selection: documenten.map(value => value.uuid).join(';'),
-                    ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
-                }));
+            if (this.data.ondertekenen && this.teOndertekenenSelection.selected.length > 0) {
+                this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
             }
             this.loading = false;
         });
@@ -67,20 +64,14 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     updateSelected($event: MatCheckboxChange, document): void {
         if ($event) {
             this.selection.toggle(document);
-            this.data.formControl.setValue(JSON.stringify({
-                selection: this.selection.selected.map(value => value.uuid).join(';'),
-                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
-            }));
+            this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
         }
     }
 
     updateTeOndertekenen($event: MatCheckboxChange, document): void {
         if ($event) {
             this.teOndertekenenSelection.toggle(document);
-            this.data.formControl.setValue(JSON.stringify({
-                selection: this.dataSource.data.map(value => value.uuid).join(';'),
-                ondertekenen: this.teOndertekenenSelection.selected.map(value => value.uuid).join(';')
-            }));
+            this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
         }
     }
 }

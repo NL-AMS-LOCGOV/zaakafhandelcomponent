@@ -77,7 +77,7 @@ public class ConfiguratieService {
 
     public static final String STATUSTYPE_OMSCHRIJVING_HEROPEND = "Heropend";
 
-    public static final String TAAK_ELEMENT_RELEVANTE_DOCUMENTEN = "relevanteDocumenten";
+    public static final String TAAK_ELEMENT_ONDERTEKENEN = "ondertekenen";
 
     public static final String BIJLAGEN = "bijlagen";
 
