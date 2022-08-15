@@ -7,7 +7,7 @@ package net.atos.zac.app.taken;
 
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
-import static net.atos.zac.configuratie.ConfiguratieService.TAAK_ELEMENT_RELEVANTE_DOCUMENTEN;
+import static net.atos.zac.configuratie.ConfiguratieService.TAAK_ELEMENT_ONDERTEKENEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
@@ -60,7 +60,6 @@ import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConvert
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
 import net.atos.zac.app.taken.converter.RESTTaakHistorieConverter;
-import net.atos.zac.app.taken.model.DocumentLijstData;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.app.taken.model.RESTTaakHistorieRegel;
@@ -303,16 +302,8 @@ public class TakenRESTService {
     }
 
     private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
-        if (taakdata.containsKey(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN) && taakdata.get(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN) != null) {
-            final DocumentLijstData documentLijstData;
-            try {
-                documentLijstData = new ObjectMapper().readValue(taakdata.get(TAAK_ELEMENT_RELEVANTE_DOCUMENTEN),
-                                                                 DocumentLijstData.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e.getMessage(), e); //invalid form-group data
-            }
-
-            Arrays.stream(documentLijstData.ondertekenen.split(";")).forEach(uuid -> {
+        if (taakdata.containsKey(TAAK_ELEMENT_ONDERTEKENEN) && taakdata.get(TAAK_ELEMENT_ONDERTEKENEN) != null) {
+            Arrays.stream(taakdata.get(TAAK_ELEMENT_ONDERTEKENEN).split(";")).forEach(uuid -> {
                 if (StringUtils.isEmpty(uuid)) {
                     return;
                 }
