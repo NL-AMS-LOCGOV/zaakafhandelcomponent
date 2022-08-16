@@ -89,9 +89,8 @@ public class BAGRESTService {
     @Path("/adres/zaak/{uuid}")
     public List<RESTAdres> listAdressenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertActie(policyService.readZaakActies(zaakUUID).getLezen());
-        zaakobjectListParameters.setZaak(zaak.getUrl());
+        zaakobjectListParameters.setZaak(zrcClientService.createUrlZaak(zaakUUID));
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {
             return zaakobjecten.getResults().stream()
