@@ -21,6 +21,9 @@ import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
+import net.atos.client.vrl.VRLClientService;
+import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
+import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
@@ -63,6 +66,9 @@ public class ProductAanvraagService {
     @Inject
     private KVKClientService kvkClientService;
 
+    @Inject
+    private VRLClientService vrlClientService;
+
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
@@ -79,6 +85,12 @@ public class ProductAanvraagService {
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
+        try {
+            CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal("E-formulier");
+            zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
+        } catch (CommunicatiekanaalNotFoundException e) {
+            //TODO: Handle exception
+        }
         zaak = zgwApiService.createZaak(zaak);
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
