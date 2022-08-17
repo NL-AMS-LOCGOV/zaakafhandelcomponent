@@ -12,6 +12,7 @@ import static net.atos.zac.configuratie.ConfiguratieService.MELDING_KLEIN_EVENEM
 
 import java.net.URI;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -89,7 +90,10 @@ public class ProductAanvraagService {
             CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal("E-formulier");
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         } catch (CommunicatiekanaalNotFoundException e) {
-            //TODO: Handle exception
+            final UUID finalZaakUUID = zaak.getUuid();
+            LOG.severe(() -> String.format("Error while setting CommunicatieKanaal for new Zaak %s: %s",
+                                            finalZaakUUID,
+                                            e.getMessage()));
         }
         zaak = zgwApiService.createZaak(zaak);
 
