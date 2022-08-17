@@ -17,11 +17,6 @@ public class RolVestiging extends Rol<Vestiging> {
         super(zaak, roltype, BetrokkeneType.VESTIGING, betrokkeneIdentificatie, roltoelichting);
     }
 
-    public RolVestiging(final URI zaak, final URI roltype, final String roltoelichting, final URI betrokkene) {
-        this(zaak, roltype, roltoelichting, new Vestiging());
-        this.setBetrokkene(betrokkene);
-    }
-
     @Override
     protected boolean equalBetrokkeneIdentificatie(final Vestiging identificatie) {
         final Vestiging betrokkeneIdentificatie = getBetrokkeneIdentificatie();

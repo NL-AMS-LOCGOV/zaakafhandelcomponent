@@ -16,6 +16,7 @@ import {Observable, share} from 'rxjs';
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     @Input() vestigingsnummer;
+    @Input() rsin;
     @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
 
@@ -29,7 +30,12 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
-        this.bedrijf$ = this.klantenService.readBedrijf(this.vestigingsnummer).pipe(share());
+        if (this.vestigingsnummer) {
+            this.bedrijf$ = this.klantenService.readVestiging(this.vestigingsnummer).pipe(share());
+        }
+        if (this.rsin) {
+            this.bedrijf$ = this.klantenService.readRechtspersoon(this.rsin).pipe(share());
+        }
         this.bedrijf$.subscribe(bedrijf => {
             this.bedrijf = bedrijf;
         });

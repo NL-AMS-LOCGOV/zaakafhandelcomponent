@@ -924,16 +924,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         SessionStorageUtil.setItem('toonAfgerondeTaken', this.toonAfgerondeTaken);
     }
 
-    get initiatorType() {
-        if (this.zaak.initiatorIdentificatie) {
-            if (this.zaak.initiatorIdentificatie.length === 9) {
-                return 'PERSOON';
-            }
-            return 'BEDRIJF';
-        }
-        return null;
-    }
-
     taakGestart(): void {
         this.actiefPlanItem = null;
         this.actionsSidenav.close();

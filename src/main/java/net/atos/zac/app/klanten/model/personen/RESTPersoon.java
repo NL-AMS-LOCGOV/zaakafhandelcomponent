@@ -5,10 +5,10 @@
 
 package net.atos.zac.app.klanten.model.personen;
 
-import static net.atos.zac.app.klanten.model.IdentificatieType.BSN;
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.BSN;
 
-import net.atos.zac.app.klanten.model.IdentificatieType;
-import net.atos.zac.app.klanten.model.RESTKlant;
+import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.klanten.model.klant.RESTKlant;
 
 public class RESTPersoon extends RESTKlant {
 

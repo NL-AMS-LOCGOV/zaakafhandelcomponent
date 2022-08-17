@@ -244,7 +244,7 @@
   "archiefNominatie.datum.VERNIETIGEN" : "Destruction date",
   "betrokkenetype" : "Type",
   "betrokkenetype.NATUURLIJK_PERSOON" : "Person",
-  "betrokkenetype.NIET_NATUURLIJK_PERSOON" : "Branch",
+  "betrokkenetype.NIET_NATUURLIJK_PERSOON" : "Legal entity",
   "betrokkenetype.VESTIGING" : "Branch",
   "betrokkenetype.ORGANISATORISCHE_EENHEID" : "Group",
   "betrokkenetype.MEDEWERKER" : "Employee",

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.klanten.model;
+package net.atos.zac.app.klanten.model.klant;
 
 public abstract class RESTKlant {
     public abstract IdentificatieType getIdentificatieType();

@@ -14,6 +14,7 @@ import {User} from '../../identity/model/user';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
 import {ZaakActies} from './zaak-acties';
+import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
 
 export class Zaak {
     uuid: string;
@@ -46,7 +47,8 @@ export class Zaak {
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     eigenschappen: ZaakEigenschap[];
-    initiatorIdentificatie: string; // BSN or Vestigingsnummer
+    initiatorIdentificatieType: IdentificatieType;
+    initiatorIdentificatie: string;
     isHeropend: boolean;
     isHoofdzaak: boolean;
     isDeelzaak: boolean;

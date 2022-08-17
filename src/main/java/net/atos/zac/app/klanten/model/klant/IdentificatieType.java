@@ -1,4 +1,4 @@
-package net.atos.zac.app.klanten.model;
+package net.atos.zac.app.klanten.model.klant;
 
 public enum IdentificatieType {
     BSN,

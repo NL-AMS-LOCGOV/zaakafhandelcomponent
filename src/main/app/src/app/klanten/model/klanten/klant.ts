@@ -1,5 +1,7 @@
+import {IdentificatieType} from './identificatieType';
+
 export interface Klant {
-    identificatieType: string;
+    identificatieType: IdentificatieType;
     identificatie: string;
     naam: string;
 }

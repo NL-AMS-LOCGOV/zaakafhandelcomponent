@@ -14,7 +14,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.kvk.KVKClientService;
-import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.drc.DRCClientService;
@@ -53,10 +51,12 @@ import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
 import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.NietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.RolNietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Vestiging;
@@ -72,7 +72,7 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.KlantenRESTService;
-import net.atos.zac.app.klanten.model.IdentificatieType;
+import net.atos.zac.app.klanten.model.klant.IdentificatieType;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakBetrokkeneConverter;
@@ -630,7 +630,7 @@ public class ZakenRESTService {
             }
             case RSIN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorBedrijf());
-                addBetrokkenVestigingExtern(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
+                addBetrokkenRechtspersoon(initiator, identificatie, zaak, INITIATOR_TOEVOEGEN_REDEN);
             }
             default -> throw new IllegalStateException(String.format("Unexpected value: %s '%s'", identificatieType, identificatie));
         }
@@ -650,7 +650,7 @@ public class ZakenRESTService {
             }
             case RSIN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenBetrokkeneBedrijf());
-                addBetrokkenVestigingExtern(betrokkene, identificatie, zaak, toelichting);
+                addBetrokkenRechtspersoon(betrokkene, identificatie, zaak, toelichting);
             }
             default -> throw new IllegalStateException(String.format("Unexpected value: %s '%s'", identificatieType, identificatie));
         }
@@ -666,12 +666,8 @@ public class ZakenRESTService {
         zrcClientService.createRol(rol, toelichting);
     }
 
-    private void addBetrokkenVestigingExtern(final Roltype roltype, final String rsin, final Zaak zaak, String toelichting) {
-        final ResultaatItem vestiging = kvkClientService.findVestigingOnRsin(rsin);
-        final URI vestigingUrl = URI.create(vestiging.getLinks().stream()
-                                                    .filter(link -> "vestigingsprofiel".equals(link.getProfile()))
-                                                    .findAny().orElseThrow().getHref());
-        final RolVestiging rol = new RolVestiging(zaak.getUrl(), roltype.getUrl(), toelichting, vestigingUrl);
+    private void addBetrokkenRechtspersoon(final Roltype roltype, final String rsin, final Zaak zaak, String toelichting) {
+        final RolNietNatuurlijkPersoon rol = new RolNietNatuurlijkPersoon(zaak.getUrl(), roltype.getUrl(), toelichting, new NietNatuurlijkPersoon(rsin));
         zrcClientService.createRol(rol, toelichting);
     }
 

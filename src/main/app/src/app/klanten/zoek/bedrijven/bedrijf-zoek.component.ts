@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
@@ -15,13 +15,14 @@ import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-para
 import {KlantenService} from '../../klanten.service';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
     templateUrl: './bedrijf-zoek.component.html',
     styleUrls: ['./bedrijf-zoek.component.less']
 })
-export class BedrijfZoekComponent implements OnInit {
+export class BedrijfZoekComponent implements OnInit, OnDestroy {
     @Input() betrokkeneRoltypeField: SelectFormField;
     @Input() betrokkeneToelichtingField: InputFormField;
     @Output() bedrijf = new EventEmitter<Bedrijf>();
@@ -31,7 +32,7 @@ export class BedrijfZoekComponent implements OnInit {
     bedrijfColumns: string[] = ['naam', 'kvk', 'vestigingsnummer', 'type', 'adres', 'acties'];
     loading = false;
 
-    types = ['HOOFDVESTIGING', 'NEVENVESTIGING'];
+    types = ['HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
 
     kvkFormField: AbstractFormField;
     vestigingsnummerFormField: AbstractFormField;
@@ -41,6 +42,8 @@ export class BedrijfZoekComponent implements OnInit {
     postcodeFormField: AbstractFormField;
     huisnummerFormField: AbstractFormField;
     plaatsFormField: AbstractFormField;
+
+    subscriptions: Subscription[] = [];
 
     constructor(private klantenService: KlantenService, private formBuilder: FormBuilder) {
     }
@@ -73,6 +76,15 @@ export class BedrijfZoekComponent implements OnInit {
             plaats: this.plaatsFormField.formControl,
             type: this.typeFormField.formControl
         });
+        this.subscriptions.push(this.typeFormField.formControl.valueChanges.subscribe(value => {
+            this.rsinFormField.required = value === 'RECHTSPERSOON';
+        }));
+    }
+
+    ngOnDestroy(): void {
+        for (const subscription of this.subscriptions) {
+            subscription.unsubscribe();
+        }
     }
 
     isValid(): boolean {

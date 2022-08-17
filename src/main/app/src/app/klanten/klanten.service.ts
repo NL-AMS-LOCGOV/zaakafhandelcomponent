@@ -31,8 +31,14 @@ export class KlantenService {
         );
     }
 
-    readBedrijf(vestigingsnummer: string): Observable<Bedrijf> {
-        return this.http.get<Bedrijf>(`${this.basepath}/bedrijf/${vestigingsnummer}`).pipe(
+    readVestiging(vestigingsnummer: string): Observable<Bedrijf> {
+        return this.http.get<Bedrijf>(`${this.basepath}/vestiging/${vestigingsnummer}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    readRechtspersoon(rsin: string): Observable<Bedrijf> {
+        return this.http.get<Bedrijf>(`${this.basepath}/rechtspersoon/${rsin}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
