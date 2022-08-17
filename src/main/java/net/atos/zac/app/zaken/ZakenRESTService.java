@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.zaken;
 
+import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
@@ -584,7 +585,7 @@ public class ZakenRESTService {
     @Path("communicatiekanalen")
     public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
-        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals("E-formulier"));
+        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 
