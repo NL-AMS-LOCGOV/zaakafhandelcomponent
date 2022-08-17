@@ -35,7 +35,7 @@
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'geboortedatum' | translate"
-                                     [value]="persoon?.geboortedatum"></zac-static-text>
+                                     [value]="persoon?.geboortedatum | datum | empty"></zac-static-text>
                     <zac-static-text [label]="'inschrijfadres' | translate"
                                      [value]="persoon?.inschrijfadres"></zac-static-text>
                 </div>
