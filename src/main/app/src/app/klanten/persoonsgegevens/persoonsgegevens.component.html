@@ -16,44 +16,31 @@
                     {{persoon?.naam}}
                 </zac-skeleton-loader>
 
-                <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(persoon)">
+                <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
+                        (click)="$event.stopPropagation(); delete.emit(persoon)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-panel-description>
 
         </mat-expansion-panel-header>
-        <zac-skeleton-loader [loading$]="persoon$" [options]="{layout:'fields', fields:7, fieldsPerRow:4}">
+        <zac-skeleton-loader [loading$]="persoon$" [options]="{layout:'fields', fields:4, fieldsPerRow:3}">
             <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <div [fxFlex]="100/4" fxFlex.lt-md="50">
+                <div [fxFlex]="100/3" fxFlex.lt-md="50">
                     <zac-static-text [label]="'naam' | translate"
                                      [value]="persoon?.naam"></zac-static-text>
-                    <zac-static-text [label]="'burgerservicenummer' | translate"
-                                     [value]="bsn"></zac-static-text>
+                    <zac-static-text [label]="'inschrijfadres' | translate"
+                                     [value]="persoon?.inschrijfadres"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/4" fxFlex.lt-md="50">
+                <div [fxFlex]="100/3" fxFlex.lt-md="50">
                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                         <mat-divider></mat-divider>
                     </div>
                     <zac-static-text [label]="'geboortedatum' | translate"
                                      [value]="persoon?.geboortedatum | datum | empty"></zac-static-text>
-                    <zac-static-text [label]="'inschrijfadres' | translate"
-                                     [value]="persoon?.inschrijfadres"></zac-static-text>
+                    <zac-static-text [label]="'burgerservicenummer' | translate"
+                                     [value]="bsn"></zac-static-text>
                 </div>
-                <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
-                    <zac-static-text fxFlex.sm="25" [label]="'telefoonnummer' | translate"
-                                     [value]="'-'"></zac-static-text>
-                    <zac-static-text fxFlex.sm="25" [label]="'telefoonnummer2' | translate"
-                                     [value]="'-'"></zac-static-text>
-                </div>
-                <div [fxFlex]="100/4" fxFlex.lt-md="50" fxLayout.sm="row">
-                    <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
-                        <mat-divider></mat-divider>
-                    </div>
-                    <zac-static-text fxFlex.sm="25" [label]="'emailadres' | translate"
-                                     [value]="'-'"></zac-static-text>
+                <div [fxFlex]="100/3" fxFlex.lt-md="50">
                 </div>
             </div>
         </zac-skeleton-loader>

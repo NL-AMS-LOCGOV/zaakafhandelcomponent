@@ -5,8 +5,7 @@
 
 package net.atos.zac.app.klanten.converter;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,9 +20,6 @@ import net.atos.zac.app.klanten.model.bedrijven.RESTBedrijf;
 import net.atos.zac.app.klanten.model.bedrijven.RESTListBedrijvenParameters;
 
 public class RESTBedrijfConverter {
-
-
-    private static boolean isNotRechtspersoon(ResultaatItem resultaatItem) {return !resultaatItem.getType().equals("rechtspersoon");}
 
     public KVKZoekenParameters convert(final RESTListBedrijvenParameters restListParameters) {
         final KVKZoekenParameters zoekenParameters = new KVKZoekenParameters();
@@ -51,11 +47,11 @@ public class RESTBedrijfConverter {
         return zoekenParameters;
     }
 
-    public List<RESTBedrijf> convert(final Resultaat resultaat) {
+    public Stream<RESTBedrijf> convert(final Resultaat resultaat) {
         if (CollectionUtils.isEmpty(resultaat.getResultaten())) {
-            return Collections.emptyList();
+            return Stream.empty();
         }
-        return resultaat.getResultaten().stream().filter(RESTBedrijfConverter::isNotRechtspersoon).map(this::convert).collect(Collectors.toList());
+        return resultaat.getResultaten().stream().map(this::convert);
     }
 
     public RESTBedrijf convert(final ResultaatItem bedrijf) {
@@ -68,7 +64,7 @@ public class RESTBedrijfConverter {
         restBedrijf.handelsnaam = bedrijf.getHandelsnaam();
         restBedrijf.postcode = bedrijf.getPostcode();
         restBedrijf.rsin = bedrijf.getRsin();
-        restBedrijf.type = bedrijf.getType();
+        restBedrijf.type = bedrijf.getType().toUpperCase(Locale.getDefault());
         restBedrijf.adres = convertAdres(bedrijf);
         return restBedrijf;
     }

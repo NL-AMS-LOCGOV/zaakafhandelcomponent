@@ -5,11 +5,11 @@
 
 package net.atos.zac.app.klanten.model.bedrijven;
 
-import static net.atos.zac.app.klanten.model.IdentificatieType.RSIN;
-import static net.atos.zac.app.klanten.model.IdentificatieType.VN;
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
 
-import net.atos.zac.app.klanten.model.IdentificatieType;
-import net.atos.zac.app.klanten.model.RESTKlant;
+import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.klanten.model.klant.RESTKlant;
 
 public class RESTBedrijf extends RESTKlant {
 

@@ -244,7 +244,7 @@
   "archiefNominatie.datum.VERNIETIGEN" : "Vernietigdatum",
   "betrokkenetype" : "Type",
   "betrokkenetype.NATUURLIJK_PERSOON" : "Persoon",
-  "betrokkenetype.NIET_NATUURLIJK_PERSOON" : "Vestiging",
+  "betrokkenetype.NIET_NATUURLIJK_PERSOON" : "Rechtspersoon",
   "betrokkenetype.VESTIGING" : "Vestiging",
   "betrokkenetype.ORGANISATORISCHE_EENHEID" : "Groep",
   "betrokkenetype.MEDEWERKER" : "Medewerker",

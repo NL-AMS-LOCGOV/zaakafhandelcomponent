@@ -186,6 +186,7 @@ public class DataConverter {
         return switch (initiator.getBetrokkeneType()) {
             case NATUURLIJK_PERSOON -> createAanvragerDataNatuurlijkPersoon(initiator.getIdentificatienummer());
             case VESTIGING -> createAanvragerDataVestiging(initiator.getIdentificatienummer());
+            case NIET_NATUURLIJK_PERSOON -> createAanvragerDataNietNatuurlijkPersoon(initiator.getIdentificatienummer());
             default -> throw new NotImplementedException(String.format("Initiator of type '%s' is not supported"), initiator.getBetrokkeneType().toValue());
         };
     }
@@ -193,13 +194,13 @@ public class DataConverter {
     private AanvragerData createAanvragerDataNatuurlijkPersoon(final String bsn) {
         final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON);
         if (persoon != null) {
-            return convertToAanvragerDataNatuurlijkPersoon(persoon);
+            return convertToAanvragerDataPersoon(persoon);
         } else {
             return null;
         }
     }
 
-    private AanvragerData convertToAanvragerDataNatuurlijkPersoon(final IngeschrevenPersoonHal persoon) {
+    private AanvragerData convertToAanvragerDataPersoon(final IngeschrevenPersoonHal persoon) {
         final AanvragerData aanvragerData = new AanvragerData();
         if (persoon.getNaam() != null) {
             aanvragerData.naam = convertToNaam(persoon.getNaam());
@@ -229,13 +230,22 @@ public class DataConverter {
     private AanvragerData createAanvragerDataVestiging(final String vestigingsnummer) {
         final ResultaatItem vestiging = kvkClientService.findVestiging(vestigingsnummer);
         if (vestiging != null) {
-            return convertToAanvragerDataVestiging(vestiging);
+            return convertToAanvragerDataBedrijf(vestiging);
         } else {
             return null;
         }
     }
 
-    private AanvragerData convertToAanvragerDataVestiging(final ResultaatItem vestiging) {
+    private AanvragerData createAanvragerDataNietNatuurlijkPersoon(final String rsin) {
+        final ResultaatItem vestiging = kvkClientService.findRechtspersoon(rsin);
+        if (vestiging != null) {
+            return convertToAanvragerDataBedrijf(vestiging);
+        } else {
+            return null;
+        }
+    }
+
+    private AanvragerData convertToAanvragerDataBedrijf(final ResultaatItem vestiging) {
         final AanvragerData aanvragerData = new AanvragerData();
         aanvragerData.naam = vestiging.getHandelsnaam();
         aanvragerData.straat = vestiging.getStraatnaam();

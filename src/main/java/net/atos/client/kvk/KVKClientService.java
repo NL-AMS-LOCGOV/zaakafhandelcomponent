@@ -52,8 +52,9 @@ public class KVKClientService {
         return findSingleItem(zoekParameters);
     }
 
-    public ResultaatItem findVestigingOnRsin(final String rsin) {
+    public ResultaatItem findRechtspersoon(final String rsin) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
+        zoekParameters.setType("rechtspersoon");
         zoekParameters.setRsin(rsin);
         return findSingleItem(zoekParameters);
     }

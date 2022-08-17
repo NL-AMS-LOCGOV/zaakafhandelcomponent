@@ -7,7 +7,7 @@ package net.atos.zac.app.zaken.model;
 
 import java.util.UUID;
 
-import net.atos.zac.app.klanten.model.IdentificatieType;
+import net.atos.zac.app.klanten.model.klant.IdentificatieType;
 
 public class RESTZaakBetrokkeneGegevens {
 

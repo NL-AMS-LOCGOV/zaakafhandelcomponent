@@ -4,6 +4,7 @@
  */
 
 import {Klant} from '../klanten/klant';
+import {IdentificatieType} from '../klanten/identificatieType';
 
 export class Bedrijf implements Klant {
     vestigingsnummer: string;
@@ -13,7 +14,7 @@ export class Bedrijf implements Klant {
     adres: string;
     postcode: string;
     type: string;
-    identificatieType: string;
+    identificatieType: IdentificatieType;
     identificatie: string;
     naam: string;
 }
