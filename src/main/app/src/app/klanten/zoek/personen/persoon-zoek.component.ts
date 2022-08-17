@@ -67,16 +67,20 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid || (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid)) {
+        if (!this.formGroup.valid ||
+            (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid) ||
+            (this.betrokkeneToelichtingField && !this.betrokkeneToelichtingField.formControl.valid)) {
             return false;
         }
+
         const bsn = this.bsnFormField.formControl.value;
         const geslachtsnaam = this.geslachtsnaamFormField.formControl.value;
         const geboortedatum = this.geboortedatumFormField.formControl.value;
         const postcode = this.postcodeFormField.formControl.value;
         const huisnummer = this.huisnummerFormField.formControl.value;
         const gemeenteCode = this.gemeenteCodeFormField.formControl.value;
-        return bsn || geboortedatum && geslachtsnaam || geslachtsnaam && gemeenteCode || postcode && huisnummer;
+
+        return bsn || (geslachtsnaam && (geboortedatum || gemeenteCode)) || (postcode && huisnummer);
     }
 
     createListPersonenParameters(): ListPersonenParameters {
