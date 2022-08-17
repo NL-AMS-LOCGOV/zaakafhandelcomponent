@@ -87,6 +87,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['dagenTotFataledatum', ColumnPickerValue.HIDDEN],
             ['toelichting', ColumnPickerValue.HIDDEN],
+            ['indicaties', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
         if (!this.acties.verdelenEnVrijgeven) {
@@ -98,7 +99,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-        this.dataSource.load();
     }
 
     private getIngelogdeMedewerker() {

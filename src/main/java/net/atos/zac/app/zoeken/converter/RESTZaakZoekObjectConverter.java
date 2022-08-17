@@ -37,6 +37,14 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.statustypeOmschrijving = zoekItem.getStatustypeOmschrijving();
         restZoekItem.resultaattypeOmschrijving = zoekItem.getResultaattypeOmschrijving();
         restZoekItem.aantalOpenstaandeTaken = zoekItem.getAantalOpenstaandeTaken();
+        restZoekItem.indicatieVerlenging = zoekItem.isIndicatieVerlenging();
+        restZoekItem.redenVerlenging = zoekItem.getRedenVerlenging();
+        restZoekItem.indicatieOpschorting = zoekItem.isIndicatieOpschorting();
+        restZoekItem.redenOpschorting = zoekItem.getRedenOpschorting();
+        restZoekItem.indicatieDeelzaak = zoekItem.isIndicatieDeelzaak();
+        restZoekItem.indicatieHoofdzaak = zoekItem.isIndicatieHoofdzaak();
+        restZoekItem.indicatieHeropend = zoekItem.isIndicatieHeropend();
+        restZoekItem.statusToelichting = zoekItem.getStatusToelichting();
         return restZoekItem;
     }
 }
