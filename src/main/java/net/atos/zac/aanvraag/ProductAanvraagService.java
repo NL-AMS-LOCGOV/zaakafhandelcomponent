@@ -73,6 +73,7 @@ public class ProductAanvraagService {
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
+        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal("E-formulier");
 
         Zaak zaak;
         switch (productAanvraag.getType()) {
@@ -86,14 +87,8 @@ public class ProductAanvraagService {
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
-        try {
-            CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal("E-formulier");
+        if(communicatieKanaal != null) {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
-        } catch (CommunicatiekanaalNotFoundException e) {
-            final UUID finalZaakUUID = zaak.getUuid();
-            LOG.severe(() -> String.format("Error while setting CommunicatieKanaal for new Zaak %s: %s",
-                                            finalZaakUUID,
-                                            e.getMessage()));
         }
         zaak = zgwApiService.createZaak(zaak);
 

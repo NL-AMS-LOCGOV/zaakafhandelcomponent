@@ -583,10 +583,8 @@ public class ZakenRESTService {
     @GET
     @Path("communicatiekanalen")
     public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
-        final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen()
-                .stream()
-                .filter(communicatieKanaal -> !communicatieKanaal.getNaam().equals("E-formulier"))
-                .toList();
+        final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
+        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals("E-formulier"));
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 

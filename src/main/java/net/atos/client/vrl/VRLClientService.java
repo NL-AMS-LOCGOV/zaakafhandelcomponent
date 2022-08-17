@@ -41,10 +41,10 @@ public class VRLClientService {
         }
     }
 
-    public CommunicatieKanaal findCommunicatiekanaal(final String communicatiekanaalNaam) throws CommunicatiekanaalNotFoundException {
+    public CommunicatieKanaal findCommunicatiekanaal(final String communicatiekanaalNaam) {
         return listCommunicatiekanalen().stream()
                 .filter(communicatieKanaal -> communicatieKanaal.getNaam().equals(communicatiekanaalNaam))
                 .findAny()
-                .orElseThrow(CommunicatiekanaalNotFoundException::new);
+                .orElse(null);
     }
 }
