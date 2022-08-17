@@ -41,9 +41,11 @@
                                   [zaak]="zaak"></zac-ontvangstbevestiging>
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
-        <zac-persoongegevens *ngIf="initiatorType==='PERSOON'" [bsn]="zaak.initiatorIdentificatie"
+        <zac-persoongegevens *ngIf="zaak.initiatorIdentificatieType==='BSN'" [bsn]="zaak.initiatorIdentificatie"
                              [isVerwijderbaar]="zaak.acties.verwijderenInitiator" (delete)="deleteInitiator()"></zac-persoongegevens>
-        <zac-bedrijfsgegevens *ngIf="initiatorType==='BEDRIJF'" [vestigingsnummer]="zaak.initiatorIdentificatie"
+        <zac-bedrijfsgegevens *ngIf="zaak.initiatorIdentificatieType==='VN'" [vestigingsnummer]="zaak.initiatorIdentificatie"
+                              [isVerwijderbaar]="zaak.acties.verwijderenInitiator" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
+        <zac-bedrijfsgegevens *ngIf="zaak.initiatorIdentificatieType==='RSIN'" [rsin]="zaak.initiatorIdentificatie"
                               [isVerwijderbaar]="zaak.acties.verwijderenInitiator" (delete)="deleteInitiator()"></zac-bedrijfsgegevens>
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(50%-20px)" fxFlex.lt-lg="100">

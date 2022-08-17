@@ -63,6 +63,10 @@ public class ZRCClientService {
     private String zgwApiUrlExtern;
 
     @Inject
+    @ConfigProperty(name = "ZGW_API_CLIENT_MP_REST_URL")
+    private String getZgwApiClientMpRestUrl;
+
+    @Inject
     @RestClient
     private ZRCClient zrcClient;
 
@@ -423,6 +427,10 @@ public class ZRCClientService {
 
     public URI createUrlExternToZaak(final UUID zaakUUID) {
         return UriBuilder.fromUri(zgwApiUrlExtern).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
+    }
+
+    public URI createUrlZaak(final UUID zaakUUID) {
+        return UriBuilder.fromUri(getZgwApiClientMpRestUrl).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
     }
 
     private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {

@@ -7,6 +7,7 @@ package net.atos.zac.app.klanten;
 
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.kvk.KVKClientService;
 import net.atos.client.kvk.model.KVKZoekenParameters;
 import net.atos.client.kvk.zoeken.model.Resultaat;
+import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
@@ -86,9 +88,15 @@ public class KlantenRESTService {
     }
 
     @GET
-    @Path("bedrijf/{vestigingsnummer}")
-    public RESTBedrijf readBedrijf(@PathParam("vestigingsnummer") final String vestigingsnummer) {
+    @Path("vestiging/{vestigingsnummer}")
+    public RESTBedrijf readVestiging(@PathParam("vestigingsnummer") final String vestigingsnummer) {
         return bedrijfConverter.convert(kvkClientService.findVestiging(vestigingsnummer));
+    }
+
+    @GET
+    @Path("rechtspersoon/{rsin}")
+    public RESTBedrijf readRechtspersoon(@PathParam("rsin") final String rsin) {
+        return bedrijfConverter.convert(kvkClientService.findRechtspersoon(rsin));
     }
 
     @PUT
@@ -108,13 +116,23 @@ public class KlantenRESTService {
     @Path("bedrijven")
     public RESTResultaat<RESTBedrijf> listBedrijven(final RESTListBedrijvenParameters restParameters) {
         try {
-            KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
-            Resultaat resultaat = kvkClientService.find(zoekenParameters);
-            return new RESTResultaat<>(bedrijfConverter.convert(resultaat));
+            final KVKZoekenParameters zoekenParameters = bedrijfConverter.convert(restParameters);
+            final Resultaat resultaat = kvkClientService.find(zoekenParameters);
+            if (resultaat.getResultaten() == null) {
+                return new RESTResultaat<>(Collections.emptyList());
+            }
+            return new RESTResultaat<>(resultaat.getResultaten().stream()
+                                               .filter(KlantenRESTService::isKoppelbaar)
+                                               .map(bedrijfConverter::convert)
+                                               .toList());
         } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listBedrijven: %s", e.getMessage()));
             return new RESTResultaat<>(e.getMessage());
         }
+    }
+
+    private static boolean isKoppelbaar(final ResultaatItem item) {
+        return item.getVestigingsnummer() != null || item.getRsin() != null;
     }
 
     @GET

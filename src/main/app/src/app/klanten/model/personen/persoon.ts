@@ -4,6 +4,7 @@
  */
 
 import {Klant} from '../klanten/klant';
+import {IdentificatieType} from '../klanten/identificatieType';
 
 export class Persoon implements Klant {
     bsn: string;
@@ -11,6 +12,7 @@ export class Persoon implements Klant {
     naam: string;
     geboortedatum: string;
     inschrijfadres: string;
+    identificatieType: IdentificatieType;
     identificatie: string;
 }
 

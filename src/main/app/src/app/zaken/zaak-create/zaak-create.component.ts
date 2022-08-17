@@ -23,7 +23,6 @@ import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {MatSidenav} from '@angular/material/sidenav';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
-import {CustomValidators} from '../../shared/validators/customValidators';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
@@ -48,6 +47,7 @@ export class ZaakCreateComponent implements OnInit {
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
     private locatieToevoegenIcon = new ActionIcon('place', 'actie.locatie.toevoegen', new Subject<void>());
 
+    private initiator: Klant;
     private locatie: AddressResult;
 
     constructor(private zakenService: ZakenService, private router: Router, private navigation: NavigationService, private utilService: UtilService) {
@@ -89,9 +89,8 @@ export class ZaakCreateComponent implements OnInit {
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
                                                          .icon(this.initiatorToevoegenIcon)
                                                          .label('initiator')
-                                                         .validators(CustomValidators.bsnOrVesPrefixed)
-                                                         .maxlength(70)
                                                          .build();
+        this.initiatorField.formControl.disable({onlySelf: true});
 
         const communicatiekanaal = new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
                                                                .optionLabel('naam').options(communicatiekanalen)
@@ -110,7 +109,6 @@ export class ZaakCreateComponent implements OnInit {
         this.locatieField = new InputFormFieldBuilder().id('zaakgeometrie')
                                                        .icon(this.locatieToevoegenIcon)
                                                        .label('locatie')
-                                                       .maxlength(100)
                                                        .build();
         this.locatieField.formControl.disable({onlySelf: true});
         const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
@@ -131,12 +129,10 @@ export class ZaakCreateComponent implements OnInit {
                 } else {
                     zaak[key] = formGroup.controls[key].value;
                 }
-                if (key === 'initiatorIdentificatie' && formGroup.controls[key].value) {
-                    const val = formGroup.controls[key].value;
-                    const prefix = val.indexOf('|');
-                    zaak[key] = val.substring(0, prefix !== -1 ? prefix : val.length).trim();
+                if (key === 'initiatorIdentificatie' && this.initiator != null) {
+                    zaak['initiatorIdentificatieType'] = this.initiator.identificatieType;
+                    zaak[key] = this.initiator.identificatie;
                 }
-
                 if (key === 'zaakgeometrie' && this.locatie != null) {
                     zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
                 }
@@ -150,7 +146,8 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     initiatorGeselecteerd(initiator: Klant): void {
-        this.initiatorField.formControl.setValue(initiator.identificatie + ' | ' + initiator.naam);
+        this.initiator = initiator;
+        this.initiatorField.formControl.setValue(initiator?.naam);
         this.actionsSidenav.close();
     }
 

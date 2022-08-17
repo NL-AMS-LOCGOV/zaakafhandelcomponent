@@ -40,4 +40,11 @@ public class VRLClientService {
             return null;
         }
     }
+
+    public CommunicatieKanaal findCommunicatiekanaal(final String communicatiekanaalNaam) {
+        return listCommunicatiekanalen().stream()
+                .filter(communicatieKanaal -> communicatieKanaal.getNaam().equals(communicatiekanaalNaam))
+                .findAny()
+                .orElse(null);
+    }
 }

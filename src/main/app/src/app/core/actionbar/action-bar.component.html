@@ -5,15 +5,19 @@
 
 <ng-template>
     <mat-list>
-        <mat-list-item *ngFor="let action of actions">
+        <mat-list-item *ngFor="let action of actions"
+                       title="{{(action.actionEnabled() ? null :action.action.title + '.disabled') | translate}}">
             <div mat-line>
                 <span class="entity-type">{{'action.entityType.' + action.entityType | translate}} </span>
-                <span>{{action.text}}</span>
+                <span>{{action.text}}
+                    <mat-icon *ngIf="!action.actionEnabled()"
+                              class="help-icon">help_outline</mat-icon>
+                </span>
             </div>
             <div class="sub-text" mat-line>{{action.subText}}</div>
             <div fxFlex fxLayoutAlign="end center">
                 <button mat-icon-button color="primary"
-                        title="{{action.action.title + (action.actionEnabled() ? '' : '.disabled') | translate}}"
+                        title="{{(action.actionEnabled() ? action.action.title: null) | translate}}"
                         [disabled]="!action.actionEnabled() || actionBarDisabled"
                         (click)="actionTextClicked(action)">
                     <mat-icon>{{action.action.icon}}</mat-icon>

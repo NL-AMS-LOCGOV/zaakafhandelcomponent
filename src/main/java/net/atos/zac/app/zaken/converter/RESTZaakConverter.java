@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.zaken.converter;
 
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.BSN;
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
+import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.time.Period;
@@ -162,6 +165,12 @@ public class RESTZaakConverter {
 
         final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
         if (initiator != null) {
+            restZaak.initiatorIdentificatieType = switch (initiator.getBetrokkeneType()) {
+                case NATUURLIJK_PERSOON -> BSN;
+                case VESTIGING -> VN;
+                case NIET_NATUURLIJK_PERSOON -> RSIN;
+                default -> null;
+            };
             restZaak.initiatorIdentificatie = initiator.getIdentificatienummer();
         }
 

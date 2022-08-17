@@ -32,6 +32,7 @@ import {ZaakKoppelGegevens} from './model/zaak-koppel-gegevens';
 import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
 import {Roltype} from '../klanten/model/klanten/roltype';
 import {ZaakBetrokkene} from './model/zaak-betrokkene';
+import {Klant} from '../klanten/model/klanten/klant';
 
 @Injectable({
     providedIn: 'root'
@@ -155,10 +156,11 @@ export class ZakenService {
         );
     }
 
-    createInitiator(zaak: Zaak, betrokkeneIdentificatie: string): Observable<Zaak> {
+    createInitiator(zaak: Zaak, initiator: Klant): Observable<Zaak> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
-        gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
+        gegevens.betrokkeneIdentificatieType = initiator.identificatieType;
+        gegevens.betrokkeneIdentificatie = initiator.identificatie;
         return this.http.post<Zaak>(`${this.basepath}/initiator`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
@@ -170,12 +172,13 @@ export class ZakenService {
         );
     }
 
-    createBetrokkene(zaak: Zaak, betrokkeneIdentificatie: string, roltype: Roltype, roltoelichting: string): Observable<Zaak> {
+    createBetrokkene(zaak: Zaak, betrokkene: Klant, roltype: Roltype, roltoelichting: string): Observable<Zaak> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
         gegevens.roltypeUUID = roltype.uuid;
         gegevens.roltoelichting = roltoelichting;
-        gegevens.betrokkeneIdentificatie = betrokkeneIdentificatie;
+        gegevens.betrokkeneIdentificatieType = betrokkene.identificatieType;
+        gegevens.betrokkeneIdentificatie = betrokkene.identificatie;
         return this.http.post<Zaak>(`${this.basepath}/betrokkene`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

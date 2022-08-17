@@ -8,6 +8,7 @@ package net.atos.zac.app.planitems;
 import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +25,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import net.atos.zac.app.taken.model.DocumentLijstData;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -117,13 +116,7 @@ public class PlanItemsRESTService {
         if (humanTaskData.taakStuurGegevens.sendMail) {
             String bijlagen = null;
             if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
-                try {
-                    final DocumentLijstData documentLijstData =
-                            new ObjectMapper().readValue(humanTaskData.taakdata.get(BIJLAGEN), DocumentLijstData.class);
-                    bijlagen = documentLijstData != null ? documentLijstData.selection : null;
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e.getMessage(), e); //invalid form-group data
-                }
+                bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
             }
 
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,

@@ -31,7 +31,7 @@ public class RESTZaakBetrokkeneConverter {
             }
             case NIET_NATUURLIJK_PERSOON -> {
                 final RolNietNatuurlijkPersoon rolNietNatuurlijkPersoon = (RolNietNatuurlijkPersoon) rol;
-                betrokkene.identificatie = rolNietNatuurlijkPersoon.getBetrokkeneIdentificatie().getAnnIdentificatie();
+                betrokkene.identificatie = rolNietNatuurlijkPersoon.getBetrokkeneIdentificatie().getInnNnpId();
             }
             case VESTIGING -> {
                 final RolVestiging rolVestiging = (RolVestiging) rol;
