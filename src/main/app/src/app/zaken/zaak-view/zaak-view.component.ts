@@ -360,12 +360,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
-        if (this.zaak.acties.koppelen) {
-            this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
-                this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
-            }, 'account_tree'));
-        }
-
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
@@ -388,7 +382,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 if (this.zaak.acties.afbreken) {
                     this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
                 }
-                this.createRelatiesToevoegenMenuItems();
+                this.createKoppelingenMenuItems();
                 if (planItems.humanTaskPlanItems.length > 0) {
                     this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                     this.menu = this.menu.concat(
@@ -399,32 +393,41 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             if (this.zaak.acties.afbreken) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
-            this.createRelatiesToevoegenMenuItems();
+            this.createKoppelingenMenuItems();
         }
     }
 
-    private createRelatiesToevoegenMenuItems(): void {
-        if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf ||
-            this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf) {
-            this.menu.push(new HeaderMenuItem('betrokkenen'));
-            if (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) {
+    private createKoppelingenMenuItems(): void {
+        const zoekInitiator: boolean = (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) &&
+            (this.zaak.initiatorIdentificatie == null || this.zaak.acties.verwijderenInitiator);
+        const zoekBetrokkene: boolean = this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf;
+        const zoekBAG: boolean = this.zaak.acties.toevoegenBAGObject;
+        const zaakToClipboard: boolean = this.zaak.acties.koppelen;
+        if (zoekInitiator || zoekBetrokkene || zoekBAG || zaakToClipboard) {
+            this.menu.push(new HeaderMenuItem('koppelingen'));
+            if (zoekInitiator) {
                 this.menu.push(new ButtonMenuItem('actie.initiator.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_INITIATOR;
                 }, 'person_add_alt_1'));
             }
-            if (this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf) {
+            if (zoekBetrokkene) {
                 this.menu.push(new ButtonMenuItem('actie.betrokkene.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_BETROKKENE;
                 }, 'group_add'));
             }
-        }
-        if (this.zaak.acties.toevoegenBAGObject) {
-            this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.ZOEK_BAG_ADRES;
-            }, 'add_home_work'));
+            if (zoekBAG) {
+                this.menu.push(new ButtonMenuItem('actie.bagobject.toevoegen', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.ZOEK_BAG_ADRES;
+                }, 'add_home_work'));
+            }
+            if (zaakToClipboard) {
+                this.menu.push(new ButtonMenuItem('actie.zaak.koppelen', () => {
+                    this.zaakKoppelenService.addTeKoppelenZaak(this.zaak);
+                }, 'account_tree'));
+            }
         }
     }
 
@@ -805,7 +808,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     initiatorGeselecteerd(initiator: Klant): void {
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.actionsSidenav.close();
-        this.zakenService.createInitiator(this.zaak, initiator)
+        this.zakenService.updateInitiator(this.zaak, initiator)
             .subscribe(zaak => {
                 this.zaak = zaak;
                 this.utilService.openSnackbar('msg.initiator.toegevoegd', {naam: zaak.initiatorIdentificatie});

@@ -122,21 +122,18 @@ toevoegen_bag_object {
 default toevoegen_initiator_persoon := false
 toevoegen_initiator_persoon {
     zaak.open == true
-    zaak.initiator == false
     zaaktype_allowed == true
 }
 
 default toevoegen_initiator_bedrijf := false
 toevoegen_initiator_bedrijf {
     zaak.open == true
-    zaak.initiator == false
     zaaktype_allowed == true
 }
 
 default verwijderen_initiator := false
 verwijderen_initiator {
     zaak.open == true
-    zaak.initiator == true
     zaaktype_allowed == true
 }
 

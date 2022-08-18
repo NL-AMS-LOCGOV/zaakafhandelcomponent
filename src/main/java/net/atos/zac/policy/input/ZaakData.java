@@ -16,6 +16,4 @@ public class ZaakData {
     public String behandelaar;
 
     public String zaaktype;
-
-    public boolean initiator;
 }
