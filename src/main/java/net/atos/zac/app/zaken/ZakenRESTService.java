@@ -5,6 +5,7 @@
 
 package net.atos.zac.app.zaken;
 
+import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
@@ -366,7 +367,7 @@ public class ZakenRESTService {
                                                zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
                                                                                            ontkoppelGegevens.reden,
                                                                                            "Ontkoppeld: "));
-        if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
+        if (zrcClientService.listZaakinformatieobjecten(informatieobject.getUrl()).isEmpty()) {
             ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }
     }
@@ -467,10 +468,7 @@ public class ZakenRESTService {
     @Path("vrijgeven")
     public void vrijgeven(final RESTZakenVerdeelGegevens verdeelGegevens) {
         assertActie(policyService.readZakenActies().getVerdelenEnVrijgeven());
-        verdeelGegevens.uuids.forEach(uuid -> {
-            final Zaak zaak = zrcClientService.readZaak(uuid);
-            zrcClientService.deleteRol(zaak.getUuid(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
-        });
+        verdeelGegevens.uuids.forEach(uuid -> zrcClientService.deleteRol(uuid, BetrokkeneType.MEDEWERKER, verdeelGegevens.reden));
         indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).toList(), ZoekObjectType.ZAAK);
     }
 
@@ -515,8 +513,8 @@ public class ZakenRESTService {
         assertActie(policyService.readZaakActies(koppelenAanZaak).getKoppelen());
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUuid(), teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), koppelenAanZaak.getUuid());
         }
     }
 
@@ -584,7 +582,7 @@ public class ZakenRESTService {
     @Path("communicatiekanalen")
     public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
-        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals("E-formulier"));
+        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 
@@ -685,10 +683,10 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
-        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
+    private void koppelHoofdEnDeelzaak(final UUID hoofdzaakUUID, final UUID deelzaakUUID) {
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(zrcClientService.createUrlZaak(hoofdzaakUUID));
         zrcClientService.updateZaak(deelzaakUUID, deelzaak);
-        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
+        eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 
     private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {

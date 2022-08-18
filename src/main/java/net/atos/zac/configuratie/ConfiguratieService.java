@@ -81,6 +81,8 @@ public class ConfiguratieService {
 
     public static final String BIJLAGEN = "bijlagen";
 
+    public static final String COMMUNICATIEKANAAL_EFORMULIER = "E-formulier";
+
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject
     @ConfigProperty(name = "CONTEXT_URL")
