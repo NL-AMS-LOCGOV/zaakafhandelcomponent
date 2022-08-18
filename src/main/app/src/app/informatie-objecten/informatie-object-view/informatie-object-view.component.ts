@@ -35,8 +35,6 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
-import {Indicatie} from '../../shared/model/indicatie';
-import {IdentityService} from '../../identity/identity.service';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -51,7 +49,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
-    indicaties: Indicatie[];
     action: string;
     versieInformatie: string;
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
@@ -69,8 +66,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 private websocketService: WebsocketService,
                 private router: Router,
                 private translate: TranslateService,
-                private dialog: MatDialog,
-                private identityService: IdentityService) {
+                private dialog: MatDialog) {
         super();
     }
 
@@ -96,7 +92,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 });
 
             this.loadHistorie();
-            this.loadIndicaties();
         }));
     }
 
@@ -117,18 +112,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     ngOnDestroy() {
         this.websocketService.removeListener(this.documentListener);
-    }
-
-    private loadIndicaties() {
-        this.indicaties = [];
-        if (this.infoObject.gelockedDoor) {
-            this.indicaties.push(new Indicatie('indicatieVergrendeld',
-                this.translate.instant('msg.document.vergrendeld', {gebruiker: this.infoObject.gelockedDoor.naam})));
-        }
-        if (this.infoObject.ondertekening) {
-            this.indicaties.push(new Indicatie('indicatieOndertekend',
-                this.infoObject.ondertekening.soort + ' - ' + this.infoObject.ondertekening.datum));
-        }
     }
 
     private toevoegenActies() {
@@ -199,7 +182,6 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             this.laatsteVersieInfoObject = infoObject;
             this.toevoegenActies();
             this.updateVersieInformatie();
-            this.loadIndicaties();
         });
     }
 

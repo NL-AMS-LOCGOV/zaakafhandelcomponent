@@ -43,6 +43,14 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
 
     public boolean indicatieVerlenging;
 
+    public boolean indicatieOpschorting;
+
+    public boolean indicatieHeropend;
+
+    public boolean indicatieDeelzaak;
+
+    public boolean indicatieHoofdzaak;
+
     public String duurVerlenging;
 
     public String redenVerlenging;
@@ -58,6 +66,8 @@ public class RESTZaakZoekObject extends AbstractRESTZoekObject {
     public String resultaatToelichting;
 
     public String statustypeOmschrijving;
+
+    public String statusToelichting;
 
     public long aantalOpenstaandeTaken;
 

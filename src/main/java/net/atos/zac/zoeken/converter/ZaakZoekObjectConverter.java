@@ -1,5 +1,7 @@
 package net.atos.zac.zoeken.converter;
 
+import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
+
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -87,15 +89,19 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             zaakZoekObject.setBehandelaarGebruikersnaam(behandelaar.getId());
         }
 
-        if (zaak.getVerlenging() != null) {
+        if (zaak.isVerlengd()) {
             zaakZoekObject.setIndicatieVerlenging(true);
             zaakZoekObject.setDuurVerlenging(String.valueOf(zaak.getVerlenging().getDuur()));
             zaakZoekObject.setRedenVerlenging(zaak.getVerlenging().getReden());
         }
 
-        if (zaak.getOpschorting() != null) {
+        if (zaak.isOpgeschort()) {
             zaakZoekObject.setRedenOpschorting(zaak.getOpschorting().getReden());
+            zaakZoekObject.setIndicatieOpschorting(true);
         }
+
+        zaakZoekObject.setIndicatieDeelzaak(zaak.isDeelzaak());
+        zaakZoekObject.setIndicatieHoofdzaak(zaak.is_Hoofdzaak());
 
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         zaakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
@@ -109,6 +115,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
             zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
             zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
+            zaakZoekObject.setIndicatieHeropend(STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()));
         }
 
         zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));

@@ -68,6 +68,7 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
             ['dagenTotStreefdatum', ColumnPickerValue.VISIBLE],
             ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
             ['dagenTotFataledatum', ColumnPickerValue.VISIBLE],
+            ['indicaties', ColumnPickerValue.VISIBLE],
             ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
         ]);
@@ -76,7 +77,6 @@ export class ZakenMijnComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-        this.dataSource.load();
     }
 
     isAfterDate(datum): boolean {
