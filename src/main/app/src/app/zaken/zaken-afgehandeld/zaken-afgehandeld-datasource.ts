@@ -4,13 +4,13 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {ZoekenTableDataSource} from '../../shared/dynamic-table/datasource/zoeken-table-data-source';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {ZoekenDataSource} from '../../shared/dynamic-table/datasource/zoeken-data-source';
 
-export class ZakenAfgehandeldDatasource extends ZoekenTableDataSource<ZaakZoekObject> {
+export class ZakenAfgehandeldDatasource extends ZoekenDataSource<ZaakZoekObject> {
 
     constructor(zoekenService: ZoekenService,
                 utilService: UtilService) {
@@ -21,4 +21,5 @@ export class ZakenAfgehandeldDatasource extends ZoekenTableDataSource<ZaakZoekOb
         zoekParameters.type = 'ZAAK';
         zoekParameters.alleenAfgeslotenZaken = true;
     }
+
 }

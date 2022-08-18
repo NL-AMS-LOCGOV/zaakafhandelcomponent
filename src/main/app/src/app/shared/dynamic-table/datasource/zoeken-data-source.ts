@@ -20,7 +20,7 @@ import {Werklijst} from '../../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../../gebruikersvoorkeuren/model/zoekopdracht';
 import {EventEmitter} from '@angular/core';
 
-export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
+export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
     zoekParameters: ZoekParameters;
     beschikbareFilters: { [key: string]: string[] } = {};
