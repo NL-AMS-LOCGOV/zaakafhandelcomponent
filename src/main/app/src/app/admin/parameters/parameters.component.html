@@ -11,24 +11,39 @@
         <mat-card>
             <mat-card-content>
                 <div class="table-wrapper historie">
-                    <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort">
+                    <table mat-table [dataSource]="parameters" matSort #parametersSort="matSort" matSortActive="geldig" matSortDirection="desc">
                         <ng-container matColumnDef="valide_filter">
                             <th mat-header-cell *matHeaderCellDef>
-                                <zac-facet-filter label="valide"
-                                                  [selected]="filterParameters.valide"
-                                                  [opties]="['Valide', 'Niet valide']"
-                                                  (changed)="filterParameters.valide = $event;  applyFilter()">
-                                </zac-facet-filter>
+                                <zac-toggle-filter unCheckedIcon="error_outline" [selected]="filterParameters.valide"
+                                                   (changed)="filterParameters.valide = $event;applyFilter()"></zac-toggle-filter>
                             </th>
                         </ng-container>
                         <ng-container matColumnDef="omschrijving_filter">
-                            <th mat-header-cell *matHeaderCellDef></th>
+                            <th mat-header-cell *matHeaderCellDef>
+                                <mat-form-field appearance="standard">
+                                    <mat-select [compareWith]="compareZaaktype" (selectionChange)="applyFilter()" id="zaaktype_filter"
+                                                placeholder="{{'zaaktype.-kies-' | translate }}"
+                                                [(ngModel)]="filterParameters.zaaktype">
+                                        <mat-option>{{'zaaktype.-kies-' | translate }}</mat-option>
+                                        <mat-option *ngFor="let value of zaaktypes" [value]="value">{{ value.omschrijving }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </th>
                         </ng-container>
                         <ng-container matColumnDef="doel_filter">
                             <th mat-header-cell *matHeaderCellDef></th>
                         </ng-container>
                         <ng-container matColumnDef="model_filter">
-                            <th mat-header-cell *matHeaderCellDef></th>
+                            <th mat-header-cell *matHeaderCellDef>
+                                <mat-form-field appearance="standard">
+                                    <mat-select [compareWith]="compareCaseDefinition" (selectionChange)="applyFilter()" id="caseDefinition_filter"
+                                                placeholder="{{'model.-kies-' | translate }}"
+                                                [(ngModel)]="filterParameters.caseDefinition">
+                                        <mat-option>{{'model.-kies-' | translate }}</mat-option>
+                                        <mat-option *ngFor="let value of caseDefinitions" [value]="value">{{ value.naam }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </th>
                         </ng-container>
                         <ng-container matColumnDef="groep_filter">
                             <th mat-header-cell *matHeaderCellDef></th>
@@ -41,22 +56,19 @@
                         </ng-container>
                         <ng-container matColumnDef="geldig_filter">
                             <th mat-header-cell *matHeaderCellDef>
-                                <zac-facet-filter label="geldig"
-                                                  [selected]="filterParameters.geldig"
-                                                  [opties]="['Ja', 'Nee']"
-                                                  (changed)="filterParameters.geldig = $event;  applyFilter()">
-                                </zac-facet-filter>
+                                <zac-toggle-filter [selected]="filterParameters.geldig"
+                                                   (changed)="filterParameters.geldig = $event;applyFilter()"></zac-toggle-filter>
                             </th>
                         </ng-container>
                         <ng-container matColumnDef="beginGeldigheid_filter">
                             <th mat-header-cell *matHeaderCellDef="let row">
-                                <zac-datum-filter label="beginGeldigheid" [range]="filterParameters.beginGeldigheid"
+                                <zac-datum-filter label="begin.geldigheid" [range]="filterParameters.beginGeldigheid"
                                                   (changed)="applyFilter()"></zac-datum-filter>
                             </th>
                         </ng-container>
                         <ng-container matColumnDef="eindeGeldigheid_filter">
                             <th mat-header-cell *matHeaderCellDef="let row">
-                                <zac-datum-filter label="eindeGeldigheid" [range]="filterParameters.eindeGeldigheid"
+                                <zac-datum-filter label="einde.geldigheid" [range]="filterParameters.eindeGeldigheid"
                                                   (changed)="applyFilter()"></zac-datum-filter>
                             </th>
                         </ng-container>
