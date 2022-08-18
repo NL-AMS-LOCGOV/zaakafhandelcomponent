@@ -138,9 +138,13 @@
     <field name="zaak_initiatorIdentificatie" type="string" indexed="true" stored="true"/>
     <field name="zaak_locatie" type="location" indexed="true" stored="true"/>
     <field name="zaak_locatie_adres" type="text_nl" indexed="true" stored="true"/>
+    <field name="zaak_indicatieOpschorting" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_redenOpschorting" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_indicatieVerlenging" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_redenVerlenging" type="text_nl" indexed="true" stored="true"/>
+    <field name="zaak_indicatieHeropend" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_indicatieDeelzaak" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_indicatieHoofdzaak" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_duurVerlenging" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_zaaktypeUuid" type="string" indexed="true" stored="true"/>
     <field name="zaak_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
@@ -191,9 +195,12 @@
     <field name="informatieobject_documentType" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_ontvangstdatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_verzenddatum" type="pdate" indexed="true" stored="true"/>
-    <field name="informatieobject_ondertekening" type="string" indexed="true" stored="true"/>
-    <field name="informatieobject_locked" type="boolean" indexed="true" stored="true"/>
+    <field name="informatieobject_ondertekeningDatum" type="pdate" indexed="true" stored="true"/>
+    <field name="informatieobject_ondertekeningSoort" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_indicatieOndertekend" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_indicatieVergrendeld" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_vergrendeldDoor" type="string" indexed="true" stored="true"/>
 
     <!--  non-tokenized version of field to make it easier to sort or group
              results by field. copied from "field" via copyField  -->

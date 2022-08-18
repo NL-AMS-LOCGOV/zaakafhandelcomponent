@@ -50,7 +50,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     taakModus: boolean;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
-    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+    documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
 
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
@@ -161,7 +161,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         if (this.toonGekoppeldeZaakDocumenten) {
             this.ophalenGekoppeldeZaakDocumenten();
         } else {
-            this.documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving','status','vertrouwelijkheidaanduiding','creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+            this.documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
             this.loadInformatieObjecten();
         }
     }
@@ -170,7 +170,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.getZaakUuid())
             .subscribe(gekoppeldeInformatieObjecten => {
                 if (gekoppeldeInformatieObjecten) {
-                    this.documentColumns = ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'url'];
+                    this.documentColumns = ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
                     gekoppeldeInformatieObjecten.forEach(gekoppeldeInformatieObject =>
                         this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, gekoppeldeInformatieObject]);
                 }

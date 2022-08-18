@@ -53,14 +53,7 @@
                     <mat-card-title fxLayout="row">
                         {{'zaak' | translate}}
                     </mat-card-title>
-                    <mat-chip-list selectable="false" fxLayout="row">
-                        <ng-container *ngFor="let indicatie of indicaties">
-                            <mat-chip [color]="indicatie.color" selected [matTooltip]="indicatie.info">
-                                {{indicatie.naam | translate}}
-                                <mat-icon *ngIf="indicatie.info">info_outline</mat-icon>
-                            </mat-chip>
-                        </ng-container>
-                    </mat-chip-list>
+                    <zac-zaak-indicaties [zaak]="zaak"></zac-zaak-indicaties>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group>
