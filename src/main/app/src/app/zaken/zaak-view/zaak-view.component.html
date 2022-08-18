@@ -193,7 +193,7 @@
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'historie' | translate}}">
+                        <mat-tab *ngIf="historie.data.length > 0" label="{{'historie' | translate}}">
                             <div id="historie_tab" class="table-wrapper historie-table">
                                 <table mat-table [dataSource]="historie" matSort #historieSort="matSort">
                                     <ng-container matColumnDef="datum">
@@ -245,11 +245,10 @@
                                     <tr mat-header-row *matHeaderRowDef="historieColumns; sticky: true"></tr>
                                     <tr mat-row *matRowDef="let row; columns: historieColumns;"></tr>
                                 </table>
-                                <p *ngIf="historie.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'betrokkenen' | translate}}">
+                        <mat-tab *ngIf="betrokkenen.data.length > 0" label="{{'betrokkenen' | translate}}">
                             <div id="betrokkenen_tab" class="table-wrapper betrokkenen-table">
                                 <table mat-table [dataSource]="betrokkenen" matSort>
                                     <ng-container matColumnDef="roltype">
@@ -290,11 +289,10 @@
                                     <tr mat-header-row *matHeaderRowDef="betrokkenenColumns; sticky: true"></tr>
                                     <tr mat-row *matRowDef="let row; columns: betrokkenenColumns;"></tr>
                                 </table>
-                                <p *ngIf="betrokkenen.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
 
-                        <mat-tab label="{{'bagobjecten' | translate}}">
+                        <mat-tab *ngIf="adressen.data.length > 0" label="{{'bagobjecten' | translate}}">
                             <div id="bagobjecten_tab" class="table-wrapper bagobjecten-table">
                                 <table mat-table [dataSource]="adressen" matSort>
                                     <ng-container matColumnDef="straat">
@@ -320,41 +318,6 @@
                                     <tr mat-header-row *matHeaderRowDef="adressenColumns; sticky: true"></tr>
                                     <tr mat-row *matRowDef="let row; columns: adressenColumns;"></tr>
                                 </table>
-                                <p *ngIf="adressen.data.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                            </div>
-                        </mat-tab>
-
-                        <mat-tab label="{{'gegevens.overig'|translate}}">
-                            <div id="overigeGegevens_tab" class="table-wrapper">
-                                <table mat-table [dataSource]="zaak.eigenschappen">
-                                    <caption><h4>{{'eigenschappen' | translate}}</h4></caption>
-                                    <ng-container [matColumnDef]="column" *ngFor="let column of ['naam', 'waarde']">
-                                        <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
-                                        <td mat-cell *matCellDef="let row"> {{row[column]}} </td>
-                                    </ng-container>
-                                    <ng-container matColumnDef="url" stickyEnd>
-                                        <th mat-header-cell *matHeaderCellDef></th>
-                                    </ng-container>
-                                    <tr mat-header-row *matHeaderRowDef="['naam', 'waarde']"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: ['naam', 'waarde'];"></tr>
-                                </table>
-                                <p *ngIf="zaak.eigenschappen.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                            </div>
-
-                            <div class="table-wrapper">
-                                <table mat-table [dataSource]="zaak.kenmerken">
-                                    <caption><h4>Kenmerken</h4></caption>
-                                    <ng-container [matColumnDef]="column" *ngFor="let column of ['naam', 'waarde']">
-                                        <th mat-header-cell *matHeaderCellDef> {{column | translate}} </th>
-                                        <td mat-cell *matCellDef="let row"> {{row[column]}} </td>
-                                    </ng-container>
-                                    <ng-container matColumnDef="url" stickyEnd>
-                                        <th mat-header-cell *matHeaderCellDef></th>
-                                    </ng-container>
-                                    <tr mat-header-row *matHeaderRowDef="['naam', 'waarde']"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: ['naam', 'waarde'];"></tr>
-                                </table>
-                                <p *ngIf="zaak.kenmerken.length == 0">{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </div>
                         </mat-tab>
                     </mat-tab-group>
