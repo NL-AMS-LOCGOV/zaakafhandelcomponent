@@ -43,7 +43,7 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
                           private zoekenService: ZoekenService,
                           private utilService: UtilService) {
         super();
-        this.zoekParameters = new ZoekParameters();
+        this.zoekParameters = SessionStorageUtil.getItem(werklijst + '_ZOEKPARAMETERS', new ZoekParameters());
     }
 
     protected abstract initZoekparameters(zoekParameters: ZoekParameters): void;
@@ -54,7 +54,8 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
         this.zoekParameters.rows = this.paginator.pageSize;
         this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = this.sort.active;
-        return this.zoekParameters;
+
+        return SessionStorageUtil.setItem(this.werklijst + '_ZOEKPARAMETERS', this.zoekParameters);;
     }
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
@@ -141,7 +142,7 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
     }
 
     reset() {
-        this.zoekParameters = new ZoekParameters();
+        this.zoekParameters = SessionStorageUtil.setItem(this.werklijst + '_ZOEKPARAMETERS', new ZoekParameters());
         this.sort.active = this.zoekParameters.sorteerVeld;
         this.sort.direction = this.zoekParameters.sorteerRichting;
         this.paginator.pageIndex = 0;
@@ -187,7 +188,7 @@ export abstract class ZoekenTableDataSource<OBJECT extends ZoekObject> extends D
             this.sort.active = this.zoekParameters.sorteerVeld;
             this.sort.direction = this.zoekParameters.sorteerRichting;
             this.load();
-        } else {
+        } else if (actieveZoekopdracht === null) {
             this.reset();
         }
     }
