@@ -8,11 +8,11 @@ package net.atos.zac.aanvraag;
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
+import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.configuratie.ConfiguratieService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,7 +23,6 @@ import net.atos.client.kvk.zoeken.model.ResultaatItem;
 import net.atos.client.or.object.ObjectsClientService;
 import net.atos.client.or.object.model.ORObject;
 import net.atos.client.vrl.VRLClientService;
-import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -73,7 +72,7 @@ public class ProductAanvraagService {
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal("E-formulier");
+        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
 
         Zaak zaak;
         switch (productAanvraag.getType()) {
