@@ -190,6 +190,8 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
             this.load();
         } else if (actieveZoekopdracht === null) {
             this.reset();
+        } else {
+            this.load();
         }
     }
 }

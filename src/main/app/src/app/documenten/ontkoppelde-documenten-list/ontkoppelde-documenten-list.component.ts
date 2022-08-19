@@ -143,6 +143,8 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             this.filterChange.emit();
         } else if (actieveZoekopdracht === null) {
             this.resetSearch();
+        } else {
+            this.filterChange.emit();
         }
     }
 
