@@ -99,6 +99,7 @@ public class PolicyService {
         zaakData.zaaktype = zaaktype.getOmschrijving();
         zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+        zaakData.ontvangstbevestigingVerstuurd = caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid());
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 

@@ -110,6 +110,7 @@ default versturen_ontvangstbevestiging := false
 versturen_ontvangstbevestiging {
     zaak.open == true
     zaak.heropend == false
+    zaak.ontvangstbevestigingVerstuurd == false
     zaaktype_allowed == true
 }
 
