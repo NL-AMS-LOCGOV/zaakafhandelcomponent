@@ -140,8 +140,10 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
             this.sort.direction = this.listParameters.order;
             this.paginator.pageIndex = 0;
             this.filterChange.emit();
-        } else if(actieveZoekopdracht === null) {
+        } else if (actieveZoekopdracht === null) {
             this.resetSearch();
+        } else {
+            this.filterChange.emit();
         }
     }
 }
