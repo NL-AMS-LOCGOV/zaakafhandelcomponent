@@ -1,0 +1,23 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div mat-dialog-content>
+    <p *ngIf="data.planItem.toelichting" class="readonly" [innerHTML]="data.planItem.toelichting"></p>
+    <mfb-form-field [field]="resultaatFormField"></mfb-form-field>
+    <mfb-form-field [field]="toelichtingFormField"></mfb-form-field>
+    <mfb-form-field [field]="sendMailFormField"></mfb-form-field>
+    <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>
+    <p *ngIf="sendMailFormField.formControl.value" class="readonly" [innerHTML]="body"></p>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="loading || formFieldsInvalid()"
+            mat-button color="primary" (click)="afhandelen()" id="zaakAfhandelen_button">
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20"></mat-spinner>
+        </mat-icon>
+        {{'actie.zaak.afhandelen' | translate}}
+    </button>
+    <button [disabled]="loading" mat-button (click)="close()">{{'actie.annuleren' | translate}}</button>
+</div>

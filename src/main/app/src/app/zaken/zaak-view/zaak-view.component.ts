@@ -75,6 +75,7 @@ import {Adres} from '../../bag/model/adres';
 import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
+import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -499,33 +500,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
-        const dialogData: DialogData = new DialogData([
-                new SelectFormFieldBuilder().id('resultaattype')
-                                            .label('resultaat')
-                                            .optionLabel('naam')
-                                            .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
-                                            .validators(Validators.required)
-                                            .build(),
-                new InputFormFieldBuilder().id('toelichting')
-                                           .label('toelichting')
-                                           .maxlength(80)
-                                           .build()],
-            (results: any[]) => this.doUserEventListenerAfhandelen(planItem.id, results['resultaattype'], results['toelichting']),
-            null,
-            planItem.toelichting);
-        dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
-
         return {
-            dialogComponent: DialogComponent,
-            dialogData: dialogData
+            dialogComponent: ZaakAfhandelenDialogComponent,
+            dialogData: { zaak: this.zaak, planItem: planItem }
         };
-    }
-
-    private doUserEventListenerAfhandelen(planItemId: string, resultaattype: ZaakResultaat, resultaatToelichting: string): Observable<void> {
-        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, planItemId, this.zaak.uuid);
-        userEventListenerData.resultaattypeUuid = resultaattype.id;
-        userEventListenerData.resultaatToelichting = resultaatToelichting;
-        return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 
     private openZaakAfbrekenDialog(): void {
