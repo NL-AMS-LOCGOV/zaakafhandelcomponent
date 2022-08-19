@@ -187,6 +187,16 @@
             <td mat-cell *matCellDef="let row">{{ row.aantalOpenstaandeTaken }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="indicaties_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="indicaties">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'indicaties' | translate | empty}}</th>
+            <td mat-cell *matCellDef="let row">
+                <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="url_filter" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
                 <zac-zoekopdracht [werklijst]="dataSource.werklijst"
@@ -245,6 +255,12 @@
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchDefault [label]="column | translate" [value]="row[column] | translate"
                                              fxFlex="33"></zac-static-text>
+                            <div fxFlex="33" *ngSwitchCase="'indicaties'" class="static-text">
+                                <label class="static-text-label">{{'indicaties' | translate}}</label>
+                                <div class="static-text-content">
+                                    <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
+                                </div>
+                            </div>
                         </ng-container>
                     </div>
                 </div>

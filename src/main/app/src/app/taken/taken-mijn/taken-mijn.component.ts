@@ -60,7 +60,6 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-        this.dataSource.load();
     }
 
     isAfterDate(datum): boolean {

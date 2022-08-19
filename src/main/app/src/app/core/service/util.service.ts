@@ -115,4 +115,12 @@ export class UtilService {
             this.router.navigate([currentUrl]);
         });
     }
+
+    getUniqueItemsList(source, item, key): any[] {
+        return source.map(value => value[item])
+                     .filter((value, index, self) => {
+                             return value && self.findIndex(v => v[key] === value[key]) === index;
+                         }
+                     );
+    }
 }

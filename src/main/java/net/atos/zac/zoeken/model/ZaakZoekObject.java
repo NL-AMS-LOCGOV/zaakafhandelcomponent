@@ -89,8 +89,20 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_redenVerlenging")
     private String redenVerlenging;
 
+    @Field("zaak_indicatieOpschorting")
+    private boolean indicatieOpschorting;
+
     @Field("zaak_redenOpschorting")
     private String redenOpschorting;
+
+    @Field("zaak_indicatieHeropend")
+    private boolean indicatieHeropend;
+
+    @Field("zaak_indicatieDeelzaak")
+    private boolean indicatieDeelzaak;
+
+    @Field("zaak_indicatieHoofdzaak")
+    private boolean indicatieHoofdzaak;
 
     @Field("zaak_zaaktypeUuid")
     private String zaaktypeUuid;
@@ -398,5 +410,37 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setAantalOpenstaandeTaken(final long aantalOpenstaandeTaken) {
         this.aantalOpenstaandeTaken = aantalOpenstaandeTaken;
+    }
+
+    public boolean isIndicatieOpschorting() {
+        return indicatieOpschorting;
+    }
+
+    public void setIndicatieOpschorting(final boolean indicatieOpschorting) {
+        this.indicatieOpschorting = indicatieOpschorting;
+    }
+
+    public boolean isIndicatieHeropend() {
+        return indicatieHeropend;
+    }
+
+    public void setIndicatieHeropend(final boolean indicatieHeropend) {
+        this.indicatieHeropend = indicatieHeropend;
+    }
+
+    public boolean isIndicatieDeelzaak() {
+        return indicatieDeelzaak;
+    }
+
+    public void setIndicatieDeelzaak(final boolean indicatieDeelzaak) {
+        this.indicatieDeelzaak = indicatieDeelzaak;
+    }
+
+    public boolean isIndicatieHoofdzaak() {
+        return indicatieHoofdzaak;
+    }
+
+    public void setIndicatieHoofdzaak(final boolean indicatieHoofdzaak) {
+        this.indicatieHoofdzaak = indicatieHoofdzaak;
     }
 }

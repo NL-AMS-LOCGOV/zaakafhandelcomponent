@@ -74,7 +74,6 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.dataSource.setViewChilds(this.paginator, this.sort);
         this.table.dataSource = this.dataSource;
-        // this.dataSource.load();
     }
 
     private getIngelogdeMedewerker() {

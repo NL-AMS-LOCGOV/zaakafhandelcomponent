@@ -28,6 +28,8 @@ import {ZaakOntkoppelenDialogComponent} from './zaak-ontkoppelen/zaak-ontkoppele
 import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.module';
 import {BAGModule} from '../bag/bag.module';
 import {ZaakAfhandelenDialogComponent} from './zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
+import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
+
 
 @NgModule({
     declarations: [
@@ -42,13 +44,15 @@ import {ZaakAfhandelenDialogComponent} from './zaak-afhandelen-dialog/zaak-afhan
         ZaakKoppelenDialogComponent,
         ZaakOntkoppelenDialogComponent,
         ZakenVrijgevenDialogComponent,
+        ZaakIndicatiesComponent,
         NotitiesComponent,
         LocatieZoekComponent,
         ZaakDocumentenComponent
     ],
     exports: [
         ZaakVerkortComponent,
-        ZaakDocumentenComponent
+        ZaakDocumentenComponent,
+        ZaakIndicatiesComponent
     ],
     imports: [
         SharedModule,

@@ -28,10 +28,15 @@ export class ZaakZoekObject implements ZoekObject {
     indicatieVerlenging: boolean;
     duurVerlenging: string;
     redenVerlenging: string;
+    indicatieOpschorting: boolean;
     redenOpschorting: string;
     zaaktypeUuid: string;
     zaaktypeOmschrijving: string;
     resultaattypeOmschrijving: string;
     resultaatToelichting: string;
     statustypeOmschrijving: string;
+    indicatieDeelzaak: boolean;
+    indicatieHoofdzaak: boolean;
+    indicatieHeropend: boolean;
+    statusToelichting: string;
 }

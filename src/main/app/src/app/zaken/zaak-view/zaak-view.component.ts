@@ -61,12 +61,10 @@ import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-t
 import {forkJoin, Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
-import {Indicatie} from '../../shared/model/indicatie';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
-import {ZaakRelatietype} from '../model/zaak-relatietype';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
 import {ZaakOntkoppelenDialogComponent} from '../zaak-ontkoppelen/zaak-ontkoppelen-dialog.component';
@@ -92,7 +90,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
     action: string;
-    indicaties: Indicatie[];
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -181,7 +178,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.loadAdressen();
         this.setEditableFormFields();
         this.setupMenu();
-        this.setupIndicaties();
         this.loadLocatie();
         this.loadOpschorting();
         this.setPaginaLocatieInformatie(zaak.identificatie);
@@ -430,31 +426,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ZOEK_BAG_ADRES;
             }, 'add_home_work'));
-        }
-    }
-
-    private setupIndicaties(): void {
-        this.indicaties = [];
-        if (this.zaak.isOpgeschort) {
-            this.indicaties.push(new Indicatie('indicatieOpschorting', this.zaak.redenOpschorting));
-        }
-        if (this.zaak.isVerlengd) {
-            this.indicaties.push(new Indicatie('indicatieVerlenging', this.zaak.redenVerlenging));
-        }
-        if (this.zaak.isHeropend) {
-            this.indicaties.push(new Indicatie('indicatieHeropend', this.zaak.status.toelichting));
-        }
-        if (this.zaak.isDeelzaak) {
-            const hoofdzaak = this.zaak.gerelateerdeZaken.find(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.HOOFDZAAK);
-            this.indicaties.push(new Indicatie('indicatieDeelzaak',
-                this.translate.instant('indicatie.relatie.toelichting', {identificatie: hoofdzaak.identificatie})));
-        }
-        if (this.zaak.isHoofdzaak) {
-            const deelzaken = this.zaak.gerelateerdeZaken.filter(gerelateerdeZaak => gerelateerdeZaak.relatieType === ZaakRelatietype.DEELZAAK);
-            this.indicaties.push(new Indicatie('indicatieHoofdzaak',
-                this.translate.instant(deelzaken.length === 1 ? 'indicatie.relatie.toelichting' : 'indicatie.relatie.toelichting.meerdere.zaken',
-                    deelzaken.length === 1 ? {identificatie: deelzaken[0].identificatie} : {aantal: deelzaken.length})));
-
         }
     }
 
