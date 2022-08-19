@@ -25,6 +25,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -73,10 +75,9 @@ public class NotificatieReceiver {
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
     @POST
-    public Response notificatieReceive(final Notificatie notificatie) {
-        LOG.info(() -> String
-                .format("Notificatie ontvangen: kanaal='%s', resource='%s', actie='%s', aanmaakdatum='%s'",
-                        notificatie.getChannel(), notificatie.getResource(), notificatie.getAction(), notificatie.getCreationDateTime().toString()));
+    public Response notificatieReceive(@Context HttpHeaders headers, final Notificatie notificatie) {
+        checkAuthentication(headers);
+        LOG.info(() -> String.format("Notificatie ontvangen: %s", notificatie.toString()));
         handleCaches(notificatie);
         handleWebsockets(notificatie);
         if (!configuratieService.isLocalDevelopment()) {
@@ -88,6 +89,13 @@ public class NotificatieReceiver {
             handleZaaktype(notificatie);
         }
         return noContent().build();
+    }
+
+    private void checkAuthentication(final HttpHeaders headers) {
+        LOG.info("Notificatie headers:");
+        headers.getRequestHeaders().forEach((key, value) -> {
+            LOG.info(String.format("   %s = %s", key, value));
+        });
     }
 
     private void handleZaaktype(final Notificatie notificatie) {
