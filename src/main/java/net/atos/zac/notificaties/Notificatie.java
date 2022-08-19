@@ -99,7 +99,10 @@ public class Notificatie {
 
     @JsonbTransient
     public ResourceInfo getResourceInfo() {
-        return new ResourceInfo(getResource(), getResourceUrl(), getAction());
+        return new ResourceInfo(
+                getResource(),
+                getResourceUrl(),
+                getAction());
     }
 
     @JsonbTransient
@@ -113,6 +116,11 @@ public class Notificatie {
                 getMainResourceType(),
                 getMainResourceUrl(),
                 getMainResourceType() == getResource() && getMainResourceUrl().equals(getResourceUrl()) ? getAction() : UPDATE);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s %s", channel, resource, action, creationDateTime.toString());
     }
 
     public static class ResourceInfo {

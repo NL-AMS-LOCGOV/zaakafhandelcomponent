@@ -156,12 +156,12 @@ export class ZakenService {
         );
     }
 
-    createInitiator(zaak: Zaak, initiator: Klant): Observable<Zaak> {
+    updateInitiator(zaak: Zaak, initiator: Klant): Observable<Zaak> {
         const gegevens = new ZaakBetrokkeneGegevens();
         gegevens.zaakUUID = zaak.uuid;
         gegevens.betrokkeneIdentificatieType = initiator.identificatieType;
         gegevens.betrokkeneIdentificatie = initiator.identificatie;
-        return this.http.post<Zaak>(`${this.basepath}/initiator`, gegevens).pipe(
+        return this.http.put<Zaak>(`${this.basepath}/initiator`, gegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -17,7 +17,5 @@ public class ZaakData {
 
     public String zaaktype;
 
-    public boolean initiator;
-
     public boolean ontvangstbevestigingVerstuurd;
 }

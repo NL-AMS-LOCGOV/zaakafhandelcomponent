@@ -14,10 +14,18 @@ import {Observable, share} from 'rxjs';
     templateUrl: './persoonsgegevens.component.html'
 })
 export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
-
-    @Input() bsn: string;
     @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Persoon>();
+
+    private _bsn: string;
+    @Input() set bsn(identificatie: string) {
+        this._bsn = identificatie;
+        this.loadPersoon();
+    }
+
+    get bsn(): string {
+        return this._bsn;
+    }
 
     persoon: Persoon;
     persoon$: Observable<Persoon>;
@@ -28,9 +36,12 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.persoon$ = this.klantenService.readPersoon(this.bsn).pipe(share());
         this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
+        this.loadPersoon();
+    }
 
+    private loadPersoon(): void {
+        this.persoon$ = this.klantenService.readPersoon(this._bsn).pipe(share());
         this.persoon$.subscribe(persoon => {
             this.persoon = persoon;
         });

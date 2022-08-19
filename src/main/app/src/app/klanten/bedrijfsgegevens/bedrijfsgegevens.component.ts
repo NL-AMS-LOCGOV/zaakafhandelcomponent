@@ -14,11 +14,28 @@ import {Observable, share} from 'rxjs';
     templateUrl: './bedrijfsgegevens.component.html'
 })
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
-
-    @Input() vestigingsnummer;
-    @Input() rsin;
     @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
+
+    private _vestigingsnummer: string;
+    @Input() set vestigingsnummer(identificatie: string) {
+        this._vestigingsnummer = identificatie;
+        this.loadVestiging();
+    }
+
+    get vestigingsnummer(): string {
+        return this._vestigingsnummer;
+    }
+
+    private _rsin: string;
+    @Input() set rsin(identificatie: string) {
+        this._rsin = identificatie;
+        this.loadRechtspersoon();
+    }
+
+    get rsin(): string {
+        return this._rsin;
+    }
 
     bedrijf: Bedrijf;
     bedrijf$: Observable<Bedrijf>;
@@ -30,12 +47,28 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.klantExpanded = SessionStorageUtil.getItem('klantExpanded', true);
-        if (this.vestigingsnummer) {
-            this.bedrijf$ = this.klantenService.readVestiging(this.vestigingsnummer).pipe(share());
+        this.loadBedrijf();
+    }
+
+    private loadBedrijf(): void {
+        if (this._vestigingsnummer) {
+            this.loadVestiging();
+        } else {
+            if (this._rsin) {
+                this.loadRechtspersoon();
+            }
         }
-        if (this.rsin) {
-            this.bedrijf$ = this.klantenService.readRechtspersoon(this.rsin).pipe(share());
-        }
+    }
+
+    private loadVestiging(): void {
+        this.bedrijf$ = this.klantenService.readVestiging(this._vestigingsnummer).pipe(share());
+        this.bedrijf$.subscribe(bedrijf => {
+            this.bedrijf = bedrijf;
+        });
+    }
+
+    private loadRechtspersoon(): void {
+        this.bedrijf$ = this.klantenService.readRechtspersoon(this._rsin).pipe(share());
         this.bedrijf$.subscribe(bedrijf => {
             this.bedrijf = bedrijf;
         });
