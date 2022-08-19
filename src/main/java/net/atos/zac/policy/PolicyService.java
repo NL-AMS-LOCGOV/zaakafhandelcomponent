@@ -94,12 +94,13 @@ public class PolicyService {
 
     public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
         final ZaakData zaakData = new ZaakData();
+        final Boolean ontvangstbevestingVerstuurd = caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid());
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
         zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
-        zaakData.ontvangstbevestigingVerstuurd = caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid());
+        zaakData.ontvangstbevestigingVerstuurd = ontvangstbevestingVerstuurd != null ? ontvangstbevestingVerstuurd : false;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
