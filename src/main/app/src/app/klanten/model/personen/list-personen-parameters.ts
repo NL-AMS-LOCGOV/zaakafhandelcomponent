@@ -5,7 +5,7 @@
 
 export class ListPersonenParameters {
     bsn: string;
-    geslachtsnaam: string;
+    achternaam: string;
     geboortedatum: string;
     gemeenteVanInschrijving: string;
     postcode: string;

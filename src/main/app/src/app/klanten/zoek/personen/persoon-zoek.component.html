@@ -5,38 +5,25 @@
 
 <div class="form">
     <div *ngIf="betrokkeneRoltypeField" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="33">
-            <mfb-form-field [field]="betrokkeneRoltypeField"></mfb-form-field>
-        </div>
-        <div fxFlex="66">
-            <mfb-form-field [field]="betrokkeneToelichtingField"></mfb-form-field>
-        </div>
+        <mfb-form-field fxFlex="33" [field]="betrokkeneRoltypeField"></mfb-form-field>
+        <mfb-form-field fxFlex [field]="betrokkeneToelichtingField"></mfb-form-field>
     </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
-            <mfb-form-field [field]="bsnFormField"></mfb-form-field>
-        </div>
+        <mfb-form-field fxFlex [field]="bsnFormField"></mfb-form-field>
+        <mfb-form-field fxFlex="33" [field]="geboortedatumFormField"></mfb-form-field>
     </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="66">
-            <mfb-form-field [field]="geslachtsnaamFormField"></mfb-form-field>
-        </div>
-        <div fxFlex="33">
-            <mfb-form-field [field]="geboortedatumFormField"></mfb-form-field>
-        </div>
+        <mfb-form-field fxFlex [field]="voornamenFormField"></mfb-form-field>
+        <mfb-form-field fxFlex="33" [field]="voorvoegselFormField"></mfb-form-field>
+        <mfb-form-field fxFlex [field]="geslachtsnaamFormField"></mfb-form-field>
     </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="66">
-            <mfb-form-field [field]="postcodeFormField"></mfb-form-field>
-        </div>
-        <div fxFlex="33">
-            <mfb-form-field [field]="huisnummerFormField"></mfb-form-field>
-        </div>
+        <mfb-form-field fxFlex="66" [field]="postcodeFormField"></mfb-form-field>
+        <mfb-form-field fxFlex [field]="huisnummerFormField"></mfb-form-field>
     </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <div fxFlex="100">
-            <mfb-form-field [field]="gemeenteCodeFormField"></mfb-form-field>
-        </div>
+        <mfb-form-field fxFlex [field]="straatFormFiled"></mfb-form-field>
+        <mfb-form-field fxFlex="33" [field]="gemeenteCodeFormField"></mfb-form-field>
     </div>
     <button mat-flat-button color="primary" [disabled]="!isValid() || loading" (click)="zoekPersonen()">Zoek
         <mat-icon class="spinner" *ngIf="loading">

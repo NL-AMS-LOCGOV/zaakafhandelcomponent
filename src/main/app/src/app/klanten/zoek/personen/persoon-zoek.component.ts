@@ -28,8 +28,11 @@ export class PersoonZoekComponent implements OnInit {
     foutmelding: string;
     bsnFormField: AbstractFormField;
     geslachtsnaamFormField: AbstractFormField;
+    voornamenFormField: AbstractFormField;
+    voorvoegselFormField: AbstractFormField;
     geboortedatumFormField: AbstractFormField;
     gemeenteCodeFormField: AbstractFormField;
+    straatFormFiled: AbstractFormField;
     postcodeFormField: AbstractFormField;
     huisnummerFormField: AbstractFormField;
     formGroup: FormGroup;
@@ -43,15 +46,19 @@ export class PersoonZoekComponent implements OnInit {
     ngOnInit(): void {
         this.bsnFormField = new InputFormFieldBuilder().id('bsn').label('bsn').validators(CustomValidators.bsn)
                                                        .maxlength(9).build();
-        this.geslachtsnaamFormField = new InputFormFieldBuilder().id('geslachtsnaam').label('geslachtsnaam')
+        this.voornamenFormField = new InputFormFieldBuilder().id('voornamen').label('voornamen').maxlength(50).build();
+        this.geslachtsnaamFormField = new InputFormFieldBuilder().id('achternaam').label('achternaam')
                                                                  .value('Me*').maxlength(50).build();
+        this.voorvoegselFormField = new InputFormFieldBuilder().id('voorvoegsel').label('voorvoegsel').maxlength(10).build();
         this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum').build();
         this.gemeenteCodeFormField = new InputFormFieldBuilder().id('gemeenteCode').label('gemeenteCode')
                                                                 .value('0599')
                                                                 .validators(Validators.min(1), Validators.max(9999))
                                                                 .maxlength(4).build();
+        this.straatFormFiled = new InputFormFieldBuilder().id('straat').label('straat').maxlength(55).build();
         this.postcodeFormField = new InputFormFieldBuilder().id('postcode').label('postcode')
                                                             .validators(CustomValidators.postcode).maxlength(7).build();
+
         this.huisnummerFormField = new InputFormFieldBuilder().id('huisnummer').label('huisnummer')
                                                               .validators(Validators.min(1), Validators.max(99999))
                                                               .maxlength(5).build();
@@ -59,8 +66,11 @@ export class PersoonZoekComponent implements OnInit {
         this.formGroup = this.formBuilder.group({
             bsn: this.bsnFormField.formControl,
             geslachtsnaam: this.geslachtsnaamFormField.formControl,
+            voornamen: this.voornamenFormField.formControl,
+            voorvoegsel: this.voorvoegselFormField.formControl,
             geboortedatum: this.geboortedatumFormField.formControl,
             gemeenteVanInschrijving: this.gemeenteCodeFormField.formControl,
+            straat: this.straatFormFiled.formControl,
             postcode: this.postcodeFormField.formControl,
             huisnummer: this.huisnummerFormField.formControl
         });
@@ -79,12 +89,19 @@ export class PersoonZoekComponent implements OnInit {
         const postcode = this.postcodeFormField.formControl.value;
         const huisnummer = this.huisnummerFormField.formControl.value;
         const gemeenteCode = this.gemeenteCodeFormField.formControl.value;
+        const straat = this.straatFormFiled.formControl.value;
 
-        return bsn || (geslachtsnaam && (geboortedatum || gemeenteCode)) || (postcode && huisnummer);
+        return bsn || (geslachtsnaam && (geboortedatum || gemeenteCode)) || (postcode && huisnummer) || (straat && huisnummer && gemeenteCode);
     }
 
     createListPersonenParameters(): ListPersonenParameters {
-        return this.formGroup.value as ListPersonenParameters;
+        const params = new ListPersonenParameters();
+        for (const [k, v] of Object.entries(this.formGroup.value)) {
+            if (v) {
+                params[k] = v;
+            }
+        }
+        return params;
     }
 
     zoekPersonen(): void {
