@@ -46,7 +46,6 @@ export class Zaak {
     behandelaar: User;
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
-    eigenschappen: ZaakEigenschap[];
     initiatorIdentificatieType: IdentificatieType;
     initiatorIdentificatie: string;
     isHeropend: boolean;
