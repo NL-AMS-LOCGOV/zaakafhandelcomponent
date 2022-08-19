@@ -134,8 +134,6 @@ public class RESTZaakConverter {
             restZaak.redenVerlenging = zaak.getVerlenging().getReden();
         }
 
-        restZaak.eigenschappen = zaakEigenschappenConverter.convert(zaak.getEigenschappen());
-
         restZaak.gerelateerdeZaken = convertGerelateerdeZaken(zaak);
 
         restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
