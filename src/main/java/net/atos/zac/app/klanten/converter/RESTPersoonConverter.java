@@ -67,6 +67,15 @@ public class RESTPersoonConverter {
         if (StringUtils.isNotBlank(restListPersonenParameters.geslachtsnaam)) {
             listPersonenParameters.setNaamGeslachtsnaam(restListPersonenParameters.geslachtsnaam);
         }
+        if (StringUtils.isNotBlank(restListPersonenParameters.voorvoegsel)) {
+            listPersonenParameters.setNaamVoorvoegsel(restListPersonenParameters.voorvoegsel);
+        }
+        if (StringUtils.isNotBlank(restListPersonenParameters.voornamen)) {
+            listPersonenParameters.setNaamVoornamen(restListPersonenParameters.voornamen);
+        }
+        if (StringUtils.isNotBlank(restListPersonenParameters.straat)) {
+            listPersonenParameters.setVerblijfplaatsStraat(restListPersonenParameters.straat);
+        }
         if (StringUtils.isNotBlank(restListPersonenParameters.gemeenteVanInschrijving)) {
             listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
         }

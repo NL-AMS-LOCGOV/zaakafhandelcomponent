@@ -13,6 +13,10 @@ public class RESTListPersonenParameters {
 
     public String geslachtsnaam;
 
+    public String voornamen;
+
+    public String voorvoegsel;
+
     public LocalDate geboortedatum;
 
     public String gemeenteVanInschrijving;
@@ -20,4 +24,6 @@ public class RESTListPersonenParameters {
     public String postcode;
 
     public Integer huisnummer;
+
+    public String straat;
 }
