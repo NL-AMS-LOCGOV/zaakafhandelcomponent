@@ -21,6 +21,7 @@ import {InformatieObjectVerplaatsService} from '../../informatie-objecten/inform
 import {InboxDocumentListParameters} from '../model/inbox-document-list-parameters';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './inbox-documenten-list.component.html',
@@ -47,7 +48,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
                 private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
 
     ngOnInit(): void {
-        this.listParameters = this.createDefaultParameters();
+        this.listParameters = SessionStorageUtil.getItem(Werklijst.INBOX_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
         this.utilService.setTitle('title.documenten.inboxDocumenten');
     }
 
@@ -77,6 +78,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
         this.listParameters.order = this.sort.direction;
         this.listParameters.page = this.paginator.pageIndex;
         this.listParameters.maxResults = this.paginator.pageSize;
+        SessionStorageUtil.setItem(Werklijst.INBOX_DOCUMENTEN + '_ZOEKPARAMETERS', this.listParameters);
     }
 
     getDownloadURL(od: InboxDocument): string {
@@ -120,7 +122,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     }
 
     resetSearch(): void {
-        this.listParameters = this.createDefaultParameters();
+        this.listParameters = SessionStorageUtil.setItem(Werklijst.INBOX_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
         this.sort.active = this.listParameters.sort;
         this.sort.direction = this.listParameters.order;
         this.paginator.pageIndex = 0;
@@ -138,7 +140,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
             this.sort.direction = this.listParameters.order;
             this.paginator.pageIndex = 0;
             this.filterChange.emit();
-        } else {
+        } else if(actieveZoekopdracht === null) {
             this.resetSearch();
         }
     }

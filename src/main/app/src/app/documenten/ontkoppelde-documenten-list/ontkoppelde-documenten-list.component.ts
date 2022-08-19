@@ -22,6 +22,7 @@ import {OntkoppeldDocumentListParameters} from '../model/ontkoppeld-document-lis
 import {User} from '../../identity/model/user';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -52,7 +53,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
-        this.listParameters = this.createDefaultParameters();
+        this.listParameters = SessionStorageUtil.getItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
     }
 
     ngAfterViewInit(): void {
@@ -82,6 +83,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
         this.listParameters.order = this.sort.direction;
         this.listParameters.page = this.paginator.pageIndex;
         this.listParameters.maxResults = this.paginator.pageSize;
+        SessionStorageUtil.setItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.listParameters);
     }
 
     getDownloadURL(od: OntkoppeldDocument): string {
@@ -125,7 +127,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     }
 
     resetSearch(): void {
-        this.listParameters = this.createDefaultParameters();
+        this.listParameters = SessionStorageUtil.setItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
         this.sort.active = this.listParameters.sort;
         this.sort.direction = this.listParameters.order;
         this.paginator.pageIndex = 0;
@@ -139,7 +141,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
             this.sort.direction = this.listParameters.order;
             this.paginator.pageIndex = 0;
             this.filterChange.emit();
-        } else {
+        } else if (actieveZoekopdracht === null) {
             this.resetSearch();
         }
     }

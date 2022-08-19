@@ -13,6 +13,7 @@ import {DatumFilterComponent} from './datum-filter/datum-filter.component';
 import {FacetFilterComponent} from './facet-filter/facet-filter.component';
 import {TekstFilterComponent} from './tekst-filter/tekst-filter.component';
 import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-object.component';
+import {ToggleFilterComponent} from './toggle-filter/toggle-filter.component';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-
         DatumFilterComponent,
         FacetFilterComponent,
         TekstFilterComponent,
+        ToggleFilterComponent,
         ZaakZoekObjectComponent,
         TaakZoekObjectComponent,
     ],
@@ -27,6 +29,7 @@ import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-
         ZoekComponent,
         DatumFilterComponent,
         TekstFilterComponent,
+        ToggleFilterComponent,
         FacetFilterComponent
     ],
     imports: [

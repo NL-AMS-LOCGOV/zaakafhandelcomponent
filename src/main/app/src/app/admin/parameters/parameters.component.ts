@@ -13,6 +13,10 @@ import {MatSort} from '@angular/material/sort';
 import {ZaakafhandelParametersListParameters} from './zaakafhandel-parameters-list-parameters';
 import {ClientMatcher} from '../../shared/dynamic-table/filter/clientMatcher';
 import {AdminComponent} from '../admin/admin.component';
+import {Zaaktype} from '../../zaken/model/zaaktype';
+import {CaseDefinition} from '../model/case-definition';
+import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {ToggleSwitchOptions} from '../../zoeken/toggle-filter/toggle-switch-options';
 
 @Component({
     templateUrl: './parameters.component.html',
@@ -24,9 +28,14 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
     @ViewChild('parametersSort') parametersSort: MatSort;
 
-    filterParameters: ZaakafhandelParametersListParameters = new ZaakafhandelParametersListParameters('valide', 'asc');
+    filterParameters: ZaakafhandelParametersListParameters;
     parameters: MatTableDataSource<ZaakafhandelParameters> = new MatTableDataSource<ZaakafhandelParameters>();
     loading: boolean = false;
+
+    private storedParameterFilters: string = 'parameterFilters';
+
+    zaaktypes: Zaaktype[];
+    caseDefinitions: CaseDefinition[];
 
     constructor(private zaakafhandelParametersService: ZaakafhandelParametersService, public utilService: UtilService) {
         super(utilService);
@@ -35,6 +44,8 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
     ngOnInit(): void {
         this.setupMenu('title.parameters');
         this.getZaakafhandelParameters();
+        this.filterParameters = SessionStorageUtil.getItem(this.storedParameterFilters, new ZaakafhandelParametersListParameters('valide', 'asc'));
+        this.applyFilter();
     }
 
     ngAfterViewInit(): void {
@@ -62,14 +73,21 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
 
             const parsedFilter = JSON.parse(filter) as ZaakafhandelParametersListParameters;
 
-            if (!!parsedFilter.valide) {
-                match = match && ClientMatcher.matchBoolean(data.valide, (parsedFilter.valide === 'Valide'));
+            if (parsedFilter.valide !== ToggleSwitchOptions.INDETERMINATE) {
+                match = match && ClientMatcher.matchBoolean(data.valide, (parsedFilter.valide === ToggleSwitchOptions.CHECKED));
             }
 
-            if (!!parsedFilter.geldig) {
-                match = match && ClientMatcher.matchBoolean(data.zaaktype.nuGeldig, (parsedFilter.geldig === 'Ja'));
+            if (parsedFilter.geldig !== ToggleSwitchOptions.INDETERMINATE) {
+                match = match && ClientMatcher.matchBoolean(data.zaaktype.nuGeldig, (parsedFilter.geldig === ToggleSwitchOptions.CHECKED));
             }
 
+            if (parsedFilter.zaaktype) {
+                match = match && ClientMatcher.matchObject(data.zaaktype, parsedFilter.zaaktype, 'identificatie');
+            }
+
+            if (parsedFilter.caseDefinition) {
+                match = match && ClientMatcher.matchObject(data.caseDefinition, parsedFilter.caseDefinition, 'key');
+            }
             if (parsedFilter.beginGeldigheid.van !== null || parsedFilter.beginGeldigheid.tot !== null) {
                 match = match && ClientMatcher.matchDatum(data.zaaktype.beginGeldigheid, parsedFilter.beginGeldigheid);
             }
@@ -84,6 +102,7 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
 
     applyFilter(): void {
         this.parameters.filter = JSON.stringify(this.filterParameters);
+        SessionStorageUtil.setItem(this.storedParameterFilters ,this.filterParameters);
     }
 
     private getZaakafhandelParameters(): void {
@@ -91,6 +110,15 @@ export class ParametersComponent extends AdminComponent implements OnInit, After
         this.zaakafhandelParametersService.listZaakafhandelParameters().subscribe(parameters => {
             this.loading = false;
             this.parameters.data = parameters;
+            this.zaaktypes = this.utilService.getUniqueItemsList(parameters, 'zaaktype', 'identificatie');
+            this.caseDefinitions = this.utilService.getUniqueItemsList(parameters, 'caseDefinition', 'key');
         });
+    }
+
+    compareZaaktype = (zaaktype1: Zaaktype, zaaktype2: Zaaktype): boolean => {
+        return zaaktype1?.identificatie === zaaktype2?.identificatie;
+    }
+    compareCaseDefinition = (caseDefinition1: CaseDefinition, caseDefinition2: CaseDefinition): boolean => {
+        return caseDefinition1?.key === caseDefinition2?.key;
     }
 }

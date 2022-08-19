@@ -172,8 +172,6 @@ public class Zaak {
      */
     private List<RelevanteZaak> relevanteAndereZaken;
 
-    private Set<URI> eigenschappen;
-
     /**
      * Indien geen status bekend is, dan is de waarde 'null'
      */
@@ -452,14 +450,6 @@ public class Zaak {
 
     public void setRelevanteAndereZaken(final List<RelevanteZaak> relevanteAndereZaken) {
         this.relevanteAndereZaken = relevanteAndereZaken;
-    }
-
-    public Set<URI> getEigenschappen() {
-        return eigenschappen;
-    }
-
-    public void setEigenschappen(final Set<URI> eigenschappen) {
-        this.eigenschappen = eigenschappen;
     }
 
     public URI getStatus() {

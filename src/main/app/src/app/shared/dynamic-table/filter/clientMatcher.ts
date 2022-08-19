@@ -20,6 +20,10 @@ export class ClientMatcher {
     static matchBoolean(dataField: boolean, filterField: boolean): boolean {
         return dataField === filterField;
     }
+
+    static matchObject<T>(dataField: T, filterField: T, key: string): boolean {
+        return dataField && dataField[key] === filterField[key];
+    }
 }
 
 
