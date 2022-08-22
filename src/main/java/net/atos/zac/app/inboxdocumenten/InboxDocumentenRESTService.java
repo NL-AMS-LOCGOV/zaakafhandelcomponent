@@ -77,13 +77,11 @@ public class InboxDocumentenRESTService {
         if (inboxDocument == null) {
             return; // reeds verwijderd
         }
-        final List<ZaakInformatieobject> zaakInformatieobjecten =
-                zrcClientService.listZaakinformatieobjecten(drcClientService.createEnkelvoudigInformatieObjectURL(
-                        inboxDocument.getEnkelvoudiginformatieobjectUUID()));
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
+                drcClientService.readEnkelvoudigInformatieobject(inboxDocument.getEnkelvoudiginformatieobjectUUID());
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
-            final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
-                    drcClientService.readEnkelvoudigInformatieobject(inboxDocument.getEnkelvoudiginformatieobjectUUID());
             LOG.warning(
                     String.format(
                             "Het inbox-document is verwijderd maar het informatieobject is niet verwijderd. Reden: informatieobject '%s' is gekoppeld aan zaak '%s'.",

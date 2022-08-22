@@ -217,8 +217,8 @@ public class ZGWApiService {
      * @param toelichting                     Explanation why the {@link EnkelvoudigInformatieobject} is to be removed.
      */
     public void removeEnkelvoudigInformatieObjectFromZaak(final UUID zaakUUID, final UUID enkelvoudigInformatieObjectUUID, final String toelichting) {
-        final List<ZaakInformatieobject> zaakInformatieobjecten =
-                zrcClientService.listZaakinformatieobjecten(drcClientService.createEnkelvoudigInformatieObjectURL(enkelvoudigInformatieObjectUUID));
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
         zaakInformatieobjecten.stream()
                 .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
@@ -227,7 +227,7 @@ public class ZGWApiService {
                                                                                              "Verwijderd: "));
 
         // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
-        if (zaakInformatieobjecten.stream().allMatch(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))) {
+        if (!zaakInformatieobjecten.stream().filter(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID)).findAny().isPresent()) {
             drcClientService.deleteEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
         }
     }
