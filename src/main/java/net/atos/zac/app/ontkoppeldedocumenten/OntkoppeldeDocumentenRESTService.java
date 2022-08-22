@@ -94,8 +94,8 @@ public class OntkoppeldeDocumentenRESTService {
         if (ontkoppeldDocument == null) {
             return; // reeds verwijderd
         }
-        final List<ZaakInformatieobject> zaakInformatieobjecten =
-                zrcClientService.listZaakinformatieobjecten(drcClientService.createEnkelvoudigInformatieObjectURL(ontkoppeldDocument.getDocumentUUID()));
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
+        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
             throw new IllegalStateException(String.format("Informatieobject is gekoppeld aan zaak '%s'", zaakUuid));

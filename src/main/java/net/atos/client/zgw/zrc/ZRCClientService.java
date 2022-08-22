@@ -316,9 +316,9 @@ public class ZRCClientService {
         return zrcClient.zaakinformatieobjectList(filter);
     }
 
-    public List<ZaakInformatieobject> listZaakinformatieobjecten(final URI informatieobjectURL) {
+    public List<ZaakInformatieobject> listZaakinformatieobjecten(final EnkelvoudigInformatieobject informatieobject) {
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
-        parameters.setInformatieobject(informatieobjectURL);
+        parameters.setInformatieobject(informatieobject.getUrl());
         return listZaakinformatieobjecten(parameters);
     }
 
@@ -339,7 +339,8 @@ public class ZRCClientService {
      * @return List of {@link Rol}
      */
     public List<Rol<?>> listRollen(final UUID zaakUUID) {
-        return zrcClient.rolList(new RolListParameters(createUrlZaak(zaakUUID))).getResults();
+        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
+        return zrcClient.rolList(new RolListParameters(zaak.getUrl())).getResults();
     }
 
     public Zaak readZaakByID(final String identificatie) {
@@ -381,7 +382,7 @@ public class ZRCClientService {
     }
 
     public void koppelInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak nieuweZaak, final String toelichting) {
-        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(informatieobject.getUrl());
+        List<ZaakInformatieobject> zaakInformatieobjecten = listZaakinformatieobjecten(informatieobject);
         if (!zaakInformatieobjecten.isEmpty()) {
             final UUID zaakUuid = UriUtil.uuidFromURI(zaakInformatieobjecten.get(0).getZaak());
             throw new IllegalStateException(String.format("Informatieobject is reeds gekoppeld aan zaak '%s'", zaakUuid));

@@ -37,6 +37,7 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
     private _visibleColumns: Array<string>;
     private _filterColumns: Array<string>;
     private _detailExpandColumns: Array<string>;
+    private _drop = false;
     private subscriptions$: Subscription[] = [];
 
     protected constructor(public werklijst: Werklijst,
@@ -92,6 +93,8 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
     }
 
     drop(event: CdkDragDrop<string[]>) {
+        this._drop = true;
+        setTimeout(() => this._drop = false, 1000);
         const extraIndex = this.visibleColumns.includes('select') ? 1 : 0;
         moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
         moveItemInArray(this.filterColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
@@ -183,13 +186,17 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
     }
 
     zoekopdrachtChanged(actieveZoekopdracht: Zoekopdracht): void {
-        if (actieveZoekopdracht) {
-            this.zoekParameters = JSON.parse(actieveZoekopdracht.json);
-            this.sort.active = this.zoekParameters.sorteerVeld;
-            this.sort.direction = this.zoekParameters.sorteerRichting;
-            this.load();
-        } else if (actieveZoekopdracht === null) {
-            this.reset();
+        if (!this._drop) { // view is reinitialized after a drop event, but the data doesn't change, so don't reload the data after a drop event.
+            if (actieveZoekopdracht) {
+                this.zoekParameters = JSON.parse(actieveZoekopdracht.json);
+                this.sort.active = this.zoekParameters.sorteerVeld;
+                this.sort.direction = this.zoekParameters.sorteerRichting;
+                this.load();
+            } else if (actieveZoekopdracht === null) {
+                this.reset();
+            } else {
+                this.load();
+            }
         }
     }
 }
