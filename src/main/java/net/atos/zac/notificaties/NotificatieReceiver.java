@@ -74,8 +74,8 @@ public class NotificatieReceiver {
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
-    //@Inject
-    //@ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY") // TODO #61
+    // @Inject
+    // @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY") // TODO #61
     private final String secret = "dummy";
 
     @POST
