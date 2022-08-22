@@ -30,6 +30,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -74,9 +76,9 @@ public class NotificatieReceiver {
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
-    // @Inject
-    // @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY") // TODO #61
-    private final String secret = "dummy";
+    @Inject
+    @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY")
+    private String secret;
 
     @POST
     public Response notificatieReceive(@Context HttpHeaders headers, final Notificatie notificatie) {
