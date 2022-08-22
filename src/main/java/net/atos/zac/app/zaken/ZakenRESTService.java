@@ -364,7 +364,7 @@ public class ZakenRESTService {
                                                zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
                                                                                            ontkoppelGegevens.reden,
                                                                                            "Ontkoppeld: "));
-        if (zrcClientService.listZaakinformatieobjecten(informatieobject.getUrl()).isEmpty()) {
+        if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
             ontkoppeldeDocumentenService.create(informatieobject, zaak, ontkoppelGegevens.reden);
         }
     }
@@ -465,7 +465,10 @@ public class ZakenRESTService {
     @Path("vrijgeven")
     public void vrijgeven(final RESTZakenVerdeelGegevens verdeelGegevens) {
         assertActie(policyService.readZakenActies().getVerdelenEnVrijgeven());
-        verdeelGegevens.uuids.forEach(uuid -> zrcClientService.deleteRol(uuid, BetrokkeneType.MEDEWERKER, verdeelGegevens.reden));
+        verdeelGegevens.uuids.forEach(uuid -> {
+            final Zaak zaak = zrcClientService.readZaak(uuid);
+            zrcClientService.deleteRol(zaak.getUuid(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
+        });
         indexeerService.indexeerDirect(verdeelGegevens.uuids.stream().map(UUID::toString).toList(), ZoekObjectType.ZAAK);
     }
 
@@ -510,8 +513,8 @@ public class ZakenRESTService {
         assertActie(policyService.readZaakActies(koppelenAanZaak).getKoppelen());
 
         switch (zaakKoppelGegevens.relatieType) {
-            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak.getUuid(), teKoppelenZaak.getUuid());
-            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak.getUuid(), koppelenAanZaak.getUuid());
+            case DEELZAAK -> koppelHoofdEnDeelzaak(koppelenAanZaak, teKoppelenZaak.getUuid());
+            case HOOFDZAAK -> koppelHoofdEnDeelzaak(teKoppelenZaak, koppelenAanZaak.getUuid());
         }
     }
 
@@ -690,10 +693,10 @@ public class ZakenRESTService {
         return count[0];
     }
 
-    private void koppelHoofdEnDeelzaak(final UUID hoofdzaakUUID, final UUID deelzaakUUID) {
-        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(zrcClientService.createUrlZaak(hoofdzaakUUID));
+    private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
+        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
         zrcClientService.updateZaak(deelzaakUUID, deelzaak);
-        eventingService.send(ZAAK.updated(hoofdzaakUUID));
+        eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
     }
 
     private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
