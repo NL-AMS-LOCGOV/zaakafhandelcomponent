@@ -3,14 +3,14 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list *ngIf="!lijst" selectable="false" fxLayout="row">
+<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
     <mat-chip *ngIf="infoObject.ondertekening" color="accent" selected
               [matTooltip]="infoObject.ondertekening.soort + ' - ' + infoObject.ondertekening.datum">{{'indicatieOndertekend' | translate}}</mat-chip>
     <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
               [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">{{'indicatieVergrendeld' | translate}}</mat-chip>
 </mat-chip-list>
 
-<mat-chip-list *ngIf="lijst" selectable="false" fxLayout="row">
+<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
     <mat-chip *ngIf="infoObject.ondertekening" color="accent" selected
               [matTooltip]="('indicatieOndertekend' | translate) + ': ' +infoObject.ondertekening.soort + ' - ' + infoObject.ondertekening.datum">O
     </mat-chip>

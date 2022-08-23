@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list *ngIf="zaakZoekObject" selectable="false" fxLayout="row">
+<mat-chip-list class="list" *ngIf="zaakZoekObject" selectable="false" fxLayout="row">
     <mat-chip *ngIf="zaakZoekObject.indicatieOpschorting" color="accent" selected
               [matTooltip]="('indicatieOpschorting' | translate) +': '+ zaakZoekObject.redenOpschorting">O
     </mat-chip>
@@ -17,7 +17,7 @@
     <mat-chip *ngIf="zaakZoekObject.indicatieHoofdzaak" color="accent" selected [matTooltip]="'indicatieHoofdzaak' | translate">HZ</mat-chip>
 </mat-chip-list>
 
-<mat-chip-list *ngIf="zaak" selectable="false" fxLayout="row">
+<mat-chip-list class="view" *ngIf="zaak" selectable="false" fxLayout="row">
     <mat-chip *ngIf="zaak.isOpgeschort" color="accent" selected [matTooltip]="zaak.redenOpschorting">{{'indicatieOpschorting' | translate}}</mat-chip>
     <mat-chip *ngIf="zaak.isVerlengd" color="accent" selected [matTooltip]="zaak.redenVerlenging">{{'indicatieVerlenging' | translate}}</mat-chip>
     <mat-chip *ngIf="zaak.isHeropend" color="accent" selected [matTooltip]="zaak.status.toelichting">{{'indicatieHeropend' | translate}}</mat-chip>
