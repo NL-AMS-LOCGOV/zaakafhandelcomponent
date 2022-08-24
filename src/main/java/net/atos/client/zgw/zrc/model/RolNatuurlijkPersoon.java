@@ -8,6 +8,8 @@ package net.atos.client.zgw.zrc.model;
 import java.net.URI;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 public class RolNatuurlijkPersoon extends Rol<NatuurlijkPersoon> {
 
     public RolNatuurlijkPersoon() {
@@ -41,12 +43,20 @@ public class RolNatuurlijkPersoon extends Rol<NatuurlijkPersoon> {
 
     @Override
     public String getNaam() {
-        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getInpBsn();
+        if (getBetrokkeneIdentificatie() == null) {
+            return null;
+        }
+        return StringUtils.isNotEmpty(getBetrokkeneIdentificatie().getVoorvoegselGeslachtsnaam())
+                ? getBetrokkeneIdentificatie().getVoorvoegselGeslachtsnaam()
+                : getIdentificatienummer();
     }
 
     @Override
     public String getIdentificatienummer() {
-        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getInpBsn();
+        if (getBetrokkeneIdentificatie() == null) {
+            return null;
+        }
+        return getBetrokkeneIdentificatie().getInpBsn();
     }
 
     @Override

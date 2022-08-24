@@ -40,17 +40,22 @@ public class RolNietNatuurlijkPersoon extends Rol<NietNatuurlijkPersoon> {
 
     @Override
     public String getNaam() {
-        final NietNatuurlijkPersoon nnp = getBetrokkeneIdentificatie();
-        return getBetrokkeneIdentificatie() == null ? null : getBetrokkeneIdentificatie().getStatutaireNaam();
+        if (getBetrokkeneIdentificatie() == null) {
+            return null;
+        }
+        return StringUtils.isNotEmpty(getBetrokkeneIdentificatie().getStatutaireNaam())
+                ? getBetrokkeneIdentificatie().getStatutaireNaam()
+                : getIdentificatienummer();
     }
 
     @Override
     public String getIdentificatienummer() {
-        return getBetrokkeneIdentificatie() != null
-                ? StringUtils.isNotEmpty(getBetrokkeneIdentificatie().getAnnIdentificatie())
+        if (getBetrokkeneIdentificatie() == null) {
+            return null;
+        }
+        return StringUtils.isNotEmpty(getBetrokkeneIdentificatie().getAnnIdentificatie())
                 ? getBetrokkeneIdentificatie().getAnnIdentificatie()
-                : getBetrokkeneIdentificatie().getInnNnpId()
-                : null;
+                : getBetrokkeneIdentificatie().getInnNnpId();
     }
 
     @Override
