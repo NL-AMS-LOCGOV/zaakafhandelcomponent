@@ -76,6 +76,7 @@ public class NotificatieReceiver {
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
+    // Injection doesn't work? Timing?
     private static final String OPEN_NOTIFICATIONS_API_SECRET_KEY = ConfigProvider.getConfig().getValue("open.notifications.api.secret.key", String.class);
 
     @POST
