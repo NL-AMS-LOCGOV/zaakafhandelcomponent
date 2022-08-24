@@ -30,7 +30,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
@@ -76,9 +76,7 @@ public class NotificatieReceiver {
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
 
-    @Inject
-    @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY")
-    private String secret;
+    private static final String OPEN_NOTIFICATIONS_API_SECRET_KEY = ConfigProvider.getConfig().getValue("open.notifications.api.secret.key", String.class);
 
     @POST
     public Response notificatieReceive(@Context HttpHeaders headers, final Notificatie notificatie) {
@@ -101,7 +99,7 @@ public class NotificatieReceiver {
     }
 
     private boolean isAuthenticated(final HttpHeaders headers) {
-        return secret.equals(headers.getHeaderString(HttpHeaders.AUTHORIZATION));
+        return OPEN_NOTIFICATIONS_API_SECRET_KEY.equals(headers.getHeaderString(HttpHeaders.AUTHORIZATION));
     }
 
     private void handleZaaktype(final Notificatie notificatie) {
