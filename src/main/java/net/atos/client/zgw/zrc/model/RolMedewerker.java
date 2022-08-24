@@ -32,10 +32,10 @@ public class RolMedewerker extends Rol<Medewerker> {
     }
 
     public String getNaam() {
-        final Medewerker medewerker = getBetrokkeneIdentificatie();
-        if (medewerker == null) {
+        if (getBetrokkeneIdentificatie() == null) {
             return null;
         }
+        final Medewerker medewerker = getBetrokkeneIdentificatie();
         final StringBuilder sb = new StringBuilder();
         sb.append(medewerker.getVoorletters());
         sb.append(StringUtils.SPACE);
@@ -44,11 +44,16 @@ public class RolMedewerker extends Rol<Medewerker> {
             sb.append(StringUtils.SPACE);
         }
         sb.append(medewerker.getAchternaam());
-        return sb.toString();
+        return !sb.isEmpty()
+                ? sb.toString()
+                : getIdentificatienummer();
     }
 
     @Override
     public String getIdentificatienummer() {
+        if (getBetrokkeneIdentificatie() == null) {
+            return null;
+        }
         return getBetrokkeneIdentificatie().getIdentificatie();
     }
 
