@@ -4,5 +4,6 @@
   -->
 
 <mat-form-field appearance="standard">
-    <input matInput placeholder="..." (keyup.enter)="changed.emit(value)" [(ngModel)]="value">
+    <input matInput placeholder="..." (blur)="change()" (keyup.enter)="change()" [(ngModel)]="value">
+    <mat-icon matSuffix (click)="change()">search</mat-icon>
 </mat-form-field>
