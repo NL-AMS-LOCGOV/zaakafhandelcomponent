@@ -93,8 +93,9 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.ZaakAfhandelen, this.data.planItem.id, this.data.zaak.uuid);
         userEventListenerData.resultaattypeUuid = this.resultaatFormField.formControl.value.id;
         userEventListenerData.resultaatToelichting = this.toelichtingFormField.formControl.value;
-        this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe(() => {
-            this.dialogRef.close(true);
+        this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
+            next: () => this.dialogRef.close(true),
+            error: () => this.dialogRef.close(false)
         });
     }
 
