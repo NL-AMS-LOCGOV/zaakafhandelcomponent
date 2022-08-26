@@ -275,10 +275,19 @@ public class ZakenRESTService {
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
         assertActie(policyService.readAppActies().getAanmakenZaak() && policyService.isZaaktypeAllowed(restZaak.zaaktype.omschrijving));
+        restZaak.registratiedatum = LocalDate.now();
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
             addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, nieuweZaak);
+        }
+        if (restZaak.toekenning.groep != null) {
+            final Group group = identityService.readGroup(restZaak.toekenning.groep.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolGroep(group, nieuweZaak), "Aanmaken zaak");
+        }
+        if (restZaak.toekenning.medewerker != null) {
+            final User user = identityService.readUser(restZaak.toekenning.medewerker.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolMedewerker(user, nieuweZaak), "Aanmaken zaak");
         }
         return zaakConverter.convert(nieuweZaak);
     }

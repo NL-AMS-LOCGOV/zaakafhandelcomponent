@@ -238,14 +238,14 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                         .options(this.zakenService.listCommunicatiekanalen()).build());
 
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.zaak.behandelaar)
+                                                                                 .value(this.zaak.toekenning?.medewerker)
                                                                                  .optionLabel('naam')
                                                                                  .options(
                                                                                      this.identityService.listUsers())
                                                                                  .maxlength(50)
                                                                                  .build());
         this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.zaak.groep).optionLabel('naam')
+                                                                           .value(this.zaak.toekenning?.groep).optionLabel('naam')
                                                                            .options(this.identityService.listGroups())
                                                                            .maxlength(50)
                                                                            .build());
@@ -625,20 +625,20 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     editGroep(event: any): void {
-        this.zaak.groep = event.groep;
+        this.zaak.toekenning.groep = event.groep;
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.toekenning.groep.naam});
             this.init(zaak);
         });
     }
 
     editBehandelaar(event: any): void {
         if (event.behandelaar) {
-            this.zaak.behandelaar = event.behandelaar;
+            this.zaak.toekenning.medewerker = event.behandelaar;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
-                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.toekenning.medewerker?.naam});
                 this.init(zaak);
             });
         } else {
@@ -647,7 +647,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private vrijgeven(reden: string): void {
-        this.zaak.behandelaar = null;
+        this.zaak.toekenning.medewerker = null;
         this.websocketService.suspendListener(this.zaakRollenListener);
         this.zakenService.vrijgeven([this.zaak.uuid], reden).subscribe(() => {
             this.init(this.zaak);
@@ -753,7 +753,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignZaakToMe(zaak: Zaak): boolean {
-        return zaak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== zaak.behandelaar?.id;
+        return zaak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== zaak.toekenning?.medewerker?.id;
     }
 
     showAssignTaakToMe(taak: Taak): boolean {
@@ -764,7 +764,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.init(zaak);
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.toekenning?.medewerker?.naam});
         });
     }
 

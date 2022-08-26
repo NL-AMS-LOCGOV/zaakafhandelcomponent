@@ -65,9 +65,7 @@ public class RESTZaak {
 
     public String duurVerlenging;
 
-    public RESTGroup groep;
-
-    public RESTUser behandelaar;
+    public RESTToekenning toekenning;
 
     public List<RESTGerelateerdeZaak> gerelateerdeZaken;
 

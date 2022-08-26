@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
 import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
@@ -19,7 +19,7 @@ import {map, startWith} from 'rxjs/operators';
     templateUrl: './medewerker-groep.component.html',
     styleUrls: ['./medewerker-groep.component.less']
 })
-export class MedewerkerGroepComponent extends FormComponent implements OnInit {
+export class MedewerkerGroepComponent extends FormComponent implements OnInit, OnDestroy {
     data: MedewerkerGroepFormField;
     formGroup: FormGroup;
     groepControl = new FormControl();
@@ -29,6 +29,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
     medewerkers: User[];
     filteredMedewerkers: Observable<User[]>;
     inGroep: boolean = true;
+    subscriptions$: Subscription[] = [];
+
+    private lastGroep: Group = null;
 
     constructor(public translate: TranslateService, public identityService: IdentityService, private formBuilder: FormBuilder) {
         super();
@@ -42,43 +45,57 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
             medewerker: this.medewerkerControl
         });
         this.data.formControl.setValue(this.formGroup.value);
-        this.formGroup.valueChanges.subscribe(data => {
-            if (this.formGroup.valid) {
-                this.data.formControl.setErrors(null);
-                if (data.medewerker === '') {
-                    data.medewerker = undefined;
+
+        this.subscriptions$.push(
+            this.formGroup.valueChanges.subscribe(data => {
+                if (this.formGroup.valid) {
+                    this.data.formControl.setErrors(null);
+                    if (data.medewerker === '') {
+                        data.medewerker = undefined;
+                    }
+                    this.data.formControl.setValue(data);
+                } else {
+                    this.data.formControl.setErrors([]);
                 }
-                this.data.formControl.setValue(data);
-            } else {
-                this.data.formControl.setErrors([]);
-            }
-        });
+            }),
+            this.groepControl.valueChanges.subscribe(() => {
+                if (this.groepControl.valid) {
+                    this.medewerkerControl.setValue(null);
+                    this.getMedewerkers();
+                }
+            }),
+            this.data.formControl.valueChanges.subscribe(v => {
+                if(v.groep !== this.lastGroep) {
+                    this.lastGroep = v.groep;
+                    this.groepControl.setValue(v.groep);
+                }
+            })
+        );
 
-        this.groepControl.valueChanges.subscribe(() => {
-            if (this.groepControl.valid) {
-                this.medewerkerControl.setValue(null);
-                this.getMedewerkers();
-            }
-        });
         this.getMedewerkers();
+    }
 
+    ngOnDestroy() {
+        this.subscriptions$.forEach(s => s.unsubscribe());
     }
 
     initGroepen(): void {
-        this.identityService.listGroups().subscribe(groepen => {
-            this.groepen = groepen;
-            const validators: ValidatorFn[] = [];
-            validators.push(AutocompleteValidators.optionInList(groepen));
-            if (!this.data.groepOptioneel) {
-                validators.push(Validators.required);
-            }
-            this.groepControl.setValidators(validators);
-            this.filteredGroepen = this.groepControl.valueChanges.pipe(
-                startWith(''),
-                map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
-            );
-            this.groepControl.setValue(this.data.defaultGroep);
-        });
+        this.subscriptions$.push(
+            this.identityService.listGroups().subscribe(groepen => {
+                this.groepen = groepen;
+                const validators: ValidatorFn[] = [];
+                validators.push(AutocompleteValidators.optionInList(groepen));
+                if (!this.data.groepOptioneel) {
+                    validators.push(Validators.required);
+                }
+                this.groepControl.setValidators(validators);
+                this.filteredGroepen = this.groepControl.valueChanges.pipe(
+                    startWith(''),
+                    map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
+                );
+                this.groepControl.setValue(this.data.defaultGroep);
+            })
+        );
     }
 
     inGroepChanged($event: MouseEvent) {
@@ -95,14 +112,16 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
         } else {
             observable = this.identityService.listUsers();
         }
-        observable.subscribe(medewerkers => {
-            this.medewerkers = medewerkers;
-            this.medewerkerControl.setValidators(AutocompleteValidators.optionInList(medewerkers));
-            this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
-                startWith(''),
-                map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
-            );
-        });
+        this.subscriptions$.push(
+            observable.subscribe(medewerkers => {
+                this.medewerkers = medewerkers;
+                this.medewerkerControl.setValidators(AutocompleteValidators.optionInList(medewerkers));
+                this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
+                    startWith(''),
+                    map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
+                );
+            })
+        );
     }
 
     displayFn(obj: User | Group): string {
