@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -316,20 +315,34 @@ public class InformatieObjectenRESTService {
         }
     }
 
-    @GET
-    @Path("/informatieobject/download/zip")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response readFilesAsZip(@QueryParam("uuids") final String uuids) {
-        final List<String> enkelvoudigInformatieObjectUUIDS = Arrays.stream(uuids.split(",")).toList();
-
+    @POST
+    @Path("/download/zip")
+    public Response readFilesAsZip(final List<String> uuids) {
+        uuids.forEach(uuid -> {
+            UUID enkelvoudigInformatieObjectUUID = UUID.fromString(uuid);
+            assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObjectUUID).getDownloaden());
+        });
         final StreamingOutput streamingOutput = outputStream -> {
             try (ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream))) {
-                enkelvoudigInformatieObjectUUIDS.forEach(stringUuid -> {
+                uuids.forEach(stringUuid -> {
                     final UUID uuid = UUID.fromString(stringUuid);
                     final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                             uuid);
                     final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
-                    final ZipEntry zipEntry = new ZipEntry(enkelvoudigInformatieobject.getBestandsnaam());
+                    final URI zaakUri = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject).get(0).getZaak();
+                    final String zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
+                    final String subfolder = enkelvoudigInformatieobject.getOntvangstdatum() != null ?
+                            "inkomend" :
+                            enkelvoudigInformatieobject.getVerzenddatum() != null ?
+                                    "uitgaand" :
+                                    "intern";
+                    final String path = String.format("%s/%s/%s-%s.%s",
+                                                      zaakId,
+                                                      subfolder,
+                                                      enkelvoudigInformatieobject.getBestandsnaam().split("\\.")[0],
+                                                      enkelvoudigInformatieobject.getIdentificatie(),
+                                                      enkelvoudigInformatieobject.getBestandsnaam().split("\\.")[1]);
+                    final ZipEntry zipEntry = new ZipEntry(path);
                     try {
                         zipOutputStream.putNextEntry(zipEntry);
                         zipOutputStream.write(inhoud.readAllBytes());
@@ -344,7 +357,7 @@ public class InformatieObjectenRESTService {
         };
 
         return Response.ok(streamingOutput)
-                .header("Content-Disposition","attachment; filename=\"file.zip\"")
+                .header("Content-Type","application/zip")
                 .build();
     }
 

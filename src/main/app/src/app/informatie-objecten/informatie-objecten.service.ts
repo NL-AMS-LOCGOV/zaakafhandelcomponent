@@ -7,7 +7,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Observable} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject';
 import {ZaakInformatieobject} from './model/zaak-informatieobject';
 import {Informatieobjecttype} from './model/informatieobjecttype';
@@ -125,9 +125,7 @@ export class InformatieObjectenService {
     }
 
     getZIPDownload(uuids: string[]) {
-        let queryParams = new HttpParams();
-        queryParams = queryParams.append('uuids', uuids.join(','));
-        return this.http.get(`${this.basepath}/informatieobject/download/zip`, {responseType: 'blob', params: queryParams}).pipe(
+        return this.http.post(`${this.basepath}/download/zip`, uuids, {responseType: "blob"}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
