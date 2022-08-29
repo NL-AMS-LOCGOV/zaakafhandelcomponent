@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigParameter;
+import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 
 public class RESTZaakbeeindigParameterConverter {
@@ -20,7 +21,7 @@ public class RESTZaakbeeindigParameterConverter {
     private RESTZaakbeeindigRedenConverter restZaakbeeindigRedenConverter;
 
     @Inject
-    private RESTZaakResultaattypeConverter restZaakResultaattypeConverter;
+    private RESTResultaattypeConverter restResultaattypeConverter;
 
     @Inject
     private ZTCClientService ztcClientService;
@@ -41,7 +42,7 @@ public class RESTZaakbeeindigParameterConverter {
         final RESTZaakbeeindigParameter restZaakbeeindigParameter = new RESTZaakbeeindigParameter();
         restZaakbeeindigParameter.id = zaakbeeindigParameter.getId();
         restZaakbeeindigParameter.zaakbeeindigReden = restZaakbeeindigRedenConverter.convertZaakbeeindigReden(zaakbeeindigParameter.getZaakbeeindigReden());
-        restZaakbeeindigParameter.zaakResultaat = restZaakResultaattypeConverter.convertResultaattype(
+        restZaakbeeindigParameter.resultaattype = restResultaattypeConverter.convertResultaattype(
                 ztcClientService.readResultaattype(zaakbeeindigParameter.getResultaattype()));
         return restZaakbeeindigParameter;
     }
@@ -50,7 +51,7 @@ public class RESTZaakbeeindigParameterConverter {
         final ZaakbeeindigParameter zaakbeeindigParameter = new ZaakbeeindigParameter();
         zaakbeeindigParameter.setId(restZaakbeeindigParameter.id);
         zaakbeeindigParameter.setZaakbeeindigReden(restZaakbeeindigRedenConverter.convertRESTZaakbeeindigReden(restZaakbeeindigParameter.zaakbeeindigReden));
-        zaakbeeindigParameter.setResultaattype(restZaakbeeindigParameter.zaakResultaat.id);
+        zaakbeeindigParameter.setResultaattype(restZaakbeeindigParameter.resultaattype.id);
         return zaakbeeindigParameter;
     }
 }
