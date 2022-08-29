@@ -21,6 +21,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -137,7 +138,10 @@ public class ZRCClientService {
      */
     public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting,
             final String toelichtingPrefix) {
-        zgwClientHeadersFactory.setAuditToelichting(String.format("%s%s", toelichtingPrefix, toelichting));
+        final String fullToelichting = StringUtils.isEmpty(toelichting) ?
+                toelichtingPrefix :
+                String.format("%s: %s", toelichtingPrefix, toelichting);
+        zgwClientHeadersFactory.setAuditToelichting(fullToelichting);
         zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
     }
 
