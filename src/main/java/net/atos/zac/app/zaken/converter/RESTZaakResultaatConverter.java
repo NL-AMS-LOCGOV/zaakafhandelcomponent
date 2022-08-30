@@ -11,35 +11,24 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Resultaat;
-import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.zac.app.zaken.model.RESTZaakResultaat;
-import net.atos.zac.util.PeriodUtil;
 
 public class RESTZaakResultaatConverter {
 
     @Inject
-    private ZTCClientService ztcClientService;
+    private ZRCClientService zrcClientService;
 
     @Inject
-    private ZRCClientService zrcClientService;
+    private RESTResultaattypeConverter restResultaattypeConverter;
 
     public RESTZaakResultaat convert(final URI resultaatURI) {
         if (resultaatURI != null) {
             final Resultaat resultaat = zrcClientService.readResultaat(resultaatURI);
-            if (resultaat != null) {
-                final RESTZaakResultaat restZaakResultaat = new RESTZaakResultaat();
-                final Resultaattype resultaattype = ztcClientService.readResultaattype(resultaat.getResultaattype());
-                restZaakResultaat.toelichting = resultaat.getToelichting();
-                restZaakResultaat.archiefNominatie = resultaattype.getArchiefnominatie().name();
-                restZaakResultaat.toelichtingResultaattype = resultaattype.getToelichting();
-                restZaakResultaat.naam = resultaattype.getOmschrijving();
-                restZaakResultaat.naamGeneriek = resultaattype.getOmschrijvingGeneriek();
-                restZaakResultaat.archiefTermijn = PeriodUtil.format(resultaattype.getArchiefactietermijn());
-                return restZaakResultaat;
-            }
+            final RESTZaakResultaat restZaakResultaat = new RESTZaakResultaat();
+            restZaakResultaat.toelichting = resultaat.getToelichting();
+            restZaakResultaat.resultaattype = restResultaattypeConverter.convertResultaattypeUri(resultaat.getResultaattype());
+            return restZaakResultaat;
         }
         return null;
     }
-
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.app.zaken.model.RESTZaaktype;
 
 public class RESTZaakafhandelParameters {
@@ -31,7 +32,7 @@ public class RESTZaakafhandelParameters {
 
     public ZonedDateTime creatiedatum;
 
-    public RESTZaakResultaattype zaakNietOntvankelijkResultaat;
+    public RESTResultaattype zaakNietOntvankelijkResultaattype;
 
     public boolean valide;
 

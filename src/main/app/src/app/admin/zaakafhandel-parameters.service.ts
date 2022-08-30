@@ -11,7 +11,7 @@ import {catchError} from 'rxjs/operators';
 import {ZaakafhandelParameters} from './model/zaakafhandel-parameters';
 import {CaseDefinition} from './model/case-definition';
 import {ZaakbeeindigReden} from './model/zaakbeeindig-reden';
-import {ZaakResultaat} from '../zaken/model/zaak-resultaat';
+import {Resultaattype} from '../zaken/model/resultaattype';
 
 @Injectable({
     providedIn: 'root'
@@ -47,8 +47,8 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    listZaakResultaten(zaaktypeUuid: string): Observable<ZaakResultaat[]> {
-        return this.http.get<ZaakResultaat[]>(`${this.basepath}/resultaten/${zaaktypeUuid}`).pipe(
+    listResultaattypes(zaaktypeUuid: string): Observable<Resultaattype[]> {
+        return this.http.get<Resultaattype[]>(`${this.basepath}/resultaattypes/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -11,6 +11,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
+import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -29,7 +30,7 @@ public class RESTZaakafhandelParametersConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private RESTZaakResultaattypeConverter zaakResultaattypeConverter;
+    private RESTResultaattypeConverter resultaattypeConverter;
 
     @Inject
     private RESTZaakbeeindigParameterConverter zaakbeeindigParameterConverter;
@@ -54,7 +55,7 @@ public class RESTZaakafhandelParametersConverter {
         restZaakafhandelParameters.creatiedatum = zaakafhandelParameters.getCreatiedatum();
         restZaakafhandelParameters.valide = zaakafhandelParameters.isValide();
         if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
-            restZaakafhandelParameters.zaakNietOntvankelijkResultaat = zaakResultaattypeConverter.convertResultaattype(
+            restZaakafhandelParameters.zaakNietOntvankelijkResultaattype = resultaattypeConverter.convertResultaattype(
                     ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
         }
         if (zaakafhandelParameters.getCaseDefinitionID() != null) {
@@ -79,7 +80,7 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setCaseDefinitionID(restZaakafhandelParameters.caseDefinition.key);
         zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroep.id);
         zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
-        zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaat.id);
+        zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
         if (restZaakafhandelParameters.defaultBehandelaar != null) {
             zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaar.id);
         }
