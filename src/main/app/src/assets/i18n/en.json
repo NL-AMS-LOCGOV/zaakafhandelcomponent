@@ -331,6 +331,8 @@
   "actie.document.verwijderen.reden" : "Reason why document is deleted",
   "actie.downloaden" : "Download",
   "actie.downloaden.zip" : "Download as zip",
+  "actie.export.csv" : "Export to CSV",
+  "actie.csv" : "CSV",
   "actie.initiator.toevoegen" : "Assign initiator",
   "actie.initiator.toevoegen.persoon" : "Assign person as initiator",
   "actie.initiator.toevoegen.bedrijf" : "Assign company as initiator",
