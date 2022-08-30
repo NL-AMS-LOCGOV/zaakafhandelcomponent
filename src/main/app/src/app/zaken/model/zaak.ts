@@ -12,7 +12,8 @@ import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
 import {ZaakActies} from './zaak-acties';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
-import {ZaakToekenning} from './zaak-toekenning';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 
 export class Zaak {
     uuid: string;
@@ -40,7 +41,8 @@ export class Zaak {
     isVerlengd: boolean;
     redenVerlenging: string;
     duurVerlenging: string;
-    toekenning: ZaakToekenning;
+    groep: Group;
+    behandelaar: User;
     gerelateerdeZaken: GerelateerdeZaak[];
     kenmerken: ZaakKenmerk[];
     initiatorIdentificatieType: IdentificatieType;

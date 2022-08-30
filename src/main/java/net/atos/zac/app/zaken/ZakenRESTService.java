@@ -132,6 +132,8 @@ public class ZakenRESTService {
 
     public static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
 
+    public static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
+
     public static final String OPSCHORTING = "Opschorting";
 
     public static final String HERVATTING = "Hervatting";
@@ -281,13 +283,13 @@ public class ZakenRESTService {
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
             addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, nieuweZaak);
         }
-        if (restZaak.toekenning.groep != null) {
-            final Group group = identityService.readGroup(restZaak.toekenning.groep.id);
-            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolGroep(group, nieuweZaak), "Aanmaken zaak");
+        if (restZaak.groep != null) {
+            final Group group = identityService.readGroup(restZaak.groep.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolGroep(group, nieuweZaak), AANMAKEN_ZAAK_REDEN);
         }
-        if (restZaak.toekenning.medewerker != null) {
-            final User user = identityService.readUser(restZaak.toekenning.medewerker.id);
-            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolMedewerker(user, nieuweZaak), "Aanmaken zaak");
+        if (restZaak.behandelaar != null) {
+            final User user = identityService.readUser(restZaak.behandelaar.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolMedewerker(user, nieuweZaak), AANMAKEN_ZAAK_REDEN);
         }
         return zaakConverter.convert(nieuweZaak);
     }

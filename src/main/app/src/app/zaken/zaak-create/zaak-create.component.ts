@@ -34,6 +34,8 @@ import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
+import {FieldType} from '../../shared/material-form-builder/model/field-type.enum';
+import {Group} from '../../identity/model/group';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -99,9 +101,7 @@ export class ZaakCreateComponent implements OnInit {
                                                      .value(moment()).validators(Validators.required)
                                                      .build();
 
-        this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('toekenning')
-                                                                         .groepLabel('actie.zaak.toekennen.groep').groepOptioneel()
-                                                                         .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50).build();
+        this.medewerkerGroepFormField = this.getMedewerkerGroupFormField();
 
         this.initiatorField = new InputFormFieldBuilder().id('initiatorIdentificatie')
                                                          .icon(this.initiatorToevoegenIcon)
@@ -154,6 +154,7 @@ export class ZaakCreateComponent implements OnInit {
         if (formGroup) {
             const zaak: Zaak = new Zaak();
             Object.keys(formGroup.controls).forEach((key) => {
+                console.warn(key);
                 if (key === 'vertrouwelijkheidaanduiding') {
                     zaak[key] = formGroup.controls[key].value?.value;
                 } else {
@@ -165,6 +166,10 @@ export class ZaakCreateComponent implements OnInit {
                 }
                 if (key === 'zaakgeometrie' && this.locatie != null) {
                     zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
+                }
+                if (key === 'toekenning') {
+                    zaak.behandelaar = this.medewerkerGroepFormField.formControl.value.medewerker;
+                    zaak.groep = this.medewerkerGroepFormField.formControl.value.groep;
                 }
             });
             this.zakenService.createZaak(zaak).subscribe(newZaak => {
@@ -187,13 +192,19 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
+    getMedewerkerGroupFormField(groep?: Group): MedewerkerGroepFormField {
+        return new MedewerkerGroepFieldBuilder().id('toekenning')
+                                                .groepLabel('actie.zaak.toekennen.groep').defaultGroep(groep).groepOptioneel()
+                                                .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50)
+                                                .build();
+    }
+
     zaaktypeGeselecteerd(zaaktype: Zaaktype): void {
         this.zaakafhandelParametersService.readZaakafhandelparameters(zaaktype.uuid).subscribe(
             zaakafhandelParameters => {
-                this.medewerkerGroepFormField.formControl.setValue({
-                    groep: zaakafhandelParameters.defaultGroep,
-                    medewerker: null
-                });
+                this.medewerkerGroepFormField = this.getMedewerkerGroupFormField(zaakafhandelParameters.defaultGroep);
+                const index = this.createZaakFields.findIndex(formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
+                this.createZaakFields[index] = [this.medewerkerGroepFormField];
             }
         );
     }

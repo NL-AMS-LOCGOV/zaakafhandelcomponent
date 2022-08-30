@@ -105,7 +105,7 @@ export class ZakenService {
     toekennen(zaak: Zaak, reden?: string): Observable<Zaak> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
-        toekennenGegevens.behandelaarGebruikersnaam = zaak.toekenning.medewerker?.id;
+        toekennenGegevens.behandelaarGebruikersnaam = zaak.behandelaar?.id;
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
@@ -116,7 +116,7 @@ export class ZakenService {
     toekennenGroep(zaak: Zaak, reden?: string): Observable<Zaak> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
-        toekennenGegevens.groepId = zaak.toekenning.groep?.id;
+        toekennenGegevens.groepId = zaak.groep?.id;
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, toekennenGegevens).pipe(

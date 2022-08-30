@@ -36,7 +36,6 @@ import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
-import net.atos.zac.app.zaken.model.RESTToekenning;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
@@ -151,17 +150,15 @@ public class RESTZaakConverter {
         }
 
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
-        restZaak.toekenning = new RESTToekenning();
 
         final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
         if (groep != null) {
-            restZaak.toekenning.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
+            restZaak.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
         }
 
         final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         if (behandelaar != null) {
-            restZaak.toekenning.medewerker =
-                    userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
+            restZaak.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
         }
 
         final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
@@ -190,6 +187,7 @@ public class RESTZaakConverter {
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);
+
         zaak.setRegistratiedatum(restZaak.registratiedatum);
 
         if (restZaak.communicatiekanaal != null) {

@@ -31,8 +31,6 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     inGroep: boolean = true;
     subscriptions$: Subscription[] = [];
 
-    private lastGroep: Group = null;
-
     constructor(public translate: TranslateService, public identityService: IdentityService, private formBuilder: FormBuilder) {
         super();
     }
@@ -51,7 +49,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 if (this.formGroup.valid) {
                     this.data.formControl.setErrors(null);
                     if (data.medewerker === '') {
-                        data.medewerker = undefined;
+                        data.medewerker = null;
                     }
                     this.data.formControl.setValue(data);
                 } else {
@@ -62,12 +60,6 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 if (this.groepControl.valid) {
                     this.medewerkerControl.setValue(null);
                     this.getMedewerkers();
-                }
-            }),
-            this.data.formControl.valueChanges.subscribe(v => {
-                if(v.groep !== this.lastGroep) {
-                    this.lastGroep = v.groep;
-                    this.groepControl.setValue(v.groep);
                 }
             })
         );
@@ -80,22 +72,20 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     }
 
     initGroepen(): void {
-        this.subscriptions$.push(
-            this.identityService.listGroups().subscribe(groepen => {
-                this.groepen = groepen;
-                const validators: ValidatorFn[] = [];
-                validators.push(AutocompleteValidators.optionInList(groepen));
-                if (!this.data.groepOptioneel) {
-                    validators.push(Validators.required);
-                }
-                this.groepControl.setValidators(validators);
-                this.filteredGroepen = this.groepControl.valueChanges.pipe(
-                    startWith(''),
-                    map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
-                );
-                this.groepControl.setValue(this.data.defaultGroep);
-            })
-        );
+        this.identityService.listGroups().subscribe(groepen => {
+            this.groepen = groepen;
+            const validators: ValidatorFn[] = [];
+            validators.push(AutocompleteValidators.optionInList(groepen));
+            if (!this.data.groepOptioneel) {
+                validators.push(Validators.required);
+            }
+            this.groepControl.setValidators(validators);
+            this.filteredGroepen = this.groepControl.valueChanges.pipe(
+                startWith(''),
+                map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
+            );
+            this.groepControl.setValue(this.data.defaultGroep);
+        });
     }
 
     inGroepChanged($event: MouseEvent) {
@@ -112,16 +102,14 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         } else {
             observable = this.identityService.listUsers();
         }
-        this.subscriptions$.push(
-            observable.subscribe(medewerkers => {
-                this.medewerkers = medewerkers;
-                this.medewerkerControl.setValidators(AutocompleteValidators.optionInList(medewerkers));
-                this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
-                    startWith(''),
-                    map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
-                );
-            })
-        );
+        observable.subscribe(medewerkers => {
+            this.medewerkers = medewerkers;
+            this.medewerkerControl.setValidators(AutocompleteValidators.optionInList(medewerkers));
+            this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
+                startWith(''),
+                map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
+            );
+        });
     }
 
     displayFn(obj: User | Group): string {
