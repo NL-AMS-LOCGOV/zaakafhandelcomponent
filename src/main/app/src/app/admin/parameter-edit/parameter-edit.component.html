@@ -175,8 +175,8 @@
                                         <mat-select placeholder="{{'resultaat.-kies-' | translate}}"
                                                     [formControl]="getZaakbeeindigControl(parameter,'beeindigResultaat')"
                                                     [compareWith]="compareObject">
-                                            <mat-option *ngFor="let resultaat of zaakResultaten | async"
-                                                        [value]="resultaat">{{ resultaat.naam }}</mat-option>
+                                            <mat-option *ngFor="let resultaattype of resultaattypes | async"
+                                                        [value]="resultaattype">{{ resultaattype.naam }}</mat-option>
                                         </mat-select>
                                     </td>
                                 </ng-container>
