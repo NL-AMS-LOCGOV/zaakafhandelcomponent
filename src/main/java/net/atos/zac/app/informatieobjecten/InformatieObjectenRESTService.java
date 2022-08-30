@@ -336,12 +336,13 @@ public class InformatieObjectenRESTService {
                             enkelvoudigInformatieobject.getVerzenddatum() != null ?
                                     "uitgaand" :
                                     "intern";
+                    final String[] bestandsnaamExtensie = enkelvoudigInformatieobject.getBestandsnaam().split("\\.");
                     final String path = String.format("%s/%s/%s-%s.%s",
                                                       zaakId,
                                                       subfolder,
-                                                      enkelvoudigInformatieobject.getBestandsnaam().split("\\.")[0],
+                                                      bestandsnaamExtensie[0],
                                                       enkelvoudigInformatieobject.getIdentificatie(),
-                                                      enkelvoudigInformatieobject.getBestandsnaam().split("\\.")[1]);
+                                                      bestandsnaamExtensie[1]);
                     final ZipEntry zipEntry = new ZipEntry(path);
                     try {
                         zipOutputStream.putNextEntry(zipEntry);
