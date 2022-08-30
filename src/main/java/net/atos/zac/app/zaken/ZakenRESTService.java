@@ -126,19 +126,19 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Singleton
 public class ZakenRESTService {
 
-    public static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
+    private static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
+    private static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
 
-    public static final String OPSCHORTING = "Opschorting";
+    private static final String OPSCHORTING = "Opschorting";
 
-    public static final String HERVATTING = "Hervatting";
+    private static final String HERVATTING = "Hervatting";
 
-    public static final String VERLENGING = "Verlenging";
+    private static final String VERLENGING = "Verlenging";
 
     @Inject
     private ZTCClientService ztcClientService;
