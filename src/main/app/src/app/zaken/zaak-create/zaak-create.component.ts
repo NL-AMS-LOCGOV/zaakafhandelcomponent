@@ -154,7 +154,6 @@ export class ZaakCreateComponent implements OnInit {
         if (formGroup) {
             const zaak: Zaak = new Zaak();
             Object.keys(formGroup.controls).forEach((key) => {
-                console.warn(key);
                 if (key === 'vertrouwelijkheidaanduiding') {
                     zaak[key] = formGroup.controls[key].value?.value;
                 } else {
