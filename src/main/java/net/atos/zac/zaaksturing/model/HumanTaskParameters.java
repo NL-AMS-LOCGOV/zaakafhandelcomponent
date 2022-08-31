@@ -8,7 +8,6 @@ package net.atos.zac.zaaksturing.model;
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class HumanTaskParameters {
     private Integer doorlooptijd;
 
     @OneToMany(mappedBy = "humantask", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<HumanTaskReferentieTabel> referentieTabellen;
+    private List<HumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -99,22 +98,15 @@ public class HumanTaskParameters {
     }
 
     public List<HumanTaskReferentieTabel> getReferentieTabellen() {
-        return referentieTabellen == null ? Collections.emptyList() : Collections.unmodifiableList(referentieTabellen);
+        return Collections.unmodifiableList(referentieTabellen);
     }
 
-    public void setReferentieTabellen(final Collection<HumanTaskReferentieTabel> referentieTabellen) {
-        if (this.referentieTabellen == null) {
-            this.referentieTabellen = new ArrayList<>();
-        } else {
-            this.referentieTabellen.clear();
-        }
+    public void setReferentieTabellen(final List<HumanTaskReferentieTabel> referentieTabellen) {
+        this.referentieTabellen.clear();
         referentieTabellen.forEach(this::addReferentieTabel);
     }
 
     private HumanTaskReferentieTabel getReferentieTabel(final String veld) {
-        if (referentieTabellen == null) {
-            return null;
-        }
         return referentieTabellen.stream()
                 .filter(referentieTabel -> referentieTabel.getVeld().equals(veld))
                 .findAny()
@@ -122,17 +114,11 @@ public class HumanTaskParameters {
     }
 
     private boolean addReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
-        if (referentieTabellen == null) {
-            referentieTabellen = new ArrayList<>();
-        }
         referentieTabel.setHumantask(this);
         return referentieTabellen.add(referentieTabel);
     }
 
     private boolean removeReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
-        if (referentieTabellen == null) {
-            return false;
-        }
         return referentieTabellen.remove(referentieTabel);
     }
 

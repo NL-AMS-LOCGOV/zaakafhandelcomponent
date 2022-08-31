@@ -51,7 +51,7 @@ public class ReferentieTabel {
     private Boolean systeem;
 
     @OneToMany(mappedBy = "tabel", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<ReferentieTabelWaarde> waarden;
+    private List<ReferentieTabelWaarde> waarden = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -88,15 +88,11 @@ public class ReferentieTabel {
     }
 
     public List<ReferentieTabelWaarde> getWaarden() {
-        return waarden == null ? Collections.emptyList() : Collections.unmodifiableList(waarden);
+        return Collections.unmodifiableList(waarden);
     }
 
     public void setWaarden(final Collection<ReferentieTabelWaarde> waarden) {
-        if (this.waarden == null) {
-            this.waarden = new ArrayList<>();
-        } else {
-            this.waarden.clear();
-        }
+        this.waarden.clear();
         waarden.forEach(this::addWaarde);
     }
 
