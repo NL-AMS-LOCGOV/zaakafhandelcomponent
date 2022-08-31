@@ -319,7 +319,7 @@ public class InformatieObjectenRESTService {
     @Path("/download/zip")
     public Response readFilesAsZip(final List<String> uuids) {
         uuids.forEach(uuid -> {
-            UUID enkelvoudigInformatieObjectUUID = UUID.fromString(uuid);
+            final UUID enkelvoudigInformatieObjectUUID = UUID.fromString(uuid);
             assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObjectUUID).getDownloaden());
         });
         final StreamingOutput streamingOutput = outputStream -> {
@@ -329,8 +329,12 @@ public class InformatieObjectenRESTService {
                     final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                             uuid);
                     final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
-                    final URI zaakUri = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject).get(0).getZaak();
-                    final String zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
+                    final List<ZaakInformatieobject> zaakInformatieObjectenList = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
+                    String zaakId = "ontkoppeld";
+                    if(zaakInformatieObjectenList.size() > 0) {
+                        final URI zaakUri = zaakInformatieObjectenList.get(0).getZaak();
+                        zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
+                    }
                     final String subfolder = enkelvoudigInformatieobject.getOntvangstdatum() != null ?
                             "inkomend" :
                             enkelvoudigInformatieobject.getVerzenddatum() != null ?
