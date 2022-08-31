@@ -10,7 +10,7 @@ import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
-import {ZaakResultaat} from './zaak-resultaat';
+import {Resultaattype} from '../../zaken/model/resultaattype';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
@@ -20,7 +20,7 @@ export class ZaakafhandelParameters {
     creatiedatum: string;
     einddatumGeplandWaarschuwing: number;
     uiterlijkeEinddatumAfdoeningWaarschuwing: number;
-    zaakNietOntvankelijkResultaat: ZaakResultaat;
+    zaakNietOntvankelijkResultaattype: Resultaattype;
     humanTaskParameters: HumanTaskParameter[];
     userEventListenerParameters: UserEventListenerParameter[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];

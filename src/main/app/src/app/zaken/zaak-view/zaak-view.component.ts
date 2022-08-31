@@ -54,7 +54,6 @@ import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
-import {ZaakResultaat} from '../model/zaak-resultaat';
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
@@ -557,7 +556,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 new SelectFormFieldBuilder().id('resultaattype')
                                             .label('resultaat')
                                             .optionLabel('naam')
-                                            .options(this.zaakafhandelParametersService.listZaakResultaten(this.zaak.zaaktype.uuid))
+                                            .options(this.zaakafhandelParametersService.listResultaattypes(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build(),
                 new InputFormFieldBuilder().id('toelichting')

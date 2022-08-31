@@ -7,13 +7,20 @@ package net.atos.zac.zaaksturing.model;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -46,6 +53,9 @@ public class HumanTaskParameters {
     @Min(value = 0)
     @Column(name = "doorlooptijd")
     private Integer doorlooptijd;
+
+    @OneToMany(mappedBy = "humantask", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<HumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -87,4 +97,54 @@ public class HumanTaskParameters {
         this.doorlooptijd = doorlooptijd;
     }
 
+    public List<HumanTaskReferentieTabel> getReferentieTabellen() {
+        return Collections.unmodifiableList(referentieTabellen);
+    }
+
+    public void setReferentieTabellen(final List<HumanTaskReferentieTabel> referentieTabellen) {
+        this.referentieTabellen.clear();
+        referentieTabellen.forEach(this::addReferentieTabel);
+    }
+
+    private HumanTaskReferentieTabel getReferentieTabel(final String veld) {
+        return referentieTabellen.stream()
+                .filter(referentieTabel -> referentieTabel.getVeld().equals(veld))
+                .findAny()
+                .orElse(null);
+    }
+
+    private boolean addReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
+        referentieTabel.setHumantask(this);
+        return referentieTabellen.add(referentieTabel);
+    }
+
+    private boolean removeReferentieTabel(final HumanTaskReferentieTabel referentieTabel) {
+        return referentieTabellen.remove(referentieTabel);
+    }
+
+    public ReferentieTabel getTabel(final String veld) {
+        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
+        return referentieTabel == null ? null : referentieTabel.getTabel();
+    }
+
+    public ReferentieTabel putTabel(final String veld, final ReferentieTabel tabel) {
+        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
+        if (referentieTabel == null) {
+            addReferentieTabel(new HumanTaskReferentieTabel(veld, tabel));
+            return null;
+        } else {
+            final ReferentieTabel previous = referentieTabel.getTabel();
+            referentieTabel.setTabel(tabel);
+            return previous;
+        }
+    }
+
+    public ReferentieTabel removeTabel(final String veld) {
+        final HumanTaskReferentieTabel referentieTabel = getReferentieTabel(veld);
+        if (referentieTabel == null) {
+            return null;
+        }
+        removeReferentieTabel(referentieTabel);
+        return referentieTabel.getTabel();
+    }
 }
