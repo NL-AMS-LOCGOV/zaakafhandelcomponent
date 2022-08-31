@@ -256,3 +256,9 @@
                    [pageSizeOptions]="[10, 25, 50, 100]" sticky>
     </mat-paginator>
 </div>
+<div class="buttons">
+    <button (click)="downloadCSV()" color="accent" id="CSV_button" mat-raised-button
+            title="{{ 'actie.export.csv' | translate }}">{{'title.csv' | translate}}
+        <mat-icon>download_for_offline</mat-icon>
+    </button>
+</div>

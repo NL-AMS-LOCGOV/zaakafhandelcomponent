@@ -32,6 +32,8 @@ import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verde
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
 import {TakenActies} from '../../policy/model/taken-acties';
 import {PolicyService} from '../../policy/policy.service';
+import {TranslateService} from '@ngx-translate/core';
+import {CsvService} from '../../csv/csv.service';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -58,7 +60,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private identityService: IdentityService, public dialog: MatDialog, private zoekenService: ZoekenService,
-                private policyService: PolicyService) {
+                private policyService: PolicyService, private translateService: TranslateService,
+                private csvService: CsvService) {
         this.dataSource = new TakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
@@ -200,5 +203,11 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     filtersChange(): void {
         this.selection.clear();
         this.dataSource.filtersChanged();
+    }
+
+    downloadCSV(): void {
+        this.csvService.exportToCSV(this.dataSource.zoekParameters).subscribe(response => {
+            this.utilService.downloadBlobResponse(response, this.translateService.instant('title.taken.werkvoorraad'));
+        });
     }
 }
