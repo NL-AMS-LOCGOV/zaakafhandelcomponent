@@ -4,10 +4,10 @@
  */
 
 import {ZaakbeeindigReden} from './zaakbeeindig-reden';
-import {ZaakResultaat} from './zaak-resultaat';
+import {Resultaattype} from '../../zaken/model/resultaattype';
 
 export class ZaakbeeindigParameter {
     id: string;
     zaakbeeindigReden: ZaakbeeindigReden;
-    zaakResultaat: ZaakResultaat;
+    resultaattype: Resultaattype;
 }

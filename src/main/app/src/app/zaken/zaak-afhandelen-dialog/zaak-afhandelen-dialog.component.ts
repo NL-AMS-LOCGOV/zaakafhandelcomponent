@@ -56,7 +56,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
         this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
                                                               .label('resultaat')
                                                               .optionLabel('naam')
-                                                              .options(this.zaakafhandelParametersService.listZaakResultaten(this.data.zaak.zaaktype.uuid))
+                                                              .options(this.zaakafhandelParametersService.listResultaattypes(this.data.zaak.zaaktype.uuid))
                                                               .validators(Validators.required)
                                                               .build();
         this.toelichtingFormField = new InputFormFieldBuilder().id('toelichting')

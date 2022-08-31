@@ -3,13 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {Resultaattype} from './resultaattype';
+
 export class ZaakResultaat {
-    id: string;
-    naam: string;
-    naamGeneriek: string;
     toelichting: string;
-    archiefNominatie: string;
-    archiefTermijn: string;
-    selectielijst: string;
-    toelichtingResultaattype: string;
+    resultaattype: Resultaattype;
 }

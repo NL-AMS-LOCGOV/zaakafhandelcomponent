@@ -4,17 +4,16 @@
  */
 
 import {Zaaktype} from './zaaktype';
-import {Group} from '../../identity/model/group';
 import {ZaakStatus} from './zaak-status';
 import {ZaakResultaat} from './zaak-resultaat';
 import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
-import {ZaakEigenschap} from './zaak-eigenschap';
-import {User} from '../../identity/model/user';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
 import {ZaakActies} from './zaak-acties';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 
 export class Zaak {
     uuid: string;

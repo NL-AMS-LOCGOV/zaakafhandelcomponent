@@ -19,13 +19,13 @@ import {MatSelectChange} from '@angular/material/select';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {ZaakbeeindigParameter} from '../model/zaakbeeindig-parameter';
 import {ZaakbeeindigReden} from '../model/zaakbeeindig-reden';
-import {ZaakResultaat} from '../../zaken/model/zaak-resultaat';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {UserEventListenerParameter} from '../model/user-event-listener-parameter';
 import {ZaaknietontvankelijkReden} from '../model/zaaknietontvankelijk-reden';
 import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-parameter';
 import {AdminComponent} from '../admin/admin.component';
+import {Resultaattype} from '../../zaken/model/resultaattype';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -56,7 +56,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     caseDefinitions: Observable<CaseDefinition[]>;
     groepen: Observable<Group[]>;
     medewerkers: Observable<User[]>;
-    zaakResultaten: Observable<ZaakResultaat[]>;
+    resultaattypes: Observable<Resultaattype[]>;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder) {
@@ -70,7 +70,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
             this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
-            this.zaakResultaten = adminService.listZaakResultaten(this.parameters.zaaktype.uuid);
+            this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
@@ -191,13 +191,13 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     private addZaakbeeindigParameter(parameter: ZaakbeeindigParameter): void {
         this.zaakbeeindigParameters.push(parameter);
-        this.zaakbeeindigFormGroup.addControl(parameter.zaakbeeindigReden.id + '__beeindigResultaat', new FormControl(parameter.zaakResultaat));
+        this.zaakbeeindigFormGroup.addControl(parameter.zaakbeeindigReden.id + '__beeindigResultaat', new FormControl(parameter.resultaattype));
         this.updateZaakbeeindigForm(parameter);
     }
 
     private getZaaknietontvankelijkParameter(zaakafhandelParameters: ZaakafhandelParameters): ZaaknietontvankelijkParameter {
         const parameter: ZaaknietontvankelijkParameter = new ZaaknietontvankelijkParameter();
-        parameter.zaakResultaat = zaakafhandelParameters.zaakNietOntvankelijkResultaat;
+        parameter.resultaattype = zaakafhandelParameters.zaakNietOntvankelijkResultaattype;
         this.selection.select(parameter);
         return parameter;
     }
@@ -266,9 +266,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.zaakbeeindigParameters = [];
         this.selection.selected.forEach(param => {
             if (this.isZaaknietontvankelijkParameter(param)) {
-                this.parameters.zaakNietOntvankelijkResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
+                this.parameters.zaakNietOntvankelijkResultaattype = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
             } else {
-                param.zaakResultaat = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
+                param.resultaattype = this.getZaakbeeindigControl(param, 'beeindigResultaat').value;
                 this.parameters.zaakbeeindigParameters.push(param);
             }
         });
