@@ -1,6 +1,7 @@
 {
   " 1 " : ">>--> TITELS <--<<",
   "title.prefix" : "{{gemeente}} - ",
+  "title.csv" : "CSV",
   "title.dashboard" : "Dashboard",
   "title.document" : "Document | {{document}}",
   "title.document.aanmaken" : "Document toevoegen | {{zaak}}",
@@ -332,6 +333,7 @@
   "actie.document.bekijken" : "Document bekijken",
   "actie.downloaden" : "Downloaden",
   "actie.downloaden.zip" : "Downloaden als zip",
+  "actie.export.csv" : "Exporteer als CSV",
   "actie.initiator.toevoegen" : "Initiator toekennen",
   "actie.initiator.toevoegen.persoon" : "Persoon als initiator toekennen",
   "actie.initiator.toevoegen.bedrijf" : "Bedrijf als initiator toekennen",

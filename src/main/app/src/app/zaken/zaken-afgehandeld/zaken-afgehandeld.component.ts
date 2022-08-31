@@ -22,6 +22,8 @@ import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
 import {FilterVeld} from '../../zoeken/model/filter-veld';
 import {DatumVeld} from '../../zoeken/model/datum-veld';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
+import {TranslateService} from '@ngx-translate/core';
+import {CsvService} from '../../csv/csv.service';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -45,7 +47,9 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     uiterlijkeEinddatumAfdoeningIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
-    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService) {
+    constructor(private zakenService: ZakenService, private zoekenService: ZoekenService,
+                public utilService: UtilService, private translateService: TranslateService,
+                private csvService: CsvService) {
         this.dataSource = new ZakenAfgehandeldDatasource(this.zoekenService, this.utilService);
     }
 
@@ -87,5 +91,11 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
 
     filtersChange(): void {
         this.dataSource.filtersChanged();
+    }
+
+    downloadCSV(): void {
+        this.csvService.exportToCSV(this.dataSource.zoekParameters).subscribe(response => {
+            this.utilService.downloadBlobResponse(response, this.translateService.instant('title.zaken.afgehandeld'));
+        });
     }
 }
