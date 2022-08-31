@@ -247,6 +247,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         formGroup.get('titel').reset();
         formGroup.get('titel').setErrors(null);
         formGroup.get('nogmaals').setValue(false);
+        formGroup.get('ontvangstdatum').reset();
+        formGroup.get('verzenddatum').reset();
         this.form.reset();
         formGroup.setErrors({invalid: true});
     }
