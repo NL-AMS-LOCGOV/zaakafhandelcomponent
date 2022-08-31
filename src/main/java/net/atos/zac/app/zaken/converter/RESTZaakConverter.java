@@ -20,6 +20,8 @@ import javax.inject.Inject;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
+import net.atos.client.zgw.brc.BRCClientService;
+import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -55,6 +57,9 @@ public class RESTZaakConverter {
     private ZRCClientService zrcClientService;
 
     @Inject
+    private BRCClientService brcClientService;
+
+    @Inject
     private ZGWApiService zgwApiService;
 
     @Inject
@@ -74,6 +79,9 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTZaakEigenschappenConverter zaakEigenschappenConverter;
+
+    @Inject
+    private RESTBesluitConverter besluitConverter;
 
     @Inject
     private RESTZaaktypeConverter zaaktypeConverter;
@@ -96,6 +104,9 @@ public class RESTZaakConverter {
     public RESTZaak convert(final Zaak zaak) {
         final RESTZaak restZaak = new RESTZaak();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+
+        final Besluit besluit = brcClientService.findBesluit(zaak);
+        restZaak.besluit = besluitConverter.convertToRESTBesluit(besluit);
 
         restZaak.identificatie = zaak.getIdentificatie();
         restZaak.uuid = zaak.getUuid();
@@ -175,7 +186,7 @@ public class RESTZaakConverter {
         restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
         restZaak.isHeropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
-        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar));
+        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar, besluit));
 
         return restZaak;
     }

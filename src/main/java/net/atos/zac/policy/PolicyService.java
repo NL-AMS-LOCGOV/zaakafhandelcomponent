@@ -23,6 +23,8 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
+import net.atos.client.zgw.brc.BRCClientService;
+import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
@@ -77,6 +79,9 @@ public class PolicyService {
     private ZTCClientService ztcClientService;
 
     @Inject
+    private BRCClientService brcClientService;
+
+    @Inject
     private ZGWApiService zgwApiService;
 
     @Inject
@@ -92,20 +97,26 @@ public class PolicyService {
         return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar,
+            final Besluit besluit) {
         final ZaakData zaakData = new ZaakData();
         final Boolean ontvangstbevestingVerstuurd = caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid());
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
-        zaakData.heropend = statustype != null ? STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()) : false;
+        zaakData.heropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+        zaakData.besluit = besluit != null;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         zaakData.ontvangstbevestigingVerstuurd = ontvangstbevestingVerstuurd != null ? ontvangstbevestingVerstuurd : false;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+        return readZaakActies(zaak, zaaktype, statustype, behandelaar, brcClientService.findBesluit(zaak));
+    }
+
     public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
-        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak));
+        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak), brcClientService.findBesluit(zaak));
     }
 
     public ZaakActies readZaakActies(final Zaak zaak, final Statustype statustype) {

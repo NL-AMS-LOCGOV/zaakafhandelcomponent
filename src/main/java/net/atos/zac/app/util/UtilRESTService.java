@@ -70,6 +70,8 @@ public class UtilRESTService {
         return ZTC + ul(Stream.of(ztcClientService.clearStatustypeCache(),
                                   ztcClientService.clearZaaktypeStatustypeManagedCache(),
                                   ztcClientService.clearResultaattypeCache(),
+                                  ztcClientService.clearBesluittypeCache(),
+                                  ztcClientService.clearZaaktypeBesluittypeManagedCache(),
                                   ztcClientService.clearZaaktypeResultaattypeManagedCache(),
                                   ztcClientService.clearZaaktypeRoltypeCache(),
                                   ztcClientService.clearZaaktypeUrlCache(),
