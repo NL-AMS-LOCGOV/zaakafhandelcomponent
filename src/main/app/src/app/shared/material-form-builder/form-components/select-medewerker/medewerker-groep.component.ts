@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
 import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
@@ -19,7 +19,7 @@ import {map, startWith} from 'rxjs/operators';
     templateUrl: './medewerker-groep.component.html',
     styleUrls: ['./medewerker-groep.component.less']
 })
-export class MedewerkerGroepComponent extends FormComponent implements OnInit {
+export class MedewerkerGroepComponent extends FormComponent implements OnInit, OnDestroy {
     data: MedewerkerGroepFormField;
     formGroup: FormGroup;
     groepControl = new FormControl();
@@ -29,6 +29,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
     medewerkers: User[];
     filteredMedewerkers: Observable<User[]>;
     inGroep: boolean = true;
+    subscriptions$: Subscription[] = [];
 
     constructor(public translate: TranslateService, public identityService: IdentityService, private formBuilder: FormBuilder) {
         super();
@@ -42,26 +43,32 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit {
             medewerker: this.medewerkerControl
         });
         this.data.formControl.setValue(this.formGroup.value);
-        this.formGroup.valueChanges.subscribe(data => {
-            if (this.formGroup.valid) {
-                this.data.formControl.setErrors(null);
-                if (data.medewerker === '') {
-                    data.medewerker = undefined;
+
+        this.subscriptions$.push(
+            this.formGroup.valueChanges.subscribe(data => {
+                if (this.formGroup.valid) {
+                    this.data.formControl.setErrors(null);
+                    if (data.medewerker === '') {
+                        data.medewerker = null;
+                    }
+                    this.data.formControl.setValue(data);
+                } else {
+                    this.data.formControl.setErrors([]);
                 }
-                this.data.formControl.setValue(data);
-            } else {
-                this.data.formControl.setErrors([]);
-            }
-        });
+            }),
+            this.groepControl.valueChanges.subscribe(() => {
+                if (this.groepControl.valid) {
+                    this.medewerkerControl.setValue(null);
+                    this.getMedewerkers();
+                }
+            })
+        );
 
-        this.groepControl.valueChanges.subscribe(() => {
-            if (this.groepControl.valid) {
-                this.medewerkerControl.setValue(null);
-                this.getMedewerkers();
-            }
-        });
         this.getMedewerkers();
+    }
 
+    ngOnDestroy() {
+        this.subscriptions$.forEach(s => s.unsubscribe());
     }
 
     initGroepen(): void {
