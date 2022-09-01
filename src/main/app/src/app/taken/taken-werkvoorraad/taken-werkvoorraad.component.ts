@@ -174,6 +174,8 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['select', ColumnPickerValue.STICKY],
             ['naam', ColumnPickerValue.VISIBLE],
             ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['omschrijving', ColumnPickerValue.VISIBLE],
+            ['toelichting', ColumnPickerValue.HIDDEN],
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
             ['creatiedatum', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],

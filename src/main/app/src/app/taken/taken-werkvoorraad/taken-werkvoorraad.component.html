@@ -132,6 +132,22 @@
             <td mat-cell *matCellDef="let row">{{ row.behandelaarNaam | empty }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="omschrijving_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="omschrijving">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'omschrijving' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.omschrijving | empty }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="toelichting_filter">
+            <th mat-header-cell *matHeaderCellDef></th>
+        </ng-container>
+        <ng-container matColumnDef="toelichting">
+            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'toelichting' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.toelichting | empty }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="url_filter" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
                 <zac-zoekopdracht [werklijst]="dataSource.werklijst"
