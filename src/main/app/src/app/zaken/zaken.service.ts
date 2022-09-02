@@ -33,6 +33,10 @@ import {ZaakOntkoppelGegevens} from './model/zaak-ontkoppel-gegevens';
 import {Roltype} from '../klanten/model/klanten/roltype';
 import {ZaakBetrokkene} from './model/zaak-betrokkene';
 import {Klant} from '../klanten/model/klanten/klant';
+import {BesluitVastleggenGegevens} from './model/besluit-vastleggen-gegevens';
+import {Besluit} from './model/besluit';
+import {Resultaattype} from './model/resultaattype';
+import {Besluittype} from './model/besluittype';
 
 @Injectable({
     providedIn: 'root'
@@ -243,6 +247,24 @@ export class ZakenService {
 
     afsluiten(uuid: string, afsluitenReden: string, resultaattypeUuid: string): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/${uuid}/afsluiten`, new ZaakAfsluitenGegevens(afsluitenReden, resultaattypeUuid)).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    bestluitVastleggen(besluitVestleggenGegevens: BesluitVastleggenGegevens): Observable<Besluit> {
+        return this.http.post<BesluitVastleggenGegevens>(`${this.basepath}/besluit`, besluitVestleggenGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listBesluittypes(zaaktypeUuid: string): Observable<Besluittype[]> {
+        return this.http.get<Besluittype[]>(`${this.basepath}/besluittypes/${zaaktypeUuid}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listResultaattypes(zaaktypeUuid: string): Observable<Resultaattype[]> {
+        return this.http.get<Resultaattype[]>(`${this.basepath}/resultaattypes/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

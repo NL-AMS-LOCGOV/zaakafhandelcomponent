@@ -9,12 +9,12 @@ import {ZaakStatus} from './zaak-status';
 import {ZaakResultaat} from './zaak-resultaat';
 import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
-import {ZaakEigenschap} from './zaak-eigenschap';
 import {User} from '../../identity/model/user';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
 import {ZaakActies} from './zaak-acties';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
+import {Besluit} from './besluit';
 
 export class Zaak {
     uuid: string;
@@ -24,6 +24,7 @@ export class Zaak {
     zaaktype: Zaaktype;
     status: ZaakStatus;
     resultaat: ZaakResultaat;
+    besluit: Besluit;
     bronorganisatie: string;
     verantwoordelijkeOrganisatie: string;
     registratiedatum: string;

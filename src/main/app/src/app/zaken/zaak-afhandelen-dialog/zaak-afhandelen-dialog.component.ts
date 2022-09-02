@@ -9,7 +9,6 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {Zaak} from '../model/zaak';
 import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
@@ -19,6 +18,7 @@ import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {MailService} from '../../mail/mail.service';
 import {MailObject} from '../../mail/model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
+import {ZakenService} from '../zaken.service';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -43,7 +43,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
 
     constructor(public dialogRef: MatDialogRef<ZaakAfhandelenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
-                private zaakafhandelParametersService: ZaakafhandelParametersService,
+                private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService) {
     }
@@ -56,7 +56,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
         this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
                                                               .label('resultaat')
                                                               .optionLabel('naam')
-                                                              .options(this.zaakafhandelParametersService.listResultaattypes(this.data.zaak.zaaktype.uuid))
+                                                              .options(this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid))
                                                               .validators(Validators.required)
                                                               .build();
         this.toelichtingFormField = new InputFormFieldBuilder().id('toelichting')

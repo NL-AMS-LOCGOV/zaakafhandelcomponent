@@ -18,6 +18,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.flowable.task.api.TaskInfo;
 
@@ -104,6 +105,7 @@ public class PolicyService {
         zaakData.open = zaak.isOpen();
         zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
+        zaakData.heeftBesluittypen = CollectionUtils.isNotEmpty(zaaktype.getBesluittypen());
         zaakData.heropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
         zaakData.besluit = besluit != null;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;

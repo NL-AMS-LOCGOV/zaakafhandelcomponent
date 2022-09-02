@@ -29,10 +29,13 @@ import {GebruikersvoorkeurenModule} from '../gebruikersvoorkeuren/gebruikersvoor
 import {BAGModule} from '../bag/bag.module';
 import {ZaakAfhandelenDialogComponent} from './zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
-
+import {BesluitCreateComponent} from './besluit-create/besluit-create.component';
+import {BesluitViewComponent} from './besluit-view/besluit-view.component';
 
 @NgModule({
     declarations: [
+        BesluitCreateComponent,
+        BesluitViewComponent,
         ZaakViewComponent,
         ZaakVerkortComponent,
         ZaakCreateComponent,

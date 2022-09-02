@@ -13,4 +13,15 @@ export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
         super();
         this.formField = new DateFormField();
     }
+
+    minDate(date: Date) {
+        this.formField.minDate = date;
+        return this;
+    }
+
+    maxDate(date: Date) {
+        this.formField.maxDate = date;
+        return this;
+    }
+
 }

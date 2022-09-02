@@ -1,0 +1,18 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+<mat-card class="besluit-gegevens">
+    <mat-card-header>
+        <mat-card-title>{{besluit.identificatie}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+            <zac-static-text fxFlex="50" [label]="'besluit' | translate" [value]="besluit.besluittype.naam"></zac-static-text>
+            <zac-static-text fxFlex="50" [label]="'datum' | translate" [value]="besluit.datum | datum "></zac-static-text>
+            <zac-static-text fxFlex="50" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
+            <zac-static-text fxFlex="50" [label]="'vervaldatum' | translate" [value]="besluit.vervaldatum | datum"></zac-static-text>
+            <zac-static-text fxFlex="100" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
+        </div>
+    </mat-card-content>
+</mat-card>

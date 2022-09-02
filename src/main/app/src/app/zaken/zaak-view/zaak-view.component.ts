@@ -360,6 +360,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
+        if (this.zaak.acties.vastleggenBesluit) {
+            this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.BESLUIT_VASTLEGGEN;
+            }, 'gavel'));
+        }
+
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
@@ -556,7 +563,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 new SelectFormFieldBuilder().id('resultaattype')
                                             .label('resultaat')
                                             .optionLabel('naam')
-                                            .options(this.zaakafhandelParametersService.listResultaattypes(this.zaak.zaaktype.uuid))
+                                            .options(this.zakenService.listResultaattypes(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build(),
                 new InputFormFieldBuilder().id('toelichting')
@@ -923,5 +930,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.utilService.openSnackbar('msg.zaak.ontkoppelen.uitgevoerd');
             }
         });
+    }
+
+    besluitVastgelegd($event: boolean): void {
+        this.action = null;
+        this.actionsSidenav.close();
+        this.updateZaak();
     }
 }

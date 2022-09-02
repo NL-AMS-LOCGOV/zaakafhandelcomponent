@@ -26,4 +26,5 @@ export class ZaakActies {
     wijzigenToekenning: boolean;
     wijzigenOverig: boolean;
     startenPlanItems: boolean;
+    vastleggenBesluit: boolean;
 }

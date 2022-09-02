@@ -79,15 +79,17 @@ import net.atos.zac.app.zaken.converter.RESTBesluitConverter;
 import net.atos.zac.app.zaken.converter.RESTBesluittypeConverter;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
+import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakBetrokkeneConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTBesluit;
-import net.atos.zac.app.zaken.model.RESTBesluitToevoegenGegevens;
+import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
+import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakAfbrekenGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakAfsluitenGegevens;
@@ -207,6 +209,9 @@ public class ZakenRESTService {
 
     @Inject
     private RESTBesluittypeConverter besluittypeConverter;
+
+    @Inject
+    private RESTResultaattypeConverter resultaattypeConverter;
 
     @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
@@ -602,10 +607,10 @@ public class ZakenRESTService {
 
     @POST
     @Path("besluit")
-    public RESTBesluit toevoegenBesluit(final RESTBesluitToevoegenGegevens besluitToevoegenGegevens) {
+    public RESTBesluit createBesluit(final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
-        final Besluit besluit = besluitConverter.convertToBesluit(besluitToevoegenGegevens);
+        final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, besluitToevoegenGegevens.toelichting);
         return besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
     }
@@ -616,6 +621,13 @@ public class ZakenRESTService {
         AppActies appActies = policyService.readAppActies();
         assertActie(appActies.getZaken());
         return besluittypeConverter.convertToRESTBesluittypes(ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
+    }
+
+    @GET
+    @Path("resultaattypes/{zaaktypeUUID}")
+    public List<RESTResultaattype> listResultaattypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
+        assertActie(policyService.readAppActies().getZaken());
+        return resultaattypeConverter.convertResultaattypes(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
     private void ingelogdeMedewerkerToekennenAanZaak(final Zaak zaak, final RESTZaakToekennenGegevens toekennenGegevens) {

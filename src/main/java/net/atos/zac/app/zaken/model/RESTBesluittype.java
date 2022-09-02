@@ -5,11 +5,11 @@
 
 package net.atos.zac.app.zaken.model;
 
-import java.net.URI;
+import java.util.UUID;
 
 public class RESTBesluittype {
 
-    public URI url;
+    public UUID id;
 
     public String naam;
 
