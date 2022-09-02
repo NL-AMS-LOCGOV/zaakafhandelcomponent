@@ -71,6 +71,8 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
                 this.utilService.openSnackbar('msg.besluit.vastgelegd');
                 this.besluitVastgelegd.emit(true);
             });
+        } else {
+            this.besluitVastgelegd.emit(false);
         }
     }
 

@@ -416,6 +416,7 @@
   "msg.advies.behandelen": "The case handler asks for advice.<br>Assess the question and, if necessary, the documents and provide your advice with an explanation.",
   "msg.bagobject.toegevoegd": "The BAG object has been added",
   "msg.besluit.vastgelegd": "The decision has been added",
+  "msg.besluit.verplicht": "For the chosen result, adding a decision is mandatory, first add a decision.",
   "msg.bagobject.koppelen.bevestigen": "Link BAG object to the case?<br><br><b>ATTENTION:</b> Once a BAG object has been linked, it can only be unlinked by an administrator!",
   "msg.betrokkene.ontkoppelen.bevestigen": "Unlink {{betrokkene}} from the case?",
   "msg.betrokkene.ontkoppelen.uitgevoerd": "{{betrokkene}} has been unlinked",

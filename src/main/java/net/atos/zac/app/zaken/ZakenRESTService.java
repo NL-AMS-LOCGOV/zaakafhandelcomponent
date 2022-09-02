@@ -611,7 +611,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
-        zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, besluitToevoegenGegevens.toelichting);
+        zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
         return besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
     }
 

@@ -8,6 +8,7 @@ export class Resultaattype {
     naam: string;
     naamGeneriek: string;
     vervaldatumBesluitVerplicht: boolean;
+    besluitVerplicht: boolean;
     toelichting: string;
     archiefNominatie: string;
     archiefTermijn: string;

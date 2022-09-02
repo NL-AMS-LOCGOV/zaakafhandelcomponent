@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
@@ -19,18 +19,27 @@ import {MailService} from '../../mail/mail.service';
 import {MailObject} from '../../mail/model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {ZakenService} from '../zaken.service';
+import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {takeUntil} from 'rxjs/operators';
+import {Resultaattype} from '../model/resultaattype';
+import {Subject} from 'rxjs';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
     styleUrls: ['./zaak-afhandelen-dialog.component.less']
 })
-export class ZaakAfhandelenDialogComponent implements OnInit {
+export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
     loading: boolean;
     toelichtingFormField: AbstractFormField;
-    resultaatFormField: AbstractFormField;
+    resultaatFormField: SelectFormField | ReadonlyFormField;
+    besluitFormField: ReadonlyFormField;
     sendMailFormField: AbstractFormField;
     ontvangerFormField: AbstractFormField;
+    private ngDestroy = new Subject<void>();
+    besluitVastleggen = false;
 
     onderwerp: string = 'Wij hebben uw verzoek afgehandeld (zaaknummer: {zaaknr}';
     body: string = 'Beste klant,\n' +
@@ -53,12 +62,24 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
         this.body = this.body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
                         .replace('{zaaknr}', this.data.zaak.identificatie);
 
-        this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
-                                                              .label('resultaat')
-                                                              .optionLabel('naam')
-                                                              .options(this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid))
-                                                              .validators(Validators.required)
-                                                              .build();
+        if (this.data.zaak.besluit) {
+            this.resultaatFormField = new ReadonlyFormFieldBuilder().id('resultaattype')
+                                                                    .label('resultaat')
+                                                                    .value(this.data.zaak.resultaat.resultaattype.naam)
+                                                                    .build();
+
+            this.besluitFormField = new ReadonlyFormFieldBuilder().id('besluit')
+                                                                  .label('besluit')
+                                                                  .value(this.data.zaak.besluit.besluittype.naam)
+                                                                  .build();
+        } else {
+            this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')
+                                                                  .label('resultaat')
+                                                                  .optionLabel('naam')
+                                                                  .options(this.zakenService.listResultaattypes(this.data.zaak.zaaktype.uuid))
+                                                                  .validators(Validators.required)
+                                                                  .build();
+        }
         this.toelichtingFormField = new InputFormFieldBuilder().id('toelichting')
                                                                .label('toelichting')
                                                                .maxlength(80)
@@ -71,6 +92,23 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
                                                              .validators(Validators.required, CustomValidators.email)
                                                              .maxlength(200)
                                                              .build();
+
+        if (!this.data.zaak.besluit) {
+            this.resultaatFormField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
+                this.besluitVastleggen = (value as Resultaattype).besluitVerplicht;
+
+                if (this.besluitVastleggen) {
+                    this.toelichtingFormField.formControl.disable();
+                    this.sendMailFormField.formControl.disable();
+                } else {
+                    this.toelichtingFormField.formControl.enable();
+                    this.sendMailFormField.formControl.setValue(false);
+                    this.sendMailFormField.formControl.enable();
+
+                }
+
+            });
+        }
     }
 
     close(): void {
@@ -101,6 +139,16 @@ export class ZaakAfhandelenDialogComponent implements OnInit {
 
     formFieldsInvalid(): boolean {
         return this.resultaatFormField.formControl.invalid || this.toelichtingFormField.formControl.invalid ||
-            this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false;
+        this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false;
+    }
+
+    ngOnDestroy(): void {
+        this.ngDestroy.next();
+        this.ngDestroy.complete();
+    }
+
+    openBesluitVastleggen(): void {
+        this.dialogRef.close('openBesluitVastleggen');
+
     }
 }

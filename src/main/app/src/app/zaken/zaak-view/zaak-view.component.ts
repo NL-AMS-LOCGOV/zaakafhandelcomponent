@@ -450,8 +450,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
             this.dialogSubscriptions.length = 0;
             if (result) {
-                this.utilService.openSnackbar('msg.planitem.uitgevoerd.' + planItem.userEventListenerActie);
-                this.updateZaak();
+                if (result === 'openBesluitVastleggen') {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.BESLUIT_VASTLEGGEN;
+                } else {
+                    this.utilService.openSnackbar('msg.planitem.uitgevoerd.' + planItem.userEventListenerActie);
+                    this.updateZaak();
+                }
             }
         });
     }
@@ -932,9 +937,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    besluitVastgelegd($event: boolean): void {
+    besluitVastgelegd(besluitVastgelegd: boolean): void {
+        if (besluitVastgelegd) {
+            this.updateZaak();
+        }
         this.action = null;
         this.actionsSidenav.close();
-        this.updateZaak();
     }
 }

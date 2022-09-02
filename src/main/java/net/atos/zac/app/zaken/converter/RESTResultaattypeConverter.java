@@ -23,11 +23,14 @@ public class RESTResultaattypeConverter {
     private ZTCClientService ztcClientService;
 
     public RESTResultaattype convertResultaattype(final Resultaattype resultaattype) {
+
+        final Afleidingswijze afleidingswijze = resultaattype.getBrondatumArchiefprocedure().getAfleidingswijze();
         final RESTResultaattype restResultaattype = new RESTResultaattype();
         restResultaattype.id = UriUtil.uuidFromURI(resultaattype.getUrl());
         restResultaattype.naam = resultaattype.getOmschrijving();
-        restResultaattype.vervaldatumBesluitVerplicht =
-                Afleidingswijze.VERVALDATUM_BESLUIT.equals(resultaattype.getBrondatumArchiefprocedure().getAfleidingswijze());
+        restResultaattype.vervaldatumBesluitVerplicht = Afleidingswijze.VERVALDATUM_BESLUIT.equals(afleidingswijze);
+        restResultaattype.besluitVerplicht = Afleidingswijze.VERVALDATUM_BESLUIT.equals(afleidingswijze) ||
+                Afleidingswijze.INGANGSDATUM_BESLUIT.equals(afleidingswijze);
         restResultaattype.archiefNominatie = resultaattype.getArchiefnominatie().name();
         restResultaattype.toelichting = resultaattype.getToelichting();
         restResultaattype.naamGeneriek = resultaattype.getOmschrijvingGeneriek();
