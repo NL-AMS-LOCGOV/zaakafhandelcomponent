@@ -1,0 +1,27 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+        <mat-card>
+            <mat-card-content>
+                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                    <div fxFlex="33" fxFlex.lt-md="100">
+                        <zac-edit-input [formField]="codeFormField"
+                                        [readonly]="tabel?.systeem"
+                                        (onSave)="editTabel($event, 'code')"></zac-edit-input>
+                    </div>
+                    <div fxFlex="33" fxFlex.lt-md="100">
+                        <zac-edit-input [formField]="naamFormField"
+                                        (onSave)="editTabel($event, 'naam')"></zac-edit-input>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>

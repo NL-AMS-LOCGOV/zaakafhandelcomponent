@@ -9,6 +9,9 @@ import {ParametersComponent} from './parameters/parameters.component';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZaakafhandelParametersResolver} from './zaakafhandel-parameters-resolver.service';
 import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
+import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
+import {ReferentieTabelResolver} from './referentie-tabel-resolver.service';
+import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 
 const routes: Routes = [
     {
@@ -16,7 +19,9 @@ const routes: Routes = [
             {path: '', redirectTo: 'parameters', pathMatch: 'full'},
             {path: 'groepen', component: GroepSignaleringenComponent},
             {path: 'parameters', component: ParametersComponent},
-            {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}}
+            {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}},
+            {path: 'referentietabellen', component: ReferentieTabellenComponent},
+            {path: 'referentietabellen/:id', component: ReferentieTabelComponent, resolve: {tabel: ReferentieTabelResolver}}
         ]
     }
 ];
