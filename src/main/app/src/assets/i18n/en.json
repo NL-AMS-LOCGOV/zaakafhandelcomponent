@@ -238,6 +238,8 @@
   "zaakIdentificatie" : "Belongs to case",
   "zaakInformatieobject" : "Document",
   "zaakObject" : "Object",
+  "zaakOmschrijving": "Case description",
+  "zaakToelichting": "Case explanation",
   "zaken" : "Cases",
   "gerelateerdeZaken" : "Related Cases",
   "zaaktype" : "Casetype",
