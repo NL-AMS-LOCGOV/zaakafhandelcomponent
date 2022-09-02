@@ -154,7 +154,7 @@ public class InformatieObjectenRESTService {
     private PolicyService policyService;
 
     @Inject
-    private InformatieObjectOndertekenenService informatieObjectOndertekenenService;
+    private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
 
     @GET
     @Path("informatieobject/{uuid}")
@@ -479,10 +479,10 @@ public class InformatieObjectenRESTService {
     }
 
     @POST
-    @Path("/informatieobject/{uuid}/ondertekenen")
-    public Response signDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
+    @Path("/informatieobject/{uuid}/onderteken")
+    public Response ondertekenInformatieObject(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
         assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getOndertekenen());
-        informatieObjectOndertekenenService.ondertekenen(uuid);
+        enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }

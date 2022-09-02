@@ -118,7 +118,7 @@ export class InformatieObjectenService {
     }
 
     ondertekenInformatieObject(uuid: string, zaakUuid: string) {
-        return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/ondertekenen`, zaakUuid), null).pipe(
+        return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/onderteken`, zaakUuid), null).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

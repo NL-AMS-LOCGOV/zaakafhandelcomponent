@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten;
 
-import com.fasterxml.uuid.impl.UUIDUtil;
-
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
@@ -15,8 +13,6 @@ import net.atos.client.zgw.drc.model.OndertekeningSoort;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-
-import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -30,7 +26,7 @@ import java.util.UUID;
 
 @ApplicationScoped
 @Transactional
-public class InformatieObjectOndertekenenService {
+public class EnkelvoudigInformatieObjectOndertekenService {
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -41,11 +37,11 @@ public class InformatieObjectOndertekenenService {
     @Inject
     private DRCClientService drcClientService;
 
-    public void ondertekenen(final List<UUID> enkelvoudigInformatieObjectUUIDs) {
-        enkelvoudigInformatieObjectUUIDs.forEach(this::ondertekenen);
+    public void ondertekenEnkelvoudigInformatieObjecten(final List<UUID> enkelvoudigInformatieObjectUUIDs) {
+        enkelvoudigInformatieObjectUUIDs.forEach(this::ondertekenEnkelvoudigInformatieObject);
     }
 
-    public void ondertekenen(final UUID enkelvoudigInformatieObjectUUID) {
+    public void ondertekenEnkelvoudigInformatieObject(final UUID enkelvoudigInformatieObjectUUID) {
         boolean tempLock = false;
         try {
             final EnkelvoudigInformatieobjectWithInhoudAndLock enkelvoudigInformatieobjectWithInhoudAndLock =

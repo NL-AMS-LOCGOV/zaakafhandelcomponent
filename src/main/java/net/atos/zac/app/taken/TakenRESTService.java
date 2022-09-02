@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.uuid.impl.UUIDUtil;
 
-import net.atos.zac.app.informatieobjecten.InformatieObjectOndertekenenService;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectOndertekenService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
@@ -131,7 +131,7 @@ public class TakenRESTService {
     private PolicyService policyService;
 
     @Inject
-    private InformatieObjectOndertekenenService informatieObjectOndertekenenService;
+    private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
 
     @GET
     @Path("zaak/{zaakUUID}")
@@ -300,7 +300,7 @@ public class TakenRESTService {
                     .filter(uuid -> !StringUtils.isEmpty(uuid))
                     .map(UUIDUtil::uuid)
                     .collect(Collectors.toList());
-            informatieObjectOndertekenenService.ondertekenen(UUIDs);
+            enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObjecten(UUIDs);
         }
     }
 
