@@ -55,6 +55,8 @@ public class ZaakActies {
 
     private final boolean startenPlanItems;
 
+    private final boolean vastleggenBesluit;
+
     @JsonbCreator
     public ZaakActies(@JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("opschorten") final boolean opschorten,
@@ -77,7 +79,8 @@ public class ZaakActies {
             @JsonbProperty("verwijderen_betrokkene") final boolean verwijderenBetrokkene,
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
             @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
-            @JsonbProperty("starten_plan_items") final boolean startenPlanItems) {
+            @JsonbProperty("starten_plan_items") final boolean startenPlanItems,
+            @JsonbProperty("vastleggen_besluit") final boolean vastleggenBesluit) {
         this.lezen = lezen;
         this.opschorten = opschorten;
         this.verlengen = verlengen;
@@ -100,6 +103,7 @@ public class ZaakActies {
         this.wijzigenToekenning = wijzigenToekenning;
         this.wijzigenOverig = wijzigenOverig;
         this.startenPlanItems = startenPlanItems;
+        this.vastleggenBesluit = vastleggenBesluit;
     }
 
     public boolean getLezen() {
@@ -188,5 +192,9 @@ public class ZaakActies {
 
     public boolean getStartenPlanItems() {
         return startenPlanItems;
+    }
+
+    public boolean getVastleggenBesluit() {
+        return vastleggenBesluit;
     }
 }

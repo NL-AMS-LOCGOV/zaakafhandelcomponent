@@ -26,6 +26,8 @@ import net.atos.client.zgw.shared.exception.ValidatieFoutExceptionMapper;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.util.JsonbConfiguration;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
+import net.atos.client.zgw.ztc.model.Besluittype;
+import net.atos.client.zgw.ztc.model.BesluittypeListParameters;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 import net.atos.client.zgw.ztc.model.Eigenschap;
@@ -101,4 +103,12 @@ public interface ZTCClient {
     @GET
     @Path("informatieobjecttypen/{uuid}")
     Informatieobjecttype informatieObjectTypeRead(@PathParam("uuid") UUID informatieObjectTypeUUID);
+
+    @GET
+    @Path("besluittypen")
+    Results<Besluittype> besluittypeList(@BeanParam final BesluittypeListParameters parameters);
+
+    @GET
+    @Path("besluittypen/{uuid}")
+    Besluittype besluittypeRead(@PathParam("uuid") final UUID uuid);
 }

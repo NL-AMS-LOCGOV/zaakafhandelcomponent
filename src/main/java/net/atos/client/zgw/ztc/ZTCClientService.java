@@ -29,6 +29,8 @@ import net.atos.client.zgw.shared.cache.Caching;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Besluittype;
+import net.atos.client.zgw.ztc.model.BesluittypeListParameters;
 import net.atos.client.zgw.ztc.model.Catalogus;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
@@ -54,8 +56,10 @@ public class ZTCClientService implements Caching {
     private static final List<String> CACHES = List.of(
             ZTC_RESULTAATTYPE,
             ZTC_STATUSTYPE,
+            ZTC_BESLUITTYPE,
             ZTC_ZAAKTYPE,
             ZTC_ZAAKTYPE_MANAGED,
+            ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED,
             ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED,
             ZTC_ZAAKTYPE_ROLTYPE,
             ZTC_ZAAKTYPE_STATUSTYPE_MANAGED,
@@ -187,6 +191,41 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_RESULTAATTYPE)
     public Resultaattype readResultaattype(final URI resultaattypeURI) {
         return createInvocationBuilder(resultaattypeURI).get(Resultaattype.class);
+    }
+
+    /**
+     * Read {@link Besluittype} via its URI.
+     * Throws a RuntimeException if the {@link Besluittype} can not be read.
+     *
+     * @param besluittypeURI URI of {@link Besluittype}.
+     * @return {@link Besluittype}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_BESLUITTYPE)
+    public Besluittype readBesluittype(final URI besluittypeURI) {
+        return createInvocationBuilder(besluittypeURI).get(Besluittype.class);
+    }
+
+    /**
+     * Read {@link Besluittype} via its UUID.
+     * Throws a RuntimeException if the {@link Besluittype} can not be read.
+     *
+     * @param besluittypeUUID UUID of {@link Besluittype}.
+     * @return {@link Besluittype}. Never 'null'!
+     */
+    @CacheResult(cacheName = ZTC_BESLUITTYPE)
+    public Besluittype readBesluittype(final UUID besluittypeUUID) {
+        return ztcClient.besluittypeRead(besluittypeUUID);
+    }
+
+    /**
+     * Read the {@link Besluittype} of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link Besluittype}.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED)
+    public List<Besluittype> readBesluittypen(final URI zaaktypeURI) {
+        return ztcClient.besluittypeList(new BesluittypeListParameters(zaaktypeURI)).getSinglePageResults();
     }
 
     /**
@@ -335,6 +374,11 @@ public class ZTCClientService implements Caching {
         return cleared(ZTC_RESULTAATTYPE);
     }
 
+    @CacheRemoveAll(cacheName = ZTC_BESLUITTYPE)
+    public String clearBesluittypeCache() {
+        return cleared(ZTC_BESLUITTYPE);
+    }
+
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
     public String clearZaaktypeResultaattypeManagedCache() {
         return cleared(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED);
@@ -343,6 +387,16 @@ public class ZTCClientService implements Caching {
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED)
     public void updateZaaktypeResultaattypeCache(final URI key) {
         removed(ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED, key);
+    }
+
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED)
+    public String clearZaaktypeBesluittypeManagedCache() {
+        return cleared(ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED);
+    }
+
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED)
+    public void updateZaaktypeBesluittypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED, key);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_ROLTYPE)

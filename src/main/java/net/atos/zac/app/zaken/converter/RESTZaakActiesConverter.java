@@ -12,7 +12,6 @@ public class RESTZaakActiesConverter {
 
     public RESTZaakActies convert(final ZaakActies zaakActies) {
         final RESTZaakActies restZaakActies = new RESTZaakActies();
-
         restZaakActies.lezen = zaakActies.getLezen();
         restZaakActies.opschorten = zaakActies.getOpschorten();
         restZaakActies.verlengen = zaakActies.getVerlengen();
@@ -35,7 +34,7 @@ public class RESTZaakActiesConverter {
         restZaakActies.wijzigenToekenning = zaakActies.getWijzigenToekenning();
         restZaakActies.wijzigenOverig = zaakActies.getWijzigenOverig();
         restZaakActies.startenPlanItems = zaakActies.getStartenPlanItems();
-
+        restZaakActies.vastleggenBesluit = zaakActies.getVastleggenBesluit();
         return restZaakActies;
     }
 }
