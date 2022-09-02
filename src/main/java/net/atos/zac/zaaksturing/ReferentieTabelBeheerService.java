@@ -35,19 +35,11 @@ public class ReferentieTabelBeheerService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public ReferentieTabel readReferentieTabel(final Long id) {
-        if (id == null) {
-            final ReferentieTabel nieuw = new ReferentieTabel();
-            nieuw.setCode(getUniqueCode(1, listReferentieTabellen()));
-            nieuw.setNaam("Nieuwe referentietabel");
-            return nieuw;
-        }
-        final ReferentieTabel referentieTabel = entityManager.find(ReferentieTabel.class, id);
-        if (referentieTabel != null) {
-            return referentieTabel;
-        } else {
-            throw new RuntimeException(String.format("%s with id=%d not found", ReferentieTabel.class.getSimpleName(), id));
-        }
+    public ReferentieTabel newReferentieTabel() {
+        final ReferentieTabel nieuw = new ReferentieTabel();
+        nieuw.setCode(getUniqueCode(1, listReferentieTabellen()));
+        nieuw.setNaam("Nieuwe referentietabel");
+        return nieuw;
     }
 
     private String getUniqueCode(final int i, final List<ReferentieTabel> list) {
@@ -57,6 +49,15 @@ public class ReferentieTabelBeheerService {
             return getUniqueCode(i + 1, list);
         }
         return code;
+    }
+
+    public ReferentieTabel readReferentieTabel(final long id) {
+        final ReferentieTabel referentieTabel = entityManager.find(ReferentieTabel.class, id);
+        if (referentieTabel != null) {
+            return referentieTabel;
+        } else {
+            throw new RuntimeException(String.format("%s with id=%d not found", ReferentieTabel.class.getSimpleName(), id));
+        }
     }
 
     public ReferentieTabel createReferentieTabel(final ReferentieTabel referentieTabel) {

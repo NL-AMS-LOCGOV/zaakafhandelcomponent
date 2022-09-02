@@ -56,7 +56,7 @@ public class ReferentieTabelRESTService {
     public RESTReferentieTabel newReferentieTabel() {
         assertActie(policyService.readAppActies().getBeheren());
         return restReferentieTabelConverter.convert(
-                referentieTabelBeheerService.readReferentieTabel(null), false);
+                referentieTabelBeheerService.newReferentieTabel(), true);
     }
 
     @POST
@@ -64,7 +64,7 @@ public class ReferentieTabelRESTService {
         assertActie(policyService.readAppActies().getBeheren());
         return restReferentieTabelConverter.convert(
                 referentieTabelBeheerService.createReferentieTabel(
-                        restReferentieTabelConverter.convert(referentieTabel)), false);
+                        restReferentieTabelConverter.convert(referentieTabel)), true);
     }
 
     @GET
@@ -82,7 +82,7 @@ public class ReferentieTabelRESTService {
         return restReferentieTabelConverter.convert(
                 referentieTabelBeheerService.updateReferentieTabel(
                         restReferentieTabelConverter.convert(referentieTabel,
-                                                             referentieTabelBeheerService.readReferentieTabel(id))), false);
+                                                             referentieTabelBeheerService.readReferentieTabel(id))), true);
     }
 
     @DELETE

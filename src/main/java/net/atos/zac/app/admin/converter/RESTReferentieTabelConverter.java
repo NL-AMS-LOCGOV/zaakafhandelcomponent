@@ -31,13 +31,15 @@ public class RESTReferentieTabelConverter {
     }
 
     public ReferentieTabel convert(final RESTReferentieTabel restReferentieTabel) {
-        return convert(restReferentieTabel, null);
+        return convert(restReferentieTabel, new ReferentieTabel());
     }
 
-    public ReferentieTabel convert(final RESTReferentieTabel restReferentieTabel, final ReferentieTabel existingReferentieTabel) {
-        final ReferentieTabel referentieTabel = existingReferentieTabel != null ? existingReferentieTabel : new ReferentieTabel();
+    public ReferentieTabel convert(final RESTReferentieTabel restReferentieTabel, final ReferentieTabel referentieTabel) {
         referentieTabel.setCode(restReferentieTabel.code);
         referentieTabel.setNaam(restReferentieTabel.naam);
+        referentieTabel.setWaarden(restReferentieTabel.waarden.stream()
+                                           .map(restReferentieWaardeConverter::convert)
+                                           .toList());
         return referentieTabel;
     }
 }

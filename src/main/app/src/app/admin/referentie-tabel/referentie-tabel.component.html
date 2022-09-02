@@ -23,5 +23,48 @@
                 </div>
             </mat-card-content>
         </mat-card>
+        <mat-card>
+            <mat-card-content>
+                <div class="table-wrapper" [ngClass]="{'table-loading-shade':isLoadingResults}">
+                    <table mat-table [dataSource]="dataSource">
+                        <ng-container matColumnDef="naam">
+                            <th mat-header-cell *matHeaderCellDef>
+                                {{'rij' | translate}}
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                <zac-edit-input [formField]="waardeFormField[row.id]"
+                                                (onSave)="editTabelWaarde($event, row)"></zac-edit-input>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="id" stickyEnd>
+                            <th mat-header-cell *matHeaderCellDef>
+                                <button mat-icon-button
+                                        id="toevoegen"
+                                        title="{{ 'actie.toevoegen' | translate}}"
+                                        (click)="nieuweTabelWaarde()">
+                                    <mat-icon>add_circle</mat-icon>
+                                </button>
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-flat-button
+                                        *ngIf="!row.systeem"
+                                        id="verwijderen"
+                                        title="{{ 'actie.verwijderen' | translate}}"
+                                        (click)="verwijderTabelWaarde(row)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+                        <tr mat-row *matNoDataRow>
+                            <td [colSpan]="columns.length">
+                                {{'msg.geen.gegevens.gevonden' | translate}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
     </mat-sidenav-content>
 </mat-sidenav-container>

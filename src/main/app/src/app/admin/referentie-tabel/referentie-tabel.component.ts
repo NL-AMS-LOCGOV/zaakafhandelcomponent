@@ -14,6 +14,8 @@ import {Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {InputFormField} from '../../shared/material-form-builder/form-components/input/input-form-field';
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {MatTableDataSource} from '@angular/material/table';
+import {ReferentieTabelWaarde} from '../model/referentie-tabel-waarde';
 
 @Component({
     templateUrl: './referentie-tabel.component.html',
@@ -29,6 +31,12 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     codeFormField: InputFormField;
     naamFormField: InputFormField;
 
+    isLoadingResults: boolean = false;
+    columns: string[] = ['naam', 'id'];
+    dataSource: MatTableDataSource<ReferentieTabelWaarde> = new MatTableDataSource<ReferentieTabelWaarde>();
+
+    waardeFormField: InputFormField[] = [];
+
     constructor(private identityService: IdentityService,
                 private service: ReferentieTabelBeheerService,
                 public utilService: UtilService,
@@ -38,16 +46,18 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.data.subscribe(data => {
-            // tslint:disable-next-line:no-console
-            console.debug(data.tabel);
             this.init(data.tabel);
         });
     }
 
     init(tabel: ReferentieTabel): void {
         this.tabel = tabel;
+        if (this.tabel.waarden == null) {
+            this.tabel.waarden = [];
+        }
         this.setupMenu('title.referentietabel', {tabel: this.tabel.code});
         this.createForm();
+        this.laadTabelWaarden();
     }
 
     createForm() {
@@ -64,7 +74,58 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     editTabel(event: any, field: string): void {
-        this.tabel[field] = event[field].value ? event[field].value : event[field];
+        this.tabel[field] = event[field];
+        this.persistTabel();
+    }
+
+    laadTabelWaarden(): void {
+        this.isLoadingResults = true;
+        this.tabel.waarden.forEach(waarde => {
+            if (this.waardeFormField[waarde.id] == null) {
+                this.waardeFormField[waarde.id] = new InputFormFieldBuilder().id('waarde_' + waarde.id)
+                                                                             .label('waarde')
+                                                                             .value(waarde.naam)
+                                                                             .validators(Validators.required)
+                                                                             .build();
+            }
+        });
+        this.dataSource.data = this.tabel.waarden.sort((a, b) => a.naam.localeCompare(b.naam));
+        this.isLoadingResults = false;
+    }
+
+    nieuweTabelWaarde() {
+        const waarde: ReferentieTabelWaarde = new ReferentieTabelWaarde();
+        waarde.naam = this.getUniqueNaam(1);
+        this.tabel.waarden.push(waarde);
+        this.persistTabel();
+    }
+
+    editTabelWaarde(event: any, row: ReferentieTabelWaarde): void {
+        this.tabel.waarden[this.getTabelWaardeIndex(row)].naam = event['waarde_' + row.id];
+        this.persistTabel();
+    }
+
+    verwijderTabelWaarde(row: ReferentieTabelWaarde): void {
+        this.tabel.waarden.splice(this.getTabelWaardeIndex(row), 1);
+        this.persistTabel();
+    }
+
+    private getTabelWaardeIndex(row: ReferentieTabelWaarde) {
+        return this.tabel.waarden.findIndex(waarde => waarde.id === row.id);
+    }
+
+    private getUniqueNaam(i: number): string {
+        let naam: string = 'Nieuwe waarde ' + i;
+        this.tabel.waarden.forEach(waarde => {
+            if (waarde.naam === naam) {
+                naam = this.getUniqueNaam(i + 1);
+                return;
+            }
+        });
+        return naam;
+    }
+
+    private persistTabel(): void {
         if (this.tabel.id != null) {
             this.service.updateReferentieTabel(this.tabel).subscribe(updatedTabel => {
                 this.init(updatedTabel);
