@@ -18,4 +18,6 @@ public class ZaakData {
     public String zaaktype;
 
     public boolean ontvangstbevestigingVerstuurd;
+
+    public boolean besluit;
 }
