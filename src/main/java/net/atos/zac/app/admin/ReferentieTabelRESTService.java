@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Atos
+ * SPDX-FileCopyrightText: 2022 Atos
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
@@ -25,6 +25,7 @@ import net.atos.zac.app.admin.converter.RESTReferentieTabelConverter;
 import net.atos.zac.app.admin.model.RESTReferentieTabel;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.zaaksturing.ReferentieTabelBeheerService;
+import net.atos.zac.zaaksturing.ReferentieTabelService;
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
 
 @Singleton
@@ -32,6 +33,8 @@ import net.atos.zac.zaaksturing.model.ReferentieTabel;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ReferentieTabelRESTService {
+    @Inject
+    private ReferentieTabelService referentieTabelService;
 
     @Inject
     private ReferentieTabelBeheerService referentieTabelBeheerService;
@@ -45,7 +48,7 @@ public class ReferentieTabelRESTService {
     @GET
     public List<RESTReferentieTabel> listReferentieTabellen() {
         assertActie(policyService.readAppActies().getBeheren());
-        final List<ReferentieTabel> referentieTabellen = referentieTabelBeheerService.listReferentieTabellen();
+        final List<ReferentieTabel> referentieTabellen = referentieTabelService.listReferentieTabellen();
         return referentieTabellen.stream()
                 .map(referentieTabel -> restReferentieTabelConverter.convert(referentieTabel, false))
                 .toList();
@@ -72,7 +75,7 @@ public class ReferentieTabelRESTService {
     public RESTReferentieTabel readReferentieTabel(@PathParam("id") final long id) {
         assertActie(policyService.readAppActies().getBeheren());
         return restReferentieTabelConverter.convert(
-                referentieTabelBeheerService.readReferentieTabel(id), true);
+                referentieTabelService.readReferentieTabel(id), true);
     }
 
     @PUT
@@ -82,7 +85,7 @@ public class ReferentieTabelRESTService {
         return restReferentieTabelConverter.convert(
                 referentieTabelBeheerService.updateReferentieTabel(
                         restReferentieTabelConverter.convert(referentieTabel,
-                                                             referentieTabelBeheerService.readReferentieTabel(id))), true);
+                                                             referentieTabelService.readReferentieTabel(id))), true);
     }
 
     @DELETE

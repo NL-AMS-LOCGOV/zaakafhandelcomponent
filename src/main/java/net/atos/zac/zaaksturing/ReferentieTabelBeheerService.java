@@ -10,11 +10,9 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
@@ -26,18 +24,12 @@ public class ReferentieTabelBeheerService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public List<ReferentieTabel> listReferentieTabellen() {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<ReferentieTabel> query = builder.createQuery(ReferentieTabel.class);
-        final Root<ReferentieTabel> root = query.from(ReferentieTabel.class);
-        query.orderBy(builder.asc(root.get("naam")));
-        query.select(root);
-        return entityManager.createQuery(query).getResultList();
-    }
+    @Inject
+    private ReferentieTabelService referentieTabelService;
 
     public ReferentieTabel newReferentieTabel() {
         final ReferentieTabel nieuw = new ReferentieTabel();
-        nieuw.setCode(getUniqueCode(1, listReferentieTabellen()));
+        nieuw.setCode(getUniqueCode(1, referentieTabelService.listReferentieTabellen()));
         nieuw.setNaam("Nieuwe referentietabel");
         return nieuw;
     }
@@ -49,15 +41,6 @@ public class ReferentieTabelBeheerService {
             return getUniqueCode(i + 1, list);
         }
         return code;
-    }
-
-    public ReferentieTabel readReferentieTabel(final long id) {
-        final ReferentieTabel referentieTabel = entityManager.find(ReferentieTabel.class, id);
-        if (referentieTabel != null) {
-            return referentieTabel;
-        } else {
-            throw new RuntimeException(String.format("%s with id=%d not found", ReferentieTabel.class.getSimpleName(), id));
-        }
     }
 
     public ReferentieTabel createReferentieTabel(final ReferentieTabel referentieTabel) {
