@@ -27,6 +27,8 @@ public class EnkelvoudigInformatieobjectActies {
 
     private final boolean ontgrendelen;
 
+    private final boolean ondertekenen;
+
     @JsonbCreator
     public EnkelvoudigInformatieobjectActies(@JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("verwijderen") final boolean verwijderen,
@@ -35,7 +37,8 @@ public class EnkelvoudigInformatieobjectActies {
             @JsonbProperty("toevoegen_nieuwe_versie") final boolean toevoegenNieuweVersie,
             @JsonbProperty("bewerken") final boolean bewerken,
             @JsonbProperty("vergrendelen") final boolean vergrendelen,
-            @JsonbProperty("ontgrendelen") final boolean ontgrendelen) {
+            @JsonbProperty("ontgrendelen") final boolean ontgrendelen,
+            @JsonbProperty("ondertekenen") final boolean ondertekenen) {
         this.lezen = lezen;
         this.verwijderen = verwijderen;
         this.koppelen = koppelen;
@@ -44,6 +47,7 @@ public class EnkelvoudigInformatieobjectActies {
         this.bewerken = bewerken;
         this.vergrendelen = vergrendelen;
         this.ontgrendelen = ontgrendelen;
+        this.ondertekenen = ondertekenen;
     }
 
     public boolean getLezen() {
@@ -76,5 +80,9 @@ public class EnkelvoudigInformatieobjectActies {
 
     public boolean getOntgrendelen() {
         return ontgrendelen;
+    }
+
+    public boolean getOndertekenen() {
+        return ondertekenen;
     }
 }

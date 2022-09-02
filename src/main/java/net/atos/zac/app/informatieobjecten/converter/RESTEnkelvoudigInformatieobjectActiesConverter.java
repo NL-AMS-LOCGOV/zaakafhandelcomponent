@@ -20,6 +20,7 @@ public class RESTEnkelvoudigInformatieobjectActiesConverter {
         restActies.vergrendelen = acties.getVergrendelen();
         restActies.verwijderen = acties.getVerwijderen();
         restActies.toevoegenNieuweVersie = acties.getToevoegenNieuweVersie();
+        restActies.ondertekenen = acties.getOndertekenen();
         return restActies;
     }
 }

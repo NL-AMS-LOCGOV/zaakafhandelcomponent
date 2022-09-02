@@ -14,7 +14,8 @@ enkelvoudig_informatieobject_acties := {
     "toevoegen_nieuwe_versie": toevoegen_nieuwe_versie,
     "bewerken": bewerken,
     "vergrendelen": vergrendelen,
-    "ontgrendelen": ontgrendelen
+    "ontgrendelen": ontgrendelen,
+    "ondertekenen": ondertekenen
 }
 
 default lezen := false
@@ -102,4 +103,13 @@ zaaktype_allowed {
     rollen[rol].id in user.rollen
     enkelvoudig_informatieobject.zaaktype in rollen[rol].zaaktypen
 }
+
+default ondertekenen := false
+ondertekenen {
+    enkelvoudig_informatieobject.zaak_open == true
+    zaaktype_allowed
+    enkelvoudig_informatieobject.definitief == false
+    onvergrendeld_of_vergrendeld_door_user == true
+}
+
 

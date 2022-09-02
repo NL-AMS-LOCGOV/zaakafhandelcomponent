@@ -117,6 +117,12 @@ export class InformatieObjectenService {
         );
     }
 
+    ondertekenInformatieObject(uuid: string, zaakUuid: string) {
+        return this.http.post<void>(this.addZaakParameter(`${this.basepath}/informatieobject/${uuid}/onderteken`, zaakUuid), null).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     getDownloadURL(uuid: string, versie?: number): string {
         if (versie) {
             return `${this.basepath}/informatieobject/${uuid}/${versie}/download`;

@@ -22,4 +22,6 @@ public class RESTEnkelvoudigInformatieobjectActies {
     public boolean vergrendelen;
 
     public boolean ontgrendelen;
+
+    public boolean ondertekenen;
 }
