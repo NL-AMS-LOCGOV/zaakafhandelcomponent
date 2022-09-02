@@ -29,6 +29,8 @@ public class RESTZaak {
 
     public RESTZaakResultaat resultaat;
 
+    public RESTBesluit besluit;
+
     public String bronorganisatie;
 
     public String verantwoordelijkeOrganisatie;

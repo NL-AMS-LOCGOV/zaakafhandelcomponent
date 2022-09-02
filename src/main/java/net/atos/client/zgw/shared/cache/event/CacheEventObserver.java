@@ -26,6 +26,7 @@ public class CacheEventObserver extends AbstractEventObserver<CacheEvent> {
             case ZAAKTYPE:
                 ztcClientService.updateZaaktypeStatustypeCache(event.getUrl());
                 ztcClientService.updateZaaktypeResultaattypeCache(event.getUrl());
+                ztcClientService.updateZaaktypeBesluittypeCache(event.getUrl());
                 ztcClientService.clearZaaktypeRoltypeCache();
                 ztcClientService.updateZaaktypeCache(event.getUrl());
                 ztcClientService.updateZaaktypeCache(event.getUUID());

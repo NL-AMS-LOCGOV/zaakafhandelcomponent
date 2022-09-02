@@ -40,9 +40,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.atos.client.kvk.KVKClientService;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
+import net.atos.client.zgw.brc.BRCClientService;
+import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -74,12 +75,17 @@ import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
 import net.atos.zac.app.klanten.KlantenRESTService;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.zaken.converter.RESTBesluitConverter;
+import net.atos.zac.app.zaken.converter.RESTBesluittypeConverter;
 import net.atos.zac.app.zaken.converter.RESTCommunicatiekanaalConverter;
 import net.atos.zac.app.zaken.converter.RESTGeometryConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakBetrokkeneConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
+import net.atos.zac.app.zaken.model.RESTBesluit;
+import net.atos.zac.app.zaken.model.RESTBesluitToevoegenGegevens;
+import net.atos.zac.app.zaken.model.RESTBesluittype;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
 import net.atos.zac.app.zaken.model.RESTZaak;
@@ -109,6 +115,7 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -141,22 +148,40 @@ public class ZakenRESTService {
     private static final String VERLENGING = "Verlenging";
 
     @Inject
+    private ZGWApiService zgwApiService;
+
+    @Inject
+    private BRCClientService brcClientService;
+
+    @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
     private ZTCClientService ztcClientService;
 
     @Inject
     private ZRCClientService zrcClientService;
 
     @Inject
-    private ZGWApiService zgwApiService;
+    private VRLClientService vrlClientService;
 
     @Inject
-    private KVKClientService kvkClientService;
+    private EventingService eventingService;
 
     @Inject
-    private RESTZaakConverter zaakConverter;
+    private IdentityService identityService;
 
     @Inject
-    private RESTZaaktypeConverter zaaktypeConverter;
+    private SignaleringenService signaleringenService;
+
+    @Inject
+    private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
+
+    @Inject
+    private IndexeerService indexeerService;
+
+    @Inject
+    private PolicyService policyService;
 
     @Inject
     private CaseService caseService;
@@ -168,10 +193,22 @@ public class ZakenRESTService {
     private CaseVariablesService caseVariablesService;
 
     @Inject
-    private EventingService eventingService;
+    private ConfiguratieService configuratieService;
 
     @Inject
-    private IdentityService identityService;
+    private Instance<LoggedInUser> loggedInUserInstance;
+
+    @Inject
+    private RESTZaakConverter zaakConverter;
+
+    @Inject
+    private RESTZaaktypeConverter zaaktypeConverter;
+
+    @Inject
+    private RESTBesluitConverter besluitConverter;
+
+    @Inject
+    private RESTBesluittypeConverter besluittypeConverter;
 
     @Inject
     private RESTZaakOverzichtConverter zaakOverzichtConverter;
@@ -183,25 +220,7 @@ public class ZakenRESTService {
     private RESTZaakBetrokkeneConverter zaakBetrokkeneConverter;
 
     @Inject
-    private Instance<LoggedInUser> loggedInUserInstance;
-
-    @Inject
-    private ConfiguratieService configuratieService;
-
-    @Inject
-    private SignaleringenService signaleringenService;
-
-    @Inject
-    private OntkoppeldeDocumentenService ontkoppeldeDocumentenService;
-
-    @Inject
-    private DRCClientService drcClientService;
-
-    @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
-
-    @Inject
-    private VRLClientService vrlClientService;
 
     @Inject
     private RESTCommunicatiekanaalConverter communicatiekanaalConverter;
@@ -209,11 +228,6 @@ public class ZakenRESTService {
     @Inject
     private RESTGeometryConverter restGeometryConverter;
 
-    @Inject
-    private IndexeerService indexeerService;
-
-    @Inject
-    private PolicyService policyService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -595,6 +609,24 @@ public class ZakenRESTService {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
         communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
         return communicatiekanaalConverter.convert(communicatieKanalen);
+    }
+
+    @POST
+    @Path("besluit")
+    public RESTBesluit toevoegenBesluit(final RESTBesluitToevoegenGegevens besluitToevoegenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
+        assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
+        final Besluit besluit = besluitConverter.convertToBesluit(besluitToevoegenGegevens);
+        zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, besluitToevoegenGegevens.toelichting);
+        return besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
+    }
+
+    @GET
+    @Path("besluittypes/{zaaktypeUUID}")
+    public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
+        AppActies appActies = policyService.readAppActies();
+        assertActie(appActies.getZaken());
+        return besluittypeConverter.convertToRESTBesluittypes(ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
     private void ingelogdeMedewerkerToekennenAanZaak(final Zaak zaak, final RESTZaakToekennenGegevens toekennenGegevens) {

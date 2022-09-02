@@ -50,4 +50,6 @@ public class RESTZaakActies {
     public boolean wijzigenOverig;
 
     public boolean startenPlanItems;
+
+    public boolean vastleggenBesluit;
 }

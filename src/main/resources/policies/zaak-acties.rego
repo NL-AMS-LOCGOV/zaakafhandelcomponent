@@ -28,7 +28,8 @@ zaak_acties := {
     "verwijderen_betrokkene": verwijderen_betrokkene,
     "wijzigen_toekenning": wijzigen_toekenning,
     "wijzigen_overig": wijzigen_overig,
-    "starten_plan_items": starten_plan_items
+    "starten_plan_items": starten_plan_items,
+    "vastleggen_besluit" : vastleggen_besluit
 }
 
 default lezen := false
@@ -40,6 +41,13 @@ default heropenen := false
 heropenen {
     zaak.open == false
     zaaktype_allowed == true
+}
+
+default vastleggen_besluit := false
+vastleggen_besluit {
+    zaak.open == true
+    zaaktype_allowed == true
+    zaak.besluit == false
 }
 
 default opschorten := false

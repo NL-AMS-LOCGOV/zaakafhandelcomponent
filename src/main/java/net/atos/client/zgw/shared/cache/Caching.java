@@ -20,6 +20,8 @@ public interface Caching {
 
     String ZTC_RESULTAATTYPE = "ztc-resultaattype";
 
+    String ZTC_BESLUITTYPE = "ztc-besluittype";
+
     String ZTC_STATUSTYPE = "ztc-statustype";
 
     String ZTC_ZAAKTYPE = "ztc-zaaktype";
@@ -34,6 +36,9 @@ public interface Caching {
 
     // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
     String ZTC_ZAAKTYPE_STATUSTYPE_MANAGED = "ztc-zaaktype-statustype-managed";
+
+    // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
+    String ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED = "ztc-zaaktype-besluittype-managed";
 
     String ZTC_ZAAKTYPE_URL = "ztc-zaaktype-url";
 
