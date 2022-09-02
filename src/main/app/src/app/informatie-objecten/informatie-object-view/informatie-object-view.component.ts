@@ -35,6 +35,7 @@ import {DialogComponent} from '../../shared/dialog/dialog.component';
 import {Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
+import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -159,6 +160,10 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         if (this.laatsteVersieInfoObject.acties.verwijderen) {
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
+
+        if (this.laatsteVersieInfoObject.acties.ondertekenen) {
+            this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'create'));
+        }
     }
 
     private loadZaakInformatieobjecten(): void {
@@ -234,5 +239,13 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
                 this.router.navigate(['/zaken/', this.zaak.identificatie]);
             }
         });
+    }
+
+    private openDocumentOndertekenenDialog(): void {
+        const dialogData = new ConfirmDialogData(this.translate.instant('msg.document.ondertekenen.bevestigen',
+                {document: this.infoObject.titel}),
+            this.informatieObjectenService.ondertekenInformatieObject(this.infoObject.uuid, this.zaak.uuid));
+
+        this.dialog.open(ConfirmDialogComponent, {data: dialogData}).afterClosed().subscribe(() => {});
     }
 }
