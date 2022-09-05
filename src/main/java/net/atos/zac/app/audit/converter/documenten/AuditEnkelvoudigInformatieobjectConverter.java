@@ -1,6 +1,7 @@
 package net.atos.zac.app.audit.converter.documenten;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -54,7 +55,6 @@ public class AuditEnkelvoudigInformatieobjectConverter extends AbstractAuditWijz
         checkAttribuut("formaat", oud.getFormaat(), nieuw.getFormaat(), historieRegels);
         checkAttribuut("ondertekening", toWaarde(oud.getOndertekening()), toWaarde(nieuw.getOndertekening()), historieRegels);
         checkAttribuut("creatiedatum", oud.getCreatiedatum(), nieuw.getCreatiedatum(), historieRegels);
-
         return historieRegels.stream();
     }
 
@@ -72,7 +72,7 @@ public class AuditEnkelvoudigInformatieobjectConverter extends AbstractAuditWijz
         return enkelvoudigInformatieobject != null ? enkelvoudigInformatieobject.getIdentificatie() : null;
     }
 
-    private String toWaarde(final Ondertekening ondertekening) {
-        return ondertekening != null && ondertekening.getDatum() != null ? ondertekening.getDatum().toString() : null;
+    private LocalDate toWaarde(final Ondertekening ondertekening) {
+        return ondertekening != null ? ondertekening.getDatum() : null;
     }
 }
