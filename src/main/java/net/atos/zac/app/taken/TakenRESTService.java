@@ -35,10 +35,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.uuid.impl.UUIDUtil;
-
-import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectOndertekenService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskInfo;
@@ -48,12 +44,14 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.uuid.impl.UUIDUtil;
 
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.zac.app.informatieobjecten.EnkelvoudigInformatieObjectOndertekenService;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.taken.converter.RESTTaakConverter;
@@ -235,7 +233,7 @@ public class TakenRESTService {
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
-        indexeerService.addZaak(restTaak.zaakUuid);
+        indexeerService.addZaak(restTaak.zaakUuid, false);
         eventingService.send(TAAK.updated(task));
         eventingService.send(ZAAK_TAKEN.updated(restTaak.zaakUuid));
         return taakConverter.convert(task, true);
