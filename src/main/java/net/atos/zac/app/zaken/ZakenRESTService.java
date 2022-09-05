@@ -135,17 +135,19 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Singleton
 public class ZakenRESTService {
 
-    public static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String INITIATOR_VERWIJDER_REDEN = "Initiator verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
+    private static final String INITIATOR_TOEVOEGEN_REDEN = "Initiator toegekend door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
+    private static final String BETROKKENE_VERWIJDER_REDEN = "Betrokkene verwijderd door de medewerker tijdens het behandelen van de zaak";
 
-    public static final String OPSCHORTING = "Opschorting";
+    private static final String AANMAKEN_ZAAK_REDEN = "Aanmaken zaak";
 
-    public static final String HERVATTING = "Hervatting";
+    private static final String OPSCHORTING = "Opschorting";
 
-    public static final String VERLENGING = "Verlenging";
+    private static final String HERVATTING = "Hervatting";
+
+    private static final String VERLENGING = "Verlenging";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -294,10 +296,19 @@ public class ZakenRESTService {
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
         assertActie(policyService.readAppActies().getAanmakenZaak() && policyService.isZaaktypeAllowed(restZaak.zaaktype.omschrijving));
+        restZaak.registratiedatum = LocalDate.now();
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
             addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, nieuweZaak);
+        }
+        if (restZaak.groep != null) {
+            final Group group = identityService.readGroup(restZaak.groep.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolGroep(group, nieuweZaak), AANMAKEN_ZAAK_REDEN);
+        }
+        if (restZaak.behandelaar != null) {
+            final User user = identityService.readUser(restZaak.behandelaar.id);
+            zrcClientService.updateRol(nieuweZaak.getUuid(), bepaalRolMedewerker(user, nieuweZaak), AANMAKEN_ZAAK_REDEN);
         }
         return zaakConverter.convert(nieuweZaak);
     }

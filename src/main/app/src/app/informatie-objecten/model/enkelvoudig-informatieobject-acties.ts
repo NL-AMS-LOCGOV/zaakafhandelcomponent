@@ -12,4 +12,5 @@ export class EnkelvoudigInformatieobjectActies {
     bewerken: boolean;
     vergrendelen: boolean;
     ontgrendelen: boolean;
+    ondertekenen: boolean;
 }
