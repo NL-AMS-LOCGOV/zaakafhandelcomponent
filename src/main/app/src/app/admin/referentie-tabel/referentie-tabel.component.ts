@@ -137,7 +137,6 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     private persistTabel(): void {
-        console.log('persistTabel');
         const persistReferentieTabel: Observable<ReferentieTabel> = this.tabel.id != null
             ? this.service.updateReferentieTabel(this.tabel)
             : this.service.createReferentieTabel(this.tabel);
