@@ -5,6 +5,8 @@
 
 package net.atos.zac.policy.input;
 
+import javax.json.bind.annotation.JsonbProperty;
+
 public class ZaakData {
 
     public boolean open;
@@ -20,4 +22,7 @@ public class ZaakData {
     public boolean ontvangstbevestigingVerstuurd;
 
     public boolean besluit;
+
+    @JsonbProperty("heeft_besluittypen")
+    public boolean heeftBesluittypen;
 }

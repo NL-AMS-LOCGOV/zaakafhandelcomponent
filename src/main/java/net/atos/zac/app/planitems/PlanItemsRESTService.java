@@ -8,7 +8,6 @@ package net.atos.zac.app.planitems;
 import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,14 +22,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
+import net.atos.client.zgw.brc.BRCClientService;
+import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.app.planitems.converter.RESTPlanItemConverter;
 import net.atos.zac.app.planitems.model.RESTHumanTaskData;
@@ -62,6 +61,9 @@ public class PlanItemsRESTService {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private BRCClientService brcClientService;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
@@ -146,8 +148,15 @@ public class PlanItemsRESTService {
                 final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
                 assertActie(policyService.readZaakActies(zaak).getAfsluiten());
                 policyService.valideerAlleDeelzakenGesloten(zaak);
-                zgwApiService.createResultaatForZaak(zaak, userEventListenerData.resultaattypeUuid,
-                                                     userEventListenerData.resultaatToelichting);
+                final Besluit besluit = brcClientService.findBesluit(zaak);
+                if (besluit != null) {
+                    final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
+                    resultaat.setToelichting(userEventListenerData.resultaatToelichting);
+                    zrcClientService.updateResultaat(resultaat);
+                } else {
+                    zgwApiService.createResultaatForZaak(zaak, userEventListenerData.resultaattypeUuid,
+                                                         userEventListenerData.resultaatToelichting);
+                }
             }
         }
         caseService.startUserEventListener(userEventListenerData.planItemInstanceId);

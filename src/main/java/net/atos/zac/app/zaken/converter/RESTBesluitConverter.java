@@ -10,14 +10,19 @@ import java.time.LocalDate;
 import javax.inject.Inject;
 
 import net.atos.client.zgw.brc.model.Besluit;
+import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.zaken.model.RESTBesluit;
-import net.atos.zac.app.zaken.model.RESTBesluitToevoegenGegevens;
+import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
 import net.atos.zac.configuratie.ConfiguratieService;
 
 public class RESTBesluitConverter {
 
     @Inject
     private RESTBesluittypeConverter restBesluittypeConverter;
+
+    @Inject
+    private ZTCClientService ztcClientService;
 
     public RESTBesluit convertToRESTBesluit(final Besluit besluit) {
         if (besluit != null) {
@@ -34,9 +39,10 @@ public class RESTBesluitConverter {
         return null;
     }
 
-    public Besluit convertToBesluit(final RESTBesluitToevoegenGegevens besluitToevoegenGegevens) {
+    public Besluit convertToBesluit(final Zaak zaak, final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
         final Besluit besluit = new Besluit();
-        besluit.setBesluittype(besluitToevoegenGegevens.besluittypeURL);
+        besluit.setZaak(zaak.getUrl());
+        besluit.setBesluittype(ztcClientService.readBesluittype(besluitToevoegenGegevens.besluittypeUuid).getUrl());
         besluit.setDatum(LocalDate.now());
         besluit.setIngangsdatum(besluitToevoegenGegevens.ingangsdatum);
         besluit.setVervaldatum(besluitToevoegenGegevens.vervaldatum);

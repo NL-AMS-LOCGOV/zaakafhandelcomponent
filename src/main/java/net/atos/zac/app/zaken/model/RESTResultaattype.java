@@ -18,6 +18,8 @@ public class RESTResultaattype {
 
     public boolean vervaldatumBesluitVerplicht;
 
+    public boolean besluitVerplicht;
+
     public String toelichting;
 
     public String archiefNominatie;

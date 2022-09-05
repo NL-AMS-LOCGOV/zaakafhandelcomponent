@@ -5,21 +5,20 @@
 
 package net.atos.zac.app.zaken.model;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class RESTBesluitToevoegenGegevens {
+public class RESTBesluitVastleggenGegevens {
 
     public UUID zaakUuid;
 
     public UUID resultaattypeUuid;
+
+    public UUID besluittypeUuid;
 
     public String toelichting;
 
     public LocalDate ingangsdatum;
 
     public LocalDate vervaldatum;
-
-    public URI besluittypeURL;
 }

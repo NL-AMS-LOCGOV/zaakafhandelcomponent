@@ -415,6 +415,11 @@ public class ZRCClientService {
         return zrcClient.resultaatCreate(resultaat);
     }
 
+    public Resultaat updateResultaat(final Resultaat resultaat) {
+        zgwClientHeadersFactory.setAuditToelichting(resultaat.getToelichting());
+        return zrcClient.resultaatUpdate(resultaat.getUuid(), resultaat);
+    }
+
     public void deleteResultaat(final UUID resultaatUUID) {
         zrcClient.resultaatDelete(resultaatUUID);
     }

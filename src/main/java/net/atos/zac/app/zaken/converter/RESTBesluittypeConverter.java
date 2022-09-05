@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Besluittype;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
+import net.atos.zac.util.UriUtil;
 
 public class RESTBesluittypeConverter {
 
@@ -21,7 +22,7 @@ public class RESTBesluittypeConverter {
 
     public RESTBesluittype convertToRESTBesluittype(final Besluittype besluittype) {
         final RESTBesluittype restBesluittype = new RESTBesluittype();
-        restBesluittype.url = besluittype.getUrl();
+        restBesluittype.id = UriUtil.uuidFromURI(besluittype.getUrl());
         restBesluittype.naam = besluittype.getOmschrijving();
         restBesluittype.toelichting = besluittype.getToelichting();
         return restBesluittype;

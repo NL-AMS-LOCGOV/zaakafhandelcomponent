@@ -187,8 +187,7 @@ public class ZaakafhandelParametersRESTService {
     @GET
     @Path("resultaattypes/{zaaktypeUUID}")
     public List<RESTResultaattype> listResultaattypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        AppActies appActies = policyService.readAppActies();
-        assertActie(appActies.getBeheren() || appActies.getZaken());
+        assertActie(policyService.readAppActies().getBeheren());
         return resultaattypeConverter.convertResultaattypes(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 

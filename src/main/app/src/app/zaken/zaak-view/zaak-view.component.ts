@@ -360,6 +360,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
+        if (this.zaak.acties.vastleggenBesluit) {
+            this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.BESLUIT_VASTLEGGEN;
+            }, 'gavel'));
+        }
+
         if (this.zaak.isHeropend && this.zaak.acties.afsluiten) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
@@ -443,8 +450,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }
             this.dialogSubscriptions.length = 0;
             if (result) {
-                this.utilService.openSnackbar('msg.planitem.uitgevoerd.' + planItem.userEventListenerActie);
-                this.updateZaak();
+                if (result === 'openBesluitVastleggen') {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.BESLUIT_VASTLEGGEN;
+                } else {
+                    this.utilService.openSnackbar('msg.planitem.uitgevoerd.' + planItem.userEventListenerActie);
+                    this.updateZaak();
+                }
             }
         });
     }
@@ -556,7 +568,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 new SelectFormFieldBuilder().id('resultaattype')
                                             .label('resultaat')
                                             .optionLabel('naam')
-                                            .options(this.zaakafhandelParametersService.listResultaattypes(this.zaak.zaaktype.uuid))
+                                            .options(this.zakenService.listResultaattypes(this.zaak.zaaktype.uuid))
                                             .validators(Validators.required)
                                             .build(),
                 new InputFormFieldBuilder().id('toelichting')
@@ -923,5 +935,13 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.utilService.openSnackbar('msg.zaak.ontkoppelen.uitgevoerd');
             }
         });
+    }
+
+    besluitVastgelegd(besluitVastgelegd: boolean): void {
+        if (besluitVastgelegd) {
+            this.updateZaak();
+        }
+        this.action = null;
+        this.actionsSidenav.close();
     }
 }

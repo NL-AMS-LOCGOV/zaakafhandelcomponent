@@ -14,6 +14,7 @@ import {ZaakActies} from './zaak-acties';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
+import {Besluit} from './besluit';
 
 export class Zaak {
     uuid: string;
@@ -23,6 +24,7 @@ export class Zaak {
     zaaktype: Zaaktype;
     status: ZaakStatus;
     resultaat: ZaakResultaat;
+    besluit: Besluit;
     bronorganisatie: string;
     verantwoordelijkeOrganisatie: string;
     registratiedatum: string;

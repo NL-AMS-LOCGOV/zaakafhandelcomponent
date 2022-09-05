@@ -48,6 +48,7 @@ vastleggen_besluit {
     zaak.open == true
     zaaktype_allowed == true
     zaak.besluit == false
+    zaak.heeft_besluittypen == true
 }
 
 default opschorten := false
