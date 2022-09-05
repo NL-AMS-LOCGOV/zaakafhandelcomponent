@@ -22,6 +22,8 @@ public enum SorteerVeld {
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving"),
     ZAAK_AANTAL_OPENSTAANDE_TAKEN("zaak_aantalOpenstaandeTaken"),
+    ZAAK_OMSCHRIJVING("zaak_omschrijving"),
+    ZAAK_TOELICHTING("zaak_toelichting"),
 
     TAAK_NAAM("taak_naam"),
     TAAK_STATUS("taak_status"),

@@ -248,6 +248,8 @@
   "zaakIdentificatie" : "Hoort bij zaak",
   "zaakInformatieobject" : "Document",
   "zaakObject" : "Object",
+  "zaakOmschrijving": "Zaakomschrijving",
+  "zaakToelichting": "Zaaktoelichting",
   "zaken" : "Zaken",
   "gerelateerdeZaken" : "Gerelateerde Zaken",
   "zaaktype" : "Zaaktype",
