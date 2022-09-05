@@ -28,18 +28,18 @@ export class FoutAfhandelingService {
 
     public foutAfhandelen(err: HttpErrorResponse): Observable<any> {
         if (err.status === 400) {
-            return this.openFoutDialog(err);
+            return this.openFoutDialog(err.error);
         } else {
             return this.redirect(err);
         }
     }
 
-    private openFoutDialog(err: HttpErrorResponse): Observable<any> {
+    public openFoutDialog(error: string): Observable<any> {
         this.dialog.open(FoutDialogComponent, {
-            data: err.error,
+            data: error
         });
 
-        return throwError(() => 'Fout!' );
+        return throwError(() => 'Fout!');
     }
 
     private redirect(err: HttpErrorResponse): Observable<never> {

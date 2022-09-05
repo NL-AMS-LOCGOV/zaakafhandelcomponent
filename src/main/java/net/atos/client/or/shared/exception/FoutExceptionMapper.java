@@ -19,7 +19,7 @@ public class FoutExceptionMapper implements ResponseExceptionMapper<FoutExceptio
 
     @Override
     public boolean handles(final int status, final MultivaluedMap<String, Object> headers) {
-        return status > Response.Status.BAD_REQUEST.getStatusCode() && status < Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+        return Response.Status.BAD_REQUEST.getStatusCode() <= status && status < Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
     }
 
     @Override
