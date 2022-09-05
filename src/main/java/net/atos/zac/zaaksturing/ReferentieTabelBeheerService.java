@@ -15,11 +15,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.zaaksturing.model.ReferentieTabel;
 
 @ApplicationScoped
 @Transactional
 public class ReferentieTabelBeheerService {
+
+    private static final String CODE_NOT_UNIQUE = "Er bestaat al een referentietabel met de code \"%s\".";
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -35,7 +38,7 @@ public class ReferentieTabelBeheerService {
     }
 
     private String getUniqueCode(final int i, final List<ReferentieTabel> list) {
-        final String code = "TABEL" + i;
+        final String code = "TABEL" + (1 < i ? i : "");
         if (list.stream()
                 .anyMatch(referentieTabel -> code.equals(referentieTabel.getCode()))) {
             return getUniqueCode(i + 1, list);
@@ -49,6 +52,10 @@ public class ReferentieTabelBeheerService {
 
     public ReferentieTabel updateReferentieTabel(final ReferentieTabel referentieTabel) {
         valideerObject(referentieTabel);
+        final ReferentieTabel existing = referentieTabelService.findReferentieTabel(referentieTabel.getCode());
+        if (existing != null && !existing.getId().equals(referentieTabel.getId())) {
+            throw new FoutmeldingException(String.format(CODE_NOT_UNIQUE, referentieTabel.getCode()));
+        }
         return entityManager.merge(referentieTabel);
     }
 
