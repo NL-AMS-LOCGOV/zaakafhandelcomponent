@@ -127,7 +127,7 @@ public class PlanItemsRESTService {
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
                                    humanTaskData.taakdata, zaakUUID);
-        indexeerService.addZaak(zaakUUID);
+        indexeerService.addZaak(zaakUUID, false);
     }
 
     @POST

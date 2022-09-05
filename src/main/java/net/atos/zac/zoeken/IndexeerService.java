@@ -317,8 +317,13 @@ public class IndexeerService {
         throw new RuntimeException("No converter found for '%s'".formatted(type));
     }
 
-    public void addZaak(final UUID zaakUUID) {
+    public void addZaak(final UUID zaakUUID, boolean inclusieTaken) {
         createEntity(zaakUUID.toString(), ZoekObjectType.ZAAK);
+        if (inclusieTaken) {
+            taskService.listTasksForCase(zaakUUID).forEach(taskInfo -> {
+                addTaak(taskInfo.getId());
+            });
+        }
     }
 
     public void removeZaak(final UUID zaakUUID) {

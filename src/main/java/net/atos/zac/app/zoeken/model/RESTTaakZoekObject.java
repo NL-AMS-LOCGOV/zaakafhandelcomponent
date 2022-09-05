@@ -22,6 +22,10 @@ public class RESTTaakZoekObject extends AbstractRESTZoekObject {
 
     public String zaakIdentificatie;
 
+    public String zaakOmschrijving;
+
+    public String zaakToelichting;
+
     public String zaaktypeUuid;
 
     public String zaaktypeIdentificatie;
@@ -45,4 +49,5 @@ public class RESTTaakZoekObject extends AbstractRESTZoekObject {
     public List<String> taakData;
 
     public List<String> taakInformatie;
+
 }

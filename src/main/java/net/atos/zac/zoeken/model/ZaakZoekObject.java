@@ -20,6 +20,10 @@ public class ZaakZoekObject implements ZoekObject {
 
     public static final String EINDSTATUS_FIELD = "zaak_statusEindstatus";
 
+    public static final String OMSCHRIJVING_FIELD = "zaak_omschrijving";
+
+    public static final String TOELICHTING_FIELD = "zaak_toelichting";
+
     @Field
     private String id;
 
@@ -29,10 +33,10 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_identificatie")
     private String identificatie;
 
-    @Field("zaak_omschrijving")
+    @Field(OMSCHRIJVING_FIELD)
     private String omschrijving;
 
-    @Field("zaak_toelichting")
+    @Field(TOELICHTING_FIELD)
     private String toelichting;
 
     @Field("zaak_registratiedatum")

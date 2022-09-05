@@ -149,12 +149,12 @@ public class NotificatieReceiver {
         if (notificatie.getChannel() == Channel.ZAKEN) {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()));
+                indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()), false);
             }
         }
     }
