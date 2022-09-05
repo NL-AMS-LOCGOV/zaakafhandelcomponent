@@ -334,8 +334,9 @@ public class ZakenRESTService {
         } else {
             assertActie(policyService.readZaakActies(zaakUUID).getHervatten());
         }
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens),
-                                                             restZaakOpschortGegevens.indicatieOpschorting ? OPSCHORTING : HERVATTING);
+        final String toelichting = String.format("%s: %s", restZaakOpschortGegevens.indicatieOpschorting ?
+                OPSCHORTING : HERVATTING, restZaakOpschortGegevens.redenOpschorting);
+        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(restZaakOpschortGegevens), toelichting);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
             caseVariablesService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
             caseVariablesService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
@@ -360,7 +361,8 @@ public class ZakenRESTService {
     @Path("zaak/{uuid}/verlenging")
     public RESTZaak verlengenZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakVerlengGegevens restZaakVerlengGegevens) {
         assertActie(policyService.readZaakActies(zaakUUID).getVerlengen());
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), VERLENGING);
+        final String toelichting = String.format("%s: %s", VERLENGING, restZaakVerlengGegevens.redenVerlenging);
+        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(zaakUUID, restZaakVerlengGegevens), toelichting);
         if (restZaakVerlengGegevens.takenVerlengen) {
             final int aantalTakenVerlengd = verlengOpenTaken(zaakUUID, restZaakVerlengGegevens.duurDagen);
             if (aantalTakenVerlengd > 0) {
