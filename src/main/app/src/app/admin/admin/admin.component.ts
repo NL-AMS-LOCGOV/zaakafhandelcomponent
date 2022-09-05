@@ -20,11 +20,12 @@ export abstract class AdminComponent extends ViewComponent {
         super();
     }
 
-    setupMenu(title: string): void {
-        this.utilService.setTitle(this.activeMenu = title);
+    setupMenu(title: string, params?: {}): void {
+        this.utilService.setTitle(this.activeMenu = title, params);
         this.menu = [];
         this.menu.push(new HeaderMenuItem('actie.admin'));
         this.menu.push(this.getMenuLink('title.signaleringen.settings.groep', '/admin/groepen', 'notifications_active'));
+        this.menu.push(this.getMenuLink('title.referentietabellen', '/admin/referentietabellen', 'schema'));
         this.menu.push(this.getMenuLink('title.parameters', '/admin/parameters', 'tune'));
     }
 

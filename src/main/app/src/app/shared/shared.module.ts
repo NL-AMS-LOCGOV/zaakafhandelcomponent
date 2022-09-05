@@ -41,6 +41,7 @@ import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.component';
 import {DagenPipe} from './pipes/dagen.pipe';
 import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
+import {EditInputComponent} from './edit/edit-input/edit-input.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import {NotificationDialogComponent} from './notification-dialog/notification-di
         EditDatumComponent,
         EditDatumGroepComponent,
         EditAutocompleteComponent,
+        EditInputComponent,
         EditTekstComponent,
         EditSelectComponent,
         ConfirmDialogComponent,
@@ -98,6 +100,7 @@ import {NotificationDialogComponent} from './notification-dialog/notification-di
         EditDatumComponent,
         EditDatumGroepComponent,
         EditAutocompleteComponent,
+        EditInputComponent,
         EditTekstComponent,
         EditSelectComponent,
         DialogComponent,

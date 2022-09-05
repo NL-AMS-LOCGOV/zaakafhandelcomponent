@@ -11,12 +11,16 @@ import {AdminRoutingModule} from './admin-routing.module';
 import {ParameterEditComponent} from './parameter-edit/parameter-edit.component';
 import {ZoekenModule} from '../zoeken/zoeken.module';
 import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
+import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
+import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 
 @NgModule({
     declarations: [
         GroepSignaleringenComponent,
         ParametersComponent,
-        ParameterEditComponent
+        ParameterEditComponent,
+        ReferentieTabellenComponent,
+        ReferentieTabelComponent
     ],
     exports: [],
     imports: [
