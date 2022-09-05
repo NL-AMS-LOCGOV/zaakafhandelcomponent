@@ -66,9 +66,7 @@ public class ReferentieTabel {
     }
 
     public void setCode(final String code) {
-        if (!isSysteem()) {
-            this.code = code;
-        }
+        this.code = code;
     }
 
     public String getNaam() {
