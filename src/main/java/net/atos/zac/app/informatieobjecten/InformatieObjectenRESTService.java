@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -38,6 +39,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
+
+import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -257,7 +260,11 @@ public class InformatieObjectenRESTService {
     public List<RESTInformatieobjecttype> listInformatieobjecttypesForZaak(@PathParam("zaakUuid") final UUID zaakID) {
         final Zaak zaak = zrcClientService.readZaak(zaakID);
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        return informatieobjecttypeConverter.convert(zaaktype.getInformatieobjecttypen());
+        final List<Informatieobjecttype> informatieObjectTypes = zaaktype.getInformatieobjecttypen().stream()
+                .map(uri -> ztcClientService.readInformatieobjecttype(uri))
+                .filter(Informatieobjecttype::isNuGeldig)
+                .collect(Collectors.toList());
+        return informatieobjecttypeConverter.convert(informatieObjectTypes);
     }
 
     @POST
