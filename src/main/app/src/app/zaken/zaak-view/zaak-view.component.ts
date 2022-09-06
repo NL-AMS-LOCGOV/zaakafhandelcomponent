@@ -232,6 +232,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
             new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
+                                        .validators(Validators.required)
                                         .value(this.zaak.communicatiekanaal)
                                         .optionLabel('naam')
                                         .options(this.zakenService.listCommunicatiekanalen()).build());
@@ -257,6 +258,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                              .maxlength(1000).build());
         this.editFormFields.set('vertrouwelijkheidaanduiding',
             new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                                        .validators(Validators.required)
                                         .value({
                                             label: this.translate.instant(
                                                 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
