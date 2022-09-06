@@ -26,8 +26,12 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Medewerker;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
+import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
@@ -35,6 +39,11 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.zac.identity.IdentityService;
+import net.atos.zac.identity.model.Group;
+import net.atos.zac.identity.model.User;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
 public class ProductAanvraagService {
@@ -69,6 +78,12 @@ public class ProductAanvraagService {
     @Inject
     private VRLClientService vrlClientService;
 
+    @Inject
+    private IdentityService identityService;
+
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
@@ -86,10 +101,14 @@ public class ProductAanvraagService {
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
-        if(communicatieKanaal != null) {
+        if (communicatieKanaal != null) {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
+
         zaak = zgwApiService.createZaak(zaak);
+
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
+        toekennenZaak(zaak, zaakafhandelParameters);
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
         pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
@@ -141,4 +160,35 @@ public class ProductAanvraagService {
         zaakInformatieobject.setBeschrijving(ZAAK_INFORMATIEOBJECT_BESCHRIJVING);
         zrcClientService.createZaakInformatieobject(zaakInformatieobject, ZAAK_INFORMATIEOBJECT_REDEN);
     }
+
+    private void toekennenZaak(final Zaak zaak, final ZaakafhandelParameters zaakafhandelParameters) {
+        if (zaakafhandelParameters.getGroepID() != null) {
+            LOG.info(String.format("Zaak %s: toegekend aan groep '%s'", zaak.getUuid(), zaakafhandelParameters.getGroepID()));
+            zrcClientService.createRol(creeerRolGroep(zaakafhandelParameters.getGroepID(), zaak));
+        }
+        if (zaakafhandelParameters.getGebruikersnaamMedewerker() != null) {
+            LOG.info(String.format("Zaak %s: toegekend aan behandelaar '%s'", zaak.getUuid(), zaakafhandelParameters.getGebruikersnaamMedewerker()));
+            zrcClientService.createRol(creeerRolMedewerker(zaakafhandelParameters.getGebruikersnaamMedewerker(), zaak));
+        }
+    }
+
+    private RolOrganisatorischeEenheid creeerRolGroep(final String groepID, final Zaak zaak) {
+        final Group group = identityService.readGroup(groepID);
+        final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
+        groep.setIdentificatie(group.getId());
+        groep.setNaam(group.getName());
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
+    }
+
+    private RolMedewerker creeerRolMedewerker(final String behandelaarGebruikersnaam, final Zaak zaak) {
+        final User user = identityService.readUser(behandelaarGebruikersnaam);
+        final Medewerker medewerker = new Medewerker();
+        medewerker.setIdentificatie(user.getId());
+        medewerker.setVoorletters(user.getFirstName());
+        medewerker.setAchternaam(user.getLastName());
+        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
+    }
+
 }

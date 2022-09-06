@@ -167,8 +167,12 @@ export class ZaakCreateComponent implements OnInit {
                     zaak[key] = LocationUtil.point(this.locatie.centroide_ll);
                 }
                 if (key === 'toekenning') {
-                    zaak.behandelaar = this.medewerkerGroepFormField.formControl.value.medewerker;
-                    zaak.groep = this.medewerkerGroepFormField.formControl.value.groep;
+                    if (this.medewerkerGroepFormField.formControl.value.medewerker) {
+                        zaak.behandelaar = this.medewerkerGroepFormField.formControl.value.medewerker;
+                    }
+                    if (this.medewerkerGroepFormField.formControl.value.groep) {
+                        zaak.groep = this.medewerkerGroepFormField.formControl.value.groep;
+                    }
                 }
             });
             this.zakenService.createZaak(zaak).subscribe(newZaak => {

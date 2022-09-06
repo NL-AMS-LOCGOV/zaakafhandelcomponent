@@ -2,6 +2,7 @@ package net.atos.zac.zoeken.converter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -10,6 +11,8 @@ import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.identitylink.api.IdentityLinkType;
 import org.flowable.task.api.TaskInfo;
 
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -38,6 +41,9 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
     @Inject
     private ZTCClientService ztcClientService;
+
+    @Inject
+    private ZRCClientService zrcClientService;
 
     @Override
     public TaakZoekObject convert(final String taskID) {
@@ -72,6 +78,10 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
         taakZoekObject.setZaakUUID(caseVariablesService.readZaakUUID(taskInfo.getScopeId()).toString());
         taakZoekObject.setZaakIdentificatie(caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId()));
+
+        final Zaak zaak = zrcClientService.readZaak(UUID.fromString(taakZoekObject.getZaakUUID()));
+        taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
+        taakZoekObject.setToelichting(zaak.getToelichting());
 
         final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
         if (MapUtils.isNotEmpty(taakdata)) {

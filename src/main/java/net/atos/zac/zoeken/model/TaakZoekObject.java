@@ -74,6 +74,12 @@ public class TaakZoekObject implements ZoekObject {
     @Field("taak_informatie")
     private List<String> taakInformatie;
 
+    @Field(ZaakZoekObject.TOELICHTING_FIELD)
+    private String zaakToelichting;
+
+    @Field(ZaakZoekObject.OMSCHRIJVING_FIELD)
+    private String zaakOmschrijving;
+
 
     public TaakZoekObject() {
     }
@@ -229,5 +235,21 @@ public class TaakZoekObject implements ZoekObject {
 
     public void setTaakInformatie(final List<String> taakInformatie) {
         this.taakInformatie = taakInformatie;
+    }
+
+    public String getZaakToelichting() {
+        return zaakToelichting;
+    }
+
+    public void setZaakToelichting(final String zaakToelichting) {
+        this.zaakToelichting = zaakToelichting;
+    }
+
+    public String getZaakOmschrijving() {
+        return zaakOmschrijving;
+    }
+
+    public void setZaakOmschrijving(final String zaakOmschrijving) {
+        this.zaakOmschrijving = zaakOmschrijving;
     }
 }

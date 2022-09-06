@@ -42,16 +42,12 @@ public class ReferentieTabelService {
         }
     }
 
-    public ReferentieTabel readReferentieTabel(final ReferentieTabel.Systeem known) {
+    public ReferentieTabel findReferentieTabel(final String code) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ReferentieTabel> query = builder.createQuery(ReferentieTabel.class);
         final Root<ReferentieTabel> root = query.from(ReferentieTabel.class);
-        query.select(root).where(builder.equal(root.get("code"), known.name()));
+        query.select(root).where(builder.equal(root.get("code"), code));
         final List<ReferentieTabel> resultList = entityManager.createQuery(query).getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            throw new RuntimeException(String.format("%s %s not found", ReferentieTabel.class.getSimpleName(), known.name()));
-        }
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
 }

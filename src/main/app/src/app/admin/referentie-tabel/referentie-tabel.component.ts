@@ -16,6 +16,9 @@ import {InputFormField} from '../../shared/material-form-builder/form-components
 import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {MatTableDataSource} from '@angular/material/table';
 import {ReferentieTabelWaarde} from '../model/referentie-tabel-waarde';
+import {Observable, of} from 'rxjs';
+import {FoutAfhandelingService} from '../../fout-afhandeling/fout-afhandeling.service';
+import {catchError} from 'rxjs/operators';
 
 @Component({
     templateUrl: './referentie-tabel.component.html',
@@ -40,7 +43,8 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     constructor(private identityService: IdentityService,
                 private service: ReferentieTabelBeheerService,
                 public utilService: UtilService,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private foutAfhandelingService: FoutAfhandelingService) {
         super(utilService);
     }
 
@@ -101,7 +105,14 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     editTabelWaarde(event: any, row: ReferentieTabelWaarde): void {
-        this.tabel.waarden[this.getTabelWaardeIndex(row)].naam = event['waarde_' + row.id];
+        const naam: string = event['waarde_' + row.id];
+        for (const waarde of this.tabel.waarden) {
+            if (waarde.naam === naam) {
+                this.foutAfhandelingService.openFoutDialog('Deze referentietabel bevat al een "' + naam + '" waarde.');
+                return;
+            }
+        }
+        this.tabel.waarden[this.getTabelWaardeIndex(row)].naam = naam;
         this.persistTabel();
     }
 
@@ -115,7 +126,7 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     private getUniqueNaam(i: number): string {
-        let naam: string = 'Nieuwe waarde ' + i;
+        let naam: string = 'Nieuwe waarde' + (1 < i ? ' ' + i : '');
         this.tabel.waarden.forEach(waarde => {
             if (waarde.naam === naam) {
                 naam = this.getUniqueNaam(i + 1);
@@ -126,14 +137,13 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     private persistTabel(): void {
-        if (this.tabel.id != null) {
-            this.service.updateReferentieTabel(this.tabel).subscribe(updatedTabel => {
-                this.init(updatedTabel);
-            });
-        } else {
-            this.service.createReferentieTabel(this.tabel).subscribe(createdTabel => {
-                this.init(createdTabel);
-            });
-        }
+        const persistReferentieTabel: Observable<ReferentieTabel> = this.tabel.id != null
+            ? this.service.updateReferentieTabel(this.tabel)
+            : this.service.createReferentieTabel(this.tabel);
+        persistReferentieTabel
+        .pipe(catchError(error => of(this.tabel)))
+        .subscribe(persistedTabel => {
+            this.init(persistedTabel);
+        });
     }
 }
