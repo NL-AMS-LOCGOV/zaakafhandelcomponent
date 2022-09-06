@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 
+import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.FilterVeld;
@@ -54,6 +56,9 @@ public class ZoekenService {
 
     private SolrClient solrClient;
 
+    @Inject
+    private Instance<LoggedInUser> loggedInUserInstance;
+
     public ZoekenService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
         solrClient = new HttpSolrClient.Builder(format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
@@ -62,7 +67,9 @@ public class ZoekenService {
     public ZoekResultaat<? extends ZoekObject> zoek(final ZoekParameters zoekParameters) {
         final SolrQuery query = new SolrQuery("*:*");
 
-        applyAllowedZaaktypenPolicy(query);
+        if (loggedInUserInstance.get() != null) { // SignaleringenJob heeft geen ingelogde gebruiker
+            applyAllowedZaaktypenPolicy(query);
+        }
 
         if (zoekParameters.getType() != null) {
             query.addFilterQuery(format("type:%s", zoekParameters.getType().toString()));

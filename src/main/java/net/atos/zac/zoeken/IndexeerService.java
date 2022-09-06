@@ -115,8 +115,12 @@ public class IndexeerService {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
             return batchGrootte;
         }
-        LOG.info("[%s] aantal te indexeren: %d".formatted(type.toString(), countEntities(type)));
-        List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
+        final int count = countEntities(type);
+        if (count == 0) {
+            return 0;
+        }
+        LOG.info("[%s] aantal te indexeren: %d".formatted(type.toString(), count));
+        final List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
         final List<ZoekObject> addList = new ArrayList<>();
         final List<String> deleteList = new ArrayList<>();
         final AbstractZoekObjectConverter<? extends ZoekObject> converter = getConverter(type);
