@@ -14,21 +14,23 @@ import net.atos.zac.zoeken.model.TaakZoekObject;
 public class RESTTaakZoekObjectConverter {
 
     public static RESTTaakZoekObject convert(final TaakZoekObject taakZoekObject) {
-        final RESTTaakZoekObject restZaakZoekObject = new RESTTaakZoekObject();
-        restZaakZoekObject.id = UUID.fromString(taakZoekObject.getId());
-        restZaakZoekObject.type = taakZoekObject.getType();
-        restZaakZoekObject.naam = taakZoekObject.getNaam();
-        restZaakZoekObject.status = taakZoekObject.getStatus();
-        restZaakZoekObject.toelichting = taakZoekObject.getToelichting();
-        restZaakZoekObject.creatiedatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getCreatiedatum());
-        restZaakZoekObject.toekenningsdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getToekenningsdatum());
-        restZaakZoekObject.streefdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getStreefdatum());
-        restZaakZoekObject.groepNaam = taakZoekObject.getGroepNaam();
-        restZaakZoekObject.behandelaarNaam = taakZoekObject.getBehandelaarNaam();
-        restZaakZoekObject.behandelaarGebruikersnaam = taakZoekObject.getBehandelaarGebruikersnaam();
-        restZaakZoekObject.zaaktypeOmschrijving = taakZoekObject.getZaaktypeOmschrijving();
-        restZaakZoekObject.zaakIdentificatie = taakZoekObject.getZaakIdentificatie();
-        restZaakZoekObject.zaakUuid = taakZoekObject.getZaakUUID();
-        return restZaakZoekObject;
+        final RESTTaakZoekObject restTaakZoekObject = new RESTTaakZoekObject();
+        restTaakZoekObject.id = UUID.fromString(taakZoekObject.getId());
+        restTaakZoekObject.type = taakZoekObject.getType();
+        restTaakZoekObject.naam = taakZoekObject.getNaam();
+        restTaakZoekObject.status = taakZoekObject.getStatus();
+        restTaakZoekObject.toelichting = taakZoekObject.getToelichting();
+        restTaakZoekObject.creatiedatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getCreatiedatum());
+        restTaakZoekObject.toekenningsdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getToekenningsdatum());
+        restTaakZoekObject.streefdatum = DateTimeConverterUtil.convertToLocalDate(taakZoekObject.getStreefdatum());
+        restTaakZoekObject.groepNaam = taakZoekObject.getGroepNaam();
+        restTaakZoekObject.behandelaarNaam = taakZoekObject.getBehandelaarNaam();
+        restTaakZoekObject.behandelaarGebruikersnaam = taakZoekObject.getBehandelaarGebruikersnaam();
+        restTaakZoekObject.zaaktypeOmschrijving = taakZoekObject.getZaaktypeOmschrijving();
+        restTaakZoekObject.zaakIdentificatie = taakZoekObject.getZaakIdentificatie();
+        restTaakZoekObject.zaakUuid = taakZoekObject.getZaakUUID();
+        restTaakZoekObject.zaakToelichting = taakZoekObject.getZaakToelichting();
+        restTaakZoekObject.zaakOmschrijving = taakZoekObject.getZaakOmschrijving();
+        return restTaakZoekObject;
     }
 }

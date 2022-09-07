@@ -73,11 +73,14 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         return new Map([
             ['naam', ColumnPickerValue.VISIBLE],
             ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
+            ['zaakOmschrijving', ColumnPickerValue.VISIBLE],
+            ['zaakToelichting', ColumnPickerValue.HIDDEN],
             ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
             ['creatiedatum', ColumnPickerValue.VISIBLE],
             ['streefdatum', ColumnPickerValue.VISIBLE],
             ['dagenTotStreefdatum', ColumnPickerValue.VISIBLE],
             ['groep', ColumnPickerValue.VISIBLE],
+            ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
         ]);
     }
