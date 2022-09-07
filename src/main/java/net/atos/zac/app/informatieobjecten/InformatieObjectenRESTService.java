@@ -40,8 +40,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
-import net.atos.client.zgw.ztc.model.Informatieobjecttype;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -56,6 +54,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
@@ -188,14 +187,25 @@ public class InformatieObjectenRESTService {
     @PUT
     @Path("informatieobjectenList")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
+        final List<RESTEnkelvoudigInformatieobject> result;
+        final Zaak zaak;
         if (zoekParameters.zaakUUID != null) {
-            return listEnkelvoudigInformatieobjectenVoorZaak(zrcClientService.readZaak(zoekParameters.zaakUUID));
+            zaak = zrcClientService.readZaak(zoekParameters.zaakUUID);
+            result = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
         } else if (zoekParameters.zaakURI != null) {
-            return listEnkelvoudigInformatieobjectenVoorZaak(zrcClientService.readZaak(zoekParameters.zaakURI));
+            zaak = zrcClientService.readZaak(zoekParameters.zaakURI);
+            result = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
         } else if (zoekParameters.UUIDs != null) {
             return informatieobjectConverter.convertToREST(zoekParameters.UUIDs);
+        } else {
+            throw new IllegalStateException("Zoekparameters hebben geen waarde");
         }
-        throw new IllegalStateException("Zoekparameters hebben geen waarde");
+        if (zoekParameters.toonGekoppeldeZaakDocumenten) {
+            final List<RESTEnkelvoudigInformatieobject> list = new ArrayList<>(result);
+            list.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
+            return list;
+        }
+        return result;
     }
 
     @POST
@@ -466,25 +476,6 @@ public class InformatieObjectenRESTService {
                 .map(zaakInformatieobject -> zrcClientService.readZaak(zaakInformatieobject.getZaak()).getIdentificatie()).toList();
     }
 
-    @GET
-    @Path("informatieobject/gekoppelde/{zaakUUID}")
-    public List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakInformatieObjecten(@PathParam("zaakUUID") UUID zaakUUID) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        final List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> enkelvoudigInformatieobjectList = new ArrayList<>();
-        zaak.getDeelzaken().forEach(deelzaak -> {
-            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(deelzaak, RelatieType.DEELZAAK));
-        });
-        if (zaak.getHoofdzaak() != null) {
-            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(zaak.getHoofdzaak(), RelatieType.HOOFDZAAK));
-        }
-        zaak.getRelevanteAndereZaken().forEach(relevanteAndereZaak -> {
-            enkelvoudigInformatieobjectList.addAll(
-                    listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(relevanteAndereZaak.getUrl(), gerelateerdeZaakConverter.convertToRelatieType(
-                            relevanteAndereZaak.getAardRelatie())));
-        });
-        return enkelvoudigInformatieobjectList;
-    }
-
     @POST
     @Path("/informatieobject/{uuid}/onderteken")
     public Response ondertekenInformatieObject(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
@@ -501,8 +492,8 @@ public class InformatieObjectenRESTService {
         return informatieobjectConverter.convertToREST(zaakInformatieobjecten);
     }
 
-    private List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(
-            final URI zaakURI, final RelatieType relatieType) {
+    private List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(final URI zaakURI,
+            final RelatieType relatieType) {
         final Zaak zaak = zrcClientService.readZaak(zaakURI);
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setZaak(zaak.getUrl());
@@ -510,5 +501,21 @@ public class InformatieObjectenRESTService {
         return zaakInformatieobjects.stream()
                 .map(zaakInformatieobject -> informatieobjectConverter.convertToREST(zaakInformatieobject, relatieType, zaak))
                 .toList();
+    }
+
+    private List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> listGekoppeldeZaakInformatieObjectenVoorZaak(final Zaak zaak) {
+        final List<RESTGekoppeldeZaakEnkelvoudigInformatieObject> enkelvoudigInformatieobjectList = new ArrayList<>();
+        zaak.getDeelzaken().forEach(deelzaak -> {
+            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(deelzaak, RelatieType.DEELZAAK));
+        });
+        if (zaak.getHoofdzaak() != null) {
+            enkelvoudigInformatieobjectList.addAll(listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(zaak.getHoofdzaak(), RelatieType.HOOFDZAAK));
+        }
+        zaak.getRelevanteAndereZaken().forEach(relevanteAndereZaak -> {
+            enkelvoudigInformatieobjectList.addAll(
+                    listGekoppeldeZaakEnkelvoudigInformatieobjectenVoorZaak(relevanteAndereZaak.getUrl(), gerelateerdeZaakConverter.convertToRelatieType(
+                            relevanteAndereZaak.getAardRelatie())));
+        });
+        return enkelvoudigInformatieobjectList;
     }
 }
