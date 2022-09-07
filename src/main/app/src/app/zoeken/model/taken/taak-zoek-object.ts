@@ -16,6 +16,8 @@ export class TaakZoekObject implements ZoekObject {
     zaaktypeOmschrijving: string;
     zaakUuid: string;
     zaakIdentificatie: string;
+    zaakOmschrijving: string;
+    zaakToelichting: string;
     creatiedatum: string;
     toekenningsdatum: string;
     streefdatum: string;

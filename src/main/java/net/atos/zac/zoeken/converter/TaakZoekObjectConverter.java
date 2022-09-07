@@ -81,7 +81,7 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
 
         final Zaak zaak = zrcClientService.readZaak(UUID.fromString(taakZoekObject.getZaakUUID()));
         taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
-        taakZoekObject.setToelichting(zaak.getToelichting());
+        taakZoekObject.setZaakToelichting(zaak.getToelichting());
 
         final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
         if (MapUtils.isNotEmpty(taakdata)) {
