@@ -36,6 +36,7 @@ import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/fo
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
 import {FieldType} from '../../shared/material-form-builder/model/field-type.enum';
 import {Group} from '../../identity/model/group';
+import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -51,6 +52,7 @@ export class ZaakCreateComponent implements OnInit {
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
+    private vertrouwelijkheidaanduidingField: AbstractChoicesFormField;
     private subscription$: Subscription;
 
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
@@ -114,7 +116,7 @@ export class ZaakCreateComponent implements OnInit {
                                                                .validators(Validators.required)
                                                                .build();
 
-        const vertrouwelijkheidaanduiding = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
+        this.vertrouwelijkheidaanduidingField = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
                                                                         .label('vertrouwelijkheidaanduiding')
                                                                         .optionLabel('label')
                                                                         .options(vertrouwelijkheidaanduidingen)
@@ -143,7 +145,7 @@ export class ZaakCreateComponent implements OnInit {
             [toekennenGegevensTitel],
             [this.medewerkerGroepFormField],
             [overigeGegevensTitel],
-            [communicatiekanaal, vertrouwelijkheidaanduiding],
+            [communicatiekanaal, this.vertrouwelijkheidaanduidingField],
             [omschrijving],
             [toelichting]
         ];
@@ -210,6 +212,9 @@ export class ZaakCreateComponent implements OnInit {
                 this.createZaakFields[index] = [this.medewerkerGroepFormField];
             }
         );
+        this.vertrouwelijkheidaanduidingField.options.subscribe({
+            next: options => this.vertrouwelijkheidaanduidingField.formControl.setValue(options.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding))
+        });
     }
 
     private iconNext(action) {
