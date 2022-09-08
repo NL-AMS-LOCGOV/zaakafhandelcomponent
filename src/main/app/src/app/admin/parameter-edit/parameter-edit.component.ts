@@ -26,6 +26,9 @@ import {ZaaknietontvankelijkReden} from '../model/zaaknietontvankelijk-reden';
 import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-parameter';
 import {AdminComponent} from '../admin/admin.component';
 import {Resultaattype} from '../../zaken/model/resultaattype';
+import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
+import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
+import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -52,6 +55,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     behandelaarControl = new FormControl();
     einddatumGeplandWaarschuwingControl = new FormControl();
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
+    intakeMailControl = new FormControl();
+    afrondenMailControl = new FormControl();
+    mailOpties: { label: string, value: string }[];
 
     caseDefinitions: Observable<CaseDefinition[]>;
     groepen: Observable<Group[]>;
@@ -70,6 +76,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
             this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
+            this.intakeMailControl.setValue(this.parameters.intakeMail);
+            this.afrondenMailControl.setValue(this.parameters.afrondenMail);
             this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
@@ -78,6 +86,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.mailOpties = this.utilService.getEnumAsSelectList('statusmail.optie', ZaakStatusmailOptie);
         this.setupMenu('title.parameters.wijzigen');
         this.createForm();
     }
@@ -135,7 +144,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             groepControl: this.groepControl,
             behandelaarControl: this.behandelaarControl,
             einddatumGeplandWaarschuwingControl: this.einddatumGeplandWaarschuwingControl,
-            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl
+            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl,
+            intakeMailControl: this.intakeMailControl,
+            afrondenMailControl: this.afrondenMailControl
         });
         this.updateHumanTaskForm();
         this.updateUserEventListenerForm();
@@ -251,6 +262,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.defaultBehandelaar = this.behandelaarControl.value;
         this.parameters.einddatumGeplandWaarschuwing = this.einddatumGeplandWaarschuwingControl.value;
         this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
+        this.parameters.intakeMail = this.intakeMailControl.value;
+        this.parameters.afrondenMail = this.afrondenMailControl.value;
 
         this.humanTaskParameters.forEach(param => {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;

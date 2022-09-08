@@ -67,6 +67,20 @@
                             <span matSuffix>{{'kalenderdagen' | translate}}</span>
                         </mat-form-field>
                     </div>
+                    <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                        <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'statusmail.type.intake' | translate}}</mat-label>
+                            <mat-select [formControl]="intakeMailControl" [compareWith]="compareObject">
+                                <mat-option *ngFor="let b of mailOpties" [value]="b.value">{{ b.label | translate }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'statusmail.type.afronden' | translate}}</mat-label>
+                            <mat-select [formControl]="afrondenMailControl" [compareWith]="compareObject">
+                                <mat-option *ngFor="let b of mailOpties" [value]="b.value">{{ b.label | translate }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
 
                     <div class="button-group" fxLayout="row wrap">
                         <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>

@@ -11,6 +11,7 @@ import {User} from '../../identity/model/user';
 import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
 import {Resultaattype} from '../../zaken/model/resultaattype';
+import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
 
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
@@ -24,5 +25,7 @@ export class ZaakafhandelParameters {
     humanTaskParameters: HumanTaskParameter[];
     userEventListenerParameters: UserEventListenerParameter[];
     zaakbeeindigParameters: ZaakbeeindigParameter[];
+    intakeMail: ZaakStatusmailOptie;
+    afrondenMail: ZaakStatusmailOptie;
     valide: boolean;
 }
