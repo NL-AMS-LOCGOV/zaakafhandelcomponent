@@ -77,6 +77,12 @@ public class ZaakafhandelParameters {
     @Column(name = "creatiedatum", nullable = false)
     private ZonedDateTime creatiedatum;
 
+    @Column(name = "intake_mail", nullable = false)
+    private String intakeMail;
+
+    @Column(name = "afronden_mail", nullable = false)
+    private String afrondenMail;
+
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<HumanTaskParameters> humanTaskParametersCollection;
@@ -221,6 +227,22 @@ public class ZaakafhandelParameters {
 
     public void setCreatiedatum(final ZonedDateTime creatiedatum) {
         this.creatiedatum = creatiedatum;
+    }
+
+    public String getIntakeMail() {
+        return intakeMail;
+    }
+
+    public void setIntakeMail(final String intakeMail) {
+        this.intakeMail = intakeMail;
+    }
+
+    public String getAfrondenMail() {
+        return afrondenMail;
+    }
+
+    public void setAfrondenMail(final String afrondenMail) {
+        this.afrondenMail = afrondenMail;
     }
 
     /**
