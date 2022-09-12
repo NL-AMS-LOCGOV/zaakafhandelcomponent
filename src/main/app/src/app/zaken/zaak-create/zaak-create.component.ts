@@ -36,7 +36,7 @@ import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/fo
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
 import {FieldType} from '../../shared/material-form-builder/model/field-type.enum';
 import {Group} from '../../identity/model/group';
-import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
+import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -52,7 +52,7 @@ export class ZaakCreateComponent implements OnInit {
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
-    private vertrouwelijkheidaanduidingField: AbstractChoicesFormField;
+    private vertrouwelijkheidaanduidingField: SelectFormField;
     private subscription$: Subscription;
 
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
