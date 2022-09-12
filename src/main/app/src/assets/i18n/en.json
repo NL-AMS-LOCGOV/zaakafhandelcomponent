@@ -152,7 +152,7 @@
   "sendMail" : "Send mail",
   "status" : "State",
   "statusmail.type.intake" : "State mail intake phase",
-  "statusmail.type.afronden" : "State mail afronden phase",
+  "statusmail.type.afronden" : "State mail finish phase",
   "systeem" : "System",
   "taal" : "Language",
   "tabel" : "Table",

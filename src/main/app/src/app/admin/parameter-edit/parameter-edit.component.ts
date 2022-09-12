@@ -27,8 +27,6 @@ import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-param
 import {AdminComponent} from '../admin/admin.component';
 import {Resultaattype} from '../../zaken/model/resultaattype';
 import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
-import {SelectFormFieldBuilder} from '../../shared/material-form-builder/form-components/select/select-form-field-builder';
-import {AbstractChoicesFormField} from '../../shared/material-form-builder/model/abstract-choices-form-field';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
