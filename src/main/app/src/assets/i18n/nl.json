@@ -281,6 +281,8 @@
   "informatieobject.documentType.e-mail" : "E-mail",
   "planitem.INTAKE_AFRONDEN" : "Intake afronden",
   "planitem.ZAAK_AFHANDELEN" : "Zaak afhandelen",
+  "referentietabel.-geen-" : "- Geen referentietabel -",
+  "referentietabel.ADVIES" : "Referentietabel voor adviezen",
   "signalering.subjecttype" : "Type",
   "signalering.subjecttype.INFORMATIEOBJECT" : "Document signalering",
   "signalering.subjecttype.TAAK" : "Taak signalering",

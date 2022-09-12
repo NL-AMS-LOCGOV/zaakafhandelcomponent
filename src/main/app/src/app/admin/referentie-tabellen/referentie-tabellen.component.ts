@@ -9,7 +9,7 @@ import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {IdentityService} from '../../identity/identity.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {AdminComponent} from '../admin/admin.component';
-import {ReferentieTabelBeheerService} from '../referentie-tabel-beheer.service';
+import {ReferentieTabelService} from '../referentie-tabel.service';
 import {ReferentieTabel} from '../model/referentie-tabel';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -29,7 +29,7 @@ export class ReferentieTabellenComponent extends AdminComponent implements OnIni
     dataSource: MatTableDataSource<ReferentieTabel> = new MatTableDataSource<ReferentieTabel>();
 
     constructor(private identityService: IdentityService,
-                private service: ReferentieTabelBeheerService,
+                private service: ReferentieTabelService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
                 public utilService: UtilService) {
