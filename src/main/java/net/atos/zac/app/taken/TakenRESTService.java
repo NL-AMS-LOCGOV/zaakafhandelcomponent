@@ -298,6 +298,7 @@ public class TakenRESTService {
                     .filter(uuid -> !StringUtils.isEmpty(uuid))
                     .map(UUIDUtil::uuid)
                     .collect(Collectors.toList());
+            UUIDs.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getOndertekenen()));
             enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObjecten(UUIDs);
         }
     }
