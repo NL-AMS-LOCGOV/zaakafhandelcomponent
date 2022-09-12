@@ -91,18 +91,33 @@
                                     <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'groep' | translate}}</mat-label>
                                         <mat-select placeholder="{{'groep.-geen-' | translate}}"
-                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')" [compareWith]="compareObject">
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'defaultGroep')"
+                                                    [compareWith]="compareObject">
                                             <mat-option [value]="">{{'groep.-geen-' | translate}}</mat-option>
-                                            <mat-option *ngFor="let groep of groepen | async" [value]="groep">{{ groep.naam }}</mat-option>
+                                            <mat-option *ngFor="let groep of groepen | async"
+                                                        [value]="groep">{{ groep.naam }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                                 <div fxLayout="row wrap">
                                     <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
                                         <mat-label>{{'doorlooptijd.gewenst' | translate}}</mat-label>
-                                        <input matInput type="number" [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')" min="0"
-                                               max="2147483647">
+                                        <input matInput type="number"
+                                               [formControl]="getHumanTaskControl(humanTaskParameter, 'doorlooptijd')"
+                                               min="0" max="2147483647">
                                         <span matSuffix>{{'kalenderdagen' | translate}}</span>
+                                    </mat-form-field>
+                                </div>
+                                <div fxLayout="row wrap" *ngFor="let referentieTabel of humanTaskParameter.referentieTabellen">
+                                    <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                                        <mat-label>{{'referentietabel.' + referentieTabel.veld | translate}}</mat-label>
+                                        <mat-select placeholder="{{'referentietabel.-geen-' | translate}}"
+                                                    [formControl]="getHumanTaskControl(humanTaskParameter, 'referentieTabel'+referentieTabel.veld)"
+                                                    [compareWith]="compareObject">
+                                            <mat-option [value]="">{{'referentietabel.-geen-' | translate}}</mat-option>
+                                            <mat-option *ngFor="let tabel of referentieTabellen | async"
+                                                        [value]="tabel">{{ tabel.naam }}</mat-option>
+                                        </mat-select>
                                     </mat-form-field>
                                 </div>
                             </mat-expansion-panel>

@@ -8,7 +8,7 @@ import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {IdentityService} from '../../identity/identity.service';
 import {AdminComponent} from '../admin/admin.component';
-import {ReferentieTabelBeheerService} from '../referentie-tabel-beheer.service';
+import {ReferentieTabelService} from '../referentie-tabel.service';
 import {ReferentieTabel} from '../model/referentie-tabel';
 import {Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
@@ -41,7 +41,7 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     waardeFormField: InputFormField[] = [];
 
     constructor(private identityService: IdentityService,
-                private service: ReferentieTabelBeheerService,
+                private service: ReferentieTabelService,
                 public utilService: UtilService,
                 private route: ActivatedRoute,
                 private foutAfhandelingService: FoutAfhandelingService) {

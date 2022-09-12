@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.atos.zac.app.identity.model.RESTGroup;
 
 public class RESTHumanTaskParameters {
@@ -16,4 +19,6 @@ public class RESTHumanTaskParameters {
     public Integer doorlooptijd;
 
     public RESTGroup defaultGroep;
+
+    public List<RESTHumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 }

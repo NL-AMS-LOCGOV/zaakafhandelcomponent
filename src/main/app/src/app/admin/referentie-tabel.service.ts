@@ -13,7 +13,7 @@ import {ReferentieTabel} from './model/referentie-tabel';
 @Injectable({
     providedIn: 'root'
 })
-export class ReferentieTabelBeheerService {
+export class ReferentieTabelService {
 
     private basepath: string = '/rest/referentietabellen';
 

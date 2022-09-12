@@ -11,14 +11,19 @@ import java.util.List;
 import javax.inject.Inject;
 
 import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
+import net.atos.zac.app.admin.model.RESTHumanTaskReferentieTabel;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
 public class RESTHumanTaskParametersConverter {
 
     @Inject
     private RESTGroupConverter groupConverter;
+
+    @Inject
+    private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
 
     public List<RESTHumanTaskParameters> convertHumanTaskParametersCollection(final Collection<HumanTaskParameters> humanTaskParametersCollection,
             final List<RESTPlanItemDefinition> humanTaskDefinitions) {
@@ -42,7 +47,20 @@ public class RESTHumanTaskParametersConverter {
         restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(humanTaskParameters.getGroepID());
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
         restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
+        restHumanTaskParameters.referentieTabellen = convertReferentieTabellen(humanTaskParameters, humanTaskDefinition);
         return restHumanTaskParameters;
+    }
+
+    private List<RESTHumanTaskReferentieTabel> convertReferentieTabellen(final HumanTaskParameters humanTaskParameters,
+            final RESTPlanItemDefinition humanTaskDefinition) {
+        final List<RESTHumanTaskReferentieTabel> referentieTabellen = restHumanTaskReferentieTabelConverter.convert(
+                humanTaskParameters.getReferentieTabellen());
+        HumanTaskFormulierKoppeling.readFormulierVeldDefinities(humanTaskDefinition.id).stream()
+                .filter(veldDefinitie -> referentieTabellen.stream()
+                        .noneMatch(referentieTabel -> veldDefinitie.name().equals(referentieTabel.veld)))
+                .map(restHumanTaskReferentieTabelConverter::convertDefault)
+                .forEach(referentieTabellen::add);
+        return referentieTabellen;
     }
 
     private RESTHumanTaskParameters convertToRESTHumanTaskParameters(final RESTPlanItemDefinition humanTaskDefinition) {
@@ -65,6 +83,7 @@ public class RESTHumanTaskParametersConverter {
         if (restHumanTaskParameters.defaultGroep != null) {
             humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
         }
+        humanTaskParameters.setReferentieTabellen(restHumanTaskReferentieTabelConverter.convert(restHumanTaskParameters.referentieTabellen));
         return humanTaskParameters;
     }
 }
