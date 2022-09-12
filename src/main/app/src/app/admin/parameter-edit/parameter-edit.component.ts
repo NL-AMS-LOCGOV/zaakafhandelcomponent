@@ -274,7 +274,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
             for (const tabel of param.referentieTabellen) {
-                tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value; // TODO #1433
+                tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
             }
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;
