@@ -14,6 +14,8 @@ import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-
 
 export class ExternAdviesVastleggen extends AbstractFormulier {
 
+    public static formulierDefinitie = 'EXTERN_ADVIES_VASTLEGGEN';
+
     fields = {
         VRAAG: 'vraag',
         ADVISEUR: 'adviseur',
@@ -47,11 +49,11 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
     _initBehandelForm() {
         const fields = this.fields;
         this.form.push(
-            [new ParagraphFormFieldBuilder().text( this.translate.instant('msg.extern.advies.vastleggen.behandelen')).build()],
+            [new ParagraphFormFieldBuilder().text(this.translate.instant('msg.extern.advies.vastleggen.behandelen')).build()],
             [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
-                                          .label(fields.VRAAG)
-                                          .value(this.getDataElement(fields.VRAAG))
-                                          .build()],
+                                           .label(fields.VRAAG)
+                                           .value(this.getDataElement(fields.VRAAG))
+                                           .build()],
             [new ReadonlyFormFieldBuilder().id(fields.ADVISEUR)
                                            .label(fields.ADVISEUR)
                                            .value(this.getDataElement(fields.ADVISEUR))

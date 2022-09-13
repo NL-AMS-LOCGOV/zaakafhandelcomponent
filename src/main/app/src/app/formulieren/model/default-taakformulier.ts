@@ -12,6 +12,8 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 
 export class DefaultTaakformulier extends AbstractFormulier {
 
+    public static formulierDefinitie = 'DEFAULT_TAAKFORMULIER';
+
     fields = {
         REDEN_START: 'redenStart',
         AFHANDELING: 'afhandeling'
@@ -21,7 +23,8 @@ export class DefaultTaakformulier extends AbstractFormulier {
         uitkomst: this.fields.AFHANDELING
     };
 
-    constructor(translate: TranslateService, public informatieObjectenService: InformatieObjectenService) {
+    constructor(translate: TranslateService,
+                public informatieObjectenService: InformatieObjectenService) {
         super(translate, informatieObjectenService);
     }
 

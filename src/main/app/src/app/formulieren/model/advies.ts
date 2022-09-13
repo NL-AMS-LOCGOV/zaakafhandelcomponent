@@ -16,8 +16,14 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {TakenService} from '../../taken/taken.service';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {map, mergeMap} from 'rxjs/operators';
+import {ReferentieTabelWaarde} from '../../admin/model/referentie-tabel-waarde';
+import {ZakenService} from '../../zaken/zaken.service';
+import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 
 export class Advies extends AbstractFormulier {
+
+    public static formulierDefinitie = 'ADVIES';
 
     fields = {
         TOELICHTING: 'toelichtingAdvies',
@@ -34,7 +40,9 @@ export class Advies extends AbstractFormulier {
     constructor(
         translate: TranslateService,
         public takenService: TakenService,
-        public informatieObjectenService: InformatieObjectenService) {
+        public informatieObjectenService: InformatieObjectenService,
+        private zakenService: ZakenService,
+        private zaakafhandelParametersService: ZaakafhandelParametersService) {
         super(translate, informatieObjectenService);
     }
 
@@ -53,7 +61,6 @@ export class Advies extends AbstractFormulier {
 
     _initBehandelForm() {
         const fields = this.fields;
-        const adviesDataElement = this.getDataElement(fields.ADVIES);
         this.form.push(
             [new ParagraphFormFieldBuilder().text('msg.advies.behandelen').build()],
             [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
@@ -67,9 +74,8 @@ export class Advies extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder().id(fields.ADVIES)
                                         .label(fields.ADVIES)
-                                        .value(this.readonly && adviesDataElement ?
-                                            this.translate.instant(adviesDataElement) : adviesDataElement)
-                                        .options(this.getAdviesOpties())
+                                        .value(this.getDataElement(fields.ADVIES))
+                                        .options(this.getAdviesWaarden(this.zaakUuid))
                                         .validators(Validators.required)
                                         .readonly(this.readonly)
                                         .build()],
@@ -96,13 +102,10 @@ export class Advies extends AbstractFormulier {
         return of([]);
     }
 
-    getAdviesOpties(): Observable<string[]> {
-        return of([
-            'advies.positief',
-            'advies.positief.onder.voorwaarde',
-            'advies.negatief',
-            'advies.negatief.tenzij',
-            'advies.niet.beoordeeld'
-        ]);
+    getAdviesWaarden(zaakUuid: string): Observable<string[]> {
+        const advies: string = this.fields.ADVIES.toUpperCase();
+        return this.zakenService.readZaak(zaakUuid)
+                   .pipe(mergeMap(zaak => this.zaakafhandelParametersService.findReferentieTabelWaarden(zaak.zaaktype.uuid, Advies.formulierDefinitie, advies)
+                                              .pipe(map((tabel: ReferentieTabelWaarde[]) => tabel.map(waarde => waarde.naam)))));
     }
 }
