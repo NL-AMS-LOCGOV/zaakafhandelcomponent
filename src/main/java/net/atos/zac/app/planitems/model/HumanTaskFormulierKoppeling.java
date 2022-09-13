@@ -6,8 +6,10 @@
 package net.atos.zac.app.planitems.model;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
+import net.atos.zac.zaaksturing.model.FormulierVeldDefinitie;
 
 public enum HumanTaskFormulierKoppeling {
 
@@ -39,5 +41,9 @@ public enum HumanTaskFormulierKoppeling {
                 .filter(humanTaskFormulierKoppeling -> humanTaskFormulierKoppeling.planItemDefinitionId.equals(planItemDefinitionId))
                 .map(HumanTaskFormulierKoppeling::getFormulierDefinitie)
                 .findAny().orElse(HumanTaskFormulierKoppeling.DEFAULT.getFormulierDefinitie());
+    }
+
+    public static Set<FormulierVeldDefinitie> readFormulierVeldDefinities(final String planItemDefinitionId) {
+        return readFormulierDefinitie(planItemDefinitionId).getVeldDefinities();
     }
 }

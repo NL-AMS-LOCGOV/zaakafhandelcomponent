@@ -286,6 +286,8 @@
   "statusmail.optie.BESCHIKBAAR_AAN" : "Beschikbaar en standaard aan",
   "statusmail.optie.BESCHIKBAAR_UIT" : "Beschikbaar en standaard uit",
   "statusmail.optie.NIET_BESCHIKBAAR" : "Niet beschikbaar",
+  "referentietabel.-geen-" : "- Geen referentietabel -",
+  "referentietabel.ADVIES" : "Referentietabel voor adviezen",
   "signalering.subjecttype" : "Type",
   "signalering.subjecttype.INFORMATIEOBJECT" : "Document signalering",
   "signalering.subjecttype.TAAK" : "Taak signalering",

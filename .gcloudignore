@@ -17,4 +17,4 @@
 *.md
 .openapi-generator
 config
-api-specs
+/api-specs

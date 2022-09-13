@@ -5,6 +5,9 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.atos.zac.app.planitems.model.PlanItemType;
 
 public class RESTPlanItemDefinition {
@@ -14,6 +17,8 @@ public class RESTPlanItemDefinition {
     public String naam;
 
     public PlanItemType type;
+
+    public List<RESTHumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 
     public RESTPlanItemDefinition() {
     }

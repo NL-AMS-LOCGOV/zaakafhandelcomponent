@@ -6,7 +6,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
-import {ReferentieTabelBeheerService} from './referentie-tabel-beheer.service';
+import {ReferentieTabelService} from './referentie-tabel.service';
 import {ReferentieTabel} from './model/referentie-tabel';
 
 @Injectable({
@@ -14,7 +14,7 @@ import {ReferentieTabel} from './model/referentie-tabel';
 })
 export class ReferentieTabelResolver implements Resolve<ReferentieTabel> {
 
-    constructor(private adminService: ReferentieTabelBeheerService) {
+    constructor(private adminService: ReferentieTabelService) {
     }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ReferentieTabel> {
