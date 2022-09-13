@@ -53,6 +53,7 @@ export class ZaakCreateComponent implements OnInit {
     private locatieField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
     private vertrouwelijkheidaanduidingField: SelectFormField;
+    private vertrouwelijkheidaanduidingen: { label: string, value: string }[];
     private subscription$: Subscription;
 
     private initiatorToevoegenIcon = new ActionIcon('person', 'actie.initiator.toevoegen', new Subject<void>());
@@ -82,7 +83,7 @@ export class ZaakCreateComponent implements OnInit {
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
         const communicatiekanalen = this.zakenService.listCommunicatiekanalen();
-        const vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+        this.vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
         const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level('1').build();
@@ -119,7 +120,7 @@ export class ZaakCreateComponent implements OnInit {
         this.vertrouwelijkheidaanduidingField = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
                                                                         .label('vertrouwelijkheidaanduiding')
                                                                         .optionLabel('label')
-                                                                        .options(vertrouwelijkheidaanduidingen)
+                                                                        .options(this.vertrouwelijkheidaanduidingen)
                                                                         .validators(Validators.required)
                                                                         .build();
 
@@ -212,9 +213,7 @@ export class ZaakCreateComponent implements OnInit {
                 this.createZaakFields[index] = [this.medewerkerGroepFormField];
             }
         );
-        this.vertrouwelijkheidaanduidingField.options.subscribe({
-            next: options => this.vertrouwelijkheidaanduidingField.formControl.setValue(options.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding))
-        });
+        this.vertrouwelijkheidaanduidingField.formControl.setValue(this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
     }
 
     private iconNext(action) {
