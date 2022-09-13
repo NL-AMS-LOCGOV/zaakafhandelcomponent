@@ -25,6 +25,7 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.configuratie.converter.RESTTaalConverter;
 import net.atos.zac.app.configuratie.model.RESTTaal;
@@ -91,7 +92,14 @@ public class RESTInformatieobjectConverter {
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject) {
-        return convertToREST(enkelvoudigInformatieObject, null);
+        final ZaakInformatieobjectListParameters params = new ZaakInformatieobjectListParameters();
+        params.setInformatieobject(enkelvoudigInformatieObject.getUrl());
+        final UUID zaakUUID = zrcClientService.listZaakinformatieobjecten(params).stream()
+                .findAny()
+                .map(ZaakInformatieobject::getZaakUUID)
+                .orElse(null);
+        final Zaak zaak = zaakUUID != null ? zrcClientService.readZaak(zaakUUID) : null;
+        return convertToREST(enkelvoudigInformatieObject, zaak);
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject, final Zaak zaak) {
