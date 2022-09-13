@@ -146,7 +146,7 @@ public class ZaakafhandelParametersRESTService {
      */
     @GET
     @Path("{zaaktypeUUID}/{formulierDefinitie}/{veldDefinitie}")
-    public List<RESTReferentieTabelWaarde> findZaakafhandelParametersReferentieTabelWaarden(
+    public List<RESTReferentieTabelWaarde> findReferentieTabelWaarden(
             @PathParam("zaaktypeUUID") final UUID zaakTypeUUID,
             @PathParam("formulierDefinitie") final FormulierDefinitie formulierDefinitie,
             @PathParam("veldDefinitie") final FormulierVeldDefinitie veldDefinitie) {
