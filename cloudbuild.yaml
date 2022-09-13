@@ -1,7 +1,7 @@
 steps:
   - id: docker build
     name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t=europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}', '.' ]
+    args: [ 'build', '-t=europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}', '-f=Containerfile', '.' ]
   - id: docker push
     name: 'gcr.io/cloud-builders/docker'
     args: [ 'push', 'europe-west4-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_DEPLOYMENT}' ]
