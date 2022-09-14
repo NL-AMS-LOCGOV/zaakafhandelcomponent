@@ -13,9 +13,10 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: MedewerkerGroepFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new MedewerkerGroepFormField();
+        this.formField.initFormControl(value);
     }
 
     groepOptioneel(): this {

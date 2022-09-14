@@ -12,7 +12,7 @@ export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilde
 
     protected readonly formField: AutocompleteFormField;
 
-    constructor(value?: any | Observable<any>) {
+    constructor(value?: any) {
         super();
         this.formField = new AutocompleteFormField();
         this.formField.initFormControl(value);

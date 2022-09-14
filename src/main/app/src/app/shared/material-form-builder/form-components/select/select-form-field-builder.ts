@@ -11,7 +11,7 @@ export class SelectFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
     protected readonly formField: SelectFormField;
 
-    constructor(value?: any | Observable<any>) {
+    constructor(value?: any) {
         super();
         this.formField = new SelectFormField();
         this.formField.initFormControl(value);
