@@ -12,9 +12,10 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: DocumentenLijstFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new DocumentenLijstFormField();
+        this.formField.initFormControl(value);
     }
 
     documenten(documenten$: Observable<EnkelvoudigInformatieobject[]>): this {

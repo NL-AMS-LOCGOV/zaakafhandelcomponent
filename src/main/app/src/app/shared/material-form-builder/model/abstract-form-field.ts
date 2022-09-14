@@ -26,7 +26,7 @@ export abstract class AbstractFormField {
         return false;
     }
 
-    value(value:any){
+    value(value: any) {
         this.formControl.setValue(value);
         this.formControl.markAsDirty();
     }
@@ -35,13 +35,7 @@ export abstract class AbstractFormField {
         this.formControl.reset();
     }
 
-    initFormControl(value?: any | Observable<any>): void {
-        if (isObservable(value)) {
-            value.pipe(first()).subscribe(firstValue => {
-                this.formControl = new FormControl(firstValue, this.formControlOptions);
-            });
-        } else {
-            this.formControl = new FormControl(value, this.formControlOptions);
-        }
+    initFormControl(value?: any): void {
+        this.formControl = new FormControl(value, this.formControlOptions);
     }
 }

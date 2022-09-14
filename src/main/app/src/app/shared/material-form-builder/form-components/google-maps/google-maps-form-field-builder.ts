@@ -9,8 +9,9 @@ import {GoogleMapsFormField} from './google-maps-form-field';
 export class GoogleMapsFormFieldBuilder extends AbstractFormFieldBuilder {
     protected readonly formField: GoogleMapsFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new GoogleMapsFormField();
+        this.formField.initFormControl(value);
     }
 }
