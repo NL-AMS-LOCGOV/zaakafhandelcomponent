@@ -15,6 +15,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -148,6 +151,8 @@ public class ZakenRESTService {
     private static final String HERVATTING = "Hervatting";
 
     private static final String VERLENGING = "Verlenging";
+
+    private static final String AANMAKEN_BESLUIT = "Aanmaken besluit";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -625,7 +630,14 @@ public class ZakenRESTService {
         assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
-        return besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
+        final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
+        besluitToevoegenGegevens.documenten.forEach(documentUri -> {
+            final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject();
+            besluitInformatieobject.setBesluit(resultaat.url);
+            besluitInformatieobject.setInformatieobject(URI.create(documentUri));
+            brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);
+        });
+        return resultaat;
     }
 
     @GET

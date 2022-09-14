@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.zaken.model;
 
+import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 public class RESTBesluittype {
@@ -14,5 +16,7 @@ public class RESTBesluittype {
     public String naam;
 
     public String toelichting;
+
+    public List<URI> informatieObjectTypen;
 
 }

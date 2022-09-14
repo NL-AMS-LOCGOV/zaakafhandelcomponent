@@ -187,7 +187,7 @@ public class InformatieObjectenRESTService {
     @PUT
     @Path("informatieobjectenList")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
-        final List<RESTEnkelvoudigInformatieobject> result;
+        List<RESTEnkelvoudigInformatieobject> result;
         final Zaak zaak;
         if (zoekParameters.zaakUUID != null) {
             zaak = zrcClientService.readZaak(zoekParameters.zaakUUID);
@@ -203,7 +203,13 @@ public class InformatieObjectenRESTService {
         if (zoekParameters.toonGekoppeldeZaakDocumenten) {
             final List<RESTEnkelvoudigInformatieobject> list = new ArrayList<>(result);
             list.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
-            return list;
+            result = list;
+        }
+        if (zoekParameters.toegestaneInformatieObjectTypen != null && zoekParameters.toegestaneInformatieObjectTypen.length > 0) {
+            final List<String> compareList = List.of(zoekParameters.toegestaneInformatieObjectTypen);
+            result = result.stream()
+                    .filter(enkelvoudigInformatieObject -> compareList.contains(enkelvoudigInformatieObject.informatieobjectTypeUUID.toString()))
+                    .collect(Collectors.toList());
         }
         return result;
     }

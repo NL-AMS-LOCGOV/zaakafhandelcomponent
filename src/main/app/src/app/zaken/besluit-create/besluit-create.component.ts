@@ -21,6 +21,9 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluittype} from '../model/besluittype';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
 
 @Component({
     selector: 'zac-besluit-create',
@@ -35,9 +38,13 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
     fields: Array<AbstractFormField[]>;
     private ngDestroy = new Subject<void>();
 
-    constructor(private zakenService: ZakenService, public utilService: UtilService) {}
+    constructor(private zakenService: ZakenService, public utilService: UtilService, private informatieObjectenService: InformatieObjectenService) {}
 
     ngOnInit(): void {
+        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        zoekparameters.zaakUUID = this.zaak.uuid;
+        let documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
         const resultaattypeField = new SelectFormFieldBuilder().id('resultaattype').label('resultaat').validators(Validators.required).optionLabel('naam')
                                                                .options(this.zakenService.listResultaattypes(this.zaak.zaaktype.uuid)).build();
@@ -46,7 +53,8 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         const toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000).build();
         const ingangsdatumField = new DateFormFieldBuilder().id('ingangsdatum').label('ingangsdatum').validators(Validators.required).value(moment()).build();
         const vervaldatumField = new DateFormFieldBuilder().id('vervaldatum').label('vervaldatum').minDate(ingangsdatumField.formControl.value).build();
-        this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField]];
+        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten').documenten(documenten).build();
+        this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
 
         resultaattypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             if (value) {
@@ -55,6 +63,10 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         });
         ingangsdatumField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             (vervaldatumField as DateFormField).minDate = value;
+        });
+        besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
+            zoekparameters.toegestaneInformatieObjectTypen = value.informatieObjectTypen;
+            documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         });
     }
 
@@ -67,6 +79,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             gegevens.toelichting = formGroup.controls['toelichting'].value;
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
+            gegevens.documenten = formGroup.controls['documenten'].value;
             this.zakenService.bestluitVastleggen(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.vastgelegd');
                 this.besluitVastgelegd.emit(true);
