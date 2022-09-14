@@ -20,13 +20,15 @@
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
-                {{einddatumGeplandField.formControl.defaultValue | datum | empty}}
-                <mat-icon class="label-icon"
-                          [ngClass]="einddatumGeplandIcon.styleClass"
-                          *ngIf="showEinddatumGeplandIcon"
-                          title="{{ einddatumGeplandIcon.title | translate}}">
-                    {{einddatumGeplandIcon.icon}}
-                </mat-icon>
+                <div>
+                    {{einddatumGeplandField.formControl.defaultValue | datum | empty}}
+                    <mat-icon class="label-icon"
+                              [ngClass]="einddatumGeplandIcon.styleClass"
+                              *ngIf="showEinddatumGeplandIcon"
+                              title="{{ einddatumGeplandIcon.title | translate}}">
+                        {{einddatumGeplandIcon.icon}}
+                    </mat-icon>
+                </div>
             </div>
         </div>
         <div [fxFlex]="100/3 - 2.25" fxLayout.sm="row">
