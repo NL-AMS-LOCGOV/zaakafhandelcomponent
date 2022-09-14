@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EditComponent} from '../edit.component';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {DateFormField} from '../../material-form-builder/form-components/date/date-form-field';
@@ -31,7 +31,7 @@ import {AbstractFormField} from '../../material-form-builder/model/abstract-form
     templateUrl: './edit-datum-groep.component.html',
     styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-datum-groep.component.less']
 })
-export class EditDatumGroepComponent extends EditComponent implements OnInit {
+export class EditDatumGroepComponent extends EditComponent implements OnChanges, OnInit {
 
     @Input() formField: DateFormField;
     @Input() startDatumField: DateFormField;
@@ -74,6 +74,11 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
         this.updateGroep();
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        super.ngOnChanges(changes);
+        this.updateGroep();
+    }
+
     updateGroep(): void {
         this.showEinddatumGeplandIcon = this.einddatumGeplandIcon?.showIcon(this.einddatumGeplandField.formControl);
         this.showUiterlijkeEinddatumAfdoeningIcon = this.uiterlijkeEinddatumAfdoeningIcon?.showIcon(this.uiterlijkeEinddatumAfdoeningField.formControl);
@@ -89,7 +94,6 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
                     uiterlijkeEinddatumAfdoening: this.uiterlijkeEinddatumAfdoeningField.formControl.value,
                     reden: this.reasonField?.formControl.value
                 });
-                this.updateGroep();
                 this.editing = false;
             }
         }

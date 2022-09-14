@@ -12,6 +12,34 @@
   padding-right: 5px;
 }
 
+.static-text {
+  &:hover {
+    div:nth-child(1) {
+      .static-text-content {
+        box-shadow: -1px 0 0 1px @box-shadow-color-light;
+        clip-path: inset(-1px 0px -1px -1px);
+      }
+    }
+
+    div:nth-child(2) {
+      .static-text-content {
+        clip-path: inset(-1px 1px -1px 0px);
+      }
+    }
+
+    div:nth-child(3) {
+      .static-text-content {
+        box-shadow: 1px 0 0 1px @box-shadow-color-light;
+        clip-path: inset(-1px -1px -1px 0px);
+      }
+    }
+  }
+
+  .label-icon {
+    margin-top: -4px;
+  }
+}
+
 .datum-groep-wrapper {
   min-height: 24px;
   flex: 1 1 100%;

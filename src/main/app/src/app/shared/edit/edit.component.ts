@@ -15,7 +15,7 @@ import {FormControlStatus, FormGroup} from '@angular/forms';
     template: '',
     styleUrls: ['../static-text/static-text.component.less', './edit.component.less']
 })
-export abstract class EditComponent extends StaticTextComponent implements OnInit, OnChanges, OnDestroy {
+export abstract class EditComponent extends StaticTextComponent implements OnInit, OnDestroy {
 
     editing: boolean;
     @HostBinding('class.zac-is-invalid') isInValid: boolean = false;
@@ -40,21 +40,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
         this.formFields.statusChanges.subscribe((status: FormControlStatus) => {
             this.isInValid = this.formFields.get(this.formField.id).dirty && status !== 'VALID';
         });
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        for (const propName in changes) {
-            if (changes.hasOwnProperty(propName)) {
-                switch (propName) {
-                    case 'formField':
-                        // todo websocket check
-                        // this.init(changes.formField.currentValue);
-                        break;
-                    case 'icon':
-                        this.showIcon = this.icon?.showIcon(this.formField.formControl);
-                }
-            }
-        }
     }
 
     ngOnDestroy(): void {

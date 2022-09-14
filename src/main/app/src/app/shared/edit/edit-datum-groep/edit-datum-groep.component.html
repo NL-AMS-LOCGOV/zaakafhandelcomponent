@@ -35,13 +35,15 @@
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
-                {{uiterlijkeEinddatumAfdoeningField.formControl.defaultValue | datum}}
-                <mat-icon class="label-icon"
-                          [ngClass]="uiterlijkeEinddatumAfdoeningIcon.styleClass"
-                          *ngIf="showUiterlijkeEinddatumAfdoeningIcon"
-                          title="{{ uiterlijkeEinddatumAfdoeningIcon.title | translate}}">
-                    {{uiterlijkeEinddatumAfdoeningIcon.icon}}
-                </mat-icon>
+                <div>
+                    {{uiterlijkeEinddatumAfdoeningField.formControl.defaultValue | datum}}
+                    <mat-icon class="label-icon"
+                              [ngClass]="uiterlijkeEinddatumAfdoeningIcon.styleClass"
+                              *ngIf="showUiterlijkeEinddatumAfdoeningIcon"
+                              title="{{ uiterlijkeEinddatumAfdoeningIcon.title | translate}}">
+                        {{uiterlijkeEinddatumAfdoeningIcon.icon}}
+                    </mat-icon>
+                </div>
                 <div *ngIf="!readonly" class="edit-icon">
                     <mat-icon>edit</mat-icon>
                 </div>
