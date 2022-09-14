@@ -61,9 +61,8 @@ export class Goedkeuren extends AbstractFormulier {
             [new ParagraphFormFieldBuilder().text(
                 this.translate.instant('msg.goedkeuring.behandelen', {zaaknummer: this.taak.zaakIdentificatie}))
                                             .build()],
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
                                            .label(fields.VRAAG)
-                                           .value(this.getDataElement(fields.VRAAG))
                                            .build()],
             [new DocumentenLijstFieldBuilder().id(fields.ONDERTEKENEN)
                                               .label(fields.ONDERTEKENEN)
@@ -72,17 +71,15 @@ export class Goedkeuren extends AbstractFormulier {
                                               .ondertekenen(true)
                                               .readonly(true)
                                               .build()],
-            [new RadioFormFieldBuilder().id(fields.GOEDKEUREN)
+            [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
+                this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
                                         .label(fields.GOEDKEUREN)
-                                        .value(this.readonly && goedkeurenDataElement ?
-                                            this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement)
                                         .options(this.getGoedkeurenOpties())
                                         .validators(Validators.required)
                                         .readonly(this.readonly)
                                         .build()],
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING)).id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
-                                           .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
                                            .readonly(this.readonly)
                                            .maxlength(1000)

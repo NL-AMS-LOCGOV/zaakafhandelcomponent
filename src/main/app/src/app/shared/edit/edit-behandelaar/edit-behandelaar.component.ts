@@ -8,6 +8,8 @@ import {MaterialFormBuilderService} from '../../material-form-builder/material-f
 import {UtilService} from '../../../core/service/util.service';
 import {EditAutocompleteComponent} from '../edit-autocomplete/edit-autocomplete.component';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
+import {IdentityService} from '../../../identity/identity.service';
+import {User} from '../../../identity/model/user';
 
 @Component({
     selector: 'zac-edit-behandelaar',
@@ -17,33 +19,32 @@ import {InputFormField} from '../../material-form-builder/form-components/input/
 export class EditBehandelaarComponent extends EditAutocompleteComponent {
 
     @Input() reasonField: InputFormField;
-    @Input() showAssignToMe: boolean = false;
-    @Output() onAssignToMe: EventEmitter<any> = new EventEmitter<any>();
+    showAssignToMe: boolean = false;
+    private loggedInUser: User;
 
-    constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
+    constructor(mfbService: MaterialFormBuilderService, utilService: UtilService, private identityService: IdentityService) {
         super(mfbService, utilService);
+        this.identityService.readLoggedInUser().subscribe(user => {
+            this.loggedInUser = user;
+        });
+
     }
 
-    edit(editing: boolean): void {
-        super.edit(editing);
-        this.reasonField?.formControl.setValue(null);
+    edit(): void {
+        super.edit();
+
+        this.showAssignToMe = this.loggedInUser.id !== this.formField.formControl.defaultValue?.id;
+        if (this.reasonField) {
+            this.formFields.addControl('reden', this.reasonField.formControl);
+        }
+
     }
 
     release(): void {
-        this.formField.formControl.setValue(null);
-        this.submitSave();
-        this.reasonField?.formControl.setValue(null);
-    }
-
-    protected submitSave(): void {
-        if (!this.reasonField || this.reasonField.formControl.valid) {
-            this.onSave.emit({behandelaar: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
-        }
-        this.editing = false;
+        this.formField.value(null);
     }
 
     assignToMe(): void {
-        this.onAssignToMe.emit({reden: this.reasonField?.formControl.value});
-        this.editing = false;
+        this.formField.value(this.loggedInUser);
     }
 }

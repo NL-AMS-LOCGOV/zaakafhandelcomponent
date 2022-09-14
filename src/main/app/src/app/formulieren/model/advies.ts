@@ -63,25 +63,22 @@ export class Advies extends AbstractFormulier {
         const fields = this.fields;
         this.form.push(
             [new ParagraphFormFieldBuilder().text('msg.advies.behandelen').build()],
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
-                                           .label(fields.VRAAG)
-                                           .value(this.getDataElement(fields.VRAAG))
-                                           .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
+                                                                            .label(fields.VRAAG)
+                                                                            .build()],
             [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
                                               .label(fields.RELEVANTE_DOCUMENTEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
                                               .readonly(true)
                                               .build()],
-            [new RadioFormFieldBuilder().id(fields.ADVIES)
+            [new RadioFormFieldBuilder(this.getDataElement(fields.ADVIES)).id(fields.ADVIES)
                                         .label(fields.ADVIES)
-                                        .value(this.getDataElement(fields.ADVIES))
                                         .options(this.getAdviesWaarden(this.zaakUuid))
                                         .validators(Validators.required)
                                         .readonly(this.readonly)
                                         .build()],
             [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
-                                           .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
                                            .readonly(this.readonly)
                                            .maxlength(1000)

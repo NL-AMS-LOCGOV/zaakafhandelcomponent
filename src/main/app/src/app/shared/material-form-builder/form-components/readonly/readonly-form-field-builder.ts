@@ -10,9 +10,10 @@ export class ReadonlyFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: ReadonlyFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new ReadonlyFormField();
+        this.formField.initFormControl(value);
     }
 
 }

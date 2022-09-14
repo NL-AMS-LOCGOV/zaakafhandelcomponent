@@ -5,13 +5,15 @@
 
 import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form-field-builder';
 import {SelectFormField} from './select-form-field';
+import {Observable} from 'rxjs';
 
 export class SelectFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
     protected readonly formField: SelectFormField;
 
-    constructor() {
+    constructor(value?: any | Observable<any>) {
         super();
         this.formField = new SelectFormField();
+        this.formField.initFormControl(value);
     }
 }

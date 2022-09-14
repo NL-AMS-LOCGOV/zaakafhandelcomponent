@@ -4,16 +4,14 @@
   -->
 
 <div *ngIf="!editing">
-    <div class="datum-groep-wrapper static-text" (click)="edit(true)" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+    <div class="datum-groep-wrapper static-text" [class.readonly]="readonly" (click)="edit()" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
         <div [fxFlex]="100/3 + 1.5" fxLayout.sm="row">
             <label class="static-text-label">
                 {{startDatumField.label | translate}}
                 <mat-icon *ngIf="!readonly">edit</mat-icon>
             </label>
             <div class="static-text-content">
-                <div>
-                    {{startDatum | datum}}
-                </div>
+                {{startDatumField.formControl.defaultValue | datum}}
             </div>
         </div>
         <div [fxFlex]="100/3 + 0.75" fxLayout.sm="row">
@@ -23,7 +21,7 @@
             </label>
             <div class="static-text-content">
                 <div>
-                    {{einddatumGeplandDatum | datum | empty}}
+                    {{einddatumGeplandField.formControl.defaultValue | datum | empty}}
                     <mat-icon class="label-icon"
                               [ngClass]="einddatumGeplandIcon.styleClass"
                               *ngIf="showEinddatumGeplandIcon"
@@ -40,7 +38,7 @@
             </label>
             <div class="static-text-content">
                 <div>
-                    {{uiterlijkeEinddatumAfdoeningDatum | datum}}
+                    {{uiterlijkeEinddatumAfdoeningField.formControl.defaultValue | datum}}
                     <mat-icon class="label-icon"
                               [ngClass]="uiterlijkeEinddatumAfdoeningIcon.styleClass"
                               *ngIf="showUiterlijkeEinddatumAfdoeningIcon"
@@ -98,14 +96,14 @@
         <div [fxFlex]="100/3" fxFlex.lt-md="100">
             <mfb-form-field [field]="uiterlijkeEinddatumAfdoeningField" (valueChanges)="validate()" (click)="$event.stopPropagation()"></mfb-form-field>
             <mat-error class="error-text" *ngIf="showUiterlijkeEinddatumAfdoeningError">
-                {{ 'msg.error.date.invalid.fatale' + (einddatumGeplandDatum ? '1' : '2') | translate}}</mat-error>
+                {{ 'msg.error.date.invalid.fatale' + (einddatumGeplandField.formControl.defaultValue ? '1' : '2') | translate}}</mat-error>
         </div>
     </div>
     <div>
         <mfb-form-field [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
     </div>
     <div class="form-buttons">
-        <button (click)="save()" [disabled]="hasError()" color="primary" id="datumOpslaan_button" mat-mini-fab
+        <button (click)="save()" [disabled]="hasError() || formFields.invalid" color="primary" id="datumOpslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">
             <mat-icon>check</mat-icon>
         </button>

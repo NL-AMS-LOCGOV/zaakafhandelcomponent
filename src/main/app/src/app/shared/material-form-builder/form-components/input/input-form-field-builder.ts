@@ -6,14 +6,16 @@
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {InputFormField} from './input-form-field';
 import {ActionIcon} from '../../../edit/action-icon';
+import {Observable} from 'rxjs';
 
 export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: InputFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new InputFormField();
+        this.formField.initFormControl(value);
     }
 
     icon(icon: ActionIcon): this {

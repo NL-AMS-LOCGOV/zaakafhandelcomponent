@@ -56,10 +56,10 @@ export class UtilService {
     }
 
     /**
-     * Check whether or not there is an active edit overlay on the screen eg. autocomplete or datepicker
+     * Check whether there is an active edit overlay on the screen eg. autocomplete or datepicker
      */
     hasEditOverlay(): boolean {
-        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-datepicker-popup');
+        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-select-panel', 'mat-datepicker-popup', 'zac-is-invalid');
         return overlayElements.length > 0;
     }
 

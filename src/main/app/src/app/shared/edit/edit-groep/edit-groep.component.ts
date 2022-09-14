@@ -22,15 +22,11 @@ export class EditGroepComponent extends EditAutocompleteComponent {
         super(mfbService, utilService);
     }
 
-    edit(editing: boolean): void {
-        super.edit(editing);
-        this.reasonField?.formControl.setValue(null);
-    }
-
-    protected submitSave(): void {
-        if (this.formField.formControl.valid) {
-            this.onSave.emit({groep: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
+    edit(): void {
+        super.edit();
+        if (this.reasonField) {
+            this.formFields.addControl('reden', this.reasonField.formControl);
         }
-        this.editing = false;
+
     }
 }
