@@ -90,9 +90,7 @@
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                                           [reasonField]="editFormFields.get('reden')"
                                                           [readonly]="!zaak.acties.wijzigenToekenning"
-                                                          (onSave)="editBehandelaar($event)"
-                                                          [showAssignToMe]="showAssignZaakToMe(zaak)"
-                                                          (onAssignToMe)="assignZaakToMe($event)"></zac-edit-behandelaar>
+                                                          (onSave)="editBehandelaar($event)"></zac-edit-behandelaar>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

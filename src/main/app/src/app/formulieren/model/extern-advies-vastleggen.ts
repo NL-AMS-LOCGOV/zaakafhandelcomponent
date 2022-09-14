@@ -48,21 +48,17 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
         const fields = this.fields;
         this.form.push(
             [new ParagraphFormFieldBuilder().text( this.translate.instant('msg.extern.advies.vastleggen.behandelen')).build()],
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
                                           .label(fields.VRAAG)
-                                          .value(this.getDataElement(fields.VRAAG))
                                           .build()],
-            [new ReadonlyFormFieldBuilder().id(fields.ADVISEUR)
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.ADVISEUR)).id(fields.ADVISEUR)
                                            .label(fields.ADVISEUR)
-                                           .value(this.getDataElement(fields.ADVISEUR))
                                            .build()],
-            [new ReadonlyFormFieldBuilder().id(fields.BRON)
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BRON)).id(fields.BRON)
                                            .label(fields.BRON)
-                                           .value(this.getDataElement(fields.BRON))
                                            .build()],
-            [new TextareaFormFieldBuilder().id(fields.EXTERNADVIES)
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.EXTERNADVIES)).id(fields.EXTERNADVIES)
                                            .label(fields.EXTERNADVIES)
-                                           .value(this.getDataElement(fields.EXTERNADVIES))
                                            .validators(Validators.required)
                                            .readonly(this.readonly)
                                            .maxlength(1000).build()]

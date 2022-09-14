@@ -87,14 +87,12 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                                                       .validators(Validators.required)
                                                       .build();
 
-        const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum')
+        const beginRegistratie = new DateFormFieldBuilder(moment()).id('creatiedatum')
                                                            .label('creatiedatum')
-                                                           .value(moment())
                                                            .validators(Validators.required)
                                                            .build();
 
-        const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                 .value$(this.configuratieService.defaultTaal())
+        const taal = new SelectFormFieldBuilder(this.configuratieService.defaultTaal()).id('taal').label('taal')
                                                  .optionLabel('naam').options(this.configuratieService.listTalen())
                                                  .validators(Validators.required)
                                                  .build();
@@ -113,9 +111,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                                                                  .validators(Validators.required)
                                                                  .build();
 
-        const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
+        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
                                                   .validators(Validators.required, Validators.pattern('\\S.*'))
-                                                  .value(this.ingelogdeMedewerker.naam)
                                                   .maxlength(50)
                                                   .build();
 

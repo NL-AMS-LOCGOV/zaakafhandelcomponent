@@ -63,14 +63,12 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                         .replace('{zaaknr}', this.data.zaak.identificatie);
 
         if (this.data.zaak.besluit) {
-            this.resultaatFormField = new ReadonlyFormFieldBuilder().id('resultaattype')
+            this.resultaatFormField = new ReadonlyFormFieldBuilder(this.data.zaak.resultaat.resultaattype.naam).id('resultaattype')
                                                                     .label('resultaat')
-                                                                    .value(this.data.zaak.resultaat.resultaattype.naam)
                                                                     .build();
 
-            this.besluitFormField = new ReadonlyFormFieldBuilder().id('besluit')
+            this.besluitFormField = new ReadonlyFormFieldBuilder(this.data.zaak.besluit.besluittype.naam).id('besluit')
                                                                   .label('besluit')
-                                                                  .value(this.data.zaak.besluit.besluittype.naam)
                                                                   .build();
         } else {
             this.resultaatFormField = new SelectFormFieldBuilder().id('resultaattype')

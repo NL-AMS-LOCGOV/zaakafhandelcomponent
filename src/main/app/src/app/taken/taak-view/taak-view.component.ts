@@ -127,23 +127,22 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private setEditableFormFields(): void {
         this.editFormFields.set('behandelaar',
-            new AutocompleteFormFieldBuilder().id('behandelaar')
-                                              .label('behandelaar')
-                                              .value(this.taak.behandelaar).optionLabel('naam')
-                                              .options(this.identityService.listUsers())
-                                              .build());
+            new AutocompleteFormFieldBuilder(this.taak.behandelaar).id('behandelaar')
+                                                                   .label('behandelaar')
+                                                                   .optionLabel('naam')
+                                                                   .options(this.identityService.listUsers())
+                                                                   .build());
         this.editFormFields.set('groep',
-            new AutocompleteFormFieldBuilder().id('groep')
-                                              .label('groep')
-                                              .value(this.taak.groep).optionLabel('naam')
-                                              .options(this.identityService.listGroups())
-                                              .build());
+            new AutocompleteFormFieldBuilder(this.taak.groep).id('groep')
+                                                             .label('groep')
+                                                             .optionLabel('naam')
+                                                             .options(this.identityService.listGroups())
+                                                             .build());
         this.editFormFields.set('toelichting',
-            new TextareaFormFieldBuilder().id('toelichting')
-                                          .label('toelichting')
-                                          .value(this.taak.toelichting)
-                                          .maxlength(1000)
-                                          .build());
+            new TextareaFormFieldBuilder(this.taak.toelichting).id('toelichting')
+                                                               .label('toelichting')
+                                                               .maxlength(1000)
+                                                               .build());
 
         this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
     }
@@ -200,7 +199,9 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     editBehandelaar(event: any): void {
-        if (event.behandelaar) {
+        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+            this.assignToMe();
+        } else if (event.behandelaar) {
             this.taak.behandelaar = event.behandelaar;
             this.websocketService.suspendListener(this.taakListener);
             this.takenService.assign(this.taak).subscribe(() => {
@@ -247,11 +248,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    showAssignToMe(): boolean {
-        return this.ingelogdeMedewerker.id !== this.taak.behandelaar?.id;
-    }
-
-    assignToMe(): void {
+    private assignToMe(): void {
         this.websocketService.suspendListener(this.taakListener);
         this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
             this.taak.behandelaar = taak.behandelaar;

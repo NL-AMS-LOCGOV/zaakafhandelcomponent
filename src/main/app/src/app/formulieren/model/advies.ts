@@ -56,26 +56,23 @@ export class Advies extends AbstractFormulier {
         const adviesDataElement = this.getDataElement(fields.ADVIES);
         this.form.push(
             [new ParagraphFormFieldBuilder().text('msg.advies.behandelen').build()],
-            [new ReadonlyFormFieldBuilder().id(fields.VRAAG)
-                                           .label(fields.VRAAG)
-                                           .value(this.getDataElement(fields.VRAAG))
-                                           .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
+                                                                            .label(fields.VRAAG)
+                                                                            .build()],
             [new DocumentenLijstFieldBuilder().id(fields.RELEVANTE_DOCUMENTEN)
                                               .label(fields.RELEVANTE_DOCUMENTEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
                                               .readonly(true)
                                               .build()],
-            [new RadioFormFieldBuilder().id(fields.ADVIES)
-                                        .label(fields.ADVIES)
-                                        .value(this.readonly && adviesDataElement ?
-                                            this.translate.instant(adviesDataElement) : adviesDataElement)
-                                        .options(this.getAdviesOpties())
-                                        .validators(Validators.required)
-                                        .readonly(this.readonly)
-                                        .build()],
-            [new TextareaFormFieldBuilder().id(fields.TOELICHTING)
+            [new RadioFormFieldBuilder(this.readonly && adviesDataElement ?
+                this.translate.instant(adviesDataElement) : adviesDataElement).id(fields.ADVIES)
+                                                                              .label(fields.ADVIES)
+                                                                              .options(this.getAdviesOpties())
+                                                                              .validators(Validators.required)
+                                                                              .readonly(this.readonly)
+                                                                              .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING)).id(fields.TOELICHTING)
                                            .label(fields.TOELICHTING)
-                                           .value(this.getDataElement(fields.TOELICHTING))
                                            .validators(Validators.required)
                                            .readonly(this.readonly)
                                            .maxlength(1000)

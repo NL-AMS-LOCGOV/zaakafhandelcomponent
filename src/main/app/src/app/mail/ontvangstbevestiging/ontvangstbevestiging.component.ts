@@ -67,14 +67,12 @@ export class OntvangstbevestigingComponent implements OnInit {
                                                      .validators(Validators.required, CustomValidators.email)
                                                      .maxlength(200)
                                                      .build();
-        const onderwerp = new InputFormFieldBuilder().id('onderwerp')
+        const onderwerp = new InputFormFieldBuilder(ontvangstOnderwerp).id('onderwerp')
                                                      .label('onderwerp')
-                                                     .value(ontvangstOnderwerp)
                                                      .validators(Validators.required).maxlength(100)
                                                      .build();
-        const body = new TextareaFormFieldBuilder().id('body')
+        const body = new TextareaFormFieldBuilder(ontvangstBericht).id('body')
                                                    .label('body')
-                                                   .value(ontvangstBericht)
                                                    .validators(Validators.required)
                                                    .maxlength(1000)
                                                    .build();

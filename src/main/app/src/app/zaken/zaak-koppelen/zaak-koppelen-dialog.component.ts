@@ -59,10 +59,9 @@ export class ZaakKoppelenDialogComponent implements OnInit {
             }
 
             if (this.koppelKeuzes.length > 0) {
-                this.koppelSelectFormField = new SelectFormFieldBuilder().id('koppelkeuze')
+                this.koppelSelectFormField = new SelectFormFieldBuilder(this.koppelKeuzes.length === 1 ? this.koppelKeuzes[0] : null).id('koppelkeuze')
                                                                          .label('title.zaak.koppelen.dialog')
                                                                          .optionLabel('label')
-                                                                         .value(this.koppelKeuzes.length === 1 ? this.koppelKeuzes[0] : null)
                                                                          .validators(Validators.required)
                                                                          .options(this.koppelKeuzes).build();
             }

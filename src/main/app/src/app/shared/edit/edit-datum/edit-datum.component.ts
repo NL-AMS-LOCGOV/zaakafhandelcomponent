@@ -21,12 +21,4 @@ export class EditDatumComponent extends EditComponent {
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
-
-    init(formField: DateFormField): void {
-        this.value = formField.formControl.value;
-    }
-
-    valueChanges(): void {
-        this.dirty = true;
-    }
 }

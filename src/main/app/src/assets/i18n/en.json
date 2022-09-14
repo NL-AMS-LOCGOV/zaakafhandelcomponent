@@ -102,6 +102,7 @@
   "bronorganisatie" : "Source organization",
   "communicatiekanaal" : "Communication channel",
   "communicatiekanaal.-kies-" : "- Select a communication channel -",
+  "communicatiekanaal.-geen-" : "- No communication channel -",
   "doel" : "Purpose",
   "door" : "By",
   "filter" : "Filter",

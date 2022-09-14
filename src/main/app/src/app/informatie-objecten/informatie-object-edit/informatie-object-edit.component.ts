@@ -71,39 +71,34 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
                                                       .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
                                                       .build();
 
-        const titel = new InputFormFieldBuilder().id('titel').label('titel')
-                                                 .validators(Validators.required)
-                                                 .value(this.infoObject.titel)
-                                                 .build();
+        const titel = new InputFormFieldBuilder(this.infoObject.titel).id('titel').label('titel')
+                                                                      .validators(Validators.required)
+                                                                      .build();
 
-        const beschrijving = new InputFormFieldBuilder().id('beschrijving')
-                                                        .label('beschrijving')
-                                                        .value(this.infoObject.beschrijving)
-                                                        .build();
+        const beschrijving = new InputFormFieldBuilder(this.infoObject.beschrijving).id('beschrijving')
+                                                                                    .label('beschrijving')
+                                                                                    .build();
 
-        const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                 .value({
-                                                     naam: this.translateService.instant(this.infoObject.taal.naam),
-                                                     value: this.infoObject.taal
-                                                 })
-                                                 .optionLabel('naam').options(this.configuratieService.listTalen())
-                                                 .validators(Validators.required)
-                                                 .build();
+        const taal = new SelectFormFieldBuilder({
+            naam: this.translateService.instant(this.infoObject.taal.naam),
+            value: this.infoObject.taal
+        }).id('taal').label('taal')
+          .optionLabel('naam').options(this.configuratieService.listTalen())
+          .validators(Validators.required)
+          .build();
 
-        const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                 .validators(Validators.required)
-                                                 .optionLabel('label').options(informatieobjectStatussen)
-                                                 .value(this.infoObject.status ? {
-                                                     label: this.translateService.instant(
-                                                         'informatieobject.status.' + this.infoObject.status.toUpperCase()),
-                                                     value: this.infoObject.status.toUpperCase()
-                                                 } : null)
-                                                 .build();
+        const status = new SelectFormFieldBuilder(this.infoObject.status ? {
+            label: this.translateService.instant(
+                'informatieobject.status.' + this.infoObject.status.toUpperCase()),
+            value: this.infoObject.status.toUpperCase()
+        } : null).id('status').label('status')
+                 .validators(Validators.required)
+                 .optionLabel('label').options(informatieobjectStatussen)
+                 .build();
 
-        const verzenddatum = new DateFormFieldBuilder().id('verzenddatum')
-                                                       .label('verzenddatum')
-                                                       .value(this.infoObject.verzenddatum)
-                                                       .build();
+        const verzenddatum = new DateFormFieldBuilder(this.infoObject.verzenddatum).id('verzenddatum')
+                                                                                   .label('verzenddatum')
+                                                                                   .build();
 
         const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
                                                          .label('ontvangstdatum')
@@ -111,22 +106,20 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
                                                              'msg.document.ontvangstdatum.hint')))
                                                          .build();
 
-        const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
-                                                  .validators(Validators.required)
-                                                  .value(this.ingelogdeMedewerker.naam)
-                                                  .build();
+        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
+                                                                               .validators(Validators.required)
+                                                                               .build();
 
-        const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
-                                                          .label('vertrouwelijkheidaanduiding')
-                                                          .optionLabel('label')
-                                                          .options(vertrouwelijkheidsAanduidingen)
-                                                          .validators(Validators.required)
-                                                          .value({
-                                                              label: this.translateService.instant(
-                                                                  'vertrouwelijkheidaanduiding.' + this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()),
-                                                              value: this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()
-                                                          })
-                                                          .build();
+        const vertrouwelijk = new SelectFormFieldBuilder({
+            label: this.translateService.instant(
+                'vertrouwelijkheidaanduiding.' + this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()),
+            value: this.infoObject.vertrouwelijkheidaanduiding.toUpperCase()
+        }).id('vertrouwelijkheidaanduiding')
+          .label('vertrouwelijkheidaanduiding')
+          .optionLabel('label')
+          .options(vertrouwelijkheidsAanduidingen)
+          .validators(Validators.required)
+          .build();
 
         const toelichting = new InputFormFieldBuilder().id('toelichting').label('toelichting').build();
 

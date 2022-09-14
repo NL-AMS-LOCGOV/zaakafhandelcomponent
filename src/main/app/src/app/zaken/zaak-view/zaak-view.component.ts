@@ -231,65 +231,59 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
-            new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                        .value(this.zaak.communicatiekanaal)
-                                        .optionLabel('naam')
-                                        .options(this.zakenService.listCommunicatiekanalen()).build());
+            new SelectFormFieldBuilder(this.zaak.communicatiekanaal).id('communicatiekanaal').label('communicatiekanaal')
+                                                                    .optionLabel('naam')
+                                                                    .options(this.zakenService.listCommunicatiekanalen()).build());
 
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.zaak.behandelaar)
-                                                                                 .optionLabel('naam')
-                                                                                 .options(
-                                                                                     this.identityService.listUsers())
-                                                                                 .maxlength(50)
-                                                                                 .build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.zaak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroups())
-                                                                           .maxlength(50)
-                                                                           .build());
-        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
-                                                                              .value(this.zaak.omschrijving)
-                                                                              .maxlength(80)
-                                                                              .build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
-                                                                             .value(this.zaak.toelichting)
-                                                                             .maxlength(1000).build());
+        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.zaak.behandelaar).id('behandelaar').label('behandelaar')
+                                                                                                      .optionLabel('naam')
+                                                                                                      .options(
+                                                                                                          this.identityService.listUsers())
+                                                                                                      .maxlength(50)
+                                                                                                      .build());
+        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder(this.zaak.groep).id('groep').label('groep')
+                                                                                          .optionLabel('naam')
+                                                                                          .options(this.identityService.listGroups())
+                                                                                          .maxlength(50)
+                                                                                          .build());
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
+                                                                                                    .maxlength(80)
+                                                                                                    .build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder(this.zaak.toelichting).id('toelichting').label('toelichting')
+                                                                                                  .maxlength(1000).build());
         this.editFormFields.set('vertrouwelijkheidaanduiding',
-            new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                        .value({
-                                            label: this.translate.instant(
-                                                'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
-                                            value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
-                                        })
-                                        .optionLabel('label')
-                                        .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
-                                            Vertrouwelijkheidaanduiding)).build());
+            new SelectFormFieldBuilder(
+                {
+                    label: this.translate.instant(
+                        'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                    value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
+                }).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                  .optionLabel('label')
+                  .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+                      Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                      .value(this.zaak.startdatum)
-                                      .validators(Validators.required).build());
+            new DateFormFieldBuilder(this.zaak.startdatum).id('startdatum').label('startdatum')
+                                                          .validators(Validators.required).build());
 
         this.editFormFields.set('einddatumGepland',
-            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
-                                      .value(this.zaak.einddatumGepland)
-                                      .readonly(!this.zaak.einddatumGepland)
-                                      .validators(this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator).build());
+            new DateFormFieldBuilder(this.zaak.einddatumGepland).id('einddatumGepland').label('einddatumGepland')
+                                                                .readonly(!this.zaak.einddatumGepland)
+                                                                .validators(this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator)
+                                                                .build());
         this.editFormFieldIcons.set('einddatumGepland',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
 
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
-            new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
-                                      .value(this.zaak.uiterlijkeEinddatumAfdoening)
-                                      .validators(Validators.required)
-                                      .build());
+            new DateFormFieldBuilder(this.zaak.uiterlijkeEinddatumAfdoening).id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
+                                                                            .validators(Validators.required)
+                                                                            .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
-        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').maxlength(80).build());
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').validators(Validators.required).maxlength(80).build());
     }
 
     private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {
@@ -516,7 +510,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ZaakAfhandelenDialogComponent,
-            dialogData: { zaak: this.zaak, planItem: planItem }
+            dialogData: {zaak: this.zaak, planItem: planItem}
         };
     }
 
@@ -645,7 +639,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     editBehandelaar(event: any): void {
-        if (event.behandelaar) {
+        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+            this.assignZaakToMe(event);
+        } else if (event.behandelaar) {
             this.zaak.behandelaar = event.behandelaar;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
@@ -763,15 +759,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.allTakenExpanded = filter.length === 0;
     }
 
-    showAssignZaakToMe(zaak: Zaak): boolean {
-        return zaak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== zaak.behandelaar?.id;
-    }
-
     showAssignTaakToMe(taak: Taak): boolean {
         return taak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
-    assignZaakToMe(event: any): void {
+    private assignZaakToMe(event: any): void {
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.init(zaak);
