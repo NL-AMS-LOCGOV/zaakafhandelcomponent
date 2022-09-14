@@ -2,15 +2,15 @@
 ARG MAVEN_VERSION=3.8.4-openjdk-17
 
 ### Maven build fase
-FROM maven:$MAVEN_VERSION as build
+FROM docker.io/maven:$MAVEN_VERSION as build
 COPY . /
 RUN mvn -DskipTests package
 
 ### Create runtime image fase
-FROM eclipse-temurin:17-jre-focal as runtime
+FROM docker.io/eclipse-temurin:17-jre-focal as runtime
 
 # Import certificates into Java truststore
-ADD docker/certificates /certificates
+ADD image/certificates /certificates
 RUN keytool -importcert -cacerts -file /certificates/* -storepass changeit -noprompt
 
 # Copy zaakafhandelcomponent bootable jar

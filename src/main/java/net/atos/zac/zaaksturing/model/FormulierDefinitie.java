@@ -5,10 +5,26 @@
 
 package net.atos.zac.zaaksturing.model;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum FormulierDefinitie {
     DEFAULT_TAAKFORMULIER,
     AANVULLENDE_INFORMATIE,
-    ADVIES,
+    ADVIES(FormulierVeldDefinitie.ADVIES),
     EXTERN_ADVIES_VASTLEGGEN,
-    GOEDKEUREN
+    GOEDKEUREN;
+
+    private final Set<FormulierVeldDefinitie> veldDefinities;
+
+    FormulierDefinitie(final FormulierVeldDefinitie... veldDefinities) {
+        final EnumSet<FormulierVeldDefinitie> formulierVeldDefinities = EnumSet.noneOf(FormulierVeldDefinitie.class);
+        Collections.addAll(formulierVeldDefinities, veldDefinities);
+        this.veldDefinities = Collections.unmodifiableSet(formulierVeldDefinities);
+    }
+
+    public Set<FormulierVeldDefinitie> getVeldDefinities() {
+        return veldDefinities;
+    }
 }

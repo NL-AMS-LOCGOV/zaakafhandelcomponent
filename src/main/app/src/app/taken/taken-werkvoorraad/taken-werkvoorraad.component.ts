@@ -182,6 +182,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['dagenTotStreefdatum', ColumnPickerValue.HIDDEN],
             ['groep', ColumnPickerValue.VISIBLE],
             ['behandelaar', ColumnPickerValue.VISIBLE],
+            ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
         ]);
         if (!this.acties.verdelenEnVrijgeven) {

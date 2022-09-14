@@ -181,6 +181,8 @@ public class ZaakafhandelParameterBeheerService {
             }
             nieuweZaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(
                     vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
+            nieuweZaakafhandelParameters.setIntakeMail(vorigeZaakafhandelparameters.getIntakeMail());
+            nieuweZaakafhandelParameters.setAfrondenMail(vorigeZaakafhandelparameters.getAfrondenMail());
 
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
@@ -202,6 +204,7 @@ public class ZaakafhandelParameterBeheerService {
             nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
             nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
             nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
+            nieuweHumanTaskParameters.setReferentieTabellen(humanTaskParameters.getReferentieTabellen());
             humanTaskParametersCollection.add(nieuweHumanTaskParameters);
         });
         nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);

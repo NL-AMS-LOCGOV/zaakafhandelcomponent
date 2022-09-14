@@ -136,6 +136,11 @@ public class Informatieobjecttype {
     }
 
     @JsonbTransient
+    public boolean isNuGeldig() {
+        return beginGeldigheid.isBefore(LocalDate.now().plusDays(1)) && (eindeGeldigheid == null || eindeGeldigheid.isAfter(LocalDate.now()));
+    }
+
+    @JsonbTransient
     public UUID getUUID() {
         return URIUtil.parseUUIDFromResourceURI(getUrl());
     }

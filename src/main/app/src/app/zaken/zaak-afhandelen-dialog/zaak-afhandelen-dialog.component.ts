@@ -25,6 +25,8 @@ import {SelectFormField} from '../../shared/material-form-builder/form-component
 import {takeUntil} from 'rxjs/operators';
 import {Resultaattype} from '../model/resultaattype';
 import {Subject} from 'rxjs';
+import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
+import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -54,7 +56,8 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
                 private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
-                private mailService: MailService) {
+                private mailService: MailService,
+                private zaakafhandelParametersService: ZaakafhandelParametersService) {
     }
 
     ngOnInit(): void {
@@ -100,11 +103,13 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                     this.sendMailFormField.formControl.disable();
                 } else {
                     this.toelichtingFormField.formControl.enable();
-                    this.sendMailFormField.formControl.setValue(false);
-                    this.sendMailFormField.formControl.enable();
-
+                    this.zaakafhandelParametersService.readZaakafhandelparameters(this.data.zaak.uuid).subscribe(zaakafhandelParameters => {
+                        this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+                        if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                            this.sendMailFormField.formControl.enable();
+                        }
+                    });
                 }
-
             });
         }
     }

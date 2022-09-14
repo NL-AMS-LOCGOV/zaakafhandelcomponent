@@ -94,6 +94,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         }
         const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekParameters.zaakUUID = this.getZaakUuid();
+        zoekParameters.toonGekoppeldeZaakDocumenten = this.toonGekoppeldeZaakDocumenten;
 
         this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(share());
 
@@ -158,23 +159,10 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     toggleGekoppeldeZaakDocumenten() {
-        if (this.toonGekoppeldeZaakDocumenten) {
-            this.ophalenGekoppeldeZaakDocumenten();
-        } else {
-            this.documentColumns = ['downloaden', 'titel', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
-            this.loadInformatieObjecten();
-        }
-    }
-
-    ophalenGekoppeldeZaakDocumenten() {
-        this.informatieObjectenService.listGekoppeldeZaakInformatieObjecten(this.getZaakUuid())
-            .subscribe(gekoppeldeInformatieObjecten => {
-                if (gekoppeldeInformatieObjecten) {
-                    this.documentColumns = ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
-                    gekoppeldeInformatieObjecten.forEach(gekoppeldeInformatieObject =>
-                        this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, gekoppeldeInformatieObject]);
-                }
-            });
+        this.documentColumns = this.toonGekoppeldeZaakDocumenten ?
+            ['downloaden', 'titel', 'zaakIdentificatie', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'] :
+            ['downloaden', 'titel', 'relatieType', 'informatieobjectTypeOmschrijving', 'status', 'vertrouwelijkheidaanduiding', 'creatiedatum', 'registratiedatumTijd', 'auteur', 'indicaties', 'url'];
+        this.loadInformatieObjecten();
     }
 
     getZaakUuid(): string {

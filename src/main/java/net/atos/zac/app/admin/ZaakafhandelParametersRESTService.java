@@ -25,11 +25,14 @@ import org.flowable.cmmn.api.repository.CaseDefinition;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.admin.converter.RESTCaseDefinitionConverter;
+import net.atos.zac.app.admin.converter.RESTReferentieWaardeConverter;
 import net.atos.zac.app.admin.converter.RESTZaakafhandelParametersConverter;
 import net.atos.zac.app.admin.converter.RESTZaakbeeindigRedenConverter;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
+import net.atos.zac.app.admin.model.RESTReferentieTabelWaarde;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
+import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -38,6 +41,8 @@ import net.atos.zac.policy.PolicyService;
 import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.model.FormulierDefinitie;
+import net.atos.zac.zaaksturing.model.FormulierVeldDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
@@ -71,6 +76,9 @@ public class ZaakafhandelParametersRESTService {
 
     @Inject
     private RESTZaakbeeindigRedenConverter zaakbeeindigRedenConverter;
+
+    @Inject
+    private RESTReferentieWaardeConverter restReferentieWaardeConverter;
 
     @Inject
     private PolicyService policyService;
@@ -118,7 +126,6 @@ public class ZaakafhandelParametersRESTService {
                 .toList();
     }
 
-
     /**
      * Retrieve the ZAAKAFHANDELPARAMETERS for a ZAAKTYPE
      *
@@ -130,6 +137,27 @@ public class ZaakafhandelParametersRESTService {
         assertActie(policyService.readAppActies().getBeheren());
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID);
         return zaakafhandelParametersConverter.convertZaakafhandelParameters(zaakafhandelParameters, true);
+    }
+
+    /**
+     * Retrieve the referentietabelwaarden for a VELD of a FORMULIER for a ZAAKTYPE
+     *
+     * @return list of values or empty list if not found
+     */
+    @GET
+    @Path("{zaaktypeUUID}/{formulierDefinitie}/{veldDefinitie}")
+    public List<RESTReferentieTabelWaarde> findReferentieTabelWaarden(
+            @PathParam("zaaktypeUUID") final UUID zaakTypeUUID,
+            @PathParam("formulierDefinitie") final FormulierDefinitie formulierDefinitie,
+            @PathParam("veldDefinitie") final FormulierVeldDefinitie veldDefinitie) {
+        assertActie(policyService.readAppActies().getTaken());
+        return zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID).getHumanTaskParametersCollection().stream()
+                .filter(parameters -> HumanTaskFormulierKoppeling.readFormulierDefinitie(parameters.getPlanItemDefinitionID()) == formulierDefinitie)
+                .flatMap(parameters -> parameters.getReferentieTabellen().stream())
+                .filter(humanTaskReferentieTabel -> humanTaskReferentieTabel.getVeld().equals(veldDefinitie.name()))
+                .flatMap(humanTaskReferentieTabel -> humanTaskReferentieTabel.getTabel().getWaarden().stream())
+                .map(restReferentieWaardeConverter::convert)
+                .toList();
     }
 
     /**

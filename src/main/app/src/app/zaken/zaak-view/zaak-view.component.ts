@@ -75,6 +75,12 @@ import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
+import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {CustomValidators} from '../../shared/validators/customValidators';
+import {MailObject} from '../../mail/model/mailobject';
+import {MailService} from '../../mail/mail.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -113,6 +119,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
 
+    onderwerp: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
+    body: string = 'Beste klant,\n' +
+        '\n' +
+        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
+
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
@@ -140,7 +155,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService) {
+                private bagService: BAGService,
+                private mailService: MailService) {
         super();
     }
 
@@ -232,8 +248,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
             new SelectFormFieldBuilder(this.zaak.communicatiekanaal).id('communicatiekanaal').label('communicatiekanaal')
+                                                                    .validators(Validators.required)
                                                                     .optionLabel('naam')
-                                                                    .options(this.zakenService.listCommunicatiekanalen()).build());
+                                        .options(this.zakenService.listCommunicatiekanalen()).build());
 
         this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.zaak.behandelaar).id('behandelaar').label('behandelaar')
                                                                                                       .optionLabel('naam')
@@ -258,6 +275,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                         'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
                     value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
                 }).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                  .validators(Validators.required)
                   .optionLabel('label')
                   .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
                       Vertrouwelijkheidaanduiding)).build());
@@ -480,17 +498,38 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                     .validators(Validators.required)
                                                     .maxlength(100)
                                                     .build();
+        const sendMail = new CheckboxFormFieldBuilder().id('sendMail')
+                                                       .label('sendMail')
+                                                       .build();
+        const ontvangerFormField = new InputFormFieldBuilder().id('ontvanger')
+                                                              .label('ontvanger')
+                                                              .validators(Validators.required, CustomValidators.email)
+                                                              .maxlength(200)
+                                                              .build();
+
+        const dialogFields: AbstractFormField[] = [radio];
+        this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
+            sendMail.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+            if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                sendMail.formControl.enable();
+                dialogFields.push(sendMail, ontvangerFormField);
+            }
+        });
 
         const dialogData: DialogData = new DialogData(
-            [radio],
-            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden']),
+            dialogFields,
+            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden'], results['sendMail'] ? results['ontvanger'] : null),
             null,
             planItem.toelichting);
         dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
 
         this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
             if (value) {
-                dialogData.formFields = value.value ? [radio] : [radio, reden];
+                if(value.value) {
+                    dialogData.formFields = dialogData.formFields.filter(ff => ff !== reden);
+                } else if (!dialogData.formFields.find(ff => ff === reden)) {
+                    dialogData.formFields = [radio, reden, ...dialogData.formFields.slice(1)];
+                }
             }
         }));
 
@@ -500,10 +539,23 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         };
     }
 
-    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string): Observable<void> {
+    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string, ontvanger: string|null): Observable<void> {
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
         userEventListenerData.zaakOntvankelijk = ontvankelijk;
         userEventListenerData.resultaatToelichting = toelichting;
+
+        this.onderwerp = this.onderwerp.replace('{zaaknr}', this.zaak.identificatie);
+        this.body = this.body.replace('{zaaktype naam}', this.zaak.zaaktype.identificatie)
+                        .replace('{zaaknr}', this.zaak.identificatie);
+        if (ontvanger !== null) {
+            const mailObject: MailObject = new MailObject();
+            mailObject.createDocumentFromMail = true;
+            mailObject.onderwerp = this.onderwerp;
+            mailObject.body = this.body;
+            mailObject.ontvanger = ontvanger;
+            this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {});
+        }
+
         return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 

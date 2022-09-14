@@ -176,12 +176,6 @@ export class InformatieObjectenService {
         );
     }
 
-    listGekoppeldeZaakInformatieObjecten(zaakUUID: string): Observable<GekoppeldeZaakEnkelvoudigInformatieobject[]> {
-        return this.http.get<GekoppeldeZaakEnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobject/gekoppelde/${zaakUUID}`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
     private addZaakParameter(url: string, zaakUuid: string): string {
         if (zaakUuid) {
             return url.concat(`?zaak=${zaakUuid}`);

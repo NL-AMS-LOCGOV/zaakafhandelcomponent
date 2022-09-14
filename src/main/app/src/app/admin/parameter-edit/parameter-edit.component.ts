@@ -26,6 +26,9 @@ import {ZaaknietontvankelijkReden} from '../model/zaaknietontvankelijk-reden';
 import {ZaaknietontvankelijkParameter} from '../model/zaaknietontvankelijk-parameter';
 import {AdminComponent} from '../admin/admin.component';
 import {Resultaattype} from '../../zaken/model/resultaattype';
+import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
+import {ReferentieTabel} from '../model/referentie-tabel';
+import {ReferentieTabelService} from '../referentie-tabel.service';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -52,14 +55,18 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     behandelaarControl = new FormControl();
     einddatumGeplandWaarschuwingControl = new FormControl();
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
+    intakeMailControl = new FormControl();
+    afrondenMailControl = new FormControl();
+    mailOpties: { label: string, value: string }[];
 
     caseDefinitions: Observable<CaseDefinition[]>;
     groepen: Observable<Group[]>;
     medewerkers: Observable<User[]>;
     resultaattypes: Observable<Resultaattype[]>;
+    referentieTabellen: Observable<ReferentieTabel[]>;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
-                private route: ActivatedRoute, private formBuilder: FormBuilder) {
+                private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService) {
         super(utilService);
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
@@ -70,14 +77,18 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
             this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
+            this.intakeMailControl.setValue(this.parameters.intakeMail);
+            this.afrondenMailControl.setValue(this.parameters.afrondenMail);
             this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
         this.medewerkers = identityService.listUsers();
+        this.referentieTabellen = referentieTabelService.listReferentieTabellen();
     }
 
     ngOnInit(): void {
+        this.mailOpties = this.utilService.getEnumAsSelectList('statusmail.optie', ZaakStatusmailOptie);
         this.setupMenu('title.parameters.wijzigen');
         this.createForm();
     }
@@ -99,6 +110,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                     const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
                     humanTaskParameter.planItemDefinition = humanTaskDefinition;
                     humanTaskParameter.defaultGroep = this.parameters.defaultGroep;
+                    humanTaskParameter.referentieTabellen = humanTaskDefinition.referentieTabellen;
                     this.humanTaskParameters.push(humanTaskParameter);
                 });
                 this.updateHumanTaskForm();
@@ -135,7 +147,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             groepControl: this.groepControl,
             behandelaarControl: this.behandelaarControl,
             einddatumGeplandWaarschuwingControl: this.einddatumGeplandWaarschuwingControl,
-            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl
+            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl,
+            intakeMailControl: this.intakeMailControl,
+            afrondenMailControl: this.afrondenMailControl
         });
         this.updateHumanTaskForm();
         this.updateUserEventListenerForm();
@@ -143,8 +157,16 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     isHumanTaskParameterValid(humanTaskParameter: HumanTaskParameter): boolean {
-        return this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid &&
-            this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid;
+        if (!this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid ||
+            !this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid) {
+            return false;
+        }
+        for (const tabel of humanTaskParameter.referentieTabellen) {
+            if (!this.getHumanTaskControl(humanTaskParameter, 'referentieTabel' + tabel.veld).valid) {
+                return false;
+            }
+        }
+        return true;
     }
 
     getActieControl(parameter: UserEventListenerParameter, field: string): FormControl {
@@ -154,9 +176,14 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     private updateHumanTaskForm() {
         this.humanTaskFormGroup = this.formBuilder.group({});
         this.humanTaskParameters.forEach(parameter => {
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep', new FormControl(parameter.defaultGroep));
+            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep',
+                new FormControl(parameter.defaultGroep));
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
                 new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
+            for (const item of parameter.referentieTabellen) {
+                this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__referentieTabel' + item.veld,
+                    new FormControl(item.tabel, [Validators.required]));
+            }
         });
     }
 
@@ -251,10 +278,15 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.defaultBehandelaar = this.behandelaarControl.value;
         this.parameters.einddatumGeplandWaarschuwing = this.einddatumGeplandWaarschuwingControl.value;
         this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
+        this.parameters.intakeMail = this.intakeMailControl.value;
+        this.parameters.afrondenMail = this.afrondenMailControl.value;
 
         this.humanTaskParameters.forEach(param => {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
+            for (const tabel of param.referentieTabellen) {
+                tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
+            }
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;
 

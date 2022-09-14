@@ -162,7 +162,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
         }
 
         if (this.laatsteVersieInfoObject.acties.ondertekenen) {
-            this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'create'));
+            this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
         }
     }
 

@@ -325,10 +325,9 @@
                     </mat-tab-group>
                 </mat-card-content>
             </mat-card>
-
             <div fxFlex="calc(50%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
                 <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit"></zac-besluit-view>
-                <mat-card>
+                <mat-card class="taken-card">
                     <mat-card-header fxLayout="row">
                         <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>
                         <mat-slide-toggle [(ngModel)]="toonAfgerondeTaken" color="primary" fxLayout="row"
