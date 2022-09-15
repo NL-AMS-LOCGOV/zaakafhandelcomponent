@@ -1,0 +1,45 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+@import "../../../variables";
+
+tr.error {
+  background-color: @error-background-color;
+}
+
+.detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.main-row td {
+  border-bottom-width: 0;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+td.mat-cell {
+  border-color: @border-color;
+}
+
+.melding {
+  border-bottom: 1px solid @border-color;
+  padding-top: 12px;
+  padding-left: 24px;
+  padding-bottom: 12px;
+}
+
+td.mat-cell.mat-column-expandedDetail {
+  padding-left: 0;
+  padding-right: 0;
+  background-color: @table-hover-background-color;
+}
+
+p {
+  padding-left: 24px;
+}
+

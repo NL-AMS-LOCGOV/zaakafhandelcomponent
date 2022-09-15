@@ -1,0 +1,126 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    {{'healthCheck.zaaktype.inrichtingscheck' | translate}}
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <table fxFlex="100" mat-table [dataSource]="dataSource" matSort #sort="matSort" matSortActive="valide" matSortDirection="asc"
+                       multiTemplateDataRows>
+                    <ng-container matColumnDef="expand">
+                        <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-icon *ngIf=" !row.valide && expandedRow !== row">keyboard_arrow_down</mat-icon>
+                            <mat-icon *ngIf="!row.valide && expandedRow === row">keyboard_arrow_up</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="zaaktypeOmschrijving">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'zaaktypeOmschrijving'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.zaaktype.omschrijving}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="zaaktypeDoel">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'doel'|translate}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <read-more [text]="row.zaaktype.doel" [maxLength]="100"></read-more>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="beginGeldigheid">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'begin.geldigheid'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.zaaktype.beginGeldigheid | datum}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="valide">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-icon *ngIf="row.valide" color="primary">check_circle_outline</mat-icon>
+                            <mat-icon *ngIf="!row.valide" color="warn">error_outline</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="expandedDetail">
+                        <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplay.length">
+                            <div class="detail" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
+                                <div fxLayout="column" fxFlex="100">
+                                    <div class="melding" *ngIf="!row.statustypeIntakeAanwezig">
+                                        <div fxFlex="15">{{'statustype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenStatustypeIntakeAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.statustypeInBehandelingAanwezig">
+                                        <div fxFlex="15">{{'statustype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenStatustypeInBehandelingAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.statustypeHeropendAanwezig">
+                                        <div fxFlex="15">{{'statustype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenStatustypeHeropendAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.statustypeAfgerondAanwezig">
+                                        <div fxFlex="15">{{'statustype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenStatustypeAfgerondAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="row.statustypeAfgerondAanwezig && !row.statustypeAfgerondLaatsteVolgnummer">
+                                        <div fxFlex="15">{{'statustype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.statustypeAfgerondLaatsteVolgnummer' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.resultaattypeAanwezig">
+                                        <div fxFlex="15">{{'resultaattype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenResultaattypeAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.rolInitiatorAanwezig">
+                                        <div fxFlex="15">{{'rol' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenRolInitiatorAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.rolBehandelaarAanwezig">
+                                        <div fxFlex="15">{{'rol' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenRolBehandelaarAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.rolOverigeAanwezig">
+                                        <div fxFlex="15">{{'rol' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenRolOverigeAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="!row.informatieobjecttypeEmailAanwezig">
+                                        <div fxFlex="15">{{'informatieobjecttype' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenInformatieobjecttypeEmailAanwezig' | translate"></div>
+                                    </div>
+                                    <div class="melding" *ngIf="row.resultaattypesMetVerplichtBesluit.length && !row.besluittypeAanwezig">
+                                        <div fxFlex="15">{{'besluittype' | translate}}</div>
+                                        <div fxFlex
+                                             [innerHTML]="'healthCheck.zaaktype.geenBesluittypeAanwezig' | translate:{resultaattypes: row.resultaattypesMetVerplichtBesluit.join(', ')}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="zoekFilter">
+                        <th mat-header-cell *matHeaderCellDef colspan="3">
+                            <mat-form-field appearance="standard">
+                                <mat-label>{{'filter' | translate}}</mat-label>
+                                <input matInput (keyup)="applyFilter($event)">
+                            </mat-form-field>
+                        </th>
+                    </ng-container>
+                    <ng-container matColumnDef="valideFilter">
+                        <th mat-header-cell *matHeaderCellDef colspan="2">
+                            <zac-toggle-filter unCheckedIcon="error_outline" [selected]="valideFilter"
+                                               (changed)="valideFilter = $event; applyFilter()"></zac-toggle-filter>
+                        </th>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+                    <tr mat-header-row *matHeaderRowDef="['valideFilter', 'zoekFilter']"></tr>
+                    <tr (click)="!row.valide ? (expandedRow = expandedRow === row ? null : row): null"
+                        [class]="row.valide ? 'ok':'error'" class="main-row" mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+                </table>
+                <p *ngIf="dataSource.data.length === 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                <p *ngIf="dataSource.data.length === 0 && loading">{{'msg.loading' | translate}}</p>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>
