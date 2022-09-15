@@ -27,14 +27,14 @@
                     title="{{'actie.mij.toekennen' | translate}}">
                 <mat-icon>person_add_alt_1</mat-icon>
             </button>
-            <button (click)="release()" *ngIf="value" color="accent" id="behandelaarVrijgeven_button"
+            <button (click)="release()" *ngIf="formField.formControl.defaultValue" color="accent" id="behandelaarVrijgeven_button"
                     mat-mini-fab
                     title="{{'actie.vrijgeven' | translate}}">
                 <mat-icon>person_remove_alt</mat-icon>
             </button>
         </div>
         <div>
-            <button (click)="save()" [disabled]="isSearching() || formFields.invalid" color="primary" id="behandelaarOpslaan_button"
+            <button (click)="save()" [disabled]="formFields.invalid" color="primary" id="behandelaarOpslaan_button"
                     mat-mini-fab
                     title="{{'actie.opslaan' | translate}}">
                 <mat-icon>check</mat-icon>
