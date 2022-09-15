@@ -47,12 +47,11 @@ export class PersoonZoekComponent implements OnInit {
         this.bsnFormField = new InputFormFieldBuilder().id('bsn').label('bsn').validators(CustomValidators.bsn)
                                                        .maxlength(9).build();
         this.voornamenFormField = new InputFormFieldBuilder().id('voornamen').label('voornamen').maxlength(50).build();
-        this.geslachtsnaamFormField = new InputFormFieldBuilder().id('achternaam').label('achternaam')
-                                                                 .value('Me*').maxlength(50).build();
+        this.geslachtsnaamFormField = new InputFormFieldBuilder('Me*').id('achternaam').label('achternaam')
+                                                                 .maxlength(50).build();
         this.voorvoegselFormField = new InputFormFieldBuilder().id('voorvoegsel').label('voorvoegsel').maxlength(10).build();
         this.geboortedatumFormField = new DateFormFieldBuilder().id('geboortedatum').label('geboortedatum').build();
-        this.gemeenteCodeFormField = new InputFormFieldBuilder().id('gemeenteCode').label('gemeenteCode')
-                                                                .value('0599')
+        this.gemeenteCodeFormField = new InputFormFieldBuilder('0599').id('gemeenteCode').label('gemeenteCode')
                                                                 .validators(Validators.min(1), Validators.max(9999))
                                                                 .maxlength(4).build();
         this.straatFormFiled = new InputFormFieldBuilder().id('straat').label('straat').maxlength(55).build();

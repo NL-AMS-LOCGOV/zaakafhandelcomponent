@@ -10,8 +10,9 @@ export class RadioFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
     protected readonly formField: RadioFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new RadioFormField();
+        this.formField.initFormControl(value);
     }
 }

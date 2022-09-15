@@ -3,17 +3,19 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormControl} from '@angular/forms';
+import {FormControl, FormControlOptions} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldHint} from './form-field-hint';
+import {first, isObservable, Observable} from 'rxjs';
 
 export abstract class AbstractFormField {
     id: string;
     label: string;
     required: boolean;
     readonly: boolean;
-    readonly formControl: FormControl = new FormControl();
+    formControl: FormControl;
     hint: FormFieldHint;
+    private formControlOptions: FormControlOptions = {initialValueIsDefault: true};
 
     abstract fieldType: FieldType;
 
@@ -22,5 +24,18 @@ export abstract class AbstractFormField {
 
     hasReadonlyView() {
         return false;
+    }
+
+    value(value: any) {
+        this.formControl.setValue(value);
+        this.formControl.markAsDirty();
+    }
+
+    reset(): void {
+        this.formControl.reset();
+    }
+
+    initFormControl(value?: any): void {
+        this.formControl = new FormControl(value, this.formControlOptions);
     }
 }

@@ -30,11 +30,6 @@ export abstract class AbstractFormFieldBuilder {
         return this;
     }
 
-    value(value: any): this {
-        this.formField.formControl.setValue(value);
-        return this;
-    }
-
     value$(value: Observable<any>): this {
         value.pipe(first()).subscribe(firstValue => {
             this.formField.formControl.setValue(firstValue);

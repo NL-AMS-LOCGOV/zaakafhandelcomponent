@@ -23,23 +23,10 @@ export class EditInputComponent extends EditComponent {
         super(mfbService, utilService);
     }
 
-    init(formField: InputFormField): void {
-        this.value = formField.formControl.value;
-    }
-
-    valueChanges(): void {
-        this.dirty = true;
-    }
-
-    edit(editing: boolean): void {
-        super.edit(editing);
-        this.dirty = false;
-    }
-
-    protected submitSave(): void {
-        if (this.formField.formControl.valid) {
-            this.onSave.emit({[this.formField.id]: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
+    edit(): void {
+        super.edit();
+        if (this.reasonField) {
+            this.formFields.addControl('reden', this.reasonField.formControl);
         }
-        this.editing = false;
     }
 }

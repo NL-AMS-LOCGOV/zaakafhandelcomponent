@@ -22,6 +22,8 @@ import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-object
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
+    public static formulierDefinitie: string = 'AANVULLENDE_INFORMATIE';
+
     private bodyTemplate: string =
         'Beste klant,\n' +
         '\n' +
@@ -66,10 +68,10 @@ export class AanvullendeInformatie extends AbstractFormulier {
         this.form.push(
             [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
                                         .validators(Validators.required, CustomValidators.emails).build()],
-            [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY).value(this.bodyTemplate)
-                                           .validators(Validators.required).maxlength(1000).build()],
-            [new HiddenFormFieldBuilder().id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD).value(moment())
-                                         .build()],
+            [new TextareaFormFieldBuilder(this.bodyTemplate).id(fields.BODY).label(fields.BODY)
+                                                            .validators(Validators.required).maxlength(1000).build()],
+            [new HiddenFormFieldBuilder(moment()).id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD)
+                                                 .build()],
             [new DocumentenLijstFieldBuilder().id(fields.BIJLAGEN).label(fields.BIJLAGEN)
                                               .documenten(documenten).build()]
         );
@@ -79,41 +81,35 @@ export class AanvullendeInformatie extends AbstractFormulier {
         const fields = this.fields;
         const aanvullendeInformatieDataElement = this.getDataElement(fields.AANVULLENDE_INFORMATIE);
         this.form.push(
-            [new ReadonlyFormFieldBuilder().id(fields.EMAILADRES)
-                                           .label(fields.EMAILADRES)
-                                           .value(this.getDataElement(fields.EMAILADRES))
-                                           .build()],
-            [new ReadonlyFormFieldBuilder().id(fields.BODY)
-                                           .label(fields.BODY)
-                                           .value(this.getDataElement(fields.BODY))
-                                           .build()],
-            [new TextareaFormFieldBuilder().id(fields.OPMERKINGEN)
-                                           .label(fields.OPMERKINGEN)
-                                           .value(this.getDataElement(fields.OPMERKINGEN))
-                                           .validators(Validators.required)
-                                           .readonly(this.readonly)
-                                           .maxlength(1000)
-                                           .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.EMAILADRES)).id(fields.EMAILADRES)
+                                                                                 .label(fields.EMAILADRES)
+                                                                                 .build()],
+            [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BODY)).id(fields.BODY)
+                                                                           .label(fields.BODY)
+                                                                           .build()],
+            [new TextareaFormFieldBuilder(this.getDataElement(fields.OPMERKINGEN)).id(fields.OPMERKINGEN)
+                                                                                  .label(fields.OPMERKINGEN)
+                                                                                  .validators(Validators.required)
+                                                                                  .readonly(this.readonly)
+                                                                                  .maxlength(1000)
+                                                                                  .build()],
             [
-                new DateFormFieldBuilder().id(fields.DATUMGEVRAAGD)
-                                          .label(fields.DATUMGEVRAAGD)
-                                          .value(this.getDataElement(fields.DATUMGEVRAAGD))
-                                          .readonly(true)
-                                          .build(),
-                new DateFormFieldBuilder().id(fields.DATUMGELEVERD)
-                                          .label(fields.DATUMGELEVERD)
-                                          .value(this.getDataElement(fields.DATUMGELEVERD))
-                                          .readonly(this.readonly)
-                                          .build()
+                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGEVRAAGD)).id(fields.DATUMGEVRAAGD)
+                                                                                   .label(fields.DATUMGEVRAAGD)
+                                                                                   .readonly(true)
+                                                                                   .build(),
+                new DateFormFieldBuilder(this.getDataElement(fields.DATUMGELEVERD)).id(fields.DATUMGELEVERD)
+                                                                                   .label(fields.DATUMGELEVERD)
+                                                                                   .readonly(this.readonly)
+                                                                                   .build()
             ],
-            [new RadioFormFieldBuilder().id(fields.AANVULLENDE_INFORMATIE)
-                                        .label(fields.AANVULLENDE_INFORMATIE)
-                                        .value(this.readonly && aanvullendeInformatieDataElement ?
-                                            this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement)
-                                        .options(this.getAanvullendeInformatieOpties())
-                                        .validators(Validators.required)
-                                        .readonly(this.readonly)
-                                        .build()]
+            [new RadioFormFieldBuilder(this.readonly && aanvullendeInformatieDataElement ?
+                this.translate.instant(aanvullendeInformatieDataElement) : aanvullendeInformatieDataElement).id(fields.AANVULLENDE_INFORMATIE)
+                                                                                                            .label(fields.AANVULLENDE_INFORMATIE)
+                                                                                                            .options(this.getAanvullendeInformatieOpties())
+                                                                                                            .validators(Validators.required)
+                                                                                                            .readonly(this.readonly)
+                                                                                                            .build()]
         );
     }
 

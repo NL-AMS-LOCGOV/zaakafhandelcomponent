@@ -10,8 +10,9 @@ export class CheckboxFormFieldBuilder extends AbstractFormFieldBuilder {
 
     protected readonly formField: CheckboxFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new CheckboxFormField();
+        this.formField.initFormControl(value);
     }
 }
