@@ -40,6 +40,8 @@ public class ZaaktypeInrichtingscheck {
 
     private final List<String> resultaattypesMetVerplichtBesluit = new ArrayList<>();
 
+    private boolean zaakafhandelParametersValide;
+
     public ZaaktypeInrichtingscheck(final Zaaktype zaaktype) {
         this.zaaktype = zaaktype;
     }
@@ -142,5 +144,19 @@ public class ZaaktypeInrichtingscheck {
 
     public Zaaktype getZaaktype() {
         return zaaktype;
+    }
+
+    public boolean isZaakafhandelParametersValide() {
+        return zaakafhandelParametersValide;
+    }
+
+    public void setZaakafhandelParametersValide(final boolean zaakafhandelParametersValide) {
+        this.zaakafhandelParametersValide = zaakafhandelParametersValide;
+    }
+
+    public boolean isValide() {
+        return statustypeIntakeAanwezig && statustypeInBehandelingAanwezig && statustypeHeropendAanwezig && statustypeAfgerondAanwezig && statustypeAfgerondLaatsteVolgnummer &&
+                rolInitiatorAanwezig && rolBehandelaarAanwezig && rolOverigeAanwezig && informatieobjecttypeEmailAanwezig && resultaattypeAanwezig &&
+                zaakafhandelParametersValide && (resultaattypesMetVerplichtBesluit.isEmpty() || besluittypeAanwezig);
     }
 }

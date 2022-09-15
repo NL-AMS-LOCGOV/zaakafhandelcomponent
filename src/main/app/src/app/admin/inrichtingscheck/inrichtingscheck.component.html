@@ -49,6 +49,10 @@
                         <td mat-cell *matCellDef="let row" [attr.colspan]="columnsToDisplay.length">
                             <div class="detail" [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                                 <div fxLayout="column" fxFlex="100">
+                                    <div class="melding" *ngIf="!row.zaakafhandelParametersValide">
+                                        <div fxFlex="15">{{'zaakafhandelparameters' | translate}}</div>
+                                        <div fxFlex [innerHTML]="'healthCheck.zaaktype.zaakafhandelParametersOngeldig' | translate"></div>
+                                    </div>
                                     <div class="melding" *ngIf="!row.statustypeIntakeAanwezig">
                                         <div fxFlex="15">{{'statustype' | translate}}</div>
                                         <div fxFlex [innerHTML]="'healthCheck.zaaktype.geenStatustypeIntakeAanwezig' | translate"></div>

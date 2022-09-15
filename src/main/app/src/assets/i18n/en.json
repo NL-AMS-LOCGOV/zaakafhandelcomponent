@@ -537,6 +537,7 @@
   "dashboard.mijn.zaken.waarschuwing": "My cases that will soon expire",
   " 9 ": ">>--> HEALTH-CHECK <--<<",
   "healthCheck.zaaktype.inrichtingscheck": "Casetype configuration check",
+  "healthCheck.zaaktype.zaakafhandelParametersOngeldig": "The case handling parameters are not (fully) configured",
   "healthCheck.zaaktype.geenStatustypeIntakeAanwezig": "The required status type \"Intake\" does not exist",
   "healthCheck.zaaktype.geenStatustypeInBehandelingAanwezig": "The required status type \"In behandeling\" does not exist",
   "healthCheck.zaaktype.geenStatustypeHeropendAanwezig": "The required status type \"Heropend\" does not exist",
@@ -567,5 +568,6 @@
   "statustype": "Status type",
   "resultaattype": "Result type",
   "besluittype": "Decision type",
-  "informatieobjecttype": "Informationobject type"
+  "informatieobjecttype": "Informationobject type",
+  "zaakafhandelparameters": "Case handling parameters"
 }

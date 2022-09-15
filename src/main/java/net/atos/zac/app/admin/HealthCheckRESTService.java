@@ -70,6 +70,8 @@ public class HealthCheckRESTService {
         restCheck.statustypeHeropendAanwezig = check.isStatustypeHeropendAanwezig();
         restCheck.statustypeInBehandelingAanwezig = check.isStatustypeInBehandelingAanwezig();
         restCheck.statustypeIntakeAanwezig = check.isStatustypeIntakeAanwezig();
+        restCheck.zaakafhandelParametersValide = check.isZaakafhandelParametersValide();
+        restCheck.valide = check.isValide();
         return restCheck;
     }
 

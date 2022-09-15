@@ -19,5 +19,6 @@ export class ZaaktypeInrichtingscheck {
     informatieobjecttypeEmailAanwezig: boolean;
     besluittypeAanwezig: boolean;
     resultaattypesMetVerplichtBesluit: string[];
+    zaakafhandelParametersValide: boolean;
     valide: boolean;
 }

@@ -537,6 +537,7 @@
   "dashboard.mijn.zaken.waarschuwing": "Mijn binnenkort verlopende zaken",
   " 9 ": ">>--> HEALTH-CHECK <--<<",
   "healthCheck.zaaktype.inrichtingscheck": "Zaaktype inrichtingscheck",
+  "healthCheck.zaaktype.zaakafhandelParametersOngeldig": "De zaakafhandelparameters zijn niet (volledig) geconfigureerd",
   "healthCheck.zaaktype.geenStatustypeIntakeAanwezig": "Het vereiste statustype \"Intake\" bestaat niet",
   "healthCheck.zaaktype.geenStatustypeInBehandelingAanwezig": "Het vereiste statustype \"In behandeling\" bestaat niet",
   "healthCheck.zaaktype.geenStatustypeHeropendAanwezig": "Het vereiste statustype \"Heropend\" bestaat niet",
@@ -547,7 +548,7 @@
   "healthCheck.zaaktype.geenRolBehandelaarAanwezig": "De vereiste rol \"Behandelaar\" bestaat niet",
   "healthCheck.zaaktype.geenRolOverigeAanwezig": "Naast de rollen \"Behandelaar\" en \"Initiator\" moet er minimaal één andere rol aanwezig zijn",
   "healthCheck.zaaktype.geenInformatieobjecttypeEmailAanwezig": "Het vereiste Informatieobjecttype \"e-mail\" bestaat niet",
-  "healthCheck.zaaktype.geenBesluittypeAanwezig": "resultaattype(s) \"<b>{{resultaattypes}}</b>\" vereisen een besluittype, maar er is geen besluittype gevonden",
+  "healthCheck.zaaktype.geenBesluittypeAanwezig": "Resultaattype(s) \"<b>{{resultaattypes}}</b>\" vereisen een besluittype, maar er is geen besluittype gevonden",
   " 10 ": ">>--> ??? <--<<",
   "initiator.titel": "Initiator",
   "burgerservicenummer": "Burgerservicenummer",
@@ -567,5 +568,6 @@
   "statustype": "Statustype",
   "resultaattype": "Resultaattype",
   "besluittype": "Besluittype",
-  "informatieobjecttype": "Informatieobjecttype"
+  "informatieobjecttype": "Informatieobjecttype",
+  "zaakafhandelparameters": "Zaakafhandelparameters"
 }

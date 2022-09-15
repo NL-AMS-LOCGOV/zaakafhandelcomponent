@@ -44,9 +44,7 @@ public class RESTZaaktypeInrichtingscheck {
 
     public List<String> resultaattypesMetVerplichtBesluit;
 
-    public boolean isValide() {
-        return statustypeIntakeAanwezig && statustypeInBehandelingAanwezig && statustypeHeropendAanwezig && statustypeAfgerondAanwezig && statustypeAfgerondLaatsteVolgnummer &&
-                rolInitiatorAanwezig && rolBehandelaarAanwezig && rolOverigeAanwezig && informatieobjecttypeEmailAanwezig && resultaattypeAanwezig &&
-                (resultaattypesMetVerplichtBesluit.isEmpty() || besluittypeAanwezig);
-    }
+    public boolean zaakafhandelParametersValide;
+
+    public boolean valide;
 }

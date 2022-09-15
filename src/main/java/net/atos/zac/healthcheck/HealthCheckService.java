@@ -18,6 +18,8 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class HealthCheckService {
 
@@ -27,6 +29,9 @@ public class HealthCheckService {
     @Inject
     private VRLClientService vrlClientService;
 
+    @Inject
+    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+
 
     public boolean bestaatCommunicatiekanaalEformulier() {
         return vrlClientService.findCommunicatiekanaal(ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER) != null;
@@ -34,7 +39,9 @@ public class HealthCheckService {
 
     public ZaaktypeInrichtingscheck controleerZaaktype(final URI zaaktypeUrl) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUrl);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktype.getUUID());
         final ZaaktypeInrichtingscheck zaaktypeInrichtingscheck = new ZaaktypeInrichtingscheck(zaaktype);
+        zaaktypeInrichtingscheck.setZaakafhandelParametersValide(zaakafhandelParameters.isValide());
         controleerZaaktypeStatustypeInrichting(zaaktypeInrichtingscheck);
         controleerZaaktypeResultaattypeInrichting(zaaktypeInrichtingscheck);
         controleerZaaktypeBesluittypeInrichting(zaaktypeInrichtingscheck);
