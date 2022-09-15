@@ -62,10 +62,7 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
             }
         };
         this.dataSource.sort = this.sort;
-
         this.dataSource.filterPredicate = (data, filter: string) => {
-
-            console.log(this.valideFilter);
             if (this.valideFilter === ToggleSwitchOptions.CHECKED && !data.valide) {
                 return false;
             }
