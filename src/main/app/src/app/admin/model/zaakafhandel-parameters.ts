@@ -27,5 +27,6 @@ export class ZaakafhandelParameters {
     zaakbeeindigParameters: ZaakbeeindigParameter[];
     intakeMail: ZaakStatusmailOptie;
     afrondenMail: ZaakStatusmailOptie;
+    productaanvraagtype: string;
     valide: boolean;
 }

@@ -7,6 +7,7 @@ package net.atos.zac.zaaksturing;
 
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.CREATIEDATUM;
+import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.PRODUCTAANVRAAGTYPE;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_UUID;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -44,6 +46,8 @@ import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
 @ApplicationScoped
 @Transactional
 public class ZaakafhandelParameterBeheerService {
+
+    private static final Logger LOG = Logger.getLogger(ZaakafhandelParameterBeheerService.class.getName());
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
@@ -123,6 +127,21 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
+    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UUID> query = builder.createQuery(UUID.class);
+        final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
+        query.select(root.get(ZAAKTYPE_UUID)).where(builder.equal(root.get(PRODUCTAANVRAAGTYPE), productaanvraagType));
+        final List<UUID> resultList = entityManager.createQuery(query).getResultList();
+        if (!resultList.isEmpty()) {
+            if(resultList.size() > 1){
+                LOG.warning(String.format("Er zijn meerdere zaaktypes gevonden voor productaanvraag type: '%s'", productaanvraagType));
+            }
+            return resultList.get(0);
+        }
+        return null;
+    }
+
     public UserEventListenerParameters readUserEventListenerParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
@@ -183,6 +202,7 @@ public class ZaakafhandelParameterBeheerService {
                     vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
             nieuweZaakafhandelParameters.setIntakeMail(vorigeZaakafhandelparameters.getIntakeMail());
             nieuweZaakafhandelParameters.setAfrondenMail(vorigeZaakafhandelparameters.getAfrondenMail());
+            nieuweZaakafhandelParameters.setProductaanvraagtype(vorigeZaakafhandelparameters.getProductaanvraagtype());
 
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);

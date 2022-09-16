@@ -41,6 +41,8 @@ import net.atos.client.zgw.ztc.model.RoltypeListParameters;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.StatustypeListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.client.zgw.ztc.model.ZaaktypeInformatieobjecttype;
+import net.atos.client.zgw.ztc.model.ZaaktypeInformatieobjecttypeListParameters;
 import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 
 /**
@@ -58,9 +60,12 @@ public class ZTCClientService implements Caching {
             ZTC_STATUSTYPE,
             ZTC_BESLUITTYPE,
             ZTC_ZAAKTYPE,
+            ZTC_INFORMATIEOBJECTTYPE,
             ZTC_ZAAKTYPE_MANAGED,
             ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED,
             ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED,
+            ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED,
+            ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED,
             ZTC_ZAAKTYPE_ROLTYPE,
             ZTC_ZAAKTYPE_STATUSTYPE_MANAGED,
             ZTC_ZAAKTYPE_URL);
@@ -179,6 +184,30 @@ public class ZTCClientService implements Caching {
     @CacheResult(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
     public List<Statustype> readStatustypen(final URI zaaktypeURI) {
         return ztcClient.statustypeList(new StatustypeListParameters(zaaktypeURI)).getSinglePageResults();
+    }
+
+
+    /**
+     * Read the {@link ZaaktypeInformatieobjecttype} of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link ZaaktypeInformatieobjecttype}.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED)
+    public List<ZaaktypeInformatieobjecttype> readZaaktypeInformatieobjecttypen(final URI zaaktypeURI) {
+        return ztcClient.zaaktypeinformatieobjecttypeList(new ZaaktypeInformatieobjecttypeListParameters(zaaktypeURI)).getSinglePageResults();
+    }
+
+    /**
+     * Read the {@link Informatieobjecttype} of {@link Zaaktype}.
+     *
+     * @param zaaktypeURI URI of {@link Zaaktype}.
+     * @return list of {@link Informatieobjecttype}.
+     */
+    @CacheResult(cacheName = ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED)
+    public List<Informatieobjecttype> readInformatieobjecttypen(final URI zaaktypeURI) {
+        return readZaaktypeInformatieobjecttypen(zaaktypeURI).stream()
+                .map(zaaktypeInformatieobjecttype -> readInformatieobjecttype(zaaktypeInformatieobjecttype.getInformatieobjecttype())).toList();
     }
 
     /**
@@ -309,6 +338,7 @@ public class ZTCClientService implements Caching {
      * @param informatieobjecttypeURI URI of {@link Informatieobjecttype}.
      * @return {@link Informatieobjecttype}. Never 'null'!
      */
+    @CacheResult(cacheName = ZTC_INFORMATIEOBJECTTYPE)
     public Informatieobjecttype readInformatieobjecttype(final URI informatieobjecttypeURI) {
         return createInvocationBuilder(informatieobjecttypeURI).get(Informatieobjecttype.class);
     }
@@ -321,6 +351,7 @@ public class ZTCClientService implements Caching {
      * @param informatieobjecttypeUUID UUID of {@link Informatieobjecttype}.
      * @return {@link Informatieobjecttype}.
      */
+    @CacheResult(cacheName = ZTC_INFORMATIEOBJECTTYPE)
     public Informatieobjecttype readInformatieobjecttype(final UUID informatieobjecttypeUUID) {
         return ztcClient.informatieObjectTypeRead(informatieobjecttypeUUID);
     }
@@ -362,6 +393,27 @@ public class ZTCClientService implements Caching {
     @CacheRemove(cacheName = ZTC_ZAAKTYPE_STATUSTYPE_MANAGED)
     public void updateZaaktypeStatustypeCache(final URI key) {
         removed(ZTC_ZAAKTYPE_STATUSTYPE_MANAGED, key);
+    }
+
+
+    @CacheRemoveAll(cacheName = ZTC_INFORMATIEOBJECTTYPE)
+    public String clearInformatieobjectCache() {
+        return cleared(ZTC_INFORMATIEOBJECTTYPE);
+    }
+
+    @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED)
+    public String clearZaaktypeInformatieobjecttypeManagedCache() {
+        return cleared(ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED);
+    }
+
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED)
+    public void updateZaaktypeInformatieobjecttypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED, key);
+    }
+
+    @CacheRemove(cacheName = ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED)
+    public void updateZaaktypeZaaktypeInformatieobjecttypeCache(final URI key) {
+        removed(ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED, key);
     }
 
     @CacheRemoveAll(cacheName = ZTC_ZAAKTYPE_URL)

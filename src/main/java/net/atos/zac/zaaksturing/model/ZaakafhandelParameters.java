@@ -43,6 +43,9 @@ public class ZaakafhandelParameters {
     /** Naam van property: {@link ZaakafhandelParameters#creatiedatum} */
     public static final String CREATIEDATUM = "creatiedatum";
 
+    /** Naam van property: {@link ZaakafhandelParameters#productaanvraagtype} */
+    public static final String PRODUCTAANVRAAGTYPE = "productaanvraagtype";
+
     @Id
     @GeneratedValue(generator = "sq_zaakafhandelparameters", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_zaakafhandelparameters")
@@ -82,6 +85,9 @@ public class ZaakafhandelParameters {
 
     @Column(name = "afronden_mail", nullable = false)
     private String afrondenMail;
+
+    @Column(name = "productaanvraagtype")
+    private String productaanvraagtype;
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -243,6 +249,14 @@ public class ZaakafhandelParameters {
 
     public void setAfrondenMail(final String afrondenMail) {
         this.afrondenMail = afrondenMail;
+    }
+
+    public String getProductaanvraagtype() {
+        return productaanvraagtype;
+    }
+
+    public void setProductaanvraagtype(final String productaanvraagtype) {
+        this.productaanvraagtype = productaanvraagtype;
     }
 
     /**

@@ -113,6 +113,7 @@ import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
+import net.atos.zac.healthcheck.HealthCheckService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -233,6 +234,8 @@ public class ZakenRESTService {
     @Inject
     private RESTGeometryConverter restGeometryConverter;
 
+    @Inject
+    private HealthCheckService healthCheckService;
 
     @GET
     @Path("zaak/{uuid}")
@@ -449,13 +452,12 @@ public class ZakenRESTService {
     @GET
     @Path("zaaktypes")
     public List<RESTZaaktype> listZaaktypes() {
-        List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
+        final List<Zaaktype> zaaktypen = ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
                 .filter(zaaktype -> !zaaktype.getConcept())
                 .filter(Zaaktype::isNuGeldig)
-                .filter(zaaktype -> zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktype.getUUID()).isValide())
+                .filter(zaaktype -> healthCheckService.controleerZaaktype(zaaktype.getUrl()).isValide())
                 .toList();
-        zaaktypen = policyService.filterAllowedZaaktypen(zaaktypen);
-        return zaaktypen.stream().map(zaaktypeConverter::convert).toList();
+        return policyService.filterAllowedZaaktypen(zaaktypen).stream().map(zaaktypeConverter::convert).toList();
     }
 
     @PUT

@@ -74,6 +74,7 @@ public class RESTZaakafhandelParametersConverter {
         if(zaakafhandelParameters.getAfrondenMail() != null) {
             restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getAfrondenMail());
         }
+        restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
         restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertZaakbeeindigParameters(
                 zaakafhandelParameters.getZaakbeeindigParameters());
         return restZaakafhandelParameters;
@@ -90,6 +91,7 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
         zaakafhandelParameters.setIntakeMail(restZaakafhandelParameters.intakeMail.name());
         zaakafhandelParameters.setAfrondenMail(restZaakafhandelParameters.afrondenMail.name());
+        zaakafhandelParameters.setProductaanvraagtype(restZaakafhandelParameters.productaanvraagtype);
         if (restZaakafhandelParameters.defaultBehandelaar != null) {
             zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaar.id);
         }

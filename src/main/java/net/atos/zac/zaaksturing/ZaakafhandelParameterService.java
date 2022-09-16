@@ -52,4 +52,8 @@ public class ZaakafhandelParameterService {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
     }
+
+    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
+        return beheerService.findZaaktypeUUIDByProductaanvraagType(productaanvraagType);
+    }
 }

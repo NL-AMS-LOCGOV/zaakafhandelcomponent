@@ -13,6 +13,7 @@ import {ZoekenModule} from '../zoeken/zoeken.module';
 import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleringen.component';
 import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
+import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.comp
         ParametersComponent,
         ParameterEditComponent,
         ReferentieTabellenComponent,
-        ReferentieTabelComponent
+        ReferentieTabelComponent,
+        InrichtingscheckComponent
     ],
     exports: [],
     imports: [

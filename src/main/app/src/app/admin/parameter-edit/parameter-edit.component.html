@@ -81,6 +81,12 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
+                    <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                        <mat-form-field fxFlex="33" fxFlex.lt-md="100" appearance="standard" floatLabel="always">
+                            <mat-label>{{'productaanvraagtype' | translate}}</mat-label>
+                            <input matInput [formControl]="productaanvraagtypeControl">
+                        </mat-form-field>
+                    </div>
 
                     <div class="button-group" fxLayout="row wrap">
                         <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>

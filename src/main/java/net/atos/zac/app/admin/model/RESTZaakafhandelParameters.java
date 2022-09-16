@@ -39,6 +39,8 @@ public class RESTZaakafhandelParameters {
 
     public RESTZaakStatusmailOptie afrondenMail;
 
+    public String productaanvraagtype;
+
     public boolean valide;
 
     public List<RESTHumanTaskParameters> humanTaskParameters = new ArrayList<>();
