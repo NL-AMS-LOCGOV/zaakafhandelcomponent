@@ -32,12 +32,14 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
     @ViewChild(MatSort) sort: MatSort;
 
     dataSource: MatTableDataSource<ZaaktypeInrichtingscheck> = new MatTableDataSource<ZaaktypeInrichtingscheck>();
-    loading: boolean = true;
+    loadingZaaktypes: boolean = true;
+    loadingCommunicatiekanaal: boolean = true;
     columnsToDisplay = ['valide', 'expand', 'zaaktypeOmschrijving', 'zaaktypeDoel', 'beginGeldigheid'];
     zaaktypes: ZaaktypeInrichtingscheck[];
     expandedRow: ZaaktypeInrichtingscheck | null;
     valideFilter: ToggleSwitchOptions = ToggleSwitchOptions.UNCHECKED;
     filterValue: string = '';
+    bestaatCommunicatiekanaalEformulier: boolean;
 
     constructor(private healtCheckService: HealthCheckService, public utilService: UtilService) {
         super(utilService);
@@ -73,8 +75,13 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
             return dataString.indexOf(filter.trim().toLowerCase()) !== -1;
         };
 
+        this.healtCheckService.getBestaatCommunicatiekanaalEformulier().subscribe(value => {
+            this.loadingCommunicatiekanaal = false;
+            this.bestaatCommunicatiekanaalEformulier = value;
+        });
+
         this.healtCheckService.listZaaktypeInrichtingschecks().subscribe(value => {
-            this.loading = false;
+            this.loadingZaaktypes = false;
             this.dataSource.data = value.sort((a, b) =>
                 a.zaaktype.omschrijving.localeCompare(b.zaaktype.omschrijving)
             );

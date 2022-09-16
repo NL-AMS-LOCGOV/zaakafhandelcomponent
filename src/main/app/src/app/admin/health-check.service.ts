@@ -26,4 +26,9 @@ export class HealthCheckService {
         );
     }
 
+    getBestaatCommunicatiekanaalEformulier(): Observable<boolean> {
+        return this.http.get<ZaaktypeInrichtingscheck[]>(`${this.basepath}/bestaat-communicatiekanaal-eformulier`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
 }

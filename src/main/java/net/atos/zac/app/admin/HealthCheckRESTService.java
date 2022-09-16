@@ -48,6 +48,12 @@ public class HealthCheckRESTService {
         return listZaaktypes().stream().map(zaaktype -> convertToREST(healthCheckService.controleerZaaktype(zaaktype.getUrl()))).toList();
     }
 
+    @GET
+    @Path("bestaat-communicatiekanaal-eformulier")
+    public boolean bestaatCommunicatiekanaalEformulier() {
+        return healthCheckService.bestaatCommunicatiekanaalEformulier();
+    }
+
     private List<Zaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
                 .filter(zaaktype -> !zaaktype.getConcept())

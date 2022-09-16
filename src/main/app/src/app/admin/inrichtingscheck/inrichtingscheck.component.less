@@ -5,13 +5,8 @@
 
 @import "../../../variables";
 
-tr.error {
-  background-color: @error-background-color;
-}
-
 .detail {
   overflow: hidden;
-  display: flex;
 }
 
 .main-row td {
@@ -20,23 +15,18 @@ tr.error {
 
 tr.detail-row {
   height: 0;
+  background-color: @table-hover-background-color;
+
+  .detail div {
+    width: 100%;
+    border-bottom: 1px solid @border-color;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 }
 
 td.mat-cell {
   border-color: @border-color;
-}
-
-.melding {
-  border-bottom: 1px solid @border-color;
-  padding-top: 12px;
-  padding-left: 24px;
-  padding-bottom: 12px;
-}
-
-td.mat-cell.mat-column-expandedDetail {
-  padding-left: 0;
-  padding-right: 0;
-  background-color: @table-hover-background-color;
 }
 
 p {
