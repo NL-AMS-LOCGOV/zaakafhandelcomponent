@@ -126,7 +126,7 @@ export class UtilService {
 
     downloadBlobResponse(response: Response, fileName: string) {
         const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(response);
+        link.href = window.URL.createObjectURL(response as unknown as Blob);
         link.download = fileName;
         document.body.appendChild(link);
         link.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
