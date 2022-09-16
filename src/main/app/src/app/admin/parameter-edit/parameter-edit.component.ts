@@ -57,6 +57,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
     intakeMailControl = new FormControl();
     afrondenMailControl = new FormControl();
+    productaanvraagtypeControl = new FormControl();
     mailOpties: { label: string, value: string }[];
 
     caseDefinitions: Observable<CaseDefinition[]>;
@@ -79,6 +80,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
             this.intakeMailControl.setValue(this.parameters.intakeMail);
             this.afrondenMailControl.setValue(this.parameters.afrondenMail);
+            this.productaanvraagtypeControl.setValue(this.parameters.productaanvraagtype);
             this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
@@ -149,7 +151,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             einddatumGeplandWaarschuwingControl: this.einddatumGeplandWaarschuwingControl,
             uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl,
             intakeMailControl: this.intakeMailControl,
-            afrondenMailControl: this.afrondenMailControl
+            afrondenMailControl: this.afrondenMailControl,
+            productaanvraagtypeControl: this.productaanvraagtypeControl
         });
         this.updateHumanTaskForm();
         this.updateUserEventListenerForm();
@@ -280,6 +283,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
         this.parameters.intakeMail = this.intakeMailControl.value;
         this.parameters.afrondenMail = this.afrondenMailControl.value;
+        this.parameters.productaanvraagtype = this.productaanvraagtypeControl.value;
 
         this.humanTaskParameters.forEach(param => {
             param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;

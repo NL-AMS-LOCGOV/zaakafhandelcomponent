@@ -83,6 +83,9 @@ public class ZaakafhandelParameters {
     @Column(name = "afronden_mail", nullable = false)
     private String afrondenMail;
 
+    @Column(name = "productaanvraagtype")
+    private String productaanvraagtype;
+
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<HumanTaskParameters> humanTaskParametersCollection;
@@ -243,6 +246,14 @@ public class ZaakafhandelParameters {
 
     public void setAfrondenMail(final String afrondenMail) {
         this.afrondenMail = afrondenMail;
+    }
+
+    public String getProductaanvraagtype() {
+        return productaanvraagtype;
+    }
+
+    public void setProductaanvraagtype(final String productaanvraagtype) {
+        this.productaanvraagtype = productaanvraagtype;
     }
 
     /**

@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
@@ -51,5 +52,9 @@ public class ZaakafhandelParameterService {
     public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
         final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
         return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
+    }
+
+    public UUID findZaaktypeByProductAanvraagType(final String productAanvraagType){
+        return UUID.randomUUID();
     }
 }

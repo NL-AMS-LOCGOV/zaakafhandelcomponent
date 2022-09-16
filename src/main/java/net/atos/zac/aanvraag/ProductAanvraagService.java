@@ -90,8 +90,10 @@ public class ProductAanvraagService {
         final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
 
         Zaak zaak;
+        zaakafhandelParameterService.findZaaktypeByProductAanvraagType(productAanvraag.getType());
         switch (productAanvraag.getType()) {
             case "melding_klein_evenement":
+//                hiero
                 zaak = createMeldingKleinEvenement(productAanvraag.getData());
                 break;
             default:
