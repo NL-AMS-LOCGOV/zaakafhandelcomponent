@@ -148,6 +148,7 @@
   "opschortduur" : "Suspension duration (calendar days)",
   "opschortreden.hervatten" : "Reason for resumption",
   "opschortreden.opschorten" : "Reason for suspension",
+  "productaanvraagtype": "Product request type",
   "profiel" : "Profile",
   "reden" : "Reason",
   "rijen" : "Rows",
