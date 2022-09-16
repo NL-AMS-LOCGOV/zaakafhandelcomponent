@@ -30,12 +30,12 @@
     "@ngx-translate/http-loader": "^7.0.0",
     "moment": "^2.29.4",
     "ng2-pdfjs-viewer": "^13.2.2",
-    "ngx-skeleton-loader": "^5.0.0",
-    "ol": "^6.13.0",
+    "ngx-skeleton-loader": "^6.0.0",
+    "ol": "^7.1.0",
     "proj4": "^2.8.0",
     "rxjs": "^7.4.0",
     "tslib": "^2.3.1",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.8"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.3",
@@ -46,15 +46,15 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^18.7.18",
     "codelyzer": "^6.0.0",
-    "jasmine-core": "~4.0.0",
+    "jasmine-core": "~4.4.0",
     "jasmine-spec-reporter": "~7.0.0",
-    "karma": "~6.3.2",
-    "karma-chrome-launcher": "~3.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.1.1",
     "karma-coverage-istanbul-reporter": "~3.0.2",
-    "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "^2.0.0",
     "protractor": "~7.0.0",
-    "ts-node": "~10.5.0",
+    "ts-node": "~10.9.1",
     "tslint": "~6.1.0",
     "typescript": "~4.8.3"
   }
