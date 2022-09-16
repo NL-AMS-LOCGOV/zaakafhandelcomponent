@@ -33,13 +33,6 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
 
     ngOnInit(): void {
         super.ngOnInit();
-
-        this.formFields = new FormGroup({});
-        this.formFields.addControl(this.formField.id, this.formField.formControl);
-
-        this.formFields.statusChanges.subscribe((status: FormControlStatus) => {
-            this.isInValid = this.formFields.get(this.formField.id).dirty && status !== 'VALID';
-        });
     }
 
     ngOnDestroy(): void {
@@ -59,6 +52,13 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     edit(): void {
         if (!this.readonly && !this.utilService.hasEditOverlay()) {
             this.editing = true;
+
+            this.formFields = new FormGroup({});
+            this.formFields.setControl(this.formField.id, this.formField.formControl);
+
+            this.subscription = this.formFields.statusChanges.subscribe((status: FormControlStatus) => {
+                this.isInValid = this.formFields.get(this.formField.id).dirty && status !== 'VALID';
+            });
         }
     }
 

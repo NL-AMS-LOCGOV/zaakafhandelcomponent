@@ -12,16 +12,18 @@ import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleri
 import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
 import {ReferentieTabelResolver} from './referentie-tabel-resolver.service';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
+import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
 
 const routes: Routes = [
     {
         path: 'admin', children: [
-            {path: '', redirectTo: 'parameters', pathMatch: 'full'},
+            {path: '', redirectTo: 'check', pathMatch: 'full'},
             {path: 'groepen', component: GroepSignaleringenComponent},
             {path: 'parameters', component: ParametersComponent},
             {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}},
             {path: 'referentietabellen', component: ReferentieTabellenComponent},
-            {path: 'referentietabellen/:id', component: ReferentieTabelComponent, resolve: {tabel: ReferentieTabelResolver}}
+            {path: 'referentietabellen/:id', component: ReferentieTabelComponent, resolve: {tabel: ReferentieTabelResolver}},
+            {path: 'check', component: InrichtingscheckComponent}
         ]
     }
 ];

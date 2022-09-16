@@ -139,6 +139,7 @@ export class ZaakCreateComponent implements OnInit {
         if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
             zaaktypeEnInitiator.push(this.initiatorField);
         }
+
         this.createZaakFields = [
             [titel],
             zaaktypeEnInitiator,

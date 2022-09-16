@@ -29,7 +29,7 @@ export class EditTekstComponent extends EditComponent {
         super.edit();
 
         if (this.reasonField) {
-            this.formFields.addControl('reden', this.reasonField.formControl);
+            this.formFields.setControl('reden', this.reasonField.formControl);
         }
     }
 }

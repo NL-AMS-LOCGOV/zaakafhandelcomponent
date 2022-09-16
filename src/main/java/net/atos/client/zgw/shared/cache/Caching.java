@@ -26,8 +26,16 @@ public interface Caching {
 
     String ZTC_ZAAKTYPE = "ztc-zaaktype";
 
+    String ZTC_INFORMATIEOBJECTTYPE = "ztc-informatieobjecttype";
+
     // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
     String ZTC_ZAAKTYPE_MANAGED = "ztc-zaaktype-managed";
+
+    // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
+    String ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED = "ztc-zaaktype-informatieobjecttype-managed";
+
+    // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
+    String ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED = "ztc-zaaktype-zaaktypeinformatieobjecttype-managed";
 
     // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
     String ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED = "ztc-zaaktype-resultaattype-managed";

@@ -40,6 +40,8 @@ import net.atos.client.zgw.ztc.model.RoltypeListParameters;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.StatustypeListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.client.zgw.ztc.model.ZaaktypeInformatieobjecttype;
+import net.atos.client.zgw.ztc.model.ZaaktypeInformatieobjecttypeListParameters;
 import net.atos.client.zgw.ztc.model.ZaaktypeListParameters;
 
 /**
@@ -87,6 +89,10 @@ public interface ZTCClient {
     @GET
     @Path("statustypen")
     Results<Statustype> statustypeList(@BeanParam final StatustypeListParameters parameters);
+
+    @GET
+    @Path("zaaktype-informatieobjecttypen")
+    Results<ZaaktypeInformatieobjecttype> zaaktypeinformatieobjecttypeList(@BeanParam final ZaaktypeInformatieobjecttypeListParameters parameters);
 
     @GET
     @Path("statustypen/{uuid}")
