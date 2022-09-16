@@ -43,6 +43,9 @@ public class ZaakafhandelParameters {
     /** Naam van property: {@link ZaakafhandelParameters#creatiedatum} */
     public static final String CREATIEDATUM = "creatiedatum";
 
+    /** Naam van property: {@link ZaakafhandelParameters#productaanvraagtype} */
+    public static final String PRODUCTAANVRAAGTYPE = "productaanvraagtype";
+
     @Id
     @GeneratedValue(generator = "sq_zaakafhandelparameters", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_zaakafhandelparameters")

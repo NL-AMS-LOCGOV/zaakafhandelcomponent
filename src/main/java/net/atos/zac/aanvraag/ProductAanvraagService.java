@@ -9,10 +9,9 @@ import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
-import static net.atos.zac.configuratie.ConfiguratieService.MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -89,17 +88,18 @@ public class ProductAanvraagService {
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
         final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
 
-        Zaak zaak;
-        zaakafhandelParameterService.findZaaktypeByProductAanvraagType(productAanvraag.getType());
-        switch (productAanvraag.getType()) {
-            case "melding_klein_evenement":
-//                hiero
-                zaak = createMeldingKleinEvenement(productAanvraag.getData());
-                break;
-            default:
-                LOG.warning(String.format("Onbekend product aanvraag type '%s'", productAanvraag.getType()));
-                return;
+        final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(productAanvraag.getType());
+        if (zaaktypeUUID == null) {
+            LOG.warning(String.format("Er is geen zaaktype gevonden voor productaanvraag type: '%s'. Er wordt geen zaak aangemaakt.",
+                                      productAanvraag.getType()));
+            return;
         }
+
+        Zaak zaak = new Zaak();
+        zaak.setZaaktype(ztcClientService.readZaaktype(zaaktypeUUID).getUrl());
+        zaak.setOmschrijving((String) productAanvraag.getData().get("naamEvenement"));
+        zaak.setToelichting((String) productAanvraag.getData().get("omschrijvingEvenement"));
+
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
@@ -135,14 +135,6 @@ public class ProductAanvraagService {
                 LOG.warning(() -> String.format("Geen hoofdvestiging gevonden voor bedrijf met kvk nummer '%s'", kvkNummer));
             }
         }
-    }
-
-    private Zaak createMeldingKleinEvenement(final Map<String, Object> aanvraagData) {
-        final Zaak zaak = new Zaak();
-        zaak.setZaaktype(ztcClientService.readZaaktypeUrl(MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE));
-        zaak.setOmschrijving((String) aanvraagData.get("naamEvenement"));
-        zaak.setToelichting((String) aanvraagData.get("omschrijvingEvenement"));
-        return zaak;
     }
 
     private void pairProductAanvraagWithZaak(final URI productAanvraagUrl, final URI zaakUrl) {

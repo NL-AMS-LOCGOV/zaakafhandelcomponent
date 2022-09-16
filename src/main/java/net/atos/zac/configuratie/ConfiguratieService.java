@@ -67,8 +67,6 @@ public class ConfiguratieService {
 
     public static final String CATALOGUS_DOMEIN = "ALG";
 
-    public static final String MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE = "melding-klein-evenement";
-
     public static final String OMSCHRIJVING_TAAK_DOCUMENT = "taak-document";
 
     public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
