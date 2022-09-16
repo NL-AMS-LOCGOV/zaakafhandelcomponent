@@ -35,7 +35,7 @@ export class EditBehandelaarComponent extends EditAutocompleteComponent {
 
         this.showAssignToMe = this.loggedInUser.id !== this.formField.formControl.defaultValue?.id;
         if (this.reasonField) {
-            this.formFields.addControl('reden', this.reasonField.formControl);
+            this.formFields.setControl('reden', this.reasonField.formControl);
         }
 
     }

@@ -26,7 +26,7 @@ export class EditInputComponent extends EditComponent {
     edit(): void {
         super.edit();
         if (this.reasonField) {
-            this.formFields.addControl('reden', this.reasonField.formControl);
+            this.formFields.setControl('reden', this.reasonField.formControl);
         }
     }
 }

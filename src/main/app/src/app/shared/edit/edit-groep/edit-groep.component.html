@@ -20,7 +20,7 @@
     <mfb-form-field *ngIf="reasonField" [field]="reasonField" (click)="$event.stopPropagation()"></mfb-form-field>
 
     <div class="form-buttons">
-        <button (click)="save()" [disabled]="isSearching() || formFields.invalid" color="primary" id="groepOpslaan_button" mat-mini-fab
+        <button (click)="save()" [disabled]="formFields.invalid" color="primary" id="groepOpslaan_button" mat-mini-fab
                 title="{{'actie.opslaan' | translate}}">
             <mat-icon>check</mat-icon>
         </button>
