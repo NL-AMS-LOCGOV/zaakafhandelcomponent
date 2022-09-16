@@ -202,6 +202,7 @@ public class ZaakafhandelParameterBeheerService {
                     vorigeZaakafhandelparameters.getUiterlijkeEinddatumAfdoeningWaarschuwing());
             nieuweZaakafhandelParameters.setIntakeMail(vorigeZaakafhandelparameters.getIntakeMail());
             nieuweZaakafhandelParameters.setAfrondenMail(vorigeZaakafhandelparameters.getAfrondenMail());
+            nieuweZaakafhandelParameters.setProductaanvraagtype(vorigeZaakafhandelparameters.getProductaanvraagtype());
 
             mapHumanTaskParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
