@@ -23,5 +23,5 @@ public class RESTBesluitVastleggenGegevens {
 
     public LocalDate vervaldatum;
 
-    public List<String> documenten;
+    public List<UUID> documenten;
 }

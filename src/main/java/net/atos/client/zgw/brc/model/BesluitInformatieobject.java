@@ -26,11 +26,6 @@ public class BesluitInformatieobject {
     private URI url;
 
     /**
-     * Unieke resource identifier (UUID4)
-     */
-    private UUID uuid;
-
-    /**
      * URL-referentie naar het INFORMATIEOBJECT (in de Documenten API), waar ook de relatieinformatie opgevraagd kan worden.
      */
     private URI informatieobject;
@@ -49,27 +44,21 @@ public class BesluitInformatieobject {
     /**
      * Constructor with required attributes for POST and PUT requests
      */
-    public BesluitInformatieobject(final URI informatieobject, final URI besluit) {
-        this.informatieobject = informatieobject;
+    public BesluitInformatieobject(final URI besluit, final URI informatieobject) {
         this.besluit = besluit;
+        this.informatieobject = informatieobject;
     }
 
     /**
      * Constructor with readOnly attributes for GET response
      */
     @JsonbCreator
-    public BesluitInformatieobject(@JsonbProperty("url") final URI url,
-                                   @JsonbProperty("uuid") final UUID uuid) {
+    public BesluitInformatieobject(@JsonbProperty("url") final URI url) {
         this.url = url;
-        this.uuid = uuid;
     }
 
     public URI getUrl() {
         return url;
-    }
-
-    public UUID getUuid() {
-        return uuid;
     }
 
     public URI getInformatieobject() {
@@ -86,10 +75,5 @@ public class BesluitInformatieobject {
 
     public void setBesluit(final URI besluit) {
         this.besluit = besluit;
-    }
-
-    @JsonbTransient
-    public UUID getBesluitUUID() {
-        return uuidFromURI(besluit);
     }
 }

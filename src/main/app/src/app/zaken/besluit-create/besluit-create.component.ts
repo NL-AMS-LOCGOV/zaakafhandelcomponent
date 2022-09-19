@@ -17,7 +17,7 @@ import {Zaak} from '../model/zaak';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import * as moment from 'moment/moment';
 import {Resultaattype} from '../model/resultaattype';
-import {takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluittype} from '../model/besluittype';
@@ -37,13 +37,15 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
     @Output() besluitVastgelegd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     private ngDestroy = new Subject<void>();
+    zoekparameters$: Subject<EnkelvoudigInformatieObjectZoekParameters> = new Subject();
 
     constructor(private zakenService: ZakenService, public utilService: UtilService, private informatieObjectenService: InformatieObjectenService) {}
 
     ngOnInit(): void {
         const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
-        let documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+        this.zoekparameters$.next(zoekparameters);
+        const documenten$ = this.zoekparameters$.pipe(switchMap(zoekparameters => this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters)));
 
         this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
         const resultaattypeField = new SelectFormFieldBuilder().id('resultaattype').label('resultaat').validators(Validators.required).optionLabel('naam')
@@ -53,7 +55,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         const toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000).build();
         const ingangsdatumField = new DateFormFieldBuilder().id('ingangsdatum').label('ingangsdatum').validators(Validators.required).value(moment()).build();
         const vervaldatumField = new DateFormFieldBuilder().id('vervaldatum').label('vervaldatum').minDate(ingangsdatumField.formControl.value).build();
-        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten').documenten(documenten).build();
+        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten').documenten(documenten$).build();
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
 
         resultaattypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
@@ -65,8 +67,8 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             (vervaldatumField as DateFormField).minDate = value;
         });
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            zoekparameters.toegestaneInformatieObjectTypen = value.informatieObjectTypen;
-            documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+            zoekparameters.toegestaneInformatieObjectTypeUUIDs = value.informatieObjectTypen.map(x => x.split("/").pop());
+            this.zoekparameters$.next(zoekparameters);
         });
     }
 
@@ -79,7 +81,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             gegevens.toelichting = formGroup.controls['toelichting'].value;
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
-            gegevens.documenten = formGroup.controls['documenten'].value;
+            gegevens.documenten = formGroup.controls['documenten'].value.split(";");
             this.zakenService.bestluitVastleggen(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.vastgelegd');
                 this.besluitVastgelegd.emit(true);

@@ -104,6 +104,9 @@ public interface BRCClient {
 
     @POST
     @Path("besluitinformatieobjecten")
+    @ClientHeaderParams({
+            @ClientHeaderParam(name = ACCEPT_CRS, value = ACCEPT_CRS_VALUE),
+            @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
     BesluitInformatieobject besluitinformatieobjectCreate(final BesluitInformatieobject besluitInformatieobject);
 
 }

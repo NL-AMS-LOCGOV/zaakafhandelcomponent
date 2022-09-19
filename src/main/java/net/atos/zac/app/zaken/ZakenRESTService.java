@@ -41,6 +41,8 @@ import javax.ws.rs.core.MediaType;
 
 import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 
+import net.atos.zac.util.UriUtil;
+
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -632,9 +634,8 @@ public class ZakenRESTService {
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
         besluitToevoegenGegevens.documenten.forEach(documentUri -> {
-            final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject();
-            besluitInformatieobject.setBesluit(resultaat.url);
-            besluitInformatieobject.setInformatieobject(URI.create(documentUri));
+            final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
+            final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(resultaat.url, informatieobject.getUrl());
             brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);
         });
         return resultaat;

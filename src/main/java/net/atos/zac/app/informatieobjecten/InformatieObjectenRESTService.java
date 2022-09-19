@@ -205,10 +205,10 @@ public class InformatieObjectenRESTService {
             list.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
             result = list;
         }
-        if (zoekParameters.toegestaneInformatieObjectTypen != null && zoekParameters.toegestaneInformatieObjectTypen.length > 0) {
-            final List<String> compareList = List.of(zoekParameters.toegestaneInformatieObjectTypen);
+        if (zoekParameters.toegestaneInformatieObjectTypeUUIDs != null && zoekParameters.toegestaneInformatieObjectTypeUUIDs.length > 0) {
+            final List<UUID> compareList = List.of(zoekParameters.toegestaneInformatieObjectTypeUUIDs);
             result = result.stream()
-                    .filter(enkelvoudigInformatieObject -> compareList.contains(enkelvoudigInformatieObject.informatieobjectTypeUUID.toString()))
+                    .filter(enkelvoudigInformatieObject -> compareList.contains(enkelvoudigInformatieObject.informatieobjectTypeUUID))
                     .collect(Collectors.toList());
         }
         return result;
