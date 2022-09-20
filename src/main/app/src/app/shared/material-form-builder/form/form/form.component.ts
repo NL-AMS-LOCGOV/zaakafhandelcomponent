@@ -5,7 +5,6 @@
 
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {FieldType} from '../../model/field-type.enum';
 import {FormConfig} from '../../model/form-config';
 import {AbstractFormField} from '../../model/abstract-form-field';
 
@@ -55,7 +54,7 @@ export class FormComponent {
         this.formGroup = new FormGroup({});
         for (const value of this.data.values()) {
             value.forEach((formField) => {
-                if (formField.fieldType !== FieldType.HEADING) {
+                if (formField.hasFormControl()) {
                     this.formGroup.addControl(formField.id, formField.formControl);
                 }
             });
