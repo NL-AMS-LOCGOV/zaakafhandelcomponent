@@ -54,7 +54,7 @@ public class BRCClientService {
         return brcClient.besluitinformatieobjectCreate(besluitInformatieobject);
     }
 
-    public List<BesluitInformatieobject> listBesluitInformaiteobjecten(final URI besluitUri) {
-        return brcClient.listBesluitInformatieobjecten(besluitUri);
+    public List<BesluitInformatieobject> listBesluitInformatieobjecten(final URI besluit) {
+        return brcClient.listBesluitInformatieobjecten(besluit);
     }
 }

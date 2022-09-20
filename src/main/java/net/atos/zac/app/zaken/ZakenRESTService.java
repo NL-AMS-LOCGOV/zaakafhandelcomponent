@@ -16,6 +16,8 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -639,6 +641,15 @@ public class ZakenRESTService {
             brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);
         });
         return resultaat;
+    }
+
+    @GET
+    @Path("listBesluitInformatieobjecten/{besluit}")
+    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final String besluit) {
+        final URI besluitUri = URI.create(URLDecoder.decode(besluit, StandardCharsets.UTF_8));
+        return brcClientService.listBesluitInformatieobjecten(besluitUri).stream()
+                .map(x -> drcClientService.readEnkelvoudigInformatieobject(x.getInformatieobject()))
+                .collect(Collectors.toList());
     }
 
     @GET
