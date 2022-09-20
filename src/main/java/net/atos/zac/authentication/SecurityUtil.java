@@ -6,6 +6,7 @@
 package net.atos.zac.authentication;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -20,6 +21,9 @@ public class SecurityUtil implements Serializable {
      * Constant which indicates in which {@link HttpSession} attribute the current authenticated {@link LoggedInUser} can be found.
      */
     public static final String LOGGED_IN_USER_SESSION_ATTRIBUTE = "logged-in-user";
+
+    public static final LoggedInUser FUNCTIONEEL_GEBRUIKER = new LoggedInUser("FG", "", "Functionele gebruiker", "Functionele gebruiker", null,
+                                                                              List.of("Admin"), List.of("zaakbehandelaar", "recordmanager", "beheerder"));
 
     @Inject
     @ActiveSession
@@ -40,11 +44,15 @@ public class SecurityUtil implements Serializable {
         if (httpSession != null) {
             return (LoggedInUser) httpSession.getAttribute(LOGGED_IN_USER_SESSION_ATTRIBUTE);
         } else {
-            return null;
+            return FUNCTIONEEL_GEBRUIKER; // No session in async context!
         }
     }
 
     public static void setLoggedInUser(final HttpSession httpSession, final LoggedInUser loggedInUser) {
         httpSession.setAttribute(SecurityUtil.LOGGED_IN_USER_SESSION_ATTRIBUTE, loggedInUser);
+    }
+
+    public static void setFunctioneelGebruiker(final HttpSession httpSession) {
+        setLoggedInUser(httpSession, FUNCTIONEEL_GEBRUIKER);
     }
 }

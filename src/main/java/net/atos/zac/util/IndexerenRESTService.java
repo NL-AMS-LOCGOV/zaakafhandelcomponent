@@ -7,7 +7,9 @@ package net.atos.zac.util;
 
 import java.util.Arrays;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,6 +17,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.authentication.ActiveSession;
+import net.atos.zac.authentication.SecurityUtil;
 import net.atos.zac.zoeken.IndexeerService;
 import net.atos.zac.zoeken.model.index.HerindexeerInfo;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -26,6 +30,10 @@ public class IndexerenRESTService {
 
     @Inject
     private IndexeerService indexeerService;
+
+    @Inject
+    @ActiveSession
+    private Instance<HttpSession> httpSession;
 
     @GET
     @Path("herindexeren/{type}")
@@ -43,6 +51,7 @@ public class IndexerenRESTService {
     @Path("{aantal}")
     @Produces(MediaType.TEXT_PLAIN)
     public String indexeer(@PathParam("aantal") int aantal) {
+        SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         final StringBuilder info = new StringBuilder();
         Arrays.stream(ZoekObjectType.values()).forEach(type -> {
             int aantalResterend = indexeerService.indexeer(aantal, type);
