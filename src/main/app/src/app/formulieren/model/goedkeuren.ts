@@ -93,6 +93,7 @@ export class Goedkeuren extends AbstractFormulier {
             const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
             if (dataElement) {
                 zoekParameters.UUIDs = dataElement.split(';');
+                zoekParameters.searchGekoppeldeZaak = true;
                 return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
             }
         }

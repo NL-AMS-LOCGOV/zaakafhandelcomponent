@@ -17,4 +17,6 @@ public class RESTInformatieObjectZoekParameters {
     public UUID[] UUIDs;
 
     public boolean toonGekoppeldeZaakDocumenten;
+
+    public boolean searchGekoppeldeZaak;
 }

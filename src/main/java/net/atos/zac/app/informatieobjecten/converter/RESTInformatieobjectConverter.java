@@ -92,14 +92,7 @@ public class RESTInformatieobjectConverter {
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject) {
-        final ZaakInformatieobjectListParameters params = new ZaakInformatieobjectListParameters();
-        params.setInformatieobject(enkelvoudigInformatieObject.getUrl());
-        final UUID zaakUUID = zrcClientService.listZaakinformatieobjecten(params).stream()
-                .findAny()
-                .map(ZaakInformatieobject::getZaakUUID)
-                .orElse(null);
-        final Zaak zaak = zaakUUID != null ? zrcClientService.readZaak(zaakUUID) : null;
-        return convertToREST(enkelvoudigInformatieObject, zaak);
+        return convertToREST(enkelvoudigInformatieObject, null);
     }
 
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject, final Zaak zaak) {
@@ -280,10 +273,22 @@ public class RESTInformatieobjectConverter {
         return enkelvoudigInformatieobjectWithInhoudAndLock;
     }
 
-    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs) {
+    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs, final boolean searchGekoppeldeZaak) {
         return Arrays.stream(enkelvoudigInformatieobjectUUIDs)
-                .map(drcClientService::readEnkelvoudigInformatieobject)
-                .map(this::convertToREST)
+                .map(uuid -> {
+                    final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+                    Zaak zaak = null;
+                    if(searchGekoppeldeZaak) {
+                        final ZaakInformatieobjectListParameters params = new ZaakInformatieobjectListParameters();
+                        params.setInformatieobject(informatieobject.getUrl());
+                        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(params);
+                        final UUID zaakUUID = zaakInformatieobjecten.size() > 0 ?
+                                zaakInformatieobjecten.get(0).getZaakUUID() :
+                                null;
+                        zaak = zrcClientService.readZaak(zaakUUID);
+                    }
+                    return convertToREST(informatieobject, zaak);
+                })
                 .toList();
     }
 
