@@ -288,8 +288,8 @@ export class ZakenService {
         );
     }
 
-    listBesluitInformatieobjecten(besluitUri: string): Observable<EnkelvoudigInformatieobject[]> {
-        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/listBesluitInformatieobjecten/${besluitUri}`).pipe(
+    listBesluitInformatieobjecten(besluitUuid: string): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/listBesluitInformatieobjecten/${besluitUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

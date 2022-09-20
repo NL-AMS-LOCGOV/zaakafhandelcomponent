@@ -7,9 +7,11 @@ import {Component, Input, OnInit} from '@angular/core';
 
 import {Besluit} from '../model/besluit';
 import {ZakenService} from '../zaken.service';
-import {shareReplay} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 @Component({
     selector: 'zac-besluit-view',
@@ -19,14 +21,22 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 export class BesluitViewComponent implements OnInit {
     @Input() besluit: Besluit;
 
-    besluitInformatieobjectenList$: Observable<EnkelvoudigInformatieobject[]>;
+    besluitInformatieobjecten: AbstractFormField;
 
     constructor(private zakenService: ZakenService) {
     }
 
     ngOnInit(): void {
-        this.besluitInformatieobjectenList$ = this.zakenService.listBesluitInformatieobjecten(encodeURIComponent(this.besluit.url)).pipe(
+        const besluitUuid = this.besluit.url.split('/').pop();
+        const besluitInformatieobjectenList = this.zakenService.listBesluitInformatieobjecten(besluitUuid).pipe(
             shareReplay()
         );
+        this.besluitInformatieobjecten = new DocumentenLijstFieldBuilder().id('documenten')
+                                                                          .label('documenten')
+                                                                          .documenten(besluitInformatieobjectenList)
+                                                                          .verbergStatus()
+                                                                          .readonly(true)
+                                                                          .build();
+
     }
 }

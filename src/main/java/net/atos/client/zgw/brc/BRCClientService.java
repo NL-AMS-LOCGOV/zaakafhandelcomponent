@@ -21,6 +21,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * BRC Client Service
@@ -48,6 +49,9 @@ public class BRCClientService {
         return brcClient.besluitCreate(besluit);
     }
 
+    public Besluit readBesluit(final UUID uuid) {
+        return brcClient.besluitRead(uuid);
+    }
 
     public BesluitInformatieobject createBesluitInformatieobject(final BesluitInformatieobject besluitInformatieobject, final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);

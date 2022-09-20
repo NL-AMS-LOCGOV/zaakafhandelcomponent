@@ -645,8 +645,9 @@ public class ZakenRESTService {
 
     @GET
     @Path("listBesluitInformatieobjecten/{besluit}")
-    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final String besluit) {
-        final URI besluitUri = URI.create(URLDecoder.decode(besluit, StandardCharsets.UTF_8));
+    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final UUID besluit) {
+        //TODO: Vervang UUID -> URI d.m.v. readBesluit voor URI-opbouw-methode van issue #1413
+        final URI besluitUri = brcClientService.readBesluit(besluit).getUrl();
         return brcClientService.listBesluitInformatieobjecten(besluitUri).stream()
                 .map(x -> drcClientService.readEnkelvoudigInformatieobject(x.getInformatieobject()))
                 .collect(Collectors.toList());

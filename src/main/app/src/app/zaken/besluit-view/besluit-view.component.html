@@ -13,9 +13,9 @@
             <zac-static-text fxFlex="50" [label]="'ingangsdatum' | translate" [value]="besluit.ingangsdatum | datum"></zac-static-text>
             <zac-static-text fxFlex="50" [label]="'vervaldatum' | translate" [value]="besluit.vervaldatum | datum"></zac-static-text>
             <zac-static-text fxFlex="100" [label]="'toelichting' | translate" [value]="besluit.toelichting"></zac-static-text>
-            <ul>
-                <li *ngFor="let informatieObject of besluitInformatieobjectenList$ | async">{{ informatieObject.identificatie }}</li>
-            </ul>
+            <div class="table-field-wrapper">
+                <mfb-form-field class="m-1" [field]="besluitInformatieobjecten"></mfb-form-field>
+            </div>
         </div>
     </mat-card-content>
 </mat-card>

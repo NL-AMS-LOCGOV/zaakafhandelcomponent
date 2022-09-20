@@ -39,6 +39,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         if (!this.data.ondertekenen) {
             this.columns.splice(this.columns.indexOf('ondertekenen'), 1);
         }
+        if (this.data.verbergStatus) {
+            this.columns.splice(this.columns.indexOf('status'), 1);
+        }
         this.data.documenten$.subscribe(documenten => {
             for (const document of documenten) {
                 document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
