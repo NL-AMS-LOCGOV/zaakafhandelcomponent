@@ -93,6 +93,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                                                              .validators(Validators.required, CustomValidators.email)
                                                              .maxlength(200)
                                                              .build();
+        this.sendMailFormField.formControl.disable();
 
         if (!this.data.zaak.besluit) {
             this.resultaatFormField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
@@ -103,15 +104,16 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                     this.sendMailFormField.formControl.disable();
                 } else {
                     this.toelichtingFormField.formControl.enable();
-                    this.zaakafhandelParametersService.readZaakafhandelparameters(this.data.zaak.uuid).subscribe(zaakafhandelParameters => {
-                        this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
-                        if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
-                            this.sendMailFormField.formControl.enable();
-                        }
-                    });
+                    this.sendMailFormField.formControl.enable();
                 }
             });
         }
+        this.zaakafhandelParametersService.readZaakafhandelparameters(this.data.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
+            this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+            if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                this.sendMailFormField.formControl.enable();
+            }
+        });
     }
 
     close(): void {
