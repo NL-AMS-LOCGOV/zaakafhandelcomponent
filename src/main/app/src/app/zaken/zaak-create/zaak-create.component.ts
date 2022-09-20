@@ -100,8 +100,8 @@ export class ZaakCreateComponent implements OnInit {
 
         this.subscription$ = zaaktype.formControl.valueChanges.subscribe(v => this.zaaktypeGeselecteerd(v));
 
-        const startdatum = new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                                     .value(moment()).validators(Validators.required)
+        const startdatum = new DateFormFieldBuilder(moment()).id('startdatum').label('startdatum')
+                                                     .validators(Validators.required)
                                                      .build();
 
         this.medewerkerGroepFormField = this.getMedewerkerGroupFormField();
@@ -139,6 +139,7 @@ export class ZaakCreateComponent implements OnInit {
         if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
             zaaktypeEnInitiator.push(this.initiatorField);
         }
+
         this.createZaakFields = [
             [titel],
             zaaktypeEnInitiator,

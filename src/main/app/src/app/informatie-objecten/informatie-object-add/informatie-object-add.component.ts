@@ -83,21 +83,20 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
                                                       .uploadURL(this.zaak ?
                                                           this.informatieObjectenService.getUploadURL(this.zaak.uuid) :
-                                                      this.informatieObjectenService.getUploadURL(this.taak.id))
+                                                          this.informatieObjectenService.getUploadURL(this.taak.id))
                                                       .validators(Validators.required)
                                                       .build();
 
-        const beginRegistratie = new DateFormFieldBuilder().id('creatiedatum')
-                                                           .label('creatiedatum')
-                                                           .value(moment())
-                                                           .validators(Validators.required)
-                                                           .build();
+        const beginRegistratie = new DateFormFieldBuilder(moment()).id('creatiedatum')
+                                                                   .label('creatiedatum')
+                                                                   .validators(Validators.required)
+                                                                   .build();
 
-        const taal = new SelectFormFieldBuilder().id('taal').label('taal')
-                                                 .value$(this.configuratieService.defaultTaal())
-                                                 .optionLabel('naam').options(this.configuratieService.listTalen())
-                                                 .validators(Validators.required)
-                                                 .build();
+        const taal = new SelectFormFieldBuilder(this.configuratieService.defaultTaal()).id('taal').label('taal')
+                                                                                       .optionLabel('naam').options(this.configuratieService.listTalen())
+                                                                                       .value$(this.configuratieService.defaultTaal())
+                                                                                       .validators(Validators.required)
+                                                                                       .build();
 
         const status = new SelectFormFieldBuilder().id('status').label('status')
                                                    .validators(Validators.required)
@@ -113,11 +112,10 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                                                                  .validators(Validators.required)
                                                                  .build();
 
-        const auteur = new InputFormFieldBuilder().id('auteur').label('auteur')
-                                                  .validators(Validators.required, Validators.pattern('\\S.*'))
-                                                  .value(this.ingelogdeMedewerker.naam)
-                                                  .maxlength(50)
-                                                  .build();
+        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
+                                                                               .validators(Validators.required, Validators.pattern('\\S.*'))
+                                                                               .maxlength(50)
+                                                                               .build();
 
         const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
                                                           .label('vertrouwelijkheidaanduiding')
@@ -148,7 +146,6 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         } else if (this.taak) {
             this.fields = [[inhoudField], [titel], [informatieobjectType], [ontvangstDatum, verzendDatum], [nogmaals]];
         }
-
 
         let vorigeBestandsnaam = null;
         this.subscriptions$.push(inhoudField.fileUploaded.subscribe(bestandsnaam => {

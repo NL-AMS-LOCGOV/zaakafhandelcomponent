@@ -9,9 +9,10 @@ import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field
 export class FileFormFieldBuilder extends AbstractFileFormFieldBuilder {
     protected readonly formField: FileFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new FileFormField();
+        this.formField.initFormControl(value);
         this.updateHint();
     }
 

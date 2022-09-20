@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EditComponent} from '../edit.component';
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {DateFormField} from '../../material-form-builder/form-components/date/date-form-field';
 import {UtilService} from '../../../core/service/util.service';
 import {TextIcon} from '../text-icon';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControlStatus, FormGroup, Validators} from '@angular/forms';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
 import * as moment from 'moment/moment';
 import {Moment} from 'moment/moment';
@@ -31,7 +31,7 @@ import {AbstractFormField} from '../../material-form-builder/model/abstract-form
     templateUrl: './edit-datum-groep.component.html',
     styleUrls: ['../../static-text/static-text.component.less', '../edit.component.less', './edit-datum-groep.component.less']
 })
-export class EditDatumGroepComponent extends EditComponent implements OnInit {
+export class EditDatumGroepComponent extends EditComponent implements OnChanges, OnInit {
 
     @Input() formField: DateFormField;
     @Input() startDatumField: DateFormField;
@@ -57,10 +57,6 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     showEinddatumGeplandError: boolean;
     showUiterlijkeEinddatumAfdoeningError: boolean;
 
-    startDatum: string;
-    einddatumGeplandDatum: string;
-    uiterlijkeEinddatumAfdoeningDatum: string;
-
     duurField: InputFormField;
     werkelijkeOpschortDuur: number;
 
@@ -78,31 +74,28 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
         this.updateGroep();
     }
 
-    updateGroep(): void {
-        this.startDatum = this.startDatumField.formControl.value;
-        this.einddatumGeplandDatum = this.einddatumGeplandField.formControl.value;
-        this.uiterlijkeEinddatumAfdoeningDatum = this.uiterlijkeEinddatumAfdoeningField.formControl.value;
-        this.showEinddatumGeplandIcon = this.einddatumGeplandIcon?.showIcon(
-            new FormControl(this.einddatumGeplandField.formControl.value));
-        this.showUiterlijkeEinddatumAfdoeningIcon = this.uiterlijkeEinddatumAfdoeningIcon?.showIcon(
-            new FormControl(this.uiterlijkeEinddatumAfdoeningField.formControl.value));
+    ngOnChanges(changes: SimpleChanges): void {
+        super.ngOnChanges(changes);
+        this.updateGroep();
     }
 
-    init(formField: DateFormField): void {
+    updateGroep(): void {
+        this.showEinddatumGeplandIcon = this.einddatumGeplandIcon?.showIcon(this.einddatumGeplandField.formControl);
+        this.showUiterlijkeEinddatumAfdoeningIcon = this.uiterlijkeEinddatumAfdoeningIcon?.showIcon(this.uiterlijkeEinddatumAfdoeningField.formControl);
     }
 
     save(): void {
-        this.validate();
-        if (!this.showEinddatumGeplandError && !this.showUiterlijkeEinddatumAfdoeningError && this.startDatumField.formControl.valid &&
-            this.einddatumGeplandField.formControl.valid && this.uiterlijkeEinddatumAfdoeningField.formControl.valid) {
-            this.onSave.emit({
-                startdatum: this.startDatumField.formControl.value,
-                einddatumGepland: this.einddatumGeplandField.formControl.value,
-                uiterlijkeEinddatumAfdoening: this.uiterlijkeEinddatumAfdoeningField.formControl.value,
-                reden: this.reasonField?.formControl.value
-            });
-            this.updateGroep();
-            this.editing = false;
+        if (this.formFields.valid) {
+            this.validate();
+            if (!this.showEinddatumGeplandError && !this.showUiterlijkeEinddatumAfdoeningError) {
+                this.onSave.emit({
+                    startdatum: this.startDatumField.formControl.value,
+                    einddatumGepland: this.einddatumGeplandField.formControl.value,
+                    uiterlijkeEinddatumAfdoening: this.uiterlijkeEinddatumAfdoeningField.formControl.value,
+                    reden: this.reasonField?.formControl.value
+                });
+                this.editing = false;
+            }
         }
     }
 
@@ -118,34 +111,27 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
         } else {
             this.showUiterlijkeEinddatumAfdoeningError = uiterlijkeEinddatumAfdoening.isBefore(start);
         }
-        this.dirty = true;
     }
 
     hasError(): boolean {
-        return this.showEinddatumGeplandError || this.showUiterlijkeEinddatumAfdoeningError ||
-            this.startDatumField.formControl.invalid ||
-            this.einddatumGeplandField.formControl.invalid ||
-            this.uiterlijkeEinddatumAfdoeningField.formControl.invalid;
+        return this.showEinddatumGeplandError || this.showUiterlijkeEinddatumAfdoeningError;
     }
 
-    edit(editing: boolean): void {
+    edit(): void {
         if (!this.readonly && !this.utilService.hasEditOverlay()) {
-            this.editing = editing;
-            this.startDatumField.formControl.markAsUntouched();
-            this.einddatumGeplandField.formControl.markAsUntouched();
-            this.uiterlijkeEinddatumAfdoeningField.formControl.markAsUntouched();
-            this.reasonField.formControl.setValue(null);
-            this.dirty = false;
-        }
-    }
+            this.editing = true;
 
-    cancel(): void {
-        this.startDatumField.formControl.setValue(this.startDatum);
-        this.einddatumGeplandField.formControl.setValue(this.einddatumGeplandDatum);
-        this.uiterlijkeEinddatumAfdoeningField.formControl.setValue(this.uiterlijkeEinddatumAfdoeningDatum);
-        this.showEinddatumGeplandError = false;
-        this.showUiterlijkeEinddatumAfdoeningError = false;
-        this.editing = false;
+            this.formFields = new FormGroup({
+                startdatum: this.startDatumField.formControl,
+                einddatumGepland: this.einddatumGeplandField.formControl,
+                uiterlijkeEinddatumAfdoening: this.uiterlijkeEinddatumAfdoeningField.formControl,
+                reden: this.reasonField.formControl
+            });
+
+            this.formFields.statusChanges.subscribe((status: FormControlStatus) => {
+                this.isInValid = this.formFields.dirty && status !== 'VALID';
+            });
+        }
     }
 
     private maakDuurField(label: string): InputFormField {
@@ -158,18 +144,16 @@ export class EditDatumGroepComponent extends EditComponent implements OnInit {
     }
 
     private maakHiddenField(field: AbstractFormField): HiddenFormField {
-        return new HiddenFormFieldBuilder()
+        return new HiddenFormFieldBuilder(field.formControl.value)
         .id(field.id)
         .label(field.label)
-        .value(field.formControl.value)
         .build();
     }
 
     private maakRedenField(reden: string): InputFormField {
-        return new InputFormFieldBuilder()
+        return new InputFormFieldBuilder(reden)
         .id('reden')
         .label('reden')
-        .value(reden)
         .validators(Validators.required)
         .build();
     }

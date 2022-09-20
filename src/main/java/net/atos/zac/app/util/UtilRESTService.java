@@ -68,7 +68,9 @@ public class UtilRESTService {
 
     private String clearZtcClientCaches() {
         return ZTC + ul(Stream.of(ztcClientService.clearStatustypeCache(),
+                                  ztcClientService.clearInformatieobjectCache(),
                                   ztcClientService.clearZaaktypeStatustypeManagedCache(),
+                                  ztcClientService.clearZaaktypeInformatieobjecttypeManagedCache(),
                                   ztcClientService.clearResultaattypeCache(),
                                   ztcClientService.clearBesluittypeCache(),
                                   ztcClientService.clearZaaktypeBesluittypeManagedCache(),

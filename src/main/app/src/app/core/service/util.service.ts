@@ -56,10 +56,10 @@ export class UtilService {
     }
 
     /**
-     * Check whether or not there is an active edit overlay on the screen eg. autocomplete or datepicker
+     * Check whether there is an active edit overlay on the screen eg. autocomplete or datepicker
      */
     hasEditOverlay(): boolean {
-        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-datepicker-popup');
+        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-select-panel', 'mat-datepicker-popup', 'zac-is-invalid');
         return overlayElements.length > 0;
     }
 
@@ -124,7 +124,7 @@ export class UtilService {
                      );
     }
 
-    downloadBlobResponse(response: Response, fileName: string) {
+    downloadBlobResponse(response: Blob, fileName: string) {
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(response);
         link.download = fileName;

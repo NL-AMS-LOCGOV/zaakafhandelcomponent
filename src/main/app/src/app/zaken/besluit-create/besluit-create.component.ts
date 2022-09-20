@@ -53,7 +53,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         const besluittypeField = new SelectFormFieldBuilder().id('besluittype').label('besluit').validators(Validators.required).optionLabel('naam')
                                                              .options(this.zakenService.listBesluittypes(this.zaak.zaaktype.uuid)).build();
         const toelichtingField = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000).build();
-        const ingangsdatumField = new DateFormFieldBuilder().id('ingangsdatum').label('ingangsdatum').validators(Validators.required).value(moment()).build();
+        const ingangsdatumField = new DateFormFieldBuilder(moment()).id('ingangsdatum').label('ingangsdatum').validators(Validators.required).build();
         const vervaldatumField = new DateFormFieldBuilder().id('vervaldatum').label('vervaldatum').minDate(ingangsdatumField.formControl.value).build();
         const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten').documenten(documenten$).build();
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];

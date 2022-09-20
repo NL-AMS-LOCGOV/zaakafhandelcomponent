@@ -4,8 +4,9 @@ import {HiddenFormField} from './hidden-form-field';
 export class HiddenFormFieldBuilder extends AbstractFormFieldBuilder {
     protected readonly formField: HiddenFormField;
 
-    constructor() {
+    constructor(value?: any) {
         super();
         this.formField = new HiddenFormField();
+        this.formField.initFormControl(value);
     }
 }

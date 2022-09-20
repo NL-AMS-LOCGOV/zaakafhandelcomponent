@@ -24,21 +24,18 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import com.fasterxml.uuid.impl.UUIDUtil;
-
-import net.atos.client.zgw.drc.DRCClientService;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
-import net.atos.zac.mail.model.Attachment;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 
+import com.fasterxml.uuid.impl.UUIDUtil;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -50,6 +47,7 @@ import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
 import net.atos.zac.mail.model.Ontvanger;
@@ -143,7 +141,8 @@ public class MailService {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         return zaaktype.getInformatieobjecttypen().stream()
                 .map(ztcClientService::readInformatieobjecttype)
-                .filter(infoObject -> infoObject.getOmschrijving().equals("e-mail")).findFirst().orElseThrow();
+                .filter(infoObject -> infoObject.getOmschrijving().equals(ConfiguratieService.INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL)).findFirst()
+                .orElseThrow();
     }
 
     private List<Attachment> getBijlagen(final String bijlagenString) {

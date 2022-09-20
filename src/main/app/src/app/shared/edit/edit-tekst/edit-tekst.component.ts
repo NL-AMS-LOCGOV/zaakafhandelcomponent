@@ -9,6 +9,7 @@ import {TextareaFormField} from '../../material-form-builder/form-components/tex
 import {MaterialFormBuilderService} from '../../material-form-builder/material-form-builder.service';
 import {UtilService} from '../../../core/service/util.service';
 import {InputFormField} from '../../material-form-builder/form-components/input/input-form-field';
+import {Validators} from '@angular/forms';
 
 @Component({
     selector: 'zac-edit-tekst',
@@ -24,23 +25,11 @@ export class EditTekstComponent extends EditComponent {
         super(mfbService, utilService);
     }
 
-    init(formField: TextareaFormField): void {
-        this.value = formField.formControl.value;
-    }
+    edit(): void {
+        super.edit();
 
-    valueChanges(): void {
-        this.dirty = true;
-    }
-
-    edit(editing: boolean): void {
-        super.edit(editing);
-        this.dirty = false;
-    }
-
-    protected submitSave(): void {
-        if (this.formField.formControl.valid) {
-            this.onSave.emit({[this.formField.id]: this.formField.formControl.value, reden: this.reasonField?.formControl.value});
+        if (this.reasonField) {
+            this.formFields.setControl('reden', this.reasonField.formControl);
         }
-        this.editing = false;
     }
 }
