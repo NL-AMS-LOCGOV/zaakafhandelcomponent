@@ -67,8 +67,6 @@ public class ConfiguratieService {
 
     public static final String CATALOGUS_DOMEIN = "ALG";
 
-    public static final String MELDING_KLEIN_EVENEMENT_ZAAKTYPE_IDENTIFICATIE = "melding-klein-evenement";
-
     public static final String OMSCHRIJVING_TAAK_DOCUMENT = "taak-document";
 
     public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
@@ -77,11 +75,19 @@ public class ConfiguratieService {
 
     public static final String STATUSTYPE_OMSCHRIJVING_HEROPEND = "Heropend";
 
+    public static final String STATUSTYPE_OMSCHRIJVING_INTAKE = "Intake";
+
+    public static final String STATUSTYPE_OMSCHRIJVING_IN_BEHANDELING = "In behandeling";
+
+    public static final String STATUSTYPE_OMSCHRIJVING_AFGEROND = "Afgerond";
+
     public static final String TAAK_ELEMENT_ONDERTEKENEN = "ondertekenen";
 
     public static final String BIJLAGEN = "bijlagen";
 
     public static final String COMMUNICATIEKANAAL_EFORMULIER = "E-formulier";
+
+    public static final String INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL = "e-mail";
 
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject

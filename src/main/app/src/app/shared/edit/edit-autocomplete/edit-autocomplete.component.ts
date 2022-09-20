@@ -21,21 +21,4 @@ export class EditAutocompleteComponent extends EditComponent {
     constructor(mfbService: MaterialFormBuilderService, utilService: UtilService) {
         super(mfbService, utilService);
     }
-
-    init(formField: AutocompleteFormField): void {
-        this.value = formField.formControl.value ? formField.formControl.value[formField.optionLabel] : formField.formControl.value;
-    }
-
-    edit(editing: boolean): void {
-        super.edit(editing);
-        this.dirty = false;
-    }
-
-    isSearching(): boolean {
-        return typeof this.formField.formControl.value === 'string';
-    }
-
-    valueChanges(): void {
-        this.dirty = true;
-    }
 }

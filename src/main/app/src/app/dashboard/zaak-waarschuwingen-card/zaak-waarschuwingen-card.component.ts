@@ -28,8 +28,6 @@ export class ZaakWaarschuwingenCardComponent extends DashboardCardComponent<Zaak
 
     ngOnInit(): void {
         this.zakenService.listZaakWaarschuwingen().subscribe(zaken => {
-            // tslint:disable-next-line:no-console
-            console.debug(zaken);
             this.dataSource.data = zaken;
         });
     }

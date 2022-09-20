@@ -50,10 +50,9 @@ export class FormFieldComponent implements AfterViewInit {
     loadComponent() {
         if (this._field.data.readonly && !this._field.data.hasReadonlyView()) {
             this._field = new FormItem(ReadonlyComponent,
-                new ReadonlyFormFieldBuilder().id(this._field.data.id)
-                                              .label(this._field.data.label)
-                                              .value(this._field.data.formControl.value)
-                                              .build());
+                new ReadonlyFormFieldBuilder(this._field.data.formControl.value).id(this._field.data.id)
+                                                                                .label(this._field.data.label)
+                                                                                .build());
         }
         const componentRef = this.formField.viewContainerRef.createComponent(this._field.component);
 
@@ -61,8 +60,10 @@ export class FormFieldComponent implements AfterViewInit {
         componentRef.instance.data = this._field.data;
         componentRef.changeDetectorRef.detectChanges();
         this.loaded = true;
-        this.valueChangesSubscription = this._field.data.formControl.valueChanges.subscribe(value => {
-            this.valueChanges.emit(value);
-        });
+        if (this._field.data.hasFormControl()) {
+            this.valueChangesSubscription = this._field.data.formControl.valueChanges.subscribe(value => {
+                this.valueChanges.emit(value);
+            });
+        }
     }
 }

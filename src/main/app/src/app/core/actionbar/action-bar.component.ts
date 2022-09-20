@@ -7,8 +7,7 @@ import {AfterViewInit, Component, TemplateRef, ViewChild} from '@angular/core';
 import {UtilService} from '../service/util.service';
 import {Observable} from 'rxjs';
 import {ActionBarAction} from './model/action-bar-action';
-import {MatBottomSheet} from '@angular/material/bottom-sheet';
-import {MatBottomSheetRef} from '@angular/material/bottom-sheet/bottom-sheet-ref';
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
 import {Router} from '@angular/router';
 
 @Component({

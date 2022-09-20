@@ -23,5 +23,6 @@ export class ZakenMijnDatasource extends ZoekenDataSource<ZaakZoekObject> {
     protected initZoekparameters(zoekParameters: ZoekParameters) {
         zoekParameters.type = 'ZAAK';
         zoekParameters.alleenMijnZaken = true;
+        zoekParameters.alleenOpenstaandeZaken = true;
     }
 }

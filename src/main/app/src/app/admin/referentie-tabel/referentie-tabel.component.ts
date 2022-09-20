@@ -8,7 +8,7 @@ import {UtilService} from '../../core/service/util.service';
 import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {IdentityService} from '../../identity/identity.service';
 import {AdminComponent} from '../admin/admin.component';
-import {ReferentieTabelBeheerService} from '../referentie-tabel-beheer.service';
+import {ReferentieTabelService} from '../referentie-tabel.service';
 import {ReferentieTabel} from '../model/referentie-tabel';
 import {Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
@@ -41,7 +41,7 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     waardeFormField: InputFormField[] = [];
 
     constructor(private identityService: IdentityService,
-                private service: ReferentieTabelBeheerService,
+                private service: ReferentieTabelService,
                 public utilService: UtilService,
                 private route: ActivatedRoute,
                 private foutAfhandelingService: FoutAfhandelingService) {
@@ -65,14 +65,12 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     }
 
     createForm() {
-        this.codeFormField = new InputFormFieldBuilder().id('code')
+        this.codeFormField = new InputFormFieldBuilder(this.tabel.code).id('code')
                                                         .label('tabel')
-                                                        .value(this.tabel.code)
                                                         .validators(Validators.required)
                                                         .build();
-        this.naamFormField = new InputFormFieldBuilder().id('naam')
+        this.naamFormField = new InputFormFieldBuilder(this.tabel.naam).id('naam')
                                                         .label('naam')
-                                                        .value(this.tabel.naam)
                                                         .validators(Validators.required)
                                                         .build();
     }
@@ -86,9 +84,8 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
         this.isLoadingResults = true;
         this.tabel.waarden.forEach(waarde => {
             if (this.waardeFormField[waarde.id] == null) {
-                this.waardeFormField[waarde.id] = new InputFormFieldBuilder().id('waarde_' + waarde.id)
+                this.waardeFormField[waarde.id] = new InputFormFieldBuilder(waarde.naam).id('waarde_' + waarde.id)
                                                                              .label('waarde')
-                                                                             .value(waarde.naam)
                                                                              .validators(Validators.required)
                                                                              .build();
             }

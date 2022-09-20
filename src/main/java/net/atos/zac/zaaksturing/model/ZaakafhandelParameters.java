@@ -43,6 +43,9 @@ public class ZaakafhandelParameters {
     /** Naam van property: {@link ZaakafhandelParameters#creatiedatum} */
     public static final String CREATIEDATUM = "creatiedatum";
 
+    /** Naam van property: {@link ZaakafhandelParameters#productaanvraagtype} */
+    public static final String PRODUCTAANVRAAGTYPE = "productaanvraagtype";
+
     @Id
     @GeneratedValue(generator = "sq_zaakafhandelparameters", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_zaakafhandelparameters")
@@ -76,6 +79,15 @@ public class ZaakafhandelParameters {
 
     @Column(name = "creatiedatum", nullable = false)
     private ZonedDateTime creatiedatum;
+
+    @Column(name = "intake_mail", nullable = false)
+    private String intakeMail;
+
+    @Column(name = "afronden_mail", nullable = false)
+    private String afrondenMail;
+
+    @Column(name = "productaanvraagtype")
+    private String productaanvraagtype;
 
     // The set is necessary for Hibernate when you have more than one eager collection on an entity.
     @OneToMany(mappedBy = "zaakafhandelParameters", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -221,6 +233,30 @@ public class ZaakafhandelParameters {
 
     public void setCreatiedatum(final ZonedDateTime creatiedatum) {
         this.creatiedatum = creatiedatum;
+    }
+
+    public String getIntakeMail() {
+        return intakeMail;
+    }
+
+    public void setIntakeMail(final String intakeMail) {
+        this.intakeMail = intakeMail;
+    }
+
+    public String getAfrondenMail() {
+        return afrondenMail;
+    }
+
+    public void setAfrondenMail(final String afrondenMail) {
+        this.afrondenMail = afrondenMail;
+    }
+
+    public String getProductaanvraagtype() {
+        return productaanvraagtype;
+    }
+
+    public void setProductaanvraagtype(final String productaanvraagtype) {
+        this.productaanvraagtype = productaanvraagtype;
     }
 
     /**

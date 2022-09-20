@@ -13,6 +13,7 @@ import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
+import net.atos.zac.app.zaken.model.RESTZaakStatusmailOptie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class RESTZaakafhandelParametersConverter {
@@ -67,6 +68,13 @@ public class RESTZaakafhandelParametersConverter {
             restZaakafhandelParameters.userEventListenerParameters = userEventListenerParametersConverter.convertUserEventListenerParametersCollection(
                     zaakafhandelParameters.getUserEventListenerParametersCollection(), restZaakafhandelParameters.caseDefinition.userEventListenerDefinitions);
         }
+        if(zaakafhandelParameters.getIntakeMail() != null) {
+            restZaakafhandelParameters.intakeMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getIntakeMail());
+        }
+        if(zaakafhandelParameters.getAfrondenMail() != null) {
+            restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getAfrondenMail());
+        }
+        restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
         restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertZaakbeeindigParameters(
                 zaakafhandelParameters.getZaakbeeindigParameters());
         return restZaakafhandelParameters;
@@ -81,6 +89,9 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroep.id);
         zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
         zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
+        zaakafhandelParameters.setIntakeMail(restZaakafhandelParameters.intakeMail.name());
+        zaakafhandelParameters.setAfrondenMail(restZaakafhandelParameters.afrondenMail.name());
+        zaakafhandelParameters.setProductaanvraagtype(restZaakafhandelParameters.productaanvraagtype);
         if (restZaakafhandelParameters.defaultBehandelaar != null) {
             zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaar.id);
         }

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
+
 export class Zaaktype {
     uuid: string;
     identificatie: string;
@@ -14,4 +16,5 @@ export class Zaaktype {
     beginGeldigheid: string;
     eindeGeldigheid: string;
     nuGeldig: boolean;
+    vertrouwelijkheidaanduiding: Vertrouwelijkheidaanduiding;
 }

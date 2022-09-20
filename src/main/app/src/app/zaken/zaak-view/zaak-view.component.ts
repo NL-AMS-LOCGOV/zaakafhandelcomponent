@@ -75,6 +75,12 @@ import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
+import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
+import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {CustomValidators} from '../../shared/validators/customValidators';
+import {MailObject} from '../../mail/model/mailobject';
+import {MailService} from '../../mail/mail.service';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -113,6 +119,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
 
+    onderwerp: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
+    body: string = 'Beste klant,\n' +
+        '\n' +
+        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
+
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
     private zaakTakenListener: WebsocketListener;
@@ -140,7 +155,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 private translate: TranslateService,
                 private locationService: LocationService,
                 private zaakKoppelenService: ZaakKoppelenService,
-                private bagService: BAGService) {
+                private bagService: BAGService,
+                private mailService: MailService) {
         super();
     }
 
@@ -231,67 +247,61 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private setEditableFormFields(): void {
         this.editFormFields.set('communicatiekanaal',
-            new SelectFormFieldBuilder().id('communicatiekanaal').label('communicatiekanaal')
-                                        .validators(Validators.required)
-                                        .value(this.zaak.communicatiekanaal)
-                                        .optionLabel('naam')
+            new SelectFormFieldBuilder(this.zaak.communicatiekanaal).id('communicatiekanaal').label('communicatiekanaal')
+                                                                    .validators(Validators.required)
+                                                                    .optionLabel('naam')
                                         .options(this.zakenService.listCommunicatiekanalen()).build());
 
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder().id('behandelaar').label('behandelaar')
-                                                                                 .value(this.zaak.behandelaar)
-                                                                                 .optionLabel('naam')
-                                                                                 .options(
-                                                                                     this.identityService.listUsers())
-                                                                                 .maxlength(50)
-                                                                                 .build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder().id('groep').label('groep')
-                                                                           .value(this.zaak.groep).optionLabel('naam')
-                                                                           .options(this.identityService.listGroups())
-                                                                           .maxlength(50)
-                                                                           .build());
-        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder().id('omschrijving').label('omschrijving')
-                                                                              .value(this.zaak.omschrijving)
-                                                                              .maxlength(80)
-                                                                              .build());
-        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder().id('toelichting').label('toelichting')
-                                                                             .value(this.zaak.toelichting)
-                                                                             .maxlength(1000).build());
+        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.zaak.behandelaar).id('behandelaar').label('behandelaar')
+                                                                                                      .optionLabel('naam')
+                                                                                                      .options(
+                                                                                                          this.identityService.listUsers())
+                                                                                                      .maxlength(50)
+                                                                                                      .build());
+        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder(this.zaak.groep).id('groep').label('groep')
+                                                                                          .optionLabel('naam')
+                                                                                          .options(this.identityService.listGroups())
+                                                                                          .maxlength(50)
+                                                                                          .build());
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
+                                                                                                    .maxlength(80)
+                                                                                                    .build());
+        this.editFormFields.set('toelichting', new TextareaFormFieldBuilder(this.zaak.toelichting).id('toelichting').label('toelichting')
+                                                                                                  .maxlength(1000).build());
         this.editFormFields.set('vertrouwelijkheidaanduiding',
-            new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
-                                        .validators(Validators.required)
-                                        .value({
-                                            label: this.translate.instant(
-                                                'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
-                                            value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
-                                        })
-                                        .optionLabel('label')
-                                        .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
-                                            Vertrouwelijkheidaanduiding)).build());
+            new SelectFormFieldBuilder(
+                {
+                    label: this.translate.instant(
+                        'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding),
+                    value: 'vertrouwelijkheidaanduiding.' + this.zaak.vertrouwelijkheidaanduiding
+                }).id('vertrouwelijkheidaanduiding').label('vertrouwelijkheidaanduiding')
+                  .validators(Validators.required)
+                  .optionLabel('label')
+                  .options(this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+                      Vertrouwelijkheidaanduiding)).build());
 
         this.editFormFields.set('startdatum',
-            new DateFormFieldBuilder().id('startdatum').label('startdatum')
-                                      .value(this.zaak.startdatum)
-                                      .validators(Validators.required).build());
+            new DateFormFieldBuilder(this.zaak.startdatum).id('startdatum').label('startdatum')
+                                                          .validators(Validators.required).build());
 
         this.editFormFields.set('einddatumGepland',
-            new DateFormFieldBuilder().id('einddatumGepland').label('einddatumGepland')
-                                      .value(this.zaak.einddatumGepland)
-                                      .readonly(!this.zaak.einddatumGepland)
-                                      .validators(this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator).build());
+            new DateFormFieldBuilder(this.zaak.einddatumGepland).id('einddatumGepland').label('einddatumGepland')
+                                                                .readonly(!this.zaak.einddatumGepland)
+                                                                .validators(this.zaak.einddatumGepland ? Validators.required : Validators.nullValidator)
+                                                                .build());
         this.editFormFieldIcons.set('einddatumGepland',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'warningVerlopen_icon',
                 'msg.datum.overschreden', 'warning'));
 
         this.editFormFields.set('uiterlijkeEinddatumAfdoening',
-            new DateFormFieldBuilder().id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
-                                      .value(this.zaak.uiterlijkeEinddatumAfdoening)
-                                      .validators(Validators.required)
-                                      .build());
+            new DateFormFieldBuilder(this.zaak.uiterlijkeEinddatumAfdoening).id('uiterlijkeEinddatumAfdoening').label('uiterlijkeEinddatumAfdoening')
+                                                                            .validators(Validators.required)
+                                                                            .build());
         this.editFormFieldIcons.set('uiterlijkeEinddatumAfdoening',
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
-        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').maxlength(80).build());
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').validators(Validators.required).maxlength(80).build());
     }
 
     private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {
@@ -488,17 +498,38 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                     .validators(Validators.required)
                                                     .maxlength(100)
                                                     .build();
+        const sendMail = new CheckboxFormFieldBuilder().id('sendMail')
+                                                       .label('sendMail')
+                                                       .build();
+        const ontvangerFormField = new InputFormFieldBuilder().id('ontvanger')
+                                                              .label('ontvanger')
+                                                              .validators(Validators.required, CustomValidators.email)
+                                                              .maxlength(200)
+                                                              .build();
+
+        const dialogFields: AbstractFormField[] = [radio];
+        this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
+            sendMail.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+            if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                sendMail.formControl.enable();
+                dialogFields.push(sendMail, ontvangerFormField);
+            }
+        });
 
         const dialogData: DialogData = new DialogData(
-            [radio],
-            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden']),
+            dialogFields,
+            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden'], results['sendMail'] ? results['ontvanger'] : null),
             null,
             planItem.toelichting);
         dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
 
         this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
             if (value) {
-                dialogData.formFields = value.value ? [radio] : [radio, reden];
+                if(value.value) {
+                    dialogData.formFields = dialogData.formFields.filter(ff => ff !== reden);
+                } else if (!dialogData.formFields.find(ff => ff === reden)) {
+                    dialogData.formFields = [radio, reden, ...dialogData.formFields.slice(1)];
+                }
             }
         }));
 
@@ -508,17 +539,30 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         };
     }
 
-    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string): Observable<void> {
+    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string, ontvanger: string|null): Observable<void> {
         const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
         userEventListenerData.zaakOntvankelijk = ontvankelijk;
         userEventListenerData.resultaatToelichting = toelichting;
+
+        this.onderwerp = this.onderwerp.replace('{zaaknr}', this.zaak.identificatie);
+        this.body = this.body.replace('{zaaktype naam}', this.zaak.zaaktype.identificatie)
+                        .replace('{zaaknr}', this.zaak.identificatie);
+        if (ontvanger !== null) {
+            const mailObject: MailObject = new MailObject();
+            mailObject.createDocumentFromMail = true;
+            mailObject.onderwerp = this.onderwerp;
+            mailObject.body = this.body;
+            mailObject.ontvanger = ontvanger;
+            this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {});
+        }
+
         return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
         return {
             dialogComponent: ZaakAfhandelenDialogComponent,
-            dialogData: { zaak: this.zaak, planItem: planItem }
+            dialogData: {zaak: this.zaak, planItem: planItem}
         };
     }
 
@@ -647,7 +691,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     editBehandelaar(event: any): void {
-        if (event.behandelaar) {
+        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+            this.assignZaakToMe(event);
+        } else if (event.behandelaar) {
             this.zaak.behandelaar = event.behandelaar;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
@@ -765,15 +811,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         this.allTakenExpanded = filter.length === 0;
     }
 
-    showAssignZaakToMe(zaak: Zaak): boolean {
-        return zaak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== zaak.behandelaar?.id;
-    }
-
     showAssignTaakToMe(taak: Taak): boolean {
         return taak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
-    assignZaakToMe(event: any): void {
+    private assignZaakToMe(event: any): void {
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenAanIngelogdeMedewerker(this.zaak, event.reden).subscribe(zaak => {
             this.init(zaak);

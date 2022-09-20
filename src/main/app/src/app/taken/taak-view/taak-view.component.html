@@ -46,9 +46,7 @@
                                                         (onSave)="editGroep($event)"></zac-edit-groep>
                                         <zac-edit-behandelaar [readonly]="!this.taak.acties.wijzigenToekenning"
                                                               [formField]="editFormFields.get('behandelaar')"
-                                                              (onSave)="editBehandelaar($event)"
-                                                              [showAssignToMe]="showAssignToMe()"
-                                                              (onAssignToMe)="assignToMe()">
+                                                              (onSave)="editBehandelaar($event)">
                                         </zac-edit-behandelaar>
                                     </div>
 
