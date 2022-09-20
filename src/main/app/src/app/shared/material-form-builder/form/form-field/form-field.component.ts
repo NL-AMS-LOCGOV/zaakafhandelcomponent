@@ -60,8 +60,10 @@ export class FormFieldComponent implements AfterViewInit {
         componentRef.instance.data = this._field.data;
         componentRef.changeDetectorRef.detectChanges();
         this.loaded = true;
-        this.valueChangesSubscription = this._field.data.formControl.valueChanges.subscribe(value => {
-            this.valueChanges.emit(value);
-        });
+        if (this._field.data.hasFormControl()) {
+            this.valueChangesSubscription = this._field.data.formControl.valueChanges.subscribe(value => {
+                this.valueChanges.emit(value);
+            });
+        }
     }
 }
