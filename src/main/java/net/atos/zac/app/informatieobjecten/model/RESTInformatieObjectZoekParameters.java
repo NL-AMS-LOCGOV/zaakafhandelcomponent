@@ -18,5 +18,5 @@ public class RESTInformatieObjectZoekParameters {
 
     public boolean toonGekoppeldeZaakDocumenten;
 
-    public boolean searchGekoppeldeZaak;
+    public boolean zaakOphalenVoorPolicyCheck;
 }
