@@ -108,7 +108,7 @@ default ondertekenen := false
 ondertekenen {
     enkelvoudig_informatieobject.zaak_open == true
     zaaktype_allowed
-    enkelvoudig_informatieobject.definitief == false
+    enkelvoudig_informatieobject.ondertekend == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
 
