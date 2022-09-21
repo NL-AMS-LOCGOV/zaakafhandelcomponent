@@ -9,7 +9,7 @@
     <mfb-form-field [field]="resultaatFormField"></mfb-form-field>
     <mfb-form-field *ngIf="data.zaak.besluit" [field]="besluitFormField"></mfb-form-field>
     <mfb-form-field [field]="toelichtingFormField"></mfb-form-field>
-    <mfb-form-field [field]="sendMailFormField"></mfb-form-field>
+    <mfb-form-field *ngIf="sendMailFormField.formControl.enabled" [field]="sendMailFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>
     <p *ngIf="sendMailFormField.formControl.value" class="readonly" [innerHTML]="body"></p>
 </div>
