@@ -55,8 +55,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     behandelaarControl = new FormControl();
     einddatumGeplandWaarschuwingControl = new FormControl();
     uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
-    intakeMailControl = new FormControl();
-    afrondenMailControl = new FormControl();
+    intakeMailControl = new FormControl(null, [Validators.required]);
+    afrondenMailControl = new FormControl(null, [Validators.required]);
     productaanvraagtypeControl = new FormControl();
     mailOpties: { label: string, value: string }[];
 
