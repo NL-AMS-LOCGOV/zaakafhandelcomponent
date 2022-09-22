@@ -145,6 +145,7 @@ public class PolicyService {
             enkelvoudigInformatieobjectData.zaakOpen = zaak.isOpen();
             enkelvoudigInformatieobjectData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         }
+        enkelvoudigInformatieobjectData.ondertekend = enkelvoudigInformatieobject.getOndertekening().getDatum() != null;
         return evaluationClient.readEnkelvoudigInformatieobjectActies(
                 new RuleQuery<>(new EnkelvoudigInformatieobjectInput(loggedInUserInstance.get(), enkelvoudigInformatieobjectData))).getResult();
     }

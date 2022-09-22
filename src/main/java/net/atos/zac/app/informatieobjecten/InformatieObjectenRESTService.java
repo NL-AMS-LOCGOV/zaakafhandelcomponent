@@ -196,7 +196,7 @@ public class InformatieObjectenRESTService {
             zaak = zrcClientService.readZaak(zoekParameters.zaakURI);
             result = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
         } else if (zoekParameters.UUIDs != null) {
-            return informatieobjectConverter.convertToREST(zoekParameters.UUIDs);
+            return informatieobjectConverter.convertToREST(zoekParameters.UUIDs, zoekParameters.zaakOphalenVoorPolicyCheck);
         } else {
             throw new IllegalStateException("Zoekparameters hebben geen waarde");
         }

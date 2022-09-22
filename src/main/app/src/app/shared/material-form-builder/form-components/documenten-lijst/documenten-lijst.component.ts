@@ -47,7 +47,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
                 document['viewLink'] = `/informatie-objecten/${document.uuid}`;
                 document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
-                if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid)) {
+                if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid) || document.ondertekening) {
                     this.teOndertekenenSelection.toggle(document);
                 }
             }

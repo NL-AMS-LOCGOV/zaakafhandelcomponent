@@ -9,4 +9,5 @@ export class EnkelvoudigInformatieObjectZoekParameters {
     UUIDs: string[];
     toonGekoppeldeZaakDocumenten: boolean;
     toegestaneInformatieObjectTypeUUIDs: string[];
+    zaakOphalenVoorPolicyCheck: boolean;
 }
