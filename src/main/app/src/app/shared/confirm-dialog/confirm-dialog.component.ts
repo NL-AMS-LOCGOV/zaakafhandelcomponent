@@ -24,8 +24,9 @@ export class ConfirmDialogComponent {
         if (this.data.observable) {
             this.loading = true;
             this.dialogRef.disableClose = true;
-            this.data.observable.subscribe(() => {
-                this.dialogRef.close(true);
+            this.data.observable.subscribe({
+                next: () => this.dialogRef.close(true),
+                error: () => this.dialogRef.close(false)
             });
         } else {
             this.dialogRef.close(true);
