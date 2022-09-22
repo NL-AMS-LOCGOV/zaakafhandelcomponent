@@ -30,6 +30,7 @@ import {InformatieObjectVerplaatsService} from '../../informatie-objecten/inform
 import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-objecten/model/gekoppelde.zaak.enkelvoudig.informatieobject';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
+import {Validators} from '@angular/forms';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -130,6 +131,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                 const dialogData = new DialogData([
                         new TextareaFormFieldBuilder().id('reden')
                                                       .label('reden')
+                                                      .validators(Validators.required)
                                                       .build()],
                     (results: any[]) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, results['reden']),
                     melding);
