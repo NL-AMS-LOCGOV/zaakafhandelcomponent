@@ -40,6 +40,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
+import net.atos.client.zgw.ztc.model.Besluittype;
+
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -205,8 +207,13 @@ public class InformatieObjectenRESTService {
             list.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
             result = list;
         }
-        if (zoekParameters.toegestaneInformatieObjectTypeUUIDs != null && zoekParameters.toegestaneInformatieObjectTypeUUIDs.length > 0) {
-            final List<UUID> compareList = List.of(zoekParameters.toegestaneInformatieObjectTypeUUIDs);
+        if (zoekParameters.ophalenVoorBesluitType != null) {
+            final Besluittype besluittype = ztcClientService.readBesluittype(zoekParameters.ophalenVoorBesluitType);
+            final List<UUID> compareList = besluittype.getInformatieobjecttypen().stream()
+                    .map(informatieobjectType -> {
+                        final String[] pathFragments = informatieobjectType.getPath().split("/");
+                        return UUID.fromString(pathFragments[pathFragments.length - 1]);
+                    }).toList();
             result = result.stream()
                     .filter(enkelvoudigInformatieObject -> compareList.contains(enkelvoudigInformatieObject.informatieobjectTypeUUID))
                     .collect(Collectors.toList());

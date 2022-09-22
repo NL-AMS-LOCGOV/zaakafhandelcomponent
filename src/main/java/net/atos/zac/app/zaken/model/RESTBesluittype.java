@@ -17,6 +17,6 @@ public class RESTBesluittype {
 
     public String toelichting;
 
-    public List<URI> informatieObjectTypen;
+    public List<URI> informatieobjecttypen;
 
 }

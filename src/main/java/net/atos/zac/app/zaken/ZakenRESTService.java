@@ -16,8 +16,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -42,8 +40,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.client.zgw.brc.model.BesluitInformatieobject;
-
-import net.atos.zac.util.UriUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -637,7 +633,7 @@ public class ZakenRESTService {
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
-        besluitToevoegenGegevens.documenten.forEach(documentUri -> {
+        besluitToevoegenGegevens.informatieobjecten.forEach(documentUri -> {
             final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
             final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(resultaat.url, informatieobject.getUrl());
             brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);

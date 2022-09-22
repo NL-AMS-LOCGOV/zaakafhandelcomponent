@@ -24,6 +24,7 @@ import {Besluittype} from '../model/besluittype';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {Besluit} from '../model/besluit';
 
 @Component({
     selector: 'zac-besluit-create',
@@ -67,7 +68,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             (vervaldatumField as DateFormField).minDate = value;
         });
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            zoekparameters.toegestaneInformatieObjectTypeUUIDs = value.informatieObjectTypen.map(x => x.split("/").pop());
+            zoekparameters.ophalenVoorBesluitType = (value as Besluit).besluittype.id;
             this.zoekparameters$.next(zoekparameters);
         });
     }

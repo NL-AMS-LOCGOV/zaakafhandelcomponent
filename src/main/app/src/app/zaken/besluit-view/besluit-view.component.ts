@@ -7,11 +7,9 @@ import {Component, Input, OnInit} from '@angular/core';
 
 import {Besluit} from '../model/besluit';
 import {ZakenService} from '../zaken.service';
-import {map, shareReplay} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
+import {shareReplay} from 'rxjs/operators';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DocumentenLijstFormField} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-form-field';
 
 @Component({
     selector: 'zac-besluit-view',
@@ -21,7 +19,7 @@ import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/fo
 export class BesluitViewComponent implements OnInit {
     @Input() besluit: Besluit;
 
-    besluitInformatieobjecten: AbstractFormField;
+    besluitInformatieobjecten: DocumentenLijstFormField;
 
     constructor(private zakenService: ZakenService) {
     }
@@ -36,7 +34,7 @@ export class BesluitViewComponent implements OnInit {
                                                                           .documenten(besluitInformatieobjectenList)
                                                                           .verbergStatus()
                                                                           .readonly(true)
-                                                                          .build();
+                                                                          .build() as DocumentenLijstFormField;
 
     }
 }

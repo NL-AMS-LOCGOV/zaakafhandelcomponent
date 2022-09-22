@@ -16,9 +16,9 @@ public class RESTInformatieObjectZoekParameters {
 
     public UUID[] UUIDs;
 
-    public boolean toonGekoppeldeZaakDocumenten;
+    public UUID ophalenVoorBesluitType;
 
-    public UUID[] toegestaneInformatieObjectTypeUUIDs;
+    public boolean toonGekoppeldeZaakDocumenten;
 
     public boolean zaakOphalenVoorPolicyCheck;
 }
