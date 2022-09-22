@@ -68,7 +68,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             (vervaldatumField as DateFormField).minDate = value;
         });
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            zoekparameters.ophalenVoorBesluitType = (value as Besluit).besluittype.id;
+            zoekparameters.ophalenVoorBesluitType = (value as Besluittype).id;
             this.zoekparameters$.next(zoekparameters);
         });
     }
