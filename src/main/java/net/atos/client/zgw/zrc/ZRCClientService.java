@@ -380,7 +380,7 @@ public class ZRCClientService {
 
         final String toelichting = "%s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
-        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst: ");
+        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst");
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
         eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }

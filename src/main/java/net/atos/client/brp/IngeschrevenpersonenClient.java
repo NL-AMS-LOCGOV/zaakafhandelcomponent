@@ -47,7 +47,7 @@ import net.atos.client.brp.util.JsonbConfiguration;
 })
 @Produces({"application/hal+json", "application/problem+json"})
 @Path("api/brp/ingeschrevenpersonen")
-@Timeout(unit = ChronoUnit.SECONDS, value = 5)
+@Timeout(unit = ChronoUnit.SECONDS, value = 10)
 public interface IngeschrevenpersonenClient {
 
     /**

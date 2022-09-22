@@ -20,4 +20,6 @@ public class EnkelvoudigInformatieobjectData {
 
     @JsonbProperty("zaak_open")
     public Boolean zaakOpen;
+
+    public boolean ondertekend;
 }

@@ -81,6 +81,7 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {MailObject} from '../../mail/model/mailobject';
 import {MailService} from '../../mail/mail.service';
+import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -509,8 +510,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         const dialogFields: AbstractFormField[] = [radio];
         this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
-            sendMail.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
-            if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+            sendMail.formControl.setValue(zaakafhandelParameters.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+            if(zaakafhandelParameters.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
                 sendMail.formControl.enable();
                 dialogFields.push(sendMail, ontvangerFormField);
             }

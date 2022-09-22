@@ -25,6 +25,7 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.configuratie.converter.RESTTaalConverter;
 import net.atos.zac.app.configuratie.model.RESTTaal;
@@ -272,10 +273,22 @@ public class RESTInformatieobjectConverter {
         return enkelvoudigInformatieobjectWithInhoudAndLock;
     }
 
-    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs) {
+    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs, final boolean searchGekoppeldeZaak) {
         return Arrays.stream(enkelvoudigInformatieobjectUUIDs)
-                .map(drcClientService::readEnkelvoudigInformatieobject)
-                .map(this::convertToREST)
+                .map(uuid -> {
+                    final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+                    Zaak zaak = null;
+                    if(searchGekoppeldeZaak) {
+                        final ZaakInformatieobjectListParameters params = new ZaakInformatieobjectListParameters();
+                        params.setInformatieobject(informatieobject.getUrl());
+                        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(params);
+                        final UUID zaakUUID = zaakInformatieobjecten.size() > 0 ?
+                                zaakInformatieobjecten.get(0).getZaakUUID() :
+                                null;
+                        zaak = zrcClientService.readZaak(zaakUUID);
+                    }
+                    return convertToREST(informatieobject, zaak);
+                })
                 .toList();
     }
 

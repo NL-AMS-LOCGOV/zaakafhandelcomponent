@@ -8,6 +8,7 @@ import {catchError} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
+import {Observable} from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,7 @@ export class CsvService {
 
     private basepath = '/rest/csv';
 
-    exportToCSV(zoekParameters: ZoekParameters) {
+    exportToCSV(zoekParameters: ZoekParameters): Observable<Blob> {
         return this.http.post(`${this.basepath}/export`, zoekParameters, {responseType: 'blob'}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

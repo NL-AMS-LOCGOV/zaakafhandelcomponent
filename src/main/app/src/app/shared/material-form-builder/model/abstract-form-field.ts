@@ -6,7 +6,6 @@
 import {FormControl, FormControlOptions} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldHint} from './form-field-hint';
-import {first, isObservable, Observable} from 'rxjs';
 
 export abstract class AbstractFormField {
     id: string;
@@ -37,5 +36,9 @@ export abstract class AbstractFormField {
 
     initFormControl(value?: any): void {
         this.formControl = new FormControl(value, this.formControlOptions);
+    }
+
+    hasFormControl(): boolean {
+        return this.formControl != null;
     }
 }

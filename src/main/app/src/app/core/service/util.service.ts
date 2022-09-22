@@ -124,7 +124,7 @@ export class UtilService {
                      );
     }
 
-    downloadBlobResponse(response: Response, fileName: string) {
+    downloadBlobResponse(response: Blob, fileName: string) {
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(response);
         link.download = fileName;
