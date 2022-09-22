@@ -37,4 +37,8 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
         this.formField.verbergStatus = true;
         return this;
     }
+
+    build() {
+        return this.formField;
+    }
 }

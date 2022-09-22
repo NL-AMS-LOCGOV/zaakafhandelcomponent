@@ -34,7 +34,7 @@ export class BesluitViewComponent implements OnInit {
                                                                           .documenten(besluitInformatieobjectenList)
                                                                           .verbergStatus()
                                                                           .readonly(true)
-                                                                          .build() as DocumentenLijstFormField;
+                                                                          .build();
 
     }
 }
