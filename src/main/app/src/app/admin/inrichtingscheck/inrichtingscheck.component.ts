@@ -40,6 +40,7 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
     valideFilter: ToggleSwitchOptions = ToggleSwitchOptions.UNCHECKED;
     filterValue: string = '';
     bestaatCommunicatiekanaalEformulier: boolean;
+    ztcCacheTime: string;
 
     constructor(private healtCheckService: HealthCheckService, public utilService: UtilService) {
         super(utilService);
@@ -80,12 +81,9 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
             this.bestaatCommunicatiekanaalEformulier = value;
         });
 
-        this.healtCheckService.listZaaktypeInrichtingschecks().subscribe(value => {
-            this.loadingZaaktypes = false;
-            this.dataSource.data = value.sort((a, b) =>
-                a.zaaktype.omschrijving.localeCompare(b.zaaktype.omschrijving)
-            );
-            this.applyFilter();
+        this.checkZaaktypes();
+        this.healtCheckService.getZTCCacheTime().subscribe(value => {
+            this.ztcCacheTime = value;
         });
     }
 
@@ -97,5 +95,26 @@ export class InrichtingscheckComponent extends AdminComponent implements OnInit,
         } else { // toggleSwitch
             this.dataSource.filter = ' ' + this.filterValue;
         }
+    }
+
+    clearZTCCache($event: MouseEvent) {
+        $event.stopPropagation();
+        this.healtCheckService.clearZTCCache().subscribe(value => {
+            this.ztcCacheTime = value;
+            this.checkZaaktypes();
+        });
+    }
+
+    checkZaaktypes() {
+        this.loadingZaaktypes = true;
+        this.dataSource.data = [];
+        this.healtCheckService.listZaaktypeInrichtingschecks().subscribe(value => {
+            this.loadingZaaktypes = false;
+            this.dataSource.data = value.sort((a, b) =>
+                a.zaaktype.omschrijving.localeCompare(b.zaaktype.omschrijving)
+            );
+            this.applyFilter();
+        });
+
     }
 }
