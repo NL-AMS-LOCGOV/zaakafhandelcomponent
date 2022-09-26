@@ -26,6 +26,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class EnkelvoudigInformatieObjectDownloadService {
+    private static final String RICHTING_INKOMEND = "inkomend";
+    private static final String RICHTING_UITGAAND = "uitgaand";
+    private static final String RICHTING_INTERN = "intern";
+    private static final String SAMENVATTING_BESTANDSNAAM = "samenvatting.txt";
 
     @Inject
     private DRCClientService drcClientService;
@@ -33,27 +37,21 @@ public class EnkelvoudigInformatieObjectDownloadService {
     @Inject
     private ZRCClientService zrcClientService;
 
-    private static final String ZAAK_ONTKOPPELD = "ontkoppeld";
-    private static final String RICHTING_INKOMEND = "inkomend";
-    private static final String RICHTING_UITGAAND = "uitgaand";
-    private static final String RICHTING_INTERN = "intern";
-    private static final String SAMENVATTING_BESTANDSNAAM = "samenvatting.txt";
-
     /**
      * Retourneer {@link StreamingOutput} zip-bestand met informatieobjecten en samenvatting
      *
      * @param uuids {@link UUID}s van op te halen informatieobjecten
      * @return het zip-bestand
      */
-    public StreamingOutput getZipFileFor(final List<UUID> uuids) {
+    public StreamingOutput getZipStreamOutput(final List<UUID> uuids) {
         return outputStream -> {
-            try (ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream))) {
-                Map<String, Map<String, List<String>>> samenvatting = new HashMap<>();
+            try (final ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream))) {
+                final Map<String, Map<String, List<String>>> samenvatting = new HashMap<>();
                 uuids.forEach(uuid -> {
-                    String pad = addInformatieObjectToZip(uuid, zipOutputStream);
-                    addInformatieObjectToSummary(pad, samenvatting);
+                    final String pad = addInformatieObjectToZip(uuid, zipOutputStream);
+                    samenvattingAddInformatieObject(pad, samenvatting);
                 });
-                addSamenvattingToZip(samenvatting, zipOutputStream);
+                zipAddSamenvatting(samenvatting, zipOutputStream);
                 zipOutputStream.finish();
             }
             outputStream.flush();
@@ -68,9 +66,9 @@ public class EnkelvoudigInformatieObjectDownloadService {
      * @param zipOutputStream {@link ZipOutputStream} van het te updaten zip-bestand
      * @return {@link String} pad naar het toegevoegde bestand in het zip-bestand
      */
-    private String addInformatieObjectToZip(final UUID uuid, ZipOutputStream zipOutputStream) {
-        final String path = getInformatieObjectZipPath(uuid);
-        final ZipEntry zipEntry = new ZipEntry(path);
+    private String addInformatieObjectToZip(final UUID uuid, final ZipOutputStream zipOutputStream) {
+        final String pad = getInformatieObjectZipPath(uuid);
+        final ZipEntry zipEntry = new ZipEntry(pad);
         try {
             zipOutputStream.putNextEntry(zipEntry);
             zipOutputStream.write(getInformatieObjectInhoud(uuid));
@@ -78,7 +76,7 @@ public class EnkelvoudigInformatieObjectDownloadService {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        return path;
+        return pad;
     }
 
     /**
@@ -101,11 +99,9 @@ public class EnkelvoudigInformatieObjectDownloadService {
     private String getInformatieObjectZipPath(final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
         final List<ZaakInformatieobject> zaakInformatieObjectenList = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
-        String zaakId = ZAAK_ONTKOPPELD;
-        if(zaakInformatieObjectenList.size() > 0) {
-            final URI zaakUri = zaakInformatieObjectenList.get(0).getZaak();
-            zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
-        }
+        assert(zaakInformatieObjectenList.size() > 0);
+        final URI zaakUri = zaakInformatieObjectenList.get(0).getZaak();
+        final String zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
         final String subfolder = enkelvoudigInformatieobject.getOntvangstdatum() != null ?
                 RICHTING_INKOMEND :
                 enkelvoudigInformatieobject.getVerzenddatum() != null ?
@@ -126,11 +122,11 @@ public class EnkelvoudigInformatieObjectDownloadService {
      * @param pad {@link String} pad naar het informatieobject
      * @param samenvatting {@link Map} samenvatting van het zip-bestand
      */
-    private void addInformatieObjectToSummary(final String pad, Map<String, Map<String, List<String>>> samenvatting) {
-        final String[] padParts = pad.split("/");
-        final String zaakId = padParts[0];
-        final String richting = padParts[1];
-        final String bestandsnaam = padParts[2];
+    private void samenvattingAddInformatieObject(final String pad, final Map<String, Map<String, List<String>>> samenvatting) {
+        final String[] padDelen = pad.split("/");
+        final String zaakId = padDelen[0];
+        final String richting = padDelen[1];
+        final String bestandsnaam = padDelen[2];
 
         // Voeg zaak toe aan samenvatting als deze nog niet bestaat
         if(!samenvatting.containsKey(zaakId)) {
@@ -153,29 +149,29 @@ public class EnkelvoudigInformatieObjectDownloadService {
      * @param samenvatting {@link Map} samenvatting van bestanden in het zip-bestand
      * @param zipOutputStream {@link ZipOutputStream} van het te updaten zip-bestand
      */
-    private void addSamenvattingToZip(Map<String, Map<String, List<String>>> samenvatting, ZipOutputStream zipOutputStream) {
+    private void zipAddSamenvatting(final Map<String, Map<String, List<String>>> samenvatting, final ZipOutputStream zipOutputStream) {
         final ZipEntry zipEntry = new ZipEntry(SAMENVATTING_BESTANDSNAAM);
         final StringBuilder stringBuilder = new StringBuilder();
-        for(String zaak : samenvatting.keySet()) {
+
+        samenvatting.forEach((zaak, richtingen) -> {
             stringBuilder.append(zaak);
             stringBuilder.append(":\n");
-            final Map<String, List<String>> zaakRichtingen = samenvatting.get(zaak);
-            for(String richting : zaakRichtingen.keySet()) {
+            richtingen.forEach((richting, bestanden) -> {
                 stringBuilder.append('\t');
                 stringBuilder.append(richting);
                 stringBuilder.append(":\n");
-                for(String bestand : zaakRichtingen.get(richting)) {
+                bestanden.forEach(bestand -> {
                     stringBuilder.append("\t  - ");
                     stringBuilder.append(bestand);
                     stringBuilder.append("\n");
-                }
-            }
+                });
+            });
             stringBuilder.append('\n');
-        }
-        final byte[] samenvattingInhoud = stringBuilder.toString().getBytes();
+        });
+
         try {
             zipOutputStream.putNextEntry(zipEntry);
-            zipOutputStream.write(samenvattingInhoud);
+            zipOutputStream.write(stringBuilder.toString().getBytes());
             zipOutputStream.closeEntry();
         } catch (final IOException e) {
             throw new RuntimeException(e);

@@ -340,7 +340,7 @@ public class InformatieObjectenRESTService {
     public Response readFilesAsZip(final List<String> uuids) {
         final List<UUID> uuidList = uuids.stream().map(UUID::fromString).toList();
         uuidList.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getDownloaden()));
-        final StreamingOutput streamingOutput = enkelvoudigInformatieObjectDownloadService.getZipFileFor(uuidList);
+        final StreamingOutput streamingOutput = enkelvoudigInformatieObjectDownloadService.getZipStreamOutput(uuidList);
         return Response.ok(streamingOutput)
                 .header("Content-Type","application/zip")
                 .build();
