@@ -65,6 +65,7 @@ public class ZaakafhandelParameterBeheerService {
     }
 
     public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
+        ztcClientService.readCacheTime();
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);

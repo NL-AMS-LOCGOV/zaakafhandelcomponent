@@ -31,4 +31,17 @@ export class HealthCheckService {
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
+
+    clearZTCCache(): Observable<string> {
+        return this.http.delete<string>(`${this.basepath}/ztc-cache`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    getZTCCacheTime(): Observable<string> {
+        return this.http.get<string>(`${this.basepath}/ztc-cache`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
 }

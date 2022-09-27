@@ -5,11 +5,13 @@
 
 package net.atos.zac.app.admin;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -54,6 +56,26 @@ public class HealthCheckRESTService {
         return healthCheckService.bestaatCommunicatiekanaalEformulier();
     }
 
+    @DELETE
+    @Path("ztc-cache")
+    public ZonedDateTime clearZTCCaches() {
+        ztcClientService.clearZaaktypeCache();
+        ztcClientService.clearStatustypeCache();
+        ztcClientService.clearResultaattypeCache();
+        ztcClientService.clearInformatieobjecttypeCache();
+        ztcClientService.clearZaaktypeInformatieobjecttypeCache();
+        ztcClientService.clearBesluittypeCache();
+        ztcClientService.clearRoltypeCache();
+        ztcClientService.clearCacheTime();
+        return ztcClientService.readCacheTime();
+    }
+
+    @GET
+    @Path("ztc-cache")
+    public ZonedDateTime getZTCCacheTime() {
+        return ztcClientService.readCacheTime();
+    }
+
     private List<Zaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI()).stream()
                 .filter(zaaktype -> !zaaktype.getConcept())
@@ -80,5 +102,4 @@ public class HealthCheckRESTService {
         restCheck.valide = check.isValide();
         return restCheck;
     }
-
 }

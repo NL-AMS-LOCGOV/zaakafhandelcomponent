@@ -18,39 +18,23 @@ import java.util.logging.Logger;
 public interface Caching {
     Logger LOG = Logger.getLogger(Caching.class.getName());
 
+    String ZTC_CACHE_TIME = "ztc-cache-datetime";
+
     String ZTC_RESULTAATTYPE = "ztc-resultaattype";
 
     String ZTC_BESLUITTYPE = "ztc-besluittype";
 
     String ZTC_STATUSTYPE = "ztc-statustype";
 
-    String ZTC_ZAAKTYPE = "ztc-zaaktype";
-
     String ZTC_INFORMATIEOBJECTTYPE = "ztc-informatieobjecttype";
 
-    // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_MANAGED = "ztc-zaaktype-managed";
+    String ZTC_ZAAKTYPE = "ztc-zaaktype";
 
-    // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED = "ztc-zaaktype-informatieobjecttype-managed";
+    String ZTC_ROLTYPE = "ztc-roltype";
 
-    // Deze cache is managed (alleen URI en UUID als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_ZAAKTYPE_INFORMATIEOBJECTTYPE_MANAGED = "ztc-zaaktype-zaaktypeinformatieobjecttype-managed";
+    String ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE = "ztczaaktypeinformatieobjecttype";
 
-    // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_RESULTAATTYPE_MANAGED = "ztc-zaaktype-resultaattype-managed";
-
-    String ZTC_ZAAKTYPE_ROLTYPE = "ztc-zaaktype-roltype";
-
-    // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_STATUSTYPE_MANAGED = "ztc-zaaktype-statustype-managed";
-
-    // Deze cache is managed (alleen zaaktype URI als sleutel gebruiken!)
-    String ZTC_ZAAKTYPE_BESLUITTYPE_MANAGED = "ztc-zaaktype-besluittype-managed";
-
-    String ZTC_ZAAKTYPE_URL = "ztc-zaaktype-url";
-
-    abstract List<String> cacheNames();
+    List<String> cacheNames();
 
     default String cleared(final String cache) {
         final String message = String.format("%s cache cleared", cache);
