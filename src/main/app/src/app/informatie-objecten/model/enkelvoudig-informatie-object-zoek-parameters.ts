@@ -7,6 +7,7 @@ export class EnkelvoudigInformatieObjectZoekParameters {
     zaakURI: string;
     zaakUUID: string;
     UUIDs: string[];
+    ophalenVoorBesluitType: string;
     toonGekoppeldeZaakDocumenten: boolean;
     zaakOphalenVoorPolicyCheck: boolean;
 }

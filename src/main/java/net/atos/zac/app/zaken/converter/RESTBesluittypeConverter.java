@@ -25,6 +25,7 @@ public class RESTBesluittypeConverter {
         restBesluittype.id = UriUtil.uuidFromURI(besluittype.getUrl());
         restBesluittype.naam = besluittype.getOmschrijving();
         restBesluittype.toelichting = besluittype.getToelichting();
+        restBesluittype.informatieobjecttypen = besluittype.getInformatieobjecttypen();
         return restBesluittype;
     }
 
