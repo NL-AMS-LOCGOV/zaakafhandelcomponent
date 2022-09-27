@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.http.HttpSession;
@@ -29,6 +30,8 @@ import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
 
 public class WebdavStore implements IWebdavStore {
+
+    private static final Logger LOG = Logger.getLogger(WebdavStore.class.getName());
 
     private static final StoredObject folderStoredObject;
 
@@ -98,7 +101,12 @@ public class WebdavStore implements IWebdavStore {
             final WebdavHelper.Gegevens webdavGegevens = webdavHelper.readGegevens(token);
             boolean tempLock = false;
             try {
-                SecurityUtil.setLoggedInUser(CDI.current().select(HttpSession.class).get(), webdavGegevens.loggedInUser());
+                final HttpSession httpSession = CDI.current().select(HttpSession.class).get();
+                if (httpSession == null || SecurityUtil.getLoggedInUser(httpSession) == null) {
+                    LOG.info(SecurityUtil.log("setResourceContent", httpSession));
+                }
+                SecurityUtil.setLoggedInUser(httpSession, webdavGegevens.loggedInUser());
+                LOG.info(SecurityUtil.log("setResourceContent.setLoggedInUser", httpSession));
                 final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
                         drcClientService.readEnkelvoudigInformatieobject(webdavGegevens.enkelvoudigInformatieibjectUUID());
                 final EnkelvoudigInformatieObjectLock enkelvoudigInformatieObjectLock;
