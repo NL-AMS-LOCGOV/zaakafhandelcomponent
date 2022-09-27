@@ -5,8 +5,6 @@
 
 package net.atos.zac.authentication;
 
-import java.util.logging.Logger;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.servlet.ServletRequest;
@@ -18,8 +16,6 @@ import javax.servlet.http.HttpSession;
 
 @WebListener
 public class ServletRequestProducingListener implements ServletRequestListener {
-
-    private static final Logger LOG = Logger.getLogger(ServletRequestProducingListener.class.getName());
 
     private static final ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<>();
 
@@ -38,10 +34,6 @@ public class ServletRequestProducingListener implements ServletRequestListener {
     @ActiveSession
     public HttpSession getActiveSession() {
         final HttpServletRequest httpServletRequest = (HttpServletRequest) SERVLET_REQUESTS.get();
-        final HttpSession httpSession = httpServletRequest != null ? httpServletRequest.getSession(false) : null;
-        if (httpSession == null || SecurityUtil.getLoggedInUser(httpSession) == null) {
-            LOG.info(SecurityUtil.log("getActiveSession", httpSession));
-        }
-        return httpSession;
+        return httpServletRequest != null ? httpServletRequest.getSession(false) : null;
     }
 }
