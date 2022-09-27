@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class RESTBesluitVastleggenGegevens {
@@ -21,4 +22,6 @@ public class RESTBesluitVastleggenGegevens {
     public LocalDate ingangsdatum;
 
     public LocalDate vervaldatum;
+
+    public List<UUID> informatieobjecten;
 }

@@ -15,6 +15,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -149,6 +152,8 @@ public class ZakenRESTService {
     private static final String HERVATTING = "Hervatting";
 
     private static final String VERLENGING = "Verlenging";
+
+    private static final String AANMAKEN_BESLUIT = "Aanmaken besluit";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -627,7 +632,23 @@ public class ZakenRESTService {
         assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
-        return besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
+        final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
+        besluitToevoegenGegevens.informatieobjecten.forEach(documentUri -> {
+            final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
+            final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(resultaat.url, informatieobject.getUrl());
+            brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);
+        });
+        return resultaat;
+    }
+
+    @GET
+    @Path("listBesluitInformatieobjecten/{besluit}")
+    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final UUID besluit) {
+        //TODO: Vervang UUID -> URI d.m.v. readBesluit voor URI-opbouw-methode van issue #1413
+        final URI besluitUri = brcClientService.readBesluit(besluit).getUrl();
+        return brcClientService.listBesluitInformatieobjecten(besluitUri).stream()
+                .map(x -> drcClientService.readEnkelvoudigInformatieobject(x.getInformatieobject()))
+                .collect(Collectors.toList());
     }
 
     @GET

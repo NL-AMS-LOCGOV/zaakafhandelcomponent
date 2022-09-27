@@ -40,6 +40,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
+import net.atos.client.zgw.ztc.model.Besluittype;
+
+import net.atos.zac.util.UriUtil;
+
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -187,7 +191,7 @@ public class InformatieObjectenRESTService {
     @PUT
     @Path("informatieobjectenList")
     public List<RESTEnkelvoudigInformatieobject> listEnkelvoudigInformatieobjecten(final RESTInformatieObjectZoekParameters zoekParameters) {
-        final List<RESTEnkelvoudigInformatieobject> result;
+        List<RESTEnkelvoudigInformatieobject> result;
         final Zaak zaak;
         if (zoekParameters.zaakUUID != null) {
             zaak = zrcClientService.readZaak(zoekParameters.zaakUUID);
@@ -203,7 +207,14 @@ public class InformatieObjectenRESTService {
         if (zoekParameters.toonGekoppeldeZaakDocumenten) {
             final List<RESTEnkelvoudigInformatieobject> list = new ArrayList<>(result);
             list.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
-            return list;
+            result = list;
+        }
+        if (zoekParameters.ophalenVoorBesluitType != null) {
+            final Besluittype besluittype = ztcClientService.readBesluittype(zoekParameters.ophalenVoorBesluitType);
+            final List<UUID> compareList = besluittype.getInformatieobjecttypen().stream().map(UriUtil::uuidFromURI).toList();
+            result = result.stream()
+                    .filter(enkelvoudigInformatieObject -> compareList.contains(enkelvoudigInformatieObject.informatieobjectTypeUUID))
+                    .collect(Collectors.toList());
         }
         return result;
     }

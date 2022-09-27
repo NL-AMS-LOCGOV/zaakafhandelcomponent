@@ -34,10 +34,13 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.data.readonly) {
-            this.columns.splice(this.columns.indexOf('select'), 1);
+            this.removeColumn('select')
         }
         if (!this.data.ondertekenen) {
-            this.columns.splice(this.columns.indexOf('ondertekenen'), 1);
+            this.removeColumn('ondertekenen');
+        }
+        if (this.data.verbergStatus) {
+            this.removeColumn('status');
         }
         this.data.documenten$.subscribe(documenten => {
             for (const document of documenten) {
@@ -73,5 +76,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
             this.teOndertekenenSelection.toggle(document);
             this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
         }
+    }
+
+    removeColumn(id: string) {
+        this.columns.splice(this.columns.indexOf(id), 1);
     }
 }
