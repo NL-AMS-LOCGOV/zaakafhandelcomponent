@@ -508,17 +508,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                               .maxlength(200)
                                                               .build();
 
-        const dialogFields: AbstractFormField[] = [radio];
-        this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
-            sendMail.formControl.setValue(zaakafhandelParameters.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
-            if(zaakafhandelParameters.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
-                sendMail.formControl.enable();
-                dialogFields.push(sendMail, ontvangerFormField);
-            }
-        });
-
         const dialogData: DialogData = new DialogData(
-            dialogFields,
+            [radio],
             (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden'], results['sendMail'] ? results['ontvanger'] : null),
             null,
             planItem.toelichting);
@@ -530,8 +521,24 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                     dialogData.formFields = dialogData.formFields.filter(ff => ff !== reden);
                 } else if (!dialogData.formFields.find(ff => ff === reden)) {
                     dialogData.formFields = [radio, reden, ...dialogData.formFields.slice(1)];
+                    // Nodig om te zorgen dat `reden` direct verplicht is
+                    dialogData.formFields.forEach(ff => ff.formControl.updateValueAndValidity());
                 }
             }
+        }));
+        this.dialogSubscriptions.push(sendMail.formControl.valueChanges.subscribe(value => {
+            if(!value) {
+                dialogData.formFields = dialogData.formFields.filter(ff => ff !== ontvangerFormField);
+            } else if (!dialogData.formFields.find(ff => ff === ontvangerFormField)) {
+                dialogData.formFields = [...dialogData.formFields, ontvangerFormField];
+            }
+        }));
+        this.dialogSubscriptions.push(this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
+            if(zaakafhandelParameters.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                sendMail.formControl.enable();
+                dialogData.formFields = [...dialogData.formFields, sendMail];
+            }
+            sendMail.formControl.setValue(zaakafhandelParameters.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
         }));
 
         return {
