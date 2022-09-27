@@ -121,13 +121,13 @@ public class ProductAanvraagService {
 
     private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
         if (bsn != null) {
-            final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
+            final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
             final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
             zrcClientService.createRol(rolNatuurlijkPersoon);
         } else {
             final ResultaatItem hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
             if (hoofdvestiging != null) {
-                final Roltype initiator = ztcClientService.readRoltype(zaaktype, AardVanRol.INITIATOR);
+                final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
                 final RolVestiging rolVestiging = new RolVestiging(zaak, initiator.getUrl(), ROL_TOELICHTING,
                                                                    new net.atos.client.zgw.zrc.model.Vestiging(hoofdvestiging.getVestigingsnummer()));
                 zrcClientService.createRol(rolVestiging);
@@ -171,7 +171,7 @@ public class ProductAanvraagService {
         final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
         groep.setIdentificatie(group.getId());
         groep.setNaam(group.getName());
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
         return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
     }
 
@@ -181,7 +181,7 @@ public class ProductAanvraagService {
         medewerker.setIdentificatie(user.getId());
         medewerker.setVoorletters(user.getFirstName());
         medewerker.setAchternaam(user.getLastName());
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 

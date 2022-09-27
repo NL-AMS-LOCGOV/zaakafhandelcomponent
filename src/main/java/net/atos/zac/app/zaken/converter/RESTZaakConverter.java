@@ -193,7 +193,7 @@ public class RESTZaakConverter {
 
     public Zaak convert(final RESTZaak restZaak) {
 
-        final Zaak zaak = new Zaak(ztcClientService.readZaaktypeUrl(restZaak.zaaktype.identificatie), restZaak.startdatum,
+        final Zaak zaak = new Zaak(ztcClientService.readZaaktype(restZaak.zaaktype.uuid).getUrl(), restZaak.startdatum,
                                    ConfiguratieService.BRON_ORGANISATIE, ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);

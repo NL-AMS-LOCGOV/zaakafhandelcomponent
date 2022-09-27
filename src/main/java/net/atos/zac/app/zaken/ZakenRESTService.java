@@ -675,7 +675,7 @@ public class ZakenRESTService {
         final OrganisatorischeEenheid groep = new OrganisatorischeEenheid();
         groep.setIdentificatie(group.getId());
         groep.setNaam(group.getName());
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
         return new RolOrganisatorischeEenheid(zaak.getUrl(), roltype.getUrl(), "groep", groep);
     }
 
@@ -684,7 +684,7 @@ public class ZakenRESTService {
         medewerker.setIdentificatie(user.getId());
         medewerker.setVoorletters(user.getFirstName());
         medewerker.setAchternaam(user.getLastName());
-        final Roltype roltype = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.BEHANDELAAR);
+        final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
 
@@ -702,7 +702,7 @@ public class ZakenRESTService {
     }
 
     private void addInitiator(final IdentificatieType identificatieType, final String identificatie, final Zaak zaak) {
-        final Roltype initiator = ztcClientService.readRoltype(zaak.getZaaktype(), AardVanRol.INITIATOR);
+        final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaak.getZaaktype());
         switch (identificatieType) {
             case BSN -> {
                 assertActie(policyService.readZaakActies(zaak).getToevoegenInitiatorPersoon());
