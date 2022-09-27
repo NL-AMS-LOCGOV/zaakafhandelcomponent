@@ -9,7 +9,6 @@ import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAA
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -18,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -161,6 +158,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private EnkelvoudigInformatieObjectOndertekenService enkelvoudigInformatieObjectOndertekenService;
+
+    @Inject
+    private EnkelvoudigInformatieObjectDownloadService enkelvoudigInformatieObjectDownloadService;
 
     @GET
     @Path("informatieobject/{uuid}")
@@ -349,49 +349,9 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/download/zip")
     public Response readFilesAsZip(final List<String> uuids) {
-        uuids.forEach(uuid -> {
-            final UUID enkelvoudigInformatieObjectUUID = UUID.fromString(uuid);
-            assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObjectUUID).getDownloaden());
-        });
-        final StreamingOutput streamingOutput = outputStream -> {
-            try (ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(outputStream))) {
-                uuids.forEach(stringUuid -> {
-                    final UUID uuid = UUID.fromString(stringUuid);
-                    final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
-                            uuid);
-                    final ByteArrayInputStream inhoud = drcClientService.downloadEnkelvoudigInformatieobject(uuid);
-                    final List<ZaakInformatieobject> zaakInformatieObjectenList = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
-                    String zaakId = "ontkoppeld";
-                    if(zaakInformatieObjectenList.size() > 0) {
-                        final URI zaakUri = zaakInformatieObjectenList.get(0).getZaak();
-                        zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
-                    }
-                    final String subfolder = enkelvoudigInformatieobject.getOntvangstdatum() != null ?
-                            "inkomend" :
-                            enkelvoudigInformatieobject.getVerzenddatum() != null ?
-                                    "uitgaand" :
-                                    "intern";
-                    final String[] bestandsnaamExtensie = enkelvoudigInformatieobject.getBestandsnaam().split("\\.");
-                    final String path = String.format("%s/%s/%s-%s.%s",
-                                                      zaakId,
-                                                      subfolder,
-                                                      bestandsnaamExtensie[0],
-                                                      enkelvoudigInformatieobject.getIdentificatie(),
-                                                      bestandsnaamExtensie[1]);
-                    final ZipEntry zipEntry = new ZipEntry(path);
-                    try {
-                        zipOutputStream.putNextEntry(zipEntry);
-                        zipOutputStream.write(inhoud.readAllBytes());
-                        zipOutputStream.closeEntry();
-                    } catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-            outputStream.flush();
-            outputStream.close();
-        };
-
+        final List<UUID> uuidList = uuids.stream().map(UUID::fromString).toList();
+        uuidList.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getDownloaden()));
+        final StreamingOutput streamingOutput = enkelvoudigInformatieObjectDownloadService.getZipStreamOutput(uuidList);
         return Response.ok(streamingOutput)
                 .header("Content-Type","application/zip")
                 .build();
