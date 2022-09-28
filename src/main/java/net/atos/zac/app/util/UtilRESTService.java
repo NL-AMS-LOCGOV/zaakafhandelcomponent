@@ -67,18 +67,14 @@ public class UtilRESTService {
     }
 
     private String clearZtcClientCaches() {
-        return ZTC + ul(Stream.of(ztcClientService.clearStatustypeCache(),
-                                  ztcClientService.clearInformatieobjectCache(),
-                                  ztcClientService.clearZaaktypeStatustypeManagedCache(),
-                                  ztcClientService.clearZaaktypeInformatieobjecttypeManagedCache(),
+        return ZTC + ul(Stream.of(ztcClientService.clearZaaktypeCache(),
+                                  ztcClientService.clearStatustypeCache(),
                                   ztcClientService.clearResultaattypeCache(),
+                                  ztcClientService.clearInformatieobjecttypeCache(),
+                                  ztcClientService.clearZaaktypeInformatieobjecttypeCache(),
                                   ztcClientService.clearBesluittypeCache(),
-                                  ztcClientService.clearZaaktypeBesluittypeManagedCache(),
-                                  ztcClientService.clearZaaktypeResultaattypeManagedCache(),
-                                  ztcClientService.clearZaaktypeRoltypeCache(),
-                                  ztcClientService.clearZaaktypeUrlCache(),
-                                  ztcClientService.clearZaaktypeCache(),
-                                  ztcClientService.clearZaaktypeManagedCache()));
+                                  ztcClientService.clearRoltypeCache(),
+                                  ztcClientService.clearCacheTime()));
     }
 
     private static String body(final Stream<String> utils) {

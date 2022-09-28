@@ -9,8 +9,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import net.atos.client.zgw.shared.cache.event.CacheEvent;
-import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.flowable.cmmn.event.CmmnEvent;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEvent;
@@ -26,9 +24,6 @@ public class EventingService {
     private Event<ScreenEvent> screenUpdateEvent;
 
     @Inject
-    private Event<CacheEvent> cacheUpdateEvent;
-
-    @Inject
     private Event<CmmnEvent> cmmnUpdateEvent;
 
     @Inject
@@ -36,18 +31,6 @@ public class EventingService {
 
     @Inject
     private Event<JobEvent> signaleringJobEvent;
-
-    /**
-     * Send {@link CacheEvent}s to Observer(s),
-     * These will be used to update the Infinispan caches.
-     * <p>
-     * Prefer using the factory methods on {@link CacheEventType} to create these event!
-     *
-     * @param event the event that will be sent.
-     */
-    public void send(final CacheEvent event) {
-        cacheUpdateEvent.fire(event);
-    }
 
     /**
      * Send {@link CmmnEvent}s to Observer(s),

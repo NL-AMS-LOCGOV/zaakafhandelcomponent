@@ -37,6 +37,7 @@ import {BesluitVastleggenGegevens} from './model/besluit-vastleggen-gegevens';
 import {Besluit} from './model/besluit';
 import {Resultaattype} from './model/resultaattype';
 import {Besluittype} from './model/besluittype';
+import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Injectable({
     providedIn: 'root'
@@ -283,6 +284,12 @@ export class ZakenService {
 
     ontkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listBesluitInformatieobjecten(besluitUuid: string): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/listBesluitInformatieobjecten/${besluitUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -14,6 +14,7 @@ export class DocumentenLijstFormField extends AbstractFormField {
     documenten$: Observable<EnkelvoudigInformatieobject[]>;
     documentenCheckedVoorOndertekenen: string[];
     ondertekenen: boolean;
+    verbergStatus: boolean;
 
 
     constructor() {
