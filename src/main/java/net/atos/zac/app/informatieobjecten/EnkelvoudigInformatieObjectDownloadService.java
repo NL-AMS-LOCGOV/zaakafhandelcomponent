@@ -98,7 +98,8 @@ public class EnkelvoudigInformatieObjectDownloadService {
      */
     private String getInformatieObjectZipPath(final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        final List<ZaakInformatieobject> zaakInformatieObjectenList = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
+        final List<ZaakInformatieobject> zaakInformatieObjectenList =
+                zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject.getUrl());
         assert(zaakInformatieObjectenList.size() > 0);
         final URI zaakUri = zaakInformatieObjectenList.get(0).getZaak();
         final String zaakId = zrcClientService.readZaak(zaakUri).getIdentificatie();
