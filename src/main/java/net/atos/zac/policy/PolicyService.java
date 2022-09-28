@@ -8,11 +8,9 @@ package net.atos.zac.policy;
 import static net.atos.client.zgw.drc.model.InformatieobjectStatus.DEFINITIEF;
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -238,8 +236,7 @@ public class PolicyService {
 
     private Set<String> readZaaktypen() {
         final RuleQuery<UserInput> query = new RuleQuery<>(new UserInput(loggedInUserInstance.get()));
-        final RuleResponse<List<List<String>>> response = evaluationClient.readZaaktypen(query);
-        return response.getResult().stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableSet());
+        final RuleResponse<List<Set<String>>> response = evaluationClient.readZaaktypen(query);
+        return response.getResult().get(0);
     }
-
 }

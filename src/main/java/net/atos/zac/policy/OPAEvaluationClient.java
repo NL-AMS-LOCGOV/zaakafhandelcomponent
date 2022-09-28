@@ -8,6 +8,7 @@ package net.atos.zac.policy;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -43,7 +44,7 @@ public interface OPAEvaluationClient {
 
     @POST
     @Path("zaaktype/zaaktypen")
-    RuleResponse<List<List<String>>> readZaaktypen(final RuleQuery<UserInput> query);
+    RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
 
     @POST
     @Path("enkelvoudiginformatieobject/enkelvoudig_informatieobject_acties")
