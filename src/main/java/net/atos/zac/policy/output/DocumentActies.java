@@ -8,7 +8,7 @@ package net.atos.zac.policy.output;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
-public class EnkelvoudigInformatieobjectActies {
+public class DocumentActies {
 
     private final boolean lezen;
 
@@ -21,7 +21,7 @@ public class EnkelvoudigInformatieobjectActies {
 
     private final boolean toevoegenNieuweVersie;
 
-    private final boolean bewerken;
+    private final boolean wijzigen;
 
     private final boolean vergrendelen;
 
@@ -30,12 +30,12 @@ public class EnkelvoudigInformatieobjectActies {
     private final boolean ondertekenen;
 
     @JsonbCreator
-    public EnkelvoudigInformatieobjectActies(@JsonbProperty("lezen") final boolean lezen,
+    public DocumentActies(@JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("verwijderen") final boolean verwijderen,
             @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("downloaden") final boolean downloaden,
             @JsonbProperty("toevoegen_nieuwe_versie") final boolean toevoegenNieuweVersie,
-            @JsonbProperty("bewerken") final boolean bewerken,
+            @JsonbProperty("wijzigen") final boolean wijzigen,
             @JsonbProperty("vergrendelen") final boolean vergrendelen,
             @JsonbProperty("ontgrendelen") final boolean ontgrendelen,
             @JsonbProperty("ondertekenen") final boolean ondertekenen) {
@@ -44,7 +44,7 @@ public class EnkelvoudigInformatieobjectActies {
         this.koppelen = koppelen;
         this.downloaden = downloaden;
         this.toevoegenNieuweVersie = toevoegenNieuweVersie;
-        this.bewerken = bewerken;
+        this.wijzigen = wijzigen;
         this.vergrendelen = vergrendelen;
         this.ontgrendelen = ontgrendelen;
         this.ondertekenen = ondertekenen;
@@ -70,8 +70,8 @@ public class EnkelvoudigInformatieobjectActies {
         return toevoegenNieuweVersie;
     }
 
-    public boolean getBewerken() {
-        return bewerken;
+    public boolean getWijzigen() {
+        return wijzigen;
     }
 
     public boolean getVergrendelen() {

@@ -8,7 +8,7 @@ import {Klant} from '../../model/klanten/klant';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {ZaakActies} from '../../../zaken/model/zaak-acties';
+import {ZaakActies} from '../../../policy/model/zaak-acties';
 import {KlantenService} from '../../klanten.service';
 import {KlantGegevens} from '../../model/klanten/klant-gegevens';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';

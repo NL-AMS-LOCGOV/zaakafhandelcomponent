@@ -9,7 +9,7 @@ export class ZaakActies {
     verlengen: boolean;
     hervatten: boolean;
     afbreken: boolean;
-    afsluiten: boolean;
+    voortzetten: boolean;
     heropenen: boolean;
     creeerenDocument: boolean;
     toevoegenDocument: boolean;
@@ -24,7 +24,7 @@ export class ZaakActies {
     toevoegenBetrokkeneBedrijf: boolean;
     verwijderenBetrokkene: boolean;
     wijzigenToekenning: boolean;
-    wijzigenOverig: boolean;
-    startenPlanItems: boolean;
+    wijzigen: boolean;
+    aanmakenTaak: boolean;
     vastleggenBesluit: boolean;
 }

@@ -210,7 +210,7 @@ public class TakenRESTService {
     @Path("")
     public RESTTaak updateTaak(final RESTTaak restTaak) {
         Task task = taskService.readOpenTask(restTaak.id);
-        assertActie(policyService.readTaakActies(task).getWijzigenOverig());
+        assertActie(policyService.readTaakActies(task).getWijzigen());
         task.setDescription(restTaak.toelichting);
         task.setDueDate(convertToDate(restTaak.streefdatum));
         task = taskService.updateTask(task);
@@ -222,7 +222,7 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigenOverig());
+        assertActie(policyService.readTaakActies(restTaak.id).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
             taskService.assignTaskToUser(restTaak.id, loggedInUserId);
@@ -298,7 +298,7 @@ public class TakenRESTService {
                     .filter(uuid -> !StringUtils.isEmpty(uuid))
                     .map(UUIDUtil::uuid)
                     .collect(Collectors.toList());
-            UUIDs.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getOndertekenen()));
+            UUIDs.forEach(uuid -> assertActie(policyService.readDocumentActies(uuid).getOndertekenen()));
             enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObjecten(UUIDs);
         }
     }

@@ -70,7 +70,7 @@
                                                      [value]="zaak.zaaktype.omschrijving"></zac-static-text>
                                     <zac-edit-select [formField]="editFormFields.get('communicatiekanaal')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="!zaak.acties.wijzigenOverig"
+                                                     [readonly]="!zaak.acties.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'communicatiekanaal')">
                                     </zac-edit-select>
                                 </div>
@@ -80,7 +80,7 @@
                                     </div>
                                     <zac-edit-select [formField]="editFormFields.get('vertrouwelijkheidaanduiding')"
                                                      [reasonField]="editFormFields.get('reden')"
-                                                     [readonly]="!zaak.acties.wijzigenOverig"
+                                                     [readonly]="!zaak.acties.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-select>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
@@ -121,8 +121,8 @@
                                         <mat-divider></mat-divider>
                                     </div>
                                     <zac-static-text [label]="'locatie' | translate"
-                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.acties.wijzigenOverig ? null : locatieIcon"
-                                                     (iconClicked)="!zaak.acties.wijzigenOverig ? null : editZaakLocatie()"></zac-static-text>
+                                                     [value]="zaakLocatie?.weergavenaam" [icon]="!zaak.acties.wijzigen ? null : locatieIcon"
+                                                     (iconClicked)="!zaak.acties.wijzigen ? null : editZaakLocatie()"></zac-static-text>
                                 </div>
 
                                 <div fxFlex="100" class="mat-divider-wrapper">
@@ -142,7 +142,7 @@
                                                           [opschortDatumTijd]="zaakOpschorting?.vanafDatumTijd"
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
-                                                          [readonly]="!zaak.acties.wijzigenOverig"
+                                                          [readonly]="!zaak.acties.wijzigen"
                                                           [actieOpschorten]="zaak.acties.opschorten"
                                                           [actieHervatten]="zaak.acties.hervatten"
                                                           [actieVerlengen]="zaak.acties.verlengen"
@@ -156,13 +156,13 @@
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('omschrijving')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.acties.wijzigenOverig"
+                                                    [readonly]="!zaak.acties.wijzigen"
                                                     (onSave)="editZaakMetReden($event, 'omschrijving')"></zac-edit-tekst>
                                 </div>
                                 <div fxFlex="100">
                                     <zac-edit-tekst [formField]="editFormFields.get('toelichting')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.acties.wijzigenOverig"
+                                                    [readonly]="!zaak.acties.wijzigen"
                                                     (onSave)="editZaakMetReden($event, 'toelichting')"></zac-edit-tekst>
                                 </div>
                             </div>

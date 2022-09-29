@@ -28,7 +28,7 @@ import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
-import {ZaakActies} from '../model/zaak-acties';
+import {ZaakActies} from '../../policy/model/zaak-acties';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';

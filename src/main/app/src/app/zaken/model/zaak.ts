@@ -10,7 +10,7 @@ import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
-import {ZaakActies} from './zaak-acties';
+import {ZaakActies} from '../../policy/model/zaak-acties';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';

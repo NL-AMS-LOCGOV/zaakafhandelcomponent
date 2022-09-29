@@ -42,7 +42,7 @@ import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockS
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
+import net.atos.zac.policy.output.DocumentActies;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieobjectConverter {
@@ -98,7 +98,7 @@ public class RESTInformatieobjectConverter {
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject, final Zaak zaak) {
         final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
                 enkelvoudigInformatieObject.getUUID()) : null;
-        final EnkelvoudigInformatieobjectActies acties = policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak);
+        final DocumentActies acties = policyService.readDocumentActies(enkelvoudigInformatieObject, lock, zaak);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = new RESTEnkelvoudigInformatieobject();
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
@@ -298,7 +298,7 @@ public class RESTInformatieobjectConverter {
                 zaakInformatieObject.getInformatieobject());
         final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
                 enkelvoudigInformatieObject.getUUID()) : null;
-        final EnkelvoudigInformatieobjectActies acties = policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject, lock, zaak);
+        final DocumentActies acties = policyService.readDocumentActies(enkelvoudigInformatieObject, lock, zaak);
         final RESTGekoppeldeZaakEnkelvoudigInformatieObject restEnkelvoudigInformatieobject = new RESTGekoppeldeZaakEnkelvoudigInformatieObject();
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();

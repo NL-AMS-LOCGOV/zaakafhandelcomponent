@@ -17,7 +17,7 @@ public class RESTZaakActies {
 
     public boolean afbreken;
 
-    public boolean afsluiten;
+    public boolean voortzetten;
 
     public boolean heropenen;
 
@@ -47,9 +47,9 @@ public class RESTZaakActies {
 
     public boolean wijzigenToekenning;
 
-    public boolean wijzigenOverig;
+    public boolean wijzigen;
 
-    public boolean startenPlanItems;
+    public boolean aanmakenTaak;
 
     public boolean vastleggenBesluit;
 }

@@ -135,7 +135,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'difference'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.bewerken && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+        if (this.laatsteVersieInfoObject.acties.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
                 this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(url => {

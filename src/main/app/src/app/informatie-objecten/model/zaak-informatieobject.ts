@@ -4,7 +4,7 @@
  */
 
 import {ZaakStatus} from '../../zaken/model/zaak-status';
-import {ZaakActies} from '../../zaken/model/zaak-acties';
+import {ZaakActies} from '../../policy/model/zaak-acties';
 
 export class ZaakInformatieobject {
     zaakIdentificatie: string;

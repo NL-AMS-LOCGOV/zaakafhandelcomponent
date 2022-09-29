@@ -10,7 +10,7 @@ import input.taak
 
 taak_acties := {
     "lezen": lezen,
-    "wijzigen_overig": wijzigen_overig,
+    "wijzigen": wijzigen,
     "wijzigen_toekenning": wijzigen_toekenning,
     "wijzigen_formulier": wijzigen_formulier,
     "creeeren_document": creeeren_document,
@@ -33,8 +33,8 @@ lezen {
     zaaktype_allowed == true
 }
 
-default wijzigen_overig := false
-wijzigen_overig {
+default wijzigen := false
+wijzigen {
     taak.afgerond == false
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
