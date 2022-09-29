@@ -1,7 +1,8 @@
 package net.atos.zac.zaken
 
 import future.keywords
-import data.net.atos.zac.rollen
+import data.net.atos.zac.rol.behandelaar
+import data.net.atos.zac.rol.coordinator
 import input.user
 
 zaken_acties := {
@@ -11,10 +12,10 @@ zaken_acties := {
 
 default verdelen_en_vrijgeven := false
 verdelen_en_vrijgeven {
-    rollen.werkverdeler.id in user.rollen
+    coordinator.rol in user.rollen
 }
 
 default toekennen_aan_mijzelf := false
 toekennen_aan_mijzelf {
-    rollen.zaakbehandelaar.id in user.rollen
+    behandelaar.rol in user.rollen
 }
