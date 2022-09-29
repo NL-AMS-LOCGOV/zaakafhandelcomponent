@@ -1,6 +1,8 @@
 package net.atos.zac.enkelvoudiginformatieobject
 
 import future.keywords
+import data.net.atos.zac.rol.behandelaar
+import data.net.atos.zac.rol.coordinator
 import data.net.atos.zac.rol.recordmanager
 import data.net.atos.zac.domein.domeinen
 import data.net.atos.zac.domein.domein_elk_zaaktype

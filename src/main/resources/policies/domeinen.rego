@@ -1,7 +1,7 @@
 package net.atos.zac.domein
 
 domein_elk_zaaktype := {
-    "rol": "elk_zaaktype",
+    "rol": "domein_elk_zaaktype",
     "zaaktypen": { "-ALLE-ZAAKTYPEN-" }
 }
 
