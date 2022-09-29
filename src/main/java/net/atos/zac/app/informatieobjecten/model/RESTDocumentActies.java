@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.informatieobjecten.model;
 
-public class RESTEnkelvoudigInformatieobjectActies {
+public class RESTDocumentActies {
 
     public boolean lezen;
 
@@ -17,7 +17,7 @@ public class RESTEnkelvoudigInformatieobjectActies {
 
     public boolean toevoegenNieuweVersie;
 
-    public boolean bewerken;
+    public boolean wijzigen;
 
     public boolean vergrendelen;
 

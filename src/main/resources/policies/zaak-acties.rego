@@ -11,13 +11,13 @@ import input.user
 
 zaak_acties := {
     "lezen": lezen,
-    "wijzigen_overig": wijzigen_overig,
+    "wijzigen": wijzigen,
     "wijzigen_toekenning": wijzigen_toekenning,
     "opschorten": opschorten,
     "verlengen": verlengen,
     "hervatten": hervatten,
     "afbreken": afbreken,
-    "afsluiten": afsluiten,
+    "voortzetten": voortzetten,
     "heropenen": heropenen,
     "creeeren_document": creeeren_document,
     "toevoegen_document": toevoegen_document,
@@ -31,7 +31,7 @@ zaak_acties := {
     "toevoegen_betrokkene_bedrijf": toevoegen_betrokkene_bedrijf,
     "verwijderen_betrokkene": verwijderen_betrokkene,
     "toevoegen_bag_object": toevoegen_bag_object,
-    "starten_plan_items": starten_plan_items,
+    "aanmaken_taak": aanmaken_taak,
     "vastleggen_besluit" : vastleggen_besluit
 }
 
@@ -51,11 +51,15 @@ lezen {
     zaaktype_allowed == true
 }
 
-default wijzigen_overig := false
-wijzigen_overig {
-    { behandelaar, recordmanager }[_].rol in user.rollen
+default wijzigen := false
+wijzigen {
+    behandelaar.rol in user.rollen
     zaaktype_allowed == true
     zaak.open == true
+}
+wijzigen {
+    recordmanager.rol in user.rollen
+    zaaktype_allowed == true
 }
 
 default wijzigen_toekenning := false
@@ -99,8 +103,8 @@ afbreken {
     zaak.heropend == false
 }
 
-default afsluiten := false
-afsluiten {
+default voortzetten := false
+voortzetten {
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
     zaak.open == true
@@ -211,8 +215,8 @@ toevoegen_bag_object {
     zaak.open == true
 }
 
-default starten_plan_items := false
-starten_plan_items {
+default aanmaken_taak := false
+aanmaken_taak {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
 }

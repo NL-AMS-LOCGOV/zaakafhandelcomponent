@@ -15,7 +15,7 @@ public class RESTTaakActiesConverter {
         restTaakActies.lezen = taakActies.getLezen();
         restTaakActies.wijzigenToekenning = taakActies.getWijzigenToekenning();
         restTaakActies.wijzigenFormulier = taakActies.getWijzigenFormulier();
-        restTaakActies.wijzigenOverig = taakActies.getWijzigenOverig();
+        restTaakActies.wijzigen = taakActies.getWijzigen();
         restTaakActies.creeerenDocument = taakActies.getCreeerenDocument();
         restTaakActies.toevoegenDocument = taakActies.getToevoegenDocument();
         return restTaakActies;

@@ -1,4 +1,4 @@
-package net.atos.zac.enkelvoudiginformatieobject
+package net.atos.zac.document
 
 import future.keywords
 import data.net.atos.zac.rol.behandelaar
@@ -7,11 +7,11 @@ import data.net.atos.zac.rol.recordmanager
 import data.net.atos.zac.domein.domeinen
 import data.net.atos.zac.domein.domein_elk_zaaktype
 import input.user
-import input.enkelvoudig_informatieobject
+import input.document
 
-enkelvoudig_informatieobject_acties := {
+document_acties := {
     "lezen": lezen,
-    "bewerken": bewerken,
+    "wijzigen": wijzigen,
     "toevoegen_nieuwe_versie": toevoegen_nieuwe_versie,
     "koppelen": koppelen,
     "verwijderen": verwijderen,
@@ -23,7 +23,7 @@ enkelvoudig_informatieobject_acties := {
 
 default zaaktype_allowed := false
 zaaktype_allowed {
-    not enkelvoudig_informatieobject.zaaktype
+    not document.zaaktype
 }
 zaaktype_allowed {
     domein_elk_zaaktype.rol in user.rollen
@@ -31,16 +31,16 @@ zaaktype_allowed {
 zaaktype_allowed {
     some domein
     domeinen[domein].rol in user.rollen
-    enkelvoudig_informatieobject.zaaktype in domeinen[domein].zaaktypen
+    document.zaaktype in domeinen[domein].zaaktypen
 }
 
 default onvergrendeld_of_vergrendeld_door_user := false
 onvergrendeld_of_vergrendeld_door_user {
-    enkelvoudig_informatieobject.vergrendeld == false
+    document.vergrendeld == false
 }
 onvergrendeld_of_vergrendeld_door_user {
-    enkelvoudig_informatieobject.vergrendeld == true
-    enkelvoudig_informatieobject.vergrendeld_door == user.id
+    document.vergrendeld == true
+    document.vergrendeld_door == user.id
 }
 
 default lezen := false
@@ -49,15 +49,15 @@ lezen {
     zaaktype_allowed
 }
 
-default bewerken := false
-bewerken {
+default wijzigen := false
+wijzigen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.zaak_open == true
-    enkelvoudig_informatieobject.definitief == false
+    document.zaak_open == true
+    document.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
-bewerken {
+wijzigen {
     recordmanager.rol in user.rollen
     zaaktype_allowed
 }
@@ -66,8 +66,8 @@ default toevoegen_nieuwe_versie := false
 toevoegen_nieuwe_versie {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.zaak_open == true
-    enkelvoudig_informatieobject.definitief == false
+    document.zaak_open == true
+    document.definitief == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
 toevoegen_nieuwe_versie {
@@ -79,8 +79,8 @@ default koppelen := false
 koppelen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.definitief == false
-    enkelvoudig_informatieobject.vergrendeld == false
+    document.definitief == false
+    document.vergrendeld == false
 }
 koppelen {
     recordmanager.rol in user.rollen
@@ -103,35 +103,35 @@ default vergrendelen := false
 vergrendelen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.zaak_open == true
-    enkelvoudig_informatieobject.definitief == false
-    enkelvoudig_informatieobject.vergrendeld == false
+    document.zaak_open == true
+    document.definitief == false
+    document.vergrendeld == false
 }
 vergrendelen {
     recordmanager.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.vergrendeld == false
+    document.vergrendeld == false
 }
 
 default ontgrendelen := false
 ontgrendelen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.vergrendeld == true
-    enkelvoudig_informatieobject.vergrendeld_door == user.id
+    document.vergrendeld == true
+    document.vergrendeld_door == user.id
 }
 ontgrendelen {
     recordmanager.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.vergrendeld == true
+    document.vergrendeld == true
 }
 
 default ondertekenen := false
 ondertekenen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    enkelvoudig_informatieobject.zaak_open == true
-    enkelvoudig_informatieobject.ondertekend == false
+    document.zaak_open == true
+    document.ondertekend == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
 

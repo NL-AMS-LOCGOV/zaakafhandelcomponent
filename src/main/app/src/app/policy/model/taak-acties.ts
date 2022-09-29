@@ -7,7 +7,7 @@ export class TaakActies {
     lezen: boolean;
     wijzigenToekenning: boolean;
     wijzigenFormulier: boolean;
-    wijzigenOverig: boolean;
+    wijzigen: boolean;
     creeerenDocument: boolean;
     toevoegenDocument: boolean;
 }

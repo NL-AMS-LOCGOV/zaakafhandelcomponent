@@ -18,12 +18,12 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
-import net.atos.zac.policy.input.EnkelvoudigInformatieobjectInput;
+import net.atos.zac.policy.input.DocumentInput;
 import net.atos.zac.policy.input.TaakInput;
 import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakInput;
 import net.atos.zac.policy.output.AppActies;
-import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
+import net.atos.zac.policy.output.DocumentActies;
 import net.atos.zac.policy.output.TaakActies;
 import net.atos.zac.policy.output.TakenActies;
 import net.atos.zac.policy.output.ZaakActies;
@@ -47,8 +47,8 @@ public interface OPAEvaluationClient {
     RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
 
     @POST
-    @Path("enkelvoudiginformatieobject/enkelvoudig_informatieobject_acties")
-    RuleResponse<EnkelvoudigInformatieobjectActies> readEnkelvoudigInformatieobjectActies(final RuleQuery<EnkelvoudigInformatieobjectInput> query);
+    @Path("document/document_acties")
+    RuleResponse<DocumentActies> readDocumentActies(final RuleQuery<DocumentInput> query);
 
     @POST
     @Path("zaken/zaken_acties")

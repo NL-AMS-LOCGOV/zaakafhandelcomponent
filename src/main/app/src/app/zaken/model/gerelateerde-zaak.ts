@@ -4,7 +4,7 @@
  */
 
 import {ZaakRelatietype} from './zaak-relatietype';
-import {ZaakActies} from './zaak-acties';
+import {ZaakActies} from '../../policy/model/zaak-acties';
 
 export class GerelateerdeZaak {
     identificatie: string;

@@ -13,7 +13,7 @@ public class RESTTaakActies {
 
     public boolean wijzigenFormulier;
 
-    public boolean wijzigenOverig;
+    public boolean wijzigen;
 
     public boolean creeerenDocument;
 

@@ -7,11 +7,11 @@
 |           opschorten           |      X      |             |               |           |
 |           hervatten            |      X      |             |               |           |
 |            afbreken            |      X      |             |       X       |           |
-|      proces fase afronden      |      X      |             |       X       |           |
+|          voortzetten           |      X      |             |       X       |           |
 |           heropenen            |             |             |       X       |           |
 |       creeeren_document        |    Open     |             |       X       |           |
 |       toevoegen_document       |    Open     |             |       X       |           |
-|         Zaak koppelen          |    Open     |             |       X       |           |
+|            koppelen            |    Open     |             |       X       |           |
 |        versturen_email         |    Open     |             |               |           |
 | versturen_ontvangstbevestiging |    Open     |             |               |           |
 |  toevoegen_initiator_persoon   |    Open     |             |               |           |
@@ -21,22 +21,22 @@
 |  toevoegen_betrokkene_bedrijf  |    Open     |             |               |           |
 |     verwijderen_betrokkene     |    Open     |             |               |           |
 |      toevoegen_bag_object      |    Open     |             |               |           |
-|         taken aanmaken         |      X      |             |               |           |
+|         aanmaken_taak          |      X      |             |               |           |
 |       vastleggen_besluit       |    Open     |             |               |           |
 
-|     Taak acties      | behandelaar | coordinator | recordmanager | beheerder |
-|:--------------------:|:-----------:|:-----------:|:-------------:|:---------:|
-|        lezen         |      X      |             |       X       |           |
-|   wijzigen_overig    |      X      |             |       X       |           |
-| wijzigen_toekenning  |      X      |             |               |           |
-|  wijzigen_formulier  |      X      |             |       X       |           |
-|  creeeren_document   |      X      |             |       X       |           |
-|  toevoegen_document  |      X      |             |       X       |           |
+|     Taak acties     | behandelaar | coordinator | recordmanager | beheerder |
+|:-------------------:|:-----------:|:-----------:|:-------------:|:---------:|
+|        lezen        |      X      |             |       X       |           |
+|     wijzigen        |      X      |             |       X       |           |
+| wijzigen_toekenning |      X      |             |               |           |
+| wijzigen_formulier  |      X      |             |       X       |           |
+|  creeeren_document  |      X      |             |       X       |           |
+| toevoegen_document  |      X      |             |       X       |           |
 
 |     Document acties     |                               behandelaar                                | coordinator | recordmanager | beheerder |
 |:-----------------------:|:------------------------------------------------------------------------:|:-----------:|:-------------:|:---------:|
 |          lezen          |                                    X                                     |      X      |       X       |           |
-|        bewerken         | zaak open, niet definitief, onvergrendeld of vergrendeld door gebruiker  |             |       X       |           |
+|        wijzigen         | zaak open, niet definitief, onvergrendeld of vergrendeld door gebruiker  |             |       X       |           |
 | toevoegen_nieuwe_versie | zaak open, niet definitief, onvergrendeld of vergrendeld door gebruiker  |             |       X       |           |
 |        koppelen         |                zaak open, niet definitief, onvergrendeld                 |             |       X       |           |
 |       verwijderen       |                                                                          |             |       X       |           |
