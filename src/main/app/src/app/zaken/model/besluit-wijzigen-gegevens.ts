@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class BesluitVastleggenGegevens {
+export class BesluitWijzigenGegevens {
+    besluitUuid: string;
     zaakUuid: string;
     resultaattypeUuid: string;
-    besluittypeUuid: string;
     toelichting: string;
     ingangsdatum: boolean;
     vervaldatum: string;

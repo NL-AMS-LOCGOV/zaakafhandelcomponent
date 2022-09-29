@@ -5,23 +5,22 @@
 
 package net.atos.client.zgw.brc;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
-import net.atos.client.zgw.brc.model.BesluitInformatieobject;
-
-import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.zgw.brc.model.Besluit;
+import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 import net.atos.client.zgw.brc.model.BesluitenListParameters;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.Zaak;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
+import net.atos.zac.util.UriUtil;
 
 /**
  * BRC Client Service
@@ -47,6 +46,12 @@ public class BRCClientService {
 
     public Besluit createBesluit(final Besluit besluit) {
         return brcClient.besluitCreate(besluit);
+    }
+
+    public Besluit updateBesluit(final Besluit besluit) {
+        final UUID uuid = UriUtil.uuidFromURI(besluit.getUrl());
+        besluit.setUrl(null);
+        return brcClient.besluitUpdate(uuid, besluit);
     }
 
     public Besluit readBesluit(final UUID uuid) {

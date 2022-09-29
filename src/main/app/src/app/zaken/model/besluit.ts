@@ -4,13 +4,16 @@
  */
 
 import {Besluittype} from './besluittype';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 export class Besluit {
     url: string;
+    uuid: string;
     identificatie: string;
     toelichting: string;
     datum: string;
     ingangsdatum: string;
     vervaldatum: string;
     besluittype: Besluittype;
+    informatieobjecten: EnkelvoudigInformatieobject[];
 }

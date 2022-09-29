@@ -15,7 +15,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -39,14 +38,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.brc.model.BesluitInformatieobject;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.brc.model.Besluit;
+import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -89,6 +87,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTBesluit;
 import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
+import net.atos.zac.app.zaken.model.RESTBesluitWijzigenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
@@ -641,14 +640,22 @@ public class ZakenRESTService {
         return resultaat;
     }
 
-    @GET
-    @Path("listBesluitInformatieobjecten/{besluit}")
-    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final UUID besluit) {
-        //TODO: Vervang UUID -> URI d.m.v. readBesluit voor URI-opbouw-methode van issue #1413
-        final URI besluitUri = brcClientService.readBesluit(besluit).getUrl();
-        return brcClientService.listBesluitInformatieobjecten(besluitUri).stream()
-                .map(x -> drcClientService.readEnkelvoudigInformatieobject(x.getInformatieobject()))
-                .collect(Collectors.toList());
+    @PUT
+    @Path("besluit")
+    public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
+        final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
+        if (!besluit.getZaak().equals(zaak.getUrl())) {
+            throw new IllegalStateException("Zaak en besluit horen niet bijelkaar");
+        }
+        besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
+        besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
+        besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
+        Besluit updatedBesluit = brcClientService.updateBesluit(besluit);
+
+        //todo Informatieobjecten
+
+        return besluitConverter.convertToRESTBesluit(updatedBesluit);
     }
 
     @GET

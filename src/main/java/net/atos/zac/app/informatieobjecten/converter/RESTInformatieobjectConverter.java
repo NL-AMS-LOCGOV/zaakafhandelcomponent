@@ -343,4 +343,8 @@ public class RESTInformatieobjectConverter {
         }
         return restEnkelvoudigInformatieobject;
     }
+
+    public List<RESTEnkelvoudigInformatieobject> convertInformatieobjectenToREST(final List<EnkelvoudigInformatieobject> informatieobjecten) {
+        return informatieobjecten.stream().map(this::convertToREST).toList();
+    }
 }

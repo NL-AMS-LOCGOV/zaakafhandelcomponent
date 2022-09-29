@@ -77,11 +77,9 @@ import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
 import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
-import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {MailObject} from '../../mail/model/mailobject';
 import {MailService} from '../../mail/mail.service';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -995,5 +993,10 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
         this.action = null;
         this.actionsSidenav.close();
+    }
+
+    besluitWijzigen(): void {
+        this.action = SideNavAction.BESLUIT_WIJZIGEN;
+        this.actionsSidenav.open();
     }
 }
