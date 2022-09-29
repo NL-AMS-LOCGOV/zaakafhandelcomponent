@@ -70,6 +70,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
                 if (this.teOndertekenenSelection.selected.length > 0) {
                     this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
                 }
+                if (this.selection.selected.length > 0) {
+                    this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
+                }
                 this.loading = false;
             });
         }

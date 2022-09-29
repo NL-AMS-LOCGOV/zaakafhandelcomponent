@@ -63,6 +63,10 @@ public class BRCClientService {
         return brcClient.besluitinformatieobjectCreate(besluitInformatieobject);
     }
 
+    public BesluitInformatieobject deleteBesluitinformatieobject(final UUID besluitInformatieobjectUuid) {
+        return brcClient.besluitinformatieobjectDelete(besluitInformatieobjectUuid);
+    }
+
     public List<BesluitInformatieobject> listBesluitInformatieobjecten(final URI besluit) {
         return brcClient.listBesluitInformatieobjecten(besluit);
     }

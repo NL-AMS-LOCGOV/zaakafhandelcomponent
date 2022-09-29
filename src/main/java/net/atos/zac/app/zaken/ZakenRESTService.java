@@ -17,6 +17,7 @@ import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -56,6 +58,7 @@ import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.NietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
+import net.atos.client.zgw.zrc.model.Resultaat;
 import net.atos.client.zgw.zrc.model.Rol;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolNatuurlijkPersoon;
@@ -70,6 +73,7 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
+import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
@@ -124,6 +128,7 @@ import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zoeken.IndexeerService;
@@ -153,6 +158,8 @@ public class ZakenRESTService {
     private static final String VERLENGING = "Verlenging";
 
     private static final String AANMAKEN_BESLUIT = "Aanmaken besluit";
+
+    private static final String WIJZIGEN_BESLUIT = "Wijzigen besluit";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -644,18 +651,41 @@ public class ZakenRESTService {
     @Path("besluit")
     public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
+        assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
         final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
-        if (!besluit.getZaak().equals(zaak.getUrl())) {
-            throw new IllegalStateException("Zaak en besluit horen niet bijelkaar");
-        }
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
-        besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
+        besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
         Besluit updatedBesluit = brcClientService.updateBesluit(besluit);
-
-        //todo Informatieobjecten
-
+        if (zaak.getResultaat() != null) {
+            final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
+            final Resultaattype resultaattype = ztcClientService.readResultaattype(restBesluitWijzgenGegevens.resultaattypeUuid);
+            if (zaakResultaat.getResultaattype() != resultaattype.getUrl()) {
+                zrcClientService.deleteResultaat(zaakResultaat.getUuid());
+                zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, StringUtils.EMPTY);
+            }
+        }
+        updateBesluitInformatieobjecten(updatedBesluit, restBesluitWijzgenGegevens.informatieobjecten);
         return besluitConverter.convertToRESTBesluit(updatedBesluit);
+    }
+
+    private void updateBesluitInformatieobjecten(final Besluit besluit, final List<UUID> nieuweDocumenten) {
+        final List<BesluitInformatieobject> besluitInformatieobjecten = brcClientService.listBesluitInformatieobjecten(besluit.getUrl());
+        final List<UUID> huidigeDocumenten = besluitInformatieobjecten.stream()
+                .map(besluitInformatieobject -> UriUtil.uuidFromURI(besluitInformatieobject.getInformatieobject())).toList();
+
+        final Collection<UUID> verwijderen = CollectionUtils.subtract(huidigeDocumenten, nieuweDocumenten);
+        final Collection<UUID> toevoegen = CollectionUtils.subtract(nieuweDocumenten, huidigeDocumenten);
+
+        verwijderen.forEach(teVerwijderenInformatieobject -> besluitInformatieobjecten.stream()
+                .filter(besluitInformatieobject -> uuidFromURI(besluitInformatieobject.getInformatieobject()).equals(teVerwijderenInformatieobject))
+                .forEach(besluitInformatieobject -> brcClientService.deleteBesluitinformatieobject(uuidFromURI(besluitInformatieobject.getUrl()))));
+
+        toevoegen.forEach(documentUri -> {
+            final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
+            final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(besluit.getUrl(), informatieobject.getUrl());
+            brcClientService.createBesluitInformatieobject(besluitInformatieobject, WIJZIGEN_BESLUIT);
+        });
     }
 
     @GET
