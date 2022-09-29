@@ -631,6 +631,13 @@ public class ZakenRESTService {
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 
+    @GET
+    @Path("besluit/zaakUuid/{zaakUuid}")
+    public RESTBesluit findBesluitByZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
+        final Besluit besluit = brcClientService.findBesluit(zrcClientService.readZaak(zaakUuid));
+        return besluitConverter.convertToRESTBesluit(besluit);
+    }
+
     @POST
     @Path("besluit")
     public RESTBesluit createBesluit(final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
@@ -651,7 +658,7 @@ public class ZakenRESTService {
     @Path("besluit")
     public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
-        assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
+        // assertActie(policyService.readZaakActies(zaak).getBesluitWijzigen()); //todo policy aanmaken
         final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);

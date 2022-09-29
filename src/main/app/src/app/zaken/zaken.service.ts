@@ -300,4 +300,10 @@ export class ZakenService {
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
+
+    findBesluitByZaakUUID(zaakUuid: string): Observable<Besluit> {
+        return this.http.get<Besluit>(`${this.basepath}/besluit/zaakUuid/${zaakUuid}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
 }

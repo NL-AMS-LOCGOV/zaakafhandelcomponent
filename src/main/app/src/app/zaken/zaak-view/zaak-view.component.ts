@@ -984,7 +984,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     besluitVastgelegd(besluitVastgelegd: boolean): void {
         if (besluitVastgelegd) {
-            this.updateZaak();
+            this.zakenService.findBesluitByZaakUUID(this.zaak.uuid).subscribe(besluit => this.zaak.besluit = besluit);
         }
         this.action = null;
         this.actionsSidenav.close();
