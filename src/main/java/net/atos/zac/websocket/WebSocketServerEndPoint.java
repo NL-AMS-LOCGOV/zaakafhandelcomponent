@@ -26,7 +26,6 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.authentication.SecurityUtil;
 
 @ServerEndpoint(value = "/websocket", configurator = WebsocketHandshakeInterceptor.class, decoders = {WebSocketSubscriptionMessageDecoder.class})
 public class WebSocketServerEndPoint {
@@ -40,10 +39,7 @@ public class WebSocketServerEndPoint {
     public void open(final Session session, final EndpointConfig conf) {
         // Check that there is a logged in employee (and that authentication has taken place).
         final HttpSession httpSession = (HttpSession) conf.getUserProperties().get(HTTP_SESSION);
-        final LoggedInUser loggedInUser = SecurityUtil.getLoggedInUser(httpSession);
-        if (httpSession == null || loggedInUser == null) {
-            LOG.info(SecurityUtil.log("open", httpSession, loggedInUser));
-        }
+        final LoggedInUser loggedInUser = (LoggedInUser) httpSession.getAttribute(LOGGED_IN_USER_SESSION_ATTRIBUTE);
         if (loggedInUser == null) {
             denyAccess(session, "no logged in user");
         } else {
