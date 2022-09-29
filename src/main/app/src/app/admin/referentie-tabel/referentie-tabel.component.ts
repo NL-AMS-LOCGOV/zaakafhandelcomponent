@@ -66,13 +66,13 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
 
     createForm() {
         this.codeFormField = new InputFormFieldBuilder(this.tabel.code).id('code')
-                                                        .label('tabel')
-                                                        .validators(Validators.required)
-                                                        .build();
+                                                                       .label('tabel')
+                                                                       .validators(Validators.required)
+                                                                       .build();
         this.naamFormField = new InputFormFieldBuilder(this.tabel.naam).id('naam')
-                                                        .label('naam')
-                                                        .validators(Validators.required)
-                                                        .build();
+                                                                       .label('naam')
+                                                                       .validators(Validators.required)
+                                                                       .build();
     }
 
     editTabel(event: any, field: string): void {
@@ -83,12 +83,10 @@ export class ReferentieTabelComponent extends AdminComponent implements OnInit {
     laadTabelWaarden(): void {
         this.isLoadingResults = true;
         this.tabel.waarden.forEach(waarde => {
-            if (this.waardeFormField[waarde.id] == null) {
-                this.waardeFormField[waarde.id] = new InputFormFieldBuilder(waarde.naam).id('waarde_' + waarde.id)
-                                                                             .label('waarde')
-                                                                             .validators(Validators.required)
-                                                                             .build();
-            }
+            this.waardeFormField[waarde.id] = new InputFormFieldBuilder(waarde.naam).id('waarde_' + waarde.id)
+                                                                                    .label('waarde')
+                                                                                    .validators(Validators.required)
+                                                                                    .build();
         });
         this.dataSource.data = this.tabel.waarden.sort((a, b) => a.naam.localeCompare(b.naam));
         this.isLoadingResults = false;

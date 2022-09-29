@@ -44,6 +44,9 @@ public class UserPrincipalFilter implements Filter {
             if (principal != null) {
                 HttpSession httpSession = httpServletRequest.getSession(true);
                 LoggedInUser loggedInUser = SecurityUtil.getLoggedInUser(httpSession);
+                if (httpSession == null || loggedInUser == null) {
+                    LOG.info(SecurityUtil.log("doFilter", httpSession, loggedInUser));
+                }
 
                 if (loggedInUser != null && !loggedInUser.getId().equals(principal.getName())) {
                     LOG.info(String.format("HTTP session of user '%s' on context path %s is invalidated", loggedInUser.getId(),
@@ -56,6 +59,7 @@ public class UserPrincipalFilter implements Filter {
                 if (loggedInUser == null) {
                     loggedInUser = createLoggedInUser(principal.getOidcSecurityContext());
                     SecurityUtil.setLoggedInUser(httpSession, loggedInUser);
+                    LOG.info(SecurityUtil.log("doFilter.setLoggedInUser", httpSession));
                     LOG.info(String.format("User logged in: '%s' with roles: %s", loggedInUser.getId(), loggedInUser.getRoles()));
                 }
             }
