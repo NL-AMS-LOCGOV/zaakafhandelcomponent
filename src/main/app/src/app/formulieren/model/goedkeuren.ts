@@ -67,7 +67,7 @@ export class Goedkeuren extends AbstractFormulier {
             [new DocumentenLijstFieldBuilder().id(fields.ONDERTEKENEN)
                                               .label(fields.ONDERTEKENEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
-                                              .documentenChecked(this.getDocumentenChecked(fields.ONDERTEKENEN))
+                                              .documentenCheckedVoorOndertekenen(this.getDocumentenChecked(fields.ONDERTEKENEN))
                                               .ondertekenen(true)
                                               .readonly(true)
                                               .build()],

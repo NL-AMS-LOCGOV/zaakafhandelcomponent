@@ -42,6 +42,9 @@
         <zac-besluit-create *ngSwitchCase="'BESLUIT_VASTLEGGEN'"
                             (besluitVastgelegd)="besluitVastgelegd($event)"
                             [zaak]="zaak"></zac-besluit-create>
+        <zac-besluit-edit *ngSwitchCase="'BESLUIT_WIJZIGEN'"
+                          (besluitGewijzigd)="besluitVastgelegd($event)"
+                          [zaak]="zaak"></zac-besluit-edit>
 
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
@@ -326,7 +329,7 @@
                 </mat-card-content>
             </mat-card>
             <div fxFlex="calc(50%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
-                <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit"></zac-besluit-view>
+                <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit" (besluitWijzigen)="besluitWijzigen()"></zac-besluit-view>
                 <mat-card class="taken-card">
                     <mat-card-header fxLayout="row">
                         <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>

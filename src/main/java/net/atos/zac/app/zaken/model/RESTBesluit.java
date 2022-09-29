@@ -7,10 +7,16 @@ package net.atos.zac.app.zaken.model;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 
 public class RESTBesluit {
 
     public URI url;
+
+    public UUID uuid;
 
     public String identificatie;
 
@@ -23,5 +29,9 @@ public class RESTBesluit {
     public LocalDate vervaldatum;
 
     public String toelichting;
+
+    public UUID zaakUuid;
+
+    public List<RESTEnkelvoudigInformatieobject> informatieobjecten;
 
 }

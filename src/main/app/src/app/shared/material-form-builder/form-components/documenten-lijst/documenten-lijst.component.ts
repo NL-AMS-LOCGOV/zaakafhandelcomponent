@@ -26,7 +26,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     teOndertekenenSelection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
-    loading = true;
+    loading = false;
 
     constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
         super();
@@ -34,7 +34,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.data.readonly) {
-            this.removeColumn('select')
+            this.removeColumn('select');
         }
         if (!this.data.ondertekenen) {
             this.removeColumn('ondertekenen');
@@ -42,21 +42,37 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
         if (this.data.verbergStatus) {
             this.removeColumn('status');
         }
-        this.data.documenten$.subscribe(documenten => {
-            for (const document of documenten) {
-                document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
-                document['viewLink'] = `/informatie-objecten/${document.uuid}`;
-                document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
-                if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid) || document.ondertekening) {
-                    this.teOndertekenenSelection.toggle(document);
-                }
-            }
-            this.dataSource.data = documenten;
-            if (this.data.ondertekenen && this.teOndertekenenSelection.selected.length > 0) {
-                this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
-            }
-            this.loading = false;
+        this.ophalenDocumenten();
+        this.data.documentenChanged.subscribe($documenten => {
+            this.data.documenten$ = $documenten;
+            this.ophalenDocumenten();
         });
+    }
+
+    ophalenDocumenten() {
+        if (this.data.documenten$) {
+            this.loading = true;
+            this.dataSource.data = [];
+            this.data.documenten$.subscribe(documenten => {
+                this.selection.clear();
+                for (const document of documenten) {
+                    document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
+                    document['viewLink'] = `/informatie-objecten/${document.uuid}`;
+                    document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
+                    if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid) || document.ondertekening) {
+                        this.teOndertekenenSelection.toggle(document);
+                    }
+                    if (this.data.documentenChecked?.includes(document.uuid)) {
+                        this.selection.toggle(document);
+                    }
+                }
+                this.dataSource.data = documenten;
+                if (this.teOndertekenenSelection.selected.length > 0) {
+                    this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
+                }
+                this.loading = false;
+            });
+        }
     }
 
     applyFilter($event: KeyboardEvent): void {
