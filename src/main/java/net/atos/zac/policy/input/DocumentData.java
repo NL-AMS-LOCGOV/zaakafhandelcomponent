@@ -7,7 +7,7 @@ package net.atos.zac.policy.input;
 
 import javax.json.bind.annotation.JsonbProperty;
 
-public class EnkelvoudigInformatieobjectData {
+public class DocumentData {
 
     public boolean definitief;
 

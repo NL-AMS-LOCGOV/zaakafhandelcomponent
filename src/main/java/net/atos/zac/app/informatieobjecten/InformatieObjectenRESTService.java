@@ -37,10 +37,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
-import net.atos.client.zgw.ztc.model.Besluittype;
-
-import net.atos.zac.util.UriUtil;
-
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import net.atos.client.zgw.drc.DRCClientService;
@@ -55,6 +51,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
+import net.atos.client.zgw.ztc.model.Besluittype;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.audit.converter.RESTHistorieRegelConverter;
@@ -90,6 +87,7 @@ import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.exception.FoutmeldingException;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.webdav.WebdavHelper;
 
 @Singleton
@@ -251,7 +249,7 @@ public class InformatieObjectenRESTService {
         final UUID enkelvoudigInformatieobjectUUID = documentVerplaatsGegevens.documentUUID;
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobject).getKoppelen());
+        assertActie(policyService.readDocumentActies(informatieobject).getKoppelen());
         assertActie(policyService.readZaakActies(nieuweZaak).getKoppelen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron, nieuweZaak.getIdentificatie());
         if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
@@ -298,8 +296,8 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/zaakinformatieobjecten")
     public List<RESTZaakInformatieobject> listZaakInformatieobjecten(@PathParam("uuid") final UUID uuid) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getLezen());
-        return zrcClientService.listZaakinformatieobjecten(drcClientService.createEnkelvoudigInformatieObjectURL(uuid)).stream()
+        assertActie(policyService.readDocumentActies(uuid).getLezen());
+        return zrcClientService.listZaakinformatieobjecten(drcClientService.readEnkelvoudigInformatieobject(uuid)).stream()
                 .map(zaakInformatieobjectConverter::convert).toList();
     }
 
@@ -307,7 +305,7 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}/edit")
     public Response editEnkelvoudigInformatieobjectInhoud(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID,
             @Context final UriInfo uriInfo) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getBewerken());
+        assertActie(policyService.readDocumentActies(uuid, zaakUUID).getWijzigen());
         final URI redirectURI = webdavHelper.createRedirectURL(uuid, uriInfo);
         return Response.ok(redirectURI).build();
     }
@@ -323,7 +321,7 @@ public class InformatieObjectenRESTService {
     @Path("/informatieobject/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, documentVerwijderenGegevens.zaakUuid).getVerwijderen());
+        assertActie(policyService.readDocumentActies(uuid, documentVerwijderenGegevens.zaakUuid).getVerwijderen());
         zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(documentVerwijderenGegevens.zaakUuid, uuid, documentVerwijderenGegevens.reden);
         return Response.noContent().build();
     }
@@ -333,7 +331,7 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject).getDownloaden());
+        assertActie(policyService.readDocumentActies(enkelvoudigInformatieObject).getDownloaden());
         try (final ByteArrayInputStream inhoud = (versie != null) ?
                 drcClientService.downloadEnkelvoudigInformatieobjectVersie(uuid, versie) :
                 drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
@@ -349,7 +347,7 @@ public class InformatieObjectenRESTService {
     @Path("/download/zip")
     public Response readFilesAsZip(final List<String> uuids) {
         final List<UUID> uuidList = uuids.stream().map(UUID::fromString).toList();
-        uuidList.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getDownloaden()));
+        uuidList.forEach(uuid -> assertActie(policyService.readDocumentActies(uuid).getDownloaden()));
         final StreamingOutput streamingOutput = enkelvoudigInformatieObjectDownloadService.getZipStreamOutput(uuidList);
         return Response.ok(streamingOutput)
                 .header("Content-Type","application/zip")
@@ -360,7 +358,7 @@ public class InformatieObjectenRESTService {
     @Path("informatieobject/{uuid}/huidigeversie")
     public RESTEnkelvoudigInformatieObjectVersieGegevens readHuidigeVersieInformatieObject(@PathParam("uuid") final UUID uuid) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieObject).getLezen());
+        assertActie(policyService.readDocumentActies(enkelvoudigInformatieObject).getLezen());
         return informatieobjectConverter.convertToRESTEnkelvoudigInformatieObjectVersieGegevens(enkelvoudigInformatieObject);
     }
 
@@ -370,7 +368,7 @@ public class InformatieObjectenRESTService {
             final RESTEnkelvoudigInformatieObjectVersieGegevens enkelvoudigInformatieObjectVersieGegevens) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieObjectVersieGegevens.uuid);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobject, enkelvoudigInformatieObjectVersieGegevens.zaakUuid)
+        assertActie(policyService.readDocumentActies(enkelvoudigInformatieobject, enkelvoudigInformatieObjectVersieGegevens.zaakUuid)
                             .getToevoegenNieuweVersie());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         boolean tempLock = false;
@@ -401,7 +399,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getVergrendelen());
+        assertActie(policyService.readDocumentActies(uuid, zaakUUID).getVergrendelen());
         enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -410,7 +408,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getOntgrendelen());
+        assertActie(policyService.readDocumentActies(uuid, zaakUUID).getOntgrendelen());
         enkelvoudigInformatieObjectLockService.deleteLock(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -419,7 +417,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{uuid}/historie")
     public List<RESTHistorieRegel> listHistorie(@PathParam("uuid") final UUID enkelvoudigInformatieobjectUUID) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(enkelvoudigInformatieobjectUUID).getLezen());
+        assertActie(policyService.readDocumentActies(enkelvoudigInformatieobjectUUID).getLezen());
         List<AuditTrailRegel> auditTrail = drcClientService.listAuditTrail(enkelvoudigInformatieobjectUUID);
         return historieRegelConverter.convert(auditTrail);
     }
@@ -439,7 +437,7 @@ public class InformatieObjectenRESTService {
     @GET
     @Path("informatieobject/{informatieObjectUuid}/zaakidentificaties")
     public List<String> listZaakIdentificatiesForInformatieobject(@PathParam("informatieObjectUuid") UUID informatieobjectUuid) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobjectUuid).getLezen());
+        assertActie(policyService.readDocumentActies(informatieobjectUuid).getLezen());
         List<ZaakInformatieobject> zaakInformatieobjects = zrcClientService.listZaakinformatieobjecten(
                 drcClientService.createEnkelvoudigInformatieObjectURL(informatieobjectUuid));
         return zaakInformatieobjects.stream()
@@ -449,7 +447,7 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/onderteken")
     public Response ondertekenInformatieObject(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid, zaakUUID).getOndertekenen());
+        assertActie(policyService.readDocumentActies(uuid, zaakUUID).getOndertekenen());
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();

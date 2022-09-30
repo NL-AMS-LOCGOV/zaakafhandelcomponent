@@ -5,7 +5,7 @@
 
 import {User} from '../../identity/model/user';
 import {ZaakResultaat} from './zaak-resultaat';
-import {ZaakActies} from './zaak-acties';
+import {ZaakActies} from '../../policy/model/zaak-acties';
 
 export class ZaakOverzicht {
     identificatie: string;

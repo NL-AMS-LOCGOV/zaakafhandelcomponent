@@ -1,22 +1,18 @@
-package net.atos.zac
+package net.atos.zac.rol
 
-alle_zaaktypen := { "-ALLE-ZAAKTYPEN-" }
-
-rollen := {
-    "zaakbehandelaar": {
-        "id": "zaakbehandelaar",
-        "zaaktypen": {"melding klein evenement"}
-    },
-    "werkverdeler": {
-        "id": "werkverdeler",
-        "zaaktypen": {"melding klein evenement", "MOR anoniem"}
-    },
-    "recordmanager": {
-        "id": "recordmanager",
-        "zaaktypen": alle_zaaktypen
-    },
-    "beheerder": {
-        "id": "beheerder",
-        "zaaktypen": alle_zaaktypen
-    }
+behandelaar := {
+    "rol": "behandelaar"
 }
+
+coordinator := {
+    "rol": "coordinator"
+}
+
+recordmanager := {
+    "rol": "recordmanager"
+}
+
+beheerder := {
+    "rol": "beheerder"
+}
+

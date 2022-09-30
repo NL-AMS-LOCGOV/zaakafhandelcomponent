@@ -17,7 +17,7 @@ public class RESTZaakActiesConverter {
         restZaakActies.verlengen = zaakActies.getVerlengen();
         restZaakActies.hervatten = zaakActies.getHervatten();
         restZaakActies.afbreken = zaakActies.getAfbreken();
-        restZaakActies.afsluiten = zaakActies.getAfsluiten();
+        restZaakActies.voortzetten = zaakActies.getVoortzetten();
         restZaakActies.heropenen = zaakActies.getHeropenen();
         restZaakActies.creeerenDocument = zaakActies.getCreeerenDocument();
         restZaakActies.toevoegenDocument = zaakActies.getToevoegenDocument();
@@ -32,8 +32,8 @@ public class RESTZaakActiesConverter {
         restZaakActies.toevoegenBetrokkeneBedrijf = zaakActies.getToevoegenBetrokkeneBedrijf();
         restZaakActies.verwijderenBetrokkene = zaakActies.getVerwijderenBetrokkene();
         restZaakActies.wijzigenToekenning = zaakActies.getWijzigenToekenning();
-        restZaakActies.wijzigenOverig = zaakActies.getWijzigenOverig();
-        restZaakActies.startenPlanItems = zaakActies.getStartenPlanItems();
+        restZaakActies.wijzigen = zaakActies.getWijzigen();
+        restZaakActies.aanmakenTaak = zaakActies.getAanmakenTaak();
         restZaakActies.vastleggenBesluit = zaakActies.getVastleggenBesluit();
         return restZaakActies;
     }

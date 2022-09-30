@@ -15,7 +15,6 @@ import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -39,14 +38,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.client.zgw.brc.model.BesluitInformatieobject;
-
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.brc.model.Besluit;
+import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
@@ -89,6 +87,7 @@ import net.atos.zac.app.zaken.converter.RESTZaakOverzichtConverter;
 import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTBesluit;
 import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
+import net.atos.zac.app.zaken.model.RESTBesluitWijzigenGegevens;
 import net.atos.zac.app.zaken.model.RESTBesluittype;
 import net.atos.zac.app.zaken.model.RESTCommunicatiekanaal;
 import net.atos.zac.app.zaken.model.RESTDocumentOntkoppelGegevens;
@@ -324,7 +323,7 @@ public class ZakenRESTService {
     @PATCH
     @Path("zaak/{uuid}")
     public RESTZaak updateZaak(@PathParam("uuid") final UUID zaakUUID, final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
-        assertActie(policyService.readZaakActies(zaakUUID).getWijzigenOverig());
+        assertActie(policyService.readZaakActies(zaakUUID).getWijzigen());
         final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(restZaakEditMetRedenGegevens.zaak),
                                                              restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
@@ -333,7 +332,7 @@ public class ZakenRESTService {
     @PATCH
     @Path("{uuid}/zaakgeometrie")
     public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
-        assertActie(policyService.readZaakActies(zaakUUID).getWijzigenOverig());
+        assertActie(policyService.readZaakActies(zaakUUID).getWijzigen());
         final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(restGeometryConverter.convert(restZaak.zaakgeometrie));
         final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakGeometriePatch);
         return zaakConverter.convert(updatedZaak);
@@ -390,7 +389,7 @@ public class ZakenRESTService {
     public void ontkoppelInformatieObject(final RESTDocumentOntkoppelGegevens ontkoppelGegevens) {
         final Zaak zaak = zrcClientService.readZaak(ontkoppelGegevens.zaakUUID);
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppelGegevens.documentUUID);
-        assertActie(policyService.readEnkelvoudigInformatieobjectActies(informatieobject, zaak).getKoppelen());
+        assertActie(policyService.readDocumentActies(informatieobject, zaak).getKoppelen());
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setInformatieobject(informatieobject.getUrl());
         parameters.setZaak(zaak.getUrl());
@@ -534,7 +533,7 @@ public class ZakenRESTService {
     @Path("/zaak/{uuid}/afsluiten")
     public void afsluiten(@PathParam("uuid") final UUID zaakUUID, final RESTZaakAfsluitenGegevens afsluitenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertActie(policyService.readZaakActies(zaak).getAfsluiten());
+        assertActie(policyService.readZaakActies(zaak).getVoortzetten());
         policyService.valideerAlleDeelzakenGesloten(zaak);
         zgwApiService.updateResultaatForZaak(zaak, afsluitenGegevens.resultaattypeUuid, afsluitenGegevens.reden);
         zgwApiService.closeZaak(zaak, afsluitenGegevens.reden);
@@ -638,14 +637,22 @@ public class ZakenRESTService {
         return resultaat;
     }
 
-    @GET
-    @Path("listBesluitInformatieobjecten/{besluit}")
-    public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(@PathParam("besluit") final UUID besluit) {
-        //TODO: Vervang UUID -> URI d.m.v. readBesluit voor URI-opbouw-methode van issue #1413
-        final URI besluitUri = brcClientService.readBesluit(besluit).getUrl();
-        return brcClientService.listBesluitInformatieobjecten(besluitUri).stream()
-                .map(x -> drcClientService.readEnkelvoudigInformatieobject(x.getInformatieobject()))
-                .collect(Collectors.toList());
+    @PUT
+    @Path("besluit")
+    public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
+        final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
+        if (!besluit.getZaak().equals(zaak.getUrl())) {
+            throw new IllegalStateException("Zaak en besluit horen niet bijelkaar");
+        }
+        besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
+        besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
+        besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
+        Besluit updatedBesluit = brcClientService.updateBesluit(besluit);
+
+        //todo Informatieobjecten
+
+        return besluitConverter.convertToRESTBesluit(updatedBesluit);
     }
 
     @GET

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class EnkelvoudigInformatieobjectActies {
+export class DocumentActies {
     lezen: boolean;
     verwijderen: boolean;
     koppelen: boolean;
     downloaden: boolean;
     toevoegenNieuweVersie: boolean;
-    bewerken: boolean;
+    wijzigen: boolean;
     vergrendelen: boolean;
     ontgrendelen: boolean;
     ondertekenen: boolean;

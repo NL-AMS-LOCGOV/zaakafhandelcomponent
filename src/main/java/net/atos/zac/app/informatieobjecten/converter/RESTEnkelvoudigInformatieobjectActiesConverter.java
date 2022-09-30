@@ -5,15 +5,15 @@
 
 package net.atos.zac.app.informatieobjecten.converter;
 
-import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobjectActies;
-import net.atos.zac.policy.output.EnkelvoudigInformatieobjectActies;
+import net.atos.zac.app.informatieobjecten.model.RESTDocumentActies;
+import net.atos.zac.policy.output.DocumentActies;
 
 public class RESTEnkelvoudigInformatieobjectActiesConverter {
 
-    public RESTEnkelvoudigInformatieobjectActies convert(final EnkelvoudigInformatieobjectActies acties) {
-        final RESTEnkelvoudigInformatieobjectActies restActies = new RESTEnkelvoudigInformatieobjectActies();
+    public RESTDocumentActies convert(final DocumentActies acties) {
+        final RESTDocumentActies restActies = new RESTDocumentActies();
         restActies.lezen = acties.getLezen();
-        restActies.bewerken = acties.getBewerken();
+        restActies.wijzigen = acties.getWijzigen();
         restActies.koppelen = acties.getKoppelen();
         restActies.downloaden = acties.getDownloaden();
         restActies.ontgrendelen = acties.getOntgrendelen();

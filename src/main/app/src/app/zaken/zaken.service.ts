@@ -38,6 +38,7 @@ import {Besluit} from './model/besluit';
 import {Resultaattype} from './model/resultaattype';
 import {Besluittype} from './model/besluittype';
 import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
+import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -254,6 +255,12 @@ export class ZakenService {
 
     bestluitVastleggen(besluitVestleggenGegevens: BesluitVastleggenGegevens): Observable<Besluit> {
         return this.http.post<BesluitVastleggenGegevens>(`${this.basepath}/besluit`, besluitVestleggenGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    bestluitWijzigen(besluitWijzigenGegevens: BesluitWijzigenGegevens): Observable<Besluit> {
+        return this.http.put<BesluitWijzigenGegevens>(`${this.basepath}/besluit`, besluitWijzigenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
