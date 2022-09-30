@@ -22,12 +22,11 @@ import net.atos.zac.policy.input.DocumentInput;
 import net.atos.zac.policy.input.TaakInput;
 import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakInput;
-import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.DocumentActies;
+import net.atos.zac.policy.output.OverigActies;
 import net.atos.zac.policy.output.TaakActies;
-import net.atos.zac.policy.output.TakenActies;
+import net.atos.zac.policy.output.WerklijstActies;
 import net.atos.zac.policy.output.ZaakActies;
-import net.atos.zac.policy.output.ZakenActies;
 
 @RegisterRestClient(configKey = "OPA-Api-Client")
 @Path("v1/data/net/atos/zac")
@@ -35,31 +34,26 @@ import net.atos.zac.policy.output.ZakenActies;
 public interface OPAEvaluationClient {
 
     @POST
+    @Path("zaaktype/zaaktypen")
+    RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
+
+    @POST
     @Path("zaak/zaak_acties")
     RuleResponse<ZaakActies> readZaakActies(final RuleQuery<ZaakInput> query);
 
     @POST
-    @Path("app/app_acties")
-    RuleResponse<AppActies> readAppActies(final RuleQuery<UserInput> query);
-
-    @POST
-    @Path("zaaktype/zaaktypen")
-    RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
+    @Path("taak/taak_acties")
+    RuleResponse<TaakActies> readTaakActies(final RuleQuery<TaakInput> query);
 
     @POST
     @Path("document/document_acties")
     RuleResponse<DocumentActies> readDocumentActies(final RuleQuery<DocumentInput> query);
 
     @POST
-    @Path("zaken/zaken_acties")
-    RuleResponse<ZakenActies> readZakenActies(final RuleQuery<UserInput> query);
+    @Path("overig/overig_acties")
+    RuleResponse<OverigActies> readOverigActies(final RuleQuery<UserInput> query);
 
     @POST
-    @Path("taken/taken_acties")
-    RuleResponse<TakenActies> readTakenActies(final RuleQuery<UserInput> query);
-
-    @POST
-    @Path("taak/taak_acties")
-    RuleResponse<TaakActies> readTaakActies(final RuleQuery<TaakInput> query);
-
+    @Path("werklijst/werklijst_acties")
+    RuleResponse<WerklijstActies> readWerklijstActies(final RuleQuery<UserInput> query);
 }

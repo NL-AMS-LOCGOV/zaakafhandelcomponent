@@ -23,6 +23,8 @@ import {User} from '../../identity/model/user';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
+import {WerklijstActies} from '../../policy/model/werklijst-acties';
+import {PolicyService} from '../../policy/policy.service';
 
 @Component({
     templateUrl: './ontkoppelde-documenten-list.component.html',
@@ -43,17 +45,20 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
     werklijst = Werklijst.ONTKOPPELDE_DOCUMENTEN;
+    werklijstActies = new WerklijstActies();
 
     constructor(private ontkoppeldeDocumentenService: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
                 private utilService: UtilService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
-                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
+                private policyService: PolicyService) { }
 
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
         this.listParameters = SessionStorageUtil.getItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
+        this.policyService.readWerklijstActies().subscribe(acties => this.werklijstActies = acties);
     }
 
     ngAfterViewInit(): void {

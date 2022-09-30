@@ -7,7 +7,7 @@ package net.atos.zac.app.informatieobjecten.model;
 
 import java.time.LocalDate;
 
-import net.atos.zac.app.zaken.model.RESTZaakActies;
+import net.atos.zac.app.policy.model.RESTZaakActies;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
 
 /**

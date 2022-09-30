@@ -30,9 +30,9 @@ import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {PolicyService} from '../../policy/policy.service';
-import {ZakenActies} from '../../policy/model/zaken-acties';
 import {TranslateService} from '@ngx-translate/core';
 import {CsvService} from '../../csv/csv.service';
+import {WerklijstActies} from '../../policy/model/werklijst-acties';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -43,7 +43,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<ZaakZoekObject>(true, []);
     dataSource: ZakenWerkvoorraadDatasource;
-    acties = new ZakenActies();
+    acties = new WerklijstActies();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
@@ -68,7 +68,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.zaken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.policyService.readZakenActies().subscribe(acties => {
+        this.policyService.readWerklijstActies().subscribe(acties => {
             this.acties = acties;
             this.dataSource.initColumns(this.defaultColumns());
         });
@@ -93,7 +93,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['indicaties', ColumnPickerValue.VISIBLE],
             ['url', ColumnPickerValue.STICKY]
         ]);
-        if (!this.acties.verdelenEnVrijgeven) {
+        if (!this.acties.zakenTakenVerdelen) {
             columns.delete('select');
         }
         return columns;
@@ -172,7 +172,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(zaakZoekObject: ZaakZoekObject): boolean {
-        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== zaakZoekObject.behandelaarGebruikersnaam;
+        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== zaakZoekObject.behandelaarGebruikersnaam;
     }
 
     openVerdelenScherm(): void {

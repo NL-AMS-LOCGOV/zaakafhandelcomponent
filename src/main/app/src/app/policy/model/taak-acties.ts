@@ -4,10 +4,10 @@
  */
 
 export class TaakActies {
-    lezen: boolean;
-    wijzigenToekenning: boolean;
-    wijzigenFormulier: boolean;
-    wijzigen: boolean;
-    creeerenDocument: boolean;
-    toevoegenDocument: boolean;
+    lezen: boolean = false;
+    wijzigenToekenning: boolean = false;
+    wijzigenFormulier: boolean = false;
+    wijzigen: boolean = false;
+    creeerenDocument: boolean = false;
+    toevoegenDocument: boolean = false;
 }

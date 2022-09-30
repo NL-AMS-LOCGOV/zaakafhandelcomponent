@@ -4,13 +4,12 @@
  */
 
 import {Injectable} from '@angular/core';
-import {AppActies} from './model/app-acties';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {ZakenActies} from './model/zaken-acties';
-import {TakenActies} from './model/taken-acties';
+import {WerklijstActies} from './model/werklijst-acties';
+import {OverigActies} from './model/overig-acties';
 
 @Injectable({
     providedIn: 'root'
@@ -21,20 +20,14 @@ export class PolicyService {
 
     private basepath = '/rest/policy';
 
-    readAppActies(): Observable<AppActies> {
-        return this.http.get<AppActies>(`${this.basepath}/appActies`).pipe(
+    readWerklijstActies(): Observable<WerklijstActies> {
+        return this.http.get<WerklijstActies>(`${this.basepath}/werklijstActies`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    readZakenActies(): Observable<ZakenActies> {
-        return this.http.get<ZakenActies>(`${this.basepath}/zakenActies`).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
-    readTakenActies(): Observable<TakenActies> {
-        return this.http.get<TakenActies>(`${this.basepath}/takenActies`).pipe(
+    readOverigActies(): Observable<OverigActies> {
+        return this.http.get<OverigActies>(`${this.basepath}/overigActies`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

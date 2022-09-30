@@ -30,7 +30,8 @@ public class DocumentActies {
     private final boolean ondertekenen;
 
     @JsonbCreator
-    public DocumentActies(@JsonbProperty("lezen") final boolean lezen,
+    public DocumentActies(
+            @JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("verwijderen") final boolean verwijderen,
             @JsonbProperty("koppelen") final boolean koppelen,
             @JsonbProperty("downloaden") final boolean downloaden,

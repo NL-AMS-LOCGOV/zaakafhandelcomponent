@@ -4,6 +4,5 @@ zaaktypen.rego
 zaak-acties.rego
 taak-acties.rego
 document-acties.rego
-zaken-acties.rego
-taken-acties.rego
-app-acties.rego
+werklijst-acties.rego
+overig-acties.rego

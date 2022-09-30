@@ -48,12 +48,11 @@ import net.atos.zac.policy.input.TaakInput;
 import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakData;
 import net.atos.zac.policy.input.ZaakInput;
-import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.policy.output.DocumentActies;
+import net.atos.zac.policy.output.OverigActies;
 import net.atos.zac.policy.output.TaakActies;
-import net.atos.zac.policy.output.TakenActies;
+import net.atos.zac.policy.output.WerklijstActies;
 import net.atos.zac.policy.output.ZaakActies;
-import net.atos.zac.policy.output.ZakenActies;
 import net.atos.zac.shared.exception.FoutmeldingException;
 
 @ApplicationScoped
@@ -92,8 +91,8 @@ public class PolicyService {
     @Inject
     private CaseVariablesService caseVariablesService;
 
-    public AppActies readAppActies() {
-        return evaluationClient.readAppActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+    public OverigActies readOverigActies() {
+        return evaluationClient.readOverigActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
     public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar,
@@ -189,12 +188,8 @@ public class PolicyService {
         return readTaakActies(taskService.readTask(taskId));
     }
 
-    public ZakenActies readZakenActies() {
-        return evaluationClient.readZakenActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
-    }
-
-    public TakenActies readTakenActies() {
-        return evaluationClient.readTakenActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
+    public WerklijstActies readWerklijstActies() {
+        return evaluationClient.readWerklijstActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
     /**

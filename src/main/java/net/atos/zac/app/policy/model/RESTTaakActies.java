@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.app.taken.model;
+package net.atos.zac.app.policy.model;
 
 public class RESTTaakActies {
 
