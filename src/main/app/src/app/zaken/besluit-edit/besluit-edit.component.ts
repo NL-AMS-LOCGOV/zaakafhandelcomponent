@@ -44,7 +44,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.besluit = this.zaak.besluit;
-        this.formConfig = new FormConfigBuilder().saveText('actie.aanmaken').cancelText('actie.annuleren').build();
+        this.formConfig = new FormConfigBuilder().saveText('actie.wijzigen').cancelText('actie.annuleren').build();
         const resultaattypeField = new SelectFormFieldBuilder(this.zaak.resultaat.resultaattype).id('resultaattype').label('resultaat')
                                                                                                 .optionLabel('naam')
                                                                                                 .validators(Validators.required)
@@ -58,11 +58,11 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                                      .build();
         const vervaldatumField = new DateFormFieldBuilder(this.besluit.vervaldatum).id('vervaldatum').label('vervaldatum')
                                                                                    .minDate(ingangsdatumField.formControl.value).build();
-        const documentenField = new DocumentenLijstFieldBuilder()
-        .id('documenten').label('documenten')
-        .documentenChecked(this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
-        .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
-        .build();
+        const documentenField = new DocumentenLijstFieldBuilder().id('documenten').label('documenten')
+                                                                 .documentenChecked(
+                                                                     this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
+                                                                 .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
+                                                                 .build();
 
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
 
@@ -97,6 +97,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
             gegevens.toelichting = formGroup.controls['toelichting'].value;
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
+            gegevens.informatieobjecten = formGroup.controls['documenten'].value ? formGroup.controls['documenten'].value.split(';') : [];
             this.zakenService.bestluitWijzigen(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.gewijzigd');
                 this.besluitGewijzigd.emit(true);

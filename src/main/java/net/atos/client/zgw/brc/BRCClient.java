@@ -117,4 +117,11 @@ public interface BRCClient {
             @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
     BesluitInformatieobject besluitinformatieobjectCreate(final BesluitInformatieobject besluitInformatieobject);
 
+    @DELETE
+    @Path("besluitinformatieobjecten/{uuid}")
+    @ClientHeaderParams({
+            @ClientHeaderParam(name = ACCEPT_CRS, value = ACCEPT_CRS_VALUE),
+            @ClientHeaderParam(name = CONTENT_CRS, value = CONTENT_CRS_VALUE)})
+    BesluitInformatieobject besluitinformatieobjectDelete(@PathParam("uuid") final UUID uuid);
+
 }
