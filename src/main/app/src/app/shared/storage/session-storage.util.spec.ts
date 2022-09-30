@@ -48,7 +48,6 @@ describe('SessionStorageService', () => {
         expect(gebruikerJSON).toEqual(gebruiker);
     });
 
-    // TODO: ESUITEDEV-25310
     // session storage word momenteel niet leeggegooid. Echter, in de afterAll() gebeurt dit wel
     xit('should call clear', () => {
         spyOn(sessionStorage, 'clear');
