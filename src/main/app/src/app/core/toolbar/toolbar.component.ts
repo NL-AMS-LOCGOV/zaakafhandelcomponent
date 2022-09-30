@@ -17,7 +17,8 @@ import {WebsocketListener} from '../websocket/model/websocket-listener';
 import * as moment from 'moment';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {PolicyService} from '../../policy/policy.service';
-import {AppActies} from '../../policy/model/app-acties';
+import {OverigActies} from '../../policy/model/overig-acties';
+import {WerklijstActies} from '../../policy/model/werklijst-acties';
 
 @Component({
     selector: 'zac-toolbar',
@@ -29,7 +30,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
     ingelogdeMedewerker: User;
-    acties = new AppActies();
+    overigActies = new OverigActies();
+    werklijstActies = new WerklijstActies();
 
     private subscription$: Subscription;
     private signaleringListener: WebsocketListener;
@@ -46,7 +48,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
         });
-        this.policyService.readAppActies().subscribe(appActies => this.acties = appActies);
+        this.policyService.readOverigActies().subscribe(acties => this.overigActies = acties);
+        this.policyService.readWerklijstActies().subscribe(acties => this.werklijstActies = acties);
         this.setSignaleringen();
     }
 
@@ -73,5 +76,4 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             }
         );
     }
-
 }

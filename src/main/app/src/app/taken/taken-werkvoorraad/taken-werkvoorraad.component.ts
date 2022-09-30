@@ -30,10 +30,10 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 import {TakenVerdelenDialogComponent} from '../taken-verdelen-dialog/taken-verdelen-dialog.component';
 import {TakenVrijgevenDialogComponent} from '../taken-vrijgeven-dialog/taken-vrijgeven-dialog.component';
-import {TakenActies} from '../../policy/model/taken-acties';
 import {PolicyService} from '../../policy/policy.service';
 import {TranslateService} from '@ngx-translate/core';
 import {CsvService} from '../../csv/csv.service';
+import {WerklijstActies} from '../../policy/model/werklijst-acties';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -44,7 +44,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
 
     selection = new SelectionModel<TaakZoekObject>(true, []);
     dataSource: TakenWerkvoorraadDatasource;
-    acties = new TakenActies();
+    acties = new WerklijstActies();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
@@ -68,7 +68,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ngOnInit(): void {
         this.utilService.setTitle('title.taken.werkvoorraad');
         this.getIngelogdeMedewerker();
-        this.policyService.readTakenActies().subscribe(acties => {
+        this.policyService.readWerklijstActies().subscribe(acties => {
             this.acties = acties;
             this.dataSource.initColumns(this.defaultColumns());
         });
@@ -86,7 +86,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(taakZoekObject: TaakZoekObject): boolean {
-        return this.acties.toekennenAanMijzelf && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
+        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
     }
 
     assignToMe(taakZoekObject: TaakZoekObject, event): void {
@@ -185,7 +185,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
             ['toelichting', ColumnPickerValue.HIDDEN],
             ['url', ColumnPickerValue.STICKY]
         ]);
-        if (!this.acties.verdelenEnVrijgeven) {
+        if (!this.acties.zakenTakenVerdelen) {
             columns.delete('select');
         }
         return columns;

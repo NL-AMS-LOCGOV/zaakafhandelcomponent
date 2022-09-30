@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTUser;
+import net.atos.zac.app.policy.model.RESTDocumentActies;
 
 /**
  *

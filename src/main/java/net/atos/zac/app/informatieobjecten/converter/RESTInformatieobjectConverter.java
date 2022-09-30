@@ -34,6 +34,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObject
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTGekoppeldeZaakEnkelvoudigInformatieObject;
+import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.authentication.LoggedInUser;
@@ -75,7 +76,7 @@ public class RESTInformatieobjectConverter {
     private IdentityService identityService;
 
     @Inject
-    private RESTEnkelvoudigInformatieobjectActiesConverter actiesConverter;
+    private RESTActiesConverter actiesConverter;
 
     @Inject
     private PolicyService policyService;

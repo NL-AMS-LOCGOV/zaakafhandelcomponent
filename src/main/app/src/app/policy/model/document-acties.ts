@@ -4,13 +4,13 @@
  */
 
 export class DocumentActies {
-    lezen: boolean;
-    verwijderen: boolean;
-    koppelen: boolean;
-    downloaden: boolean;
-    toevoegenNieuweVersie: boolean;
-    wijzigen: boolean;
-    vergrendelen: boolean;
-    ontgrendelen: boolean;
-    ondertekenen: boolean;
+    lezen: boolean = false;
+    verwijderen: boolean = false;
+    koppelen: boolean = false;
+    downloaden: boolean = false;
+    toevoegenNieuweVersie: boolean = false;
+    wijzigen: boolean = false;
+    vergrendelen: boolean = false;
+    ontgrendelen: boolean = false;
+    ondertekenen: boolean = false;
 }

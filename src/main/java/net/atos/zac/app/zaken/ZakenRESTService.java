@@ -120,7 +120,6 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.AppActies;
 import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
@@ -302,7 +301,7 @@ public class ZakenRESTService {
     @POST
     @Path("zaak")
     public RESTZaak createZaak(final RESTZaak restZaak) {
-        assertActie(policyService.readAppActies().getAanmakenZaak() && policyService.isZaaktypeAllowed(restZaak.zaaktype.omschrijving));
+        assertActie(policyService.readOverigActies().getStartenZaak() && policyService.isZaaktypeAllowed(restZaak.zaaktype.omschrijving));
         restZaak.registratiedatum = LocalDate.now();
         final Zaak zaak = zaakConverter.convert(restZaak);
         final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
@@ -483,7 +482,7 @@ public class ZakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertActie(policyService.readZakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? identityService.readGroup(verdeelGegevens.groepId) : null;
         final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
                 identityService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
@@ -502,7 +501,7 @@ public class ZakenRESTService {
     @PUT
     @Path("vrijgeven")
     public void vrijgeven(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertActie(policyService.readZakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak.getUuid(), BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
@@ -582,7 +581,7 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen/mij/lijst")
     public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
-        assertActie(policyService.readZakenActies().getToekennenAanMijzelf());
+        assertActie(policyService.readWerklijstActies().getZakenTaken());
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         ingelogdeMedewerkerToekennenAanZaak(zaak, toekennenGegevens);
         indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
@@ -661,15 +660,14 @@ public class ZakenRESTService {
     @GET
     @Path("besluittypes/{zaaktypeUUID}")
     public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        AppActies appActies = policyService.readAppActies();
-        assertActie(appActies.getZaken());
+        assertActie(policyService.readWerklijstActies().getZakenTaken());
         return besluittypeConverter.convertToRESTBesluittypes(ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
     @GET
     @Path("resultaattypes/{zaaktypeUUID}")
     public List<RESTResultaattype> listResultaattypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        assertActie(policyService.readAppActies().getZaken());
+        assertActie(policyService.readWerklijstActies().getZakenTaken());
         return resultaattypeConverter.convertResultaattypes(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
