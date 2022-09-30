@@ -60,7 +60,7 @@ public class ConfiguratieService {
         return talen.isEmpty() ? null : talen.get(0);
     }
 
-    //TODO ESUITEDEV-25102 vervangen van onderstaande placeholders
+    //TODO zaakafhandelcomponent#1468 vervangen van onderstaande placeholders
     public static final String BRON_ORGANISATIE = "123443210";
 
     public static final String VERANTWOORDELIJKE_ORGANISATIE = "316245124";
