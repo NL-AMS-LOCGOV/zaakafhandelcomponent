@@ -23,7 +23,15 @@ public final class UriUtil {
         return UUID.fromString(extractUUID(uri.getPath()));
     }
 
+    public static boolean equal(final URI a, final URI b) {
+        if (a != null && b != null) {
+            return uuidFromURI(a).equals(uuidFromURI(b));
+        }
+        return a == null && b == null;
+    }
+
     private static String extractUUID(final String path) {
         return contains(path, "/") ? substringAfterLast(path, "/") : path;
     }
+
 }

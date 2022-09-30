@@ -10,6 +10,8 @@ import java.lang.reflect.Type;
 import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.zgw.shared.model.audit.AuditWijziging;
+import net.atos.client.zgw.shared.model.audit.besluiten.BesluitInformatieobjectWijziging;
+import net.atos.client.zgw.shared.model.audit.besluiten.BesluitWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.EnkelvoudigInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.GebuiksrechtenWijziging;
 import net.atos.client.zgw.shared.model.audit.documenten.ObjectInformatieobjectWijziging;
@@ -21,7 +23,6 @@ import net.atos.client.zgw.shared.model.audit.zaken.RolNietNatuurlijkPersoonWijz
 import net.atos.client.zgw.shared.model.audit.zaken.RolOrganisatorischeEenheidWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.RolVestigingWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.StatusWijziging;
-import net.atos.client.zgw.shared.model.audit.zaken.ZaakBesluitWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakEigenschapWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakInformatieobjectWijziging;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
@@ -36,12 +37,6 @@ public enum ObjectType {
      * http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/zaakeigenschappen
      */
     ZAAKEIGENSCHAP("/zaakeigenschappen/", ZaakEigenschapWijziging.class),
-
-    /**
-     * LETOP: Volgorde is belangrijk. ZAAKBESLUIT moet boven ZAAK; ZAAK url matcht ook op ZAAKBESLUIT url
-     * http://open-zaak/zaken/api/v1/zaken/{zaak_uuid}/besluiten/{uuid}
-     */
-    ZAAKBESLUIT("/besluiten/", ZaakBesluitWijziging.class),
 
     /** http://open-zaak/zaken/api/v1/zaken/{uuid} */
     ZAAK("/zaken/api/v1/zaken/", ZaakWijziging.class),
@@ -71,7 +66,13 @@ public enum ObjectType {
     OBJECT_INFORMATIEOBJECT("documenten/api/v1/objectinformatieobjecten", ObjectInformatieobjectWijziging.class),
 
     /** http://open-zaak/zaken/api/v1/klantcontacten/{uuid} */
-    KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantcontactWijziging.class);
+    KLANTCONTACT("/zaken/api/v1/klantcontacten", KlantcontactWijziging.class),
+
+    /** http://open-zaak.default/besluiten/api/v1/besluit/{uuid} */
+    BESLUIT("/besluiten/api/v1/besluiten", BesluitWijziging.class),
+
+    /** http://open-zaak.default/besluiten/api/v1/besluitinformatieobjecten/{uuid} */
+    BESLUIT_INFORMATIEOBJECT("/besluiten/api/v1/besluitinformatieobjecten", BesluitInformatieobjectWijziging.class);
 
     private final String url;
 

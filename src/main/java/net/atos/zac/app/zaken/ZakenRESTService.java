@@ -157,9 +157,9 @@ public class ZakenRESTService {
 
     private static final String VERLENGING = "Verlenging";
 
-    private static final String AANMAKEN_BESLUIT = "Aanmaken besluit";
+    private static final String AANMAKEN_BESLUIT_TOELICHTING = "Aanmaken besluit";
 
-    private static final String WIJZIGEN_BESLUIT = "Wijzigen besluit";
+    private static final String WIJZIGEN_BESLUIT_TOELICHTING = "Wijzigen besluit";
 
     @Inject
     private ZGWApiService zgwApiService;
@@ -644,12 +644,12 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         assertActie(policyService.readZaakActies(zaak).getVastleggenBesluit());
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
-        zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, StringUtils.EMPTY);
+        zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, null);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
         besluitToevoegenGegevens.informatieobjecten.forEach(documentUri -> {
             final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
             final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(resultaat.url, informatieobject.getUrl());
-            brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT);
+            brcClientService.createBesluitInformatieobject(besluitInformatieobject, AANMAKEN_BESLUIT_TOELICHTING);
         });
         return resultaat;
     }
@@ -667,9 +667,9 @@ public class ZakenRESTService {
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
             final Resultaattype resultaattype = ztcClientService.readResultaattype(restBesluitWijzgenGegevens.resultaattypeUuid);
-            if (zaakResultaat.getResultaattype() != resultaattype.getUrl()) {
+            if (!UriUtil.equal(zaakResultaat.getResultaattype(), resultaattype.getUrl())) {
                 zrcClientService.deleteResultaat(zaakResultaat.getUuid());
-                zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, StringUtils.EMPTY);
+                zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, null);
             }
         }
         updateBesluitInformatieobjecten(updatedBesluit, restBesluitWijzgenGegevens.informatieobjecten);
@@ -691,8 +691,15 @@ public class ZakenRESTService {
         toevoegen.forEach(documentUri -> {
             final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(documentUri);
             final BesluitInformatieobject besluitInformatieobject = new BesluitInformatieobject(besluit.getUrl(), informatieobject.getUrl());
-            brcClientService.createBesluitInformatieobject(besluitInformatieobject, WIJZIGEN_BESLUIT);
+            brcClientService.createBesluitInformatieobject(besluitInformatieobject, WIJZIGEN_BESLUIT_TOELICHTING);
         });
+    }
+
+    @GET
+    @Path("besluit/{uuid}/historie")
+    public List<RESTHistorieRegel> listBesluitHistorie(@PathParam("uuid") final UUID uuid) {
+        List<AuditTrailRegel> auditTrail = brcClientService.listAuditTrail(uuid);
+        return auditTrailConverter.convert(auditTrail);
     }
 
     @GET
