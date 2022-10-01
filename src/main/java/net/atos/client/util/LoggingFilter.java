@@ -23,11 +23,11 @@ public class LoggingFilter implements ClientRequestFilter, ClientResponseFilter 
 
     @Override
     public void filter(final ClientRequestContext requestContext) {
-        // ToDo: ESUITEDEV-22996
+        // ToDo: zaakafhandelcomponent#1660
     }
 
     @Override
     public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext) {
-        // ToDo: ESUITEDEV-22996
+        // ToDo: zaakafhandelcomponent#1660
     }
 }

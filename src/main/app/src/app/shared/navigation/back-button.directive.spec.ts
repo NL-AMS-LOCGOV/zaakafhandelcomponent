@@ -43,7 +43,6 @@ describe('BackButtonDirective', () => {
         expect(mockNavigationService.back).toHaveBeenCalled();
     });
 
-    // TODO: ESUITEDEV-25310
     // navigationHistory word niet aangemaakt bij tests
     xit('should build navigation history, then tear it down', () => {
         const history = SessionStorageUtil.getItem('navigationHistory') as string[];
