@@ -10,7 +10,7 @@ import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {TranslateService} from '@ngx-translate/core';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TakenService} from '../../taken/taken.service';
@@ -47,7 +47,7 @@ export class Advies extends AbstractFormulier {
     }
 
     _initStartForm() {
-        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
@@ -89,8 +89,9 @@ export class Advies extends AbstractFormulier {
     getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
-            const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-            zoekParameters.UUIDs = dataElement.split(';');
+            const zoekParameters = new InformatieobjectZoekParameters();
+            zoekParameters.zaakUUID = this.zaakUuid;
+            zoekParameters.informatieobjectUUIDs = dataElement.split(';');
             return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
         }
         return of([]);

@@ -16,7 +16,7 @@ import {HumanTaskData} from '../../plan-items/model/human-task-data';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {Observable} from 'rxjs';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 
 export abstract class AbstractFormulier {
@@ -112,12 +112,13 @@ export abstract class AbstractFormulier {
     }
 
     private getTaakdocumenten(): Observable<EnkelvoudigInformatieobject[]> {
-        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
-        zoekParameters.UUIDs = [];
+        const zoekParameters = new InformatieobjectZoekParameters();
+        zoekParameters.zaakUUID = this.zaakUuid;
+        zoekParameters.informatieobjectUUIDs = [];
 
         if (this.taak?.taakdocumenten) {
             this.taak.taakdocumenten.forEach((uuid) => {
-                zoekParameters.UUIDs.push(uuid);
+                zoekParameters.informatieobjectUUIDs.push(uuid);
             });
         }
 

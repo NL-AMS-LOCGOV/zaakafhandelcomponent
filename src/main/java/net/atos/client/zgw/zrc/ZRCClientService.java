@@ -183,33 +183,32 @@ public class ZRCClientService {
      * Update all instances of {@link Rol} for {@link Zaak}.
      * Replaces all current instances of {@link Rol} with the suplied instances.
      *
-     * @param zaakUUID de bij te werken zaak
-     * @param rollen   de gewenste rollen
+     * @param zaak   de bij te werken zaak
+     * @param rollen de gewenste rollen
      */
-    private void updateRollen(final UUID zaakUUID, final Collection<Rol<?>> rollen, final String toelichting) {
-        final Collection<Rol<?>> current = listRollen(zaakUUID);
+    private void updateRollen(final Zaak zaak, final Collection<Rol<?>> rollen, final String toelichting) {
+        final Collection<Rol<?>> current = listRollen(zaak);
         deleteDeletedRollen(current, rollen, toelichting);
         deleteUpdatedRollen(current, rollen, toelichting);
         createUpdatedRollen(current, rollen, toelichting);
         createCreatedRollen(current, rollen, toelichting);
     }
 
-    public void updateRol(final UUID zaakUUID, final Rol<?> rol, final String toelichting) {
-        final List<Rol<?>> rollen = listRollen(zaakUUID);
+    public void updateRol(final Zaak zaak, final Rol<?> rol, final String toelichting) {
+        final List<Rol<?>> rollen = listRollen(zaak);
         rollen.add(rol);
-
-        updateRollen(zaakUUID, rollen, toelichting);
+        updateRollen(zaak, rollen, toelichting);
     }
 
-    public void deleteRol(final UUID zaakUUID, final BetrokkeneType betrokkeneType, final String toelichting) {
-        final List<Rol<?>> rollen = listRollen(zaakUUID);
+    public void deleteRol(final Zaak zaak, final BetrokkeneType betrokkeneType, final String toelichting) {
+        final List<Rol<?>> rollen = listRollen(zaak);
 
         final Optional<Rol<?>> rolMedewerker =
                 rollen.stream().filter(rol -> rol.getBetrokkeneType() == betrokkeneType).findFirst();
 
         rolMedewerker.ifPresent(betrokkene -> rollen.removeIf(rol -> rol.equalBetrokkeneRol(betrokkene)));
 
-        updateRollen(zaakUUID, rollen, toelichting);
+        updateRollen(zaak, rollen, toelichting);
     }
 
     /**
@@ -339,11 +338,10 @@ public class ZRCClientService {
     /**
      * List all instances of {@link Rol} for a specific {@link Zaak}.
      *
-     * @param zaakUUID UUID of {@link Zaak}
+     * @param zaak {@link Zaak}
      * @return List of {@link Rol}
      */
-    public List<Rol<?>> listRollen(final UUID zaakUUID) {
-        final Zaak zaak = zrcClient.zaakRead(zaakUUID);
+    public List<Rol<?>> listRollen(final Zaak zaak) {
         return zrcClient.rolList(new RolListParameters(zaak.getUrl())).getResults();
     }
 

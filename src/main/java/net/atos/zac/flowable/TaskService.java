@@ -217,17 +217,15 @@ public class TaskService {
      * @param groupId Id of the new group
      * @return Assigned Task
      */
-    public Task assignTaskToGroup(final String taskId, final String groupId) {
-        final Task task = readOpenTask(taskId);
-
+    public Task assignTaskToGroup(final Task task, final String groupId) {
         task.getIdentityLinks().stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                 .map(IdentityLinkInfo::getGroupId)
-                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(taskId, currentGroupId, IdentityLinkType.CANDIDATE));
+                .forEach(currentGroupId -> cmmnTaskService.deleteGroupIdentityLink(task.getId(), currentGroupId, IdentityLinkType.CANDIDATE));
 
-        cmmnTaskService.addGroupIdentityLink(taskId, groupId, IdentityLinkType.CANDIDATE);
+        cmmnTaskService.addGroupIdentityLink(task.getId(), groupId, IdentityLinkType.CANDIDATE);
 
-        return readOpenTask(taskId);
+        return readOpenTask(task.getId());
     }
 
     public TaakStatus getTaakStatus(final TaskInfo taskInfo) {

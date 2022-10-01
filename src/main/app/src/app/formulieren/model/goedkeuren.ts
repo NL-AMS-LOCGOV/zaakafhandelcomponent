@@ -4,7 +4,7 @@
  */
 
 import {AbstractFormulier} from './abstract-formulier';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {Validators} from '@angular/forms';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
@@ -41,7 +41,7 @@ export class Goedkeuren extends AbstractFormulier {
     }
 
     _initStartForm() {
-        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
@@ -90,10 +90,10 @@ export class Goedkeuren extends AbstractFormulier {
     getDocumenten$(field: string): Observable<EnkelvoudigInformatieobject[]> {
         const dataElement = this.getDataElement(field);
         if (dataElement) {
-            const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+            const zoekParameters = new InformatieobjectZoekParameters();
             if (dataElement) {
-                zoekParameters.UUIDs = dataElement.split(';');
-                zoekParameters.zaakOphalenVoorPolicyCheck = true;
+                zoekParameters.zaakUUID = this.zaakUuid;
+                zoekParameters.informatieobjectUUIDs = dataElement.split(';');
                 return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters);
             }
         }

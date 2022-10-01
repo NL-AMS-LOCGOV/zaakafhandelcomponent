@@ -12,7 +12,7 @@ import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject'
 import {ZaakInformatieobject} from './model/zaak-informatieobject';
 import {Informatieobjecttype} from './model/informatieobjecttype';
 import {HistorieRegel} from '../shared/historie/model/historie-regel';
-import {EnkelvoudigInformatieObjectZoekParameters} from './model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from './model/informatieobject-zoek-parameters';
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {EnkelvoudigInformatieObjectVersieGegevens} from './model/enkelvoudig-informatie-object-versie-gegevens';
 import {DocumentCreatieGegevens} from './model/document-creatie-gegevens';
@@ -85,7 +85,7 @@ export class InformatieObjectenService {
         );
     }
 
-    listEnkelvoudigInformatieobjecten(zoekParameters: EnkelvoudigInformatieObjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
+    listEnkelvoudigInformatieobjecten(zoekParameters: InformatieobjectZoekParameters): Observable<EnkelvoudigInformatieobject[]> {
         return this.http.put<EnkelvoudigInformatieobject[]>(`${this.basepath}/informatieobjectenList`, zoekParameters).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

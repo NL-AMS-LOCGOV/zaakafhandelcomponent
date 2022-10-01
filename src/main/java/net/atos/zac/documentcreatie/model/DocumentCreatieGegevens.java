@@ -8,10 +8,11 @@ package net.atos.zac.documentcreatie.model;
 import java.util.UUID;
 
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
+import net.atos.client.zgw.zrc.model.Zaak;
 
 public class DocumentCreatieGegevens {
 
-    private final UUID zaakUUID;
+    private final Zaak zaak;
 
     private final UUID informatieobjecttype;
 
@@ -21,19 +22,14 @@ public class DocumentCreatieGegevens {
 
     private InformatieobjectStatus informatieobjectStatus = InformatieobjectStatus.TER_VASTSTELLING;
 
-    public DocumentCreatieGegevens(final UUID zaakUUID, final UUID informatieobjecttype) {
-        this.zaakUUID = zaakUUID;
-        this.informatieobjecttype = informatieobjecttype;
-    }
-
-    public DocumentCreatieGegevens(final UUID zaakUUID, final UUID informatieobjecttype, final String taskId) {
-        this.zaakUUID = zaakUUID;
+    public DocumentCreatieGegevens(final Zaak zaak, final UUID informatieobjecttype, final String taskId) {
+        this.zaak = zaak;
         this.taskId = taskId;
         this.informatieobjecttype = informatieobjecttype;
     }
 
-    public UUID getZaakUUID() {
-        return zaakUUID;
+    public Zaak getZaak() {
+        return zaak;
     }
 
     public UUID getInformatieobjecttype() {
@@ -52,15 +48,7 @@ public class DocumentCreatieGegevens {
         return informatieobjectStatus;
     }
 
-    public void setInformatieobjectStatus(final InformatieobjectStatus informatieobjectStatus) {
-        this.informatieobjectStatus = informatieobjectStatus;
-    }
-
     public String getTaskId() {
         return taskId;
-    }
-
-    public void setTaskId(final String taskId) {
-        this.taskId = taskId;
     }
 }

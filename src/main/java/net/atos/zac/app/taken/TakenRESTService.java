@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -44,8 +43,8 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.uuid.impl.UUIDUtil;
 
+import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -120,6 +119,9 @@ public class TakenRESTService {
     private ZRCClientService zrcClientService;
 
     @Inject
+    private DRCClientService drcClientService;
+
+    @Inject
     private SignaleringenService signaleringenService;
 
     @Inject
@@ -134,7 +136,7 @@ public class TakenRESTService {
     @GET
     @Path("zaak/{zaakUUID}")
     public List<RESTTaak> listTakenVoorZaak(@PathParam("zaakUUID") final UUID zaakUUID) {
-        assertActie(policyService.readZaakActies(zaakUUID).getLezen());
+        assertActie(policyService.readZaakActies(zrcClientService.readZaak(zaakUUID)).getLezen());
         return taakConverter.convert(taskService.listTasksForCase(zaakUUID));
     }
 
@@ -151,7 +153,7 @@ public class TakenRESTService {
     @PUT
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigenFormulier());
+        assertActie(policyService.readTaakActies(taskService.readTask(restTaak.id)).getWijzigenFormulier());
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;
@@ -184,15 +186,15 @@ public class TakenRESTService {
     @PATCH
     @Path("assign")
     public void assignTaak(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigenToekenning());
+        assertActie(policyService.readTaakActies(taskService.readTask(restTaak.id)).getWijzigenToekenning());
         assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.id : null, restTaak.zaakUuid);
     }
 
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        assertActie(
-                policyService.readWerklijstActies().getZakenTaken() && policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
+        assertActie(policyService.readWerklijstActies().getZakenTaken() && policyService.readTaakActies(taskService.readTask(restTaakToekennenGegevens.taakId))
+                .getWijzigenToekenning());
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convert(task, true);
@@ -201,8 +203,9 @@ public class TakenRESTService {
     @PATCH
     @Path("assign/group")
     public void assignGroup(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigenToekenning());
-        final Task task = taskService.assignTaskToGroup(restTaak.id, restTaak.groep.id);
+        Task task = taskService.readOpenTask(restTaak.id);
+        assertActie(policyService.readTaakActies(task).getWijzigenToekenning());
+        task = taskService.assignTaskToGroup(task, restTaak.groep.id);
         taakBehandelaarGewijzigd(task, restTaak.zaakUuid);
     }
 
@@ -222,7 +225,7 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigen());
+        assertActie(policyService.readTaakActies(taskService.readTask(restTaak.id)).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
             taskService.assignTaskToUser(restTaak.id, loggedInUserId);
@@ -251,7 +254,7 @@ public class TakenRESTService {
     @GET
     @Path("{taskId}/historie")
     public List<RESTTaakHistorieRegel> listHistorie(@PathParam("taskId") final String taskId) {
-        assertActie(policyService.readTaakActies(taskId).getLezen());
+        assertActie(policyService.readTaakActies(taskService.readTask(taskId)).getLezen());
         final List<HistoricTaskLogEntry> historicTaskLogEntries = taskService.listHistorieForTask(taskId);
         return taakHistorieConverter.convert(historicTaskLogEntries);
     }
@@ -278,7 +281,7 @@ public class TakenRESTService {
                 final RESTTaakDocumentData restTaakDocumentData;
                 try {
                     restTaakDocumentData = new ObjectMapper().readValue(jsonDocumentData, RESTTaakDocumentData.class);
-                } catch (JsonProcessingException e) {
+                } catch (final JsonProcessingException e) {
                     throw new RuntimeException(e.getMessage(), e); //invalid form-group data
                 }
                 final EnkelvoudigInformatieobjectWithInhoud document = restInformatieobjectConverter.convert(restTaakDocumentData, uploadedFile);
@@ -294,25 +297,22 @@ public class TakenRESTService {
 
     private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
         if (taakdata.containsKey(TAAK_ELEMENT_ONDERTEKENEN) && taakdata.get(TAAK_ELEMENT_ONDERTEKENEN) != null) {
-            final List<UUID> UUIDs = Arrays.stream(taakdata.get(TAAK_ELEMENT_ONDERTEKENEN).split(";"))
-                    .filter(uuid -> !StringUtils.isEmpty(uuid))
-                    .map(UUIDUtil::uuid)
-                    .collect(Collectors.toList());
-            UUIDs.forEach(uuid -> assertActie(policyService.readDocumentActies(uuid).getOndertekenen()));
-            enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObjecten(UUIDs);
+            Arrays.stream(taakdata.get(TAAK_ELEMENT_ONDERTEKENEN).split(";"))
+                    .filter(StringUtils::isNotEmpty)
+                    .map(UUID::fromString)
+                    .map(drcClientService::readEnkelvoudigInformatieobject)
+                    .forEach(enkelvoudigInformatieobject -> {
+                        assertActie(policyService.readDocumentActies(enkelvoudigInformatieobject).getOndertekenen());
+                        enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(enkelvoudigInformatieobject.getUUID());
+                    });
         }
     }
 
     private void deleteSignaleringen(final TaskInfo taskInfo) {
         final LoggedInUser loggedInUser = loggedInUserInstance.get();
-        signaleringenService.deleteSignaleringen(
-                new SignaleringZoekParameters(loggedInUser)
-                        .types(SignaleringType.Type.TAAK_OP_NAAM)
-                        .subject(taskInfo));
-        signaleringenService.deleteSignaleringen(
-                new SignaleringZoekParameters(loggedInUser)
-                        .types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
-                        .subjectZaak(caseVariablesService.readZaakUUID(taskInfo.getScopeId())));
+        signaleringenService.deleteSignaleringen(new SignaleringZoekParameters(loggedInUser).types(SignaleringType.Type.TAAK_OP_NAAM).subject(taskInfo));
+        signaleringenService.deleteSignaleringen(new SignaleringZoekParameters(loggedInUser).types(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD)
+                                                         .subjectZaak(caseVariablesService.readZaakUUID(taskInfo.getScopeId())));
     }
 
     private void taakBehandelaarGewijzigd(final Task task, final UUID zaakUuid) {
