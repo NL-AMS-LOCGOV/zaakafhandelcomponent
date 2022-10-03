@@ -698,14 +698,14 @@ public class ZakenRESTService {
     @GET
     @Path("besluit/{uuid}/historie")
     public List<RESTHistorieRegel> listBesluitHistorie(@PathParam("uuid") final UUID uuid) {
-        List<AuditTrailRegel> auditTrail = brcClientService.listAuditTrail(uuid);
+        final List<AuditTrailRegel> auditTrail = brcClientService.listAuditTrail(uuid);
         return auditTrailConverter.convert(auditTrail);
     }
 
     @GET
     @Path("besluittypes/{zaaktypeUUID}")
     public List<RESTBesluittype> listBesluittypes(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        AppActies appActies = policyService.readAppActies();
+        final AppActies appActies = policyService.readAppActies();
         assertActie(appActies.getZaken());
         return besluittypeConverter.convertToRESTBesluittypes(ztcClientService.readBesluittypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
