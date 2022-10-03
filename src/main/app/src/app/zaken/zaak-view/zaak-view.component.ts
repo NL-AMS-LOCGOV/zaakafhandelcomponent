@@ -382,24 +382,25 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
         }
 
-        forkJoin({
-            userEventListenerPlanItems: this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
-            humanTaskPlanItems: this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid)
-        }).subscribe(planItems => {
-            if (this.zaak.acties.voortzetten && planItems.userEventListenerPlanItems.length > 0) {
+        forkJoin([
+            this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
+            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
+            this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid)
+        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, zaakafhandelParameters]) => {
+            if (this.zaak.acties.voortzetten && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
-                    planItems.userEventListenerPlanItems.map(
+                    userEventListenerPlanItems.map(
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.acties.afbreken) {
+            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.acties.afbreken && zaakafhandelParameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
             this.createKoppelingenMenuItems();
-            if (this.zaak.acties.aanmakenTaak && planItems.humanTaskPlanItems.length > 0) {
+            if (this.zaak.acties.aanmakenTaak && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
-                    planItems.humanTaskPlanItems.map(humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
+                    humanTaskPlanItems.map(humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
             }
         });
     }
