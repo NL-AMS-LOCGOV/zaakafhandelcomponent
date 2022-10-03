@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten;
 
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
 
@@ -36,6 +35,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
+
+import net.atos.zac.util.Constants;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -227,7 +228,7 @@ public class InformatieObjectenRESTService {
         final ZaakInformatieobject zaakInformatieobject =
                 zgwApiService.createZaakInformatieobjectForZaak(zaak, enkelvoudigInformatieobjectWithInhoud, enkelvoudigInformatieobjectWithInhoud.getTitel(),
                                                                 enkelvoudigInformatieobjectWithInhoud.getBeschrijving(),
-                                                                OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                                Constants.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
             List<UUID> taakdocumenten = taskVariablesService.findTaakdocumenten(documentReferentieId);
             if (taakdocumenten == null) {

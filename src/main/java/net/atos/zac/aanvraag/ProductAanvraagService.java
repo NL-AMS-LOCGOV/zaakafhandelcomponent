@@ -7,8 +7,6 @@ package net.atos.zac.aanvraag;
 
 import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
-import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 
 import java.net.URI;
 import java.util.UUID;
@@ -41,6 +39,7 @@ import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.util.Constants;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -86,7 +85,8 @@ public class ProductAanvraagService {
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
+        final CommunicatieKanaal communicatieKanaal =
+                vrlClientService.findCommunicatiekanaal(Constants.COMMUNICATIEKANAAL_EFORMULIER);
 
         final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(productAanvraag.getType());
         if (zaaktypeUUID == null) {
@@ -101,8 +101,8 @@ public class ProductAanvraagService {
         zaak.setToelichting((String) productAanvraag.getData().get("omschrijvingEvenement"));
 
         zaak.setStartdatum(object.getRecord().getStartAt());
-        zaak.setBronorganisatie(BRON_ORGANISATIE);
-        zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
+        zaak.setBronorganisatie(Constants.BRON_ORGANISATIE);
+        zaak.setVerantwoordelijkeOrganisatie(Constants.BRON_ORGANISATIE);
         if (communicatieKanaal != null) {
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }

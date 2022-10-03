@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.mail;
 
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
 import java.util.UUID;
@@ -29,6 +28,7 @@ import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.util.Constants;
 import net.atos.zac.util.ValidationUtil;
 
 @Singleton
@@ -77,7 +77,7 @@ public class MailRESTService {
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
                              restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
 
-        if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
+        if(statustype != null && Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
             return;
         }
         caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);

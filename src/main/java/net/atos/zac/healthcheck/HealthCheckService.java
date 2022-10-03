@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import net.atos.zac.util.Constants;
+
 import org.apache.commons.collections4.CollectionUtils;
 
 import net.atos.client.vrl.VRLClientService;
@@ -16,7 +18,6 @@ import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Roltype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -34,7 +35,7 @@ public class HealthCheckService {
 
 
     public boolean bestaatCommunicatiekanaalEformulier() {
-        return vrlClientService.findCommunicatiekanaal(ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER) != null;
+        return vrlClientService.findCommunicatiekanaal(Constants.COMMUNICATIEKANAAL_EFORMULIER) != null;
     }
 
     public ZaaktypeInrichtingscheck controleerZaaktype(final URI zaaktypeUrl) {
@@ -60,10 +61,10 @@ public class HealthCheckService {
                 hoogsteVolgnummer = statustype.getVolgnummer();
             }
             switch (statustype.getOmschrijving()) {
-                case ConfiguratieService.STATUSTYPE_OMSCHRIJVING_INTAKE -> zaaktypeInrichtingscheck.setStatustypeIntakeAanwezig(true);
-                case ConfiguratieService.STATUSTYPE_OMSCHRIJVING_IN_BEHANDELING -> zaaktypeInrichtingscheck.setStatustypeInBehandelingAanwezig(true);
-                case ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND -> zaaktypeInrichtingscheck.setStatustypeHeropendAanwezig(true);
-                case ConfiguratieService.STATUSTYPE_OMSCHRIJVING_AFGEROND -> {
+                case Constants.STATUSTYPE_OMSCHRIJVING_INTAKE -> zaaktypeInrichtingscheck.setStatustypeIntakeAanwezig(true);
+                case Constants.STATUSTYPE_OMSCHRIJVING_IN_BEHANDELING -> zaaktypeInrichtingscheck.setStatustypeInBehandelingAanwezig(true);
+                case Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND -> zaaktypeInrichtingscheck.setStatustypeHeropendAanwezig(true);
+                case Constants.STATUSTYPE_OMSCHRIJVING_AFGEROND -> {
                     afgerondVolgnummer = statustype.getVolgnummer();
                     zaaktypeInrichtingscheck.setStatustypeAfgerondAanwezig(true);
                 }
@@ -111,7 +112,7 @@ public class HealthCheckService {
     private void controleerZaaktypeInformatieobjecttypeInrichting(final ZaaktypeInrichtingscheck zaaktypeInrichtingscheck) {
         final List<Informatieobjecttype> informatieobjecttypes = ztcClientService.readInformatieobjecttypen(zaaktypeInrichtingscheck.getZaaktype().getUrl());
         informatieobjecttypes.forEach(informatieobjecttype -> {
-            if (informatieobjecttype.isNuGeldig() && ConfiguratieService.INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL.equals(
+            if (informatieobjecttype.isNuGeldig() && Constants.INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL.equals(
                     informatieobjecttype.getOmschrijving())) {
                 zaaktypeInrichtingscheck.setInformatieobjecttypeEmailAanwezig(true);
             }

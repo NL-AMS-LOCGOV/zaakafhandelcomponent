@@ -26,6 +26,9 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.CatalogusListParameters;
 import net.atos.zac.configuratie.model.Taal;
 
+import static net.atos.zac.util.Constants.CATALOGUS_DOMEIN;
+import static net.atos.zac.util.Constants.TAAL_NEDERLANDS;
+
 @ApplicationScoped
 @Transactional
 public class ConfiguratieService {
@@ -59,35 +62,6 @@ public class ConfiguratieService {
         final List<Taal> talen = emQuery.getResultList();
         return talen.isEmpty() ? null : talen.get(0);
     }
-
-    //TODO zaakafhandelcomponent#1468 vervangen van onderstaande placeholders
-    public static final String BRON_ORGANISATIE = "123443210";
-
-    public static final String VERANTWOORDELIJKE_ORGANISATIE = "316245124";
-
-    public static final String CATALOGUS_DOMEIN = "ALG";
-
-    public static final String OMSCHRIJVING_TAAK_DOCUMENT = "taak-document";
-
-    public static final String OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN = "geen";
-
-    public static final String TAAL_NEDERLANDS = "dut"; // ISO 639-2/B
-
-    public static final String STATUSTYPE_OMSCHRIJVING_HEROPEND = "Heropend";
-
-    public static final String STATUSTYPE_OMSCHRIJVING_INTAKE = "Intake";
-
-    public static final String STATUSTYPE_OMSCHRIJVING_IN_BEHANDELING = "In behandeling";
-
-    public static final String STATUSTYPE_OMSCHRIJVING_AFGEROND = "Afgerond";
-
-    public static final String TAAK_ELEMENT_ONDERTEKENEN = "ondertekenen";
-
-    public static final String BIJLAGEN = "bijlagen";
-
-    public static final String COMMUNICATIEKANAAL_EFORMULIER = "E-formulier";
-
-    public static final String INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL = "e-mail";
 
     // Base URL of the zaakafhandelcomponent: protocol, host, port and context (no trailing slash)
     @Inject

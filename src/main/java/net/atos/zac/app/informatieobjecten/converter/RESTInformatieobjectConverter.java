@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.informatieobjecten.converter;
 
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -36,12 +34,12 @@ import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.policy.output.DocumentActies;
+import net.atos.zac.util.Constants;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieobjectConverter {
@@ -105,7 +103,7 @@ public class RESTInformatieobjectConverter {
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
-                    .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
+                    .equals(Constants.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
             restEnkelvoudigInformatieobject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
             if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
                 restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();
@@ -149,7 +147,7 @@ public class RESTInformatieobjectConverter {
     public EnkelvoudigInformatieobjectWithInhoud convertZaakObject(final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject,
             final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
-        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
+        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(Constants.BRON_ORGANISATIE);
         enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(restEnkelvoudigInformatieobject.creatiedatum);
         enkelvoudigInformatieobjectWithInhoud.setTitel(restEnkelvoudigInformatieobject.titel);
         enkelvoudigInformatieobjectWithInhoud.setAuteur(restEnkelvoudigInformatieobject.auteur);
@@ -171,17 +169,17 @@ public class RESTInformatieobjectConverter {
     public EnkelvoudigInformatieobjectWithInhoud convertTaakObject(
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
-        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
+        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(Constants.BRON_ORGANISATIE);
         enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(LocalDate.now());
         enkelvoudigInformatieobjectWithInhoud.setTitel(restEnkelvoudigInformatieobject.titel);
         enkelvoudigInformatieobjectWithInhoud.setAuteur(loggedInUserInstance.get().getFullName());
-        enkelvoudigInformatieobjectWithInhoud.setTaal(ConfiguratieService.TAAL_NEDERLANDS);
+        enkelvoudigInformatieobjectWithInhoud.setTaal(Constants.TAAL_NEDERLANDS);
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(
                 ztcClientService.readInformatieobjecttype(restEnkelvoudigInformatieobject.informatieobjectTypeUUID).getUrl());
         enkelvoudigInformatieobjectWithInhoud.setInhoud(bestand.file);
         enkelvoudigInformatieobjectWithInhoud.setFormaat(bestand.type);
         enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(bestand.filename);
-        enkelvoudigInformatieobjectWithInhoud.setBeschrijving(OMSCHRIJVING_TAAK_DOCUMENT);
+        enkelvoudigInformatieobjectWithInhoud.setBeschrijving(Constants.OMSCHRIJVING_TAAK_DOCUMENT);
         enkelvoudigInformatieobjectWithInhoud.setStatus(InformatieobjectStatus.DEFINITIEF);
         enkelvoudigInformatieobjectWithInhoud.setVerzenddatum(restEnkelvoudigInformatieobject.verzenddatum);
         enkelvoudigInformatieobjectWithInhoud.setOntvangstdatum(restEnkelvoudigInformatieobject.ontvangstdatum);
@@ -191,11 +189,11 @@ public class RESTInformatieobjectConverter {
 
     public EnkelvoudigInformatieobjectWithInhoud convert(final RESTTaakDocumentData documentData, final RESTFileUpload bestand) {
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
-        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
+        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(Constants.BRON_ORGANISATIE);
         enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(LocalDate.now());
         enkelvoudigInformatieobjectWithInhoud.setTitel(documentData.documentTitel);
         enkelvoudigInformatieobjectWithInhoud.setAuteur(loggedInUserInstance.get().getFullName());
-        enkelvoudigInformatieobjectWithInhoud.setTaal(ConfiguratieService.TAAL_NEDERLANDS);
+        enkelvoudigInformatieobjectWithInhoud.setTaal(Constants.TAAL_NEDERLANDS);
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(ztcClientService.readInformatieobjecttype(documentData.documentType.uuid).getUrl());
         enkelvoudigInformatieobjectWithInhoud.setInhoud(bestand.file);
         enkelvoudigInformatieobjectWithInhoud.setFormaat(bestand.type);
@@ -292,7 +290,7 @@ public class RESTInformatieobjectConverter {
         if (acties.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
-                    .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
+                    .equals(Constants.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
             restEnkelvoudigInformatieobject.creatiedatum = enkelvoudigInformatieObject.getCreatiedatum();
             if (enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding() != null) {
                 restEnkelvoudigInformatieobject.vertrouwelijkheidaanduiding = enkelvoudigInformatieObject.getVertrouwelijkheidaanduiding().toString();

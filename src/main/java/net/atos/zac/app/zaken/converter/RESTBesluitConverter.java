@@ -20,7 +20,7 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.informatieobjecten.converter.RESTInformatieobjectConverter;
 import net.atos.zac.app.zaken.model.RESTBesluit;
 import net.atos.zac.app.zaken.model.RESTBesluitVastleggenGegevens;
-import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.util.Constants;
 import net.atos.zac.util.UriUtil;
 
 public class RESTBesluitConverter {
@@ -64,7 +64,7 @@ public class RESTBesluitConverter {
         besluit.setDatum(LocalDate.now());
         besluit.setIngangsdatum(besluitToevoegenGegevens.ingangsdatum);
         besluit.setVervaldatum(besluitToevoegenGegevens.vervaldatum);
-        besluit.setVerantwoordelijkeOrganisatie(ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
+        besluit.setVerantwoordelijkeOrganisatie(Constants.VERANTWOORDELIJKE_ORGANISATIE);
         besluit.setToelichting(besluitToevoegenGegevens.toelichting);
         return besluit;
     }

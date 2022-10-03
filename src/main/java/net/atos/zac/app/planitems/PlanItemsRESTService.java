@@ -5,7 +5,6 @@
 
 package net.atos.zac.app.planitems;
 
-import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 
 import java.util.Date;
@@ -21,6 +20,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.zac.util.Constants;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
@@ -118,8 +119,8 @@ public class PlanItemsRESTService {
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
             String bijlagen = null;
-            if (humanTaskData.taakdata.containsKey(BIJLAGEN) && humanTaskData.taakdata.get(BIJLAGEN) != null) {
-                bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
+            if (humanTaskData.taakdata.containsKey(Constants.BIJLAGEN) && humanTaskData.taakdata.get(Constants.BIJLAGEN) != null) {
+                bijlagen = humanTaskData.taakdata.get(Constants.BIJLAGEN);
             }
 
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,

@@ -5,7 +5,6 @@
 
 package net.atos.zac.mail;
 
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.util.JsonbUtil.JSONB;
 
 import java.io.ByteArrayInputStream;
@@ -23,6 +22,8 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
+import net.atos.zac.util.Constants;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -46,7 +47,6 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Informatieobjecttype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.mail.model.Attachment;
 import net.atos.zac.mail.model.EMail;
 import net.atos.zac.mail.model.EMails;
@@ -114,17 +114,17 @@ public class MailService {
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final Zaak zaak) {
         final EnkelvoudigInformatieobjectWithInhoud data = createDocumentInformatieObject(zaak, onderwerp, body);
         zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp,
-                                                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                        Constants.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
     }
 
     private EnkelvoudigInformatieobjectWithInhoud createDocumentInformatieObject(final Zaak zaak, final String onderwerp, final String body) {
         final Informatieobjecttype eMailObjectType = getEmailInformatieObjectType(zaak);
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = new EnkelvoudigInformatieobjectWithInhoud();
-        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(ConfiguratieService.BRON_ORGANISATIE);
+        enkelvoudigInformatieobjectWithInhoud.setBronorganisatie(Constants.BRON_ORGANISATIE);
         enkelvoudigInformatieobjectWithInhoud.setCreatiedatum(LocalDate.now());
         enkelvoudigInformatieobjectWithInhoud.setTitel(onderwerp);
         enkelvoudigInformatieobjectWithInhoud.setAuteur(loggedInUserInstance.get().getFullName());
-        enkelvoudigInformatieobjectWithInhoud.setTaal(ConfiguratieService.TAAL_NEDERLANDS);
+        enkelvoudigInformatieobjectWithInhoud.setTaal(Constants.TAAL_NEDERLANDS);
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(eMailObjectType.getUrl());
         enkelvoudigInformatieobjectWithInhoud.setInhoud(body.getBytes(StandardCharsets.UTF_8));
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
@@ -140,7 +140,7 @@ public class MailService {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         return zaaktype.getInformatieobjecttypen().stream()
                 .map(ztcClientService::readInformatieobjecttype)
-                .filter(infoObject -> infoObject.getOmschrijving().equals(ConfiguratieService.INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL)).findFirst()
+                .filter(infoObject -> infoObject.getOmschrijving().equals(Constants.INFORMATIEOBJECTTYPE_OMSCHRIJVING_EMAIL)).findFirst()
                 .orElseThrow();
     }
 

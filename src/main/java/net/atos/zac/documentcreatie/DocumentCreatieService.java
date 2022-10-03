@@ -6,7 +6,6 @@
 package net.atos.zac.documentcreatie;
 
 import static java.lang.String.format;
-import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 
 import java.time.LocalDate;
 
@@ -14,6 +13,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
+
+import net.atos.zac.util.Constants;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -84,7 +85,7 @@ public class DocumentCreatieService {
 
     private Registratie createRegistratie(final DocumentCreatieGegevens documentCreatieGegevens) {
         final Registratie registratie = new Registratie();
-        registratie.bronorganisatie = BRON_ORGANISATIE;
+        registratie.bronorganisatie = Constants.BRON_ORGANISATIE;
         registratie.zaak = zrcClientService.createUrlExternToZaak(documentCreatieGegevens.getZaak().getUuid());
         registratie.informatieobjecttype = ztcClientService.createUrlExternToInformatieobjecttype(documentCreatieGegevens.getInformatieobjecttype());
         registratie.titel = documentCreatieGegevens.getTitel();

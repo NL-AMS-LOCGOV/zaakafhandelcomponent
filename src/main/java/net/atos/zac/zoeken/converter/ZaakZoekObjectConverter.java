@@ -1,6 +1,5 @@
 package net.atos.zac.zoeken.converter;
 
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.util.UUID;
 
@@ -24,6 +23,7 @@ import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
+import net.atos.zac.util.Constants;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
@@ -115,7 +115,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
             zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
             zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
-            zaakZoekObject.setIndicatieHeropend(STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()));
+            zaakZoekObject.setIndicatieHeropend(Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()));
         }
 
         zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));

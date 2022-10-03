@@ -5,8 +5,6 @@
 
 package net.atos.zac.util;
 
-import static net.atos.zac.configuratie.ConfiguratieService.CATALOGUS_DOMEIN;
-
 import java.time.LocalDateTime;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,7 +24,7 @@ public class OpenZaakReadinessHealthCheck implements HealthCheck {
     private static final CatalogusListParameters CATALOGUS_LIST_PARAMETERS = new CatalogusListParameters();
 
     static {
-        CATALOGUS_LIST_PARAMETERS.setDomein(CATALOGUS_DOMEIN);
+        CATALOGUS_LIST_PARAMETERS.setDomein(Constants.CATALOGUS_DOMEIN);
     }
 
     @Inject

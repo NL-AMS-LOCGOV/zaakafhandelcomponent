@@ -8,7 +8,6 @@ package net.atos.zac.app.zaken.converter;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.BSN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -44,8 +43,8 @@ import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
 import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RelatieType;
-import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.util.Constants;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
 
@@ -186,7 +185,8 @@ public class RESTZaakConverter {
 
         restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
-        restZaak.isHeropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+        restZaak.isHeropend =
+                statustype != null && Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
         restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar, besluit));
 
         return restZaak;
@@ -195,7 +195,7 @@ public class RESTZaakConverter {
     public Zaak convert(final RESTZaak restZaak) {
 
         final Zaak zaak = new Zaak(ztcClientService.readZaaktype(restZaak.zaaktype.uuid).getUrl(), restZaak.startdatum,
-                                   ConfiguratieService.BRON_ORGANISATIE, ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
+                                   Constants.BRON_ORGANISATIE, Constants.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);

@@ -5,8 +5,6 @@
 
 package net.atos.zac.app.zaken;
 
-import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToLocalDate;
@@ -38,6 +36,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import net.atos.zac.util.Constants;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -536,7 +536,7 @@ public class ZakenRESTService {
     public void heropenen(@PathParam("uuid") final UUID zaakUUID, final RESTZaakHeropenenGegevens heropenenGegevens) {
         Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertActie(policyService.readZaakActies(zaak).getHeropenen());
-        zgwApiService.createStatusForZaak(zaak, STATUSTYPE_OMSCHRIJVING_HEROPEND, heropenenGegevens.reden);
+        zgwApiService.createStatusForZaak(zaak, Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND, heropenenGegevens.reden);
     }
 
     @PATCH
@@ -626,7 +626,7 @@ public class ZakenRESTService {
     @Path("communicatiekanalen")
     public List<RESTCommunicatiekanaal> listCommunicatiekanalen() {
         final List<CommunicatieKanaal> communicatieKanalen = vrlClientService.listCommunicatiekanalen();
-        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals(COMMUNICATIEKANAAL_EFORMULIER));
+        communicatieKanalen.removeIf(communicatieKanaal -> communicatieKanaal.getNaam().equals(Constants.COMMUNICATIEKANAAL_EFORMULIER));
         return communicatiekanaalConverter.convert(communicatieKanalen);
     }
 

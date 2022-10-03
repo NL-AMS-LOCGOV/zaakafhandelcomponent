@@ -6,7 +6,6 @@
 package net.atos.zac.policy;
 
 import static net.atos.client.zgw.drc.model.InformatieobjectStatus.DEFINITIEF;
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.util.List;
 import java.util.Set;
@@ -14,6 +13,8 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
+import net.atos.zac.util.Constants;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -115,7 +116,8 @@ public class PolicyService {
         zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
         zaakData.heeftBesluittypen = CollectionUtils.isNotEmpty(zaaktype.getBesluittypen());
-        zaakData.heropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+        zaakData.heropend =
+                statustype != null && Constants.STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
         zaakData.besluit = besluit != null;
         zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
         zaakData.ontvangstbevestigingVerstuurd = ontvangstbevestingVerstuurd != null ? ontvangstbevestingVerstuurd : false;

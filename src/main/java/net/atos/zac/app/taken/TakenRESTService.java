@@ -5,9 +5,6 @@
 
 package net.atos.zac.app.taken;
 
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
-import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
-import static net.atos.zac.configuratie.ConfiguratieService.TAAK_ELEMENT_ONDERTEKENEN;
 import static net.atos.zac.policy.PolicyService.assertActie;
 import static net.atos.zac.util.DateTimeConverterUtil.convertToDate;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
@@ -33,6 +30,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import net.atos.zac.util.Constants;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.task.api.Task;
@@ -287,8 +286,8 @@ public class TakenRESTService {
                 final EnkelvoudigInformatieobjectWithInhoud document = restInformatieobjectConverter.convert(restTaakDocumentData, uploadedFile);
                 final ZaakInformatieobject zaakInformatieobject =
                         zgwApiService.createZaakInformatieobjectForZaak(zaak, document, document.getTitel(),
-                                                                        OMSCHRIJVING_TAAK_DOCUMENT,
-                                                                        OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
+                                                                        Constants.OMSCHRIJVING_TAAK_DOCUMENT,
+                                                                        Constants.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
                 restTaak.taakdata.replace(key, UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()).toString());
                 httpSession.removeAttribute(fileKey);
             }
@@ -296,8 +295,8 @@ public class TakenRESTService {
     }
 
     private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
-        if (taakdata.containsKey(TAAK_ELEMENT_ONDERTEKENEN) && taakdata.get(TAAK_ELEMENT_ONDERTEKENEN) != null) {
-            Arrays.stream(taakdata.get(TAAK_ELEMENT_ONDERTEKENEN).split(";"))
+        if (taakdata.containsKey(Constants.TAAK_ELEMENT_ONDERTEKENEN) && taakdata.get(Constants.TAAK_ELEMENT_ONDERTEKENEN) != null) {
+            Arrays.stream(taakdata.get(Constants.TAAK_ELEMENT_ONDERTEKENEN).split(";"))
                     .filter(StringUtils::isNotEmpty)
                     .map(UUID::fromString)
                     .map(drcClientService::readEnkelvoudigInformatieobject)
