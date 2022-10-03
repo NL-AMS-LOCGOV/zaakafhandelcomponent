@@ -5,10 +5,12 @@
 
 package net.atos.zac.app.zaken.converter;
 
+import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.BSN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -21,7 +23,6 @@ import javax.inject.Inject;
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
-import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -45,6 +46,7 @@ import net.atos.zac.app.zaken.model.RESTZaakOpschortGegevens;
 import net.atos.zac.app.zaken.model.RESTZaakVerlengGegevens;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.configuratie.ConfiguratieService;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.PeriodUtil;
 import net.atos.zac.util.UriUtil;
@@ -102,13 +104,20 @@ public class RESTZaakConverter {
     @Inject
     private PolicyService policyService;
 
+    @Inject
+    private CaseVariablesService caseVariablesService;
+
     public RESTZaak convert(final Zaak zaak) {
+        final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
+        final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
+        return convert(zaak, status, statustype);
+    }
+
+    public RESTZaak convert(final Zaak zaak, final Status status, final Statustype statustype) {
         final RESTZaak restZaak = new RESTZaak();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
 
-        final Besluit besluit = brcClientService.findBesluit(zaak);
-        restZaak.besluit = besluitConverter.convertToRESTBesluit(besluit);
-
+        restZaak.besluit = besluitConverter.convertToRESTBesluit(brcClientService.findBesluit(zaak));
         restZaak.identificatie = zaak.getIdentificatie();
         restZaak.uuid = zaak.getUuid();
         restZaak.bronorganisatie = zaak.getBronorganisatie();
@@ -126,10 +135,7 @@ public class RESTZaakConverter {
         restZaak.omschrijving = zaak.getOmschrijving();
         restZaak.toelichting = zaak.getToelichting();
         restZaak.zaaktype = zaaktypeConverter.convert(zaaktype);
-        Statustype statustype = null;
-        if (zaak.getStatus() != null) {
-            final Status status = zrcClientService.readStatus(zaak.getStatus());
-            statustype = ztcClientService.readStatustype(status.getStatustype());
+        if (status != null) {
             restZaak.status = zaakStatusConverter.convertToRESTZaakStatus(status, statustype);
         }
 
@@ -186,8 +192,11 @@ public class RESTZaakConverter {
 
         restZaak.isHoofdzaak = zaak.is_Hoofdzaak();
         restZaak.isDeelzaak = zaak.isDeelzaak();
-        restZaak.isHeropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
-        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar, besluit));
+        restZaak.isOpen = zaak.isOpen();
+        restZaak.isHeropend = isHeropend(statustype);
+        restZaak.isOntvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
+        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype));
 
         return restZaak;
     }

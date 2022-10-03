@@ -1,6 +1,6 @@
 package net.atos.zac.zoeken.converter;
 
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
+import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
 
 import java.util.UUID;
 
@@ -115,7 +115,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
             zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
             zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
-            zaakZoekObject.setIndicatieHeropend(STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving()));
+            zaakZoekObject.setIndicatieHeropend(isHeropend(statustype));
         }
 
         zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));

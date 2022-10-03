@@ -304,13 +304,9 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {
-        if (this.zaak.acties.voortzetten) {
-            return new ButtonMenuItem('planitem.' + userEventListenerPlanItem.userEventListenerActie, () =>
-                    this.openPlanItemStartenDialog(userEventListenerPlanItem),
-                this.getuserEventListenerPlanItemMenuItemIcon(userEventListenerPlanItem.userEventListenerActie));
-        } else {
-            return null;
-        }
+        return new ButtonMenuItem('planitem.' + userEventListenerPlanItem.userEventListenerActie, () =>
+                this.openPlanItemStartenDialog(userEventListenerPlanItem),
+            this.getuserEventListenerPlanItemMenuItemIcon(userEventListenerPlanItem.userEventListenerActie));
     }
 
     private createHumanTaskPlanItemMenuItem(humanTaskPlanItem: PlanItem): MenuItem {
@@ -343,7 +339,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (this.zaak.acties.versturenOntvangstbevestiging) {
+        if (!this.zaak.isOntvangstbevestigingVerstuurd && this.zaak.acties.versturenOntvangstbevestiging) {
             this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ONTVANGSTBEVESTIGING;
@@ -371,7 +367,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
-        if (this.zaak.acties.vastleggenBesluit) {
+        if (this.zaak.isOpen && !this.zaak.besluit && this.zaak.isBesluittypeAanwezig && this.zaak.acties.vastleggenBesluit) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
@@ -382,7 +378,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
 
-        if (this.zaak.acties.heropenen) {
+        if (!this.zaak.isOpen && this.zaak.acties.heropenen) {
             this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
         }
 
@@ -396,7 +392,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.acties.afbreken) {
+            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.acties.afbreken) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
             this.createKoppelingenMenuItems();

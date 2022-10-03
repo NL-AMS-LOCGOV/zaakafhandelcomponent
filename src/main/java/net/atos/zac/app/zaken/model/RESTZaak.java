@@ -82,11 +82,17 @@ public class RESTZaak {
 
     public String initiatorIdentificatie;
 
+    public boolean isOpen;
+
     public boolean isHeropend;
 
     public boolean isHoofdzaak;
 
     public boolean isDeelzaak;
+
+    public boolean isOntvangstbevestigingVerstuurd;
+
+    public boolean isBesluittypeAanwezig;
 
     public RESTZaakActies acties;
 }

@@ -49,8 +49,11 @@ export class Zaak {
     kenmerken: ZaakKenmerk[];
     initiatorIdentificatieType: IdentificatieType;
     initiatorIdentificatie: string;
+    isOpen: boolean;
     isHeropend: boolean;
     isHoofdzaak: boolean;
     isDeelzaak: boolean;
+    isOntvangstbevestigingVerstuurd: boolean;
+    isBesluittypeAanwezig: boolean;
     acties: ZaakActies;
 }

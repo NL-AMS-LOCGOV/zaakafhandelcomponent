@@ -12,7 +12,6 @@ import net.atos.client.zgw.zrc.model.AardRelatie;
 import net.atos.client.zgw.zrc.model.RelevanteZaak;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
@@ -36,9 +35,7 @@ public class RESTGerelateerdeZaakConverter {
 
     public RESTGerelateerdeZaak convert(final Zaak zaak, final RelatieType relatieType) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Statustype statustype = zaak.getStatus() != null ?
-                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype, statustype);
+        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
         final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
         restGerelateerdeZaak.identificatie = zaak.getIdentificatie();
         restGerelateerdeZaak.relatieType = relatieType;
@@ -46,8 +43,9 @@ public class RESTGerelateerdeZaakConverter {
         if (zaakActies.getLezen()) {
             restGerelateerdeZaak.zaaktypeOmschrijving = zaaktype.getOmschrijving();
             restGerelateerdeZaak.startdatum = zaak.getStartdatum();
-            if (statustype != null) {
-                restGerelateerdeZaak.statustypeOmschrijving = statustype.getOmschrijving();
+            if (zaak.getStatus() != null) {
+                restGerelateerdeZaak.statustypeOmschrijving = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype())
+                        .getOmschrijving();
             }
         }
         return restGerelateerdeZaak;

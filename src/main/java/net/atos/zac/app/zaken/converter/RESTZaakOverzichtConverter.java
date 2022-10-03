@@ -13,7 +13,6 @@ import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
@@ -53,11 +52,7 @@ public class RESTZaakOverzichtConverter {
 
     public RESTZaakOverzicht convert(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Statustype statustype = zaak.getStatus() != null ?
-                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype, statustype, behandelaar);
+        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
         final RESTZaakOverzicht restZaakOverzicht = new RESTZaakOverzicht();
         restZaakOverzicht.uuid = zaak.getUuid();
         restZaakOverzicht.identificatie = zaak.getIdentificatie();
@@ -69,15 +64,17 @@ public class RESTZaakOverzichtConverter {
             restZaakOverzicht.uiterlijkeEinddatumAfdoening = zaak.getUiterlijkeEinddatumAfdoening();
             restZaakOverzicht.toelichting = zaak.getToelichting();
             restZaakOverzicht.omschrijving = zaak.getOmschrijving();
-            restZaakOverzicht.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
+            restZaakOverzicht.zaaktype = zaaktype.getOmschrijving();
             restZaakOverzicht.openstaandeTaken = openstaandeTakenConverter.convert(zaak.getUuid());
             restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
-            if (statustype != null) {
-                restZaakOverzicht.status = statustype.getOmschrijving();
+            if (zaak.getStatus() != null) {
+                restZaakOverzicht.status = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
             }
+            final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
             if (behandelaar != null) {
                 restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
             }
+            final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
             if (groep != null) {
                 restZaakOverzicht.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
             }

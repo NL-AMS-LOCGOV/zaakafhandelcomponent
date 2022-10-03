@@ -63,7 +63,7 @@ public class InboxDocumentenRESTService {
     @PUT
     @Path("")
     public RESTResultaat<RESTInboxDocument> list(final RESTInboxDocumentListParameters restListParameters) {
-        PolicyService.assertActie(policyService.readWerklijstActies().getDocumentenInbox());
+        PolicyService.assertPolicy(policyService.readWerklijstActies().getDocumentenInbox());
         final InboxDocumentListParameters listParameters = listParametersConverter.convert(restListParameters);
         return new RESTResultaat<>(inboxDocumentConverter.convert(
                 inboxDocumentenService.list(listParameters)), inboxDocumentenService.count(listParameters));
@@ -72,7 +72,7 @@ public class InboxDocumentenRESTService {
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") final long id) {
-        PolicyService.assertActie(policyService.readWerklijstActies().getDocumentenInbox());
+        PolicyService.assertPolicy(policyService.readWerklijstActies().getDocumentenInbox());
         final InboxDocument inboxDocument = inboxDocumentenService.find(id);
         if (inboxDocument == null) {
             return; // reeds verwijderd

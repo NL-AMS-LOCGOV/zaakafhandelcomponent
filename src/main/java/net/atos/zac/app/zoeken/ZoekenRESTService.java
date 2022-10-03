@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.zoeken;
 
-import static net.atos.zac.policy.PolicyService.assertActie;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
 import static net.atos.zac.zoeken.model.index.ZoekObjectType.TAAK;
 import static net.atos.zac.zoeken.model.index.ZoekObjectType.ZAAK;
 
@@ -50,9 +50,9 @@ public class ZoekenRESTService {
     @Path("list")
     public RESTZoekResultaat<? extends AbstractRESTZoekObject> list(final RESTZoekParameters restZoekParameters) {
         if (restZoekParameters.type == ZAAK || restZoekParameters.type == TAAK) {
-            assertActie(policyService.readWerklijstActies().getZakenTaken());
+            assertPolicy(policyService.readWerklijstActies().getZakenTaken());
         } else {
-            assertActie(policyService.readOverigActies().getZoeken());
+            assertPolicy(policyService.readOverigActies().getZoeken());
         }
         final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZoekParameters);
         final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);

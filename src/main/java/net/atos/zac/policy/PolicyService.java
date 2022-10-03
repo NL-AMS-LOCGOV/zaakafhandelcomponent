@@ -6,7 +6,6 @@
 package net.atos.zac.policy;
 
 import static net.atos.client.zgw.drc.model.InformatieobjectStatus.DEFINITIEF;
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 
 import java.util.List;
 import java.util.Set;
@@ -15,21 +14,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.flowable.task.api.TaskInfo;
 
 import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
-import net.atos.client.zgw.brc.BRCClientService;
-import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
-import net.atos.client.zgw.shared.ZGWApiService;
-import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
-import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.LoggedInUser;
@@ -50,7 +42,6 @@ import net.atos.zac.policy.output.OverigActies;
 import net.atos.zac.policy.output.TaakActies;
 import net.atos.zac.policy.output.WerklijstActies;
 import net.atos.zac.policy.output.ZaakActies;
-import net.atos.zac.shared.exception.FoutmeldingException;
 
 @ApplicationScoped
 public class PolicyService {
@@ -65,16 +56,7 @@ public class PolicyService {
     private OPAEvaluationClient evaluationClient;
 
     @Inject
-    private ZRCClientService zrcClientService;
-
-    @Inject
     private ZTCClientService ztcClientService;
-
-    @Inject
-    private BRCClientService brcClientService;
-
-    @Inject
-    private ZGWApiService zgwApiService;
 
     @Inject
     private TaskService taskService;
@@ -90,35 +72,13 @@ public class PolicyService {
     }
 
     public ZaakActies readZaakActies(final Zaak zaak) {
-        final Statustype statustype = zaak.getStatus() != null ?
-                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
+        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()));
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Statustype statustype) {
-        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
-    }
-
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
-        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak), brcClientService.findBesluit(zaak));
-    }
-
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
-        return readZaakActies(zaak, zaaktype, statustype, behandelaar, brcClientService.findBesluit(zaak));
-    }
-
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar,
-            final Besluit besluit) {
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype) {
         final ZaakData zaakData = new ZaakData();
-        final Boolean ontvangstbevestingVerstuurd = caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid());
         zaakData.open = zaak.isOpen();
-        zaakData.opgeschort = zaak.isOpgeschort();
         zaakData.zaaktype = zaaktype.getOmschrijving();
-        zaakData.heeftBesluittypen = CollectionUtils.isNotEmpty(zaaktype.getBesluittypen());
-        zaakData.heropend = statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
-        zaakData.besluit = besluit != null;
-        zaakData.behandelaar = behandelaar != null ? behandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
-        zaakData.ontvangstbevestigingVerstuurd = ontvangstbevestingVerstuurd != null ? ontvangstbevestingVerstuurd : false;
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
@@ -186,15 +146,9 @@ public class PolicyService {
         return zaaktypenAllowed.contains(ALLE_ZAAKTYPEN) || zaaktypenAllowed.contains(zaaktype);
     }
 
-    public static void assertActie(final boolean actie) {
-        if (!actie) {
+    public static void assertPolicy(final boolean policy) {
+        if (!policy) {
             throw new PolicyException();
-        }
-    }
-
-    public void valideerAlleDeelzakenGesloten(final Zaak zaak) {
-        if (zaak.getDeelzaken().stream().map(zrcClientService::readZaak).anyMatch(Zaak::isOpen)) {
-            throw new FoutmeldingException("Zaak kan niet worden afgesloten want er zijn nog openstaande deelzaken.");
         }
     }
 

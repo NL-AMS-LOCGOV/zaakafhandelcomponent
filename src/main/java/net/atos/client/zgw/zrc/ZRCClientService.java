@@ -440,6 +440,12 @@ public class ZRCClientService {
         return UriBuilder.fromUri(getZgwApiClientMpRestUrl).path(ZRCClient.class).path(ZRCClient.class, "zaakRead").build(zaakUUID);
     }
 
+    public boolean heeftOpenDeelzaken(final Zaak zaak) {
+        return zaak.getDeelzaken().stream()
+                .map(this::readZaak).
+                anyMatch(Zaak::isOpen);
+    }
+
     private void deleteDeletedRollen(final Collection<Rol<?>> current, final Collection<Rol<?>> rollen, final String toelichting) {
         current.stream()
                 .filter(oud -> rollen.stream()

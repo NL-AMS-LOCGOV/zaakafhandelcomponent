@@ -45,7 +45,7 @@ public class RESTZaakActies {
 
     public boolean verwijderenBetrokkene;
 
-    public boolean wijzigenToekenning;
+    public boolean toekennen;
 
     public boolean wijzigen;
 
