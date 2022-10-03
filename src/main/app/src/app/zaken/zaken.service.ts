@@ -306,4 +306,10 @@ export class ZakenService {
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
+
+    listBesluitHistorie(uuid: string): Observable<HistorieRegel[]> {
+        return this.http.get<HistorieRegel[]>(`${this.basepath}/besluit/${uuid}/historie`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
 }

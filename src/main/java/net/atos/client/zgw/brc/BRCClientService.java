@@ -18,6 +18,7 @@ import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.brc.model.BesluitInformatieobject;
 import net.atos.client.zgw.brc.model.BesluitenListParameters;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.util.UriUtil;
@@ -52,6 +53,10 @@ public class BRCClientService {
         final UUID uuid = UriUtil.uuidFromURI(besluit.getUrl());
         besluit.setUrl(null);
         return brcClient.besluitUpdate(uuid, besluit);
+    }
+
+    public List<AuditTrailRegel> listAuditTrail(final UUID besluitUuid) {
+        return brcClient.listAuditTrail(besluitUuid);
     }
 
     public Besluit readBesluit(final UUID uuid) {
