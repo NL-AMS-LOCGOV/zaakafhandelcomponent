@@ -21,7 +21,6 @@ public final class OpenZaakPaginationUtil {
 
     /**
      * Geeft het juiste pagina nummer terug
-     * fix voor ESUITEDEV-24924
      *
      * @param pagination het paginatie object met pagina nummer en aantal per pagina
      * @return het juiste paginanummer voor Open Zaak
@@ -32,7 +31,6 @@ public final class OpenZaakPaginationUtil {
 
     /**
      * Geeft de juiste aantal resultaten terug aan de hand van de opgegeven {@link Pagination}
-     * fix voor ESUITEDEV-24924
      *
      * @param results    de resultaten die voldoen aan de opgegeven paginering
      * @param pagination de paginering voor de resultaten

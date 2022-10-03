@@ -23,7 +23,8 @@ public class TaakActies {
     private final boolean toevoegenDocument;
 
     @JsonbCreator
-    public TaakActies(@JsonbProperty("lezen") final boolean lezen,
+    public TaakActies(
+            @JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
             @JsonbProperty("wijzigen_formulier") final boolean wijzigenFormulier,
             @JsonbProperty("wijzigen") final boolean wijzigen,

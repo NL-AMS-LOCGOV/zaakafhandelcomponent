@@ -19,6 +19,7 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
+import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -48,7 +49,7 @@ public class RESTTaakConverter {
     private TaskVariablesService taskVariablesService;
 
     @Inject
-    private RESTTaakActiesConverter actiesConverter;
+    private RESTActiesConverter actiesConverter;
 
     @Inject
     private PolicyService policyService;

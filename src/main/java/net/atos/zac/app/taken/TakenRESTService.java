@@ -160,7 +160,7 @@ public class TakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
@@ -172,7 +172,7 @@ public class TakenRESTService {
     @PUT
     @Path("vrijgeven")
     public void vrijgeven(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, null, task.zaakUuid);
@@ -191,8 +191,8 @@ public class TakenRESTService {
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        assertActie(policyService.readTakenActies().getToekennenAanMijzelf() ||
-                            policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
+        assertActie(
+                policyService.readWerklijstActies().getZakenTaken() && policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convert(task, true);

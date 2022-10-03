@@ -12,6 +12,7 @@ import java.util.UUID;
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
+import net.atos.zac.app.policy.model.RESTZaakActies;
 
 public class RESTZaak {
 

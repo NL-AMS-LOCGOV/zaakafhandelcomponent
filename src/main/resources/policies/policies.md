@@ -47,14 +47,14 @@
 
 |         Werklijst acties          | behandelaar | coordinator | recordmanager | beheerder |
 |:---------------------------------:|:-----------:|:-----------:|:-------------:|:---------:|
-|         documenten inbox          |             |             |       X       |           |
-|       documenten ontkoppeld       |      X      |             |       X       |           |
-| documenten ontkoppeld verwijderen |             |             |       X       |           |
-|            zaken/taken            |      X      |      X      |       X       |           |
-|       zaken/taken verdelen        |             |      X      |               |           |
+|         documenten_inbox          |             |             |       X       |           |
+|       documenten_ontkoppeld       |      X      |             |       X       |           |
+| documenten_ontkoppeld_verwijderen |             |             |       X       |           |
+|            zaken_taken            |      X      |      X      |       X       |           |
+|       zaken_taken_verdelen        |             |      X      |               |           |
 
-|    overige acties    | behandelaar | coordinator | recordmanager | beheerder |
-|:--------------------:|:-----------:|:-----------:|:-------------:|:---------:|
-|     zaak starten     |      X      |             |               |           |
-|       beheren        |             |             |               |     X     |
-|        zoeken        |      X      |      X      |       X       |           |
+| overige acties | behandelaar | coordinator | recordmanager | beheerder |
+|:--------------:|:-----------:|:-----------:|:-------------:|:---------:|
+|  starten_zaak  |      X      |             |               |           |
+|    beheren     |             |             |               |     X     |
+|     zoeken     |      X      |      X      |       X       |           |

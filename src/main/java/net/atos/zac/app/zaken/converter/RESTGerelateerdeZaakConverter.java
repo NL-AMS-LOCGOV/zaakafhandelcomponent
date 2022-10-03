@@ -14,6 +14,7 @@ import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.policy.PolicyService;
@@ -28,7 +29,7 @@ public class RESTGerelateerdeZaakConverter {
     private ZTCClientService ztcClientService;
 
     @Inject
-    private RESTZaakActiesConverter actiesConverter;
+    private RESTActiesConverter actiesConverter;
 
     @Inject
     private PolicyService policyService;

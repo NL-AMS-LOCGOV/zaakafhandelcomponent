@@ -62,7 +62,8 @@ public class ZaakActies {
     private final boolean vastleggenBesluit;
 
     @JsonbCreator
-    public ZaakActies(@JsonbProperty("lezen") final boolean lezen,
+    public ZaakActies(
+            @JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("opschorten") final boolean opschorten,
             @JsonbProperty("verlengen") final boolean verlengen,
             @JsonbProperty("hervatten") final boolean hervatten,
