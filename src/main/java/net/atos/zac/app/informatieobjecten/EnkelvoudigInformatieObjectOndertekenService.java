@@ -5,6 +5,14 @@
 
 package net.atos.zac.app.informatieobjecten;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.InformatieobjectStatus;
@@ -13,15 +21,6 @@ import net.atos.client.zgw.drc.model.OndertekeningSoort;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
 
 
 @ApplicationScoped
@@ -36,10 +35,6 @@ public class EnkelvoudigInformatieObjectOndertekenService {
 
     @Inject
     private DRCClientService drcClientService;
-
-    public void ondertekenEnkelvoudigInformatieObjecten(final List<UUID> enkelvoudigInformatieObjectUUIDs) {
-        enkelvoudigInformatieObjectUUIDs.forEach(this::ondertekenEnkelvoudigInformatieObject);
-    }
 
     public void ondertekenEnkelvoudigInformatieObject(final UUID enkelvoudigInformatieObjectUUID) {
         boolean tempLock = false;

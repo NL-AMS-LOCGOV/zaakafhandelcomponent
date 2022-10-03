@@ -100,19 +100,18 @@ public class MailService {
     }
 
     public boolean sendMail(final String ontvanger, final String onderwerp, final String body,
-            final String bijlagen, final boolean createDocumentFromMail, final UUID zaakUuid) {
+            final String bijlagen, final boolean createDocumentFromMail, final Zaak zaak) {
 
         final List<Attachment> attachments = getBijlagen(bijlagen);
 
         final boolean sent = sendMail(new Ontvanger(ontvanger), onderwerp, body, attachments);
         if (sent && createDocumentFromMail) {
-            createAndSaveDocumentFromMail(body, onderwerp, zaakUuid);
+            createAndSaveDocumentFromMail(body, onderwerp, zaak);
         }
         return sent;
     }
 
-    private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final UUID zaakUuid) {
-        final Zaak zaak = zrcClientService.readZaak(zaakUuid);
+    private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final Zaak zaak) {
         final EnkelvoudigInformatieobjectWithInhoud data = createDocumentInformatieObject(zaak, onderwerp, body);
         zgwApiService.createZaakInformatieobjectForZaak(zaak, data, onderwerp, onderwerp,
                                                         OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);

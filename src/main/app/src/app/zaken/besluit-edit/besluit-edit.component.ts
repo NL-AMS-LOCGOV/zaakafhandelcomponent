@@ -20,7 +20,7 @@ import {Observable, Subject} from 'rxjs';
 import {DateFormField} from '../../shared/material-form-builder/form-components/date/date-form-field';
 import {Besluit} from '../model/besluit';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {BesluitWijzigenGegevens} from '../model/besluit-wijzigen-gegevens';
@@ -82,9 +82,9 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
     }
 
     listInformatieObjecten(besluittypeUUID: string): Observable<EnkelvoudigInformatieobject[]> {
-        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
-        zoekparameters.ophalenVoorBesluitType = besluittypeUUID;
+        zoekparameters.besluittypeUUID = besluittypeUUID;
         return this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
     }
 

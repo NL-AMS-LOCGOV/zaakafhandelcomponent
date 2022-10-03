@@ -54,14 +54,14 @@ public class MailRESTService {
 
     @POST
     @Path("send/{zaakUuid}")
-    public void sendMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
-        assertActie(policyService.readZaakActies(zaakUuid).getVersturenEmail());
+    public void sendMail(@PathParam("zaakUuid") final UUID zaakUUID, final RESTMailObject restMailObject) throws MailjetException {
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        assertActie(policyService.readZaakActies(zaak).getVersturenEmail());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaakUuid);
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
     }
 
     @POST
@@ -75,7 +75,7 @@ public class MailRESTService {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaakUuid);
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
 
         if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
             return;

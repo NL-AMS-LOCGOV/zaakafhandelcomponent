@@ -102,10 +102,9 @@ public class DataConverter {
     public Data createData(final DocumentCreatieGegevens documentCreatieGegevens, final LoggedInUser loggedInUser) {
         final Data data = new Data();
         data.gebruiker = createGebruikerData(loggedInUser);
-        final Zaak zaak = zrcClientService.readZaak(documentCreatieGegevens.getZaakUUID());
-        data.zaak = createZaakData(zaak);
-        data.aanvrager = createAanvragerData(zaak);
-        data.startformulier = createStartformulierData(zaak.getUrl());
+        data.zaak = createZaakData(documentCreatieGegevens.getZaak());
+        data.aanvrager = createAanvragerData(documentCreatieGegevens.getZaak());
+        data.startformulier = createStartformulierData(documentCreatieGegevens.getZaak().getUrl());
         if (documentCreatieGegevens.getTaskId() != null) {
             data.taak = createTaakData(documentCreatieGegevens.getTaskId());
         }

@@ -24,7 +24,7 @@ import {MailService} from '../mail.service';
 import {MailObject} from '../model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 
 @Component({
     selector: 'zac-mail-create',
@@ -56,7 +56,7 @@ export class MailCreateComponent implements OnInit {
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
         });
-        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')

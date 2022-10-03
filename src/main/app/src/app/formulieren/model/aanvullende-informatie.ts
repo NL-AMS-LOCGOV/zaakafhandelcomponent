@@ -18,7 +18,7 @@ import * as moment from 'moment/moment';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {HiddenFormFieldBuilder} from '../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
@@ -61,7 +61,7 @@ export class AanvullendeInformatie extends AbstractFormulier {
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
         this.humanTaskData.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
-        const zoekparameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;

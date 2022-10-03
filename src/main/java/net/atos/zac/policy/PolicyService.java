@@ -10,7 +10,6 @@ import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJV
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -24,9 +23,7 @@ import net.atos.client.opa.model.RuleQuery;
 import net.atos.client.opa.model.RuleResponse;
 import net.atos.client.zgw.brc.BRCClientService;
 import net.atos.client.zgw.brc.model.Besluit;
-import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
-import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.RolMedewerker;
@@ -71,9 +68,6 @@ public class PolicyService {
     private ZRCClientService zrcClientService;
 
     @Inject
-    private DRCClientService drcClientService;
-
-    @Inject
     private ZTCClientService ztcClientService;
 
     @Inject
@@ -95,6 +89,24 @@ public class PolicyService {
         return evaluationClient.readOverigActies(new RuleQuery<>(new UserInput(loggedInUserInstance.get()))).getResult();
     }
 
+    public ZaakActies readZaakActies(final Zaak zaak) {
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
+    }
+
+    public ZaakActies readZaakActies(final Zaak zaak, final Statustype statustype) {
+        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
+    }
+
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
+        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak), brcClientService.findBesluit(zaak));
+    }
+
+    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
+        return readZaakActies(zaak, zaaktype, statustype, behandelaar, brcClientService.findBesluit(zaak));
+    }
+
     public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar,
             final Besluit besluit) {
         final ZaakData zaakData = new ZaakData();
@@ -110,30 +122,16 @@ public class PolicyService {
         return evaluationClient.readZaakActies(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype, final RolMedewerker behandelaar) {
-        return readZaakActies(zaak, zaaktype, statustype, behandelaar, brcClientService.findBesluit(zaak));
+    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
+        return readDocumentActies(enkelvoudigInformatieobject, null);
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Zaaktype zaaktype, final Statustype statustype) {
-        return readZaakActies(zaak, zaaktype, statustype, zgwApiService.findBehandelaarForZaak(zaak), brcClientService.findBesluit(zaak));
+    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject, final Zaak zaak) {
+        return readDocumentActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), zaak);
     }
 
-    public ZaakActies readZaakActies(final Zaak zaak, final Statustype statustype) {
-        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
-    }
-
-    public ZaakActies readZaakActies(final Zaak zaak) {
-        final Statustype statustype = zaak.getStatus() != null ?
-                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        return readZaakActies(zaak, ztcClientService.readZaaktype(zaak.getZaaktype()), statustype);
-    }
-
-    public ZaakActies readZaakActies(final UUID zaakUUID) {
-        return readZaakActies(zrcClientService.readZaak(zaakUUID));
-    }
-
-    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final EnkelvoudigInformatieObjectLock lock, final Zaak zaak) {
+    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject, final EnkelvoudigInformatieObjectLock lock,
+            final Zaak zaak) {
         final DocumentData documentData = new DocumentData();
         documentData.definitief = enkelvoudigInformatieobject.getStatus() == DEFINITIEF;
         documentData.vergrendeld = enkelvoudigInformatieobject.getLocked();
@@ -147,29 +145,8 @@ public class PolicyService {
                 new RuleQuery<>(new DocumentInput(loggedInUserInstance.get(), documentData))).getResult();
     }
 
-    public DocumentActies readDocumentActies(final UUID enkelvoudigInformatieobjectUUID, final UUID zaakUUID) {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID);
-        final Zaak zaak = zaakUUID != null ? zrcClientService.readZaak(zaakUUID) : null;
-        return readDocumentActies(enkelvoudigInformatieobject, zaak);
-    }
-
-    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final Zaak zaak) {
-        return readDocumentActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), zaak);
-    }
-
-    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject,
-            final UUID zaakUUID) {
-        return readDocumentActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()),
-                                  zrcClientService.readZaak(zaakUUID));
-    }
-
-    public DocumentActies readDocumentActies(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return readDocumentActies(enkelvoudigInformatieobject, lockService.findLock(enkelvoudigInformatieobject.getUUID()), null);
-    }
-
-    public DocumentActies readDocumentActies(final UUID enkelvoudigInformatieobjectUUID) {
-        return readDocumentActies(drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID));
+    public TaakActies readTaakActies(final TaskInfo taskInfo) {
+        return readTaakActies(taskInfo, taskService.getTaakStatus(taskInfo), caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
     }
 
     public TaakActies readTaakActies(final TaskInfo taskInfo, final TaakStatus taakStatus, final String zaaktypeOmschrijving) {
@@ -178,14 +155,6 @@ public class PolicyService {
         taakData.afgerond = taakStatus == TaakStatus.AFGEROND;
         taakData.zaaktype = zaaktypeOmschrijving;
         return evaluationClient.readTaakActies(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
-    }
-
-    public TaakActies readTaakActies(final TaskInfo taskInfo) {
-        return readTaakActies(taskInfo, taskService.getTaakStatus(taskInfo), caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
-    }
-
-    public TaakActies readTaakActies(final String taskId) {
-        return readTaakActies(taskService.readTask(taskId));
     }
 
     public WerklijstActies readWerklijstActies() {

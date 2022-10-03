@@ -111,7 +111,8 @@ public class PlanItemsRESTService {
     public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
-        assertActie(policyService.readZaakActies(zaakUUID).getAanmakenTaak());
+        final Zaak zaak = zrcClientService.readZaak(zaakUUID);
+        assertActie(policyService.readZaakActies(zaak).getAanmakenTaak());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
@@ -122,7 +123,7 @@ public class PlanItemsRESTService {
             }
 
             mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
-                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaakUUID);
+                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaak);
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,

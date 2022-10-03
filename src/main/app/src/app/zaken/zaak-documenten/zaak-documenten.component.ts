@@ -5,7 +5,7 @@
 
 import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
-import {EnkelvoudigInformatieObjectZoekParameters} from '../../informatie-objecten/model/enkelvoudig-informatie-object-zoek-parameters';
+import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
@@ -93,9 +93,9 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         if (event) {
             console.log('callback loadInformatieObjecten: ' + event.key);
         }
-        const zoekParameters = new EnkelvoudigInformatieObjectZoekParameters();
+        const zoekParameters = new InformatieobjectZoekParameters();
         zoekParameters.zaakUUID = this.getZaakUuid();
-        zoekParameters.toonGekoppeldeZaakDocumenten = this.toonGekoppeldeZaakDocumenten;
+        zoekParameters.gekoppeldeZaakDocumenten = this.toonGekoppeldeZaakDocumenten;
 
         this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(share());
 

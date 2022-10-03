@@ -8,7 +8,6 @@ package net.atos.zac.app.informatieobjecten.converter;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_TAAK_DOCUMENT;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +24,6 @@ import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
-import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.configuratie.converter.RESTTaalConverter;
 import net.atos.zac.app.configuratie.model.RESTTaal;
@@ -274,22 +272,9 @@ public class RESTInformatieobjectConverter {
         return enkelvoudigInformatieobjectWithInhoudAndLock;
     }
 
-    public List<RESTEnkelvoudigInformatieobject> convertToREST(final UUID[] enkelvoudigInformatieobjectUUIDs, final boolean searchGekoppeldeZaak) {
-        return Arrays.stream(enkelvoudigInformatieobjectUUIDs)
-                .map(uuid -> {
-                    final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-                    Zaak zaak = null;
-                    if(searchGekoppeldeZaak) {
-                        final ZaakInformatieobjectListParameters params = new ZaakInformatieobjectListParameters();
-                        params.setInformatieobject(informatieobject.getUrl());
-                        final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(params);
-                        final UUID zaakUUID = zaakInformatieobjecten.size() > 0 ?
-                                zaakInformatieobjecten.get(0).getZaakUUID() :
-                                null;
-                        zaak = zrcClientService.readZaak(zaakUUID);
-                    }
-                    return convertToREST(informatieobject, zaak);
-                })
+    public List<RESTEnkelvoudigInformatieobject> convertUUIDsToREST(final List<UUID> enkelvoudigInformatieobjectUUIDs, final Zaak zaak) {
+        return enkelvoudigInformatieobjectUUIDs.stream()
+                .map(enkelvoudigInformatieobjectUUID -> convertToREST(drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieobjectUUID), zaak))
                 .toList();
     }
 

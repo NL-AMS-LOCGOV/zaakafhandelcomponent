@@ -208,27 +208,24 @@ public class ZGWApiService {
     }
 
     /**
-     * Delete {@link ZaakInformatieobject} which relates {@link EnkelvoudigInformatieobject} with enkelvoudigInformatieObjectUUID
-     * and {@link Zaak} with zaakUUID.
+     * Delete {@link ZaakInformatieobject} which relates {@link EnkelvoudigInformatieobject} and {@link Zaak} with zaakUUID.
      * When the {@link EnkelvoudigInformatieobject} has no other related {@link ZaakInformatieobject}s then it is also deleted.
      *
-     * @param zaakUUID                        UUID of a {@link Zaak}
-     * @param enkelvoudigInformatieObjectUUID UUID of a  {@link EnkelvoudigInformatieobject}
-     * @param toelichting                     Explanation why the {@link EnkelvoudigInformatieobject} is to be removed.
+     * @param enkelvoudigInformatieobject {@link EnkelvoudigInformatieobject}
+     * @param zaakUUID                    UUID of a {@link Zaak}
+     * @param toelichting                 Explanation why the {@link EnkelvoudigInformatieobject} is to be removed.
      */
-    public void removeEnkelvoudigInformatieObjectFromZaak(final UUID zaakUUID, final UUID enkelvoudigInformatieObjectUUID, final String toelichting) {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
+    public void removeEnkelvoudigInformatieObjectFromZaak(final EnkelvoudigInformatieobject enkelvoudigInformatieobject, final UUID zaakUUID,
+            final String toelichting) {
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
         // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
         zaakInformatieobjecten.stream()
                 .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
-                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
-                                                                                             toelichting,
-                                                                                             "Verwijderd"));
+                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(), toelichting, "Verwijderd"));
 
         // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
         if (!zaakInformatieobjecten.stream().filter(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID)).findAny().isPresent()) {
-            drcClientService.deleteEnkelvoudigInformatieobject(enkelvoudigInformatieObjectUUID);
+            drcClientService.deleteEnkelvoudigInformatieobject(enkelvoudigInformatieobject.getUUID());
         }
     }
 
