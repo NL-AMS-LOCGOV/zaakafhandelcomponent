@@ -10,4 +10,5 @@ export class BesluitVastleggenGegevens {
     toelichting: string;
     ingangsdatum: boolean;
     vervaldatum: string;
+    informatieobjecten: string[];
 }

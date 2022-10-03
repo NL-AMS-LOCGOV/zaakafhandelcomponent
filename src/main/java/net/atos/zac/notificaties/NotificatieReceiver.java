@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import net.atos.client.zgw.shared.cache.event.CacheEventType;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
@@ -93,7 +92,6 @@ public class NotificatieReceiver {
         SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         if (isAuthenticated(headers)) {
             LOG.info(() -> String.format("Notificatie ontvangen: %s", notificatie.toString()));
-            handleCaches(notificatie);
             handleWebsockets(notificatie);
             if (!configuratieService.isLocalDevelopment()) {
                 handleSignaleringen(notificatie);
@@ -118,12 +116,6 @@ public class NotificatieReceiver {
             if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
                 zaakafhandelParameterBeheerService.zaaktypeAangepast(notificatie.getResourceUrl());
             }
-        }
-    }
-
-    private void handleCaches(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            CacheEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
         }
     }
 

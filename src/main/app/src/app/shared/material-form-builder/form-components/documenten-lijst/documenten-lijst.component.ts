@@ -26,7 +26,7 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
     teOndertekenenSelection = new SelectionModel<EnkelvoudigInformatieobject>(true, []);
     dataSource: MatTableDataSource<EnkelvoudigInformatieobject> = new MatTableDataSource<EnkelvoudigInformatieobject>();
     datumPipe = new DatumPipe('nl');
-    loading = true;
+    loading = false;
 
     constructor(public translate: TranslateService, private informatieObjectenService: InformatieObjectenService) {
         super();
@@ -34,26 +34,48 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.data.readonly) {
-            this.columns.splice(this.columns.indexOf('select'), 1);
+            this.removeColumn('select');
         }
         if (!this.data.ondertekenen) {
-            this.columns.splice(this.columns.indexOf('ondertekenen'), 1);
+            this.removeColumn('ondertekenen');
         }
-        this.data.documenten$.subscribe(documenten => {
-            for (const document of documenten) {
-                document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
-                document['viewLink'] = `/informatie-objecten/${document.uuid}`;
-                document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
-                if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid) || document.ondertekening) {
-                    this.teOndertekenenSelection.toggle(document);
-                }
-            }
-            this.dataSource.data = documenten;
-            if (this.data.ondertekenen && this.teOndertekenenSelection.selected.length > 0) {
-                this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
-            }
-            this.loading = false;
+        if (this.data.verbergStatus) {
+            this.removeColumn('status');
+        }
+        this.ophalenDocumenten();
+        this.data.documentenChanged.subscribe($documenten => {
+            this.data.documenten$ = $documenten;
+            this.ophalenDocumenten();
         });
+    }
+
+    ophalenDocumenten() {
+        if (this.data.documenten$) {
+            this.loading = true;
+            this.dataSource.data = [];
+            this.data.documenten$.subscribe(documenten => {
+                this.selection.clear();
+                for (const document of documenten) {
+                    document.creatiedatum = this.datumPipe.transform(document.creatiedatum); // nodig voor zoeken
+                    document['viewLink'] = `/informatie-objecten/${document.uuid}`;
+                    document['downloadLink'] = this.informatieObjectenService.getDownloadURL(document.uuid);
+                    if (this.data.documentenCheckedVoorOndertekenen?.includes(document.uuid) || document.ondertekening) {
+                        this.teOndertekenenSelection.toggle(document);
+                    }
+                    if (this.data.documentenChecked?.includes(document.uuid)) {
+                        this.selection.toggle(document);
+                    }
+                }
+                this.dataSource.data = documenten;
+                if (this.teOndertekenenSelection.selected.length > 0) {
+                    this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
+                }
+                if (this.selection.selected.length > 0) {
+                    this.data.formControl.setValue(this.selection.selected.map(value => value.uuid).join(';'));
+                }
+                this.loading = false;
+            });
+        }
     }
 
     applyFilter($event: KeyboardEvent): void {
@@ -73,5 +95,9 @@ export class DocumentenLijstComponent extends FormComponent implements OnInit {
             this.teOndertekenenSelection.toggle(document);
             this.data.formControl.setValue(this.teOndertekenenSelection.selected.map(value => value.uuid).join(';'));
         }
+    }
+
+    removeColumn(id: string) {
+        this.columns.splice(this.columns.indexOf(id), 1);
     }
 }

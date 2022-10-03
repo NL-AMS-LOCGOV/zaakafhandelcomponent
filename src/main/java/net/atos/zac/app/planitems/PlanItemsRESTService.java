@@ -111,7 +111,7 @@ public class PlanItemsRESTService {
     public void doHumanTaskplanItem(final RESTHumanTaskData humanTaskData) {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
-        assertActie(policyService.readZaakActies(zaakUUID).getStartenPlanItems());
+        assertActie(policyService.readZaakActies(zaakUUID).getAanmakenTaak());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
@@ -146,7 +146,7 @@ public class PlanItemsRESTService {
             }
             case ZAAK_AFHANDELEN -> {
                 final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-                assertActie(policyService.readZaakActies(zaak).getAfsluiten());
+                assertActie(policyService.readZaakActies(zaak).getVoortzetten());
                 policyService.valideerAlleDeelzakenGesloten(zaak);
                 final Besluit besluit = brcClientService.findBesluit(zaak);
                 if (besluit != null) {

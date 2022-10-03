@@ -1,8 +1,8 @@
 rollen.rego
+domeinen.rego
 zaaktypen.rego
-app-acties.rego
 zaak-acties.rego
-zaken-acties.rego
 taak-acties.rego
-taken-acties.rego
-enkelvoudig-informatieobject-acties.rego
+document-acties.rego
+werklijst-acties.rego
+overig-acties.rego

@@ -37,6 +37,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
+import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
@@ -87,7 +88,7 @@ public class RESTZaakConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private RESTZaakActiesConverter actiesConverter;
+    private RESTActiesConverter actiesConverter;
 
     @Inject
     private VRLClientService vrlClientService;
@@ -193,7 +194,7 @@ public class RESTZaakConverter {
 
     public Zaak convert(final RESTZaak restZaak) {
 
-        final Zaak zaak = new Zaak(ztcClientService.readZaaktypeUrl(restZaak.zaaktype.identificatie), restZaak.startdatum,
+        final Zaak zaak = new Zaak(ztcClientService.readZaaktype(restZaak.zaaktype.uuid).getUrl(), restZaak.startdatum,
                                    ConfiguratieService.BRON_ORGANISATIE, ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);

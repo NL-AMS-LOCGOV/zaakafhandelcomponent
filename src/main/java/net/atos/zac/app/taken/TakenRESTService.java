@@ -160,7 +160,7 @@ public class TakenRESTService {
     @PUT
     @Path("verdelen")
     public void verdelen(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
@@ -172,7 +172,7 @@ public class TakenRESTService {
     @PUT
     @Path("vrijgeven")
     public void vrijgeven(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
-        assertActie(policyService.readTakenActies().getVerdelenEnVrijgeven());
+        assertActie(policyService.readWerklijstActies().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
             assignTaak(task.taakId, null, task.zaakUuid);
@@ -191,8 +191,8 @@ public class TakenRESTService {
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        assertActie(policyService.readTakenActies().getToekennenAanMijzelf() ||
-                            policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
+        assertActie(
+                policyService.readWerklijstActies().getZakenTaken() && policyService.readTaakActies(restTaakToekennenGegevens.taakId).getWijzigenToekenning());
         final Task task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convert(task, true);
@@ -210,7 +210,7 @@ public class TakenRESTService {
     @Path("")
     public RESTTaak updateTaak(final RESTTaak restTaak) {
         Task task = taskService.readOpenTask(restTaak.id);
-        assertActie(policyService.readTaakActies(task).getWijzigenOverig());
+        assertActie(policyService.readTaakActies(task).getWijzigen());
         task.setDescription(restTaak.toelichting);
         task.setDueDate(convertToDate(restTaak.streefdatum));
         task = taskService.updateTask(task);
@@ -222,7 +222,7 @@ public class TakenRESTService {
     @PATCH
     @Path("complete")
     public RESTTaak completeTaak(final RESTTaak restTaak) {
-        assertActie(policyService.readTaakActies(restTaak.id).getWijzigenOverig());
+        assertActie(policyService.readTaakActies(restTaak.id).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         if (restTaak.behandelaar == null || !restTaak.behandelaar.id.equals(loggedInUserId)) {
             taskService.assignTaskToUser(restTaak.id, loggedInUserId);
@@ -298,7 +298,7 @@ public class TakenRESTService {
                     .filter(uuid -> !StringUtils.isEmpty(uuid))
                     .map(UUIDUtil::uuid)
                     .collect(Collectors.toList());
-            UUIDs.forEach(uuid -> assertActie(policyService.readEnkelvoudigInformatieobjectActies(uuid).getOndertekenen()));
+            UUIDs.forEach(uuid -> assertActie(policyService.readDocumentActies(uuid).getOndertekenen()));
             enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObjecten(UUIDs);
         }
     }

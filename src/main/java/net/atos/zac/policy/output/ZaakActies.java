@@ -20,7 +20,9 @@ public class ZaakActies {
 
     private final boolean afbreken;
 
-    private final boolean afsluiten;
+    // activeren van een UserEventListener in een CMMN model
+    // handmatig afsluiten
+    private final boolean voortzetten;
 
     private final boolean heropenen;
 
@@ -28,7 +30,9 @@ public class ZaakActies {
 
     private final boolean toevoegenDocument;
 
-    // (ont)koppelen aan een andere zaak of zaakobject.
+    // koppelen van huidige zaak aan andere zaak
+    // koppelen van andere zaak aan huidige zaak
+    // koppelen van document aan huidige zaak
     private final boolean koppelen;
 
     private final boolean versturenEmail;
@@ -51,19 +55,20 @@ public class ZaakActies {
 
     private final boolean wijzigenToekenning;
 
-    private final boolean wijzigenOverig;
+    private final boolean wijzigen;
 
-    private final boolean startenPlanItems;
+    private final boolean aanmakenTaak;
 
     private final boolean vastleggenBesluit;
 
     @JsonbCreator
-    public ZaakActies(@JsonbProperty("lezen") final boolean lezen,
+    public ZaakActies(
+            @JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("opschorten") final boolean opschorten,
             @JsonbProperty("verlengen") final boolean verlengen,
             @JsonbProperty("hervatten") final boolean hervatten,
             @JsonbProperty("afbreken") final boolean afbreken,
-            @JsonbProperty("afsluiten") final boolean afsluiten,
+            @JsonbProperty("voortzetten") final boolean voortzetten,
             @JsonbProperty("heropenen") final boolean heropenen,
             @JsonbProperty("creeeren_document") final boolean creeerenDocument,
             @JsonbProperty("toevoegen_document") final boolean toevoegenDocument,
@@ -78,15 +83,15 @@ public class ZaakActies {
             @JsonbProperty("toevoegen_betrokkene_bedrijf") final boolean toevoegenBetrokkeneBedrijf,
             @JsonbProperty("verwijderen_betrokkene") final boolean verwijderenBetrokkene,
             @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
-            @JsonbProperty("wijzigen_overig") final boolean wijzigenOverig,
-            @JsonbProperty("starten_plan_items") final boolean startenPlanItems,
+            @JsonbProperty("wijzigen") final boolean wijzigen,
+            @JsonbProperty("aanmaken_taak") final boolean aanmakenTaak,
             @JsonbProperty("vastleggen_besluit") final boolean vastleggenBesluit) {
         this.lezen = lezen;
         this.opschorten = opschorten;
         this.verlengen = verlengen;
         this.hervatten = hervatten;
         this.afbreken = afbreken;
-        this.afsluiten = afsluiten;
+        this.voortzetten = voortzetten;
         this.heropenen = heropenen;
         this.creeerenDocument = creeerenDocument;
         this.toevoegenDocument = toevoegenDocument;
@@ -101,8 +106,8 @@ public class ZaakActies {
         this.toevoegenBetrokkeneBedrijf = toevoegenBetrokkeneBedrijf;
         this.verwijderenBetrokkene = verwijderenBetrokkene;
         this.wijzigenToekenning = wijzigenToekenning;
-        this.wijzigenOverig = wijzigenOverig;
-        this.startenPlanItems = startenPlanItems;
+        this.wijzigen = wijzigen;
+        this.aanmakenTaak = aanmakenTaak;
         this.vastleggenBesluit = vastleggenBesluit;
     }
 
@@ -126,8 +131,8 @@ public class ZaakActies {
         return afbreken;
     }
 
-    public boolean getAfsluiten() {
-        return afsluiten;
+    public boolean getVoortzetten() {
+        return voortzetten;
     }
 
     public boolean getHeropenen() {
@@ -186,12 +191,12 @@ public class ZaakActies {
         return wijzigenToekenning;
     }
 
-    public boolean getWijzigenOverig() {
-        return wijzigenOverig;
+    public boolean getWijzigen() {
+        return wijzigen;
     }
 
-    public boolean getStartenPlanItems() {
-        return startenPlanItems;
+    public boolean getAanmakenTaak() {
+        return aanmakenTaak;
     }
 
     public boolean getVastleggenBesluit() {

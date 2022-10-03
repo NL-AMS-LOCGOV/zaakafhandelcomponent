@@ -144,7 +144,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
 
     formFieldsInvalid(): boolean {
         return this.resultaatFormField.formControl.invalid || this.toelichtingFormField.formControl.invalid ||
-        this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false;
+            (this.sendMailFormField.formControl.value ? this.ontvangerFormField.formControl.invalid : false);
     }
 
     ngOnDestroy(): void {

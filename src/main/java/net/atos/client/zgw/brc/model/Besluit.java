@@ -8,6 +8,8 @@ package net.atos.client.zgw.brc.model;
 import java.net.URI;
 import java.time.LocalDate;
 
+import javax.json.bind.annotation.JsonbProperty;
+
 /**
  * Besluit
  */
@@ -71,6 +73,7 @@ public class Besluit {
     /**
      * Datum waarop de werkingsperiode van het besluit eindigt.
      */
+    @JsonbProperty(nillable = true)
     private LocalDate vervaldatum;
 
     /**

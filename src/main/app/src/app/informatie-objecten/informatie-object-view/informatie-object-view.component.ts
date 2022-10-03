@@ -36,6 +36,7 @@ import {Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {tap} from 'rxjs/operators';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../shared/confirm-dialog/confirm-dialog.component';
+import {Observable} from 'rxjs';
 
 @Component({
     templateUrl: './informatie-object-view.component.html',
@@ -134,7 +135,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'difference'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.bewerken && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+        if (this.laatsteVersieInfoObject.acties.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
                 this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(url => {
@@ -221,22 +222,33 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     private openDocumentVerwijderenDialog(): void {
-        const dialogData = new DialogData([
+        let openDialog;
+
+        if(this.zaak) {
+            const dialogData = new DialogData([
                 new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
                                            .validators(Validators.required)
                                            .maxlength(100)
                                            .build()],
-            (results: any[]) => this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak.uuid, results['reden']).pipe(
-                tap(() => this.websocketService.suspendListener(this.documentListener))
+            (results: any[]) => this.deleteEnkelvoudigInformatieObject$(results['reden'])
+            );
+
+            dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
+
+            openDialog = this.dialog.open(DialogComponent, {data: dialogData});
+        } else {
+            const dialogData = new ConfirmDialogData(
+                this.translate.instant('msg.document.verwijderen.bevestigen', {document: this.infoObject.titel}),
+                this.deleteEnkelvoudigInformatieObject$()
             )
-        );
 
-        dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
+            openDialog = this.dialog.open(ConfirmDialogComponent, {data: dialogData});
+        }
 
-        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
+        openDialog.afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('msg.document.verwijderen.uitgevoerd', {document: this.infoObject.titel});
-                this.router.navigate(['/zaken/', this.zaak.identificatie]);
+                this.router.navigate(this.zaak ? ['zaken', this.zaak.identificatie] : ['documenten', 'ontkoppelde']);
             }
         });
     }
@@ -247,5 +259,11 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             this.informatieObjectenService.ondertekenInformatieObject(this.infoObject.uuid, this.zaak.uuid));
 
         this.dialog.open(ConfirmDialogComponent, {data: dialogData}).afterClosed().subscribe(() => {});
+    }
+
+    private deleteEnkelvoudigInformatieObject$(reden?: string): Observable<void> {
+        return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
+            tap(() => this.websocketService.suspendListener(this.documentListener))
+        );
     }
 }

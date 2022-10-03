@@ -31,10 +31,12 @@ import {ZaakAfhandelenDialogComponent} from './zaak-afhandelen-dialog/zaak-afhan
 import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.component';
 import {BesluitCreateComponent} from './besluit-create/besluit-create.component';
 import {BesluitViewComponent} from './besluit-view/besluit-view.component';
+import {BesluitEditComponent} from './besluit-edit/besluit-edit.component';
 
 @NgModule({
     declarations: [
         BesluitCreateComponent,
+        BesluitEditComponent,
         BesluitViewComponent,
         ZaakViewComponent,
         ZaakVerkortComponent,

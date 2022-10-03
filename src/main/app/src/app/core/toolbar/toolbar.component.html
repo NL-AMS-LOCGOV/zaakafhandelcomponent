@@ -14,7 +14,7 @@
                 <mat-icon mat-list-icon>home</mat-icon>
             </button>
 
-            <button *ngIf="this.acties.zoeken" mat-mini-fab
+            <button *ngIf="this.overigActies.zoeken" mat-mini-fab
                     (click)="zoekenClicked.emit()"
                     color="primary"
                     title="{{ 'actie.zoeken' | translate }}">
@@ -27,12 +27,12 @@
                 <mat-icon>arrow_back</mat-icon>
             </button>
 
-            <button *ngIf="this.acties.aanmakenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
+            <button *ngIf="this.overigActies.startenZaak" routerLink="/zaken/create" id="zaakAanmaken_button" mat-mini-fab
                     title="{{ 'actie.zaak.aanmaken' | translate }}" aria-label="Zaak toevoegen">
                 <mat-icon>create_new_folder</mat-icon>
             </button>
 
-            <button *ngIf="this.acties.zaken" [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
+            <button *ngIf="this.werklijstActies.zakenTaken" [matMenuTriggerFor]="zakenMenu" id="zakenWerklijsten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor zaken">
                 {{'zaken' |translate }}
@@ -56,7 +56,7 @@
                 </button>
             </mat-menu>
 
-            <button *ngIf="this.acties.taken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
+            <button *ngIf="this.werklijstActies.zakenTaken" [matMenuTriggerFor]="takenMenu" id="takenWerklijsten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor taken">
                 {{'taken' |translate }}
@@ -75,19 +75,20 @@
                 </button>
             </mat-menu>
 
-            <button *ngIf="this.acties.documenten" [matMenuTriggerFor]="documentenMenu" id="documenten_button" mat-flat-button
+            <button *ngIf="this.werklijstActies.documentenInbox || this.werklijstActies.documentenOntkoppeld" [matMenuTriggerFor]="documentenMenu"
+                    id="documenten_button" mat-flat-button
                     color="primary"
                     aria-label="Menu voor documenten">
                 {{'documenten' |translate }}
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #documentenMenu="matMenu">
-                <button routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
+                <button *ngIf="this.werklijstActies.documentenOntkoppeld" routerLink="/documenten/ontkoppelde" id="ontkoppeldeDocumenten_button" mat-menu-item
                         routerLinkActive="active">
                     <mat-icon mat-list-icon>inbox</mat-icon>
                     <span>{{ 'title.documenten.ontkoppeldeDocumenten' | translate }}</span>
                 </button>
-                <button routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
+                <button *ngIf="this.werklijstActies.documentenInbox" routerLink="/documenten/inbox" id="inboxDocumenten_button" mat-menu-item
                         routerLinkActive="active">
                     <mat-icon mat-list-icon>drive_file_move_outline</mat-icon>
                     <span>{{ 'title.documenten.inboxDocumenten' | translate }}</span>
@@ -119,7 +120,7 @@
                 </a>
             </mat-menu>
 
-            <button *ngIf="this.acties.beheren" routerLink="/admin" id="admin_button" mat-icon-button
+            <button *ngIf="this.overigActies.beheren" routerLink="/admin" id="admin_button" mat-icon-button
                     title="{{ 'actie.admin' | translate }}">
                 <mat-icon>settings</mat-icon>
             </button>

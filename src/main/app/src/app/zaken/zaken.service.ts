@@ -37,6 +37,8 @@ import {BesluitVastleggenGegevens} from './model/besluit-vastleggen-gegevens';
 import {Besluit} from './model/besluit';
 import {Resultaattype} from './model/resultaattype';
 import {Besluittype} from './model/besluittype';
+import {EnkelvoudigInformatieobject} from '../informatie-objecten/model/enkelvoudig-informatieobject';
+import {BesluitWijzigenGegevens} from './model/besluit-wijzigen-gegevens';
 
 @Injectable({
     providedIn: 'root'
@@ -257,6 +259,12 @@ export class ZakenService {
         );
     }
 
+    bestluitWijzigen(besluitWijzigenGegevens: BesluitWijzigenGegevens): Observable<Besluit> {
+        return this.http.put<BesluitWijzigenGegevens>(`${this.basepath}/besluit`, besluitWijzigenGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     listBesluittypes(zaaktypeUuid: string): Observable<Besluittype[]> {
         return this.http.get<Besluittype[]>(`${this.basepath}/besluittypes/${zaaktypeUuid}`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
@@ -283,6 +291,24 @@ export class ZakenService {
 
     ontkoppelZaak(zaakOntkoppelGegevens: ZaakOntkoppelGegevens): Observable<void> {
         return this.http.patch<void>(`${this.basepath}/zaak/ontkoppel`, zaakOntkoppelGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listBesluitInformatieobjecten(besluitUuid: string): Observable<EnkelvoudigInformatieobject[]> {
+        return this.http.get<EnkelvoudigInformatieobject[]>(`${this.basepath}/listBesluitInformatieobjecten/${besluitUuid}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    findBesluitByZaakUUID(zaakUuid: string): Observable<Besluit> {
+        return this.http.get<Besluit>(`${this.basepath}/besluit/zaakUuid/${zaakUuid}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listBesluitHistorie(uuid: string): Observable<HistorieRegel[]> {
+        return this.http.get<HistorieRegel[]>(`${this.basepath}/besluit/${uuid}/historie`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

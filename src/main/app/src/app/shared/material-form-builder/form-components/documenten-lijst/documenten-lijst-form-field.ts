@@ -7,14 +7,18 @@ import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {EventEmitter} from '@angular/core';
 
 export class DocumentenLijstFormField extends AbstractFormField {
 
     fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten$: Observable<EnkelvoudigInformatieobject[]>;
+    documentenChanged = new EventEmitter<Observable<EnkelvoudigInformatieobject[]>>();
     documentenCheckedVoorOndertekenen: string[];
-    ondertekenen: boolean;
+    documentenChecked: string[];
 
+    ondertekenen: boolean;
+    verbergStatus: boolean;
 
     constructor() {
         super();
@@ -25,6 +29,10 @@ export class DocumentenLijstFormField extends AbstractFormField {
      */
     hasReadonlyView() {
         return true;
+    }
+
+    setDocumenten$(documenten: Observable<EnkelvoudigInformatieobject[]>) {
+        this.documentenChanged.emit(documenten);
     }
 
 }

@@ -23,13 +23,27 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    documentenChecked(documentenChecked: string[]): this {
+    documentenCheckedVoorOndertekenen(documentenChecked: string[]): this {
         this.formField.documentenCheckedVoorOndertekenen = documentenChecked;
+        return this;
+    }
+
+    documentenChecked(documentenChecked: string[]): this {
+        this.formField.documentenChecked = documentenChecked;
         return this;
     }
 
     ondertekenen(ondertekenen: boolean): this {
         this.formField.ondertekenen = ondertekenen;
         return this;
+    }
+
+    verbergStatus(): this {
+        this.formField.verbergStatus = true;
+        return this;
+    }
+
+    build() {
+        return this.formField;
     }
 }

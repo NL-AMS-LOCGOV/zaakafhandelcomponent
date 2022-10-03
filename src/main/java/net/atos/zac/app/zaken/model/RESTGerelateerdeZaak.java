@@ -7,6 +7,8 @@ package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
 
+import net.atos.zac.app.policy.model.RESTZaakActies;
+
 public class RESTGerelateerdeZaak {
 
     public RelatieType relatieType;
