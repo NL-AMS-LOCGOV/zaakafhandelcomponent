@@ -34,6 +34,6 @@ public class ServletRequestProducingListener implements ServletRequestListener {
     @ActiveSession
     public HttpSession getActiveSession() {
         final HttpServletRequest httpServletRequest = (HttpServletRequest) SERVLET_REQUESTS.get();
-        return httpServletRequest != null ? httpServletRequest.getSession(false) : null;
+        return httpServletRequest != null ? httpServletRequest.getSession(true) : null;
     }
 }

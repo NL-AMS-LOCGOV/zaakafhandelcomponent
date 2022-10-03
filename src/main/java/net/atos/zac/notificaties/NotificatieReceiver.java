@@ -20,7 +20,9 @@ import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
 
 import java.util.logging.Logger;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,6 +35,8 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.zac.aanvraag.ProductAanvraagService;
+import net.atos.zac.authentication.ActiveSession;
+import net.atos.zac.authentication.SecurityUtil;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.event.EventingService;
@@ -79,8 +83,13 @@ public class NotificatieReceiver {
     @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY")
     private String secret;
 
+    @Inject
+    @ActiveSession
+    private Instance<HttpSession> httpSession;
+
     @POST
     public Response notificatieReceive(@Context HttpHeaders headers, final Notificatie notificatie) {
+        SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         if (isAuthenticated(headers)) {
             LOG.info(() -> String.format("Notificatie ontvangen: %s", notificatie.toString()));
             handleWebsockets(notificatie);
