@@ -32,14 +32,12 @@ import {ZaakIndicatiesComponent} from './zaak-indicaties/zaak-indicaties.compone
 import {BesluitCreateComponent} from './besluit-create/besluit-create.component';
 import {BesluitViewComponent} from './besluit-view/besluit-view.component';
 import {BesluitEditComponent} from './besluit-edit/besluit-edit.component';
-import {IntakeAfrondenDialogComponent} from './intake-afronden-dialog/intake-afronden-dialog.component';
 
 @NgModule({
     declarations: [
         BesluitCreateComponent,
         BesluitEditComponent,
         BesluitViewComponent,
-        IntakeAfrondenDialogComponent,
         ZaakViewComponent,
         ZaakVerkortComponent,
         ZaakCreateComponent,
