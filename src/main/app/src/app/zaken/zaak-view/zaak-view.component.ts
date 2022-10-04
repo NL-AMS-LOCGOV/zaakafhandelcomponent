@@ -53,11 +53,13 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {UserEventListenerActie} from '../../plan-items/model/user-event-listener-actie-enum';
+import {UserEventListenerData} from '../../plan-items/model/user-event-listener-data';
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
 import {forkJoin, Observable, of, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
+import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
 import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
@@ -73,8 +75,11 @@ import {BAGObjectGegevens} from '../../bag/model/bagobject-gegevens';
 import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
+import {CheckboxFormFieldBuilder} from '../../shared/material-form-builder/form-components/checkbox/checkbox-form-field-builder';
+import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
+import {CustomValidators} from '../../shared/validators/customValidators';
+import {MailObject} from '../../mail/model/mailobject';
 import {MailService} from '../../mail/mail.service';
-import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -112,6 +117,15 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     viewInitialized = false;
     toolTipIcon = new TextIcon(Conditionals.always, 'info_outline', 'toolTip_icon', '', 'pointer');
     locatieIcon = new TextIcon(Conditionals.always, 'place', 'locatie_icon', '', 'pointer');
+
+    onderwerp: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
+    body: string = 'Beste klant,\n' +
+        '\n' +
+        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;
@@ -460,10 +474,87 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     createUserEventListenerIntakeAfrondenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
+        const radio = new RadioFormFieldBuilder().id('ontvankelijk')
+                                                 .label('zaakOntvankelijk')
+                                                 .optionLabel('key')
+                                                 .options(of([
+                                                     {value: true, key: 'actie.ja'},
+                                                     {value: false, key: 'actie.nee'}]))
+                                                 .validators(Validators.required)
+                                                 .build();
+        const reden = new TextareaFormFieldBuilder().id('reden')
+                                                    .label('redenNietOntvankelijk')
+                                                    .validators(Validators.required)
+                                                    .maxlength(100)
+                                                    .build();
+        const sendMail = new CheckboxFormFieldBuilder().id('sendMail')
+                                                       .label('sendMail')
+                                                       .build();
+        const ontvangerFormField = new InputFormFieldBuilder().id('ontvanger')
+                                                              .label('ontvanger')
+                                                              .validators(Validators.required, CustomValidators.email)
+                                                              .maxlength(200)
+                                                              .build();
+
+        const dialogData: DialogData = new DialogData(
+            [radio],
+            (results: any[]) => this.doUserEventListenerIntakeAfronden(planItem.id, results['ontvankelijk'].value, results['reden'],
+                results['sendMail'] ? results['ontvanger'] : null),
+            null,
+            planItem.toelichting);
+        dialogData.confirmButtonActionKey = 'planitem.' + planItem.userEventListenerActie;
+
+        this.dialogSubscriptions.push(radio.formControl.valueChanges.subscribe(value => {
+            if (value) {
+                if (value.value) {
+                    dialogData.formFields = dialogData.formFields.filter(ff => ff !== reden);
+                } else if (!dialogData.formFields.find(ff => ff === reden)) {
+                    dialogData.formFields = [radio, reden, ...dialogData.formFields.slice(1)];
+                    // Nodig om te zorgen dat `reden` direct verplicht is
+                    dialogData.formFields.forEach(ff => ff.formControl.updateValueAndValidity());
+                }
+            }
+        }));
+        this.dialogSubscriptions.push(sendMail.formControl.valueChanges.subscribe(value => {
+            if (!value) {
+                dialogData.formFields = dialogData.formFields.filter(ff => ff !== ontvangerFormField);
+            } else if (!dialogData.formFields.find(ff => ff === ontvangerFormField)) {
+                dialogData.formFields = [...dialogData.formFields, ontvangerFormField];
+            }
+        }));
+        this.dialogSubscriptions.push(
+            this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
+                if (zaakafhandelParameters.intakeMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+                    sendMail.formControl.enable();
+                    dialogData.formFields = [...dialogData.formFields, sendMail];
+                }
+                sendMail.formControl.setValue(zaakafhandelParameters.intakeMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+            }));
+
         return {
-            dialogComponent: IntakeAfrondenDialogComponent,
-            dialogData: {zaak: this.zaak, planItem: planItem}
+            dialogComponent: DialogComponent,
+            dialogData: dialogData
         };
+    }
+
+    private doUserEventListenerIntakeAfronden(planItemId: string, ontvankelijk: boolean, toelichting: string, ontvanger: string | null): Observable<void> {
+        const userEventListenerData = new UserEventListenerData(UserEventListenerActie.IntakeAfronden, planItemId, this.zaak.uuid);
+        userEventListenerData.zaakOntvankelijk = ontvankelijk;
+        userEventListenerData.resultaatToelichting = toelichting;
+
+        this.onderwerp = this.onderwerp.replace('{zaaknr}', this.zaak.identificatie);
+        this.body = this.body.replace('{zaaktype naam}', this.zaak.zaaktype.identificatie)
+                        .replace('{zaaknr}', this.zaak.identificatie);
+        if (ontvanger !== null) {
+            const mailObject: MailObject = new MailObject();
+            mailObject.createDocumentFromMail = true;
+            mailObject.onderwerp = this.onderwerp;
+            mailObject.body = this.body;
+            mailObject.ontvanger = ontvanger;
+            this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {});
+        }
+
+        return this.planItemsService.doUserEventListenerPlanItem(userEventListenerData);
     }
 
     createUserEventListenerZaakAfhandelenDialog(planItem: PlanItem): { dialogComponent: any, dialogData: any } {
