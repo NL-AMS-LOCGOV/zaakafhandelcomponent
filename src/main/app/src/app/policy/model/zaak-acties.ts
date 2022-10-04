@@ -23,7 +23,7 @@ export class ZaakActies {
     toevoegenBetrokkenePersoon: boolean = false;
     toevoegenBetrokkeneBedrijf: boolean = false;
     verwijderenBetrokkene: boolean = false;
-    wijzigenToekenning: boolean = false;
+    toekennen: boolean = false;
     wijzigen: boolean = false;
     aanmakenTaak: boolean = false;
     vastleggenBesluit: boolean = false;

@@ -5,10 +5,13 @@
 
 package net.atos.client.zgw.ztc.model;
 
+import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
+
 import java.net.URI;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 /**
  *
@@ -157,5 +160,10 @@ public class Statustype {
 
     public void setToelichting(String toelichting) {
         this.toelichting = toelichting;
+    }
+
+    @JsonbTransient
+    public static boolean isHeropend(final Statustype statustype) {
+        return statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
     }
 }

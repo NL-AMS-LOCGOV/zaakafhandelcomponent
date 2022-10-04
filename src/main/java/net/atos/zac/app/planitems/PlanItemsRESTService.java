@@ -6,7 +6,7 @@
 package net.atos.zac.app.planitems;
 
 import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
-import static net.atos.zac.policy.PolicyService.assertActie;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Date;
 import java.util.List;
@@ -112,7 +112,7 @@ public class PlanItemsRESTService {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertActie(policyService.readZaakActies(zaak).getAanmakenTaak());
+        assertPolicy(policyService.readZaakActies(zaak).getAanmakenTaak());
         final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(planItem);
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
@@ -134,21 +134,20 @@ public class PlanItemsRESTService {
     @POST
     @Path("doUserEventListenerPlanItem")
     public void doUserEventListenerPlanItem(final RESTUserEventListenerData userEventListenerData) {
+        final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
+        assertPolicy(zaak.isOpen() && policyService.readZaakActies(zaak).getVoortzetten());
         switch (userEventListenerData.actie) {
             case INTAKE_AFRONDEN -> {
                 final PlanItemInstance planItemInstance = caseService.readOpenPlanItem(userEventListenerData.planItemInstanceId);
                 caseVariablesService.setOntvankelijk(planItemInstance.getCaseInstanceId(), userEventListenerData.zaakOntvankelijk);
                 if (!userEventListenerData.zaakOntvankelijk) {
-                    final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
                     final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
                     zgwApiService.createResultaatForZaak(zaak, zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
                 }
             }
             case ZAAK_AFHANDELEN -> {
-                final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-                assertActie(policyService.readZaakActies(zaak).getVoortzetten());
-                policyService.valideerAlleDeelzakenGesloten(zaak);
+                assertPolicy(!zrcClientService.heeftOpenDeelzaken(zaak));
                 final Besluit besluit = brcClientService.findBesluit(zaak);
                 if (besluit != null) {
                     final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());

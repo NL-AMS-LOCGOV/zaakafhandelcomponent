@@ -64,7 +64,7 @@ public class RESTActiesConverter {
         restZaakActies.toevoegenBetrokkenePersoon = zaakActies.getToevoegenBetrokkenePersoon();
         restZaakActies.toevoegenBetrokkeneBedrijf = zaakActies.getToevoegenBetrokkeneBedrijf();
         restZaakActies.verwijderenBetrokkene = zaakActies.getVerwijderenBetrokkene();
-        restZaakActies.wijzigenToekenning = zaakActies.getWijzigenToekenning();
+        restZaakActies.toekennen = zaakActies.getToekennen();
         restZaakActies.wijzigen = zaakActies.getWijzigen();
         restZaakActies.aanmakenTaak = zaakActies.getAanmakenTaak();
         restZaakActies.vastleggenBesluit = zaakActies.getVastleggenBesluit();

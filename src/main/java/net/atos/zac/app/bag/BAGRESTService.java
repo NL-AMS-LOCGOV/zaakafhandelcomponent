@@ -6,7 +6,7 @@
 package net.atos.zac.app.bag;
 
 import static net.atos.client.zgw.zrc.model.Objecttype.ADRES;
-import static net.atos.zac.policy.PolicyService.assertActie;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.net.URI;
 import java.util.Collections;
@@ -77,7 +77,7 @@ public class BAGRESTService {
     @Path("")
     public void createBAGObject(final RESTBAGObjectGegevens bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
-        assertActie(policyService.readZaakActies(zaak).getToevoegenBAGObject());
+        assertPolicy(policyService.readZaakActies(zaak).getToevoegenBAGObject());
         final Zaakobject zaakobject = new Zaakobject();
         zaakobject.setZaak(zaak.getUrl());
         zaakobject.setObject(bagObjectGegevens.bagObject);
@@ -90,7 +90,7 @@ public class BAGRESTService {
     public List<RESTAdres> listAdressenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertActie(policyService.readZaakActies(zaak).getLezen());
+        assertPolicy(policyService.readZaakActies(zaak).getLezen());
         zaakobjectListParameters.setZaak(zaak.getUrl());
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {

@@ -88,11 +88,11 @@
                                     </zac-edit-select>
                                     <zac-edit-groep [formField]="editFormFields.get('groep')"
                                                     [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.acties.wijzigenToekenning"
+                                                    [readonly]="!zaak.isOpen || !zaak.acties.toekennen"
                                                     (onSave)="editGroep($event)"></zac-edit-groep>
                                     <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
                                                           [reasonField]="editFormFields.get('reden')"
-                                                          [readonly]="!zaak.acties.wijzigenToekenning"
+                                                          [readonly]="!zaak.isOpen || !zaak.acties.toekennen"
                                                           (onSave)="editBehandelaar($event)"></zac-edit-behandelaar>
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
@@ -146,9 +146,9 @@
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
                                                           [readonly]="!zaak.acties.wijzigen"
-                                                          [actieOpschorten]="zaak.acties.opschorten"
-                                                          [actieHervatten]="zaak.acties.hervatten"
-                                                          [actieVerlengen]="zaak.acties.verlengen"
+                                                          [actieOpschorten]="zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.acties.opschorten"
+                                                          [actieHervatten]="zaak.isOpgeschort && zaak.acties.hervatten"
+                                                          [actieVerlengen]="zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.acties.verlengen"
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>

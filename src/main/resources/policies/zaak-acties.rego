@@ -12,7 +12,7 @@ import input.user
 zaak_acties := {
     "lezen": lezen,
     "wijzigen": wijzigen,
-    "wijzigen_toekenning": wijzigen_toekenning,
+    "toekennen": toekennen,
     "opschorten": opschorten,
     "verlengen": verlengen,
     "hervatten": hervatten,
@@ -62,59 +62,46 @@ wijzigen {
     zaaktype_allowed == true
 }
 
-default wijzigen_toekenning := false
-wijzigen_toekenning {
+default toekennen := false
+toekennen {
     { behandelaar, coordinator, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
 }
 
 default verlengen := false
 verlengen {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
-    zaak.heropend == false
 }
 
 default opschorten := false
 opschorten {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
-    zaak.heropend == false
-    zaak.opgeschort == false
 }
 
 default hervatten := false
 hervatten {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
-    zaak.heropend == false
-    zaak.opgeschort == true
 }
 
 default afbreken := false
 afbreken {
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
-    zaak.heropend == false
 }
 
 default voortzetten := false
 voortzetten {
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
 }
 
 default heropenen := false
 heropenen {
     recordmanager.rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == false
 }
 
 default creeeren_document := false
@@ -162,8 +149,6 @@ versturen_ontvangstbevestiging {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
     zaak.open == true
-    zaak.heropend == false
-    zaak.ontvangstbevestigingVerstuurd == false
 }
 
 default toevoegen_initiator_persoon := false
@@ -225,7 +210,4 @@ default vastleggen_besluit := false
 vastleggen_besluit {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
-    zaak.open == true
-    zaak.besluit == false
-    zaak.heeft_besluittypen == true
 }

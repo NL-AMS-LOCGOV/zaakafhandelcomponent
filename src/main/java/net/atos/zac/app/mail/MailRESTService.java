@@ -5,8 +5,8 @@
 
 package net.atos.zac.app.mail;
 
-import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
-import static net.atos.zac.policy.PolicyService.assertActie;
+import static net.atos.zac.policy.PolicyService.assertPolicy;
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 
 import java.util.UUID;
 
@@ -56,7 +56,7 @@ public class MailRESTService {
     @Path("send/{zaakUuid}")
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUUID, final RESTMailObject restMailObject) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertActie(policyService.readZaakActies(zaak).getVersturenEmail());
+        assertPolicy(policyService.readZaakActies(zaak).getVersturenEmail());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
@@ -68,18 +68,18 @@ public class MailRESTService {
     @Path("acknowledge/{zaakUuid}")
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        final Statustype statustype = zaak.getStatus() != null ?
-                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
-        assertActie(policyService.readZaakActies(zaak, statustype).getVersturenOntvangstbevestiging());
+        assertPolicy(isNotTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid())) &&
+                             policyService.readZaakActies(zaak).getVersturenOntvangstbevestiging());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
         mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
                              restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
 
-        if(statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving())) {
-            return;
+        final Statustype statustype = zaak.getStatus() != null ?
+                ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
+        if (!Statustype.isHeropend(statustype)) {
+            caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
         }
-        caseVariablesService.setOntvangstbevestigingVerstuurd(zaakUuid, Boolean.TRUE);
     }
 }

@@ -40,9 +40,7 @@ public class RESTZaakInformatieobjectConverter {
     public RESTZaakInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
-        final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype, statustype);
+        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
         final RESTZaakInformatieobject restZaakInformatieobject = new RESTZaakInformatieobject();
         restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
         restZaakInformatieobject.zaakActies = actiesConverter.convert(zaakActies);
@@ -50,7 +48,9 @@ public class RESTZaakInformatieobjectConverter {
             restZaakInformatieobject.zaakStartDatum = zaak.getStartdatum();
             restZaakInformatieobject.zaakEinddatumGepland = zaak.getEinddatumGepland();
             restZaakInformatieobject.zaaktypeOmschrijving = zaaktype.getOmschrijving();
-            if (status != null) {
+            if (zaak.getStatus() != null) {
+                final Status status = zrcClientService.readStatus(zaak.getStatus());
+                final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
                 restZaakInformatieobject.zaakStatus = restZaakStatusConverter.convertToRESTZaakStatus(status, statustype);
             }
         }
