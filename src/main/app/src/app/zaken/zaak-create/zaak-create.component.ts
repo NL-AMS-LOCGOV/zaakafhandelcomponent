@@ -124,7 +124,7 @@ export class ZaakCreateComponent implements OnInit {
                                                                         .validators(Validators.required)
                                                                         .build();
 
-        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(80, true)
+        const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(80)
                                                         .validators(Validators.required)
                                                         .build();
         const toelichting = new TextareaFormFieldBuilder().id('toelichting').label('toelichting').maxlength(1000)

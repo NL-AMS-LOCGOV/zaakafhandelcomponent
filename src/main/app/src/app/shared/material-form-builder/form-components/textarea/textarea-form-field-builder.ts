@@ -5,7 +5,6 @@
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {TextareaFormField} from './textarea-form-field';
-import {FormControl} from '@angular/forms';
 
 export class TextareaFormFieldBuilder extends AbstractFormFieldBuilder {
 
@@ -17,8 +16,9 @@ export class TextareaFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField.initFormControl(value);
     }
 
-    maxlength(maxlength: number): this {
+    maxlength(maxlength: number, showCount: boolean = true): this {
         this.formField.maxlength = maxlength;
+        this.formField.showCount = showCount;
         return this;
     }
 
