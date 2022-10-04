@@ -6,7 +6,6 @@
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
 import {InputFormField} from './input-form-field';
 import {ActionIcon} from '../../../edit/action-icon';
-import {Observable} from 'rxjs';
 
 export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
 
@@ -28,7 +27,7 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    maxlength(maxlength: number, showCount?: boolean): this {
+    maxlength(maxlength: number, showCount: boolean = true): this {
         this.formField.maxlength = maxlength;
         this.formField.showCount = showCount;
         return this;
