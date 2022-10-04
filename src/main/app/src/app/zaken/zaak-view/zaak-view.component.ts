@@ -414,7 +414,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (zoekInitiator || zoekBetrokkene || zoekBAG || zaakToClipboard) {
             this.menu.push(new HeaderMenuItem('koppelingen'));
             if (zoekInitiator) {
-                this.menu.push(new ButtonMenuItem('actie.initiator.toevoegen', () => {
+                this.menu.push(new ButtonMenuItem(this.zaak.initiatorIdentificatie ?
+                    'actie.initiator.wijzigen' : 'actie.initiator.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.ZOEK_INITIATOR;
                 }, 'person_add_alt_1'));
