@@ -36,10 +36,18 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
     ontvangerFormField: AbstractFormField;
     private ngDestroy = new Subject<void>();
 
-    onderwerp: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
-    body: string = 'Beste klant,\n' +
+    onderwerpOntvankelijk: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
+    bodyOntvankelijk: string = 'Beste klant,\n' +
         '\n' +
         'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.\n' +
+        '\n' +
+        'Met vriendelijke groet,\n' +
+        '\n' +
+        'Gemeente';
+    onderwerpNietOntvankelijk: string = 'Wij hebben uw verzoek niet ontvankelijk verklaard (zaaknummer: {zaaknr}';
+    bodyNietOntvankelijk: string = 'Beste klant,\n' +
+        '\n' +
+        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is niet ontvankelijk verklaard. Voor meer informatie gaat u naar Mijn loket.\n' +
         '\n' +
         'Met vriendelijke groet,\n' +
         '\n' +
@@ -53,10 +61,6 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.onderwerp = this.onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-        this.body = this.body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
-                        .replace('{zaaknr}', this.data.zaak.identificatie);
-
         this.radioFormField = new RadioFormFieldBuilder().id('ontvankelijk')
                                                  .label('zaakOntvankelijk')
                                                  .optionLabel('key')
@@ -119,11 +123,16 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
         userEventListenerData.zaakOntvankelijk = this.radioFormField.formControl.value.value;
         userEventListenerData.resultaatToelichting = this.redenFormField.formControl.value;
 
+        let onderwerp = userEventListenerData.zaakOntvankelijk ? this.onderwerpOntvankelijk : this.onderwerpNietOntvankelijk;
+        onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
+        let body = userEventListenerData.zaakOntvankelijk ? this.bodyOntvankelijk : this.bodyNietOntvankelijk;
+        body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie).replace('{zaaknr}', this.data.zaak.identificatie);
+
         if (this.sendMailFormField.formControl.value) {
             const mailObject: MailObject = new MailObject();
             mailObject.createDocumentFromMail = true;
-            mailObject.onderwerp = this.onderwerp;
-            mailObject.body = this.body;
+            mailObject.onderwerp = onderwerp;
+            mailObject.body = body;
             mailObject.ontvanger = this.ontvangerFormField.formControl.value;
             this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
         }

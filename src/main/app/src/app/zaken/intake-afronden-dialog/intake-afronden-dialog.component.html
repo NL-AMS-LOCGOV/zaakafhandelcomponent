@@ -9,7 +9,6 @@
     <mfb-form-field *ngIf="redenFormField.formControl.enabled" [field]="redenFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.enabled" [field]="sendMailFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>
-    <p *ngIf="sendMailFormField.formControl.value" class="readonly" [innerHTML]="body"></p>
 </div>
 <div mat-dialog-actions>
     <button [disabled]="loading || formFieldsInvalid()"
