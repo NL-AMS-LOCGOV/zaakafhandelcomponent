@@ -16,8 +16,6 @@
     <input [formControl]="data.formControl" [id]="data.id + '_tekstfield'" [required]="data.required" matInput
            [maxlength]="data.maxlength">
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
-    <mat-hint *ngIf="data.maxlength && data.showCount">{{data.formControl.value?.length || 0}}
-        /{{data.maxlength}}</mat-hint>
+    <mat-hint *ngIf="data.showCount && data.formControl.value && data.formControl.dirty">{{data.formControl.value.length}}/{{data.maxlength}}</mat-hint>
     <mat-error *ngIf="data.formControl.invalid">{{getErrorMessage()}}</mat-error>
-
 </mat-form-field>

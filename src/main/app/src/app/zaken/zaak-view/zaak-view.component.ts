@@ -300,7 +300,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             new TextIcon(Conditionals.isAfterDate(this.zaak.einddatum), 'report_problem', 'errorVerlopen_icon',
                 'msg.datum.overschreden', 'error'));
 
-        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden').label('reden').validators(Validators.required).maxlength(80).build());
+        this.editFormFields.set('reden', new InputFormFieldBuilder().id('reden')
+                                                                    .label('reden')
+                                                                    .validators(Validators.required)
+                                                                    .maxlength(80)
+                                                                    .build());
     }
 
     private createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem: PlanItem): MenuItem {

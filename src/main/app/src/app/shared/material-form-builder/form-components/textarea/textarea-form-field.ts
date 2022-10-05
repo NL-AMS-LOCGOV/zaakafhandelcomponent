@@ -9,6 +9,7 @@ import {FieldType} from '../../model/field-type.enum';
 export class TextareaFormField extends AbstractFormField {
     fieldType = FieldType.TEXTAREA;
     maxlength: number;
+    showCount: boolean = false;
 
     constructor() {
         super();

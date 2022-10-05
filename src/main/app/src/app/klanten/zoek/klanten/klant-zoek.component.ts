@@ -40,7 +40,7 @@ export class KlantZoekComponent implements OnInit {
         this.betrokkeneToelichting = new InputFormFieldBuilder().id('betrokkenToelichting')
                                                                 .label('toelichting')
                                                                 .validators(Validators.required)
-                                                                .maxlength(75, true)
+                                                                .maxlength(75)
                                                                 .build();
     }
 
