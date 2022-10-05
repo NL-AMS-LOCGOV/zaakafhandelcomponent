@@ -9,7 +9,7 @@ import static net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl.DATABASE_SCHEMA
 import static net.atos.zac.flowable.bpmn.ProcessEngineLookupImpl.DATA_SOURCE_JNDI_NAME;
 import static org.flowable.cmmn.engine.impl.cfg.DelegateExpressionFieldInjectionMode.DISABLED;
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DATABASE_TYPE_POSTGRES;
-import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_FALSE;
+import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_TRUE;
 import static org.flowable.common.engine.impl.history.HistoryLevel.AUDIT;
 
 import org.flowable.cdi.spi.CmmnEngineLookup;
@@ -31,7 +31,7 @@ public class CmmnEngineLookupImpl implements CmmnEngineLookup {
         cmmnEngineConfiguration.setDataSourceJndiName(DATA_SOURCE_JNDI_NAME);
         cmmnEngineConfiguration.setDatabaseType(DATABASE_TYPE_POSTGRES);
         cmmnEngineConfiguration.setDatabaseSchema(DATABASE_SCHEMA);
-        cmmnEngineConfiguration.setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_FALSE);
+        cmmnEngineConfiguration.setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_TRUE);
         cmmnEngineConfiguration.setHistoryLevel(AUDIT);
         cmmnEngineConfiguration.setEnableSafeCmmnXml(true);
         cmmnEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);
