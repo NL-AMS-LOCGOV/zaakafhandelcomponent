@@ -23,7 +23,7 @@ import {User} from '../../identity/model/user';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../gebruikersvoorkeuren/model/zoekopdracht';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {WerklijstActies} from '../../policy/model/werklijst-acties';
+import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {PolicyService} from '../../policy/policy.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     clearZoekopdracht: EventEmitter<void> = new EventEmitter<void>();
     werklijst = Werklijst.ONTKOPPELDE_DOCUMENTEN;
-    werklijstActies = new WerklijstActies();
+    werklijstRechten = new WerklijstRechten();
 
     constructor(private ontkoppeldeDocumentenService: OntkoppeldeDocumentenService,
                 private infoService: InformatieObjectenService,
@@ -58,7 +58,7 @@ export class OntkoppeldeDocumentenListComponent implements OnInit, AfterViewInit
     ngOnInit(): void {
         this.utilService.setTitle('title.documenten.ontkoppeldeDocumenten');
         this.listParameters = SessionStorageUtil.getItem(Werklijst.ONTKOPPELDE_DOCUMENTEN + '_ZOEKPARAMETERS', this.createDefaultParameters());
-        this.policyService.readWerklijstActies().subscribe(acties => this.werklijstActies = acties);
+        this.policyService.readWerklijstRechten().subscribe(rechten => this.werklijstRechten = rechten);
     }
 
     ngAfterViewInit(): void {

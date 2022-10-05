@@ -7,7 +7,7 @@ import {TaakStatus} from './taak-status.enum';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
 import {Taakinformatie} from './taakinformatie';
-import {TaakActies} from '../../policy/model/taak-acties';
+import {TaakRechten} from '../../policy/model/taak-rechten';
 
 export class Taak {
     id: string;
@@ -26,9 +26,9 @@ export class Taak {
     taakdata: {};
     taakinformatie: Taakinformatie;
     taakdocumenten: string[];
-    acties: TaakActies;
+    rechten: TaakRechten;
 
-    isAfgerond(): boolean {
+    public isAfgerond(): boolean {
         return this.status === TaakStatus.Afgerond;
     }
 }

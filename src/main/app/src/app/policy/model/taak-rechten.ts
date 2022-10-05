@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class TaakActies {
+export class TaakRechten {
+    lezen: boolean = false;
     toekennen: boolean = false;
     wijzigenFormulier: boolean = false;
     wijzigen: boolean = false;

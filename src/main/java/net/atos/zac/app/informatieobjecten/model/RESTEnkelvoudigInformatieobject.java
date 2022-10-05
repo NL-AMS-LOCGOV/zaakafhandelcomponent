@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTUser;
-import net.atos.zac.app.policy.model.RESTDocumentActies;
+import net.atos.zac.app.policy.model.RESTDocumentRechten;
 
 /**
  *
@@ -63,5 +63,5 @@ public class RESTEnkelvoudigInformatieobject {
 
     public RESTUser gelockedDoor;
 
-    public RESTDocumentActies acties;
+    public RESTDocumentRechten rechten;
 }

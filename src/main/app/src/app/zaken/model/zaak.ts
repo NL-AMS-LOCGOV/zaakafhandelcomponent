@@ -10,7 +10,7 @@ import {GerelateerdeZaak} from './gerelateerde-zaak';
 import {ZaakKenmerk} from './zaak-kenmerk';
 import {Geometry} from './geometry';
 import {Communicatiekanaal} from './communicatiekanaal';
-import {ZaakActies} from '../../policy/model/zaak-acties';
+import {ZaakRechten} from '../../policy/model/zaak-rechten';
 import {IdentificatieType} from '../../klanten/model/klanten/identificatieType';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
@@ -55,5 +55,5 @@ export class Zaak {
     isDeelzaak: boolean;
     isOntvangstbevestigingVerstuurd: boolean;
     isBesluittypeAanwezig: boolean;
-    acties: ZaakActies;
+    rechten: ZaakRechten;
 }

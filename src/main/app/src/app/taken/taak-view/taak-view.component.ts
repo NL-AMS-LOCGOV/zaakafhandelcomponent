@@ -112,7 +112,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createTaakForm(taak: Taak): void {
-        if (!this.taak.isAfgerond() && this.taak.acties.wijzigenFormulier) {
+        if (!this.taak.isAfgerond && this.taak.rechten.wijzigenFormulier) {
             this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
         } else {
             this.formConfig = null;
@@ -150,15 +150,15 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (!this.taak.isAfgerond()) {
-            if (this.taak.acties.toevoegenDocument) {
+        if (!this.taak.isAfgerond) {
+            if (this.taak.rechten.toevoegenDocument) {
                 this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
                 }, 'upload_file'));
             }
 
-            if (this.taak.acties.creeerenDocument) {
+            if (this.taak.rechten.creeerenDocument) {
                 this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_MAKEN;

@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.policy.model;
 
-public class RESTDocumentActies {
+public class RESTDocumentRechten {
 
     public boolean verwijderen;
 

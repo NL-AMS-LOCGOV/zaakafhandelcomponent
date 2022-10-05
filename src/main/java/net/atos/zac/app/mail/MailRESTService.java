@@ -56,7 +56,7 @@ public class MailRESTService {
     @Path("send/{zaakUuid}")
     public void sendMail(@PathParam("zaakUuid") final UUID zaakUUID, final RESTMailObject restMailObject) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertPolicy(policyService.readZaakActies(zaak).getVersturenEmail());
+        assertPolicy(policyService.readZaakRechten(zaak).getVersturenEmail());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
@@ -69,7 +69,7 @@ public class MailRESTService {
     public void sendAcknowledgmentReceiptMail(@PathParam("zaakUuid") final UUID zaakUuid, final RESTMailObject restMailObject) throws MailjetException {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
         assertPolicy(isNotTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid())) &&
-                             policyService.readZaakActies(zaak).getVersturenOntvangstbevestiging());
+                             policyService.readZaakRechten(zaak).getVersturenOntvangstbevestiging());
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }

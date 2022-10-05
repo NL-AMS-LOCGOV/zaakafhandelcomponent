@@ -32,7 +32,7 @@ import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieObject
 import net.atos.zac.app.informatieobjecten.model.RESTEnkelvoudigInformatieobject;
 import net.atos.zac.app.informatieobjecten.model.RESTFileUpload;
 import net.atos.zac.app.informatieobjecten.model.RESTGekoppeldeZaakEnkelvoudigInformatieObject;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.taken.model.RESTTaakDocumentData;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.authentication.LoggedInUser;
@@ -41,7 +41,7 @@ import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockS
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.DocumentActies;
+import net.atos.zac.policy.output.DocumentRechten;
 import net.atos.zac.util.UriUtil;
 
 public class RESTInformatieobjectConverter {
@@ -74,7 +74,7 @@ public class RESTInformatieobjectConverter {
     private IdentityService identityService;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private PolicyService policyService;
@@ -97,12 +97,12 @@ public class RESTInformatieobjectConverter {
     public RESTEnkelvoudigInformatieobject convertToREST(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieObject, final Zaak zaak) {
         final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
                 enkelvoudigInformatieObject.getUUID()) : null;
-        final DocumentActies acties = policyService.readDocumentActies(enkelvoudigInformatieObject, lock, zaak);
+        final DocumentRechten rechten = policyService.readDocumentRechten(enkelvoudigInformatieObject, lock, zaak);
         final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject = new RESTEnkelvoudigInformatieobject();
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
-        restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
-        if (acties.getLezen()) {
+        restEnkelvoudigInformatieobject.rechten = rechtenConverter.convert(rechten);
+        if (rechten.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
                     .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();
@@ -284,12 +284,12 @@ public class RESTInformatieobjectConverter {
                 zaakInformatieObject.getInformatieobject());
         final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObject.getLocked() ? enkelvoudigInformatieObjectLockService.findLock(
                 enkelvoudigInformatieObject.getUUID()) : null;
-        final DocumentActies acties = policyService.readDocumentActies(enkelvoudigInformatieObject, lock, zaak);
+        final DocumentRechten rechten = policyService.readDocumentRechten(enkelvoudigInformatieObject, lock, zaak);
         final RESTGekoppeldeZaakEnkelvoudigInformatieObject restEnkelvoudigInformatieobject = new RESTGekoppeldeZaakEnkelvoudigInformatieObject();
         restEnkelvoudigInformatieobject.uuid = enkelvoudigInformatieObject.getUUID();
         restEnkelvoudigInformatieobject.identificatie = enkelvoudigInformatieObject.getIdentificatie();
-        restEnkelvoudigInformatieobject.acties = actiesConverter.convert(acties);
-        if (acties.getLezen()) {
+        restEnkelvoudigInformatieobject.rechten = rechtenConverter.convert(rechten);
+        if (rechten.getLezen()) {
             restEnkelvoudigInformatieobject.titel = enkelvoudigInformatieObject.getTitel();
             restEnkelvoudigInformatieobject.bronorganisatie = enkelvoudigInformatieObject.getBronorganisatie()
                     .equals(ConfiguratieService.BRON_ORGANISATIE) ? null : enkelvoudigInformatieObject.getBronorganisatie();

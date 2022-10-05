@@ -9,7 +9,7 @@ import data.net.atos.zac.domein.domein_elk_zaaktype
 import input.zaak
 import input.user
 
-zaak_acties := {
+zaak_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
     "toekennen": toekennen,

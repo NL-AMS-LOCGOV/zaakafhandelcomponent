@@ -15,10 +15,10 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.informatieobjecten.model.RESTZaakInformatieobject;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zaken.converter.RESTZaakStatusConverter;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.ZaakRechten;
 
 public class RESTZaakInformatieobjectConverter {
 
@@ -32,7 +32,7 @@ public class RESTZaakInformatieobjectConverter {
     private RESTZaakStatusConverter restZaakStatusConverter;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private PolicyService policyService;
@@ -40,11 +40,11 @@ public class RESTZaakInformatieobjectConverter {
     public RESTZaakInformatieobject convert(final ZaakInformatieobject zaakInformatieObject) {
         final Zaak zaak = zrcClientService.readZaak(zaakInformatieObject.getZaak());
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
         final RESTZaakInformatieobject restZaakInformatieobject = new RESTZaakInformatieobject();
         restZaakInformatieobject.zaakIdentificatie = zaak.getIdentificatie();
-        restZaakInformatieobject.zaakActies = actiesConverter.convert(zaakActies);
-        if (zaakActies.getLezen()) {
+        restZaakInformatieobject.zaakRechten = rechtenConverter.convert(zaakrechten);
+        if (zaakrechten.getLezen()) {
             restZaakInformatieobject.zaakStartDatum = zaak.getStartdatum();
             restZaakInformatieobject.zaakEinddatumGepland = zaak.getEinddatumGepland();
             restZaakInformatieobject.zaaktypeOmschrijving = zaaktype.getOmschrijving();

@@ -8,7 +8,7 @@ package net.atos.zac.policy.output;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
-public class ZaakActies {
+public class ZaakRechten {
 
     private final boolean lezen;
 
@@ -62,7 +62,7 @@ public class ZaakActies {
     private final boolean vastleggenBesluit;
 
     @JsonbCreator
-    public ZaakActies(
+    public ZaakRechten(
             @JsonbProperty("lezen") final boolean lezen,
             @JsonbProperty("opschorten") final boolean opschorten,
             @JsonbProperty("verlengen") final boolean verlengen,
