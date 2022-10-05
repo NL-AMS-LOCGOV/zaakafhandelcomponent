@@ -355,6 +355,7 @@
   "actie.initiator.toevoegen" : "Assign initiator",
   "actie.initiator.toevoegen.persoon" : "Assign person as initiator",
   "actie.initiator.toevoegen.bedrijf" : "Assign company as initiator",
+  "actie.initiator.wijzigen" : "Change initiator",
   "actie.koppelen" : "Link",
   "actie.locatie.toevoegen" : "Set location",
   "actie.lock" : "Lock",
