@@ -15,7 +15,7 @@ import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static net.atos.zac.websocket.event.ScreenEventType.TAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK;
 import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_TAKEN;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -653,7 +653,7 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         assertPolicy(zaak.isOpen() && brcClientService.findBesluit(zaak) == null &&
-                             isEmpty(zaaktype.getBesluittypen()) && policyService.readZaakActies(zaak, zaaktype).getVastleggenBesluit());
+                             isNotEmpty(zaaktype.getBesluittypen()) && policyService.readZaakActies(zaak, zaaktype).getVastleggenBesluit());
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, null);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
