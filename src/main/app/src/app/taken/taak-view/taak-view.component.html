@@ -41,10 +41,10 @@
                                     </div>
 
                                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                        <zac-edit-groep [readonly]="!this.taak.acties.wijzigenToekenning"
+                                        <zac-edit-groep [readonly]="this.taak.isAfgerond || !this.taak.acties.toekennen"
                                                         [formField]="editFormFields.get('groep')"
                                                         (onSave)="editGroep($event)"></zac-edit-groep>
-                                        <zac-edit-behandelaar [readonly]="!this.taak.acties.wijzigenToekenning"
+                                        <zac-edit-behandelaar [readonly]="this.taak.isAfgerond || !this.taak.acties.toekennen"
                                                               [formField]="editFormFields.get('behandelaar')"
                                                               (onSave)="editBehandelaar($event)">
                                         </zac-edit-behandelaar>
@@ -61,7 +61,7 @@
                                     </div>
 
                                     <div fxFlex="100">
-                                        <zac-edit-tekst [readonly]="!this.taak.acties.wijzigen"
+                                        <zac-edit-tekst [readonly]="this.taak.isAfgerond || !this.taak.acties.wijzigen"
                                                         [formField]="editFormFields.get('toelichting')"
                                                         (onSave)="partialEditTaak($event, 'toelichting')">
                                         </zac-edit-tekst>

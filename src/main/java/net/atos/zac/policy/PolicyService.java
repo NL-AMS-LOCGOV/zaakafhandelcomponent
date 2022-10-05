@@ -23,12 +23,10 @@ import net.atos.client.zgw.drc.model.AbstractEnkelvoudigInformatieobject;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockService;
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.flowable.TaskService;
 import net.atos.zac.policy.exception.PolicyException;
 import net.atos.zac.policy.input.DocumentData;
 import net.atos.zac.policy.input.DocumentInput;
@@ -57,9 +55,6 @@ public class PolicyService {
 
     @Inject
     private ZTCClientService ztcClientService;
-
-    @Inject
-    private TaskService taskService;
 
     @Inject
     private EnkelvoudigInformatieObjectLockService lockService;
@@ -106,13 +101,12 @@ public class PolicyService {
     }
 
     public TaakActies readTaakActies(final TaskInfo taskInfo) {
-        return readTaakActies(taskInfo, taskService.getTaakStatus(taskInfo), caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
+        return readTaakActies(taskInfo, caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
     }
 
-    public TaakActies readTaakActies(final TaskInfo taskInfo, final TaakStatus taakStatus, final String zaaktypeOmschrijving) {
+    public TaakActies readTaakActies(final TaskInfo taskInfo, final String zaaktypeOmschrijving) {
         final TaakData taakData = new TaakData();
         taakData.behandelaar = taskInfo.getAssignee();
-        taakData.afgerond = taakStatus == TaakStatus.AFGEROND;
         taakData.zaaktype = zaaktypeOmschrijving;
         return evaluationClient.readTaakActies(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
     }

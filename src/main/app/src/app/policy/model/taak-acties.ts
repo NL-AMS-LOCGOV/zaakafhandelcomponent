@@ -4,8 +4,7 @@
  */
 
 export class TaakActies {
-    lezen: boolean = false;
-    wijzigenToekenning: boolean = false;
+    toekennen: boolean = false;
     wijzigenFormulier: boolean = false;
     wijzigen: boolean = false;
     creeerenDocument: boolean = false;

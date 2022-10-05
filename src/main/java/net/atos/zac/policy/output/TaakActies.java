@@ -12,7 +12,7 @@ public class TaakActies {
 
     private final boolean lezen;
 
-    private final boolean wijzigenToekenning;
+    private final boolean toekennen;
 
     private final boolean wijzigenFormulier;
 
@@ -25,13 +25,13 @@ public class TaakActies {
     @JsonbCreator
     public TaakActies(
             @JsonbProperty("lezen") final boolean lezen,
-            @JsonbProperty("wijzigen_toekenning") final boolean wijzigenToekenning,
+            @JsonbProperty("toekennen") final boolean toekennen,
             @JsonbProperty("wijzigen_formulier") final boolean wijzigenFormulier,
             @JsonbProperty("wijzigen") final boolean wijzigen,
             @JsonbProperty("creeeren_document") final boolean creeerenDocument,
             @JsonbProperty("toevoegen_document") final boolean toevoegenDocument) {
         this.lezen = lezen;
-        this.wijzigenToekenning = wijzigenToekenning;
+        this.toekennen = toekennen;
         this.wijzigenFormulier = wijzigenFormulier;
         this.wijzigen = wijzigen;
         this.creeerenDocument = creeerenDocument;
@@ -42,8 +42,8 @@ public class TaakActies {
         return lezen;
     }
 
-    public boolean getWijzigenToekenning() {
-        return wijzigenToekenning;
+    public boolean getToekennen() {
+        return toekennen;
     }
 
     public boolean getWijzigenFormulier() {

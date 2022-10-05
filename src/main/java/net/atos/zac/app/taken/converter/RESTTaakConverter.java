@@ -21,7 +21,6 @@ import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 import net.atos.zac.app.policy.converter.RESTActiesConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
-import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
@@ -62,16 +61,16 @@ public class RESTTaakConverter {
     }
 
     public RESTTaak convert(final TaskInfo taskInfo, boolean withTaakdata) {
-        final TaakStatus status = taskService.getTaakStatus(taskInfo);
         final String zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId());
-        final TaakActies acties = policyService.readTaakActies(taskInfo, status, zaaktypeOmschrijving);
+        final TaakActies acties = policyService.readTaakActies(taskInfo, zaaktypeOmschrijving);
         final RESTTaak restTaak = new RESTTaak();
         restTaak.id = taskInfo.getId();
         restTaak.acties = actiesConverter.convert(acties);
         restTaak.naam = taskInfo.getName();
         restTaak.zaakUuid = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId());
-        restTaak.status = status;
+        restTaak.status = taskService.getTaakStatus(taskInfo);
+        ;
         if (acties.getLezen()) {
             restTaak.toelichting = taskInfo.getDescription();
             restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());

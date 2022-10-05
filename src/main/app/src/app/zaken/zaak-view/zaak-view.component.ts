@@ -810,7 +810,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignTaakToMe(taak: Taak): boolean {
-        return taak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
+        return !taak.isAfgerond() && taak.acties.toekennen && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
     private assignZaakToMe(event: any): void {

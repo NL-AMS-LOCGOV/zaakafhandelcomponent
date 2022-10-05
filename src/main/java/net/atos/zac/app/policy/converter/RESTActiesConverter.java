@@ -34,8 +34,7 @@ public class RESTActiesConverter {
 
     public RESTTaakActies convert(final TaakActies taakActies) {
         final RESTTaakActies restTaakActies = new RESTTaakActies();
-        restTaakActies.lezen = taakActies.getLezen();
-        restTaakActies.wijzigenToekenning = taakActies.getWijzigenToekenning();
+        restTaakActies.toekennen = taakActies.getToekennen();
         restTaakActies.wijzigenFormulier = taakActies.getWijzigenFormulier();
         restTaakActies.wijzigen = taakActies.getWijzigen();
         restTaakActies.creeerenDocument = taakActies.getCreeerenDocument();
