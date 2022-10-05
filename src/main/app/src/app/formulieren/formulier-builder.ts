@@ -39,7 +39,7 @@ export class FormulierBuilder {
         this._formulier.zaakUuid = taak.zaakUuid;
         this._formulier.taak = taak;
         this._formulier.dataElementen = taak.taakdata;
-        this._formulier.initBehandelForm(!taak.acties.wijzigenFormulier);
+        this._formulier.initBehandelForm(taak.isAfgerond() || !taak.rechten.wijzigenFormulier);
         return this;
     }
 

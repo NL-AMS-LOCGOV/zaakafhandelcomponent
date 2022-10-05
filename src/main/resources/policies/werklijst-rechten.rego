@@ -6,7 +6,7 @@ import data.net.atos.zac.rol.coordinator
 import data.net.atos.zac.rol.recordmanager
 import input.user
 
-werklijst_acties := {
+werklijst_rechten := {
     "documenten_inbox": documenten_inbox,
     "documenten_ontkoppeld": documenten_ontkoppeld,
     "documenten_ontkoppeld_verwijderen": documenten_ontkoppeld_verwijderen,

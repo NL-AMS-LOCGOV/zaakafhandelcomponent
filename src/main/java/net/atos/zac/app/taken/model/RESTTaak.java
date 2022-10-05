@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
-import net.atos.zac.app.policy.model.RESTTaakActies;
+import net.atos.zac.app.policy.model.RESTTaakRechten;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
@@ -54,5 +54,5 @@ public class RESTTaak {
 
     public List<UUID> taakdocumenten;
 
-    public RESTTaakActies acties;
+    public RESTTaakRechten rechten;
 }

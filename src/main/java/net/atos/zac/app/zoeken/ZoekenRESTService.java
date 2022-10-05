@@ -50,9 +50,9 @@ public class ZoekenRESTService {
     @Path("list")
     public RESTZoekResultaat<? extends AbstractRESTZoekObject> list(final RESTZoekParameters restZoekParameters) {
         if (restZoekParameters.type == ZAAK || restZoekParameters.type == TAAK) {
-            assertPolicy(policyService.readWerklijstActies().getZakenTaken());
+            assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
         } else {
-            assertPolicy(policyService.readOverigActies().getZoeken());
+            assertPolicy(policyService.readOverigeRechten().getZoeken());
         }
         final ZoekParameters zoekParameters = zoekZaakParametersConverter.convert(restZoekParameters);
         final ZoekResultaat<? extends ZoekObject> zoekResultaat = zoekenService.zoek(zoekParameters);

@@ -5,13 +5,9 @@
 
 package net.atos.zac.app.policy.model;
 
-public class RESTDocumentActies {
-
-    public boolean lezen;
+public class RESTDocumentRechten {
 
     public boolean verwijderen;
-
-    public boolean koppelen;
 
     public boolean downloaden;
 
