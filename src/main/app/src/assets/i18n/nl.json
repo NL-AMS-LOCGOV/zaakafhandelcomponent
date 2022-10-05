@@ -355,6 +355,7 @@
   "actie.initiator.toevoegen" : "Initiator toekennen",
   "actie.initiator.toevoegen.persoon" : "Persoon als initiator toekennen",
   "actie.initiator.toevoegen.bedrijf" : "Bedrijf als initiator toekennen",
+  "actie.initiator.wijzigen" : "Initiator wijzigen",
   "actie.koppelen" : "Koppelen",
   "actie.locatie.toevoegen" : "Locatie bepalen",
   "actie.lock" : "Vergrendel",
