@@ -20,9 +20,7 @@ public class RESTActiesConverter {
 
     public RESTDocumentActies convert(final DocumentActies acties) {
         final RESTDocumentActies restActies = new RESTDocumentActies();
-        restActies.lezen = acties.getLezen();
         restActies.wijzigen = acties.getWijzigen();
-        restActies.koppelen = acties.getKoppelen();
         restActies.downloaden = acties.getDownloaden();
         restActies.ontgrendelen = acties.getOntgrendelen();
         restActies.vergrendelen = acties.getVergrendelen();

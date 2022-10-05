@@ -144,14 +144,14 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'edit'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.vergrendelen) {
+        if (!this.laatsteVersieInfoObject.gelockedDoor && this.laatsteVersieInfoObject.acties.vergrendelen) {
             this.menu.push(new ButtonMenuItem('actie.lock', () => {
                 this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
             }, 'lock'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.ontgrendelen) {
+        if (this.laatsteVersieInfoObject.gelockedDoor && this.laatsteVersieInfoObject.acties.ontgrendelen) {
             this.menu.push(new ButtonMenuItem('actie.unlock', () => {
                 this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
@@ -162,7 +162,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.ondertekenen) {
+        if (!this.laatsteVersieInfoObject.ondertekening && this.laatsteVersieInfoObject.acties.ondertekenen) {
             this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
         }
     }

@@ -4,9 +4,7 @@
  */
 
 export class DocumentActies {
-    lezen: boolean = false;
     verwijderen: boolean = false;
-    koppelen: boolean = false;
     downloaden: boolean = false;
     toevoegenNieuweVersie: boolean = false;
     wijzigen: boolean = false;

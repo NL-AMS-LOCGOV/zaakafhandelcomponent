@@ -8,6 +8,7 @@ package net.atos.zac.app.informatieobjecten;
 import static net.atos.zac.configuratie.ConfiguratieService.OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 import static net.atos.zac.websocket.event.ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -403,8 +404,10 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertPolicy(policyService.readDocumentActies(drcClientService.readEnkelvoudigInformatieobject(uuid), zrcClientService.readZaak(zaakUUID))
-                             .getVergrendelen());
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        assertPolicy(isFalse(enkelvoudigInformatieobject.getLocked()) && policyService.readDocumentActies(enkelvoudigInformatieobject,
+                                                                                                          zrcClientService.readZaak(zaakUUID))
+                .getVergrendelen());
         enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -413,8 +416,9 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/unlock")
     public Response unlockDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertPolicy(policyService.readDocumentActies(drcClientService.readEnkelvoudigInformatieobject(uuid), zrcClientService.readZaak(zaakUUID))
-                             .getOntgrendelen());
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        assertPolicy(enkelvoudigInformatieobject.getLocked() && policyService.readDocumentActies(enkelvoudigInformatieobject,
+                                                                                                 zrcClientService.readZaak(zaakUUID)).getOntgrendelen());
         enkelvoudigInformatieObjectLockService.deleteLock(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -453,8 +457,9 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/onderteken")
     public Response ondertekenInformatieObject(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        assertPolicy(policyService.readDocumentActies(drcClientService.readEnkelvoudigInformatieobject(uuid), zrcClientService.readZaak(zaakUUID))
-                             .getOndertekenen());
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
+        assertPolicy(enkelvoudigInformatieobject.getOndertekening() == null &&
+                             policyService.readDocumentActies(enkelvoudigInformatieobject, zrcClientService.readZaak(zaakUUID)).getOndertekenen());
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();

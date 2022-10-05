@@ -307,7 +307,8 @@ public class TakenRESTService {
                     .map(UUID::fromString)
                     .map(drcClientService::readEnkelvoudigInformatieobject)
                     .forEach(enkelvoudigInformatieobject -> {
-                        assertPolicy(policyService.readDocumentActies(enkelvoudigInformatieobject).getOndertekenen());
+                        assertPolicy(enkelvoudigInformatieobject.getOndertekening() == null &&
+                                             policyService.readDocumentActies(enkelvoudigInformatieobject).getOndertekenen());
                         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(enkelvoudigInformatieobject.getUUID());
                     });
         }

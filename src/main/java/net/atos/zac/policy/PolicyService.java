@@ -95,7 +95,6 @@ public class PolicyService {
             documentData.zaakOpen = zaak.isOpen();
             documentData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         }
-        documentData.ondertekend = enkelvoudigInformatieobject.getOndertekening().getDatum() != null;
         return evaluationClient.readDocumentActies(
                 new RuleQuery<>(new DocumentInput(loggedInUserInstance.get(), documentData))).getResult();
     }
