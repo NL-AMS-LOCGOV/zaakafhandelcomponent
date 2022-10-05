@@ -15,7 +15,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
 import net.atos.client.vrl.model.CommunicatieKanaal;
-import net.atos.client.vrl.model.InlineResponse200;
+import net.atos.client.vrl.model.CommunicatiekanaalList200Response;
 
 @ApplicationScoped
 public class VRLClientService {
@@ -25,7 +25,7 @@ public class VRLClientService {
     private CommunicatiekanalenClient communicatiekanalenClient;
 
     public List<CommunicatieKanaal> listCommunicatiekanalen() {
-        final InlineResponse200 results = communicatiekanalenClient.communicatiekanaalList(null);
+        final CommunicatiekanaalList200Response results = communicatiekanalenClient.communicatiekanaalList(null);
         if (results.getNext() == null) {
             return results.getResults();
         } else {

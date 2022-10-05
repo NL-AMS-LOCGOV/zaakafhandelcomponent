@@ -33,7 +33,7 @@ import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundException;
 import net.atos.client.vrl.exception.CommunicatiekanaalNotFoundExceptionMapping;
 import net.atos.client.vrl.exception.RuntimeExceptionMapper;
 import net.atos.client.vrl.model.CommunicatieKanaal;
-import net.atos.client.vrl.model.InlineResponse200;
+import net.atos.client.vrl.model.CommunicatiekanaalList200Response;
 
 /**
  * Referentielijsten & Selectielijst API
@@ -69,7 +69,7 @@ import net.atos.client.vrl.model.InlineResponse200;
 public interface CommunicatiekanalenClient {
 
     @GET
-    InlineResponse200 communicatiekanaalList(@QueryParam("page") Integer page);
+    CommunicatiekanaalList200Response communicatiekanaalList(@QueryParam("page") Integer page);
 
     @GET
     @Path("/{uuid}")
