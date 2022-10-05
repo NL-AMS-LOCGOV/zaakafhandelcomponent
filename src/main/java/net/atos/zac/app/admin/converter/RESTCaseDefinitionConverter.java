@@ -31,15 +31,17 @@ public class RESTCaseDefinitionConverter {
     @Inject
     private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
 
-    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey) {
+    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, boolean inclusiefRelaties) {
         final CaseDefinition caseDefinition = caseService.readCaseDefinition(caseDefinitionKey);
         final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinitionKey);
-        restCaseDefinition.humanTaskDefinitions = taskService.listHumanTasks(caseDefinition.getId()).stream()
-                .map(this::convertHumanTaskDefinition)
-                .toList();
-        restCaseDefinition.userEventListenerDefinitions = caseService.listUserEventListeners(caseDefinition.getId()).stream()
-                .map(this::convertUserEventListenerDefinition)
-                .toList();
+        if (inclusiefRelaties) {
+            restCaseDefinition.humanTaskDefinitions = taskService.listHumanTasks(caseDefinition.getId()).stream()
+                    .map(this::convertHumanTaskDefinition)
+                    .toList();
+            restCaseDefinition.userEventListenerDefinitions = caseService.listUserEventListeners(caseDefinition.getId()).stream()
+                    .map(this::convertUserEventListenerDefinition)
+                    .toList();
+        }
         return restCaseDefinition;
     }
 

@@ -5,6 +5,7 @@
 
 package net.atos.zac.zaaksturing;
 
+import static net.atos.client.zgw.shared.cache.Caching.ZAC_ZAAKAFHANDELPARAMETERS;
 import static net.atos.zac.util.ValidationUtil.valideerObject;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.CREATIEDATUM;
 import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.PRODUCTAANVRAAGTYPE;
@@ -13,12 +14,12 @@ import static net.atos.zac.zaaksturing.model.ZaakafhandelParameters.ZAAKTYPE_UUI
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.cache.annotation.CacheRemoveAll;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -26,9 +27,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -55,16 +53,10 @@ public class ZaakafhandelParameterBeheerService {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public ZaakafhandelParameters createZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
-        valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
-        zaakafhandelParameters.getUserEventListenerParametersCollection().forEach(ValidationUtil::valideerObject);
-        zaakafhandelParameters.setCreatiedatum(ZonedDateTime.now());
-        entityManager.persist(zaakafhandelParameters);
-        return zaakafhandelParameters;
-    }
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
-    public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
+    ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
         ztcClientService.readCacheTime();
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
@@ -80,28 +72,7 @@ public class ZaakafhandelParameterBeheerService {
         }
     }
 
-    public ZaakafhandelParameters readRecentsteZaakafhandelParameters(final String zaaktypeOmschrijving) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
-        final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
-        query.select(root).where(builder.equal(root.get(ZAAKTYPE_OMSCHRIJVING), zaaktypeOmschrijving));
-        query.orderBy(builder.desc(root.get(CREATIEDATUM)));
-        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).setMaxResults(1).getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return new ZaakafhandelParameters();
-        }
-    }
-
-    public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
-        valideerObject(zaakafhandelParameters);
-        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
-        zaakafhandelParameters.setCreatiedatum(entityManager.find(ZaakafhandelParameters.class, zaakafhandelParameters.getId()).getCreatiedatum());
-        return entityManager.merge(zaakafhandelParameters);
-    }
-
-    public List<ZaakafhandelParameters> listZaakafhandelParameters() {
+    List<ZaakafhandelParameters> listZaakafhandelParameters() {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
@@ -110,23 +81,26 @@ public class ZaakafhandelParameterBeheerService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public HumanTaskParameters findHumanTaskParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<HumanTaskParameters> query = builder.createQuery(HumanTaskParameters.class);
-        final Root<HumanTaskParameters> queryRoot = query.from(HumanTaskParameters.class);
-
-        final Join<HumanTaskParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
-        final List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaaktypeUUID));
-        predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
-        query.where(predicates.toArray(new Predicate[0]));
-        final List<HumanTaskParameters> resultList = entityManager.createQuery(query).getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+    @CacheRemoveAll(cacheName = ZAC_ZAAKAFHANDELPARAMETERS)
+    public ZaakafhandelParameters createZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
+        valideerObject(zaakafhandelParameters);
+        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.getUserEventListenerParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.setCreatiedatum(ZonedDateTime.now());
+        entityManager.persist(zaakafhandelParameters);
+        return zaakafhandelParameters;
     }
+
+    public ZaakafhandelParameters updateZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
+        valideerObject(zaakafhandelParameters);
+        zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
+        zaakafhandelParameters.setCreatiedatum(entityManager.find(ZaakafhandelParameters.class, zaakafhandelParameters.getId()).getCreatiedatum());
+        final ZaakafhandelParameters update = entityManager.merge(zaakafhandelParameters);
+        zaakafhandelParameterService.cacheRemoveZaakafhandelParameters(update.getZaakTypeUUID());
+        return update;
+    }
+
+
 
     public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -143,26 +117,6 @@ public class ZaakafhandelParameterBeheerService {
         return null;
     }
 
-    public UserEventListenerParameters readUserEventListenerParameters(final UUID zaaktypeUUID, final String planitemDefinitionID) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<UserEventListenerParameters> query = builder.createQuery(UserEventListenerParameters.class);
-        final Root<UserEventListenerParameters> queryRoot = query.from(UserEventListenerParameters.class);
-
-        final Join<UserEventListenerParameters, ZaakafhandelParameters> zapJoin = queryRoot.join("zaakafhandelParameters", JoinType.INNER);
-        final List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(zapJoin.get(ZAAKTYPE_UUID), zaaktypeUUID));
-        predicates.add(builder.equal(queryRoot.get("planItemDefinitionID"), planitemDefinitionID));
-        query.where(predicates.toArray(new Predicate[0]));
-        final List<UserEventListenerParameters> resultList = entityManager.createQuery(query).getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            throw new RuntimeException(
-                    String.format("No UserEventListenerParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaaktypeUUID.toString(),
-                                  planitemDefinitionID));
-        }
-    }
-
     public List<ZaakbeeindigReden> listZaakbeeindigRedenen() {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<ZaakbeeindigReden> query = builder.createQuery(ZaakbeeindigReden.class);
@@ -172,19 +126,13 @@ public class ZaakafhandelParameterBeheerService {
         return emQuery.getResultList();
     }
 
-    public ZaakbeeindigParameter readZaakbeeindigParameter(final UUID zaaktypeUUID, final Long zaakbeeindigRedenId) {
-        return readZaakafhandelParameters(zaaktypeUUID).getZaakbeeindigParameters().stream()
-                .filter(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden().getId().equals(zaakbeeindigRedenId))
-                .findAny().orElseThrow(() -> new RuntimeException(
-                        String.format("No ZaakbeeindigParameter found for zaaktypeUUID: '%s' and zaakbeeindigRedenId: '%d'", zaaktypeUUID.toString(),
-                                      zaakbeeindigRedenId)));
-    }
 
     /**
      * Zaaktype is aangepast, indien geen concept, dan de zaakafhandelparameters van de vorige versie zoveel mogelijk overnemen
      *
      * @param zaaktypeUri uri van het nieuwe zaaktype
      */
+    @CacheRemoveAll(cacheName = ZAC_ZAAKAFHANDELPARAMETERS)
     public void zaaktypeAangepast(final URI zaaktypeUri) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUri);
         if (!zaaktype.getConcept()) {
@@ -209,6 +157,20 @@ public class ZaakafhandelParameterBeheerService {
             mapUserEventListenerParameters(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters);
             mapZaakbeeindigGegevens(vorigeZaakafhandelparameters, nieuweZaakafhandelParameters, zaaktype);
             createZaakafhandelParameters(nieuweZaakafhandelParameters);
+        }
+    }
+
+    private ZaakafhandelParameters readRecentsteZaakafhandelParameters(final String zaaktypeOmschrijving) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ZaakafhandelParameters> query = builder.createQuery(ZaakafhandelParameters.class);
+        final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
+        query.select(root).where(builder.equal(root.get(ZAAKTYPE_OMSCHRIJVING), zaaktypeOmschrijving));
+        query.orderBy(builder.desc(root.get(CREATIEDATUM)));
+        final List<ZaakafhandelParameters> resultList = entityManager.createQuery(query).setMaxResults(1).getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return new ZaakafhandelParameters();
         }
     }
 

@@ -40,6 +40,7 @@ import net.atos.zac.flowable.CaseService;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.FormulierVeldDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -60,6 +61,9 @@ public class ZaakafhandelParametersRESTService {
 
     @Inject
     private CaseService caseService;
+
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
@@ -107,7 +111,7 @@ public class ZaakafhandelParametersRESTService {
     @Path("caseDefinition/{key}")
     public RESTCaseDefinition readCaseDefinition(@PathParam("key") String caseDefinitionKey) {
         assertPolicy(policyService.readOverigActies().getBeheren());
-        return caseDefinitionConverter.convertToRESTCaseDefinition(caseDefinitionKey);
+        return caseDefinitionConverter.convertToRESTCaseDefinition(caseDefinitionKey, true);
     }
 
     /**
@@ -120,7 +124,7 @@ public class ZaakafhandelParametersRESTService {
         assertPolicy(policyService.readOverigActies().getBeheren());
         return listZaaktypes().stream()
                 .map(zaaktype -> UriUtil.uuidFromURI(zaaktype.getUrl()))
-                .map(zaakafhandelParameterBeheerService::readZaakafhandelParameters)
+                .map(zaakafhandelParameterService::readZaakafhandelParameters)
                 .map(zaakafhandelParameters -> zaakafhandelParametersConverter.convertZaakafhandelParameters(zaakafhandelParameters, false))
                 .toList();
     }
@@ -134,7 +138,7 @@ public class ZaakafhandelParametersRESTService {
     @Path("{zaaktypeUUID}")
     public RESTZaakafhandelParameters readZaakafhandelParameters(@PathParam("zaaktypeUUID") final UUID zaakTypeUUID) {
         assertPolicy(policyService.readOverigActies().getBeheren());
-        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaakTypeUUID);
         return zaakafhandelParametersConverter.convertZaakafhandelParameters(zaakafhandelParameters, true);
     }
 
@@ -149,7 +153,7 @@ public class ZaakafhandelParametersRESTService {
             @PathParam("zaaktypeUUID") final UUID zaakTypeUUID,
             @PathParam("formulierDefinitie") final FormulierDefinitie formulierDefinitie,
             @PathParam("veldDefinitie") final FormulierVeldDefinitie veldDefinitie) {
-        return zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaakTypeUUID).getHumanTaskParametersCollection().stream()
+        return zaakafhandelParameterService.readZaakafhandelParameters(zaakTypeUUID).getHumanTaskParametersCollection().stream()
                 .filter(parameters -> HumanTaskFormulierKoppeling.readFormulierDefinitie(parameters.getPlanItemDefinitionID()) == formulierDefinitie)
                 .flatMap(parameters -> parameters.getReferentieTabellen().stream())
                 .filter(humanTaskReferentieTabel -> humanTaskReferentieTabel.getVeld().equals(veldDefinitie.name()))
@@ -195,7 +199,7 @@ public class ZaakafhandelParametersRESTService {
     @GET
     @Path("zaakbeeindigRedenen/{zaaktypeUUID}")
     public List<RESTZaakbeeindigReden> listZaakbeeindigRedenenForZaaktype(@PathParam("zaaktypeUUID") final UUID zaaktypeUUID) {
-        final List<ZaakbeeindigReden> zaakbeeindigRedenen = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktypeUUID)
+        final List<ZaakbeeindigReden> zaakbeeindigRedenen = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID)
                 .getZaakbeeindigParameters().stream()
                 .map(ZaakbeeindigParameter::getZaakbeeindigReden)
                 .toList();

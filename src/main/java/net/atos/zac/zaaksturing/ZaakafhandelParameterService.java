@@ -5,55 +5,45 @@
 
 package net.atos.zac.zaaksturing;
 
-import java.util.UUID;
+import static net.atos.client.zgw.shared.cache.Caching.ZAC_ZAAKAFHANDELPARAMETERS;
+import static net.atos.client.zgw.shared.cache.Caching.ZAC_ZAAKAFHANDELPARAMETERS_MANAGED;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.cache.annotation.CacheRemove;
+import javax.cache.annotation.CacheResult;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.flowable.cmmn.api.runtime.PlanItemInstance;
-
-import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.zac.flowable.CaseVariablesService;
-import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.model.HumanTaskParameters;
-import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
 public class ZaakafhandelParameterService {
 
-    private static final String PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK = "humantask";
-
-    @Inject
-    private CaseVariablesService caseVariablesService;
-
     @Inject
     private ZaakafhandelParameterBeheerService beheerService;
 
-    public ZaakafhandelParameters readZaakafhandelParameters(final Zaak zaak) {
-        final UUID zaakTypeUUID = UriUtil.uuidFromURI(zaak.getZaaktype());
-        return beheerService.readZaakafhandelParameters(zaakTypeUUID);
+    private final Logger LOG = Logger.getLogger(ZaakafhandelParameterService.class.getName());
+
+
+    @CacheResult(cacheName = ZAC_ZAAKAFHANDELPARAMETERS_MANAGED)
+    public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
+        return beheerService.readZaakafhandelParameters(zaaktypeUUID);
     }
 
-    public HumanTaskParameters findHumanTaskParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
-        if (planItem.getPlanItemDefinitionType().equals(PLAN_ITEM_DEFINITION_TYPE_HUMAN_TASK)) {
-            return beheerService.findHumanTaskParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
-        } else {
-            final HumanTaskParameters parameters = new HumanTaskParameters();
-            parameters.setPlanItemDefinitionID(planItem.getPlanItemDefinitionId());
-            ZaakafhandelParameters zaakafhandelParameters = beheerService.readZaakafhandelParameters(zaaktypeUUID);
-            parameters.setZaakafhandelParameters(zaakafhandelParameters);
-            return parameters;
-        }
+    @CacheResult(cacheName = ZAC_ZAAKAFHANDELPARAMETERS)
+    public List<ZaakafhandelParameters> listZaakafhandelParameters() {
+        return beheerService.listZaakafhandelParameters();
     }
 
-    public UserEventListenerParameters readUserEventParameters(final PlanItemInstance planItem) {
-        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
-        return beheerService.readUserEventListenerParameters(zaaktypeUUID, planItem.getPlanItemDefinitionId());
+    @CacheRemove(cacheName = ZAC_ZAAKAFHANDELPARAMETERS_MANAGED)
+    public void cacheRemoveZaakafhandelParameters(final UUID zaaktypeUUID) {
+        LOG.info("Zaakafhandelparameters for Zaaktype '%s' removed from cache".formatted(zaaktypeUUID));
     }
 
-    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType){
+    public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
         return beheerService.findZaaktypeUUIDByProductaanvraagType(productaanvraagType);
     }
 }

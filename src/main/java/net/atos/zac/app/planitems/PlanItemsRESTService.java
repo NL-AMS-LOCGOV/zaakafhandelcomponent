@@ -39,6 +39,7 @@ import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.policy.PolicyService;
+import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
@@ -101,8 +102,10 @@ public class PlanItemsRESTService {
     @Path("humanTaskPlanItem/{id}")
     public RESTPlanItem readHumanTaskPlanItem(@PathParam("id") final String planItemId) {
         final PlanItemInstance humanTaskPlanItem = caseService.readOpenPlanItem(planItemId);
+        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(humanTaskPlanItem.getCaseInstanceId());
         final UUID zaakUuidForCase = caseVariablesService.readZaakUUID(humanTaskPlanItem.getCaseInstanceId());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(humanTaskPlanItem);
+        final HumanTaskParameters humanTaskParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID).findHumanTaskParameter(humanTaskPlanItem.getPlanItemDefinitionId());
         return planItemConverter.convertHumanTask(humanTaskPlanItem, zaakUuidForCase, humanTaskParameters);
     }
 
@@ -113,7 +116,9 @@ public class PlanItemsRESTService {
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
         assertPolicy(policyService.readZaakActies(zaak).getAanmakenTaak());
-        final HumanTaskParameters humanTaskParameters = zaakafhandelParameterService.findHumanTaskParameters(planItem);
+        final HumanTaskParameters humanTaskParameters =
+                zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()))
+                        .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
         final Date streefdatum = humanTaskParameters != null && humanTaskParameters.getDoorlooptijd() != null ?
                 DateUtils.addDays(new Date(), humanTaskParameters.getDoorlooptijd()) : null;
         if (humanTaskData.taakStuurGegevens.sendMail) {
@@ -141,7 +146,8 @@ public class PlanItemsRESTService {
                 final PlanItemInstance planItemInstance = caseService.readOpenPlanItem(userEventListenerData.planItemInstanceId);
                 caseVariablesService.setOntvankelijk(planItemInstance.getCaseInstanceId(), userEventListenerData.zaakOntvankelijk);
                 if (!userEventListenerData.zaakOntvankelijk) {
-                    final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
+                    final ZaakafhandelParameters zaakafhandelParameters =
+                            zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
                     zgwApiService.createResultaatForZaak(zaak, zaakafhandelParameters.getNietOntvankelijkResultaattype(),
                                                          userEventListenerData.resultaatToelichting);
                 }

@@ -32,7 +32,11 @@ public interface Caching {
 
     String ZTC_ROLTYPE = "ztc-roltype";
 
-    String ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE = "ztczaaktypeinformatieobjecttype";
+    String ZTC_ZAAKTYPE_INFORMATIEOBJECTTYPE = "ztc-zaaktypeinformatieobjecttype";
+
+    String ZAC_ZAAKAFHANDELPARAMETERS_MANAGED = "zac-zaakafhandelparameters-read";
+
+    String ZAC_ZAAKAFHANDELPARAMETERS = "zac-zaakafhandelparameters-list";
 
     List<String> cacheNames();
 

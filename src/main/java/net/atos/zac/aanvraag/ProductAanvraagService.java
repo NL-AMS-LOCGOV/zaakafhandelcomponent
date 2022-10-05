@@ -109,7 +109,7 @@ public class ProductAanvraagService {
 
         zaak = zgwApiService.createZaak(zaak);
 
-        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaak);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID);
         toekennenZaak(zaak, zaakafhandelParameters);
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
