@@ -27,8 +27,4 @@ export class Taak {
     taakinformatie: Taakinformatie;
     taakdocumenten: string[];
     rechten: TaakRechten;
-
-    public isAfgerond(): boolean {
-        return this.status === TaakStatus.Afgerond;
-    }
 }
