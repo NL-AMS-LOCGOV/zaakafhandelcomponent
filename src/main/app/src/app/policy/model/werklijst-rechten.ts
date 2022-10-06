@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class WerklijstActies {
+export class WerklijstRechten {
     documentenInbox: boolean = false;
     documentenOntkoppeld: boolean = false;
     documentenOntkoppeldVerwijderen: boolean = false;

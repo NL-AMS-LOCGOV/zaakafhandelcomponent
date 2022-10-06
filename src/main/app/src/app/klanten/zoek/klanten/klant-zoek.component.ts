@@ -8,7 +8,7 @@ import {Klant} from '../../model/klanten/klant';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {Validators} from '@angular/forms';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {ZaakActies} from '../../../policy/model/zaak-acties';
+import {ZaakRechten} from '../../../policy/model/zaak-rechten';
 import {KlantenService} from '../../klanten.service';
 import {KlantGegevens} from '../../model/klanten/klant-gegevens';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
@@ -21,7 +21,7 @@ import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-
 })
 export class KlantZoekComponent implements OnInit {
     @Input() initiator: boolean;
-    @Input() acties: ZaakActies;
+    @Input() rechten: ZaakRechten;
     @Input() zaaktypeUUID: string;
     @Output() klantGegevens = new EventEmitter<KlantGegevens>();
     betrokkeneRoltype: SelectFormField;
@@ -40,7 +40,7 @@ export class KlantZoekComponent implements OnInit {
         this.betrokkeneToelichting = new InputFormFieldBuilder().id('betrokkenToelichting')
                                                                 .label('toelichting')
                                                                 .validators(Validators.required)
-                                                                .maxlength(75, true)
+                                                                .maxlength(75)
                                                                 .build();
     }
 

@@ -4,7 +4,7 @@
  */
 
 import {ZaakRelatietype} from './zaak-relatietype';
-import {ZaakActies} from '../../policy/model/zaak-acties';
+import {ZaakRechten} from '../../policy/model/zaak-rechten';
 
 export class GerelateerdeZaak {
     identificatie: string;
@@ -12,5 +12,5 @@ export class GerelateerdeZaak {
     statustypeOmschrijving: string;
     startdatum: string;
     relatieType: ZaakRelatietype;
-    acties: ZaakActies;
+    rechten: ZaakRechten;
 }

@@ -1,8 +1,8 @@
 rollen.rego
 domeinen.rego
 zaaktypen.rego
-zaak-acties.rego
-taak-acties.rego
-document-acties.rego
-werklijst-acties.rego
-overig-acties.rego
+zaak-rechten.rego
+taak-rechten.rego
+document-rechten.rego
+werklijst-rechten.rego
+overige-rechten.rego

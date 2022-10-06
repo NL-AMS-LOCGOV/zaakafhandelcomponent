@@ -5,7 +5,7 @@
 
 import {FileFormat} from './file-format';
 import {User} from '../../identity/model/user';
-import {DocumentActies} from '../../policy/model/document-acties';
+import {DocumentRechten} from '../../policy/model/document-rechten';
 import {EnkelvoudigInformatieobjectOndertekening} from './enkelvoudig-informatieobject-ondertekening';
 
 export class EnkelvoudigInformatieobject {
@@ -32,5 +32,5 @@ export class EnkelvoudigInformatieobject {
     ondertekening: EnkelvoudigInformatieobjectOndertekening;
     indicatieGebruiksrecht: boolean;
     gelockedDoor: User;
-    acties: DocumentActies;
+    rechten: DocumentRechten;
 }

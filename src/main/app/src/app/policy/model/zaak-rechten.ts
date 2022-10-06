@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class ZaakActies {
+export class ZaakRechten {
     lezen: boolean = false;
     opschorten: boolean = false;
     verlengen: boolean = false;

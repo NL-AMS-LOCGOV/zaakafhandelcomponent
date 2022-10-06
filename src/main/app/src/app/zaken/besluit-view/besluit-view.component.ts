@@ -41,6 +41,7 @@ export class BesluitViewComponent implements OnInit, OnChanges {
         if (this.besluitInformatieobjecten) {
             this.besluitInformatieobjecten.documentenChanged.emit(of(this.besluit.informatieobjecten));
         }
+        this.loadHistorie();
     }
 
     private loadHistorie(): void {

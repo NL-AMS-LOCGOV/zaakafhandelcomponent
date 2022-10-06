@@ -11,11 +11,10 @@ export class InputFormField extends AbstractFormField {
     fieldType: FieldType = FieldType.INPUT;
     icons: ActionIcon[];
     maxlength: number;
-    showCount: boolean;
+    showCount: boolean = false;
 
     constructor() {
         super();
     }
-
 
 }

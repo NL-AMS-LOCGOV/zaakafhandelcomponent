@@ -119,13 +119,13 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     private toevoegenActies() {
         this.menu = [new HeaderMenuItem('informatieobject')];
 
-        if (this.laatsteVersieInfoObject.acties.downloaden) {
+        if (this.laatsteVersieInfoObject.rechten.downloaden) {
             this.menu.push(
                 new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie), 'save_alt')
             );
         }
 
-        if (this.laatsteVersieInfoObject.acties.toevoegenNieuweVersie) {
+        if (this.laatsteVersieInfoObject.rechten.toevoegenNieuweVersie) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
                 this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
                     this.documentNieuweVersieGegevens = nieuweVersie;
@@ -135,7 +135,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'difference'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
+        if (this.laatsteVersieInfoObject.rechten.wijzigen && FileFormatUtil.isOffice(this.infoObject.formaat)) {
             this.menu.push(new ButtonMenuItem('actie.bewerken', () => {
                 this.informatieObjectenService.editEnkelvoudigInformatieObjectInhoud(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(url => {
@@ -144,25 +144,25 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             }, 'edit'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.vergrendelen) {
+        if (!this.laatsteVersieInfoObject.gelockedDoor && this.laatsteVersieInfoObject.rechten.vergrendelen) {
             this.menu.push(new ButtonMenuItem('actie.lock', () => {
                 this.informatieObjectenService.lockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
             }, 'lock'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.ontgrendelen) {
+        if (this.laatsteVersieInfoObject.gelockedDoor && this.laatsteVersieInfoObject.rechten.ontgrendelen) {
             this.menu.push(new ButtonMenuItem('actie.unlock', () => {
                 this.informatieObjectenService.unlockInformatieObject(this.infoObject.uuid, this.zaak?.uuid)
                     .subscribe(() => {});
             }, 'lock_open'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.verwijderen) {
+        if (this.laatsteVersieInfoObject.rechten.verwijderen) {
             this.menu.push(new ButtonMenuItem('actie.verwijderen', () => this.openDocumentVerwijderenDialog(), 'delete'));
         }
 
-        if (this.laatsteVersieInfoObject.acties.ondertekenen) {
+        if (!this.laatsteVersieInfoObject.ondertekening && this.laatsteVersieInfoObject.rechten.ondertekenen) {
             this.menu.push(new ButtonMenuItem('actie.ondertekenen', () => this.openDocumentOndertekenenDialog(), 'fact_check'));
         }
     }
