@@ -80,6 +80,7 @@ import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {MailObject} from '../../mail/model/mailobject';
 import {MailService} from '../../mail/mail.service';
+import {TaakStatus} from '../../taken/model/taak-status.enum';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -815,7 +816,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignTaakToMe(taak: Taak): boolean {
-        return !taak.isAfgerond && taak.rechten.toekennen && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
+        return taak.status !== TaakStatus.Afgerond && taak.rechten.toekennen && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
     private assignZaakToMe(event: any): void {
