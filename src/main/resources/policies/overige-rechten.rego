@@ -7,7 +7,7 @@ import data.net.atos.zac.rol.recordmanager
 import data.net.atos.zac.rol.beheerder
 import input.user
 
-overig_acties := {
+overige_rechten := {
     "starten_zaak": starten_zaak,
     "beheren": beheren,
     "zoeken": zoeken

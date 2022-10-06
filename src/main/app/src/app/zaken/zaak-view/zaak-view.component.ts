@@ -186,7 +186,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     init(zaak: Zaak): void {
         this.zaak = zaak;
-        this.utilService.disableActionBar(!zaak.acties.koppelen);
+        this.utilService.disableActionBar(!zaak.rechten.koppelen);
         this.loadHistorie();
         this.loadBetrokkenen();
         this.loadAdressen();
@@ -343,46 +343,46 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu = [new HeaderMenuItem('zaak')];
 
-        if (!this.zaak.isOntvangstbevestigingVerstuurd && this.zaak.acties.versturenOntvangstbevestiging) {
+        if (!this.zaak.isOntvangstbevestigingVerstuurd && this.zaak.rechten.versturenOntvangstbevestiging) {
             this.menu.push(new ButtonMenuItem('actie.ontvangstbevestiging.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.ONTVANGSTBEVESTIGING;
             }, 'mark_email_read'));
         }
 
-        if (this.zaak.acties.versturenEmail) {
+        if (this.zaak.rechten.versturenEmail) {
             this.menu.push(new ButtonMenuItem('actie.mail.versturen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.MAIL_VERSTUREN;
             }, 'mail'));
         }
 
-        if (this.zaak.acties.creeerenDocument) {
+        if (this.zaak.rechten.creeerenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_MAKEN;
             }, 'note_add'));
         }
 
-        if (this.zaak.acties.toevoegenDocument) {
+        if (this.zaak.rechten.toevoegenDocument) {
             this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
             }, 'upload_file'));
         }
 
-        if (this.zaak.isOpen && !this.zaak.besluit && this.zaak.isBesluittypeAanwezig && this.zaak.acties.vastleggenBesluit) {
+        if (this.zaak.isOpen && !this.zaak.besluit && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.vastleggenBesluit) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
             }, 'gavel'));
         }
 
-        if (this.zaak.isHeropend && this.zaak.acties.voortzetten) {
+        if (this.zaak.isHeropend && this.zaak.rechten.voortzetten) {
             this.menu.push(new ButtonMenuItem('actie.zaak.afsluiten', () => this.openZaakAfsluitenDialog(), 'thumb_up_alt'));
         }
 
-        if (!this.zaak.isOpen && this.zaak.acties.heropenen) {
+        if (!this.zaak.isOpen && this.zaak.rechten.heropenen) {
             this.menu.push(new ButtonMenuItem('actie.zaak.heropenen', () => this.openZaakHeropenenDialog(), 'restart_alt'));
         }
 
@@ -391,17 +391,17 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
             this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid)
         ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, zaakafhandelParameters]) => {
-            if (this.zaak.acties.voortzetten && userEventListenerPlanItems.length > 0) {
+            if (this.zaak.rechten.voortzetten && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
                     userEventListenerPlanItems.map(
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.acties.afbreken && zaakafhandelParameters.zaakbeeindigParameters.length > 0) {
+            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken && zaakafhandelParameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
             this.createKoppelingenMenuItems();
-            if (this.zaak.acties.aanmakenTaak && humanTaskPlanItems.length > 0) {
+            if (this.zaak.rechten.aanmakenTaak && humanTaskPlanItems.length > 0) {
                 this.menu.push(new HeaderMenuItem('actie.taak.starten'));
                 this.menu = this.menu.concat(
                     humanTaskPlanItems.map(humanTaskPlanItem => this.createHumanTaskPlanItemMenuItem(humanTaskPlanItem)));
@@ -410,11 +410,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createKoppelingenMenuItems(): void {
-        const zoekInitiator: boolean = (this.zaak.acties.toevoegenInitiatorPersoon || this.zaak.acties.toevoegenInitiatorBedrijf) &&
-            (this.zaak.initiatorIdentificatie == null || this.zaak.acties.verwijderenInitiator);
-        const zoekBetrokkene: boolean = this.zaak.acties.toevoegenBetrokkenePersoon || this.zaak.acties.toevoegenBetrokkeneBedrijf;
-        const zoekBAG: boolean = this.zaak.acties.toevoegenBAGObject;
-        const zaakToClipboard: boolean = this.zaak.acties.koppelen;
+        const zoekInitiator: boolean = (this.zaak.rechten.toevoegenInitiatorPersoon || this.zaak.rechten.toevoegenInitiatorBedrijf) &&
+            (this.zaak.initiatorIdentificatie == null || this.zaak.rechten.verwijderenInitiator);
+        const zoekBetrokkene: boolean = this.zaak.rechten.toevoegenBetrokkenePersoon || this.zaak.rechten.toevoegenBetrokkeneBedrijf;
+        const zoekBAG: boolean = this.zaak.rechten.toevoegenBAGObject;
+        const zaakToClipboard: boolean = this.zaak.rechten.koppelen;
         if (zoekInitiator || zoekBetrokkene || zoekBAG || zaakToClipboard) {
             this.menu.push(new HeaderMenuItem('koppelingen'));
             if (zoekInitiator) {
@@ -815,7 +815,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     showAssignTaakToMe(taak: Taak): boolean {
-        return taak.acties.wijzigenToekenning && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
+        return !taak.isAfgerond && taak.rechten.toekennen && this.ingelogdeMedewerker.id !== taak.behandelaar?.id;
     }
 
     private assignZaakToMe(event: any): void {

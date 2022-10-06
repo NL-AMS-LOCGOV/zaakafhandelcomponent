@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
-import net.atos.zac.app.policy.model.RESTZaakActies;
+import net.atos.zac.app.policy.model.RESTZaakRechten;
 
 public class RESTZaakOverzicht {
 
@@ -42,5 +42,5 @@ public class RESTZaakOverzicht {
 
     public RESTOpenstaandeTaken openstaandeTaken;
 
-    public RESTZaakActies acties;
+    public RESTZaakRechten rechten;
 }

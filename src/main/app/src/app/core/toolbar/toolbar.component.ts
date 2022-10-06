@@ -17,8 +17,8 @@ import {WebsocketListener} from '../websocket/model/websocket-listener';
 import * as moment from 'moment';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {PolicyService} from '../../policy/policy.service';
-import {OverigActies} from '../../policy/model/overig-acties';
-import {WerklijstActies} from '../../policy/model/werklijst-acties';
+import {OverigeRechten} from '../../policy/model/overige-rechten';
+import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 
 @Component({
     selector: 'zac-toolbar',
@@ -30,8 +30,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
     ingelogdeMedewerker: User;
-    overigActies = new OverigActies();
-    werklijstActies = new WerklijstActies();
+    overigeRechten = new OverigeRechten();
+    werklijstRechten = new WerklijstRechten();
 
     private subscription$: Subscription;
     private signaleringListener: WebsocketListener;
@@ -48,8 +48,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
         });
-        this.policyService.readOverigActies().subscribe(acties => this.overigActies = acties);
-        this.policyService.readWerklijstActies().subscribe(acties => this.werklijstActies = acties);
+        this.policyService.readOverigeRechten().subscribe(rechten => this.overigeRechten = rechten);
+        this.policyService.readWerklijstRechten().subscribe(rechten => this.werklijstRechten = rechten);
         this.setSignaleringen();
     }
 

@@ -7,7 +7,7 @@ package net.atos.zac.app.informatieobjecten.model;
 
 import java.time.LocalDate;
 
-import net.atos.zac.app.policy.model.RESTZaakActies;
+import net.atos.zac.app.policy.model.RESTZaakRechten;
 import net.atos.zac.app.zaken.model.RESTZaakStatus;
 
 /**
@@ -25,5 +25,5 @@ public class RESTZaakInformatieobject {
 
     public String zaaktypeOmschrijving;
 
-    public RESTZaakActies zaakActies;
+    public RESTZaakRechten zaakRechten;
 }

@@ -13,11 +13,11 @@ import net.atos.client.zgw.zrc.model.RelevanteZaak;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RelatieType;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.ZaakRechten;
 
 public class RESTGerelateerdeZaakConverter {
 
@@ -28,19 +28,19 @@ public class RESTGerelateerdeZaakConverter {
     private ZTCClientService ztcClientService;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private PolicyService policyService;
 
     public RESTGerelateerdeZaak convert(final Zaak zaak, final RelatieType relatieType) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
         final RESTGerelateerdeZaak restGerelateerdeZaak = new RESTGerelateerdeZaak();
         restGerelateerdeZaak.identificatie = zaak.getIdentificatie();
         restGerelateerdeZaak.relatieType = relatieType;
-        restGerelateerdeZaak.acties = actiesConverter.convert(zaakActies);
-        if (zaakActies.getLezen()) {
+        restGerelateerdeZaak.rechten = rechtenConverter.convert(zaakrechten);
+        if (zaakrechten.getLezen()) {
             restGerelateerdeZaak.zaaktypeOmschrijving = zaaktype.getOmschrijving();
             restGerelateerdeZaak.startdatum = zaak.getStartdatum();
             if (zaak.getStatus() != null) {
