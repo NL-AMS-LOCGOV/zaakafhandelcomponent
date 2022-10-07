@@ -17,6 +17,8 @@ import static net.atos.zac.notificaties.Resource.STATUS;
 import static net.atos.zac.notificaties.Resource.ZAAK;
 import static net.atos.zac.notificaties.Resource.ZAAKINFORMATIEOBJECT;
 import static net.atos.zac.notificaties.Resource.ZAAKTYPE;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import net.atos.client.or.objecttype.ObjecttypesClientService;
 import net.atos.zac.aanvraag.ProductAanvraagService;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
@@ -42,7 +45,6 @@ import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
-import net.atos.zac.util.UriUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zoeken.IndexeerService;
@@ -57,9 +59,9 @@ public class NotificatieReceiver {
 
     private static final Logger LOG = Logger.getLogger(NotificatieReceiver.class.getName());
 
-    private static final String PRODUCT_AANVRAAG_KENMERK_KEY = "objectType";
+    private static final String OBJECTTYPE_KENMERK = "objectType";
 
-    private static final String PRODUCT_AANVRAAG_KENMERK_VALUE = "objecttypes: ProductAanvraag";
+    private static final String PRODUCTAANVRAAG_OBJECTTYPE_NAME = "ProductAanvraag";
 
     @Inject
     private EventingService eventingService;
@@ -78,6 +80,9 @@ public class NotificatieReceiver {
 
     @Inject
     private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+
+    @Inject
+    private ObjecttypesClientService objecttypesClientService;
 
     @Inject
     @ConfigProperty(name = "OPEN_NOTIFICATIONS_API_SECRET_KEY")
@@ -140,23 +145,29 @@ public class NotificatieReceiver {
     }
 
     private void handleProductAanvraag(final Notificatie notificatie) {
-        if (notificatie.getResource() == OBJECT && notificatie.getAction() == CREATE &&
-                notificatie.getProperties().containsKey(PRODUCT_AANVRAAG_KENMERK_KEY) &&
-                notificatie.getProperties().containsValue(PRODUCT_AANVRAAG_KENMERK_VALUE)) {
+        if (isProductAanvraag(notificatie)) {
             productAanvraagService.verwerkProductAanvraag(notificatie.getResourceUrl());
         }
+    }
+
+    private boolean isProductAanvraag(final Notificatie notificatie) {
+        final String producttypeUri = notificatie.getProperties().get(OBJECTTYPE_KENMERK);
+        if (notificatie.getResource() != OBJECT || notificatie.getAction() != CREATE || isEmpty(producttypeUri)) {
+            return false;
+        }
+        return PRODUCTAANVRAAG_OBJECTTYPE_NAME.equals(objecttypesClientService.readObjecttype(uuidFromURI(producttypeUri)).getName());
     }
 
     private void handleIndexering(final Notificatie notificatie) {
         if (notificatie.getChannel() == Channel.ZAKEN) {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
-                    indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
+                    indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
                 } else if (notificatie.getAction() == DELETE) {
-                    indexeerService.removeZaak(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                    indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
-                indexeerService.addZaak(UriUtil.uuidFromURI(notificatie.getMainResourceUrl()), false);
+                indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
             }
         }
     }
@@ -164,9 +175,9 @@ public class NotificatieReceiver {
     private void handleInboxDocumenten(final Notificatie notificatie) {
         if (notificatie.getAction() == CREATE) {
             if (notificatie.getResource() == INFORMATIEOBJECT) {
-                inboxDocumentenService.create(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                inboxDocumentenService.create(uuidFromURI(notificatie.getResourceUrl()));
             } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT) {
-                inboxDocumentenService.delete(UriUtil.uuidFromURI(notificatie.getResourceUrl()));
+                inboxDocumentenService.delete(uuidFromURI(notificatie.getResourceUrl()));
             }
         }
     }
