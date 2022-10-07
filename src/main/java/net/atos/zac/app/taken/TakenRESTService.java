@@ -237,7 +237,8 @@ public class TakenRESTService {
         }
 
         createDocuments(restTaak);
-        ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata);
+        final Zaak zaak = zrcClientService.readZaak(restTaak.zaakUuid);
+        ondertekenEnkelvoudigInformatieObjecten(restTaak.taakdata, zaak);
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         final HistoricTaskInstance task = taskService.completeTask(restTaak.id);
@@ -300,15 +301,16 @@ public class TakenRESTService {
         }
     }
 
-    private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata) {
-        if (taakdata.containsKey(TAAK_ELEMENT_ONDERTEKENEN) && taakdata.get(TAAK_ELEMENT_ONDERTEKENEN) != null) {
-            Arrays.stream(taakdata.get(TAAK_ELEMENT_ONDERTEKENEN).split(";"))
+    private void ondertekenEnkelvoudigInformatieObjecten(final Map<String, String> taakdata, final Zaak zaak) {
+        final String ondertekenen = taakdata.get(TAAK_ELEMENT_ONDERTEKENEN);
+        if (ondertekenen != null) {
+            Arrays.stream(ondertekenen.split(";"))
                     .filter(StringUtils::isNotEmpty)
                     .map(UUID::fromString)
                     .map(drcClientService::readEnkelvoudigInformatieobject)
                     .forEach(enkelvoudigInformatieobject -> {
                         assertPolicy(enkelvoudigInformatieobject.getOndertekening() == null &&
-                                             policyService.readDocumentRechten(enkelvoudigInformatieobject).getOndertekenen());
+                                             policyService.readDocumentRechten(enkelvoudigInformatieobject, zaak).getOndertekenen());
                         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(enkelvoudigInformatieobject.getUUID());
                     });
         }
