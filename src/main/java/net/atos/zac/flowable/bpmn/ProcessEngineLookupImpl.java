@@ -6,7 +6,7 @@
 package net.atos.zac.flowable.bpmn;
 
 import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DATABASE_TYPE_POSTGRES;
-import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_FALSE;
+import static org.flowable.common.engine.impl.AbstractEngineConfiguration.DB_SCHEMA_UPDATE_TRUE;
 import static org.flowable.common.engine.impl.history.HistoryLevel.AUDIT;
 import static org.flowable.engine.impl.cfg.DelegateExpressionFieldInjectionMode.DISABLED;
 
@@ -35,7 +35,7 @@ public class ProcessEngineLookupImpl implements ProcessEngineLookup {
         processEngineConfiguration.setDataSourceJndiName(DATA_SOURCE_JNDI_NAME);
         processEngineConfiguration.setDatabaseType(DATABASE_TYPE_POSTGRES);
         processEngineConfiguration.setDatabaseSchema(DATABASE_SCHEMA);
-        processEngineConfiguration.setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_FALSE);
+        processEngineConfiguration.setDatabaseSchemaUpdate(DB_SCHEMA_UPDATE_TRUE);
         processEngineConfiguration.setHistoryLevel(AUDIT);
         processEngineConfiguration.setEnableSafeBpmnXml(true);
         processEngineConfiguration.setDelegateExpressionFieldInjectionMode(DISABLED);

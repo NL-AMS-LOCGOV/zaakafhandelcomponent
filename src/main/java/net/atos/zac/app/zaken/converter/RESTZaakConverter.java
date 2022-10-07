@@ -38,7 +38,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zaken.model.RESTGerelateerdeZaak;
 import net.atos.zac.app.zaken.model.RESTZaak;
 import net.atos.zac.app.zaken.model.RESTZaakKenmerk;
@@ -90,7 +90,7 @@ public class RESTZaakConverter {
     private RESTZaaktypeConverter zaaktypeConverter;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private VRLClientService vrlClientService;
@@ -196,7 +196,7 @@ public class RESTZaakConverter {
         restZaak.isHeropend = isHeropend(statustype);
         restZaak.isOntvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
-        restZaak.acties = actiesConverter.convert(policyService.readZaakActies(zaak, zaaktype));
+        restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 
         return restZaak;
     }

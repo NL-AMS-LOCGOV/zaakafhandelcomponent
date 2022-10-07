@@ -28,7 +28,7 @@ import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
-import {ZaakActies} from '../../policy/model/zaak-acties';
+import {ZaakRechten} from '../../policy/model/zaak-rechten';
 import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {Zaaktype} from '../model/zaaktype';
 import {IdentityService} from '../../identity/identity.service';
@@ -48,7 +48,7 @@ export class ZaakCreateComponent implements OnInit {
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     action: string;
-    acties: ZaakActies;
+    rechten: ZaakRechten;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
@@ -71,10 +71,10 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Dummy policy acties, since there is no way yet to get acties for a new not yet existing case.
-        this.acties = new ZaakActies();
-        this.acties.toevoegenInitiatorPersoon = true;
-        this.acties.toevoegenInitiatorBedrijf = true;
+        // Dummy policy rechten, since there is no way yet to get rechten for a new not yet existing case.
+        this.rechten = new ZaakRechten();
+        this.rechten.toevoegenInitiatorPersoon = true;
+        this.rechten.toevoegenInitiatorBedrijf = true;
 
         this.initiatorToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
         this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
@@ -136,7 +136,7 @@ export class ZaakCreateComponent implements OnInit {
                                                        .build();
         this.locatieField.formControl.disable({onlySelf: true});
         const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
-        if (this.acties.toevoegenInitiatorPersoon || this.acties.toevoegenInitiatorBedrijf) {
+        if (this.rechten.toevoegenInitiatorPersoon || this.rechten.toevoegenInitiatorBedrijf) {
             zaaktypeEnInitiator.push(this.initiatorField);
         }
 

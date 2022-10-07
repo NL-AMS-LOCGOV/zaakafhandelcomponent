@@ -8,7 +8,7 @@ package net.atos.zac.policy.output;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
-public class WerklijstActies {
+public class WerklijstRechten {
 
     private final boolean documentenInbox;
 
@@ -21,7 +21,7 @@ public class WerklijstActies {
     private final boolean zakenTakenVerdelen;
 
     @JsonbCreator
-    public WerklijstActies(
+    public WerklijstRechten(
             @JsonbProperty("documenten_inbox") final boolean documentenInbox,
             @JsonbProperty("documenten_ontkoppeld") final boolean documentenOntkoppeld,
             @JsonbProperty("documenten_ontkoppeld_verwijderen") final boolean documentenOntkoppeldVerwijderen,

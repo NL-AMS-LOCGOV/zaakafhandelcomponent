@@ -16,10 +16,10 @@ import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zaken.model.RESTZaakOverzicht;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.ZaakRechten;
 
 public class RESTZaakOverzichtConverter {
 
@@ -42,7 +42,7 @@ public class RESTZaakOverzichtConverter {
     private RESTOpenstaandeTakenConverter openstaandeTakenConverter;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private PolicyService policyService;
@@ -52,12 +52,12 @@ public class RESTZaakOverzichtConverter {
 
     public RESTZaakOverzicht convert(final Zaak zaak) {
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final ZaakActies zaakActies = policyService.readZaakActies(zaak, zaaktype);
+        final ZaakRechten zaakrechten = policyService.readZaakRechten(zaak, zaaktype);
         final RESTZaakOverzicht restZaakOverzicht = new RESTZaakOverzicht();
         restZaakOverzicht.uuid = zaak.getUuid();
         restZaakOverzicht.identificatie = zaak.getIdentificatie();
-        restZaakOverzicht.acties = actiesConverter.convert(zaakActies);
-        if (zaakActies.getLezen()) {
+        restZaakOverzicht.rechten = rechtenConverter.convert(zaakrechten);
+        if (zaakrechten.getLezen()) {
             restZaakOverzicht.startdatum = zaak.getStartdatum();
             restZaakOverzicht.einddatum = zaak.getEinddatum();
             restZaakOverzicht.einddatumGepland = zaak.getEinddatumGepland();

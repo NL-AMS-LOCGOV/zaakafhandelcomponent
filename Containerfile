@@ -1,5 +1,4 @@
-### The following versions should be equal to the ones defined in install-wildfly.sh
-ARG MAVEN_VERSION=3.8.4-openjdk-17
+ARG MAVEN_VERSION=3.8-openjdk-17
 
 ### Maven build fase
 FROM docker.io/maven:$MAVEN_VERSION as build

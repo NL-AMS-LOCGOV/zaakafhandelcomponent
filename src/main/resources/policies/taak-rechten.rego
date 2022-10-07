@@ -8,10 +8,10 @@ import data.net.atos.zac.domein.domein_elk_zaaktype
 import input.user
 import input.taak
 
-taak_acties := {
+taak_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
-    "wijzigen_toekenning": wijzigen_toekenning,
+    "toekennen": toekennen,
     "wijzigen_formulier": wijzigen_formulier,
     "creeeren_document": creeeren_document,
     "toevoegen_document": toevoegen_document
@@ -35,35 +35,30 @@ lezen {
 
 default wijzigen := false
 wijzigen {
-    taak.afgerond == false
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
 }
 
-default wijzigen_toekenning := false
-wijzigen_toekenning {
-    taak.afgerond == false
-    behandelaar.rol in user.rol
+default toekennen := false
+toekennen {
+    behandelaar.rol in user.rollen
     zaaktype_allowed == true
 }
 
 default wijzigen_formulier := false
 wijzigen_formulier {
-    taak.afgerond == false
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
 }
 
 default creeeren_document := false
 creeeren_document {
-    taak.afgerond == false
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
 }
 
 default toevoegen_document := false
 toevoegen_document {
-    taak.afgerond == false
     { behandelaar, recordmanager }[_].rol in user.rollen
     zaaktype_allowed == true
 }

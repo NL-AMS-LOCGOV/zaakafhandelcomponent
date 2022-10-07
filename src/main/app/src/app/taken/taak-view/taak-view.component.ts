@@ -35,6 +35,7 @@ import {ButtonMenuItem} from '../../shared/side-nav/menu-item/button-menu-item';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {TaakStatus} from '../model/taak-status.enum';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -62,6 +63,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     posts: number = 0;
     private taakListener: WebsocketListener;
     private ingelogdeMedewerker: User;
+    readonly TaakStatusAfgerond = TaakStatus.Afgerond;
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
                 private websocketService: WebsocketService, private taakFormulierenService: TaakFormulierenService, private identityService: IdentityService,
@@ -112,7 +114,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createTaakForm(taak: Taak): void {
-        if (this.taak.acties.wijzigenFormulier) {
+        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigenFormulier) {
             this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
         } else {
             this.formConfig = null;
@@ -150,18 +152,20 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (this.taak.acties.toevoegenDocument) {
-            this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
-            }, 'upload_file'));
-        }
+        if (this.taak.status !== TaakStatus.Afgerond) {
+            if (this.taak.rechten.toevoegenDocument) {
+                this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
+                }, 'upload_file'));
+            }
 
-        if (this.taak.acties.creeerenDocument) {
-            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                this.actionsSidenav.open();
-                this.action = SideNavAction.DOCUMENT_MAKEN;
-            }, 'note_add'));
+            if (this.taak.rechten.creeerenDocument) {
+                this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.DOCUMENT_MAKEN;
+                }, 'note_add'));
+            }
         }
     }
 

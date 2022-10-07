@@ -19,14 +19,13 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
-import net.atos.zac.app.taken.model.TaakStatus;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.flowable.TaskService;
 import net.atos.zac.flowable.TaskVariablesService;
 import net.atos.zac.policy.PolicyService;
-import net.atos.zac.policy.output.TaakActies;
+import net.atos.zac.policy.output.TaakRechten;
 
 /**
  *
@@ -49,7 +48,7 @@ public class RESTTaakConverter {
     private TaskVariablesService taskVariablesService;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @Inject
     private PolicyService policyService;
@@ -62,17 +61,17 @@ public class RESTTaakConverter {
     }
 
     public RESTTaak convert(final TaskInfo taskInfo, boolean withTaakdata) {
-        final TaakStatus status = taskService.getTaakStatus(taskInfo);
         final String zaaktypeOmschrijving = caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId());
-        final TaakActies acties = policyService.readTaakActies(taskInfo, status, zaaktypeOmschrijving);
+        final TaakRechten rechten = policyService.readTaakRechten(taskInfo, zaaktypeOmschrijving);
         final RESTTaak restTaak = new RESTTaak();
         restTaak.id = taskInfo.getId();
-        restTaak.acties = actiesConverter.convert(acties);
+        restTaak.rechten = rechtenConverter.convert(rechten);
         restTaak.naam = taskInfo.getName();
         restTaak.zaakUuid = caseVariablesService.readZaakUUID(taskInfo.getScopeId());
         restTaak.zaakIdentificatie = caseVariablesService.readZaakIdentificatie(taskInfo.getScopeId());
-        restTaak.status = status;
-        if (acties.getLezen()) {
+        restTaak.status = taskService.getTaakStatus(taskInfo);
+        ;
+        if (rechten.getLezen()) {
             restTaak.toelichting = taskInfo.getDescription();
             restTaak.creatiedatumTijd = convertToZonedDateTime(taskInfo.getCreateTime());
             restTaak.toekenningsdatumTijd = convertToZonedDateTime(taskInfo.getClaimTime());

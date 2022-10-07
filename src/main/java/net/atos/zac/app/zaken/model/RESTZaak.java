@@ -12,7 +12,7 @@ import java.util.UUID;
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.klanten.model.klant.IdentificatieType;
-import net.atos.zac.app.policy.model.RESTZaakActies;
+import net.atos.zac.app.policy.model.RESTZaakRechten;
 
 public class RESTZaak {
 
@@ -94,5 +94,5 @@ public class RESTZaak {
 
     public boolean isBesluittypeAanwezig;
 
-    public RESTZaakActies acties;
+    public RESTZaakRechten rechten;
 }
