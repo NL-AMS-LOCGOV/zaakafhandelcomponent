@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.policy.model;
 
-public class RESTWerklijstActies {
+public class RESTWerklijstRechten {
 
     public boolean documentenInbox;
 

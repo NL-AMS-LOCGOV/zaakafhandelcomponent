@@ -58,7 +58,7 @@
                         <mat-checkbox (click)="$event.stopPropagation()"
                                       (change)="updateTeOndertekenen($event, document)"
                                       [checked]="teOndertekenenSelection.isSelected(document)"
-                                      [disabled]="!document.acties.ondertekenen">
+                                      [disabled]="!document.rechten.ondertekenen">
                         </mat-checkbox>
                     </td>
                 </ng-container>

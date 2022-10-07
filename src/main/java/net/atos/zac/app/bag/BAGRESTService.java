@@ -77,7 +77,7 @@ public class BAGRESTService {
     @Path("")
     public void createBAGObject(final RESTBAGObjectGegevens bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
-        assertPolicy(policyService.readZaakActies(zaak).getToevoegenBAGObject());
+        assertPolicy(policyService.readZaakRechten(zaak).getToevoegenBAGObject());
         final Zaakobject zaakobject = new Zaakobject();
         zaakobject.setZaak(zaak.getUrl());
         zaakobject.setObject(bagObjectGegevens.bagObject);
@@ -90,7 +90,7 @@ public class BAGRESTService {
     public List<RESTAdres> listAdressenVoorZaak(@PathParam("uuid") final UUID zaakUUID) {
         final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertPolicy(policyService.readZaakActies(zaak).getLezen());
+        assertPolicy(policyService.readZaakRechten(zaak).getLezen());
         zaakobjectListParameters.setZaak(zaak.getUrl());
         final Results<Zaakobject> zaakobjecten = zrcClientService.listZaakobjecten(zaakobjectListParameters);
         if (zaakobjecten.getCount() > 0) {

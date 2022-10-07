@@ -10,6 +10,4 @@ public class TaakData {
     public String behandelaar;
 
     public String zaaktype;
-
-    public boolean afgerond;
 }

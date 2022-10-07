@@ -13,9 +13,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.app.policy.converter.RESTActiesConverter;
-import net.atos.zac.app.policy.model.RESTOverigActies;
-import net.atos.zac.app.policy.model.RESTWerklijstActies;
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
+import net.atos.zac.app.policy.model.RESTOverigeRechten;
+import net.atos.zac.app.policy.model.RESTWerklijstRechten;
 import net.atos.zac.policy.PolicyService;
 
 @Path("policy")
@@ -28,17 +28,17 @@ public class PolicyRESTService {
     private PolicyService policyService;
 
     @Inject
-    private RESTActiesConverter actiesConverter;
+    private RESTRechtenConverter rechtenConverter;
 
     @GET
-    @Path("werklijstActies")
-    public RESTWerklijstActies readWerklijstActies() {
-        return actiesConverter.convert(policyService.readWerklijstActies());
+    @Path("werklijstRechten")
+    public RESTWerklijstRechten readWerklijstRechten() {
+        return rechtenConverter.convert(policyService.readWerklijstRechten());
     }
 
     @GET
-    @Path("overigActies")
-    public RESTOverigActies readOverigActies() {
-        return actiesConverter.convert(policyService.readOverigActies());
+    @Path("overigeRechten")
+    public RESTOverigeRechten readOverigeRechten() {
+        return rechtenConverter.convert(policyService.readOverigeRechten());
     }
 }

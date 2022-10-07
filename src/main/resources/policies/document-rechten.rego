@@ -9,7 +9,7 @@ import data.net.atos.zac.domein.domein_elk_zaaktype
 import input.user
 import input.document
 
-document_acties := {
+document_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
     "toevoegen_nieuwe_versie": toevoegen_nieuwe_versie,
@@ -105,25 +105,21 @@ vergrendelen {
     zaaktype_allowed
     document.zaak_open == true
     document.definitief == false
-    document.vergrendeld == false
 }
 vergrendelen {
     recordmanager.rol in user.rollen
     zaaktype_allowed
-    document.vergrendeld == false
 }
 
 default ontgrendelen := false
 ontgrendelen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
-    document.vergrendeld == true
     document.vergrendeld_door == user.id
 }
 ontgrendelen {
     recordmanager.rol in user.rollen
     zaaktype_allowed
-    document.vergrendeld == true
 }
 
 default ondertekenen := false
@@ -131,7 +127,6 @@ ondertekenen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
     document.zaak_open == true
-    document.ondertekend == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
 

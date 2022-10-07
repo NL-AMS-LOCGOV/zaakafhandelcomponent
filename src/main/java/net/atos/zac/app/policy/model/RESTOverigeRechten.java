@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.policy.model;
 
-public class RESTOverigActies {
+public class RESTOverigeRechten {
 
     public boolean startenZaak;
 

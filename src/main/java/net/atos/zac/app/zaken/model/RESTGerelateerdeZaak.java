@@ -7,7 +7,7 @@ package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
 
-import net.atos.zac.app.policy.model.RESTZaakActies;
+import net.atos.zac.app.policy.model.RESTZaakRechten;
 
 public class RESTGerelateerdeZaak {
 
@@ -21,5 +21,5 @@ public class RESTGerelateerdeZaak {
 
     public LocalDate startdatum;
 
-    public RESTZaakActies acties;
+    public RESTZaakRechten rechten;
 }

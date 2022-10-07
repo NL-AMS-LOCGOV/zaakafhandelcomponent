@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export class DocumentActies {
-    lezen: boolean = false;
+export class DocumentRechten {
     verwijderen: boolean = false;
-    koppelen: boolean = false;
     downloaden: boolean = false;
     toevoegenNieuweVersie: boolean = false;
     wijzigen: boolean = false;

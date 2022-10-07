@@ -8,8 +8,8 @@ import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
-import {WerklijstActies} from './model/werklijst-acties';
-import {OverigActies} from './model/overig-acties';
+import {WerklijstRechten} from './model/werklijst-rechten';
+import {OverigeRechten} from './model/overige-rechten';
 
 @Injectable({
     providedIn: 'root'
@@ -20,14 +20,14 @@ export class PolicyService {
 
     private basepath = '/rest/policy';
 
-    readWerklijstActies(): Observable<WerklijstActies> {
-        return this.http.get<WerklijstActies>(`${this.basepath}/werklijstActies`).pipe(
+    readWerklijstRechten(): Observable<WerklijstRechten> {
+        return this.http.get<WerklijstRechten>(`${this.basepath}/werklijstRechten`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    readOverigActies(): Observable<OverigActies> {
-        return this.http.get<OverigActies>(`${this.basepath}/overigActies`).pipe(
+    readOverigeRechten(): Observable<OverigeRechten> {
+        return this.http.get<OverigeRechten>(`${this.basepath}/overigeRechten`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

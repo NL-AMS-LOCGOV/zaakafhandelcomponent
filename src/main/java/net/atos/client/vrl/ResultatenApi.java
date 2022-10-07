@@ -31,7 +31,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import net.atos.client.vrl.exception.RuntimeExceptionMapper;
-import net.atos.client.vrl.model.InlineResponse2001;
+import net.atos.client.vrl.model.CommunicatiekanaalList200Response;
 import net.atos.client.vrl.model.Resultaat;
 
 /**
@@ -51,11 +51,11 @@ public interface ResultatenApi {
 
     /**
      * Ontsluit de selectielijst resultaten.
-     *
+     * <p>
      * Bij een procestype horen meerdere mogelijke resultaten, al dan niet generiek/specifiek. Bij het configureren van een resultaattype in het ZTC wordt aangegeven welke selectielijstklasse van toepassing is, wat een referentie is naar een item van deze resource.  Zie https://vng.nl/files/vng/20170706-selectielijst-gemeenten-intergemeentelijke-organen-2017.pdf voor de bron van de inhoud.
      */
     @GET
-    InlineResponse2001 resultaatList(@QueryParam("procesType") URI procesType, @QueryParam("page") Integer page);
+    CommunicatiekanaalList200Response resultaatList(@QueryParam("procesType") URI procesType, @QueryParam("page") Integer page);
 
     /**
      * Ontsluit de selectielijst resultaten.

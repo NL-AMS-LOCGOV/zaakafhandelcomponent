@@ -22,11 +22,11 @@ import net.atos.zac.policy.input.DocumentInput;
 import net.atos.zac.policy.input.TaakInput;
 import net.atos.zac.policy.input.UserInput;
 import net.atos.zac.policy.input.ZaakInput;
-import net.atos.zac.policy.output.DocumentActies;
-import net.atos.zac.policy.output.OverigActies;
-import net.atos.zac.policy.output.TaakActies;
-import net.atos.zac.policy.output.WerklijstActies;
-import net.atos.zac.policy.output.ZaakActies;
+import net.atos.zac.policy.output.DocumentRechten;
+import net.atos.zac.policy.output.OverigeRechten;
+import net.atos.zac.policy.output.TaakRechten;
+import net.atos.zac.policy.output.WerklijstRechten;
+import net.atos.zac.policy.output.ZaakRechten;
 
 @RegisterRestClient(configKey = "OPA-Api-Client")
 @Path("v1/data/net/atos/zac")
@@ -38,22 +38,22 @@ public interface OPAEvaluationClient {
     RuleResponse<List<Set<String>>> readZaaktypen(final RuleQuery<UserInput> query);
 
     @POST
-    @Path("zaak/zaak_acties")
-    RuleResponse<ZaakActies> readZaakActies(final RuleQuery<ZaakInput> query);
+    @Path("zaak/zaak_rechten")
+    RuleResponse<ZaakRechten> readZaakRechten(final RuleQuery<ZaakInput> query);
 
     @POST
-    @Path("taak/taak_acties")
-    RuleResponse<TaakActies> readTaakActies(final RuleQuery<TaakInput> query);
+    @Path("taak/taak_rechten")
+    RuleResponse<TaakRechten> readTaakRechten(final RuleQuery<TaakInput> query);
 
     @POST
-    @Path("document/document_acties")
-    RuleResponse<DocumentActies> readDocumentActies(final RuleQuery<DocumentInput> query);
+    @Path("document/document_rechten")
+    RuleResponse<DocumentRechten> readDocumentRechten(final RuleQuery<DocumentInput> query);
 
     @POST
-    @Path("overig/overig_acties")
-    RuleResponse<OverigActies> readOverigActies(final RuleQuery<UserInput> query);
+    @Path("overig/overige_rechten")
+    RuleResponse<OverigeRechten> readOverigeRechten(final RuleQuery<UserInput> query);
 
     @POST
-    @Path("werklijst/werklijst_acties")
-    RuleResponse<WerklijstActies> readWerklijstActies(final RuleQuery<UserInput> query);
+    @Path("werklijst/werklijst_rechten")
+    RuleResponse<WerklijstRechten> readWerklijstRechten(final RuleQuery<UserInput> query);
 }

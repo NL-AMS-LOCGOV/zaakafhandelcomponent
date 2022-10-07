@@ -115,7 +115,7 @@ public class PlanItemsRESTService {
         final PlanItemInstance planItem = caseService.readOpenPlanItem(humanTaskData.planItemInstanceId);
         final UUID zaakUUID = caseVariablesService.readZaakUUID(planItem.getCaseInstanceId());
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        assertPolicy(policyService.readZaakActies(zaak).getAanmakenTaak());
+        assertPolicy(policyService.readZaakRechten(zaak).getAanmakenTaak());
         final HumanTaskParameters humanTaskParameters =
                 zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()))
                         .findHumanTaskParameter(planItem.getPlanItemDefinitionId());
@@ -140,7 +140,7 @@ public class PlanItemsRESTService {
     @Path("doUserEventListenerPlanItem")
     public void doUserEventListenerPlanItem(final RESTUserEventListenerData userEventListenerData) {
         final Zaak zaak = zrcClientService.readZaak(userEventListenerData.zaakUuid);
-        assertPolicy(zaak.isOpen() && policyService.readZaakActies(zaak).getVoortzetten());
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getVoortzetten());
         switch (userEventListenerData.actie) {
             case INTAKE_AFRONDEN -> {
                 final PlanItemInstance planItemInstance = caseService.readOpenPlanItem(userEventListenerData.planItemInstanceId);

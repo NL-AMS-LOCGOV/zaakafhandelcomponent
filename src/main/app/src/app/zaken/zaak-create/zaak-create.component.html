@@ -6,7 +6,7 @@
     <mat-sidenav #actionsSideNav mode="over" position="end" [ngSwitch]="action">
         <zac-klant-zoek *ngSwitchCase="'ZOEK_INITIATOR'"
                         (klantGegevens)="initiatorGeselecteerd($event.klant)"
-                        [acties]="acties"
+                        [rechten]="rechten"
                         [initiator]="true"></zac-klant-zoek>
         <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
