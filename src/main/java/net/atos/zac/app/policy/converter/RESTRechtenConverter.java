@@ -66,6 +66,7 @@ public class RESTRechtenConverter {
         restZaakRechten.wijzigen = zaakRechten.getWijzigen();
         restZaakRechten.aanmakenTaak = zaakRechten.getAanmakenTaak();
         restZaakRechten.vastleggenBesluit = zaakRechten.getVastleggenBesluit();
+        restZaakRechten.wijzigenBesluit = zaakRechten.getWijzigenBesluit();
         return restZaakRechten;
     }
 
