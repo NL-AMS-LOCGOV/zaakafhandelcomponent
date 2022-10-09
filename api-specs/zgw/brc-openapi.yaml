@@ -32,7 +32,7 @@ info:
 
     _Zelf een token genereren_
 
-    De tokens die gebruikt worden voor autorisatie zijn [jwt.io][JWT's] (JSON web
+    De tokens die gebruikt worden voor autorisatie zijn [JWT's](https://jwt.io) (JSON web
     token). In de API calls moeten deze gebruikt worden in de `Authorization`
     header:
 
@@ -208,6 +208,14 @@ paths:
         - `datum` in het verleden of nu
         - publicatie `besluittype` - `concept` moet `false` zijn
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -423,6 +431,14 @@ paths:
         - `datum` in het verleden of nu
         - publicatie `besluittype` - `concept` moet `false` zijn
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -488,6 +504,14 @@ paths:
         - `datum` in het verleden of nu
         - publicatie `besluittype` - `concept` moet `false` zijn
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -679,6 +703,14 @@ paths:
         - Bij het aanmaken wordt ook in de Documenten API de gespiegelde relatie
           aangemaakt, echter zonder de relatie-informatie.
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -837,6 +869,11 @@ paths:
         schema:
           type: string
           format: uuid
+tags:
+  - name: besluiten
+    description: ''
+  - name: besluitinformatieobjecten
+    description: ''
 servers:
   - url: http://open-zaak.default/besluiten/api/v1
 components:
@@ -1241,6 +1278,9 @@ components:
             * `ztc` - Catalogi API
             * `drc` - Documenten API
             * `brc` - Besluiten API
+            * `cmc` - Contactmomenten API
+            * `kc` - Klanten API
+            * `vrc` - Verzoeken API
           type: string
           enum:
             - ac
@@ -1249,6 +1289,9 @@ components:
             - ztc
             - drc
             - brc
+            - cmc
+            - kc
+            - vrc
         applicatieId:
           title: Applicatie id
           description: Unieke identificatie van de applicatie, binnen de organisatie.
