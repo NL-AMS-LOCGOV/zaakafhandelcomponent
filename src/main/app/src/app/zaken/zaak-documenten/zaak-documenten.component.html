@@ -77,11 +77,11 @@
                             </button>
                         </th>
                         <td mat-cell *matCellDef="let row">
-                            <button *ngIf="row.rechten.lezen" mat-flat-button
+                            <a *ngIf="row.rechten.lezen" mat-flat-button
                                     [routerLink]="['/informatie-objecten', row.uuid, this.getZaakUuid()]"
                                     title="{{ 'actie.document.bekijken' | translate}}">
                                 <mat-icon>visibility</mat-icon>
-                            </button>
+                            </a>
                             <button *ngIf="!taakModus && row.rechten.koppelen" mat-flat-button [disabled]="isOntkoppelenDisabled(row)"
                                     (click)="documentOntkoppelen(row)"
                                     title="{{ 'actie.document.ontkoppelen' | translate}}">
