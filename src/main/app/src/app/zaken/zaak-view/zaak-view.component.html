@@ -329,7 +329,8 @@
                 </mat-card-content>
             </mat-card>
             <div fxFlex="calc(50%-20px)" fxFlex.lt-lg="100" fxLayout="column" fxLayoutGap="20px">
-                <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit" (besluitWijzigen)="besluitWijzigen()"></zac-besluit-view>
+                <zac-besluit-view *ngIf="zaak.besluit" [besluit]="zaak.besluit"
+                                  [readonly]="!zaak.isOpen || !zaak.rechten.wijzigenBesluit" (besluitWijzigen)="besluitWijzigen()"></zac-besluit-view>
                 <mat-card class="taken-card">
                     <mat-card-header fxLayout="row">
                         <mat-card-title fxLayout="row">{{'taken'| translate}}</mat-card-title>

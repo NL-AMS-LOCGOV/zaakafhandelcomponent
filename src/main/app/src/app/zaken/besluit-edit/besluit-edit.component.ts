@@ -98,7 +98,7 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
             gegevens.informatieobjecten = formGroup.controls['documenten'].value ? formGroup.controls['documenten'].value.split(';') : [];
-            this.zakenService.bestluitWijzigen(gegevens).subscribe(() => {
+            this.zakenService.updateBesluit(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.gewijzigd');
                 this.besluitGewijzigd.emit(true);
             });

@@ -78,7 +78,7 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
             gegevens.informatieobjecten = formGroup.controls['documenten'].value ? formGroup.controls['documenten'].value.split(';') : [];
-            this.zakenService.bestluitVastleggen(gegevens).subscribe(() => {
+            this.zakenService.createBesluit(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.vastgelegd');
                 this.besluitVastgelegd.emit(true);
             });

@@ -669,12 +669,12 @@ public class ZakenRESTService {
     @Path("besluit")
     public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
-        // assertActie(policyService.readZaakActies(zaak).getBesluitWijzigen()); //todo policy aanmaken
-        final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getWijzigenBesluit());
+        Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
         besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
-        Besluit updatedBesluit = brcClientService.updateBesluit(besluit);
+        besluit = brcClientService.updateBesluit(besluit);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
             final Resultaattype resultaattype = ztcClientService.readResultaattype(restBesluitWijzgenGegevens.resultaattypeUuid);
@@ -683,8 +683,8 @@ public class ZakenRESTService {
                 zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, null);
             }
         }
-        updateBesluitInformatieobjecten(updatedBesluit, restBesluitWijzgenGegevens.informatieobjecten);
-        return besluitConverter.convertToRESTBesluit(updatedBesluit);
+        updateBesluitInformatieobjecten(besluit, restBesluitWijzgenGegevens.informatieobjecten);
+        return besluitConverter.convertToRESTBesluit(besluit);
     }
 
     private void updateBesluitInformatieobjecten(final Besluit besluit, final List<UUID> nieuweDocumenten) {

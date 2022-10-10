@@ -61,6 +61,8 @@ public class ZaakRechten {
 
     private final boolean vastleggenBesluit;
 
+    private final boolean wijzigenBesluit;
+
     @JsonbCreator
     public ZaakRechten(
             @JsonbProperty("lezen") final boolean lezen,
@@ -85,7 +87,8 @@ public class ZaakRechten {
             @JsonbProperty("toekennen") final boolean toekennen,
             @JsonbProperty("wijzigen") final boolean wijzigen,
             @JsonbProperty("aanmaken_taak") final boolean aanmakenTaak,
-            @JsonbProperty("vastleggen_besluit") final boolean vastleggenBesluit) {
+            @JsonbProperty("vastleggen_besluit") final boolean vastleggenBesluit,
+            @JsonbProperty("wijzigen_besluit") final boolean wijzigenBesluit) {
         this.lezen = lezen;
         this.opschorten = opschorten;
         this.verlengen = verlengen;
@@ -109,6 +112,7 @@ public class ZaakRechten {
         this.wijzigen = wijzigen;
         this.aanmakenTaak = aanmakenTaak;
         this.vastleggenBesluit = vastleggenBesluit;
+        this.wijzigenBesluit = wijzigenBesluit;
     }
 
     public boolean getLezen() {
@@ -201,5 +205,9 @@ public class ZaakRechten {
 
     public boolean getVastleggenBesluit() {
         return vastleggenBesluit;
+    }
+
+    public boolean getWijzigenBesluit() {
+        return wijzigenBesluit;
     }
 }
