@@ -63,11 +63,11 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                      this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
                                                                  .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
                                                                  .build();
-        const redenField = new TextareaFormFieldBuilder().id('reden')
-                                                         .label('reden')
-                                                         .maxlength(80)
-                                                         .validators(Validators.required)
-                                                         .build();
+        const redenField = new InputFormFieldBuilder().id('reden')
+                                                      .label('reden')
+                                                      .maxlength(80)
+                                                      .validators(Validators.required)
+                                                      .build();
 
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField], [redenField]];
 
