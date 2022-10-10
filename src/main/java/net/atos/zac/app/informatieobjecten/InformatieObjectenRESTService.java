@@ -195,8 +195,9 @@ public class InformatieObjectenRESTService {
             return informatieobjectConverter.convertUUIDsToREST(zoekParameters.informatieobjectUUIDs, zaak);
         } else if (zaak != null) {
             assertPolicy(policyService.readZaakRechten(zaak).getLezen());
-            final List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
+            List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
             if (zoekParameters.gekoppeldeZaakDocumenten) {
+                enkelvoudigInformatieobjectenVoorZaak = new ArrayList<>(enkelvoudigInformatieobjectenVoorZaak);
                 enkelvoudigInformatieobjectenVoorZaak.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
             }
             if (zoekParameters.besluittypeUUID != null) {

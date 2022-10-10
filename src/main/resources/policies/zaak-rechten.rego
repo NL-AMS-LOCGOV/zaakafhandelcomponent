@@ -32,7 +32,8 @@ zaak_rechten := {
     "verwijderen_betrokkene": verwijderen_betrokkene,
     "toevoegen_bag_object": toevoegen_bag_object,
     "aanmaken_taak": aanmaken_taak,
-    "vastleggen_besluit" : vastleggen_besluit
+    "vastleggen_besluit" : vastleggen_besluit,
+    "wijzigen_besluit" : wijzigen_besluit
 }
 
 default zaaktype_allowed := false
@@ -208,6 +209,12 @@ aanmaken_taak {
 
 default vastleggen_besluit := false
 vastleggen_besluit {
+    behandelaar.rol in user.rollen
+    zaaktype_allowed == true
+}
+
+default wijzigen_besluit := false
+wijzigen_besluit {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
 }

@@ -6,6 +6,7 @@
 package net.atos.zac.authentication;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
@@ -23,7 +24,7 @@ public class SecurityUtil implements Serializable {
     public static final String LOGGED_IN_USER_SESSION_ATTRIBUTE = "logged-in-user";
 
     public static final LoggedInUser FUNCTIONEEL_GEBRUIKER = new LoggedInUser("FG", "", "Functionele gebruiker", "Functionele gebruiker", null,
-                                                                              List.of("Admin"), List.of("zaakbehandelaar", "recordmanager", "beheerder"));
+                                                                              Collections.emptyList(), List.of("functionele_gebruiker"));
 
     @Inject
     @ActiveSession

@@ -188,10 +188,10 @@
                 <zac-column-picker [columnSrc]="dataSource.columns" (columnsChanged)="dataSource.updateColumns($event)"></zac-column-picker>
             </th>
             <td mat-cell *matCellDef=" let row">
-                <button mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
+                <a mat-flat-button [routerLink]="['/zaken', row.identificatie]" (click)="$event.stopPropagation()"
                         [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
-                </button>
+                </a>
             </td>
         </ng-container>
 

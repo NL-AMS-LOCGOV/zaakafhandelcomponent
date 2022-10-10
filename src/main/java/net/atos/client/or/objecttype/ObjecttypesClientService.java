@@ -41,4 +41,14 @@ public class ObjecttypesClientService {
     public List<ObjecttypeVersion> listObjecttypeVersions(final UUID objecttypeUUID) {
         return objecttypesClient.objectversionList(objecttypeUUID);
     }
+
+    /**
+     * Read an {@link Objecttype}
+     *
+     * @param objecttypeUUID UUID of the {@link Objecttype}
+     * @return {@link Objecttype} throws an exception if not found,
+     */
+    public Objecttype readObjecttype(final UUID objecttypeUUID) {
+        return objecttypesClient.objecttypeRead(objecttypeUUID);
+    }
 }
