@@ -5,10 +5,10 @@
 
 package net.atos.zac.aanvraag;
 
-import static net.atos.client.or.shared.util.URIUtil.getUUID;
 import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
 import static net.atos.zac.configuratie.ConfiguratieService.BRON_ORGANISATIE;
 import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
 import java.util.UUID;
@@ -84,7 +84,7 @@ public class ProductAanvraagService {
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
-        final ORObject object = objectsClientService.readObject(getUUID(productAanvraagUrl));
+        final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
         final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
 
