@@ -45,7 +45,7 @@ public class RESTZaakafhandelParametersConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, boolean inclusiefPlanitems) {
+    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, boolean inclusiefRelaties) {
         final RESTZaakafhandelParameters restZaakafhandelParameters = new RESTZaakafhandelParameters();
         restZaakafhandelParameters.id = zaakafhandelParameters.getId();
         restZaakafhandelParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
@@ -55,28 +55,31 @@ public class RESTZaakafhandelParametersConverter {
         restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = zaakafhandelParameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
         restZaakafhandelParameters.creatiedatum = zaakafhandelParameters.getCreatiedatum();
         restZaakafhandelParameters.valide = zaakafhandelParameters.isValide();
-        if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
-            restZaakafhandelParameters.zaakNietOntvankelijkResultaattype = resultaattypeConverter.convertResultaattype(
-                    ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
-        }
+
         if (zaakafhandelParameters.getCaseDefinitionID() != null) {
-            restZaakafhandelParameters.caseDefinition = caseDefinitionConverter.convertToRESTCaseDefinition(zaakafhandelParameters.getCaseDefinitionID());
+            restZaakafhandelParameters.caseDefinition =
+                    caseDefinitionConverter.convertToRESTCaseDefinition(zaakafhandelParameters.getCaseDefinitionID(), inclusiefRelaties);
         }
-        if (inclusiefPlanitems && restZaakafhandelParameters.caseDefinition != null) {
+        if (inclusiefRelaties && restZaakafhandelParameters.caseDefinition != null) {
+            if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
+                restZaakafhandelParameters.zaakNietOntvankelijkResultaattype = resultaattypeConverter.convertResultaattype(
+                        ztcClientService.readResultaattype(zaakafhandelParameters.getNietOntvankelijkResultaattype()));
+            }
             restZaakafhandelParameters.humanTaskParameters = humanTaskParametersConverter.convertHumanTaskParametersCollection(
                     zaakafhandelParameters.getHumanTaskParametersCollection(), restZaakafhandelParameters.caseDefinition.humanTaskDefinitions);
             restZaakafhandelParameters.userEventListenerParameters = userEventListenerParametersConverter.convertUserEventListenerParametersCollection(
                     zaakafhandelParameters.getUserEventListenerParametersCollection(), restZaakafhandelParameters.caseDefinition.userEventListenerDefinitions);
+            restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertZaakbeeindigParameters(
+                    zaakafhandelParameters.getZaakbeeindigParameters());
         }
-        if(zaakafhandelParameters.getIntakeMail() != null) {
+        if (zaakafhandelParameters.getIntakeMail() != null) {
             restZaakafhandelParameters.intakeMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getIntakeMail());
         }
         if(zaakafhandelParameters.getAfrondenMail() != null) {
             restZaakafhandelParameters.afrondenMail = RESTZaakStatusmailOptie.valueOf(zaakafhandelParameters.getAfrondenMail());
         }
         restZaakafhandelParameters.productaanvraagtype = zaakafhandelParameters.getProductaanvraagtype();
-        restZaakafhandelParameters.zaakbeeindigParameters = zaakbeeindigParameterConverter.convertZaakbeeindigParameters(
-                zaakafhandelParameters.getZaakbeeindigParameters());
+
         return restZaakafhandelParameters;
     }
 

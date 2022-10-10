@@ -18,7 +18,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class HealthCheckService {
@@ -30,7 +30,7 @@ public class HealthCheckService {
     private VRLClientService vrlClientService;
 
     @Inject
-    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+    private ZaakafhandelParameterService zaakafhandelParameterBeheerService;
 
 
     public boolean bestaatCommunicatiekanaalEformulier() {
