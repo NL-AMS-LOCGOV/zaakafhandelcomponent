@@ -54,12 +54,12 @@
                                 </button>
                             </th>
                             <td mat-cell *matCellDef="let row">
-                                <button mat-flat-button
+                                <a mat-flat-button
                                         [routerLink]="['/admin/referentietabellen/', row.id]"
                                         id="edit"
                                         title="{{ 'actie.bewerken' | translate}}">
                                     <mat-icon>visibility</mat-icon>
-                                </button>
+                                </a>
                                 <button mat-flat-button
                                         *ngIf="!row.systeem"
                                         id="verwijderen"

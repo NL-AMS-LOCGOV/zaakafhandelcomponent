@@ -5,7 +5,7 @@
 <mat-card class="besluit-gegevens">
     <mat-card-header>
         <mat-card-title>{{besluit.identificatie}}
-            <button mat-icon-button (click)="besluitWijzigen.emit()">
+            <button *ngIf="!readonly" mat-icon-button (click)="besluitWijzigen.emit()">
                 <mat-icon>edit</mat-icon>
             </button>
         </mat-card-title>

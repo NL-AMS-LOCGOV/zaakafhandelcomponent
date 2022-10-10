@@ -27,4 +27,5 @@ export class ZaakRechten {
     wijzigen: boolean = false;
     aanmakenTaak: boolean = false;
     vastleggenBesluit: boolean = false;
+    wijzigenBesluit: boolean = false;
 }

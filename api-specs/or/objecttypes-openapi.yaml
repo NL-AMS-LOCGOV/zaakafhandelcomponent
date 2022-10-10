@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Objecttypes API
-  version: 2.0.0 (v2)
+  version: 2.1.0 (v2)
   description: |+
     An API to manage Object types.
 
@@ -515,6 +515,12 @@ components:
           format: date
           readOnly: true
           description: Last date when the object type was modified
+        allowGeometry:
+          type: boolean
+          description: 'Shows whether the related objects can have geographic coordinates.
+            If the value is ''false'' the related objects are not allowed to have
+            coordinates and the creation/update of objects with `geometry` property
+            will raise an error '
         versions:
           type: array
           items:
@@ -694,6 +700,12 @@ components:
           format: date
           readOnly: true
           description: Last date when the object type was modified
+        allowGeometry:
+          type: boolean
+          description: 'Shows whether the related objects can have geographic coordinates.
+            If the value is ''false'' the related objects are not allowed to have
+            coordinates and the creation/update of objects with `geometry` property
+            will raise an error '
         versions:
           type: array
           items:

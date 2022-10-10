@@ -52,4 +52,6 @@ public class RESTZaakRechten {
     public boolean aanmakenTaak;
 
     public boolean vastleggenBesluit;
+
+    public boolean wijzigenBesluit;
 }
