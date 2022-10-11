@@ -31,7 +31,7 @@ public class RESTCaseDefinitionConverter {
     @Inject
     private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
 
-    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, boolean inclusiefRelaties) {
+    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, final boolean inclusiefRelaties) {
         final CaseDefinition caseDefinition = caseService.readCaseDefinition(caseDefinitionKey);
         final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinitionKey);
         if (inclusiefRelaties) {

@@ -79,8 +79,7 @@ public class SignaleringenJob {
         LOG.info("Zaak signaleringen verzenden: gestart...");
         ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI())
                 .forEach(zaaktype -> {
-                    final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaaktype.getUrl());
-                    final ZaakafhandelParameters parameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID);
+                    final ZaakafhandelParameters parameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID());
                     if (parameters.getEinddatumGeplandWaarschuwing() != null) {
                         info.dueVerzonden += zaakEinddatumGeplandVerzenden(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                         zaakEinddatumGeplandOnterechtVerzondenVerwijderen(zaaktype, parameters.getEinddatumGeplandWaarschuwing());

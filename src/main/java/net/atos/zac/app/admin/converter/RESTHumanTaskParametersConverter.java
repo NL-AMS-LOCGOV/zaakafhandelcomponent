@@ -44,7 +44,7 @@ public class RESTHumanTaskParametersConverter {
             final RESTPlanItemDefinition humanTaskDefinition) {
         final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
         restHumanTaskParameters.id = humanTaskParameters.getId();
-        restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(humanTaskParameters.getGroepID());
+        restHumanTaskParameters.defaultGroepId = humanTaskParameters.getGroepID();
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
         restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
         restHumanTaskParameters.referentieTabellen = convertReferentieTabellen(humanTaskParameters, humanTaskDefinition);
@@ -80,9 +80,7 @@ public class RESTHumanTaskParametersConverter {
         humanTaskParameters.setId(restHumanTaskParameters.id);
         humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
         humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
-        if (restHumanTaskParameters.defaultGroep != null) {
-            humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
-        }
+        humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroepId);
         humanTaskParameters.setReferentieTabellen(restHumanTaskReferentieTabelConverter.convert(restHumanTaskParameters.referentieTabellen));
         return humanTaskParameters;
     }

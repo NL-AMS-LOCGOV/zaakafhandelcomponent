@@ -9,23 +9,20 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.atos.zac.app.identity.model.RESTGroup;
-import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.app.zaken.model.RESTZaakStatusmailOptie;
-import net.atos.zac.app.zaken.model.RESTZaaktype;
 
 public class RESTZaakafhandelParameters {
 
     public Long id;
 
-    public RESTZaaktype zaaktype;
+    public RESTZaaktypeOverzicht zaaktype;
 
     public RESTCaseDefinition caseDefinition;
 
-    public RESTUser defaultBehandelaar;
+    public String defaultBehandelaarId;
 
-    public RESTGroup defaultGroep;
+    public String defaultGroepId;
 
     public Integer einddatumGeplandWaarschuwing;
 

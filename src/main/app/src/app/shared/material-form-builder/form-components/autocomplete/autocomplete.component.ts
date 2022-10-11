@@ -30,7 +30,7 @@ export class AutocompleteComponent extends FormComponent implements AfterViewIni
 
     ngAfterViewInit() {
         this.initOptions();
-        this.optionsChanged$ = this.data.optionsChanged.subscribe(() => {
+        this.optionsChanged$ = this.data.optionsChanged$.subscribe(() => {
             this.data.formControl.clearAsyncValidators();
             this.initOptions();
             this.data.formControl.setValue(this.data.formControl.value); // force validation on new options

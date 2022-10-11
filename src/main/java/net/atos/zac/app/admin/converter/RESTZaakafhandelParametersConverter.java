@@ -12,7 +12,6 @@ import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
-import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaakStatusmailOptie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
@@ -28,7 +27,7 @@ public class RESTZaakafhandelParametersConverter {
     private RESTUserConverter userConverter;
 
     @Inject
-    private RESTZaaktypeConverter zaaktypeConverter;
+    private RESTZaaktypeOverzichtConverter restZaaktypeOverzichtConverter;
 
     @Inject
     private RESTResultaattypeConverter resultaattypeConverter;
@@ -45,12 +44,12 @@ public class RESTZaakafhandelParametersConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
-    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, boolean inclusiefRelaties) {
+    public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, final boolean inclusiefRelaties) {
         final RESTZaakafhandelParameters restZaakafhandelParameters = new RESTZaakafhandelParameters();
         restZaakafhandelParameters.id = zaakafhandelParameters.getId();
-        restZaakafhandelParameters.zaaktype = zaaktypeConverter.convert(ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
-        restZaakafhandelParameters.defaultGroep = groupConverter.convertGroupId(zaakafhandelParameters.getGroepID());
-        restZaakafhandelParameters.defaultBehandelaar = userConverter.convertUserId(zaakafhandelParameters.getGebruikersnaamMedewerker());
+        restZaakafhandelParameters.zaaktype = restZaaktypeOverzichtConverter.convert(ztcClientService.readZaaktype(zaakafhandelParameters.getZaakTypeUUID()));
+        restZaakafhandelParameters.defaultGroepId = zaakafhandelParameters.getGroepID();
+        restZaakafhandelParameters.defaultBehandelaarId = zaakafhandelParameters.getGebruikersnaamMedewerker();
         restZaakafhandelParameters.einddatumGeplandWaarschuwing = zaakafhandelParameters.getEinddatumGeplandWaarschuwing();
         restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing = zaakafhandelParameters.getUiterlijkeEinddatumAfdoeningWaarschuwing();
         restZaakafhandelParameters.creatiedatum = zaakafhandelParameters.getCreatiedatum();
@@ -89,15 +88,13 @@ public class RESTZaakafhandelParametersConverter {
         zaakafhandelParameters.setZaakTypeUUID(restZaakafhandelParameters.zaaktype.uuid);
         zaakafhandelParameters.setZaaktypeOmschrijving(restZaakafhandelParameters.zaaktype.omschrijving);
         zaakafhandelParameters.setCaseDefinitionID(restZaakafhandelParameters.caseDefinition.key);
-        zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroep.id);
+        zaakafhandelParameters.setGroepID(restZaakafhandelParameters.defaultGroepId);
         zaakafhandelParameters.setUiterlijkeEinddatumAfdoeningWaarschuwing(restZaakafhandelParameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
         zaakafhandelParameters.setNietOntvankelijkResultaattype(restZaakafhandelParameters.zaakNietOntvankelijkResultaattype.id);
         zaakafhandelParameters.setIntakeMail(restZaakafhandelParameters.intakeMail.name());
         zaakafhandelParameters.setAfrondenMail(restZaakafhandelParameters.afrondenMail.name());
         zaakafhandelParameters.setProductaanvraagtype(restZaakafhandelParameters.productaanvraagtype);
-        if (restZaakafhandelParameters.defaultBehandelaar != null) {
-            zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaar.id);
-        }
+        zaakafhandelParameters.setGebruikersnaamMedewerker(restZaakafhandelParameters.defaultBehandelaarId);
         if (restZaakafhandelParameters.einddatumGeplandWaarschuwing != null) {
             zaakafhandelParameters.setEinddatumGeplandWaarschuwing(restZaakafhandelParameters.einddatumGeplandWaarschuwing);
         }

@@ -31,7 +31,7 @@ export class FormulierBuilder {
                                               .label('actie.taak.toewijzing')
                                               .groepLabel('actie.taak.toekennen.groep')
                                               .medewerkerLabel('actie.taak.toekennen.medewerker')
-                                              .defaultGroep(planItem.groep)
+                                              .defaultGroep(planItem.groepId)
                                               .build()]);
         return this;
     }

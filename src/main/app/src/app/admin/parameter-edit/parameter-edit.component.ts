@@ -74,14 +74,15 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
             this.humanTaskParameters = this.parameters.humanTaskParameters;
             this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
-            this.groepControl.setValue(this.parameters.defaultGroep);
-            this.behandelaarControl.setValue(this.parameters.defaultBehandelaar);
+            this.groepControl.setValue(this.parameters.defaultGroepId);
+            this.behandelaarControl.setValue(this.parameters.defaultBehandelaarId);
             this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
             this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
             this.intakeMailControl.setValue(this.parameters.intakeMail);
             this.afrondenMailControl.setValue(this.parameters.afrondenMail);
             this.productaanvraagtypeControl.setValue(this.parameters.productaanvraagtype);
             this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
+
         });
         this.caseDefinitions = adminService.listCaseDefinitions();
         this.groepen = identityService.listGroups();
@@ -111,7 +112,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
                 caseDefinition.humanTaskDefinitions.forEach(humanTaskDefinition => {
                     const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
                     humanTaskParameter.planItemDefinition = humanTaskDefinition;
-                    humanTaskParameter.defaultGroep = this.parameters.defaultGroep;
+                    humanTaskParameter.defaultGroepId = this.parameters.defaultGroepId;
                     humanTaskParameter.referentieTabellen = humanTaskDefinition.referentieTabellen;
                     this.humanTaskParameters.push(humanTaskParameter);
                 });
@@ -180,7 +181,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.humanTaskFormGroup = this.formBuilder.group({});
         this.humanTaskParameters.forEach(parameter => {
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep',
-                new FormControl(parameter.defaultGroep));
+                new FormControl(parameter.defaultGroepId));
             this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
                 new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
             for (const item of parameter.referentieTabellen) {
@@ -277,8 +278,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     opslaan(): void {
         this.parameters.caseDefinition = this.caseDefinitionControl.value;
-        this.parameters.defaultGroep = this.groepControl.value;
-        this.parameters.defaultBehandelaar = this.behandelaarControl.value;
+        this.parameters.defaultGroepId = this.groepControl.value;
+        this.parameters.defaultBehandelaarId = this.behandelaarControl.value;
         this.parameters.einddatumGeplandWaarschuwing = this.einddatumGeplandWaarschuwingControl.value;
         this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
         this.parameters.intakeMail = this.intakeMailControl.value;
@@ -286,7 +287,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.productaanvraagtype = this.productaanvraagtypeControl.value;
 
         this.humanTaskParameters.forEach(param => {
-            param.defaultGroep = this.getHumanTaskControl(param, 'defaultGroep').value;
+            param.defaultGroepId = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
             for (const tabel of param.referentieTabellen) {
                 tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
