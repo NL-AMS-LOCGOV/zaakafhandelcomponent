@@ -11,15 +11,18 @@
             <td mat-cell *matCellDef="let informatieobject"> {{informatieobject.titel | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="registratiedatumTijd">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="registratiedatumTijd"> {{'registratiedatumTijd' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="registratiedatumTijd"> {{'registratiedatumTijd' | translate}} </th>
             <td mat-cell *matCellDef="let informatieobject"> {{informatieobject.registratiedatumTijd | datum | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="informatieobjectType">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="informatieobjectType"> {{'informatieobjectType' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="informatieobjectType"> {{'informatieobjectType' | translate}} </th>
             <td mat-cell *matCellDef="let informatieobject"> {{informatieobject.informatieobjectType}} </td>
         </ng-container>
         <ng-container matColumnDef="auteur">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="auteur"> {{'auteur' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="auteur"> {{'auteur' | translate}} </th>
             <td mat-cell *matCellDef="let informatieobject"> {{informatieobject.auteur | empty}} </td>
         </ng-container>
 
