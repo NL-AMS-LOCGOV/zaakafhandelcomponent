@@ -407,7 +407,14 @@ public class Zaaktype {
     }
 
     public Period getDoorlooptijd() {
-        return doorlooptijd;
+        // TODO Default doorlooptijd van 7 dagen weghalen
+        // Er is op het moment een bug bij open zaak dat de verplichte waarde doorlooptijd niet opgeslagen
+        // wordt bij het aanmaken van een nieuwe versie van het zaaktype. Vandaar even tijdelijk
+        // een default doorlooptijd van 7 dagen als de doorlooptijd null is,
+        // want deze kan op het moment als null binnenkomen.
+        //
+        // Bug open zaak: https://github.com/open-zaak/open-zaak/issues/1273
+        return doorlooptijd != null ? doorlooptijd : Period.ofDays(7);
     }
 
     public void setDoorlooptijd(final Period doorlooptijd) {
