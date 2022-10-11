@@ -8,9 +8,11 @@ import {BreakpointObserver} from '@angular/cdk/layout';
 import {UtilService} from '../core/service/util.service';
 import * as moment from 'moment';
 import {SignaleringenService} from '../signaleringen.service';
-import {DashboardCardData} from './model/dashboard-card-data';
+import {DashboardCard} from './model/dashboard-card';
 import {SignaleringType} from '../shared/signaleringen/signalering-type';
 import {SessionStorageUtil} from '../shared/storage/session-storage.util';
+import {ObjectType} from './model/object-type';
+import {DashboardCardType} from './model/dashboard-card-type';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -18,23 +20,21 @@ import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 })
 export class DashboardComponent implements OnInit {
 
-    /** These cards may be added to the grid on the dashboard in this order */
-    private signaleringCards: Array<DashboardCardData> = [
-        new DashboardCardData('ZAAK', 'dashboard.mijn.zaken.nieuw', SignaleringType.ZAAK_OP_NAAM),
-        new DashboardCardData('TAAK', 'dashboard.mijn.taken.nieuw', SignaleringType.TAAK_OP_NAAM),
-        new DashboardCardData('ZAAK', 'dashboard.mijn.documenten.nieuw', SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
-        new DashboardCardData('ZAAK-WAARSCHUWING', 'dashboard.mijn.zaken.waarschuwing', SignaleringType.ZAAK_VERLOPEND)
-    ];
-
-    /** These cards will then be added to the grid on the dashboard in this order */
-    private otherCards: Array<DashboardCardData> = [
+    /** These cards may be added to the grid on the dashboard, initially in this order */
+    private signaleringCards: Array<DashboardCard> = [
+        new DashboardCard(DashboardCardType.MIJNDOCUMENTENNIEUW, ObjectType.ZAAK, SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
+        new DashboardCard(DashboardCardType.MIJNTAKEN, ObjectType.TAAKZOEKRESULTAAT),
+        new DashboardCard(DashboardCardType.MIJNTAKENNIEUW, ObjectType.TAAK, SignaleringType.TAAK_OP_NAAM),
+        new DashboardCard(DashboardCardType.MIJNZAKEN, ObjectType.ZAAKZOEKRESULTAAT),
+        new DashboardCard(DashboardCardType.MIJNZAKENNIEUW, ObjectType.ZAAK, SignaleringType.ZAAK_OP_NAAM),
+        new DashboardCard(DashboardCardType.MIJNZAKENWAARSCHUWING, ObjectType.ZAAKWAARSCHUWING, SignaleringType.ZAAK_VERLOPEND)
     ];
 
     width: number; // Maximum number of cards horizontally
     showHint: boolean = false; // Show hint how to add signalerings cards
 
     /** Based on the screen size, switch from standard to one column per row */
-    grid: Array<DashboardCardData[]> = [];
+    grid: Array<DashboardCard[]> = [];
 
     constructor(private breakpointObserver: BreakpointObserver,
                 private utilService: UtilService,
@@ -51,22 +51,24 @@ export class DashboardComponent implements OnInit {
     }
 
     private addCards(): void {
+        // TODO 1697
         this.signaleringenService.listDashboardSignaleringTypen().subscribe(typen => {
             for (const card of this.signaleringCards) {
-                for (const type of typen) {
-                    if (card.signaleringType === type) {
-                        this.addCard(card);
+                if (card.signaleringType == null) {
+                    this.addCard(card);
+                } else {
+                    for (const type of typen) {
+                        if (card.signaleringType === type) {
+                            this.addCard(card);
+                        }
                     }
                 }
             }
             this.showHint = this.grid.length === 0;
-            for (const card of this.otherCards) {
-                this.addCard(card);
-            }
         });
     }
 
-    private addCard(card: DashboardCardData): void {
+    private addCard(card: DashboardCard): void {
         if (this.grid.length < 1 || this.width <= this.grid[this.grid.length - 1].length) {
             this.grid.push([]);
         }
