@@ -4,6 +4,8 @@
  */
 
 export class DocumentRechten {
+    lezen: boolean = false;
+    koppelen: boolean = false;
     verwijderen: boolean = false;
     downloaden: boolean = false;
     toevoegenNieuweVersie: boolean = false;
