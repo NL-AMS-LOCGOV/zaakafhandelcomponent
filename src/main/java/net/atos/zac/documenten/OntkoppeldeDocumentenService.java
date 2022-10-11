@@ -132,6 +132,13 @@ public class OntkoppeldeDocumentenService {
         }
     }
 
+    public void delete(final UUID uuid) {
+        final OntkoppeldDocument ontkoppeldDocument = read(uuid);
+        if (ontkoppeldDocument != null) {
+            entityManager.remove(ontkoppeldDocument);
+        }
+    }
+
     private Predicate getWhere(final OntkoppeldDocumentListParameters listParameters, final Root<OntkoppeldDocument> root) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final List<Predicate> predicates = new ArrayList<>();
