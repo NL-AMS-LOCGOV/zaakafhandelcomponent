@@ -7,14 +7,10 @@ import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder'
 import {DividerFormField} from './divider-form-field';
 
 export class DividerFormFieldBuilder extends AbstractFormFieldBuilder {
-    protected readonly formField: DividerFormField;
+    readonly formField: DividerFormField;
 
     constructor() {
         super();
         this.formField = new DividerFormField();
-    }
-
-    build() {
-        return this.formField;
     }
 }

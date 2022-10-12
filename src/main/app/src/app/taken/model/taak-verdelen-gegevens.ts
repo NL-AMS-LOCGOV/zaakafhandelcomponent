@@ -9,5 +9,6 @@ export class TaakVerdelenGegevens {
 
     taakGegevens: TaakToekennenGegevens[];
     behandelaarGebruikersnaam: string;
+    groepId: string;
 
 }

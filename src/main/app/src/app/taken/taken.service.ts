@@ -15,6 +15,7 @@ import {User} from '../identity/model/user';
 import {TaakVerdelenGegevens} from './model/taak-verdelen-gegevens';
 import {TaakHistorieRegel} from '../shared/historie/model/taak-historie-regel';
 import {TaakZoekObject} from '../zoeken/model/taken/taak-zoek-object';
+import {Group} from '../identity/model/group';
 
 @Injectable({
     providedIn: 'root'
@@ -88,10 +89,11 @@ export class TakenService {
         );
     }
 
-    verdelen(taken: TaakZoekObject[], medewerker: User): Observable<void> {
+    verdelen(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
         taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
+        taakBody.groepId = groep?.id;
         return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

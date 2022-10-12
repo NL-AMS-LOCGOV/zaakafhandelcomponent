@@ -4,7 +4,6 @@
  */
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {Adres} from '../../model/adres';
 import {MatTableDataSource} from '@angular/material/table';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
@@ -15,6 +14,7 @@ import {ListAdressenParameters} from '../../model/list-adressen-parameters';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../../shared/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
+import {AbstractFormControlFormField} from '../../../shared/material-form-builder/model/abstract-form-control-form-field';
 
 @Component({
     selector: 'zac-bag-adres-zoek',
@@ -25,8 +25,8 @@ export class BagAdresZoekComponent implements OnInit {
 
     @Output() bagObject = new EventEmitter<Adres>();
 
-    postcodeFormField: AbstractFormField;
-    huisnummerFormField: AbstractFormField;
+    postcodeFormField: AbstractFormControlFormField;
+    huisnummerFormField: AbstractFormControlFormField;
     adressen: MatTableDataSource<Adres> = new MatTableDataSource<Adres>();
     loading = false;
     formGroup: FormGroup;

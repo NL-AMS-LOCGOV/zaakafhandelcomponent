@@ -221,6 +221,7 @@
   "groep" : "Group",
   "groep.-kies-" : "- Select a group -",
   "groep.-geen-" : "- No group -",
+  "groep.behandelaar": "Group/handler",
   "naam.-kies-" : "- Select a name -",
   "historie" : "History",
   "behandelaar.-kies-" : "- Select a handler -",

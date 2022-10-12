@@ -26,11 +26,10 @@ export class FormulierBuilder {
         this._formulier.initStartForm();
         this._formulier.form.push(
             [new DividerFormFieldBuilder().build()],
-            [new MedewerkerGroepFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
+            [new MedewerkerGroepFieldBuilder(planItem.groep).id(AbstractFormulier.TOEKENNING_FIELD)
                                               .label('actie.taak.toewijzing')
                                               .groepLabel('actie.taak.toekennen.groep')
                                               .medewerkerLabel('actie.taak.toekennen.medewerker')
-                                              .defaultGroep(planItem.groep)
                                               .build()]);
         return this;
     }

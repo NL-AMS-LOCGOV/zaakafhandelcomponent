@@ -5,8 +5,9 @@
 
 import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
+import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
 
-export class DateFormField extends AbstractFormField {
+export class DateFormField extends AbstractFormControlFormField {
 
     fieldType = FieldType.DATE;
     public minDate: Date;

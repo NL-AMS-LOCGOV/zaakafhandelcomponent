@@ -8,11 +8,11 @@ import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder'
 
 export class CheckboxFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: CheckboxFormField;
+    readonly formField: CheckboxFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new CheckboxFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 }

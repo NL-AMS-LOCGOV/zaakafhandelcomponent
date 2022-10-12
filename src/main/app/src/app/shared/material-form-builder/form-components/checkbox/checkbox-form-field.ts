@@ -5,8 +5,9 @@
 
 import {FieldType} from '../../model/field-type.enum';
 import {AbstractFormField} from '../../model/abstract-form-field';
+import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
 
-export class CheckboxFormField extends AbstractFormField {
+export class CheckboxFormField extends AbstractFormControlFormField {
     fieldType = FieldType.CHECKBOX;
 
     constructor() {

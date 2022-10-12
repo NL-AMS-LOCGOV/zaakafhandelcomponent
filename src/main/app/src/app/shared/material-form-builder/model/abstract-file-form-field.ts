@@ -6,8 +6,9 @@
 import {AbstractFormField} from './abstract-form-field';
 import {AppGlobals} from '../../../app.globals';
 import {Observable, Subject} from 'rxjs';
+import {AbstractFormControlFormField} from './abstract-form-control-form-field';
 
-export abstract class AbstractFileFormField extends AbstractFormField {
+export abstract class AbstractFileFormField extends AbstractFormControlFormField {
 
     fileTypes: string = AppGlobals.ALLOWED_FILETYPES;
     fileSizeMB: number = AppGlobals.FILE_MAX_SIZE;

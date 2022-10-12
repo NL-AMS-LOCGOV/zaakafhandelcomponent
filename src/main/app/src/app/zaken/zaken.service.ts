@@ -112,6 +112,7 @@ export class ZakenService {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;
         toekennenGegevens.behandelaarGebruikersnaam = zaak.behandelaar?.id;
+        toekennenGegevens.groepId = zaak.groep?.id;
         toekennenGegevens.reden = reden;
 
         return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(

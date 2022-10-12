@@ -8,12 +8,12 @@ import {TextareaFormField} from './textarea-form-field';
 
 export class TextareaFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: TextareaFormField;
+    readonly formField: TextareaFormField;
 
     constructor(value?:any) {
         super();
         this.formField = new TextareaFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
     maxlength(maxlength: number, showCount: boolean = true): this {

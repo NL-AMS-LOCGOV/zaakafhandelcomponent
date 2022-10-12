@@ -8,12 +8,12 @@ import {ReadonlyFormField} from './readonly-form-field';
 
 export class ReadonlyFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: ReadonlyFormField;
+    readonly formField: ReadonlyFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new ReadonlyFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
 }

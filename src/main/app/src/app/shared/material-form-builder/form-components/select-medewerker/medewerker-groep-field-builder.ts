@@ -8,29 +8,25 @@ import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder'
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
+import {ValidatorFn, Validators} from '@angular/forms';
+import {AbstractFormField} from '../../model/abstract-form-field';
 
 export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: MedewerkerGroepFormField;
+    readonly formField: MedewerkerGroepFormField;
 
-    constructor(value?: any) {
+    constructor(group?: Group, medewerker?: User) {
         super();
         this.formField = new MedewerkerGroepFormField();
-        this.formField.initFormControl(value);
-    }
 
-    groepOptioneel(): this {
-        this.formField.groepOptioneel = true;
-        return this;
+        this.formField.initControl({
+            groep: AbstractFormField.formControlInstance(group),
+            medewerker: AbstractFormField.formControlInstance(medewerker)
+        });
     }
 
     groepLabel(groepLabel: string): this {
         this.formField.groepLabel = groepLabel;
-        return this;
-    }
-
-    defaultGroep(groep: Group): this {
-        this.formField.defaultGroep = groep;
         return this;
     }
 
@@ -39,8 +35,19 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    defaultMedewerker(medewerker: User): this {
-        this.formField.defaultMedewerker = medewerker;
+    validators(...validators: ValidatorFn[]): this {
+        throw new Error('Not implemented');
+    }
+
+    groepRequired(): this {
+        this.formField.groep.setValidators(Validators.required);
+        this.formField.required = true;
+        return this;
+    }
+
+    medewerkerRequired(): this {
+        this.formField.medewerker.setValidators(Validators.required);
+        this.formField.required = true;
         return this;
     }
 
@@ -49,8 +56,9 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    build() {
-        return this.formField;
+    validate() {
+        if (!this.formField.id) {
+            throw new Error('id is required');
+        }
     }
-
 }

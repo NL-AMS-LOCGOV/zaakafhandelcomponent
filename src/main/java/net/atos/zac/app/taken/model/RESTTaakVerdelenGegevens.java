@@ -13,4 +13,6 @@ public class RESTTaakVerdelenGegevens {
 
     public String behandelaarGebruikersnaam;
 
+    public String groepId;
+
 }

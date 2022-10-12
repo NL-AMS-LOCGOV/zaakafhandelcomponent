@@ -42,6 +42,7 @@ import {SkeletonLoaderComponent} from './skeleton-loader/skeleton-loader.compone
 import {DagenPipe} from './pipes/dagen.pipe';
 import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
 import {EditInputComponent} from './edit/edit-input/edit-input.component';
+import {EditGroepBehandelaarComponent} from './edit/edit-groep-behandelaar/edit-groep-behandelaar.component';
 
 @NgModule({
     declarations: [
@@ -53,6 +54,7 @@ import {EditInputComponent} from './edit/edit-input/edit-input.component';
         OutsideClickDirective,
         EditBehandelaarComponent,
         EditGroepComponent,
+        EditGroepBehandelaarComponent,
         EditDatumComponent,
         EditDatumGroepComponent,
         EditAutocompleteComponent,
@@ -97,6 +99,7 @@ import {EditInputComponent} from './edit/edit-input/edit-input.component';
         StatusLabelComponent,
         EditBehandelaarComponent,
         EditGroepComponent,
+        EditGroepBehandelaarComponent,
         EditDatumComponent,
         EditDatumGroepComponent,
         EditAutocompleteComponent,

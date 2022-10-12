@@ -101,8 +101,8 @@ export class ZaakCreateComponent implements OnInit {
         this.subscription$ = zaaktype.formControl.valueChanges.subscribe(v => this.zaaktypeGeselecteerd(v));
 
         const startdatum = new DateFormFieldBuilder(moment()).id('startdatum').label('startdatum')
-                                                     .validators(Validators.required)
-                                                     .build();
+                                                             .validators(Validators.required)
+                                                             .build();
 
         this.medewerkerGroepFormField = this.getMedewerkerGroupFormField();
 
@@ -118,11 +118,11 @@ export class ZaakCreateComponent implements OnInit {
                                                                .build();
 
         this.vertrouwelijkheidaanduidingField = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
-                                                                        .label('vertrouwelijkheidaanduiding')
-                                                                        .optionLabel('label')
-                                                                        .options(this.vertrouwelijkheidaanduidingen)
-                                                                        .validators(Validators.required)
-                                                                        .build();
+                                                                            .label('vertrouwelijkheidaanduiding')
+                                                                            .optionLabel('label')
+                                                                            .options(this.vertrouwelijkheidaanduidingen)
+                                                                            .validators(Validators.required)
+                                                                            .build();
 
         const omschrijving = new InputFormFieldBuilder().id('omschrijving').label('omschrijving').maxlength(80)
                                                         .validators(Validators.required)
@@ -200,10 +200,10 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     getMedewerkerGroupFormField(groep?: Group): MedewerkerGroepFormField {
-        return new MedewerkerGroepFieldBuilder().id('toekenning')
-                                                .groepLabel('actie.zaak.toekennen.groep').defaultGroep(groep).groepOptioneel()
-                                                .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50)
-                                                .build();
+        return new MedewerkerGroepFieldBuilder(groep).id('toekenning')
+                                                     .groepLabel('actie.zaak.toekennen.groep')
+                                                     .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50)
+                                                     .build();
     }
 
     zaaktypeGeselecteerd(zaaktype: Zaaktype): void {
@@ -214,7 +214,8 @@ export class ZaakCreateComponent implements OnInit {
                 this.createZaakFields[index] = [this.medewerkerGroepFormField];
             }
         );
-        this.vertrouwelijkheidaanduidingField.formControl.setValue(this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
+        this.vertrouwelijkheidaanduidingField.formControl.setValue(
+            this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
     }
 
     private iconNext(action) {

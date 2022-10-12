@@ -3,18 +3,20 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {FormControl, FormControlOptions} from '@angular/forms';
+import {AbstractControl, FormControl, FormControlOptions, FormGroup} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldHint} from './form-field-hint';
 
 export abstract class AbstractFormField {
+
+    static formControlOptions: FormControlOptions = { nonNullable: true };
+
     id: string;
     label: string;
     required: boolean;
     readonly: boolean;
-    formControl: FormControl;
+    abstract formControl: AbstractControl;
     hint: FormFieldHint;
-    private formControlOptions: FormControlOptions = {initialValueIsDefault: true};
 
     abstract fieldType: FieldType;
 
@@ -34,8 +36,10 @@ export abstract class AbstractFormField {
         this.formControl.reset();
     }
 
-    initFormControl(value?: any): void {
-        this.formControl = new FormControl(value, this.formControlOptions);
+    abstract initControl(value?: any);
+
+    static formControlInstance(value:any):FormControl{
+        return new FormControl(value, this.formControlOptions);
     }
 
     hasFormControl(): boolean {
