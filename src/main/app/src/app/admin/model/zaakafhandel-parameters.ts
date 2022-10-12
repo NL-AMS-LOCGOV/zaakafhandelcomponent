@@ -6,8 +6,6 @@
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from './case-definition';
 import {HumanTaskParameter} from './human-task-parameter';
-import {Group} from '../../identity/model/group';
-import {User} from '../../identity/model/user';
 import {ZaakbeeindigParameter} from './zaakbeeindig-parameter';
 import {UserEventListenerParameter} from './user-event-listener-parameter';
 import {Resultaattype} from '../../zaken/model/resultaattype';
@@ -16,8 +14,8 @@ import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
 export class ZaakafhandelParameters {
     zaaktype: Zaaktype;
     caseDefinition: CaseDefinition;
-    defaultBehandelaar: User;
-    defaultGroep: Group;
+    defaultBehandelaarId: string;
+    defaultGroepId: string;
     creatiedatum: string;
     einddatumGeplandWaarschuwing: number;
     uiterlijkeEinddatumAfdoeningWaarschuwing: number;

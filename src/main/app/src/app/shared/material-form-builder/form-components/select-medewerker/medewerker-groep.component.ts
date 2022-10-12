@@ -37,7 +37,6 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
 
     ngOnInit(): void {
         this.initGroepen();
-        this.medewerkerControl.setValue(this.data.defaultMedewerker);
         this.formGroup = this.formBuilder.group({
             groep: this.groepControl,
             medewerker: this.medewerkerControl
@@ -63,8 +62,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 }
             })
         );
-
-        this.getMedewerkers();
+        this.getMedewerkers(this.data.defaultMedewerkerId);
     }
 
     ngOnDestroy() {
@@ -84,7 +82,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 startWith(''),
                 map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
             );
-            this.groepControl.setValue(this.data.defaultGroep);
+            this.groepControl.setValue(groepen.find(groep => groep.id === this.data.defaultGroepId));
         });
     }
 
@@ -94,7 +92,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         this.getMedewerkers();
     }
 
-    private getMedewerkers() {
+    private getMedewerkers(defaultMedewerkerId?: string) {
         this.medewerkers = [];
         let observable: Observable<User[]>;
         if (this.inGroep && this.groepControl.value) {
@@ -109,6 +107,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 startWith(''),
                 map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
             );
+            if (defaultMedewerkerId) {
+                this.medewerkerControl.setValue(medewerkers.find(medewerker => medewerker.id = defaultMedewerkerId));
+            }
         });
     }
 
