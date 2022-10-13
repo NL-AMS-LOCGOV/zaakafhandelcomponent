@@ -49,7 +49,8 @@ public class BRCClientService {
         return brcClient.besluitCreate(besluit);
     }
 
-    public Besluit updateBesluit(final Besluit besluit) {
+    public Besluit updateBesluit(final Besluit besluit, final String toelichting) {
+        zgwClientHeadersFactory.setAuditToelichting(toelichting);
         final UUID uuid = UriUtil.uuidFromURI(besluit.getUrl());
         besluit.setUrl(null);
         return brcClient.besluitUpdate(uuid, besluit);

@@ -18,7 +18,12 @@ export class TakenMijnDatasource extends ZoekenDataSource<TaakZoekObject> {
     }
 
     protected initZoekparameters(zoekParameters: ZoekParameters) {
+        TakenMijnDatasource.mijnLopendeTaken(zoekParameters);
+    }
+
+    public static mijnLopendeTaken(zoekParameters: ZoekParameters): ZoekParameters {
         zoekParameters.type = 'TAAK';
         zoekParameters.alleenMijnTaken = true;
+        return zoekParameters;
     }
 }

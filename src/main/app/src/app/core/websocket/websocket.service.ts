@@ -141,7 +141,7 @@ export class WebsocketService implements OnDestroy {
         const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
         const listener: WebsocketListener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
-        console.log('listener added: ' + listener.key);
+        console.debug('listener added: ' + listener.key);
         return listener;
     }
 
@@ -167,7 +167,7 @@ export class WebsocketService implements OnDestroy {
             } else {
                 this.suspended[listener.id] = new EventSuspension(timeout);
             }
-            console.log('listener suspended: ' + listener.key);
+            console.debug('listener suspended: ' + listener.key);
         }
     }
 
@@ -180,7 +180,7 @@ export class WebsocketService implements OnDestroy {
         if (listener) {
             this.removeCallback(listener);
             this.send(new SubscriptionMessage(SubscriptionType.DELETE, listener.event));
-            console.log('listener removed: ' + listener.key);
+            console.debug('listener removed: ' + listener.key);
         }
     }
 

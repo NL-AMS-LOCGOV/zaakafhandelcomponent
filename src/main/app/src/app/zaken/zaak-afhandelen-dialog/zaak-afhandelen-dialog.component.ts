@@ -61,6 +61,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        const zaakafhandelParameters = this.data.zaak.zaaktype.zaakafhandelparameters;
         this.onderwerp = this.onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
         this.body = this.body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
                         .replace('{zaaknr}', this.data.zaak.identificatie);
@@ -108,12 +109,11 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
                 }
             });
         }
-        this.zaakafhandelParametersService.readZaakafhandelparameters(this.data.zaak.zaaktype.uuid).subscribe(zaakafhandelParameters => {
-            this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
-            if(zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
-                this.sendMailFormField.formControl.enable();
-            }
-        });
+        this.sendMailFormField.formControl.setValue(zaakafhandelParameters.afrondenMail === ZaakStatusmailOptie.BESCHIKBAAR_AAN);
+        if (zaakafhandelParameters.afrondenMail !== ZaakStatusmailOptie.NIET_BESCHIKBAAR) {
+            this.sendMailFormField.formControl.enable();
+        }
+
     }
 
     close(): void {

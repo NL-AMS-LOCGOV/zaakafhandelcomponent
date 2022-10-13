@@ -5,15 +5,13 @@
 
 import {FieldType} from '../../model/field-type.enum';
 import {AbstractFormField} from '../../model/abstract-form-field';
-import {Group} from '../../../../identity/model/group';
-import {User} from '../../../../identity/model/user';
 
 export class MedewerkerGroepFormField extends AbstractFormField {
 
     fieldType = FieldType.MEDEWERKER_GROEP;
-    defaultGroep: Group;
+    defaultGroepId: string;
     groepLabel: string;
-    defaultMedewerker: User;
+    defaultMedewerkerId: string;
     medewerkerLabel: string;
     groepOptioneel = false;
     maxlength: number;

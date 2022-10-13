@@ -53,9 +53,6 @@ public class ZaakafhandelParameterBeheerService {
     @Inject
     private ZTCClientService ztcClientService;
 
-    @Inject
-    private ZaakafhandelParameterService zaakafhandelParameterService;
-
     ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
         ztcClientService.readCacheTime();
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -95,9 +92,7 @@ public class ZaakafhandelParameterBeheerService {
         valideerObject(zaakafhandelParameters);
         zaakafhandelParameters.getHumanTaskParametersCollection().forEach(ValidationUtil::valideerObject);
         zaakafhandelParameters.setCreatiedatum(entityManager.find(ZaakafhandelParameters.class, zaakafhandelParameters.getId()).getCreatiedatum());
-        final ZaakafhandelParameters update = entityManager.merge(zaakafhandelParameters);
-        zaakafhandelParameterService.cacheRemoveZaakafhandelParameters(update.getZaakTypeUUID());
-        return update;
+        return entityManager.merge(zaakafhandelParameters);
     }
 
 

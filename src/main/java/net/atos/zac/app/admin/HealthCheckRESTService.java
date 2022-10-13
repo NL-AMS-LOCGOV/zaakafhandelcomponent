@@ -19,8 +19,8 @@ import javax.ws.rs.core.MediaType;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.app.admin.converter.RESTZaaktypeOverzichtConverter;
 import net.atos.zac.app.admin.model.RESTZaaktypeInrichtingscheck;
-import net.atos.zac.app.zaken.converter.RESTZaaktypeConverter;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.healthcheck.HealthCheckService;
 import net.atos.zac.healthcheck.model.ZaaktypeInrichtingscheck;
@@ -41,8 +41,7 @@ public class HealthCheckRESTService {
     private HealthCheckService healthCheckService;
 
     @Inject
-    private RESTZaaktypeConverter zaaktypeConverter;
-
+    private RESTZaaktypeOverzichtConverter zaaktypeConverter;
 
     @GET
     @Path("zaaktypes")

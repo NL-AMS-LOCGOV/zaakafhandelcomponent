@@ -10,7 +10,6 @@ import static net.atos.client.zgw.shared.cache.Caching.ZAC_ZAAKAFHANDELPARAMETER
 
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheResult;
@@ -25,9 +24,6 @@ public class ZaakafhandelParameterService {
     @Inject
     private ZaakafhandelParameterBeheerService beheerService;
 
-    private final Logger LOG = Logger.getLogger(ZaakafhandelParameterService.class.getName());
-
-
     @CacheResult(cacheName = ZAC_ZAAKAFHANDELPARAMETERS_MANAGED)
     public ZaakafhandelParameters readZaakafhandelParameters(final UUID zaaktypeUUID) {
         return beheerService.readZaakafhandelParameters(zaaktypeUUID);
@@ -39,9 +35,7 @@ public class ZaakafhandelParameterService {
     }
 
     @CacheRemove(cacheName = ZAC_ZAAKAFHANDELPARAMETERS_MANAGED)
-    public void cacheRemoveZaakafhandelParameters(final UUID zaaktypeUUID) {
-        LOG.info("Zaakafhandelparameters for Zaaktype '%s' removed from cache".formatted(zaaktypeUUID));
-    }
+    public void cacheRemoveZaakafhandelParameters(final UUID zaaktypeUUID) {}
 
     public UUID findZaaktypeUUIDByProductaanvraagType(final String productaanvraagType) {
         return beheerService.findZaaktypeUUIDByProductaanvraagType(productaanvraagType);

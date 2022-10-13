@@ -7,6 +7,10 @@ package net.atos.zac.app.policy.model;
 
 public class RESTDocumentRechten {
 
+    public boolean lezen;
+
+    public boolean koppelen;
+
     public boolean verwijderen;
 
     public boolean downloaden;

@@ -675,7 +675,7 @@ public class ZakenRESTService {
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
         besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
-        besluit = brcClientService.updateBesluit(besluit);
+        besluit = brcClientService.updateBesluit(besluit, restBesluitWijzgenGegevens.reden);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
             final Resultaattype resultaattype = ztcClientService.readResultaattype(restBesluitWijzgenGegevens.resultaattypeUuid);

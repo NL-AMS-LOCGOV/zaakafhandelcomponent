@@ -4,9 +4,6 @@
  */
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
-
-import {Group} from '../../../../identity/model/group';
-import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 
 export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
@@ -29,8 +26,8 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    defaultGroep(groep: Group): this {
-        this.formField.defaultGroep = groep;
+    defaultGroep(groepId: string): this {
+        this.formField.defaultGroepId = groepId;
         return this;
     }
 
@@ -39,8 +36,8 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
-    defaultMedewerker(medewerker: User): this {
-        this.formField.defaultMedewerker = medewerker;
+    defaultMedewerker(medewerkerId: string): this {
+        this.formField.defaultMedewerkerId = medewerkerId;
         return this;
     }
 
