@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Objects API
-  version: 2.0.0 (v2)
+  version: 2.1.1 (v2)
   description: |
     An API to manage Objects.
 
@@ -105,7 +105,7 @@ paths:
             * `gte` - greater than or equal to
             * `lt` - lower than
             * `lte` - lower than or equal to
-            * `icontains` - case-insensitive partial matches on string values.
+            * `icontains` - case-insensitive partial match
 
             `value` may not contain double underscore or comma characters.
             `key` may not contain comma characters and includes double underscore only if it indicates nested attributes.
@@ -132,6 +132,14 @@ paths:
             type: string
           description: 'Comma-separated fields, which should be displayed in the response.
           For example: ''url, uuid, record__geometry''.'
+        - name: ordering
+          required: false
+          in: query
+          description: 'Comma-separated fields, which are used to order results. For
+          descending order user ''-'' as prefix. Nested fileds are also supported.
+          For example: ''-record__data__length,record__index''.'
+          schema:
+            type: string
         - name: page
           required: false
           in: query
@@ -571,7 +579,7 @@ paths:
                         * `gte` - greater than or equal to
                         * `lt` - lower than
                         * `lte` - lower than or equal to
-                        * `icontains` - case-insensitive partial matches on string values.
+                        * `icontains` - case-insensitive partial match
 
                         `value` may not contain double underscore or comma characters.
                         `key` may not contain comma characters and includes double underscore only if it indicates nested attributes.
@@ -594,6 +602,11 @@ paths:
                     data_icontains:
                       type: string
                       description: Search in all `data` values of string properties.
+                    ordering:
+                      type: string
+                      description: 'Comma-separated fields, which are used to order
+                      results. For descending order user ''-'' as prefix. Nested fileds
+                      are also supported. For example: ''-record__data__length,record__index''.'
       security:
         - tokenAuth: [ ]
       responses:
@@ -715,7 +728,9 @@ components:
             - $ref: '#/components/schemas/GeoJSONGeometry'
           nullable: true
           description: Point, linestring or polygon object which represents the coordinates
-            of the object
+            of the object. Geometry can be added only if the related OBJECTTYPE allows
+            this (`OBJECTTYPE.allowGeometry = true` or `OBJECTTYPE.allowGeometry`
+            doesn't exist)
         startAt:
           type: string
           format: date
@@ -865,7 +880,9 @@ components:
             - $ref: '#/components/schemas/GeoJSONGeometry'
           nullable: true
           description: Point, linestring or polygon object which represents the coordinates
-            of the object
+            of the object. Geometry can be added only if the related OBJECTTYPE allows
+            this (`OBJECTTYPE.allowGeometry = true` or `OBJECTTYPE.allowGeometry`
+            doesn't exist)
         startAt:
           type: string
           format: date

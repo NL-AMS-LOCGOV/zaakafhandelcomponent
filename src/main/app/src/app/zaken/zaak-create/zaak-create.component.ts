@@ -29,13 +29,10 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
 import {ZaakRechten} from '../../policy/model/zaak-rechten';
-import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {Zaaktype} from '../model/zaaktype';
-import {IdentityService} from '../../identity/identity.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
 import {FieldType} from '../../shared/material-form-builder/model/field-type.enum';
-import {Group} from '../../identity/model/group';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
 
 @Component({
@@ -65,9 +62,7 @@ export class ZaakCreateComponent implements OnInit {
     constructor(private zakenService: ZakenService,
                 private router: Router,
                 private navigation: NavigationService,
-                private utilService: UtilService,
-                private identityService: IdentityService,
-                private zaakafhandelParametersService: ZaakafhandelParametersService) {
+                private utilService: UtilService) {
     }
 
     ngOnInit(): void {
@@ -199,23 +194,23 @@ export class ZaakCreateComponent implements OnInit {
         this.actionsSidenav.close();
     }
 
-    getMedewerkerGroupFormField(groep?: Group): MedewerkerGroepFormField {
-        return new MedewerkerGroepFieldBuilder(groep).id('toekenning')
-                                                     .groepLabel('actie.zaak.toekennen.groep')
-                                                     .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50)
-                                                     .build();
+    getMedewerkerGroupFormField(groepId?: string, medewerkerId?: string): MedewerkerGroepFormField {
+        return new MedewerkerGroepFieldBuilder(groepId, medewerkerId).id('toekenning')
+                                                .groepLabel('actie.zaak.toekennen.groep')
+                                                .medewerkerLabel('actie.zaak.toekennen.medewerker')
+                                                .maxlength(50)
+                                                .build();
     }
 
     zaaktypeGeselecteerd(zaaktype: Zaaktype): void {
-        this.zaakafhandelParametersService.readZaakafhandelparameters(zaaktype.uuid).subscribe(
-            zaakafhandelParameters => {
-                this.medewerkerGroepFormField = this.getMedewerkerGroupFormField(zaakafhandelParameters.defaultGroep);
-                const index = this.createZaakFields.findIndex(formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
-                this.createZaakFields[index] = [this.medewerkerGroepFormField];
-            }
-        );
-        this.vertrouwelijkheidaanduidingField.formControl.setValue(
-            this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
+        if (zaaktype) {
+            this.medewerkerGroepFormField = this.getMedewerkerGroupFormField(
+                zaaktype.zaakafhandelparameters.defaultGroepId, zaaktype.zaakafhandelparameters.defaultBehandelaarId);
+            const index = this.createZaakFields.findIndex(formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
+            this.createZaakFields[index] = [this.medewerkerGroepFormField];
+            this.vertrouwelijkheidaanduidingField.formControl.setValue(
+                this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
+        }
     }
 
     private iconNext(action) {

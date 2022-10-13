@@ -1,0 +1,47 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="identificatie">
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="identificatie"> {{'zaak.identificatie' | translate}} </th>
+            <td mat-cell *matCellDef="let object"> {{object.identificatie | empty}} </td>
+        </ng-container>
+        <ng-container matColumnDef="startdatum">
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="startdatum"> {{'startdatum' | translate}} </th>
+            <td mat-cell *matCellDef="let object"> {{object.startdatum | datum | empty}} </td>
+        </ng-container>
+        <ng-container matColumnDef="zaaktypeOmschrijving">
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="zaaktypeOmschrijving"> {{'zaaktype' | translate}} </th>
+            <td mat-cell *matCellDef="let object"> {{object.zaaktypeOmschrijving}} </td>
+        </ng-container>
+        <ng-container matColumnDef="omschrijving">
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="omschrijving"> {{'omschrijving' | translate}} </th>
+            <td mat-cell *matCellDef="let object"> {{object.omschrijving | empty}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let object">
+                <button mat-flat-button [routerLink]="['/zaken', object.identificatie]"
+                        [id]="'zaakBekijken_' + object.uuid +'_button'"
+                        title="{{ 'actie.zaak.bekijken' | translate }}">
+                    <mat-icon>visibility</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></td>
+        </tr>
+    </table>
+
+    <mat-paginator [pageSize]="5" [hidePageSize]="true"></mat-paginator>
+</div>

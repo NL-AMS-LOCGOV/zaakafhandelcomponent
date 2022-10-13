@@ -63,8 +63,13 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
                                                                      this.besluit.informatieobjecten ? this.besluit.informatieobjecten.map(i => i.uuid) : [])
                                                                  .documenten(this.listInformatieObjecten(this.besluit.besluittype.id))
                                                                  .build();
+        const redenField = new InputFormFieldBuilder().id('reden')
+                                                      .label('reden')
+                                                      .maxlength(80)
+                                                      .validators(Validators.required)
+                                                      .build();
 
-        this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
+        this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField], [redenField]];
 
         resultaattypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             if (value) {
@@ -98,7 +103,8 @@ export class BesluitEditComponent implements OnInit, OnDestroy {
             gegevens.ingangsdatum = formGroup.controls['ingangsdatum'].value;
             gegevens.vervaldatum = formGroup.controls['vervaldatum'].value;
             gegevens.informatieobjecten = formGroup.controls['documenten'].value ? formGroup.controls['documenten'].value.split(';') : [];
-            this.zakenService.bestluitWijzigen(gegevens).subscribe(() => {
+            gegevens.reden = formGroup.controls['reden'].value;
+            this.zakenService.updateBesluit(gegevens).subscribe(() => {
                 this.utilService.openSnackbar('msg.besluit.gewijzigd');
                 this.besluitGewijzigd.emit(true);
             });

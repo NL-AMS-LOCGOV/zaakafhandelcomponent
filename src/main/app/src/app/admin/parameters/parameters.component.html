@@ -45,12 +45,6 @@
                                 </mat-form-field>
                             </th>
                         </ng-container>
-                        <ng-container matColumnDef="groep_filter">
-                            <th mat-header-cell *matHeaderCellDef></th>
-                        </ng-container>
-                        <ng-container matColumnDef="behandelaar_filter">
-                            <th mat-header-cell *matHeaderCellDef></th>
-                        </ng-container>
                         <ng-container matColumnDef="creatiedatum_filter">
                             <th mat-header-cell *matHeaderCellDef></th>
                         </ng-container>
@@ -99,14 +93,6 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'caseDefinition' | translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.caseDefinition | empty:'naam'}} </td>
                         </ng-container>
-                        <ng-container matColumnDef="groep">
-                            <th mat-header-cell *matHeaderCellDef> {{'groep' | translate}} </th>
-                            <td mat-cell *matCellDef="let row"> {{row.defaultGroep | empty:'naam'}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="behandelaar">
-                            <th mat-header-cell *matHeaderCellDef> {{'behandelaar' | translate}} </th>
-                            <td mat-cell *matCellDef="let row"> {{row.defaultBehandelaar | empty:'naam'}} </td>
-                        </ng-container>
                         <ng-container matColumnDef="creatiedatum">
                             <th mat-header-cell *matHeaderCellDef> {{'creatiedatum' | translate}} </th>
                             <td mat-cell *matCellDef="let row"> {{row.creatiedatum | datum:'short' }} </td>
@@ -127,21 +113,21 @@
                         <ng-container matColumnDef="url" stickyEnd>
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let row">
-                                <button mat-flat-button [routerLink]="['/admin/parameters/', row.zaaktype.uuid]"
-                                        title="{{ 'actie.bewerken' | translate}}">
+                                <a mat-flat-button [routerLink]="['/admin/parameters/', row.zaaktype.uuid]"
+                                   title="{{ 'actie.bewerken' | translate}}">
                                     <mat-icon>visibility</mat-icon>
-                                </button>
+                                </a>
                             </td>
                         </ng-container>
 
                         <tr mat-header-row
-                            *matHeaderRowDef="['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum', 'geldig',
+                            *matHeaderRowDef="['valide','omschrijving', 'doel', 'model', 'creatiedatum', 'geldig',
                             'beginGeldigheid', 'eindeGeldigheid', 'url']; sticky: true"></tr>
-                        <tr mat-header-row *matHeaderRowDef="['valide_filter','omschrijving_filter', 'doel_filter', 'model_filter', 'groep_filter',
-                        'behandelaar_filter', 'creatiedatum_filter', 'geldig_filter', 'beginGeldigheid_filter', 'eindeGeldigheid_filter', 'url_filter'];
+                        <tr mat-header-row *matHeaderRowDef="['valide_filter','omschrijving_filter', 'doel_filter', 'model_filter'
+                        , 'creatiedatum_filter', 'geldig_filter', 'beginGeldigheid_filter', 'eindeGeldigheid_filter', 'url_filter'];
                         sticky: true"></tr>
                         <tr mat-row
-                            *matRowDef="let row; columns: ['valide','omschrijving', 'doel', 'model', 'groep', 'behandelaar', 'creatiedatum','geldig',
+                            *matRowDef="let row; columns: ['valide','omschrijving', 'doel', 'model', 'creatiedatum','geldig',
                             'beginGeldigheid', 'eindeGeldigheid', 'url'];"></tr>
                     </table>
                     <p *ngIf="parameters.data.length === 0 && !loading">{{'msg.geen.gegevens.gevonden' | translate}}</p>

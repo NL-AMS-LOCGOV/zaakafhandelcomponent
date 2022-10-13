@@ -9,6 +9,7 @@ import {Taak} from '../taken/model/taak';
 import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {HumanTaskData} from '../plan-items/model/human-task-data';
 import {DividerFormFieldBuilder} from '../shared/material-form-builder/form-components/divider/divider-form-field-builder';
+import {TaakStatus} from '../taken/model/taak-status.enum';
 
 export class FormulierBuilder {
 
@@ -26,7 +27,7 @@ export class FormulierBuilder {
         this._formulier.initStartForm();
         this._formulier.form.push(
             [new DividerFormFieldBuilder().build()],
-            [new MedewerkerGroepFieldBuilder(planItem.groep).id(AbstractFormulier.TOEKENNING_FIELD)
+            [new MedewerkerGroepFieldBuilder(planItem.groepId).id(AbstractFormulier.TOEKENNING_FIELD)
                                               .label('actie.taak.toewijzing')
                                               .groepLabel('actie.taak.toekennen.groep')
                                               .medewerkerLabel('actie.taak.toekennen.medewerker')
@@ -38,7 +39,7 @@ export class FormulierBuilder {
         this._formulier.zaakUuid = taak.zaakUuid;
         this._formulier.taak = taak;
         this._formulier.dataElementen = taak.taakdata;
-        this._formulier.initBehandelForm(taak.isAfgerond() || !taak.rechten.wijzigenFormulier);
+        this._formulier.initBehandelForm(taak.status === TaakStatus.Afgerond || !taak.rechten.wijzigenFormulier);
         return this;
     }
 

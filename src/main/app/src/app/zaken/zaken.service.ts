@@ -254,13 +254,13 @@ export class ZakenService {
         );
     }
 
-    bestluitVastleggen(besluitVestleggenGegevens: BesluitVastleggenGegevens): Observable<Besluit> {
+    createBesluit(besluitVestleggenGegevens: BesluitVastleggenGegevens): Observable<Besluit> {
         return this.http.post<BesluitVastleggenGegevens>(`${this.basepath}/besluit`, besluitVestleggenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    bestluitWijzigen(besluitWijzigenGegevens: BesluitWijzigenGegevens): Observable<Besluit> {
+    updateBesluit(besluitWijzigenGegevens: BesluitWijzigenGegevens): Observable<Besluit> {
         return this.http.put<BesluitWijzigenGegevens>(`${this.basepath}/besluit`, besluitWijzigenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );

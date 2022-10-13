@@ -30,7 +30,7 @@ import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringVerzendInfo;
 import net.atos.zac.signalering.model.SignaleringVerzondenZoekParameters;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zoeken.ZoekenService;
 import net.atos.zac.zoeken.model.DatumRange;
@@ -58,7 +58,7 @@ public class SignaleringenJob {
     private ZTCClientService ztcClientService;
 
     @Inject
-    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     private ZoekenService zoekenService;
@@ -79,8 +79,7 @@ public class SignaleringenJob {
         LOG.info("Zaak signaleringen verzenden: gestart...");
         ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI())
                 .forEach(zaaktype -> {
-                    final UUID zaaktypeUUID = UriUtil.uuidFromURI(zaaktype.getUrl());
-                    final ZaakafhandelParameters parameters = zaakafhandelParameterBeheerService.readZaakafhandelParameters(zaaktypeUUID);
+                    final ZaakafhandelParameters parameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID());
                     if (parameters.getEinddatumGeplandWaarschuwing() != null) {
                         info.dueVerzonden += zaakEinddatumGeplandVerzenden(zaaktype, parameters.getEinddatumGeplandWaarschuwing());
                         zaakEinddatumGeplandOnterechtVerzondenVerwijderen(zaaktype, parameters.getEinddatumGeplandWaarschuwing());

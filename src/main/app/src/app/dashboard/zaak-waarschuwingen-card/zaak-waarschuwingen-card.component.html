@@ -12,7 +12,8 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="streefdatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="einddatumGepland"> {{'einddatumGepland' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="einddatumGepland"> {{'einddatumGepland' | translate}} </th>
             <td mat-cell *matCellDef="let zaak">
                 {{zaak.einddatumGepland | datum | empty}}
                 <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate"
@@ -21,11 +22,13 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="dagenTotStreefdatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="einddatumGepland"> {{'dagenTotStreefdatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="einddatumGepland"> {{'dagenTotStreefdatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.einddatumGepland | dagen }} </td>
         </ng-container>
         <ng-container matColumnDef="fataledatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="uiterlijkeEinddatumAfdoening"> {{'uiterlijkeEinddatumAfdoening' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="uiterlijkeEinddatumAfdoening"> {{'uiterlijkeEinddatumAfdoening' | translate}} </th>
             <td mat-cell *matCellDef="let zaak">
                 {{zaak.uiterlijkeEinddatumAfdoening | datum | empty}}
                 <mat-icon class="error" [title]="'msg.datum.overschreden' | translate"
@@ -34,7 +37,8 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="dagenTotFataledatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="uiterlijkeEinddatumAfdoening"> {{'dagenTotFataledatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="uiterlijkeEinddatumAfdoening"> {{'dagenTotFataledatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak">
                 {{zaak.uiterlijkeEinddatumAfdoening | dagen }}
             </td>
@@ -43,11 +47,11 @@
         <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let zaak">
-                <button *ngIf="zaak.rechten.lezen" mat-flat-button [routerLink]="['/zaken', zaak.identificatie]"
+                <a *ngIf="zaak.rechten.lezen" mat-flat-button [routerLink]="['/zaken', zaak.identificatie]"
                         [id]="'zaakBekijken_' + zaak.uuid +'_button'"
                         title="{{ 'actie.zaak.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
-                </button>
+                </a>
             </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns"></tr>

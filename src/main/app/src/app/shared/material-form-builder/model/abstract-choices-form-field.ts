@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormField} from './abstract-form-field';
-import {Observable, Subject} from 'rxjs';
+import {Observable, tap} from 'rxjs';
+import {EventEmitter} from '@angular/core';
 import {AbstractFormControlFormField} from './abstract-form-control-form-field';
 
 /**
@@ -13,9 +13,10 @@ import {AbstractFormControlFormField} from './abstract-form-control-form-field';
  */
 export abstract class AbstractChoicesFormField extends AbstractFormControlFormField {
 
-    private optionsChanged$ = new Subject<void>();
+    optionsChanged$ = new EventEmitter<void>();
     private options$: Observable<any[]>;
     public optionLabel: string | null;
+    loading$ = new EventEmitter<boolean>();
 
     protected constructor() {
         super();
@@ -33,11 +34,11 @@ export abstract class AbstractChoicesFormField extends AbstractFormControlFormFi
     }
 
     set options(options: Observable<any[]>) {
-        this.options$ = options;
+        this.options$ = options.pipe(
+            tap({
+                subscribe: () => this.loading$.emit(true),
+                next: () => this.loading$.emit(false)
+            }));
         this.optionsChanged$.next();
-    }
-
-    get optionsChanged(): Observable<void> {
-        return this.optionsChanged$.asObservable();
     }
 }

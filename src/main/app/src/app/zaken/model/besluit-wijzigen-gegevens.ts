@@ -11,4 +11,5 @@ export class BesluitWijzigenGegevens {
     ingangsdatum: boolean;
     vervaldatum: string;
     informatieobjecten: string[];
+    reden: string;
 }

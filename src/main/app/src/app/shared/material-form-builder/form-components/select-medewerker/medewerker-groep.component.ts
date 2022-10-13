@@ -44,8 +44,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 }
             })
         );
-
-        this.getMedewerkers();
+        this.getMedewerkers(this.data.defaultMedewerkerId);
     }
 
     ngOnDestroy() {
@@ -67,6 +66,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 startWith(''),
                 map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
             );
+            this.data.groep.setValue(groepen.find(groep => groep.id === this.data.defaultGroepId));
         });
     }
 
@@ -76,7 +76,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         this.getMedewerkers();
     }
 
-    private getMedewerkers() {
+    private getMedewerkers(defaultMedewerkerId?: string) {
         this.medewerkers = [];
         let observable: Observable<User[]>;
         if (this.inGroep && this.data.groep.value) {
@@ -96,6 +96,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 startWith(''),
                 map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
             );
+            if (defaultMedewerkerId) {
+                this.data.medewerker.setValue(medewerkers.find(medewerker => medewerker.id = defaultMedewerkerId));
+            }
         });
     }
 

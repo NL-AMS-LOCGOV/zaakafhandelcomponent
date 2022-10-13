@@ -7,8 +7,6 @@ package net.atos.zac.app.admin.model;
 
 import java.util.List;
 
-import net.atos.zac.app.zaken.model.RESTZaaktype;
-
 /**
  * 4 statustype; Intake, In behandeling, Heropend, Afgerond: met Afgerond als laatste statustypevolgnummer
  * min 1 resultaattype
@@ -18,7 +16,7 @@ import net.atos.zac.app.zaken.model.RESTZaaktype;
  */
 public class RESTZaaktypeInrichtingscheck {
 
-    public RESTZaaktype zaaktype;
+    public RESTZaaktypeOverzicht zaaktype;
 
     public boolean statustypeIntakeAanwezig;
 

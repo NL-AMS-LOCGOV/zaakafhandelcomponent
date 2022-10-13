@@ -15,13 +15,13 @@ export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
     readonly formField: MedewerkerGroepFormField;
 
-    constructor(group?: Group, medewerker?: User) {
+    constructor(groepId?: string, medewerkerId?: string) {
         super();
         this.formField = new MedewerkerGroepFormField();
 
         this.formField.initControl({
-            groep: AbstractFormField.formControlInstance(group),
-            medewerker: AbstractFormField.formControlInstance(medewerker)
+            groep: AbstractFormField.formControlInstance(groepId),
+            medewerker: AbstractFormField.formControlInstance(medewerkerId)
         });
     }
 

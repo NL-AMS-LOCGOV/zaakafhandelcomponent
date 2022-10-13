@@ -4,7 +4,7 @@
  */
 
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {DashboardCardData} from '../model/dashboard-card-data';
+import {DashboardCard} from '../model/dashboard-card';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -15,7 +15,7 @@ import {MatTableDataSource} from '@angular/material/table';
 })
 export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit {
 
-    @Input() data: DashboardCardData;
+    @Input() data: DashboardCard;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;

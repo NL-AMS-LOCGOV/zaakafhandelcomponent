@@ -8,7 +8,7 @@
         <mat-card *ngFor="let card of row " [fxFlex]="100/(width<grid[0].length?width:grid[0].length)+'%'">
             <mat-card-header>
                 <mat-card-title>
-                    {{card.title | translate}}
+                    {{'dashboard.card.' + card.type | translate}}
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content class="dashboard-card-content" [ngSwitch]="card.objectType">
@@ -18,12 +18,18 @@
                 <zac-taken-card
                         [data]="card" *ngSwitchCase="'TAAK'">
                 </zac-taken-card>
+                <zac-taak-zoeken-card
+                        [data]="card" *ngSwitchCase="'TAAKZOEKRESULTAAT'">
+                </zac-taak-zoeken-card>
                 <zac-zaken-card
                         [data]="card" *ngSwitchCase="'ZAAK'">
                 </zac-zaken-card>
                 <zac-zaak-waarschuwingen-card
-                        [data]="card" *ngSwitchCase="'ZAAK-WAARSCHUWING'">
+                        [data]="card" *ngSwitchCase="'ZAAKWAARSCHUWING'">
                 </zac-zaak-waarschuwingen-card>
+                <zac-zaak-zoeken-card
+                        [data]="card" *ngSwitchCase="'ZAAKZOEKRESULTAAT'">
+                </zac-zaak-zoeken-card>
             </mat-card-content>
         </mat-card>
     </div>

@@ -195,8 +195,9 @@ public class InformatieObjectenRESTService {
             return informatieobjectConverter.convertUUIDsToREST(zoekParameters.informatieobjectUUIDs, zaak);
         } else if (zaak != null) {
             assertPolicy(policyService.readZaakRechten(zaak).getLezen());
-            final List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
+            List<RESTEnkelvoudigInformatieobject> enkelvoudigInformatieobjectenVoorZaak = listEnkelvoudigInformatieobjectenVoorZaak(zaak);
             if (zoekParameters.gekoppeldeZaakDocumenten) {
+                enkelvoudigInformatieobjectenVoorZaak = new ArrayList<>(enkelvoudigInformatieobjectenVoorZaak);
                 enkelvoudigInformatieobjectenVoorZaak.addAll(listGekoppeldeZaakInformatieObjectenVoorZaak(zaak));
             }
             if (zoekParameters.besluittypeUUID != null) {
@@ -322,10 +323,17 @@ public class InformatieObjectenRESTService {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response deleteEnkelvoudigInformatieObject(@PathParam("uuid") final UUID uuid, final RESTDocumentVerwijderenGegevens documentVerwijderenGegevens) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(uuid);
-        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieobject, zrcClientService.readZaak(documentVerwijderenGegevens.zaakUuid))
-                             .getVerwijderen());
+        final Zaak zaak = documentVerwijderenGegevens.zaakUuid != null ?
+                zrcClientService.readZaak(documentVerwijderenGegevens.zaakUuid) : null;
+        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieobject, zaak).getVerwijderen());
         zgwApiService.removeEnkelvoudigInformatieObjectFromZaak(enkelvoudigInformatieobject, documentVerwijderenGegevens.zaakUuid,
                                                                 documentVerwijderenGegevens.reden);
+
+        // In geval van een ontkoppeld document
+        if (documentVerwijderenGegevens.zaakUuid == null) {
+            ontkoppeldeDocumentenService.delete(uuid);
+        }
+
         return Response.noContent().build();
     }
 

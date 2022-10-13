@@ -16,3 +16,6 @@ beheerder := {
     "rol": "beheerder"
 }
 
+functioneel := {
+    "rol": "functionele_gebruiker"
+}

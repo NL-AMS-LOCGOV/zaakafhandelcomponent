@@ -42,7 +42,7 @@ info:
 
     _Zelf een token genereren_
 
-    De tokens die gebruikt worden voor autorisatie zijn [jwt.io][JWT's] (JSON web
+    De tokens die gebruikt worden voor autorisatie zijn [JWT's](https://jwt.io) (JSON web
     token). In de API calls moeten deze gebruikt worden in de `Authorization`
     header:
 
@@ -204,6 +204,14 @@ paths:
           worden uit de catalogi API en de vorm van een INFORMATIEOBJECTTYPE hebben.
         - publicatie `informatieobjecttype` - `concept` moet `false` zijn
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -454,6 +462,14 @@ paths:
         *TODO*
         - valideer immutable attributes
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -534,6 +550,14 @@ paths:
         *TODO*
         - valideer immutable attributes
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -732,6 +756,15 @@ paths:
         vergrendeld wordt met een `lock` waarde. Alleen met deze waarde kan het
         (ENKELVOUDIG) INFORMATIEOBJECT bijgewerkt (`PUT`, `PATCH`) en weer
         ontgrendeld worden.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
       requestBody:
         content:
           application/json:
@@ -789,6 +822,15 @@ paths:
       description: |-
         Heft de "checkout" op waardoor het (ENKELVOUDIG) INFORMATIEOBJECT
         ontgrendeld wordt.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
       requestBody:
         content:
           application/json:
@@ -956,6 +998,14 @@ paths:
         - Het toevoegen van gebruiksrechten zorgt ervoor dat de
           `indicatieGebruiksrecht` op het informatieobject op `true` gezet wordt.
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -1058,6 +1108,14 @@ paths:
       summary: Werk een GEBRUIKSRECHT in zijn geheel bij.
       description: Werk een GEBRUIKSRECHT in zijn geheel bij.
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -1115,6 +1173,14 @@ paths:
       summary: Werk een GEBRUIKSRECHT relatie deels bij.
       description: Werk een GEBRUIKSRECHT relatie deels bij.
       parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
         - name: X-NLX-Logrecord-ID
           in: header
           description: Identifier of the request, traceable throughout the network
@@ -1300,6 +1366,15 @@ paths:
         - geldigheid `informatieobject` URL
         - de combinatie `informatieobject` en `object` moet uniek zijn
         - bestaan van `object` URL
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
       requestBody:
         $ref: '#/components/requestBodies/ObjectInformatieObject'
       responses:
@@ -1391,6 +1466,15 @@ paths:
       description: |-
         Het betreft een relatie tussen een willekeurig OBJECT, bijvoorbeeld een
         ZAAK in de Zaken API, en een INFORMATIEOBJECT.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
       requestBody:
         $ref: '#/components/requestBodies/ObjectInformatieObject'
       responses:
@@ -1437,6 +1521,15 @@ paths:
       description: |-
         Het betreft een relatie tussen een willekeurig OBJECT, bijvoorbeeld een
         ZAAK in de Zaken API, en een INFORMATIEOBJECT.
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Content type van de verzoekinhoud.
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
       requestBody:
         $ref: '#/components/requestBodies/ObjectInformatieObject'
       responses:
@@ -1525,6 +1618,15 @@ paths:
         schema:
           type: string
           format: uuid
+tags:
+  - name: enkelvoudiginformatieobjecten
+    description: ''
+  - name: gebruiksrechten
+    description: ''
+  - name: objectinformatieobjecten
+    description: |-
+      Het betreft een relatie tussen een willekeurig OBJECT, bijvoorbeeld een
+      ZAAK in de Zaken API, en een INFORMATIEOBJECT.
 servers:
   - url: http://open-zaak.default/documenten/api/v1
 components:
@@ -2318,6 +2420,9 @@ components:
             * `ztc` - Catalogi API
             * `drc` - Documenten API
             * `brc` - Besluiten API
+            * `cmc` - Contactmomenten API
+            * `kc` - Klanten API
+            * `vrc` - Verzoeken API
           type: string
           enum:
             - ac
@@ -2326,6 +2431,9 @@ components:
             - ztc
             - drc
             - brc
+            - cmc
+            - kc
+            - vrc
         applicatieId:
           title: Applicatie id
           description: Unieke identificatie van de applicatie, binnen de organisatie.

@@ -268,5 +268,29 @@ public class ZaakafhandelParameters {
         return StringUtils.isNotBlank(groepID) && StringUtils.isNotBlank(caseDefinitionID) && nietOntvankelijkResultaattype != null;
     }
 
+
+    public ZaakbeeindigParameter readZaakbeeindigParameter(final Long zaakbeeindigRedenId) {
+        return getZaakbeeindigParameters().stream()
+                .filter(zaakbeeindigParameter -> zaakbeeindigParameter.getZaakbeeindigReden().getId().equals(zaakbeeindigRedenId))
+                .findAny().orElseThrow(() -> new RuntimeException(
+                        String.format("No ZaakbeeindigParameter found for zaaktypeUUID: '%s' and zaakbeeindigRedenId: '%d'", zaakTypeUUID,
+                                      zaakbeeindigRedenId)));
+    }
+
+
+    public UserEventListenerParameters readUserEventListenerParameters(final String planitemDefinitionID) {
+        return getUserEventListenerParametersCollection().stream()
+                .filter(userEventListenerParameters -> userEventListenerParameters.getPlanItemDefinitionID().equals(planitemDefinitionID))
+                .findAny().orElseThrow(() -> new RuntimeException(
+                        String.format("No UserEventListenerParameters found for zaaktypeUUID: '%s' and planitemDefinitionID: '%s'", zaakTypeUUID,
+                                      planitemDefinitionID)));
+    }
+
+    public HumanTaskParameters findHumanTaskParameter(final String planitemDefinitionID) {
+        return getHumanTaskParametersCollection().stream()
+                .filter(humanTaskParameter -> humanTaskParameter.getPlanItemDefinitionID().equals(planitemDefinitionID))
+                .findAny().orElse(null);
+    }
+
 }
 

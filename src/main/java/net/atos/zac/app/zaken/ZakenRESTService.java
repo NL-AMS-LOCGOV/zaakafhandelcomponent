@@ -132,7 +132,8 @@ import net.atos.zac.signalering.SignaleringenService;
 import net.atos.zac.signalering.model.SignaleringType;
 import net.atos.zac.signalering.model.SignaleringZoekParameters;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zoeken.IndexeerService;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -240,7 +241,7 @@ public class ZakenRESTService {
     private RESTZaakBetrokkeneConverter zaakBetrokkeneConverter;
 
     @Inject
-    private ZaakafhandelParameterBeheerService zaakafhandelParameterBeheerService;
+    private ZaakafhandelParameterService zaakafhandelParameterService;
 
     @Inject
     private RESTCommunicatiekanaalConverter communicatiekanaalConverter;
@@ -430,7 +431,7 @@ public class ZakenRESTService {
         final LocalDate vandaag = LocalDate.now();
         final Map<UUID, LocalDate> einddatumGeplandWaarschuwing = new HashMap<>();
         final Map<UUID, LocalDate> uiterlijkeEinddatumAfdoeningWaarschuwing = new HashMap<>();
-        zaakafhandelParameterBeheerService.listZaakafhandelParameters().forEach(parameters -> {
+        zaakafhandelParameterService.listZaakafhandelParameters().forEach(parameters -> {
             if (parameters.getEinddatumGeplandWaarschuwing() != null) {
                 einddatumGeplandWaarschuwing.put(parameters.getZaakTypeUUID(),
                                                  datumWaarschuwing(vandaag, parameters.getEinddatumGeplandWaarschuwing()));
@@ -553,8 +554,8 @@ public class ZakenRESTService {
                 zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;
         assertPolicy(
                 zaak.isOpen() && !isHeropend(statustype) && policyService.readZaakRechten(zaak).getAfbreken() && !zrcClientService.heeftOpenDeelzaken(zaak));
-        final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameterBeheerService.readZaakbeeindigParameter(
-                uuidFromURI(zaak.getZaaktype()), afbrekenGegevens.zaakbeeindigRedenId);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(UriUtil.uuidFromURI(zaak.getZaaktype()));
+        final ZaakbeeindigParameter zaakbeeindigParameter = zaakafhandelParameters.readZaakbeeindigParameter(afbrekenGegevens.zaakbeeindigRedenId);
         zgwApiService.createResultaatForZaak(zaak, zaakbeeindigParameter.getResultaattype(), zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         zgwApiService.endZaak(zaak, zaakbeeindigParameter.getZaakbeeindigReden().getNaam());
         // Terminate case after the zaak is ended in order to prevent the EndCaseLifecycleListener from ending the zaak.
@@ -678,12 +679,12 @@ public class ZakenRESTService {
     @Path("besluit")
     public RESTBesluit updateBesluit(final RESTBesluitWijzigenGegevens restBesluitWijzgenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restBesluitWijzgenGegevens.zaakUuid);
-        // assertActie(policyService.readZaakActies(zaak).getBesluitWijzigen()); //todo policy aanmaken
-        final Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getWijzigenBesluit());
+        Besluit besluit = brcClientService.readBesluit(restBesluitWijzgenGegevens.besluitUuid);
         besluit.setToelichting(restBesluitWijzgenGegevens.toelichting);
         besluit.setIngangsdatum(restBesluitWijzgenGegevens.ingangsdatum);
         besluit.setVervaldatum(restBesluitWijzgenGegevens.vervaldatum);
-        Besluit updatedBesluit = brcClientService.updateBesluit(besluit);
+        besluit = brcClientService.updateBesluit(besluit, restBesluitWijzgenGegevens.reden);
         if (zaak.getResultaat() != null) {
             final Resultaat zaakResultaat = zrcClientService.readResultaat(zaak.getResultaat());
             final Resultaattype resultaattype = ztcClientService.readResultaattype(restBesluitWijzgenGegevens.resultaattypeUuid);
@@ -692,8 +693,8 @@ public class ZakenRESTService {
                 zgwApiService.createResultaatForZaak(zaak, restBesluitWijzgenGegevens.resultaattypeUuid, null);
             }
         }
-        updateBesluitInformatieobjecten(updatedBesluit, restBesluitWijzgenGegevens.informatieobjecten);
-        return besluitConverter.convertToRESTBesluit(updatedBesluit);
+        updateBesluitInformatieobjecten(besluit, restBesluitWijzgenGegevens.informatieobjecten);
+        return besluitConverter.convertToRESTBesluit(besluit);
     }
 
     private void updateBesluitInformatieobjecten(final Besluit besluit, final List<UUID> nieuweDocumenten) {

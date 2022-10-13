@@ -20,6 +20,7 @@ import {ZakenService} from '../zaken.service';
 })
 export class BesluitViewComponent implements OnInit, OnChanges {
     @Input() besluit: Besluit;
+    @Input() readonly: boolean;
     @Output() besluitWijzigen = new EventEmitter<void>();
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
 

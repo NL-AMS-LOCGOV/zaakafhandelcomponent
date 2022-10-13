@@ -14,17 +14,18 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
-
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
+import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
 import net.atos.zac.app.planitems.model.UserEventListenerActie;
+import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 
 /**
  *
@@ -37,6 +38,9 @@ public class RESTPlanItemConverter {
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
+    @Inject
+    private CaseVariablesService caseVariablesService;
+
     public List<RESTPlanItem> convertPlanItems(final List<PlanItemInstance> planItems, final UUID zaakUuid) {
         return planItems.stream().map(planItemInstance -> this.convertPlanItem(planItemInstance, zaakUuid)).toList();
     }
@@ -48,8 +52,11 @@ public class RESTPlanItemConverter {
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
         if (restPlanItem.type == USER_EVENT_LISTENER) {
+            final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
             restPlanItem.userEventListenerActie = UserEventListenerActie.valueOf(planItem.getPlanItemDefinitionId());
-            restPlanItem.toelichting = zaakafhandelParameterService.readUserEventParameters(planItem).getToelichting();
+            final UserEventListenerParameters userEventListenerParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID)
+                    .readUserEventListenerParameters(planItem.getPlanItemDefinitionId());
+            restPlanItem.toelichting = userEventListenerParameters.getToelichting();
         }
         return restPlanItem;
     }
