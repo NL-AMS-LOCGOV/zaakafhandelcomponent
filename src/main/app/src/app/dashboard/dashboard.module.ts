@@ -12,14 +12,18 @@ import {RouterModule} from '@angular/router';
 import {TakenCardComponent} from './taken-card/taken-card.component';
 import {InformatieobjectenCardComponent} from './informatieobjecten-card/informatieobjecten-card.component';
 import {ZaakWaarschuwingenCardComponent} from './zaak-waarschuwingen-card/zaak-waarschuwingen-card.component';
+import {ZaakZoekenCardComponent} from './zaak-zoeken-card/zaak-zoeken-card.component';
+import {TaakZoekenCardComponent} from './taak-zoeken-card/taak-zoeken-card.component';
 
 @NgModule({
     declarations: [
         DashboardComponent,
         InformatieobjectenCardComponent,
         TakenCardComponent,
+        TaakZoekenCardComponent,
         ZakenCardComponent,
-        ZaakWaarschuwingenCardComponent
+        ZaakWaarschuwingenCardComponent,
+        ZaakZoekenCardComponent
     ],
     exports: [
         DashboardComponent

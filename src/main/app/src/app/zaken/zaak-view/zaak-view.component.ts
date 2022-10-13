@@ -56,7 +56,7 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {forkJoin, Observable, of, share, Subscription} from 'rxjs';
+import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
@@ -375,16 +375,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         forkJoin([
             this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
-            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
-            this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid)
-        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, zaakafhandelParameters]) => {
+            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid)
+        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems]) => {
             if (this.zaak.rechten.voortzetten && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
                     userEventListenerPlanItems.map(
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken && zaakafhandelParameters.zaakbeeindigParameters.length > 0) {
+            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken &&
+                this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
             this.createKoppelingenMenuItems();

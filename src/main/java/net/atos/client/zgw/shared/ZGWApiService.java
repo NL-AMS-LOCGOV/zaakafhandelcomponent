@@ -224,7 +224,7 @@ public class ZGWApiService {
                 .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(), toelichting, "Verwijderd"));
 
         // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
-        if (!zaakInformatieobjecten.stream().filter(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID)).findAny().isPresent()) {
+        if (!zaakInformatieobjecten.stream().anyMatch(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID))) {
             drcClientService.deleteEnkelvoudigInformatieobject(enkelvoudigInformatieobject.getUUID());
         }
     }

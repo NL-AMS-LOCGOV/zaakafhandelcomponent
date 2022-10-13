@@ -25,4 +25,6 @@ public class RESTBesluitWijzigenGegevens {
 
     public List<UUID> informatieobjecten;
 
+    public String reden;
+
 }

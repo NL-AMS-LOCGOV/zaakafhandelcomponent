@@ -11,15 +11,18 @@
             <td mat-cell *matCellDef="let zaak"> {{zaak.identificatie | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="startdatum">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="startdatum"> {{'startdatum' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="startdatum"> {{'startdatum' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.startdatum | datum | empty}} </td>
         </ng-container>
         <ng-container matColumnDef="zaaktype">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="zaaktype"> {{'zaaktype' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="zaaktype"> {{'zaaktype' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.zaaktype}} </td>
         </ng-container>
         <ng-container matColumnDef="omschrijving">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="omschrijving"> {{'omschrijving' | translate}} </th>
+            <th mat-header-cell *matHeaderCellDef
+                mat-sort-header="omschrijving"> {{'omschrijving' | translate}} </th>
             <td mat-cell *matCellDef="let zaak"> {{zaak.omschrijving | empty}} </td>
         </ng-container>
 
