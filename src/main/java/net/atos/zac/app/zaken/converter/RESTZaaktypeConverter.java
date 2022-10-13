@@ -23,6 +23,8 @@ public class RESTZaaktypeConverter {
         restZaaktype.beginGeldigheid = zaaktype.getBeginGeldigheid();
         restZaaktype.eindeGeldigheid = zaaktype.getEindeGeldigheid();
         restZaaktype.vertrouwelijkheidaanduiding = zaaktype.getVertrouwelijkheidaanduiding();
+        restZaaktype.opschortingMogelijk = zaaktype.getOpschortingEnAanhoudingMogelijk();
+        restZaaktype.verlengingMogelijk = zaaktype.getVerlengingMogelijk();
         if (zaaktype.getReferentieproces() != null) {
             restZaaktype.referentieproces = zaaktype.getReferentieproces().getNaam();
         }

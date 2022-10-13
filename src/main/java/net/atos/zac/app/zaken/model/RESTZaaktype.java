@@ -5,10 +5,10 @@
 
 package net.atos.zac.app.zaken.model;
 
-import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
-
 import java.time.LocalDate;
 import java.util.UUID;
+
+import net.atos.client.zgw.shared.model.Vertrouwelijkheidaanduiding;
 
 public class RESTZaaktype {
 
@@ -33,4 +33,8 @@ public class RESTZaaktype {
     public Vertrouwelijkheidaanduiding vertrouwelijkheidaanduiding;
 
     public boolean nuGeldig;
+
+    public boolean opschortingMogelijk;
+
+    public boolean verlengingMogelijk;
 }

@@ -17,4 +17,6 @@ export class Zaaktype {
     eindeGeldigheid: string;
     nuGeldig: boolean;
     vertrouwelijkheidaanduiding: Vertrouwelijkheidaanduiding;
+    opschortingMogelijk: boolean;
+    verlengingMogelijk: boolean;
 }
