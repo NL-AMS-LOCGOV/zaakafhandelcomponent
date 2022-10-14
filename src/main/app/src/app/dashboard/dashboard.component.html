@@ -13,26 +13,31 @@
                     <mat-card-header>
                         <mat-card-title>
                             {{'dashboard.card.' + card.id | translate}}
+                            <mat-icon *ngIf="card.signaleringType!=null"
+                                      class="cardtype"
+                                      title="{{'signalering.type.'+card.signaleringType | translate}}">
+                                notifications_active
+                            </mat-icon>
                         </mat-card-title>
                     </mat-card-header>
                     <mat-card-content class="dashboard-card-content" [ngSwitch]="card.type">
                         <zac-informatieobjecten-card
-                                [data]="card" *ngSwitchCase="'INFORMATIEOBJECTEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.INFORMATIEOBJECTEN">
                         </zac-informatieobjecten-card>
                         <zac-taken-card
-                                [data]="card" *ngSwitchCase="'TAKEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.TAKEN">
                         </zac-taken-card>
                         <zac-taak-zoeken-card
-                                [data]="card" *ngSwitchCase="'TAAK_ZOEKEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.TAAK_ZOEKEN">
                         </zac-taak-zoeken-card>
                         <zac-zaken-card
-                                [data]="card" *ngSwitchCase="'ZAKEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.ZAKEN">
                         </zac-zaken-card>
                         <zac-zaak-waarschuwingen-card
-                                [data]="card" *ngSwitchCase="'ZAAK_WAARSCHUWINGEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.ZAAK_WAARSCHUWINGEN">
                         </zac-zaak-waarschuwingen-card>
                         <zac-zaak-zoeken-card
-                                [data]="card" *ngSwitchCase="'ZAAK_ZOEKEN'">
+                                [data]="card" *ngSwitchCase="dashboardCardType.ZAAK_ZOEKEN">
                         </zac-zaak-zoeken-card>
                     </mat-card-content>
                 </ng-container>
