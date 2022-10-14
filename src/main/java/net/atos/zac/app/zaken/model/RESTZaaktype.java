@@ -35,5 +35,9 @@ public class RESTZaaktype {
 
     public boolean nuGeldig;
 
+    public boolean opschortingMogelijk;
+
+    public boolean verlengingMogelijk;
+
     public RESTZaakafhandelParameters zaakafhandelparameters;
 }
