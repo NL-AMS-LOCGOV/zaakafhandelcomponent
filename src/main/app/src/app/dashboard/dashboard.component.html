@@ -3,37 +3,43 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<ng-container *ngFor="let row of grid">
-    <div class="grid-container" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px">
-        <mat-card *ngFor="let card of row " [fxFlex]="100/(width<grid[0].length?width:grid[0].length)+'%'">
-            <mat-card-header>
-                <mat-card-title>
-                    {{'dashboard.card.' + card.type | translate}}
-                </mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="dashboard-card-content" [ngSwitch]="card.objectType">
-                <zac-informatieobjecten-card
-                        [data]="card" *ngSwitchCase="'INFORMATIEOBJECT'">
-                </zac-informatieobjecten-card>
-                <zac-taken-card
-                        [data]="card" *ngSwitchCase="'TAAK'">
-                </zac-taken-card>
-                <zac-taak-zoeken-card
-                        [data]="card" *ngSwitchCase="'TAAKZOEKRESULTAAT'">
-                </zac-taak-zoeken-card>
-                <zac-zaken-card
-                        [data]="card" *ngSwitchCase="'ZAAK'">
-                </zac-zaken-card>
-                <zac-zaak-waarschuwingen-card
-                        [data]="card" *ngSwitchCase="'ZAAKWAARSCHUWING'">
-                </zac-zaak-waarschuwingen-card>
-                <zac-zaak-zoeken-card
-                        [data]="card" *ngSwitchCase="'ZAAKZOEKRESULTAAT'">
-                </zac-zaak-zoeken-card>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</ng-container>
+<div cdkDropListGroup>
+    <ng-container *ngFor="let row of grid">
+        <div class="grid-container" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px"
+             cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" [cdkDropListData]="row">
+            <mat-card *ngFor="let card of row " [fxFlex]="100/width+'%'" cdkDrag>
+                <div class="placeholder" *cdkDragPlaceholder></div>
+                <ng-container *ngIf="card!=null">
+                    <mat-card-header>
+                        <mat-card-title>
+                            {{'dashboard.card.' + card.id | translate}}
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content class="dashboard-card-content" [ngSwitch]="card.type">
+                        <zac-informatieobjecten-card
+                                [data]="card" *ngSwitchCase="'INFORMATIEOBJECTEN'">
+                        </zac-informatieobjecten-card>
+                        <zac-taken-card
+                                [data]="card" *ngSwitchCase="'TAKEN'">
+                        </zac-taken-card>
+                        <zac-taak-zoeken-card
+                                [data]="card" *ngSwitchCase="'TAAK_ZOEKEN'">
+                        </zac-taak-zoeken-card>
+                        <zac-zaken-card
+                                [data]="card" *ngSwitchCase="'ZAKEN'">
+                        </zac-zaken-card>
+                        <zac-zaak-waarschuwingen-card
+                                [data]="card" *ngSwitchCase="'ZAAK_WAARSCHUWINGEN'">
+                        </zac-zaak-waarschuwingen-card>
+                        <zac-zaak-zoeken-card
+                                [data]="card" *ngSwitchCase="'ZAAK_ZOEKEN'">
+                        </zac-zaak-zoeken-card>
+                    </mat-card-content>
+                </ng-container>
+            </mat-card>
+        </div>
+    </ng-container>
+</div>
 <ng-container *ngIf="showHint">
     <div class="table-wrapper">
         <p><br/><br/><br/>
