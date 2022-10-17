@@ -8,9 +8,9 @@ import {DashboardCardType} from './dashboard-card-type';
 import {DashboardCardId} from './dashboard-card-id';
 
 export class DashboardCard {
-    id: DashboardCardId;
-    type: DashboardCardType;
-    signaleringType?: SignaleringType;
+    readonly id: DashboardCardId;
+    readonly type: DashboardCardType;
+    readonly signaleringType?: SignaleringType;
 
     constructor(id: DashboardCardId, type: DashboardCardType, signaleringType?: SignaleringType) {
         this.id = id;
