@@ -143,12 +143,23 @@ export class ZakenService {
         );
     }
 
-    vrijgeven(uuids: string[], reden?: string): Observable<void> {
+
+    vrijgeven(uuid: string, reden?: string): Observable<void> {
+        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
+        toekennenGegevens.zaakUUID = uuid;
+        toekennenGegevens.reden = reden;
+
+        return this.http.put<void>(`${this.basepath}/vrijgeven`, toekennenGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    vrijgevenLijst(uuids: string[], reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         verdeelGegevens.uuids = uuids;
         verdeelGegevens.reden = reden;
 
-        return this.http.put<void>(`${this.basepath}/vrijgeven`, verdeelGegevens).pipe(
+        return this.http.put<void>(`${this.basepath}/vrijgeven/lijst`, verdeelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

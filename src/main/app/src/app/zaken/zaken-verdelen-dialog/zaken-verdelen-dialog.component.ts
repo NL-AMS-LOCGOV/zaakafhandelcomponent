@@ -39,7 +39,8 @@ export class ZakenVerdelenDialogComponent implements OnInit {
     ngOnInit(): void {
         this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('toekenning')
                                                                          .groepLabel('actie.zaak.toekennen.groep')
-                                                                         .medewerkerLabel('actie.zaak.toekennen.medewerker').maxlength(50).build();
+                                                                         .medewerkerLabel('actie.zaak.toekennen.medewerker')
+                                                                         .maxlength(50).build();
         this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').maxlength(100).build();
     }
 

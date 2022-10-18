@@ -34,6 +34,9 @@ import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/fo
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
 import {FieldType} from '../../shared/material-form-builder/model/field-type.enum';
 import {SelectFormField} from '../../shared/material-form-builder/form-components/select/select-form-field';
+import {IdentityService} from '../../identity/identity.service';
+import {Group} from '../../identity/model/group';
+import {User} from '../../identity/model/user';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -60,6 +63,7 @@ export class ZaakCreateComponent implements OnInit {
     private locatie: AddressResult;
 
     constructor(private zakenService: ZakenService,
+                private identityService: IdentityService,
                 private router: Router,
                 private navigation: NavigationService,
                 private utilService: UtilService) {
@@ -195,11 +199,24 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     getMedewerkerGroupFormField(groepId?: string, medewerkerId?: string): MedewerkerGroepFormField {
-        return new MedewerkerGroepFieldBuilder(groepId, medewerkerId).id('toekenning')
-                                                .groepLabel('actie.zaak.toekennen.groep')
-                                                .medewerkerLabel('actie.zaak.toekennen.medewerker')
-                                                .maxlength(50)
-                                                .build();
+        let groep = null;
+        let medewerker = null;
+
+        if (groepId) {
+            groep = new Group();
+            groep.id = groepId;
+        }
+
+        if (medewerkerId) {
+            medewerker = new User();
+            medewerker.id = medewerkerId;
+        }
+        return new MedewerkerGroepFieldBuilder(groep, medewerker).id('toekenning')
+                                                                 .groepLabel('actie.zaak.toekennen.groep')
+                                                                 .groepRequired()
+                                                                 .medewerkerLabel('actie.zaak.toekennen.medewerker')
+                                                                 .maxlength(50)
+                                                                 .build();
     }
 
     zaaktypeGeselecteerd(zaaktype: Zaaktype): void {

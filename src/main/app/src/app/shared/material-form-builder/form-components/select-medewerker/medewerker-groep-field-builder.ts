@@ -4,24 +4,23 @@
  */
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
-
-import {Group} from '../../../../identity/model/group';
-import {User} from '../../../../identity/model/user';
 import {MedewerkerGroepFormField} from './medewerker-groep-form-field';
 import {ValidatorFn, Validators} from '@angular/forms';
 import {AbstractFormField} from '../../model/abstract-form-field';
+import {User} from '../../../../identity/model/user';
+import {Group} from '../../../../identity/model/group';
 
 export class MedewerkerGroepFieldBuilder extends AbstractFormFieldBuilder {
 
     readonly formField: MedewerkerGroepFormField;
 
-    constructor(groepId?: string, medewerkerId?: string) {
+    constructor(groep?: Group, medewerker?: User) {
         super();
         this.formField = new MedewerkerGroepFormField();
 
         this.formField.initControl({
-            groep: AbstractFormField.formControlInstance(groepId),
-            medewerker: AbstractFormField.formControlInstance(medewerkerId)
+            groep: AbstractFormField.formControlInstance(groep),
+            medewerker: AbstractFormField.formControlInstance(medewerker)
         });
     }
 

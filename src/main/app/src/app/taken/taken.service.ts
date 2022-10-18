@@ -51,13 +51,13 @@ export class TakenService {
     }
 
     assign(taak: Taak): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/assign`, taak).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
+        const taakToekennenGegevens:TaakToekennenGegevens = new TaakToekennenGegevens();
+        taakToekennenGegevens.taakId = taak.id;
+        taakToekennenGegevens.zaakUuid = taak.zaakUuid;
+        taakToekennenGegevens.groepId = taak.groep?.id;
+        taakToekennenGegevens.behandelaarId = taak.behandelaar?.id;
 
-    assignGroup(taak: Taak): Observable<void> {
-        return this.http.patch<void>(`${this.basepath}/assign/group`, taak).pipe(
+        return this.http.patch<void>(`${this.basepath}/assign`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -39,10 +39,10 @@ export class TakenVerdelenDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('behandelaar').label('behandelaar.-kies-')
-                                                                          .validators(Validators.required).maxlength(50)
-                                                                          .build();
-
+        this.medewerkerGroepFormField = new MedewerkerGroepFieldBuilder().id('toekenning').groepLabel('actie.taak.toekennen.groep')
+                                                                         .medewerkerLabel('actie.taak.toekennen.medewerker')
+                                                                         .maxlength(50)
+                                                                         .build();
     }
 
     verdeel(): void {

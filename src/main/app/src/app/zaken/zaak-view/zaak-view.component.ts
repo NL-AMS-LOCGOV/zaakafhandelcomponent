@@ -245,7 +245,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                                    .groepRequired()
                                                                                    .medewerkerLabel('behandelaar.-kies-')
                                                                                    .build());
-           this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
+        this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
                                                                                                     .maxlength(80)
                                                                                                     .build());
         this.editFormFields.set('toelichting', new TextareaFormFieldBuilder(this.zaak.toelichting).id('toelichting').label('toelichting')
@@ -590,7 +590,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    editToewijzing(event: any): void  {
+    editToewijzing(event: any): void {
         if (this.zaak.groep !== event['medewerker-groep'].groep && this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
             this.zaak.groep = event['medewerker-groep'].groep;
             this.zaak.behandelaar = event['medewerker-groep'].medewerker;
@@ -635,7 +635,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.vrijgeven([this.zaak.uuid], reden).subscribe(() => {
+        this.zakenService.vrijgeven(this.zaak.uuid, reden).subscribe(() => {
             this.init(this.zaak);
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
         });

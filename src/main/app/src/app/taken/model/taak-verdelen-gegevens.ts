@@ -7,7 +7,7 @@ import {TaakToekennenGegevens} from './taak-toekennen-gegevens';
 
 export class TaakVerdelenGegevens {
 
-    taakGegevens: TaakToekennenGegevens[];
+    taakGegevens: { taakId:string, zaakUuid:string }[];
     behandelaarGebruikersnaam: string;
     groepId: string;
 

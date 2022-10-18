@@ -7,14 +7,10 @@ package net.atos.zac.app.taken.model;
 
 import java.util.UUID;
 
-public class RESTTaakToekennenGegevens {
+public class RESTTaakVerdelenTaak {
 
     public String taakId;
 
     public UUID zaakUuid;
-
-    public String groepId;
-
-    public String behandelaarId;
 
 }

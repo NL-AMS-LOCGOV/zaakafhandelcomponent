@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RESTTaakVerdelenGegevens {
 
-    public List<RESTTaakToekennenGegevens> taakGegevens;
+    public List<RESTTaakVerdelenTaak> taken;
 
     public String behandelaarGebruikersnaam;
 
