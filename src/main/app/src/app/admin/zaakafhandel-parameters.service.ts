@@ -13,6 +13,7 @@ import {CaseDefinition} from './model/case-definition';
 import {ZaakbeeindigReden} from './model/zaakbeeindig-reden';
 import {Resultaattype} from '../zaken/model/resultaattype';
 import {ReferentieTabelWaarde} from './model/referentie-tabel-waarde';
+import {FormulierDefinitie} from './model/formulier-definitie';
 
 @Injectable({
     providedIn: 'root'
@@ -66,7 +67,7 @@ export class ZaakafhandelParametersService {
         );
     }
 
-    updateZaakafhandelparameters(zaakafhandelparameters: ZaakafhandelParameters): Observable<void> {
+    updateZaakafhandelparameters(zaakafhandelparameters: ZaakafhandelParameters): Observable<ZaakafhandelParameters> {
         return this.http.put<void>(`${this.basepath}`, zaakafhandelparameters).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
@@ -74,6 +75,12 @@ export class ZaakafhandelParametersService {
 
     findReferentieTabelWaarden(zaaktypeUuid: string, formulierDefinitie: string, veldDefinitie: string): Observable<ReferentieTabelWaarde[]> {
         return this.http.get<ZaakafhandelParameters>(`${this.basepath}/${zaaktypeUuid}/${formulierDefinitie}/${veldDefinitie}`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listFormulierDefinities(): Observable<FormulierDefinitie[]> {
+        return this.http.get<string[]>(`${this.basepath}/formulierDefinities`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

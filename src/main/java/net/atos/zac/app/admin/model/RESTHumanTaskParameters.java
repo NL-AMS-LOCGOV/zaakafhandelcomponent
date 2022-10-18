@@ -18,5 +18,7 @@ public class RESTHumanTaskParameters {
 
     public String defaultGroepId;
 
+    public String formulierDefinitieId;
+
     public List<RESTHumanTaskReferentieTabel> referentieTabellen = new ArrayList<>();
 }

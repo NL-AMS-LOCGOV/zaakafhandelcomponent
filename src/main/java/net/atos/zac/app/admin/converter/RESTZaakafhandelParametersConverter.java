@@ -9,22 +9,15 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
-import net.atos.zac.app.identity.converter.RESTGroupConverter;
-import net.atos.zac.app.identity.converter.RESTUserConverter;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.model.RESTZaakStatusmailOptie;
+import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 public class RESTZaakafhandelParametersConverter {
 
     @Inject
     private RESTCaseDefinitionConverter caseDefinitionConverter;
-
-    @Inject
-    private RESTGroupConverter groupConverter;
-
-    @Inject
-    private RESTUserConverter userConverter;
 
     @Inject
     private RESTZaaktypeOverzichtConverter restZaaktypeOverzichtConverter;
@@ -44,6 +37,9 @@ public class RESTZaakafhandelParametersConverter {
     @Inject
     private ZTCClientService ztcClientService;
 
+    @Inject
+    private ZaakafhandelParameterService zaakafhandelParameterService;
+
     public RESTZaakafhandelParameters convertZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters, final boolean inclusiefRelaties) {
         final RESTZaakafhandelParameters restZaakafhandelParameters = new RESTZaakafhandelParameters();
         restZaakafhandelParameters.id = zaakafhandelParameters.getId();
@@ -56,8 +52,8 @@ public class RESTZaakafhandelParametersConverter {
         restZaakafhandelParameters.valide = zaakafhandelParameters.isValide();
 
         if (zaakafhandelParameters.getCaseDefinitionID() != null) {
-            restZaakafhandelParameters.caseDefinition =
-                    caseDefinitionConverter.convertToRESTCaseDefinition(zaakafhandelParameters.getCaseDefinitionID(), inclusiefRelaties);
+            restZaakafhandelParameters.caseDefinition = caseDefinitionConverter.convertToRESTCaseDefinition(zaakafhandelParameters.getCaseDefinitionID(),
+                                                                                                            inclusiefRelaties);
         }
         if (inclusiefRelaties && restZaakafhandelParameters.caseDefinition != null) {
             if (zaakafhandelParameters.getNietOntvankelijkResultaattype() != null) {
@@ -83,7 +79,7 @@ public class RESTZaakafhandelParametersConverter {
     }
 
     public ZaakafhandelParameters convertRESTZaakafhandelParameters(final RESTZaakafhandelParameters restZaakafhandelParameters) {
-        final ZaakafhandelParameters zaakafhandelParameters = new ZaakafhandelParameters();
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(restZaakafhandelParameters.zaaktype.uuid);
         zaakafhandelParameters.setId(restZaakafhandelParameters.id);
         zaakafhandelParameters.setZaakTypeUUID(restZaakafhandelParameters.zaaktype.uuid);
         zaakafhandelParameters.setZaaktypeOmschrijving(restZaakafhandelParameters.zaaktype.omschrijving);

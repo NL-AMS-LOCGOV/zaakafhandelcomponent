@@ -18,7 +18,7 @@ import org.flowable.task.api.TaskInfo;
 
 import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.identity.converter.RESTUserConverter;
-import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
+import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.taken.model.RESTTaak;
 import net.atos.zac.flowable.CaseVariablesService;
@@ -78,7 +78,7 @@ public class RESTTaakConverter {
             restTaak.streefdatum = convertToLocalDate(taskInfo.getDueDate());
             restTaak.behandelaar = medewerkerConverter.convertUserId(taskInfo.getAssignee());
             restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
-            restTaak.formulierDefinitie = HumanTaskFormulierKoppeling.readFormulierDefinitie(taskInfo.getTaskDefinitionKey());
+            restTaak.formulierDefinitie = DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(taskInfo.getTaskDefinitionKey());
             restTaak.zaaktypeOmschrijving = zaaktypeOmschrijving;
             restTaak.taakinformatie = taskVariablesService.findTaakinformatie(taskInfo.getId());
             if (withTaakdata) {

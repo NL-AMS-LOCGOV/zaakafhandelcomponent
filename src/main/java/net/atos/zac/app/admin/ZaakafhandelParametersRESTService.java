@@ -7,8 +7,10 @@ package net.atos.zac.app.admin;
 
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,10 +31,12 @@ import net.atos.zac.app.admin.converter.RESTReferentieWaardeConverter;
 import net.atos.zac.app.admin.converter.RESTZaakafhandelParametersConverter;
 import net.atos.zac.app.admin.converter.RESTZaakbeeindigRedenConverter;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
+import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
+import net.atos.zac.app.admin.model.RESTFormulierVeldDefinitie;
 import net.atos.zac.app.admin.model.RESTReferentieTabelWaarde;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
-import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
+import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -96,9 +100,7 @@ public class ZaakafhandelParametersRESTService {
     public List<RESTCaseDefinition> listCaseDefinitions() {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         final List<CaseDefinition> caseDefinitions = caseService.listCaseDefinitions();
-        return caseDefinitions.stream()
-                .map(caseDefinition -> new RESTCaseDefinition(caseDefinition.getName(), caseDefinition.getKey()))
-                .toList();
+        return caseDefinitions.stream().map(caseDefinition -> caseDefinitionConverter.convertToRESTCaseDefinition(caseDefinition, true)).toList();
     }
 
     /**
@@ -154,7 +156,7 @@ public class ZaakafhandelParametersRESTService {
             @PathParam("formulierDefinitie") final FormulierDefinitie formulierDefinitie,
             @PathParam("veldDefinitie") final FormulierVeldDefinitie veldDefinitie) {
         return zaakafhandelParameterService.readZaakafhandelParameters(zaakTypeUUID).getHumanTaskParametersCollection().stream()
-                .filter(parameters -> HumanTaskFormulierKoppeling.readFormulierDefinitie(parameters.getPlanItemDefinitionID()) == formulierDefinitie)
+                .filter(parameters -> DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(parameters.getPlanItemDefinitionID()) == formulierDefinitie)
                 .flatMap(parameters -> parameters.getReferentieTabellen().stream())
                 .filter(humanTaskReferentieTabel -> humanTaskReferentieTabel.getVeld().equals(veldDefinitie.name()))
                 .flatMap(humanTaskReferentieTabel -> humanTaskReferentieTabel.getTabel().getWaarden().stream())
@@ -222,5 +224,24 @@ public class ZaakafhandelParametersRESTService {
 
     private List<Zaaktype> listZaaktypes() {
         return ztcClientService.listZaaktypen(configuratieService.readDefaultCatalogusURI());
+    }
+
+    /**
+     * Retrieve all FORMULIER_DEFINITIEs that can be linked to a HUMAN_TASK_PLAN_ITEM
+     *
+     * @return lijst of FORMULIER_DEFINITIEs
+     */
+    @GET
+    @Path("formulierDefinities")
+    public List<RESTFormulierDefinitie> listFormulierDefinities() {
+        return Arrays.stream(FormulierDefinitie.values())
+                .map(formulierDefinitie -> new RESTFormulierDefinitie(formulierDefinitie.name(),
+                                                                      formulierDefinitie.getVeldDefinities()
+                                                                              .stream()
+                                                                              .map(formulierVeldDefinitie -> new RESTFormulierVeldDefinitie(
+                                                                                      formulierVeldDefinitie.name(),
+                                                                                      formulierVeldDefinitie.getDefaultTabel().name()))
+                                                                              .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 }
