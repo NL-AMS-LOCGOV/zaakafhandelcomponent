@@ -12,6 +12,7 @@ export class PlanItem {
     type: PlanItemType;
     groepId: string;
     formulierDefinitie: string;
+    tabellen: { [key: string]: string[] };
     zaakUuid: string;
     userEventListenerActie: UserEventListenerActie;
     toelichting: string;

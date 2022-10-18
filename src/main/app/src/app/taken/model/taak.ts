@@ -23,6 +23,7 @@ export class Taak {
     zaaktypeOmschrijving: string;
     status: TaakStatus;
     formulierDefinitie: string;
+    tabellen: { [key: string]: string[] };
     taakdata: {};
     taakinformatie: Taakinformatie;
     taakdocumenten: string[];

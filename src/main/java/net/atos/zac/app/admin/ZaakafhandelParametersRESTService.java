@@ -33,10 +33,8 @@ import net.atos.zac.app.admin.converter.RESTZaakbeeindigRedenConverter;
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
 import net.atos.zac.app.admin.model.RESTFormulierDefinitie;
 import net.atos.zac.app.admin.model.RESTFormulierVeldDefinitie;
-import net.atos.zac.app.admin.model.RESTReferentieTabelWaarde;
 import net.atos.zac.app.admin.model.RESTZaakafhandelParameters;
 import net.atos.zac.app.admin.model.RESTZaakbeeindigReden;
-import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.zaken.converter.RESTResultaattypeConverter;
 import net.atos.zac.app.zaken.model.RESTResultaattype;
 import net.atos.zac.configuratie.ConfiguratieService;
@@ -46,7 +44,6 @@ import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
-import net.atos.zac.zaaksturing.model.FormulierVeldDefinitie;
 import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigParameter;
 import net.atos.zac.zaaksturing.model.ZaakbeeindigReden;
@@ -142,26 +139,6 @@ public class ZaakafhandelParametersRESTService {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaakTypeUUID);
         return zaakafhandelParametersConverter.convertZaakafhandelParameters(zaakafhandelParameters, true);
-    }
-
-    /**
-     * Retrieve the referentietabelwaarden for a VELD of a FORMULIER for a ZAAKTYPE
-     *
-     * @return list of values or empty list if not found
-     */
-    @GET
-    @Path("{zaaktypeUUID}/{formulierDefinitie}/{veldDefinitie}")
-    public List<RESTReferentieTabelWaarde> findReferentieTabelWaarden(
-            @PathParam("zaaktypeUUID") final UUID zaakTypeUUID,
-            @PathParam("formulierDefinitie") final FormulierDefinitie formulierDefinitie,
-            @PathParam("veldDefinitie") final FormulierVeldDefinitie veldDefinitie) {
-        return zaakafhandelParameterService.readZaakafhandelParameters(zaakTypeUUID).getHumanTaskParametersCollection().stream()
-                .filter(parameters -> DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(parameters.getPlanItemDefinitionID()) == formulierDefinitie)
-                .flatMap(parameters -> parameters.getReferentieTabellen().stream())
-                .filter(humanTaskReferentieTabel -> humanTaskReferentieTabel.getVeld().equals(veldDefinitie.name()))
-                .flatMap(humanTaskReferentieTabel -> humanTaskReferentieTabel.getTabel().getWaarden().stream())
-                .map(restReferentieWaardeConverter::convert)
-                .toList();
     }
 
     /**

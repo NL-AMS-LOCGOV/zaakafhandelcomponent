@@ -26,6 +26,7 @@ import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
+import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
 
 /**
@@ -67,6 +68,8 @@ public class RESTPlanItemConverter {
         if (parameters != null) {
             if (parameters.getFormulierDefinitieID() != null) {
                 restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(parameters.getFormulierDefinitieID());
+                parameters.getReferentieTabellen().forEach(
+                        rt -> restPlanItem.tabellen.put(rt.getVeld(), rt.getTabel().getWaarden().stream().map(ReferentieTabelWaarde::getNaam).toList()));
             } else {
                 restPlanItem.formulierDefinitie =
                         DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(planItem.getPlanItemDefinitionId());
