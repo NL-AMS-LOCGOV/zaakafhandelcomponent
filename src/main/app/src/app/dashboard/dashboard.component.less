@@ -4,20 +4,39 @@
  */
 
 .grid-container {
-  margin: 20px;
+  margin: 0 24px 32px;
+}
+
+.draggable {
+  cursor: grab;
 }
 
 .placeholder {
   background: #ccc;
   border: dotted 1px #999;
-  min-width: 180px;
-  min-height: 60px;
+  min-width: 120px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .cardtype {
   color: #0000008A;
+  margin-top: -20px;
   position: relative;
   top: 6px;
   left: 12px;
+}
+
+.delete {
+  margin-bottom: -20px;
+  position: relative;
+  z-index: 2;
+}
+
+.menu-title {
+  font-size: 14px;
+  text-align: center;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: none;
 }

@@ -120,6 +120,7 @@ public class GebruikersvoorkeurenService {
         final List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(root.get("medewerkerId"), medewerkerId));
         query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.asc(root.get("volgorde")));
         final TypedQuery<DashboardCardInstelling> emQuery = entityManager.createQuery(query);
         return emQuery.getResultList();
     }
@@ -133,36 +134,44 @@ public class GebruikersvoorkeurenService {
                     .filter(card -> existingCard.getCardId().equals(card.getCardId()))
                     .findAny();
             if (updatedCard.isPresent()) {
-                updateDashboardCard(existingCard, updatedCard.get().getVolgorde());
+                existingCard.setVolgorde(updatedCard.get().getVolgorde());
+                entityManager.persist(existingCard);
             } else {
-                deleteDashboardCard(existingCard);
+                entityManager.remove(existingCard);
             }
         });
         cards.stream()
                 .filter(card -> card.getId() == null)
                 .forEach(newCard -> {
-                    createDashboardCard(newCard, medewerkerId);
+                    newCard.setMedewerkerId(medewerkerId);
+                    entityManager.persist(newCard);
                 });
     }
 
-    private void createDashboardCard(final DashboardCardInstelling card, final String medewerkerId) {
-        card.setMedewerkerId(medewerkerId);
-        entityManager.persist(card);
-    }
-
-    private void updateDashboardCard(final DashboardCardInstelling card, final int volgorde) {
-        card.setVolgorde(volgorde);
-        entityManager.persist(card);
-    }
-
-    private void deleteDashboardCard(final DashboardCardInstelling card) {
+    public void addDashboardCard(final String medewerkerId, final DashboardCardInstelling card) {
         if (card.getSignaleringType() != null) {
-            final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(card.getSignaleringType(), card.getMedewerkerId());
-            if (instellingen != null) {
+            final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(card.getSignaleringType(), medewerkerId);
+            if (instellingen.getId() != null) {
+                instellingen.setDashboard(true);
+                signaleringenService.createUpdateOrDeleteInstellingen(instellingen);
+            }
+        }
+        if (card.getId() == null) {
+            card.setMedewerkerId(medewerkerId);
+            entityManager.persist(card);
+        }
+    }
+
+    public void deleteDashboardCard(final String medewerkerId, final DashboardCardInstelling card) {
+        if (card.getSignaleringType() != null) {
+            final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(card.getSignaleringType(), medewerkerId);
+            if (instellingen.getId() != null) {
                 instellingen.setDashboard(false);
                 signaleringenService.createUpdateOrDeleteInstellingen(instellingen);
             }
         }
-        entityManager.remove(card);
+        if (card.getId() != null) {
+            entityManager.remove(entityManager.find(DashboardCardInstelling.class, card.getId()));
+        }
     }
 }
