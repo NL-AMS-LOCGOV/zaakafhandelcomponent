@@ -20,7 +20,6 @@ import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
-import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {User} from '../../identity/model/user';
@@ -51,7 +50,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taak: Taak;
     menu: MenuItem[] = [];
-    action: string;
+    sideNavAction = SideNavAction;
+    action: SideNavAction;
 
     historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
     historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];

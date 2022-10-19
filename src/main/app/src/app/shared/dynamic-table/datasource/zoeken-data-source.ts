@@ -19,6 +19,7 @@ import {ZoekObject} from '../../../zoeken/model/zoek-object';
 import {Werklijst} from '../../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../../gebruikersvoorkeuren/model/zoekopdracht';
 import {EventEmitter} from '@angular/core';
+import {ZoekenColumn} from '../model/zoeken-column';
 
 export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
@@ -31,12 +32,12 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
     filtersChanged$ = new EventEmitter<void>();
 
     private tableSubject = new BehaviorSubject<ZoekObject[]>([]);
-    private _defaultColumns: Map<string, ColumnPickerValue>;
-    private _columns: Map<string, ColumnPickerValue>;
+    private _defaultColumns: Map<ZoekenColumn, ColumnPickerValue>;
+    private _columns: Map<ZoekenColumn, ColumnPickerValue>;
     private _sessionKey: string;
-    private _visibleColumns: Array<string>;
+    private _visibleColumns: Array<ZoekenColumn>;
     private _filterColumns: Array<string>;
-    private _detailExpandColumns: Array<string>;
+    private _detailExpandColumns: Array<ZoekenColumn>;
     private _drop = false;
     private subscriptions$: Subscription[] = [];
 
@@ -56,7 +57,7 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
         this.zoekParameters.sorteerRichting = this.sort.direction;
         this.zoekParameters.sorteerVeld = this.sort.active;
 
-        return SessionStorageUtil.setItem(this.werklijst + '_ZOEKPARAMETERS', this.zoekParameters);;
+        return SessionStorageUtil.setItem(this.werklijst + '_ZOEKPARAMETERS', this.zoekParameters);
     }
 
     connect(collectionViewer: CollectionViewer): Observable<OBJECT[] | ReadonlyArray<OBJECT>> {
@@ -95,7 +96,7 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
     drop(event: CdkDragDrop<string[]>) {
         this._drop = true;
         setTimeout(() => this._drop = false, 1000);
-        const extraIndex = this.visibleColumns.includes('select') ? 1 : 0;
+        const extraIndex = this.visibleColumns.includes(ZoekenColumn.SELECT) ? 1 : 0;
         moveItemInArray(this.visibleColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
         moveItemInArray(this.filterColumns, event.previousIndex + extraIndex, event.currentIndex + extraIndex);
     }
@@ -116,11 +117,11 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
      *
      * @param defaultColumns available columns
      */
-    initColumns(defaultColumns: Map<string, ColumnPickerValue>): void {
+    initColumns(defaultColumns: Map<ZoekenColumn, ColumnPickerValue>): void {
         const key = this.werklijst + 'Columns';
         const columnsString = JSON.stringify(Array.from(defaultColumns.entries()));
         const sessionColumns: string = SessionStorageUtil.getItem(key, columnsString);
-        const columns: Map<string, ColumnPickerValue> = new Map(JSON.parse(sessionColumns));
+        const columns: Map<ZoekenColumn, ColumnPickerValue> = new Map(JSON.parse(sessionColumns));
         this._defaultColumns = defaultColumns;
         this._columns = columns;
         this._sessionKey = key;
@@ -137,7 +138,7 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
      *
      * @param columns updated columns
      */
-    updateColumns(columns: Map<string, ColumnPickerValue>): void {
+    updateColumns(columns: Map<ZoekenColumn, ColumnPickerValue>): void {
         this._visibleColumns = [...columns.keys()].filter(key => columns.get(key) !== ColumnPickerValue.HIDDEN);
         this._detailExpandColumns = [...columns.keys()].filter(key => columns.get(key) === ColumnPickerValue.HIDDEN);
         this._filterColumns = this.visibleColumns.map(c => c + '_filter');
@@ -169,11 +170,11 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
         return this._columns;
     }
 
-    get visibleColumns(): Array<string> {
+    get visibleColumns(): Array<ZoekenColumn> {
         return this._visibleColumns;
     }
 
-    get detailExpandColumns(): Array<string> {
+    get detailExpandColumns(): Array<ZoekenColumn> {
         return this._detailExpandColumns;
     }
 

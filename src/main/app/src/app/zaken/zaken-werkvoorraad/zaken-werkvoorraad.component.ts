@@ -33,6 +33,7 @@ import {PolicyService} from '../../policy/policy.service';
 import {TranslateService} from '@ngx-translate/core';
 import {CsvService} from '../../csv/csv.service';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
+import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 
 @Component({
     templateUrl: './zaken-werkvoorraad.component.html',
@@ -49,10 +50,11 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     ingelogdeMedewerker: User;
     expandedRow: ZaakZoekObject | null;
-    ZoekVeld = ZoekVeld;
-    SorteerVeld = SorteerVeld;
-    FilterVeld = FilterVeld;
-    DatumVeld = DatumVeld;
+    zoekenColumn = ZoekenColumn;
+    zoekVeld = ZoekVeld;
+    sorteerVeld = SorteerVeld;
+    filterVeld = FilterVeld;
+    datumVeld = DatumVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
@@ -74,27 +76,27 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         });
     }
 
-    defaultColumns(): Map<string, ColumnPickerValue> {
+    defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
         const columns = new Map([
-            ['select', ColumnPickerValue.STICKY],
-            ['zaak.identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.VISIBLE],
-            ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['omschrijving', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['startdatum', ColumnPickerValue.VISIBLE],
-            ['openstaandeTaken', ColumnPickerValue.HIDDEN],
-            ['einddatumGepland', ColumnPickerValue.HIDDEN],
-            ['dagenTotStreefdatum', ColumnPickerValue.HIDDEN],
-            ['behandelaar', ColumnPickerValue.VISIBLE],
-            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-            ['dagenTotFataledatum', ColumnPickerValue.HIDDEN],
-            ['toelichting', ColumnPickerValue.HIDDEN],
-            ['indicaties', ColumnPickerValue.VISIBLE],
-            ['url', ColumnPickerValue.STICKY]
+            [ZoekenColumn.SELECT, ColumnPickerValue.STICKY],
+            [ZoekenColumn.ZAAK_IDENTIFICATIE2, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.STATUS, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAKTYPE, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.OMSCHRIJVING, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.GROEP, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.STARTDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.OPENSTAANDE_TAKEN, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.EINDDATUM_GEPLAND, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.DAGEN_TOT_STREEFDATUM, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.BEHANDELAAR, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.UITERLIJKE_EINDDATUM_AFDOENING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.DAGEN_TOT_FATALEDATUM, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.INDICATIES, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
         if (!this.rechten.zakenTakenVerdelen) {
-            columns.delete('select');
+            columns.delete(ZoekenColumn.SELECT);
         }
         return columns;
     }

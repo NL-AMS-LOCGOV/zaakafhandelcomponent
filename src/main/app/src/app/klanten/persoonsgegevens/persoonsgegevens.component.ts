@@ -8,6 +8,7 @@ import {KlantenService} from '../klanten.service';
 import {Persoon} from '../model/personen/persoon';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {Observable, share} from 'rxjs';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-persoongegevens',
@@ -27,6 +28,7 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
         return this._bsn;
     }
 
+    skeletonLayout = SkeletonLayout;
     persoon: Persoon;
     persoon$: Observable<Persoon>;
     klantExpanded: boolean;

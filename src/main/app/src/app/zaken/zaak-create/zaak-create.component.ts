@@ -37,6 +37,7 @@ import {SelectFormField} from '../../shared/material-form-builder/form-component
 import {IdentityService} from '../../identity/identity.service';
 import {Group} from '../../identity/model/group';
 import {User} from '../../identity/model/user';
+import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 
 @Component({
     templateUrl: './zaak-create.component.html',
@@ -47,7 +48,8 @@ export class ZaakCreateComponent implements OnInit {
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
-    action: string;
+    sideNavAction = SideNavAction;
+    action: SideNavAction;
     rechten: ZaakRechten;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
@@ -85,11 +87,11 @@ export class ZaakCreateComponent implements OnInit {
         this.vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
-        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level('1').build();
+        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level(HeadingLevel.H1).build();
 
-        const toekennenGegevensTitel = new HeadingFormFieldBuilder().id('toekennengegevens').label('gegevens.toekennen').level('2').build();
+        const toekennenGegevensTitel = new HeadingFormFieldBuilder().id('toekennengegevens').label('gegevens.toekennen').level(HeadingLevel.H2).build();
 
-        const overigeGegevensTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig').level('2').build();
+        const overigeGegevensTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig').level(HeadingLevel.H2).build();
 
         const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
                                                      .validators(Validators.required)

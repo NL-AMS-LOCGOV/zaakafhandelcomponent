@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {ZoekObjectType} from './zoek-object';
+
 export class ZoekParameters {
-    type: 'ZAAK' | 'TAAK' | null;
+    type: ZoekObjectType;
     alleenMijnZaken: boolean = false;
     alleenOpenstaandeZaken: boolean = false;
     alleenAfgeslotenZaken: boolean = false;

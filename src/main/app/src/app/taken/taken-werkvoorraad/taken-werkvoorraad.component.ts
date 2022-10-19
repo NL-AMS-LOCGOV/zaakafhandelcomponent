@@ -34,6 +34,7 @@ import {PolicyService} from '../../policy/policy.service';
 import {TranslateService} from '@ngx-translate/core';
 import {CsvService} from '../../csv/csv.service';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
+import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 
 @Component({
     templateUrl: './taken-werkvoorraad.component.html',
@@ -50,10 +51,11 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
     ingelogdeMedewerker: User;
     expandedRow: TaakZoekObject | null;
-    ZoekVeld = ZoekVeld;
-    SorteerVeld = SorteerVeld;
-    FilterVeld = FilterVeld;
-    DatumVeld = DatumVeld;
+    zoekenColumn = ZoekenColumn;
+    zoekVeld = ZoekVeld;
+    sorteerVeld = SorteerVeld;
+    filterVeld = FilterVeld;
+    datumVeld = DatumVeld;
 
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
@@ -169,24 +171,24 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         return Conditionals.isOverschreden(datum);
     }
 
-    defaultColumns(): Map<string, ColumnPickerValue> {
+    defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
         const columns = new Map([
-            ['select', ColumnPickerValue.STICKY],
-            ['naam', ColumnPickerValue.VISIBLE],
-            ['zaakIdentificatie', ColumnPickerValue.VISIBLE],
-            ['zaakOmschrijving', ColumnPickerValue.VISIBLE],
-            ['zaakToelichting', ColumnPickerValue.HIDDEN],
-            ['zaaktypeOmschrijving', ColumnPickerValue.VISIBLE],
-            ['creatiedatum', ColumnPickerValue.VISIBLE],
-            ['streefdatum', ColumnPickerValue.VISIBLE],
-            ['dagenTotStreefdatum', ColumnPickerValue.HIDDEN],
-            ['groep', ColumnPickerValue.VISIBLE],
-            ['behandelaar', ColumnPickerValue.VISIBLE],
-            ['toelichting', ColumnPickerValue.HIDDEN],
-            ['url', ColumnPickerValue.STICKY]
+            [ZoekenColumn.SELECT, ColumnPickerValue.STICKY],
+            [ZoekenColumn.NAAM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAK_IDENTIFICATIE, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAK_OMSCHRIJVING, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAK_TOELICHTING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.ZAAKTYPE_OMSCHRIJVING, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.CREATIEDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.STREEFDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.DAGEN_TOT_STREEFDATUM, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.GROEP, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.BEHANDELAAR, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
         if (!this.rechten.zakenTakenVerdelen) {
-            columns.delete('select');
+            columns.delete(ZoekenColumn.SELECT);
         }
         return columns;
     }

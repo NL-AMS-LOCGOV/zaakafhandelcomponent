@@ -7,7 +7,7 @@ import {Injectable} from '@angular/core';
 import {Zaak} from '../model/zaak';
 import {Subject} from 'rxjs';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {ActionBarAction} from '../../core/actionbar/model/action-bar-action';
+import {ActionBarAction, ActionEntityType} from '../../core/actionbar/model/action-bar-action';
 import {ActionIcon} from '../../shared/edit/action-icon';
 import {ZaakKoppelGegevens} from '../model/zaak-koppel-gegevens';
 import {ZaakKoppelenDialogComponent} from './zaak-koppelen-dialog.component';
@@ -57,7 +57,7 @@ export class ZaakKoppelenService {
         if (!onInit) {
             SessionStorageUtil.setItem('teKoppelenZaken', teKoppelenZaken);
         }
-        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, 'ZAAK', zaak.identificatie,
+        const action: ActionBarAction = new ActionBarAction(zaak.identificatie, ActionEntityType.ZAAK, zaak.identificatie,
             new ActionIcon('link', 'actie.zaak.koppelen', editAction), dismiss, () => this.isKoppelenToegestaan(zaak.identificatie));
         this.utilService.addAction(action);
     }
@@ -68,7 +68,7 @@ export class ZaakKoppelenService {
         zaakKoppelGegevens.identificatie = nieuwZaakID;
 
         this.dialog.open(ZaakKoppelenDialogComponent, {
-            data: zaakKoppelGegevens,
+            data: zaakKoppelGegevens
         });
     }
 

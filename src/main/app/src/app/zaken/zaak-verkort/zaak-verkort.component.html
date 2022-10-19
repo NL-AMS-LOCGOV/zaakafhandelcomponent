@@ -3,13 +3,13 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:'card', fields:4, fieldsPerRow:2}">
+<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:skeletonLayout.CARD, fields:4, fieldsPerRow:2}">
     <mat-card class="zaak-gegevens" *ngIf="zaak$ | async as zaak">
         <mat-card-header>
             <mat-card-title>
                 {{'zaak' | translate}} {{zaak.identificatie}}
                 <a [routerLink]="['/zaken', zaak?.identificatie]" [title]="zaak.identificatie + ' openen'" id="zaakDetail_button"
-                        mat-icon-button>
+                   mat-icon-button>
                     <mat-icon>visibility</mat-icon>
                 </a>
 
