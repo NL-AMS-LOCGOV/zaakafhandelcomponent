@@ -20,7 +20,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.app.gebruikersvoorkeuren.converter.RESTDashboardCardInstellingConverter;
 import net.atos.zac.app.gebruikersvoorkeuren.converter.RESTZoekopdrachtConverter;
+import net.atos.zac.app.gebruikersvoorkeuren.model.RESTDashboardCardInstelling;
 import net.atos.zac.app.gebruikersvoorkeuren.model.RESTZoekopdracht;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.gebruikersvoorkeuren.GebruikersvoorkeurenService;
@@ -39,6 +41,9 @@ public class GebruikersvoorkeurenRESTService {
 
     @Inject
     private RESTZoekopdrachtConverter zoekopdrachtConverter;
+
+    @Inject
+    private RESTDashboardCardInstellingConverter dashboardCardInstellingConverter;
 
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
@@ -75,5 +80,20 @@ public class GebruikersvoorkeurenRESTService {
     @Path("zoekopdracht/{werklijst}/actief")
     public void removeZoekopdrachtActief(@PathParam("werklijst") final Werklijst werklijst) {
         gebruikersvoorkeurenService.removeActief(new ZoekopdrachtListParameters(werklijst, loggedInUserInstance.get().getId()));
+    }
+
+    @GET
+    @Path("dasboardcard")
+    public List<RESTDashboardCardInstelling> listDashboardCards() {
+        return dashboardCardInstellingConverter.convert(
+                gebruikersvoorkeurenService.listDashboardCards(loggedInUserInstance.get().getId()));
+    }
+
+    @PUT
+    @Path("dasboardcard")
+    public void updateDashboardCards(final List<RESTDashboardCardInstelling> instellingen) {
+        gebruikersvoorkeurenService.updateDashboardCards(
+                loggedInUserInstance.get().getId(),
+                instellingen.stream().map(dashboardCardInstellingConverter::convert).toList());
     }
 }
