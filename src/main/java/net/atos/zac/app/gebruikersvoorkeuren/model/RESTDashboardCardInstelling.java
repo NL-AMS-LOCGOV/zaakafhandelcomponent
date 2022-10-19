@@ -15,6 +15,4 @@ public class RESTDashboardCardInstelling {
     public DashboardCardId cardId;
 
     public SignaleringType.Type signaleringType;
-
-    public Integer volgorde;
 }

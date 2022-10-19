@@ -2,24 +2,55 @@
   ~ SPDX-FileCopyrightText: 2021 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-
+<div>
+    <div fxFlex fxLayoutAlign="flex-end top">
+        <button *ngIf="!editmode"
+                id="dashboardEdit_button" mat-icon-button
+                title="{{ 'actie.dashboard.wijzigen' | translate }}" aria-label="Dashboard aanpassen"
+                (click)="editmode=true">
+            <mat-icon>grid_view</mat-icon>
+        </button>
+        <button *ngIf="editmode" [disabled]="this.available.length==0"
+                id="cardToevoegen_button" mat-icon-button
+                title="{{ 'actie.card.toevoegen' | translate }}" aria-label="Dashboardcard toevoegen"
+                [matMenuTriggerFor]="cardsMenu">
+            <mat-icon>dashboard_customize</mat-icon>
+        </button>
+        <mat-menu #cardsMenu="matMenu">
+            <h4 class="menu-title" fxHide.xs translate="actie.card.toevoegen"></h4>
+            <mat-divider fxHide.gt-xs></mat-divider>
+            <ng-container *ngFor="let card of available">
+                <button mat-menu-item (click)="add(card)">
+                    <mat-icon>{{card.signaleringType != null ? 'notifications' : ''}}</mat-icon>
+                    <span>{{'dashboard.card.' + card.id | translate}}</span>
+                </button>
+            </ng-container>
+        </mat-menu>
+    </div>
+</div>
 <div cdkDropListGroup>
     <ng-container *ngFor="let row of grid">
-        <div class="grid-container" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px"
-             cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" [cdkDropListData]="row">
+        <div class="grid-container" [ngClass]="{'draggable':editmode}" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px"
+             cdkDropList cdkDropListOrientation="horizontal" cdkDropListDisabled="{{!editmode}}"
+             (cdkDropListDropped)="move($event)" [cdkDropListData]="row">
             <mat-card *ngFor="let card of row " [fxFlex]="100/width+'%'" cdkDrag>
                 <div class="placeholder" *cdkDragPlaceholder></div>
                 <ng-container *ngIf="card!=null">
-                    <mat-card-header>
+                    <mat-card-title-group>
                         <mat-card-title>
                             {{'dashboard.card.' + card.id | translate}}
-                            <mat-icon *ngIf="card.signaleringType!=null"
-                                      class="cardtype"
+                            <mat-icon *ngIf="card.signaleringType!=null" class="cardtype"
                                       title="{{'signalering.type.'+card.signaleringType | translate}}">
                                 notifications_active
                             </mat-icon>
                         </mat-card-title>
-                    </mat-card-header>
+                        <button *ngIf="editmode" class="delete"
+                                [id]="'cardVerwijderen_' + card.id +'_button'" mat-icon-button
+                                title="{{ 'actie.card.verwijderen' | translate }}"
+                                (click)="delete(card)">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-card-title-group>
                     <mat-card-content class="dashboard-card-content" [ngSwitch]="card.type">
                         <zac-informatieobjecten-card
                                 [data]="card" *ngSwitchCase="dashboardCardType.INFORMATIEOBJECTEN">
@@ -45,12 +76,3 @@
         </div>
     </ng-container>
 </div>
-<ng-container *ngIf="showHint">
-    <div class="table-wrapper">
-        <p><br/><br/><br/>
-            <button routerLink="/signaleringen/settings" id="hint_button" mat-button>
-                {{'msg.geen.cards.hint' | translate }}
-            </button>
-        </p>
-    </div>
-</ng-container>

@@ -83,17 +83,36 @@ public class GebruikersvoorkeurenRESTService {
     }
 
     @GET
-    @Path("dasboardcard")
+    @Path("dasboardcard/actief")
     public List<RESTDashboardCardInstelling> listDashboardCards() {
         return dashboardCardInstellingConverter.convert(
                 gebruikersvoorkeurenService.listDashboardCards(loggedInUserInstance.get().getId()));
     }
 
     @PUT
-    @Path("dasboardcard")
-    public void updateDashboardCards(final List<RESTDashboardCardInstelling> instellingen) {
+    @Path("dasboardcard/actief")
+    public List<RESTDashboardCardInstelling> updateDashboardCards(final List<RESTDashboardCardInstelling> instellingen) {
         gebruikersvoorkeurenService.updateDashboardCards(
                 loggedInUserInstance.get().getId(),
                 instellingen.stream().map(dashboardCardInstellingConverter::convert).toList());
+        return listDashboardCards();
+    }
+
+    @PUT
+    @Path("dasboardcard")
+    public List<RESTDashboardCardInstelling> addDashboardCard(RESTDashboardCardInstelling instelling) {
+        gebruikersvoorkeurenService.addDashboardCard(
+                loggedInUserInstance.get().getId(),
+                dashboardCardInstellingConverter.convert(instelling));
+        return listDashboardCards();
+    }
+
+    @DELETE
+    @Path("dasboardcard")
+    public List<RESTDashboardCardInstelling> deleteDashboardCard(final RESTDashboardCardInstelling instelling) {
+        gebruikersvoorkeurenService.deleteDashboardCard(
+                loggedInUserInstance.get().getId(),
+                dashboardCardInstellingConverter.convert(instelling));
+        return listDashboardCards();
     }
 }

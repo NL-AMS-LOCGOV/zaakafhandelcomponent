@@ -24,23 +24,23 @@ import {DashboardCardInstelling} from './model/dashboard-card-instelling';
 })
 export class DashboardComponent implements OnInit {
 
-    /** These are the cards that may be put in the grid on the dashboard */
+    /** all cards that may be put on the dashboard */
     private cards: Array<DashboardCard> = [
-        new DashboardCard(DashboardCardId.MIJN_DOCUMENTEN_NIEUW, DashboardCardType.ZAKEN, SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
         new DashboardCard(DashboardCardId.MIJN_TAKEN, DashboardCardType.TAAK_ZOEKEN),
         new DashboardCard(DashboardCardId.MIJN_TAKEN_NIEUW, DashboardCardType.TAKEN, SignaleringType.TAAK_OP_NAAM),
         new DashboardCard(DashboardCardId.MIJN_ZAKEN, DashboardCardType.ZAAK_ZOEKEN),
         new DashboardCard(DashboardCardId.MIJN_ZAKEN_NIEUW, DashboardCardType.ZAKEN, SignaleringType.ZAAK_OP_NAAM),
+        new DashboardCard(DashboardCardId.MIJN_DOCUMENTEN_NIEUW, DashboardCardType.ZAKEN, SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
         new DashboardCard(DashboardCardId.MIJN_ZAKEN_WAARSCHUWING, DashboardCardType.ZAAK_WAARSCHUWINGEN, SignaleringType.ZAAK_VERLOPEND)
     ];
 
     dashboardCardType = DashboardCardType;
-    width: number; // Maximum number of cards horizontally
-    showHint: boolean = false; // Show hint how to add signalerings cards
+    width: number; // maximum number of cards horizontally
+    editmode: boolean = false;
 
-    /** Based on the screen size, switch from standard to one column per row */
-    instellingen: DashboardCardInstelling[];
-    grid: Array<DashboardCard[]> = [];
+    instellingen: DashboardCardInstelling[]; // the last loaded card settings
+    available: DashboardCard[] = []; // cards that are not on the dashboard
+    grid: Array<DashboardCard[]> = []; // cards that are on the dashboard
 
     constructor(private breakpointObserver: BreakpointObserver,
                 private utilService: UtilService,
@@ -61,26 +61,26 @@ export class DashboardComponent implements OnInit {
         forkJoin([
             this.gebruikersvoorkeurenService.listDashboardCards(),
             this.signaleringenService.listDashboardSignaleringTypen()
-        ]).subscribe(([settings, signaleringenSettings]) => {
-            this.instellingen = settings;
-            this.addExistingCards(settings, signaleringenSettings);
-            this.addNewCards(signaleringenSettings);
-            this.showHint = this.grid.length === 0;
+        ]).subscribe(([dashboardInstellingen, signaleringInstellingen]) => {
+            this.instellingen = dashboardInstellingen;
+            this.addExistingCards(dashboardInstellingen, signaleringInstellingen);
+            this.addNewCards(signaleringInstellingen);
+            this.updateAvailable();
         });
     }
 
     // add configured cards (except when disabled by corresponding signaleringen settings)
-    private addExistingCards(settings, signaleringenSettings): void {
-        for (const instelling of settings) {
+    private addExistingCards(dashboardInstellingen, signaleringenInstellingen): void {
+        for (const instelling of dashboardInstellingen) {
             for (const card of this.cards) {
                 if (card.id === instelling.cardId) {
                     if (card.signaleringType == null) {
                         this.addCard(card);
                     } else {
-                        const i: number = signaleringenSettings.indexOf(card.signaleringType);
+                        const i: number = signaleringenInstellingen.indexOf(card.signaleringType);
                         if (0 <= i) {
                             this.addCard(card);
-                            signaleringenSettings.splice(i, 1); // prevent adding this one as new card
+                            signaleringenInstellingen.splice(i, 1); // prevent adding this one as a new card in the next step
                         }
                     }
                     break;
@@ -90,8 +90,8 @@ export class DashboardComponent implements OnInit {
     }
 
     // add unconfigured cards (when enabled by the corresponding signaleringen settings)
-    private addNewCards(signaleringenSettings): void {
-        for (const signaleringType of signaleringenSettings) {
+    private addNewCards(signaleringenInstellingen): void {
+        for (const signaleringType of signaleringenInstellingen) {
             for (const card of this.cards) {
                 if (card.signaleringType === signaleringType) {
                     this.addCard(card);
@@ -122,7 +122,27 @@ export class DashboardComponent implements OnInit {
         this.grid[row][column] = card;
     }
 
-    drop(event: CdkDragDrop<DashboardCard[]>) {
+    private updateAvailable(): void {
+        this.available = [];
+        for (const card of this.cards) {
+            if (this.isAvailable(card)) {
+                this.available.push(card);
+            }
+        }
+    }
+
+    private isAvailable(card: DashboardCard): boolean {
+        for (const row of this.grid) {
+            for (const cell of row) {
+                if (cell.id === card.id) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    move(event: CdkDragDrop<DashboardCard[]>) {
         const sameRow = event.previousContainer.data === event.container.data;
         const sameColumn = event.previousIndex === event.currentIndex;
         if (!sameRow || !sameColumn) {
@@ -134,6 +154,63 @@ export class DashboardComponent implements OnInit {
             this.flow();
             this.saveCards();
         }
+    }
+
+    add(card: DashboardCard): void {
+        this.addCard(card);
+        this.saveCard(card);
+        this.updateAvailable();
+    }
+
+    delete(card: DashboardCard): void {
+        for (const row of this.grid) {
+            for (let column = 0; column < row.length; column++) {
+                if (row[column].id === card.id) {
+                    row[column] = null;
+                    this.flow();
+                    this.deleteCard(card);
+                    this.updateAvailable();
+                    return;
+                }
+            }
+        }
+    }
+
+    private saveCards(): void {
+        const instellingen: DashboardCardInstelling[] = [];
+        for (const row of this.grid) {
+            for (const card of row) {
+                instellingen.push(this.getInstelling(card));
+            }
+        }
+        this.gebruikersvoorkeurenService.updateDashboardCards(instellingen).subscribe(dashboardInstellingen => {
+            this.instellingen = dashboardInstellingen;
+        });
+    }
+
+    private saveCard(card: DashboardCard): void {
+        this.gebruikersvoorkeurenService.addDashboardCard(this.getInstelling(card)).subscribe(dashboardInstellingen => {
+            this.instellingen = dashboardInstellingen;
+        });
+    }
+
+    private deleteCard(card: DashboardCard): void {
+        this.gebruikersvoorkeurenService.deleteDashboardCard(this.getInstelling(card)).subscribe(dashboardInstellingen => {
+            this.instellingen = dashboardInstellingen;
+        });
+    }
+
+    private getInstelling(card: DashboardCard): DashboardCardInstelling {
+        for (const existingInstelling of this.instellingen) {
+            if (existingInstelling.cardId === card.id) {
+                existingInstelling.signaleringType = card.signaleringType;
+                return existingInstelling;
+            }
+        }
+        const newInstelling: DashboardCardInstelling = new DashboardCardInstelling();
+        newInstelling.cardId = card.id;
+        newInstelling.signaleringType = card.signaleringType;
+        return newInstelling;
     }
 
     private flow() {
@@ -200,9 +277,5 @@ export class DashboardComponent implements OnInit {
         while (0 < this.grid.length && this.grid[this.grid.length - 1].length < 1) {
             this.grid.length--;
         }
-    }
-
-    private saveCards(): void {
-        // TODO 1697
     }
 }
