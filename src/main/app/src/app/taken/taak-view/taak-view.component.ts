@@ -196,9 +196,13 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         } else {
             this.taak.groep = event['medewerker-groep'].groep;
             this.taak.behandelaar = event['medewerker-groep'].medewerker;
+            this.websocketService.suspendListener(this.taakListener);
             this.takenService.assign(this.taak).subscribe(() => {
-
-                this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar?.naam});
+                if (this.taak.behandelaar) {
+                    this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
+                } else {
+                    this.utilService.openSnackbar('msg.vrijgegeven.taak');
+                }
                 this.init(this.taak);
             });
         }

@@ -13,4 +13,8 @@ export class DividerFormFieldBuilder extends AbstractFormFieldBuilder {
         super();
         this.formField = new DividerFormField();
     }
+
+    validate(): void {
+        // no validation needed
+    }
 }

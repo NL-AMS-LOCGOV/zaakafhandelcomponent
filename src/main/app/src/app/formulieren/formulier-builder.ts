@@ -36,6 +36,7 @@ export class FormulierBuilder {
             [new MedewerkerGroepFieldBuilder(groep).id(AbstractFormulier.TOEKENNING_FIELD)
                                                    .label('actie.taak.toewijzing')
                                                    .groepLabel('actie.taak.toekennen.groep')
+                                                   .groepRequired()
                                                    .medewerkerLabel('actie.taak.toekennen.medewerker')
                                                    .build()]);
         return this;
