@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractControl, FormControl, FormControlOptions, FormGroup} from '@angular/forms';
+import {AbstractControl, FormControl, FormControlOptions} from '@angular/forms';
 import {FieldType} from './field-type.enum';
 import {FormFieldHint} from './form-field-hint';
 
