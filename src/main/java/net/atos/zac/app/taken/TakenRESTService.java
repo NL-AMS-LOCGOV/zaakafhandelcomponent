@@ -168,9 +168,23 @@ public class TakenRESTService {
         assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
         restTaakVerdelenGegevens.taken.forEach(taak -> {
-            final Task task = assignTaak(taak.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam);
-            taakBehandelaarGewijzigd(task, taak.zaakUuid);
-            taakIds.add(taak.taakId);
+            Task task = taskService.readOpenTask(taak.taakId);
+            boolean changed = false;
+            if (restTaakVerdelenGegevens.behandelaarGebruikersnaam != null) {
+                task = assignTaak(taak.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam);
+                changed = true;
+            }
+
+            if (restTaakVerdelenGegevens.groepId != null) {
+                taskService.assignTaskToGroup(task, restTaakVerdelenGegevens.groepId);
+                changed = true;
+            }
+
+            if (changed) {
+                taakBehandelaarGewijzigd(task, taak.zaakUuid);
+                taakIds.add(taak.taakId);
+            }
+
         });
         indexeerService.indexeerDirect(taakIds, ZoekObjectType.TAAK);
     }

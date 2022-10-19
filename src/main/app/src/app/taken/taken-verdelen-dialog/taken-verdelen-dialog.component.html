@@ -11,8 +11,7 @@
 </div>
 <div mat-dialog-actions>
     <button (click)="verdeel()"
-            [disabled]="medewerkerGroepFormField.formControl.pending ||
-                        medewerkerGroepFormField.formControl.invalid || loading" color="primary"
+            [disabled]="isDisabled()" color="primary"
             id="takenVerdelen_button"
             mat-button>
         <mat-icon *ngIf="loading">
