@@ -44,6 +44,11 @@ export class ZakenVerdelenDialogComponent implements OnInit {
         this.redenFormField = new TextareaFormFieldBuilder().id('reden').label('reden').maxlength(100).build();
     }
 
+    isDisabled(): boolean {
+        return !this.medewerkerGroepFormField.medewerker.value && !this.medewerkerGroepFormField.groep.value
+            || this.medewerkerGroepFormField.formControl.invalid || this.loading;
+    }
+
     verdeel(): void {
         const toekenning: { groep?: Group, medewerker?: User } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
