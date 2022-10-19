@@ -11,7 +11,7 @@ import java.util.Set;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.FormulierVeldDefinitie;
 
-public enum HumanTaskFormulierKoppeling {
+public enum DefaultHumanTaskFormulierKoppeling {
 
     AANVULLENDE_INFORMATIE("AANVULLENDE_INFORMATIE", FormulierDefinitie.AANVULLENDE_INFORMATIE),
     GOEDKEUREN("GOEDKEUREN", FormulierDefinitie.GOEDKEUREN),
@@ -23,7 +23,7 @@ public enum HumanTaskFormulierKoppeling {
 
     private final FormulierDefinitie formulierDefinitie;
 
-    HumanTaskFormulierKoppeling(final String planItemDefinitionId, final FormulierDefinitie formulierDefinitie) {
+    DefaultHumanTaskFormulierKoppeling(final String planItemDefinitionId, final FormulierDefinitie formulierDefinitie) {
         this.planItemDefinitionId = planItemDefinitionId;
         this.formulierDefinitie = formulierDefinitie;
     }
@@ -39,8 +39,8 @@ public enum HumanTaskFormulierKoppeling {
     public static FormulierDefinitie readFormulierDefinitie(final String planItemDefinitionId) {
         return Arrays.stream(values())
                 .filter(humanTaskFormulierKoppeling -> humanTaskFormulierKoppeling.planItemDefinitionId.equals(planItemDefinitionId))
-                .map(HumanTaskFormulierKoppeling::getFormulierDefinitie)
-                .findAny().orElse(HumanTaskFormulierKoppeling.DEFAULT.getFormulierDefinitie());
+                .map(DefaultHumanTaskFormulierKoppeling::getFormulierDefinitie)
+                .findAny().orElse(DefaultHumanTaskFormulierKoppeling.DEFAULT.getFormulierDefinitie());
     }
 
     public static Set<FormulierVeldDefinitie> readFormulierVeldDefinities(final String planItemDefinitionId) {

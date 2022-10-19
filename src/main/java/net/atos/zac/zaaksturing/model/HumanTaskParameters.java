@@ -27,6 +27,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
+
 @Entity
 @Table(schema = SCHEMA, name = "humantask_parameters")
 @SequenceGenerator(schema = SCHEMA, name = "sq_humantask_parameters", sequenceName = "sq_humantask_parameters",
@@ -42,6 +44,9 @@ public class HumanTaskParameters {
     @ManyToOne
     @JoinColumn(name = "id_zaakafhandelparameters", referencedColumnName = "id_zaakafhandelparameters")
     private ZaakafhandelParameters zaakafhandelParameters;
+
+    @Column(name = "id_formulier_definition")
+    private String formulierDefinitieID;
 
     @NotBlank
     @Column(name = "id_planitem_definition", nullable = false)
@@ -71,6 +76,14 @@ public class HumanTaskParameters {
 
     public void setZaakafhandelParameters(final ZaakafhandelParameters zaakafhandelParameters) {
         this.zaakafhandelParameters = zaakafhandelParameters;
+    }
+
+    public String getFormulierDefinitieID() {
+        return formulierDefinitieID != null ? formulierDefinitieID : DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(planItemDefinitionID).name();
+    }
+
+    public void setFormulierDefinitieID(final String formulierDefinitieID) {
+        this.formulierDefinitieID = formulierDefinitieID;
     }
 
     public String getPlanItemDefinitionID() {
