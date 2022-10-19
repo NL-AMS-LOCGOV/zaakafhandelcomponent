@@ -9,12 +9,12 @@ import {ActionIcon} from '../../../edit/action-icon';
 
 export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: InputFormField;
+    readonly formField: InputFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new InputFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
     icon(icon: ActionIcon): this {
@@ -32,10 +32,4 @@ export class InputFormFieldBuilder extends AbstractFormFieldBuilder {
         this.formField.showCount = showCount;
         return this;
     }
-
-    build() {
-        super.validate();
-        return this.formField;
-    }
-
 }

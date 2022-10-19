@@ -5,7 +5,6 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {ListPersonenParameters} from '../../model/personen/list-personen-parameters';
@@ -15,6 +14,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
+import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -26,15 +26,15 @@ export class PersoonZoekComponent implements OnInit {
     @Input() betrokkeneToelichtingField: InputFormField;
     @Output() persoon = new EventEmitter<Persoon>();
     foutmelding: string;
-    bsnFormField: AbstractFormField;
-    geslachtsnaamFormField: AbstractFormField;
-    voornamenFormField: AbstractFormField;
-    voorvoegselFormField: AbstractFormField;
-    geboortedatumFormField: AbstractFormField;
-    gemeenteCodeFormField: AbstractFormField;
-    straatFormFiled: AbstractFormField;
-    postcodeFormField: AbstractFormField;
-    huisnummerFormField: AbstractFormField;
+    bsnFormField: AbstractFormControlField;
+    geslachtsnaamFormField: AbstractFormControlField;
+    voornamenFormField: AbstractFormControlField;
+    voorvoegselFormField: AbstractFormControlField;
+    geboortedatumFormField: AbstractFormControlField;
+    gemeenteCodeFormField: AbstractFormControlField;
+    straatFormFiled: AbstractFormControlField;
+    postcodeFormField: AbstractFormControlField;
+    huisnummerFormField: AbstractFormControlField;
     formGroup: FormGroup;
     personen: MatTableDataSource<Persoon> = new MatTableDataSource<Persoon>();
     persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];

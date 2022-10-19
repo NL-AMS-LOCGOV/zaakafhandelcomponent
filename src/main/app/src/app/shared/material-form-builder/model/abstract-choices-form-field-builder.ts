@@ -9,7 +9,7 @@ import {isObservable, Observable, of as observableOf} from 'rxjs';
 
 export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected abstract readonly formField: AbstractChoicesFormField;
+    abstract readonly formField: AbstractChoicesFormField;
 
     constructor() {
         super();
@@ -27,11 +27,6 @@ export abstract class AbstractChoicesFormFieldBuilder extends AbstractFormFieldB
             this.formField.options = observableOf(options);
         }
         return this;
-    }
-
-    build() {
-        super.validate();
-        return this.formField;
     }
 
 }

@@ -106,7 +106,7 @@ public class RESTTaakConverter {
         return restTaak;
     }
 
-    private String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
+    public String extractGroupId(final List<? extends IdentityLinkInfo> identityLinks) {
         return identityLinks.stream()
                 .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                 .findAny()

@@ -5,17 +5,15 @@
 
 import {AbstractChoicesFormFieldBuilder} from '../../model/abstract-choices-form-field-builder';
 import {AutocompleteFormField} from './autocomplete-form-field';
-import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
 
 export class AutocompleteFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
-    protected readonly formField: AutocompleteFormField;
+    readonly formField: AutocompleteFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new AutocompleteFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
     maxlength(maxlength: number): this {

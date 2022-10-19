@@ -8,11 +8,11 @@ import {RadioFormField} from './radio-form-field';
 
 export class RadioFormFieldBuilder extends AbstractChoicesFormFieldBuilder {
 
-    protected readonly formField: RadioFormField;
+    readonly formField: RadioFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new RadioFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 }

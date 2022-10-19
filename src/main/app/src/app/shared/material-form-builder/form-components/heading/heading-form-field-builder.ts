@@ -8,7 +8,7 @@ import {HeadingFormField} from './heading-form-field';
 
 export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: HeadingFormField;
+    readonly formField: HeadingFormField;
 
     constructor() {
         super();

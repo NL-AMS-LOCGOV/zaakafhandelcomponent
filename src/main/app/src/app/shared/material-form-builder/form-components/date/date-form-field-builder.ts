@@ -8,12 +8,12 @@ import {DateFormField} from './date-form-field';
 import {Observable} from 'rxjs';
 
 export class DateFormFieldBuilder extends AbstractFormFieldBuilder {
-    protected readonly formField: DateFormField;
+    readonly formField: DateFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new DateFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
     minDate(date: Date) {

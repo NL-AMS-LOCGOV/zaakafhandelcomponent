@@ -74,6 +74,7 @@ import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {MailService} from '../../mail/mail.service';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
 
@@ -238,17 +239,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                     .optionLabel('naam')
                                                                     .options(this.zakenService.listCommunicatiekanalen()).build());
 
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.zaak.behandelaar).id('behandelaar').label('behandelaar')
-                                                                                                      .optionLabel('naam')
-                                                                                                      .options(
-                                                                                                          this.identityService.listUsers())
-                                                                                                      .maxlength(50)
-                                                                                                      .build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder(this.zaak.groep).id('groep').label('groep')
-                                                                                          .optionLabel('naam')
-                                                                                          .options(this.identityService.listGroups())
-                                                                                          .maxlength(50)
-                                                                                          .build());
+        this.editFormFields.set('medewerker-groep',
+            new MedewerkerGroepFieldBuilder(this.zaak.groep, this.zaak.behandelaar).id('medewerker-groep')
+                                                                                   .groepLabel('groep.-kies-')
+                                                                                   .groepRequired()
+                                                                                   .medewerkerLabel('behandelaar.-kies-')
+                                                                                   .build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
                                                                                                     .maxlength(80)
                                                                                                     .build());
@@ -594,8 +590,26 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    editGroep(event: any): void {
-        this.zaak.groep = event.groep;
+    editToewijzing(event: any): void {
+        if (this.zaak.groep !== event['medewerker-groep'].groep && this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
+            this.zaak.groep = event['medewerker-groep'].groep;
+            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
+
+            this.websocketService.doubleSuspendListener(this.zaakRollenListener);
+            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+                this.init(zaak);
+            });
+
+        } else if (this.zaak.groep !== event['medewerker-groep'].groep) {
+            this.editGroep(event);
+        } else if (this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
+            this.editBehandelaar(event);
+        }
+    }
+
+    private editGroep(event: any): void {
+        this.zaak.groep = event['medewerker-groep'].groep;
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
@@ -603,11 +617,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    editBehandelaar(event: any): void {
-        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+    private editBehandelaar(event: any): void {
+        if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id) {
             this.assignZaakToMe(event);
-        } else if (event.behandelaar) {
-            this.zaak.behandelaar = event.behandelaar;
+        } else if (event['medewerker-groep'].medewerker) {
+            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
@@ -621,7 +635,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.vrijgeven([this.zaak.uuid], reden).subscribe(() => {
+        this.zakenService.vrijgeven(this.zaak.uuid, reden).subscribe(() => {
             this.init(this.zaak);
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
         });

@@ -10,6 +10,7 @@ import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-
 import {HumanTaskData} from '../plan-items/model/human-task-data';
 import {DividerFormFieldBuilder} from '../shared/material-form-builder/form-components/divider/divider-form-field-builder';
 import {TaakStatus} from '../taken/model/taak-status.enum';
+import {Group} from '../identity/model/group';
 
 export class FormulierBuilder {
 
@@ -26,14 +27,19 @@ export class FormulierBuilder {
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
         this._formulier.initStartForm();
+        let groep = null;
+        if (planItem.groepId) {
+            groep = new Group();
+            groep.id = planItem.groepId;
+        }
         this._formulier.form.push(
             [new DividerFormFieldBuilder().build()],
-            [new MedewerkerGroepFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
-                                              .label('actie.taak.toewijzing')
-                                              .groepLabel('actie.taak.toekennen.groep')
-                                              .medewerkerLabel('actie.taak.toekennen.medewerker')
-                                              .defaultGroep(planItem.groepId)
-                                              .build()]);
+            [new MedewerkerGroepFieldBuilder(groep).id(AbstractFormulier.TOEKENNING_FIELD)
+                                                   .label('actie.taak.toewijzing')
+                                                   .groepLabel('actie.taak.toekennen.groep')
+                                                   .groepRequired()
+                                                   .medewerkerLabel('actie.taak.toekennen.medewerker')
+                                                   .build()]);
         return this;
     }
 

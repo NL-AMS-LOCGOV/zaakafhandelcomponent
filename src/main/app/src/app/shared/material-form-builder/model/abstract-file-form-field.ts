@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormField} from './abstract-form-field';
 import {AppGlobals} from '../../../app.globals';
 import {Observable, Subject} from 'rxjs';
+import {AbstractFormControlField} from './abstract-form-control-field';
 
-export abstract class AbstractFileFormField extends AbstractFormField {
+export abstract class AbstractFileFormField extends AbstractFormControlField {
 
     fileTypes: string = AppGlobals.ALLOWED_FILETYPES;
     fileSizeMB: number = AppGlobals.FILE_MAX_SIZE;

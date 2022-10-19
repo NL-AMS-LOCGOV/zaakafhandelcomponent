@@ -86,14 +86,12 @@
                                                      [readonly]="!zaak.rechten.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-select>
-                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
-                                                    [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
-                                                    (onSave)="editGroep($event)"></zac-edit-groep>
-                                    <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
-                                                          [reasonField]="editFormFields.get('reden')"
-                                                          [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
-                                                          (onSave)="editBehandelaar($event)"></zac-edit-behandelaar>
+                                    <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
+                                                                [reasonField]="editFormFields.get('reden')"
+                                                                [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
+                                                                (onSave)="editToewijzing($event)">
+                                    </zac-edit-groep-behandelaar>
+
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>

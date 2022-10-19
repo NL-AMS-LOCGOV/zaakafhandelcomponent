@@ -10,7 +10,7 @@ import {first, Observable} from 'rxjs';
 
 export abstract class AbstractFormFieldBuilder {
 
-    protected abstract readonly formField: AbstractFormField;
+    abstract readonly formField: AbstractFormField;
 
     protected constructor() {
     }
@@ -51,7 +51,7 @@ export abstract class AbstractFormFieldBuilder {
         return this;
     }
 
-    build() {
+    build(): this['formField'] {
         this.validate();
         return this.formField;
     }

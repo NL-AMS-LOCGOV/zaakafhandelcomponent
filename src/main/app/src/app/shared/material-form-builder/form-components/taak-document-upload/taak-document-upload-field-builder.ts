@@ -7,12 +7,12 @@ import {TaakDocumentUploadFormField} from './taak-document-upload-form-field';
 import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field-builder';
 
 export class TaakDocumentUploadFieldBuilder extends AbstractFileFormFieldBuilder {
-    protected readonly formField: TaakDocumentUploadFormField;
+    readonly formField: TaakDocumentUploadFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new TaakDocumentUploadFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
         this.updateHint();
     }
 

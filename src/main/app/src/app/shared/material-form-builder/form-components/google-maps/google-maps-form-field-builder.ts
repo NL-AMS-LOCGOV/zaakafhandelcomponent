@@ -7,11 +7,11 @@ import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder'
 import {GoogleMapsFormField} from './google-maps-form-field';
 
 export class GoogleMapsFormFieldBuilder extends AbstractFormFieldBuilder {
-    protected readonly formField: GoogleMapsFormField;
+    readonly formField: GoogleMapsFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new GoogleMapsFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 }
