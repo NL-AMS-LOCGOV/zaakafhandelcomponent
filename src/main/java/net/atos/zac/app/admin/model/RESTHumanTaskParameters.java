@@ -10,6 +10,8 @@ import java.util.List;
 
 public class RESTHumanTaskParameters {
 
+    public boolean actief;
+
     public Long id;
 
     public RESTPlanItemDefinition planItemDefinition;
