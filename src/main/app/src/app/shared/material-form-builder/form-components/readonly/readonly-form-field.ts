@@ -4,9 +4,9 @@
  */
 
 import {FieldType} from '../../model/field-type.enum';
-import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class ReadonlyFormField extends AbstractFormControlFormField {
+export class ReadonlyFormField extends AbstractFormControlField {
     fieldType = FieldType.READONLY;
 
     constructor() {

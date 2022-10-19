@@ -14,7 +14,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
-import {AbstractFormControlFormField} from '../../../shared/material-form-builder/model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -26,15 +26,15 @@ export class PersoonZoekComponent implements OnInit {
     @Input() betrokkeneToelichtingField: InputFormField;
     @Output() persoon = new EventEmitter<Persoon>();
     foutmelding: string;
-    bsnFormField: AbstractFormControlFormField;
-    geslachtsnaamFormField: AbstractFormControlFormField;
-    voornamenFormField: AbstractFormControlFormField;
-    voorvoegselFormField: AbstractFormControlFormField;
-    geboortedatumFormField: AbstractFormControlFormField;
-    gemeenteCodeFormField: AbstractFormControlFormField;
-    straatFormFiled: AbstractFormControlFormField;
-    postcodeFormField: AbstractFormControlFormField;
-    huisnummerFormField: AbstractFormControlFormField;
+    bsnFormField: AbstractFormControlField;
+    geslachtsnaamFormField: AbstractFormControlField;
+    voornamenFormField: AbstractFormControlField;
+    voorvoegselFormField: AbstractFormControlField;
+    geboortedatumFormField: AbstractFormControlField;
+    gemeenteCodeFormField: AbstractFormControlField;
+    straatFormFiled: AbstractFormControlField;
+    postcodeFormField: AbstractFormControlField;
+    huisnummerFormField: AbstractFormControlField;
     formGroup: FormGroup;
     personen: MatTableDataSource<Persoon> = new MatTableDataSource<Persoon>();
     persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];

@@ -1,7 +1,7 @@
 import {FieldType} from '../../model/field-type.enum';
-import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class HiddenFormField extends AbstractFormControlFormField {
+export class HiddenFormField extends AbstractFormControlField {
     fieldType: FieldType = FieldType.HIDDEN;
 
     constructor() {super();}

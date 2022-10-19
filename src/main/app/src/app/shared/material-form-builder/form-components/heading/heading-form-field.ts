@@ -4,10 +4,9 @@
  */
 
 import {FieldType} from '../../model/field-type.enum';
-import {AbstractFormField} from '../../model/abstract-form-field';
-import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class HeadingFormField extends AbstractFormControlFormField {
+export class HeadingFormField extends AbstractFormControlField {
     fieldType = FieldType.HEADING;
 
     level: string;

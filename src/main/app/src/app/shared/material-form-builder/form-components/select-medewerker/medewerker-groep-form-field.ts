@@ -7,9 +7,9 @@ import {FieldType} from '../../model/field-type.enum';
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
 import {FormControl} from '@angular/forms';
-import {AbstractFormGroupFormField} from '../../model/abstract-form-group-form-field';
+import {AbstractFormGroupField} from '../../model/abstract-form-group-field';
 
-export class MedewerkerGroepFormField extends AbstractFormGroupFormField {
+export class MedewerkerGroepFormField extends AbstractFormGroupField {
 
     fieldType = FieldType.MEDEWERKER_GROEP;
     groepLabel: string;

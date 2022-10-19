@@ -6,7 +6,7 @@
 import {FormControl} from '@angular/forms';
 import {AbstractFormField} from './abstract-form-field';
 
-export abstract class AbstractFormControlFormField extends AbstractFormField {
+export abstract class AbstractFormControlField extends AbstractFormField {
 
     formControl: FormControl;
 

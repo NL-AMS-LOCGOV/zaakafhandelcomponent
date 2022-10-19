@@ -5,13 +5,13 @@
 
 import {Observable, tap} from 'rxjs';
 import {EventEmitter} from '@angular/core';
-import {AbstractFormControlFormField} from './abstract-form-control-form-field';
+import {AbstractFormControlField} from './abstract-form-control-field';
 
 /**
  * Abstract class voor Form Fields die meerdere waardes tonen (checkbox, radiobutton, select)
  * Deze componenten hebben een compare methode nodig om te bepalen welke value geselecteerd moet worden in de lijst.
  */
-export abstract class AbstractChoicesFormField extends AbstractFormControlFormField {
+export abstract class AbstractChoicesFormField extends AbstractFormControlField {
 
     optionsChanged$ = new EventEmitter<void>();
     private options$: Observable<any[]>;

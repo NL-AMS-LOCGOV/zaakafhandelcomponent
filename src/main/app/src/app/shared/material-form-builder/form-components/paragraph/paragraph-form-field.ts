@@ -4,9 +4,9 @@
  */
 
 import {FieldType} from '../../model/field-type.enum';
-import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class ParagraphFormField extends AbstractFormControlFormField {
+export class ParagraphFormField extends AbstractFormControlField {
     fieldType = FieldType.PARAGRAPH;
 
     constructor() {

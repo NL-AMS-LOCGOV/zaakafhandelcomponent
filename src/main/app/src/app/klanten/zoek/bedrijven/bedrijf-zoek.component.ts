@@ -15,7 +15,7 @@ import {KlantenService} from '../../klanten.service';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 import {Subscription} from 'rxjs';
-import {AbstractFormControlFormField} from '../../../shared/material-form-builder/model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -34,14 +34,14 @@ export class BedrijfZoekComponent implements OnInit, OnDestroy {
 
     types = ['HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
 
-    kvkFormField: AbstractFormControlFormField;
-    vestigingsnummerFormField: AbstractFormControlFormField;
-    rsinFormField: AbstractFormControlFormField;
-    handelsnaamFormField: AbstractFormControlFormField;
-    typeFormField: AbstractFormControlFormField;
-    postcodeFormField: AbstractFormControlFormField;
-    huisnummerFormField: AbstractFormControlFormField;
-    plaatsFormField: AbstractFormControlFormField;
+    kvkFormField: AbstractFormControlField;
+    vestigingsnummerFormField: AbstractFormControlField;
+    rsinFormField: AbstractFormControlField;
+    handelsnaamFormField: AbstractFormControlField;
+    typeFormField: AbstractFormControlField;
+    postcodeFormField: AbstractFormControlField;
+    huisnummerFormField: AbstractFormControlField;
+    plaatsFormField: AbstractFormControlField;
 
     subscriptions: Subscription[] = [];
 

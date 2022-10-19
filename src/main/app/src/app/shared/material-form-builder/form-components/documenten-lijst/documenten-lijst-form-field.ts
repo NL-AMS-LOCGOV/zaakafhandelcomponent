@@ -7,9 +7,9 @@ import {FieldType} from '../../model/field-type.enum';
 import {Observable} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {EventEmitter} from '@angular/core';
-import {AbstractFormControlFormField} from '../../model/abstract-form-control-form-field';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class DocumentenLijstFormField extends AbstractFormControlFormField {
+export class DocumentenLijstFormField extends AbstractFormControlField {
 
     fieldType = FieldType.DOCUMENTEN_LIJST;
     documenten$: Observable<EnkelvoudigInformatieobject[]>;
