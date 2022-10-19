@@ -5,14 +5,14 @@
 
 package net.atos.zac.app.planitems.model;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
-/**
- *
- */
 public class RESTPlanItem {
 
     public String id;
@@ -24,6 +24,8 @@ public class RESTPlanItem {
     public RESTGroup groep;
 
     public FormulierDefinitie formulierDefinitie;
+
+    public Map<String, List<String>> tabellen = new HashMap<>();
 
     public UUID zaakUuid;
 

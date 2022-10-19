@@ -28,6 +28,7 @@ export abstract class AbstractFormulier {
     taakNaam: string;
     humanTaskData: HumanTaskData;
     taak: Taak;
+    tabellen: { [key: string]: string[] };
     abstract taakinformatieMapping: { uitkomst: string, bijlagen?: string, opmerking?: string };
     dataElementen: {};
     readonly: boolean;

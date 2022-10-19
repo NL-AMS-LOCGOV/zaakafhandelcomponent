@@ -54,13 +54,25 @@ export class GebruikersvoorkeurenService {
     }
 
     listDashboardCards(): Observable<DashboardCardInstelling[]> {
-        return this.http.get<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard`).pipe(
+        return this.http.get<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard/actief`).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    updateDashboardCards(cards: DashboardCardInstelling[]): Observable<void> {
-        return this.http.put<void>(`${this.basepath}/dasboardcard`, cards).pipe(
+    updateDashboardCards(cards: DashboardCardInstelling[]): Observable<DashboardCardInstelling[]> {
+        return this.http.put<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard/actief`, cards).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    addDashboardCard(card: DashboardCardInstelling): Observable<DashboardCardInstelling[]> {
+        return this.http.put<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard`, card).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    deleteDashboardCard(card: DashboardCardInstelling): Observable<DashboardCardInstelling[]> {
+        return this.http.delete<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard`, {body: card}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

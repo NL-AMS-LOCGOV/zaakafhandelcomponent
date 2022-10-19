@@ -21,6 +21,7 @@ export class FormulierBuilder {
     }
 
     startForm(planItem: PlanItem): FormulierBuilder {
+        this._formulier.tabellen = planItem.tabellen;
         this._formulier.zaakUuid = planItem.zaakUuid;
         this._formulier.taakNaam = planItem.naam;
         this._formulier.humanTaskData = new HumanTaskData();
@@ -45,6 +46,7 @@ export class FormulierBuilder {
     behandelForm(taak: Taak): FormulierBuilder {
         this._formulier.zaakUuid = taak.zaakUuid;
         this._formulier.taak = taak;
+        this._formulier.tabellen = taak.tabellen;
         this._formulier.dataElementen = taak.taakdata;
         this._formulier.initBehandelForm(taak.status === TaakStatus.Afgerond || !taak.rechten.wijzigenFormulier);
         return this;

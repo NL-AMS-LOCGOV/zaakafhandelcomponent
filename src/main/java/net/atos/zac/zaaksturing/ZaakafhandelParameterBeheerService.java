@@ -183,6 +183,7 @@ public class ZaakafhandelParameterBeheerService {
             nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
             nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
             nieuweHumanTaskParameters.setReferentieTabellen(humanTaskParameters.getReferentieTabellen());
+            nieuweHumanTaskParameters.setFormulierDefinitieID(humanTaskParameters.getFormulierDefinitieID());
             humanTaskParametersCollection.add(nieuweHumanTaskParameters);
         });
         nieuweZaakafhandelParameters.setHumanTaskParametersCollection(humanTaskParametersCollection);

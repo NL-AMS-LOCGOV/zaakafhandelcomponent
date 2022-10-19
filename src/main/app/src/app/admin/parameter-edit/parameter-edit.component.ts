@@ -8,7 +8,7 @@ import {UtilService} from '../../core/service/util.service';
 import {ActivatedRoute} from '@angular/router';
 import {ZaakafhandelParameters} from '../model/zaakafhandel-parameters';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {forkJoin} from 'rxjs';
 import {CaseDefinition} from '../model/case-definition';
 import {ZaakafhandelParametersService} from '../zaakafhandel-parameters.service';
 import {Group} from '../../identity/model/group';
@@ -29,6 +29,9 @@ import {Resultaattype} from '../../zaken/model/resultaattype';
 import {ZaakStatusmailOptie} from '../../zaken/model/zaak-statusmail-optie';
 import {ReferentieTabel} from '../model/referentie-tabel';
 import {ReferentieTabelService} from '../referentie-tabel.service';
+import {FormulierDefinitie} from '../model/formulier-definitie';
+import {HumanTaskReferentieTabel} from '../model/human-task-referentie-tabel';
+import {FormulierVeldDefinitie} from '../model/formulier-veld-definitie';
 
 @Component({
     templateUrl: './parameter-edit.component.html',
@@ -46,8 +49,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     selection = new SelectionModel<ZaakbeeindigParameter>(true);
 
     algemeenFormGroup: FormGroup;
-    humanTaskFormGroup: FormGroup;
-    UserEventListenerFormGroup: FormGroup;
+    humanTasksFormGroup: FormGroup;
+    userEventListenersFormGroup: FormGroup;
     zaakbeeindigFormGroup: FormGroup;
 
     caseDefinitionControl = new FormControl(null, [Validators.required]);
@@ -60,11 +63,12 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     productaanvraagtypeControl = new FormControl();
     mailOpties: { label: string, value: string }[];
 
-    caseDefinitions: Observable<CaseDefinition[]>;
-    groepen: Observable<Group[]>;
-    medewerkers: Observable<User[]>;
-    resultaattypes: Observable<Resultaattype[]>;
-    referentieTabellen: Observable<ReferentieTabel[]>;
+    caseDefinitions: CaseDefinition[];
+    groepen: Group[];
+    medewerkers: User[];
+    resultaattypes: Resultaattype[];
+    referentieTabellen: ReferentieTabel[];
+    formulierDefinities: FormulierDefinitie[];
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService) {
@@ -81,67 +85,59 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.intakeMailControl.setValue(this.parameters.intakeMail);
             this.afrondenMailControl.setValue(this.parameters.afrondenMail);
             this.productaanvraagtypeControl.setValue(this.parameters.productaanvraagtype);
-            this.resultaattypes = adminService.listResultaattypes(this.parameters.zaaktype.uuid);
-
+            adminService.listResultaattypes(this.parameters.zaaktype.uuid).subscribe(resultaattypes => this.resultaattypes = resultaattypes);
         });
-        this.caseDefinitions = adminService.listCaseDefinitions();
-        this.groepen = identityService.listGroups();
-        this.medewerkers = identityService.listUsers();
-        this.referentieTabellen = referentieTabelService.listReferentieTabellen();
+        identityService.listGroups().subscribe(groepen => this.groepen = groepen);
+        identityService.listUsers().subscribe(medewerkers => this.medewerkers = medewerkers);
+        forkJoin([
+            this.adminService.listCaseDefinitions(),
+            this.adminService.listFormulierDefinities(),
+            this.referentieTabelService.listReferentieTabellen()
+        ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen]) => {
+            this.caseDefinitions = caseDefinitions;
+            this.formulierDefinities = formulierDefinities;
+            this.referentieTabellen = referentieTabellen;
+            this.createForm();
+        });
     }
 
     ngOnInit(): void {
         this.mailOpties = this.utilService.getEnumAsSelectList('statusmail.optie', ZaakStatusmailOptie);
         this.setupMenu('title.parameters.wijzigen');
-        this.createForm();
     }
 
-    readPlanItemDefinitions(event: MatSelectChange): void {
-        this.readHumanTaskParameters(event);
-        this.readUserEventListenerParameters(event);
+    caseDefinitionChanged(event: MatSelectChange): void {
+        this.readHumanTaskParameters(event.value);
+        this.readUserEventListenerParameters(event.value);
     }
 
-    private readHumanTaskParameters(event: MatSelectChange): void {
+    private readHumanTaskParameters(caseDefinition: CaseDefinition): void {
         this.humanTaskParameters = [];
-        const changedCaseDefinition = event.value;
-        if (this.compareObject(changedCaseDefinition, this.parameters.caseDefinition)) {
-            this.humanTaskParameters = this.parameters.humanTaskParameters;
-            this.updateHumanTaskForm();
-        } else {
-            this.adminService.readCaseDefinition(changedCaseDefinition.key).subscribe(caseDefinition => {
-                caseDefinition.humanTaskDefinitions.forEach(humanTaskDefinition => {
-                    const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
-                    humanTaskParameter.planItemDefinition = humanTaskDefinition;
-                    humanTaskParameter.defaultGroepId = this.parameters.defaultGroepId;
-                    humanTaskParameter.referentieTabellen = humanTaskDefinition.referentieTabellen;
-                    this.humanTaskParameters.push(humanTaskParameter);
-                });
-                this.updateHumanTaskForm();
-            });
-        }
+        this.caseDefinitions.find(cd => cd.key === caseDefinition.key).humanTaskDefinitions.forEach(humanTaskDefinition => {
+            const humanTaskParameter: HumanTaskParameter = new HumanTaskParameter();
+            humanTaskParameter.planItemDefinition = humanTaskDefinition;
+            humanTaskParameter.defaultGroepId = this.parameters.defaultGroepId;
+            humanTaskParameter.formulierDefinitieId = humanTaskDefinition.defaultFormulierDefinitie;
+            humanTaskParameter.referentieTabellen = [];
+            this.humanTaskParameters.push(humanTaskParameter);
+        });
+        this.createHumanTasksForm();
     }
 
-    private readUserEventListenerParameters(event: MatSelectChange): void {
+    private readUserEventListenerParameters(caseDefinition: CaseDefinition): void {
         this.userEventListenerParameters = [];
-        const changedCaseDefinition = event.value;
-        if (this.compareObject(changedCaseDefinition, this.parameters.caseDefinition)) {
-            this.userEventListenerParameters = this.parameters.userEventListenerParameters;
-            this.updateUserEventListenerForm();
-        } else {
-            this.adminService.readCaseDefinition(changedCaseDefinition.key).subscribe(caseDefinition => {
-                caseDefinition.userEventListenerDefinitions.forEach(userEventListenerDefinition => {
-                    const userEventListenerParameter: UserEventListenerParameter = new UserEventListenerParameter();
-                    userEventListenerParameter.id = userEventListenerDefinition.id;
-                    userEventListenerParameter.naam = userEventListenerDefinition.naam;
-                    this.userEventListenerParameters.push(userEventListenerParameter);
-                });
-                this.updateUserEventListenerForm();
-            });
-        }
+        this.caseDefinitions.find(cd => cd.key === caseDefinition.key).userEventListenerDefinitions.forEach(userEventListenerDefinition => {
+            const userEventListenerParameter: UserEventListenerParameter = new UserEventListenerParameter();
+            userEventListenerParameter.id = userEventListenerDefinition.id;
+            userEventListenerParameter.naam = userEventListenerDefinition.naam;
+            this.userEventListenerParameters.push(userEventListenerParameter);
+        });
+        this.createUserEventListenerForm();
     }
 
     getHumanTaskControl(parameter: HumanTaskParameter, field: string): FormControl {
-        return this.humanTaskFormGroup.get(`${parameter.planItemDefinition.id}__${field}`) as FormControl;
+        const formGroup: FormGroup = this.humanTasksFormGroup.get(parameter.planItemDefinition.id) as FormGroup;
+        return formGroup.get(field) as FormControl;
     }
 
     createForm() {
@@ -155,8 +151,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             afrondenMailControl: this.afrondenMailControl,
             productaanvraagtypeControl: this.productaanvraagtypeControl
         });
-        this.updateHumanTaskForm();
-        this.updateUserEventListenerForm();
+        this.createHumanTasksForm();
+        this.createUserEventListenerForm();
         this.createZaakbeeindigForm();
     }
 
@@ -165,36 +161,52 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             !this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid) {
             return false;
         }
-        for (const tabel of humanTaskParameter.referentieTabellen) {
-            if (!this.getHumanTaskControl(humanTaskParameter, 'referentieTabel' + tabel.veld).valid) {
-                return false;
+        if (humanTaskParameter.formulierDefinitieId) {
+            for (const veld of this.getVeldDefinities(humanTaskParameter.formulierDefinitieId)) {
+                if (!this.getHumanTaskControl(humanTaskParameter, 'referentieTabel' + veld.naam).valid) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     getActieControl(parameter: UserEventListenerParameter, field: string): FormControl {
-        return this.UserEventListenerFormGroup.get(`${parameter.id}__${field}`) as FormControl;
+        return this.userEventListenersFormGroup.get(parameter.id).get(field) as FormControl;
     }
 
-    private updateHumanTaskForm() {
-        this.humanTaskFormGroup = this.formBuilder.group({});
+    private createHumanTasksForm() {
+        this.humanTasksFormGroup = this.formBuilder.group({});
         this.humanTaskParameters.forEach(parameter => {
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__defaultGroep',
-                new FormControl(parameter.defaultGroepId));
-            this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__doorlooptijd',
-                new FormControl(parameter.doorlooptijd, [Validators.min(0)]));
-            for (const item of parameter.referentieTabellen) {
-                this.humanTaskFormGroup.addControl(parameter.planItemDefinition.id + '__referentieTabel' + item.veld,
-                    new FormControl(item.tabel, [Validators.required]));
-            }
+            this.humanTasksFormGroup.addControl(parameter.planItemDefinition.id, this.getHumanTaskFormGroup(parameter));
         });
     }
 
-    private updateUserEventListenerForm() {
-        this.UserEventListenerFormGroup = this.formBuilder.group({});
+    private getHumanTaskFormGroup(humanTaskParameters: HumanTaskParameter): FormGroup {
+        const humanTaskFormGroup = this.formBuilder.group({});
+        humanTaskFormGroup.addControl('formulierDefinitie', new FormControl(humanTaskParameters.formulierDefinitieId, [Validators.required]));
+        humanTaskFormGroup.addControl('defaultGroep', new FormControl(humanTaskParameters.defaultGroepId));
+        humanTaskFormGroup.addControl('doorlooptijd', new FormControl(humanTaskParameters.doorlooptijd, [Validators.min(0)]));
+        if (humanTaskParameters.formulierDefinitieId) {
+            for (const veld of this.getVeldDefinities(humanTaskParameters.formulierDefinitieId)) {
+                humanTaskFormGroup.addControl('referentieTabel' + veld.naam,
+                    new FormControl(this.getReferentieTabel(humanTaskParameters, veld), [Validators.required]));
+            }
+        }
+        return humanTaskFormGroup;
+    }
+
+    private getReferentieTabel(humanTaskParameters: HumanTaskParameter, veld: FormulierVeldDefinitie): ReferentieTabel {
+        const humanTaskReferentieTabel: HumanTaskReferentieTabel = humanTaskParameters.referentieTabellen.find(r => r.veld = veld.naam);
+        return humanTaskReferentieTabel != null ? humanTaskReferentieTabel.tabel : this.referentieTabellen.find(r => r.code = veld.naam);
+    }
+
+    private createUserEventListenerForm() {
+        this.userEventListenersFormGroup = this.formBuilder.group({});
         this.userEventListenerParameters.forEach(parameter => {
-            this.UserEventListenerFormGroup.addControl(parameter.id + '__toelichting', new FormControl(parameter.toelichting));
+            const formGroup = this.formBuilder.group({});
+            formGroup.addControl('toelichting', new FormControl(parameter.toelichting));
+            this.userEventListenersFormGroup.addControl(parameter.id, formGroup);
         });
     }
 
@@ -272,7 +284,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
 
     isValid(): boolean {
         return this.algemeenFormGroup.valid &&
-            this.humanTaskFormGroup.valid &&
+            this.humanTasksFormGroup.valid &&
             this.zaakbeeindigFormGroup.valid;
     }
 
@@ -287,11 +299,18 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         this.parameters.productaanvraagtype = this.productaanvraagtypeControl.value;
 
         this.humanTaskParameters.forEach(param => {
+            param.formulierDefinitieId = this.getHumanTaskControl(param, 'formulierDefinitie').value;
             param.defaultGroepId = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
-            for (const tabel of param.referentieTabellen) {
+            const old = this.parameters.humanTaskParameters.find(htp => htp.planItemDefinition.id === param.planItemDefinition.id).referentieTabellen;
+            param.referentieTabellen = [];
+            this.getVeldDefinities(param.formulierDefinitieId).forEach(value => {
+                const oldHumanTaskReferentieTabel: HumanTaskReferentieTabel = old.find(o => o.veld === value.naam);
+                const tabel = oldHumanTaskReferentieTabel != null ? oldHumanTaskReferentieTabel : new HumanTaskReferentieTabel();
+                tabel.veld = value.naam;
                 tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
-            }
+                param.referentieTabellen.push(tabel);
+            });
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;
 
@@ -310,8 +329,9 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             }
         });
 
-        this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(() => {
+        this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(data => {
             this.utilService.openSnackbar('msg.zaakafhandelparameters.opgeslagen');
+            this.parameters = data;
         });
     }
 
@@ -332,5 +352,14 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             return object1 === object2;
         }
         return false;
+    }
+
+    formulierDefinitieChanged($event: MatSelectChange, humanTaskParameter: HumanTaskParameter): void {
+        humanTaskParameter.formulierDefinitieId = $event.value;
+        this.humanTasksFormGroup.setControl(humanTaskParameter.planItemDefinition.id, this.getHumanTaskFormGroup(humanTaskParameter));
+    }
+
+    getVeldDefinities(formulierDefinitieId: string): FormulierVeldDefinitie[] {
+        return this.formulierDefinities.find(f => f.id === formulierDefinitieId).veldDefinities;
     }
 }

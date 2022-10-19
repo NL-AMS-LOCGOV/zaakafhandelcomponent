@@ -7,6 +7,7 @@ package net.atos.zac.app.taken.model;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,7 +15,6 @@ import java.util.UUID;
 import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.app.identity.model.RESTUser;
 import net.atos.zac.app.policy.model.RESTTaakRechten;
-import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 /**
  *
@@ -46,7 +46,9 @@ public class RESTTaak {
 
     public TaakStatus status;
 
-    public FormulierDefinitie formulierDefinitie;
+    public String formulierDefinitie;
+
+    public Map<String, List<String>> tabellen = new HashMap<>();
 
     public Map<String, String> taakdata;
 
