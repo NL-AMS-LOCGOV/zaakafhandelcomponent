@@ -14,6 +14,7 @@ public enum FormulierDefinitie {
     AANVULLENDE_INFORMATIE,
     ADVIES(FormulierVeldDefinitie.ADVIES),
     EXTERN_ADVIES_VASTLEGGEN,
+    EXTERN_ADVIES_MAIL,
     GOEDKEUREN;
 
     private final Set<FormulierVeldDefinitie> veldDefinities;

@@ -180,6 +180,8 @@ public class ZaakafhandelParameterBeheerService {
         vorigeZaakafhandelparameters.getHumanTaskParametersCollection().forEach(humanTaskParameters -> {
             final HumanTaskParameters nieuweHumanTaskParameters = new HumanTaskParameters();
             nieuweHumanTaskParameters.setDoorlooptijd(humanTaskParameters.getDoorlooptijd());
+            nieuweHumanTaskParameters.setActief(humanTaskParameters.isActief());
+            nieuweHumanTaskParameters.setFormulierDefinitieID(humanTaskParameters.getFormulierDefinitieID());
             nieuweHumanTaskParameters.setPlanItemDefinitionID(humanTaskParameters.getPlanItemDefinitionID());
             nieuweHumanTaskParameters.setGroepID(humanTaskParameters.getGroepID());
             nieuweHumanTaskParameters.setReferentieTabellen(humanTaskParameters.getReferentieTabellen());

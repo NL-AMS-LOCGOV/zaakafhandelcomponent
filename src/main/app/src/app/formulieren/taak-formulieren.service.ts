@@ -15,6 +15,7 @@ import {Goedkeuren} from './model/goedkeuren';
 import {ExternAdviesVastleggen} from './model/extern-advies-vastleggen';
 import {ZakenService} from '../zaken/zaken.service';
 import {ZaakafhandelParametersService} from '../admin/zaakafhandel-parameters.service';
+import {ExternAdviesMail} from './model/extern-advies-mail';
 
 @Injectable({
     providedIn: 'root'
@@ -38,6 +39,9 @@ export class TaakFormulierenService {
             case ExternAdviesVastleggen.formulierDefinitie:
                 return new FormulierBuilder(
                     new ExternAdviesVastleggen(this.translate, this.takenService, this.informatieObjectenService));
+            case ExternAdviesMail.formulierDefinitie:
+                return new FormulierBuilder(
+                    new ExternAdviesMail(this.translate, this.takenService, this.informatieObjectenService));
             case Goedkeuren.formulierDefinitie:
                 return new FormulierBuilder(
                     new Goedkeuren(this.translate, this.takenService, this.informatieObjectenService));
