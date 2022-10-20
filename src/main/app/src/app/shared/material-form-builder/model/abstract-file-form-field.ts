@@ -20,6 +20,26 @@ export abstract class AbstractFileFormField extends AbstractFormControlField {
         super();
     }
 
+    isBestandstypeToegestaan(file: File): boolean {
+        const extensies = this.fileTypes.split(/\s*,\s*/).map(s => s.trim().toLowerCase());
+        return extensies.indexOf(this.getBestandsextensie(file)) > -1;
+    }
+
+    isBestandsgrootteToegestaan(file: File): boolean {
+        return file.size <= this.fileSizeMB * 1024 * 1024;
+    }
+
+    getBestandsextensie(file: File) {
+        if (file.name.indexOf('.') < 1) {
+            return '-';
+        }
+        return '.' + file.name.split('.').pop().toLowerCase();
+    }
+
+    getBestandsgrootteMB(file: File): string {
+        return parseFloat(String(file.size / 1024 / 1024)).toFixed(2);
+    }
+
     get fileUploaded(): Observable<string> {
         return this.fileUploaded$.asObservable();
     }

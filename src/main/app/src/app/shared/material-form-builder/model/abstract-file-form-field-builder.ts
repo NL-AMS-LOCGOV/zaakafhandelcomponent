@@ -41,7 +41,7 @@ export abstract class AbstractFileFormFieldBuilder extends AbstractFormFieldBuil
 
     protected updateHint() {
         this.formField.hint = new FormFieldHint(
-            'Maximale bestandsgrootte: ' + this.formField.fileSizeMB + 'MB | toegestane bestandstypen: ' + this.formField.fileTypes, 'end');
+            'Maximale bestandsgrootte: ' + this.formField.fileSizeMB + 'MB | Toegestane bestandstypen: ' + this.formField.fileTypes, 'end');
     }
 
 }
