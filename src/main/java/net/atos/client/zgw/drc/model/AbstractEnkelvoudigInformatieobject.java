@@ -329,6 +329,9 @@ public abstract class AbstractEnkelvoudigInformatieobject {
     }
 
     public Ondertekening getOndertekening() {
+        if (ondertekening != null && ondertekening.getDatum() == null && ondertekening.getSoort() == null) {
+            return null;
+        }
         return ondertekening;
     }
 
