@@ -225,6 +225,10 @@ export class ZaakCreateComponent implements OnInit {
                 zaaktype.zaakafhandelparameters.defaultGroepId, zaaktype.zaakafhandelparameters.defaultBehandelaarId);
             const index = this.createZaakFields.findIndex(formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
             this.createZaakFields[index] = [this.medewerkerGroepFormField];
+
+            // update reference of the array to apply changes
+            this.createZaakFields = Object.assign([], this.createZaakFields);
+
             this.vertrouwelijkheidaanduidingField.formControl.setValue(
                 this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));
         }
