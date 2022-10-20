@@ -38,7 +38,7 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
         return this._rsin;
     }
 
-    skeletonLayout = SkeletonLayout;
+    readonly skeletonLayout = SkeletonLayout;
     bedrijf: Bedrijf;
     bedrijf$: Observable<Bedrijf>;
     klantExpanded: boolean;

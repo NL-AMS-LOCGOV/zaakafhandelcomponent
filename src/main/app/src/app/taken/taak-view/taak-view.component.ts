@@ -50,7 +50,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taak: Taak;
     menu: MenuItem[] = [];
-    sideNavAction = SideNavAction;
+    readonly sideNavAction = SideNavAction;
     action: SideNavAction;
 
     historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();

@@ -51,7 +51,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
-    sideNavAction = SideNavAction;
+    readonly sideNavAction = SideNavAction;
     action: SideNavAction;
     versieInformatie: string;
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();

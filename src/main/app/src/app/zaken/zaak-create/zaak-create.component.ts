@@ -48,7 +48,7 @@ export class ZaakCreateComponent implements OnInit {
     createZaakFields: Array<AbstractFormField[]>;
     formConfig: FormConfig;
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
-    sideNavAction = SideNavAction;
+    readonly sideNavAction = SideNavAction;
     action: SideNavAction;
     rechten: ZaakRechten;
     private initiatorField: InputFormField;

@@ -50,7 +50,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     ingelogdeMedewerker: User;
     expandedRow: ZaakZoekObject | null;
-    zoekenColumn = ZoekenColumn;
+    readonly zoekenColumn = ZoekenColumn;
     zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
     filterVeld = FilterVeld;
@@ -79,7 +79,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
         const columns = new Map([
             [ZoekenColumn.SELECT, ColumnPickerValue.STICKY],
-            [ZoekenColumn.ZAAK_IDENTIFICATIE2, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAK_DOT_IDENTIFICATIE, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.STATUS, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.ZAAKTYPE, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.OMSCHRIJVING, ColumnPickerValue.VISIBLE],

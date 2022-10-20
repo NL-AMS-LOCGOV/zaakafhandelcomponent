@@ -28,7 +28,7 @@ export class ZoekComponent implements AfterViewInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
     @Input() sideNav: MatSidenav;
-    zoekObjectType = ZoekObjectType;
+    readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
     isLoadingResults = true;
     slow = false;

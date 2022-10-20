@@ -38,7 +38,7 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     expandedRow: ZaakZoekObject | null;
-    zoekenColumn = ZoekenColumn;
+    readonly zoekenColumn = ZoekenColumn;
     zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
     filterVeld = FilterVeld;
@@ -62,7 +62,7 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
 
     defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
         return new Map([
-            [ZoekenColumn.ZAAK_IDENTIFICATIE2, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.ZAAK_DOT_IDENTIFICATIE, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.STATUS, ColumnPickerValue.HIDDEN],
             [ZoekenColumn.ZAAKTYPE, ColumnPickerValue.VISIBLE],
             [ZoekenColumn.OMSCHRIJVING, ColumnPickerValue.VISIBLE],

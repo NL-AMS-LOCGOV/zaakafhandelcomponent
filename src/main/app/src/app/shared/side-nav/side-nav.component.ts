@@ -24,7 +24,7 @@ export class SideNavComponent implements OnInit {
     @Input() menu: MenuItem[];
     @Output() mode = new EventEmitter<string>();
 
-    menuItemType = MenuItemType;
+    readonly menuItemType = MenuItemType;
     menuMode = SideNavUtil.load();
     menuState: string;
 

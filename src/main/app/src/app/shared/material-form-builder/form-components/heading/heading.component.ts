@@ -14,7 +14,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class HeadingComponent extends FormComponent implements OnInit {
 
-    headingLevel = HeadingLevel;
+    readonly headingLevel = HeadingLevel;
     data: HeadingFormField;
 
     constructor(public translate: TranslateService) {

@@ -85,13 +85,13 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    skeletonLayout = SkeletonLayout;
+    readonly skeletonLayout = SkeletonLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
-    sideNavAction = SideNavAction;
+    readonly sideNavAction = SideNavAction;
     action: SideNavAction;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;

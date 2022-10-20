@@ -51,7 +51,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
     ingelogdeMedewerker: User;
     expandedRow: TaakZoekObject | null;
-    zoekenColumn = ZoekenColumn;
+    readonly zoekenColumn = ZoekenColumn;
     zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
     filterVeld = FilterVeld;

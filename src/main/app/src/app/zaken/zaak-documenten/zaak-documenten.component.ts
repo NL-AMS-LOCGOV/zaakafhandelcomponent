@@ -49,7 +49,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    skeletonLayout = SkeletonLayout;
+    readonly skeletonLayout = SkeletonLayout;
     taakModus: boolean;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;

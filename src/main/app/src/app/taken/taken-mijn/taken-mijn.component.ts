@@ -42,7 +42,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
     expandedRow: TaakZoekObject | null;
-    zoekenColumn = ZoekenColumn;
+    readonly zoekenColumn = ZoekenColumn;
     zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
     filterVeld = FilterVeld;

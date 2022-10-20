@@ -19,7 +19,7 @@ export class SkeletonLoaderComponent implements OnInit {
     private delay: number = 0;
     private duration: number = 400;
 
-    skeletonLayout = SkeletonLayout;
+    readonly skeletonLayout = SkeletonLayout;
     showLoader$: Observable<boolean>;
 
     cardHeaderTheme: NgxSkeletonLoaderConfigTheme = {
