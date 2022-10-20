@@ -7,10 +7,15 @@ import {ActionIcon} from '../../../shared/edit/action-icon';
 import {Subject} from 'rxjs';
 
 export class ActionBarAction {
-    constructor(public text: string, public entityType: string, public subText: string,
+    constructor(public text: string, public entityType: ActionEntityType, public subText: string,
                 public action: ActionIcon, public dissmis: Subject<void>, public actionEnabled?: () => boolean) {
         if (!this.actionEnabled) {
             this.actionEnabled = () => true;
         }
     }
+}
+
+export enum ActionEntityType {
+    DOCUMENT = 'DOCUMENT',
+    ZAAK = 'ZAAK'
 }

@@ -18,6 +18,8 @@ export class ToggleFilterComponent {
     @Input() indeterminateIcon: string = 'radio_button_unchecked';
     @Output() changed = new EventEmitter<ToggleSwitchOptions>();
 
+    readonly toggleSwitchOptions = ToggleSwitchOptions;
+
     toggle() {
         switch (this.selected) {
             case ToggleSwitchOptions.CHECKED:

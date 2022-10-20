@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="options.layout" *ngIf="showLoader$|async">
-    <ng-container *ngSwitchCase="'card'">
+    <ng-container *ngSwitchCase="skeletonLayout.CARD">
         <mat-card @loadingFadeIn>
             <ngx-skeleton-loader [theme]="cardHeaderTheme" appearance="line"></ngx-skeleton-loader>
             <mat-card-content>
@@ -30,12 +30,12 @@
         </mat-card>
     </ng-container>
 
-    <ng-container *ngSwitchCase="'table'">
+    <ng-container *ngSwitchCase="skeletonLayout.TABLE">
         <div class="row" @loadingFadeIn>
             <ngx-skeleton-loader [theme]="tableTheme" appearance="line"></ngx-skeleton-loader>
         </div>
     </ng-container>
-    <ng-container *ngSwitchCase="'fields'">
+    <ng-container *ngSwitchCase="skeletonLayout.FIELDS">
         <div class="content" fxLayout="row wrap" @loadingFadeIn>
 
             <div *ngFor="let field of getFields(options.fields)" [fxFlex]="100/options.fieldsPerRow">

@@ -18,6 +18,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 import {Observable} from 'rxjs';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 
 export abstract class AbstractFormulier {
 
@@ -43,7 +44,7 @@ export abstract class AbstractFormulier {
         this.humanTaskData.taakStuurGegevens = new TaakStuurGegevens();
         this.form = [];
         this.form.push(
-            [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level('2').build()]);
+            [new HeadingFormFieldBuilder().id('taakStarten').label(this.getStartTitel()).level(HeadingLevel.H2).build()]);
         this._initStartForm();
     }
 
@@ -93,11 +94,11 @@ export abstract class AbstractFormulier {
 
     refreshTaakdocumenten() {
         this.form.forEach((value, index) => {
-           value.forEach(field => {
-               if (field.id === AbstractFormulier.BIJLAGEN_FIELD) {
-                   this.form.splice(index, 1);
-               }
-           });
+            value.forEach(field => {
+                if (field.id === AbstractFormulier.BIJLAGEN_FIELD) {
+                    this.form.splice(index, 1);
+                }
+            });
         });
 
         this.form.push(

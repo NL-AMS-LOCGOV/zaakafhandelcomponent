@@ -9,6 +9,7 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {ZoekenDataSource} from '../../shared/dynamic-table/datasource/zoeken-data-source';
+import {ZoekObjectType} from '../../zoeken/model/zoek-object';
 
 export class TakenMijnDatasource extends ZoekenDataSource<TaakZoekObject> {
 
@@ -22,7 +23,7 @@ export class TakenMijnDatasource extends ZoekenDataSource<TaakZoekObject> {
     }
 
     public static mijnLopendeTaken(zoekParameters: ZoekParameters): ZoekParameters {
-        zoekParameters.type = 'TAAK';
+        zoekParameters.type = ZoekObjectType.TAAK;
         zoekParameters.alleenMijnTaken = true;
         return zoekParameters;
     }

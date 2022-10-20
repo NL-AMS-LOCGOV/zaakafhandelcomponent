@@ -5,7 +5,7 @@
 
 import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular/core';
 
-import {ZoekObject} from '../model/zoek-object';
+import {ZoekObject, ZoekObjectType} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
 import {Resultaat} from '../../shared/model/resultaat';
@@ -28,6 +28,7 @@ export class ZoekComponent implements AfterViewInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
     @Input() sideNav: MatSidenav;
+    readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
     isLoadingResults = true;
     slow = false;

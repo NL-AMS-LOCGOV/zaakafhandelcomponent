@@ -26,7 +26,6 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {User} from '../../identity/model/user';
-import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -77,6 +76,7 @@ import {MailService} from '../../mail/mail.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -85,12 +85,14 @@ import {TaakStatus} from '../../taken/model/taak-status.enum';
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
+    readonly skeletonLayout = SkeletonLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
-    action: string;
+    readonly sideNavAction = SideNavAction;
+    action: SideNavAction;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();

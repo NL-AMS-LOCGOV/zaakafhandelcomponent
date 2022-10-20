@@ -51,7 +51,8 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     documentNieuweVersieGegevens: EnkelvoudigInformatieObjectVersieGegevens;
     documentPreviewBeschikbaar: boolean = false;
     menu: MenuItem[];
-    action: string;
+    readonly sideNavAction = SideNavAction;
+    action: SideNavAction;
     versieInformatie: string;
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
 
@@ -224,13 +225,13 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     private openDocumentVerwijderenDialog(): void {
         let openDialog;
 
-        if(this.zaak) {
+        if (this.zaak) {
             const dialogData = new DialogData([
-                new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
-                                           .validators(Validators.required)
-                                           .maxlength(100)
-                                           .build()],
-            (results: any[]) => this.deleteEnkelvoudigInformatieObject$(results['reden'])
+                    new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
+                                               .validators(Validators.required)
+                                               .maxlength(100)
+                                               .build()],
+                (results: any[]) => this.deleteEnkelvoudigInformatieObject$(results['reden'])
             );
 
             dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
@@ -240,7 +241,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             const dialogData = new ConfirmDialogData(
                 this.translate.instant('msg.document.verwijderen.bevestigen', {document: this.infoObject.titel}),
                 this.deleteEnkelvoudigInformatieObject$()
-            )
+            );
 
             openDialog = this.dialog.open(ConfirmDialogComponent, {data: dialogData});
         }

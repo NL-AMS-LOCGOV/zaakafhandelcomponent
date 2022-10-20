@@ -9,9 +9,18 @@ import {AbstractFormControlField} from '../../model/abstract-form-control-field'
 export class HeadingFormField extends AbstractFormControlField {
     fieldType = FieldType.HEADING;
 
-    level: string;
+    level: HeadingLevel;
 
     constructor() {
         super();
     }
+}
+
+export enum HeadingLevel {
+    H1 = 'H1',
+    H2 = 'H2',
+    H3 = 'H3',
+    H4 = 'H4',
+    H5 = 'H5',
+    H6 = 'H6'
 }

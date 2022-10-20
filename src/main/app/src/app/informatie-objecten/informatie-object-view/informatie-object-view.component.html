@@ -8,8 +8,10 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-sidenav>
     <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-informatie-object-edit *ngSwitchCase="'DOCUMENT_VERSIE_TOEVOEGEN'" [sideNav]="actionsSidenav"
-                                    [infoObject]="documentNieuweVersieGegevens" [zaakUuid]="zaak.uuid"
+        <zac-informatie-object-edit *ngSwitchCase="sideNavAction.DOCUMENT_VERSIE_TOEVOEGEN"
+                                    [sideNav]="actionsSidenav"
+                                    [infoObject]="documentNieuweVersieGegevens"
+                                    [zaakUuid]="zaak.uuid"
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
     </mat-sidenav>
@@ -42,7 +44,8 @@
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
                                         <mat-divider></mat-divider>
                                     </div>
-                                    <zac-static-text [label]="'documentType' | translate" [value]="infoObject.informatieobjectTypeOmschrijving"></zac-static-text>
+                                    <zac-static-text [label]="'documentType' | translate"
+                                                     [value]="infoObject.informatieobjectTypeOmschrijving"></zac-static-text>
                                     <zac-static-text [label]="'auteur' | translate" [value]="infoObject.auteur"></zac-static-text>
                                     <zac-static-text [label]="'beschrijving' | translate" [value]="infoObject.beschrijving"></zac-static-text>
                                     <div fxLayout="row wrap">
@@ -50,7 +53,8 @@
                                             <mat-icon>chevron_left</mat-icon>
                                         </button>
                                         <zac-static-text [value]="versieInformatie"></zac-static-text>
-                                        <button [disabled]="laatsteVersieInfoObject && infoObject.versie === laatsteVersieInfoObject.versie" mat-icon-button (click)="haalVersieOp(infoObject.versie + 1);">
+                                        <button [disabled]="laatsteVersieInfoObject && infoObject.versie === laatsteVersieInfoObject.versie" mat-icon-button
+                                                (click)="haalVersieOp(infoObject.versie + 1);">
                                             <mat-icon>chevron_right</mat-icon>
                                         </button>
                                     </div>
@@ -160,7 +164,7 @@
                         <mat-panel-description>
                             {{zaakInformatieobject.zaaktypeOmschrijving}}
                             <a *ngIf="zaakInformatieobject.zaakRechten.lezen" mat-flat-button
-                                    [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
+                               [routerLink]="['/zaken', zaakInformatieobject.zaakIdentificatie]" (click)="$event.stopPropagation()">
                                 <mat-icon>visibility</mat-icon>
                             </a>
                         </mat-panel-description>

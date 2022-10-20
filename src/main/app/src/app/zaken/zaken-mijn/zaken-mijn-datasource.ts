@@ -9,6 +9,7 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {ZoekenDataSource} from '../../shared/dynamic-table/datasource/zoeken-data-source';
+import {ZoekObjectType} from '../../zoeken/model/zoek-object';
 
 /**
  * Datasource voor de mijn zaken. Via deze class wordt de data voor de tabel opgehaald
@@ -25,7 +26,7 @@ export class ZakenMijnDatasource extends ZoekenDataSource<ZaakZoekObject> {
     }
 
     public static mijnLopendeZaken(zoekParameters: ZoekParameters): ZoekParameters {
-        zoekParameters.type = 'ZAAK';
+        zoekParameters.type = ZoekObjectType.ZAAK;
         zoekParameters.alleenMijnZaken = true;
         zoekParameters.alleenOpenstaandeZaken = true;
         return zoekParameters;

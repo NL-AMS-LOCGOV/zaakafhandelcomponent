@@ -31,6 +31,7 @@ import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-object
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {Validators} from '@angular/forms';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -48,6 +49,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
+    readonly skeletonLayout = SkeletonLayout;
     taakModus: boolean;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
