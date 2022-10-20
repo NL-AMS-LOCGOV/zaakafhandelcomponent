@@ -28,6 +28,7 @@ import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 import net.atos.zac.zaaksturing.model.ReferentieTabelWaarde;
 import net.atos.zac.zaaksturing.model.UserEventListenerParameters;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 /**
  *
@@ -48,17 +49,21 @@ public class RESTPlanItemConverter {
     }
 
     public RESTPlanItem convertPlanItem(final PlanItemInstance planItem, final UUID zaakUuid) {
+        final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID);
         final RESTPlanItem restPlanItem = new RESTPlanItem();
         restPlanItem.id = planItem.getId();
         restPlanItem.naam = planItem.getName();
         restPlanItem.zaakUuid = zaakUuid;
         restPlanItem.type = convertDefinitionType(planItem.getPlanItemDefinitionType());
         if (restPlanItem.type == USER_EVENT_LISTENER) {
-            final UUID zaaktypeUUID = caseVariablesService.readZaaktypeUUID(planItem.getCaseInstanceId());
             restPlanItem.userEventListenerActie = UserEventListenerActie.valueOf(planItem.getPlanItemDefinitionId());
-            final UserEventListenerParameters userEventListenerParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID)
-                    .readUserEventListenerParameters(planItem.getPlanItemDefinitionId());
+            final UserEventListenerParameters userEventListenerParameters = zaakafhandelParameters.readUserEventListenerParameters(
+                    planItem.getPlanItemDefinitionId());
             restPlanItem.toelichting = userEventListenerParameters.getToelichting();
+        } else if (restPlanItem.type == HUMAN_TASK) {
+            final HumanTaskParameters humanTaskParameters = zaakafhandelParameters.findHumanTaskParameter(planItem.getPlanItemDefinitionId());
+            restPlanItem.actief = humanTaskParameters.isActief();
         }
         return restPlanItem;
     }
@@ -66,6 +71,7 @@ public class RESTPlanItemConverter {
     public RESTPlanItem convertHumanTask(final PlanItemInstance planItem, final UUID zaakUuid, final HumanTaskParameters parameters) {
         final RESTPlanItem restPlanItem = convertPlanItem(planItem, zaakUuid);
         if (parameters != null) {
+            restPlanItem.actief = parameters.isActief();
             if (parameters.getFormulierDefinitieID() != null) {
                 restPlanItem.formulierDefinitie = FormulierDefinitie.valueOf(parameters.getFormulierDefinitieID());
                 parameters.getReferentieTabellen().forEach(
