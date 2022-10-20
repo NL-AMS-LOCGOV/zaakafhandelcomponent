@@ -88,7 +88,7 @@ public class PlanItemsRESTService {
     @Path("zaak/{uuid}/humanTaskPlanItems")
     public List<RESTPlanItem> listHumanTaskPlanItems(@PathParam("uuid") final UUID zaakUUID) {
         final List<PlanItemInstance> humanTaskPlanItems = caseService.listHumanTaskPlanItems(zaakUUID);
-        return planItemConverter.convertPlanItems(humanTaskPlanItems, zaakUUID);
+        return planItemConverter.convertPlanItems(humanTaskPlanItems, zaakUUID).stream().filter(restPlanItem -> restPlanItem.actief).toList();
     }
 
     @GET

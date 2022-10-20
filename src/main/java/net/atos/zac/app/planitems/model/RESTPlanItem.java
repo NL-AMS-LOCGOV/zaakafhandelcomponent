@@ -23,6 +23,8 @@ public class RESTPlanItem {
 
     public RESTGroup groep;
 
+    public boolean actief;
+
     public FormulierDefinitie formulierDefinitie;
 
     public Map<String, List<String>> tabellen = new HashMap<>();

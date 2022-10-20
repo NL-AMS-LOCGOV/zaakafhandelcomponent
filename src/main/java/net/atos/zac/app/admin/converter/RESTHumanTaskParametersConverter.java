@@ -40,6 +40,7 @@ public class RESTHumanTaskParametersConverter {
             final RESTPlanItemDefinition humanTaskDefinition) {
         final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
         restHumanTaskParameters.id = humanTaskParameters.getId();
+        restHumanTaskParameters.actief = humanTaskParameters.isActief();
         restHumanTaskParameters.defaultGroepId = humanTaskParameters.getGroepID();
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
         restHumanTaskParameters.formulierDefinitieId = humanTaskParameters.getFormulierDefinitieID();
@@ -75,6 +76,7 @@ public class RESTHumanTaskParametersConverter {
     private HumanTaskParameters convertRESTHumanTaskParameters(final RESTHumanTaskParameters restHumanTaskParameters) {
         HumanTaskParameters humanTaskParameters = new HumanTaskParameters();
         humanTaskParameters.setId(restHumanTaskParameters.id);
+        humanTaskParameters.setActief(restHumanTaskParameters.actief);
         humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
         humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
         humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroepId);

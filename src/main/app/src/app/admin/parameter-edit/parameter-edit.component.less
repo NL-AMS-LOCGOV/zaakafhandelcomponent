@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-mat-expansion-panel-header.mat-expanded {
+mat-expansion-panel-header {
   mat-panel-title {
-    font-weight: bold;
+    .disabled {
+      text-decoration: line-through;
+      color: gray;
+    }
   }
 }
 

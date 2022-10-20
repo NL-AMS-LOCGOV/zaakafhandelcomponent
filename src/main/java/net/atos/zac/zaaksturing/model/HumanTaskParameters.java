@@ -45,6 +45,9 @@ public class HumanTaskParameters {
     @JoinColumn(name = "id_zaakafhandelparameters", referencedColumnName = "id_zaakafhandelparameters")
     private ZaakafhandelParameters zaakafhandelParameters;
 
+    @Column(name = "actief")
+    private boolean actief;
+
     @Column(name = "id_formulier_definition")
     private String formulierDefinitieID;
 
@@ -159,5 +162,13 @@ public class HumanTaskParameters {
         }
         removeReferentieTabel(referentieTabel);
         return referentieTabel.getTabel();
+    }
+
+    public boolean isActief() {
+        return actief;
+    }
+
+    public void setActief(final boolean actief) {
+        this.actief = actief;
     }
 }

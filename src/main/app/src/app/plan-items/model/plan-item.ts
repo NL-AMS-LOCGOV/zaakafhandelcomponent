@@ -9,6 +9,7 @@ import {UserEventListenerActie} from './user-event-listener-actie-enum';
 export class PlanItem {
     id: string;
     naam: string;
+    actief: boolean;
     type: PlanItemType;
     groepId: string;
     formulierDefinitie: string;

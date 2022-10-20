@@ -53,14 +53,6 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     userEventListenersFormGroup: FormGroup;
     zaakbeeindigFormGroup: FormGroup;
 
-    caseDefinitionControl = new FormControl(null, [Validators.required]);
-    groepControl = new FormControl(null, [Validators.required]);
-    behandelaarControl = new FormControl();
-    einddatumGeplandWaarschuwingControl = new FormControl();
-    uiterlijkeEinddatumAfdoeningWaarschuwingControl = new FormControl();
-    intakeMailControl = new FormControl(null, [Validators.required]);
-    afrondenMailControl = new FormControl(null, [Validators.required]);
-    productaanvraagtypeControl = new FormControl();
     mailOpties: { label: string, value: string }[];
 
     caseDefinitions: CaseDefinition[];
@@ -69,6 +61,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     resultaattypes: Resultaattype[];
     referentieTabellen: ReferentieTabel[];
     formulierDefinities: FormulierDefinitie[];
+    zaakbeeindigRedenen: ZaakbeeindigReden[];
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService) {
@@ -77,27 +70,23 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             this.parameters = data.parameters;
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
             this.humanTaskParameters = this.parameters.humanTaskParameters;
-            this.caseDefinitionControl.setValue(this.parameters.caseDefinition);
-            this.groepControl.setValue(this.parameters.defaultGroepId);
-            this.behandelaarControl.setValue(this.parameters.defaultBehandelaarId);
-            this.einddatumGeplandWaarschuwingControl.setValue(this.parameters.einddatumGeplandWaarschuwing);
-            this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.setValue(this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing);
-            this.intakeMailControl.setValue(this.parameters.intakeMail);
-            this.afrondenMailControl.setValue(this.parameters.afrondenMail);
-            this.productaanvraagtypeControl.setValue(this.parameters.productaanvraagtype);
             adminService.listResultaattypes(this.parameters.zaaktype.uuid).subscribe(resultaattypes => this.resultaattypes = resultaattypes);
-        });
-        identityService.listGroups().subscribe(groepen => this.groepen = groepen);
-        identityService.listUsers().subscribe(medewerkers => this.medewerkers = medewerkers);
-        forkJoin([
-            this.adminService.listCaseDefinitions(),
-            this.adminService.listFormulierDefinities(),
-            this.referentieTabelService.listReferentieTabellen()
-        ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen]) => {
-            this.caseDefinitions = caseDefinitions;
-            this.formulierDefinities = formulierDefinities;
-            this.referentieTabellen = referentieTabellen;
-            this.createForm();
+            forkJoin([
+                adminService.listCaseDefinitions(),
+                adminService.listFormulierDefinities(),
+                referentieTabelService.listReferentieTabellen(),
+                identityService.listGroups(),
+                identityService.listUsers(),
+                this.adminService.listZaakbeeindigRedenen()
+            ]).subscribe(([caseDefinitions, formulierDefinities, referentieTabellen, groepen, medewerkers, zaakbeeindigRedenen]) => {
+                this.caseDefinitions = caseDefinitions;
+                this.formulierDefinities = formulierDefinities;
+                this.referentieTabellen = referentieTabellen;
+                this.groepen = groepen;
+                this.medewerkers = medewerkers;
+                this.zaakbeeindigRedenen = zaakbeeindigRedenen;
+                this.createForm();
+            });
         });
     }
 
@@ -136,20 +125,20 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     getHumanTaskControl(parameter: HumanTaskParameter, field: string): FormControl {
-        const formGroup: FormGroup = this.humanTasksFormGroup.get(parameter.planItemDefinition.id) as FormGroup;
+        const formGroup = this.humanTasksFormGroup.get(parameter.planItemDefinition.id) as FormGroup;
         return formGroup.get(field) as FormControl;
     }
 
     createForm() {
         this.algemeenFormGroup = this.formBuilder.group({
-            caseDefinitionControl: this.caseDefinitionControl,
-            groepControl: this.groepControl,
-            behandelaarControl: this.behandelaarControl,
-            einddatumGeplandWaarschuwingControl: this.einddatumGeplandWaarschuwingControl,
-            uiterlijkeEinddatumAfdoeningWaarschuwingControl: this.uiterlijkeEinddatumAfdoeningWaarschuwingControl,
-            intakeMailControl: this.intakeMailControl,
-            afrondenMailControl: this.afrondenMailControl,
-            productaanvraagtypeControl: this.productaanvraagtypeControl
+            caseDefinition: [this.parameters.caseDefinition, [Validators.required]],
+            defaultGroepId: [this.parameters.defaultGroepId, [Validators.required]],
+            defaultBehandelaarId: [this.parameters.defaultBehandelaarId],
+            einddatumGeplandWaarschuwing: [this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing],
+            uiterlijkeEinddatumAfdoeningWaarschuwing: [this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing],
+            intakeMail: [this.parameters.intakeMail, [Validators.required]],
+            afrondenMail: [this.parameters.afrondenMail, [Validators.required]],
+            productaanvraagtype: [this.parameters.productaanvraagtype]
         });
         this.createHumanTasksForm();
         this.createUserEventListenerForm();
@@ -157,22 +146,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     isHumanTaskParameterValid(humanTaskParameter: HumanTaskParameter): boolean {
-        if (!this.getHumanTaskControl(humanTaskParameter, 'defaultGroep').valid ||
-            !this.getHumanTaskControl(humanTaskParameter, 'doorlooptijd').valid) {
-            return false;
-        }
-        if (humanTaskParameter.formulierDefinitieId) {
-            for (const veld of this.getVeldDefinities(humanTaskParameter.formulierDefinitieId)) {
-                if (!this.getHumanTaskControl(humanTaskParameter, 'referentieTabel' + veld.naam).valid) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    getActieControl(parameter: UserEventListenerParameter, field: string): FormControl {
-        return this.userEventListenersFormGroup.get(parameter.id).get(field) as FormControl;
+        return this.humanTasksFormGroup.get(humanTaskParameter.planItemDefinition.id).status === 'VALID';
     }
 
     private createHumanTasksForm() {
@@ -183,14 +157,17 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     private getHumanTaskFormGroup(humanTaskParameters: HumanTaskParameter): FormGroup {
-        const humanTaskFormGroup = this.formBuilder.group({});
-        humanTaskFormGroup.addControl('formulierDefinitie', new FormControl(humanTaskParameters.formulierDefinitieId, [Validators.required]));
-        humanTaskFormGroup.addControl('defaultGroep', new FormControl(humanTaskParameters.defaultGroepId));
-        humanTaskFormGroup.addControl('doorlooptijd', new FormControl(humanTaskParameters.doorlooptijd, [Validators.min(0)]));
+        const humanTaskFormGroup: FormGroup = this.formBuilder.group({
+            formulierDefinitie: [humanTaskParameters.formulierDefinitieId, [Validators.required]],
+            defaultGroep: [humanTaskParameters.defaultGroepId],
+            doorlooptijd: [humanTaskParameters.doorlooptijd, [Validators.min(0)]],
+            actief: [humanTaskParameters.actief]
+        });
+
         if (humanTaskParameters.formulierDefinitieId) {
             for (const veld of this.getVeldDefinities(humanTaskParameters.formulierDefinitieId)) {
                 humanTaskFormGroup.addControl('referentieTabel' + veld.naam,
-                    new FormControl(this.getReferentieTabel(humanTaskParameters, veld), [Validators.required]));
+                    this.formBuilder.control(this.getReferentieTabel(humanTaskParameters, veld), Validators.required));
             }
         }
         return humanTaskFormGroup;
@@ -204,26 +181,17 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     private createUserEventListenerForm() {
         this.userEventListenersFormGroup = this.formBuilder.group({});
         this.userEventListenerParameters.forEach(parameter => {
-            const formGroup = this.formBuilder.group({});
-            formGroup.addControl('toelichting', new FormControl(parameter.toelichting));
+            const formGroup = this.formBuilder.group({
+                toelichting: [parameter.toelichting]
+            });
             this.userEventListenersFormGroup.addControl(parameter.id, formGroup);
         });
     }
 
     createZaakbeeindigForm() {
         this.zaakbeeindigFormGroup = this.formBuilder.group({});
-        this.readZaaknietontvankelijkParameter(this.parameters);
-        this.adminService.listZaakbeeindigRedenen().subscribe(redenen => {
-            this.readZaakbeeindigRedenen(redenen);
-        });
-    }
-
-    readZaaknietontvankelijkParameter(zaakafhandelParameters: ZaakafhandelParameters): void {
-        this.addZaakbeeindigParameter(this.getZaaknietontvankelijkParameter(zaakafhandelParameters));
-    }
-
-    readZaakbeeindigRedenen(zaakbeeindigRedenen: ZaakbeeindigReden[]): void {
-        for (const reden of zaakbeeindigRedenen) {
+        this.addZaakbeeindigParameter(this.getZaaknietontvankelijkParameter(this.parameters));
+        for (const reden of this.zaakbeeindigRedenen) {
             this.addZaakbeeindigParameter(this.getZaakbeeindigParameter(reden));
         }
     }
@@ -289,18 +257,11 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     opslaan(): void {
-        this.parameters.caseDefinition = this.caseDefinitionControl.value;
-        this.parameters.defaultGroepId = this.groepControl.value;
-        this.parameters.defaultBehandelaarId = this.behandelaarControl.value;
-        this.parameters.einddatumGeplandWaarschuwing = this.einddatumGeplandWaarschuwingControl.value;
-        this.parameters.uiterlijkeEinddatumAfdoeningWaarschuwing = this.uiterlijkeEinddatumAfdoeningWaarschuwingControl.value;
-        this.parameters.intakeMail = this.intakeMailControl.value;
-        this.parameters.afrondenMail = this.afrondenMailControl.value;
-        this.parameters.productaanvraagtype = this.productaanvraagtypeControl.value;
-
+        Object.assign(this.parameters, this.algemeenFormGroup.value);
         this.humanTaskParameters.forEach(param => {
             param.formulierDefinitieId = this.getHumanTaskControl(param, 'formulierDefinitie').value;
             param.defaultGroepId = this.getHumanTaskControl(param, 'defaultGroep').value;
+            param.actief = this.getHumanTaskControl(param, 'actief').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
             const old = this.parameters.humanTaskParameters.find(htp => htp.planItemDefinition.id === param.planItemDefinition.id).referentieTabellen;
             param.referentieTabellen = [];
@@ -313,9 +274,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             });
         });
         this.parameters.humanTaskParameters = this.humanTaskParameters;
-
         this.userEventListenerParameters.forEach(param => {
-            param.toelichting = this.getActieControl(param, 'toelichting').value;
+            param.toelichting = this.userEventListenersFormGroup.get(param.id).get('toelichting').value;
         });
         this.parameters.userEventListenerParameters = this.userEventListenerParameters;
 
