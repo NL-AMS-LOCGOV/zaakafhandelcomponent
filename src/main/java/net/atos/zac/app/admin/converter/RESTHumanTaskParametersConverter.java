@@ -13,14 +13,10 @@ import javax.inject.Inject;
 import net.atos.zac.app.admin.model.RESTHumanTaskParameters;
 import net.atos.zac.app.admin.model.RESTHumanTaskReferentieTabel;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
-import net.atos.zac.app.identity.converter.RESTGroupConverter;
-import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
+import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.zaaksturing.model.HumanTaskParameters;
 
 public class RESTHumanTaskParametersConverter {
-
-    @Inject
-    private RESTGroupConverter groupConverter;
 
     @Inject
     private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
@@ -44,8 +40,10 @@ public class RESTHumanTaskParametersConverter {
             final RESTPlanItemDefinition humanTaskDefinition) {
         final RESTHumanTaskParameters restHumanTaskParameters = new RESTHumanTaskParameters();
         restHumanTaskParameters.id = humanTaskParameters.getId();
-        restHumanTaskParameters.defaultGroep = groupConverter.convertGroupId(humanTaskParameters.getGroepID());
+        restHumanTaskParameters.actief = humanTaskParameters.isActief();
+        restHumanTaskParameters.defaultGroepId = humanTaskParameters.getGroepID();
         restHumanTaskParameters.planItemDefinition = humanTaskDefinition;
+        restHumanTaskParameters.formulierDefinitieId = humanTaskParameters.getFormulierDefinitieID();
         restHumanTaskParameters.doorlooptijd = humanTaskParameters.getDoorlooptijd();
         restHumanTaskParameters.referentieTabellen = convertReferentieTabellen(humanTaskParameters, humanTaskDefinition);
         return restHumanTaskParameters;
@@ -55,7 +53,7 @@ public class RESTHumanTaskParametersConverter {
             final RESTPlanItemDefinition humanTaskDefinition) {
         final List<RESTHumanTaskReferentieTabel> referentieTabellen = restHumanTaskReferentieTabelConverter.convert(
                 humanTaskParameters.getReferentieTabellen());
-        HumanTaskFormulierKoppeling.readFormulierVeldDefinities(humanTaskDefinition.id).stream()
+        DefaultHumanTaskFormulierKoppeling.readFormulierVeldDefinities(humanTaskDefinition.id).stream()
                 .filter(veldDefinitie -> referentieTabellen.stream()
                         .noneMatch(referentieTabel -> veldDefinitie.name().equals(referentieTabel.veld)))
                 .map(restHumanTaskReferentieTabelConverter::convertDefault)
@@ -78,11 +76,11 @@ public class RESTHumanTaskParametersConverter {
     private HumanTaskParameters convertRESTHumanTaskParameters(final RESTHumanTaskParameters restHumanTaskParameters) {
         HumanTaskParameters humanTaskParameters = new HumanTaskParameters();
         humanTaskParameters.setId(restHumanTaskParameters.id);
+        humanTaskParameters.setActief(restHumanTaskParameters.actief);
         humanTaskParameters.setDoorlooptijd(restHumanTaskParameters.doorlooptijd);
         humanTaskParameters.setPlanItemDefinitionID(restHumanTaskParameters.planItemDefinition.id);
-        if (restHumanTaskParameters.defaultGroep != null) {
-            humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroep.id);
-        }
+        humanTaskParameters.setGroepID(restHumanTaskParameters.defaultGroepId);
+        humanTaskParameters.setFormulierDefinitieID(restHumanTaskParameters.formulierDefinitieId);
         humanTaskParameters.setReferentieTabellen(restHumanTaskReferentieTabelConverter.convert(restHumanTaskParameters.referentieTabellen));
         return humanTaskParameters;
     }

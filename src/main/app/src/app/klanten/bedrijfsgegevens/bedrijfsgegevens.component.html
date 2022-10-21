@@ -15,12 +15,13 @@
                 <zac-skeleton-loader [loading$]="bedrijf$">
                     {{bedrijf?.naam}}
                 </zac-skeleton-loader>
-                <button *ngIf="bedrijf && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button (click)="$event.stopPropagation(); delete.emit(bedrijf)">
+                <button *ngIf="bedrijf && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
+                        (click)="$event.stopPropagation(); delete.emit(bedrijf)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-panel-description>
         </mat-expansion-panel-header>
-        <zac-skeleton-loader [loading$]="bedrijf$" [options]="{layout:'fields', fields:5, fieldsPerRow:5}">
+        <zac-skeleton-loader [loading$]="bedrijf$" [options]="{layout:skeletonLayout.FIELDS, fields:5, fieldsPerRow:5}">
             <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <div [fxFlex]="100/5" fxFlex.lt-md="50">
                     <zac-static-text [label]="'handelsnaam' | translate"

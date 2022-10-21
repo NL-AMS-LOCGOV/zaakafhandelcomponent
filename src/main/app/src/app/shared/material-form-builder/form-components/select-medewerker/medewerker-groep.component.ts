@@ -7,7 +7,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
-import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
@@ -21,9 +21,6 @@ import {map, startWith} from 'rxjs/operators';
 })
 export class MedewerkerGroepComponent extends FormComponent implements OnInit, OnDestroy {
     data: MedewerkerGroepFormField;
-    formGroup: FormGroup;
-    groepControl = new FormControl();
-    medewerkerControl = new FormControl();
     groepen: Group[];
     filteredGroepen: Observable<Group[]>;
     medewerkers: User[];
@@ -31,40 +28,22 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     inGroep: boolean = true;
     subscriptions$: Subscription[] = [];
 
-    constructor(public translate: TranslateService, public identityService: IdentityService, private formBuilder: FormBuilder) {
+    constructor(public translate: TranslateService, public identityService: IdentityService) {
         super();
     }
 
     ngOnInit(): void {
         this.initGroepen();
-        this.medewerkerControl.setValue(this.data.defaultMedewerker);
-        this.formGroup = this.formBuilder.group({
-            groep: this.groepControl,
-            medewerker: this.medewerkerControl
-        });
-        this.data.formControl.setValue(this.formGroup.value);
 
         this.subscriptions$.push(
-            this.formGroup.valueChanges.subscribe(data => {
-                if (this.formGroup.valid) {
-                    this.data.formControl.setErrors(null);
-                    if (data.medewerker === '') {
-                        data.medewerker = null;
-                    }
-                    this.data.formControl.setValue(data);
-                } else {
-                    this.data.formControl.setErrors([]);
-                }
-            }),
-            this.groepControl.valueChanges.subscribe(() => {
-                if (this.groepControl.valid) {
-                    this.medewerkerControl.setValue(null);
+            this.data.groep.valueChanges.subscribe((value) => {
+                if (this.data.groep.valid && this.data.groep.dirty) {
+                    this.data.medewerker.setValue(null);
                     this.getMedewerkers();
                 }
             })
         );
-
-        this.getMedewerkers();
+        this.getMedewerkers(this.data.medewerker.defaultValue?.id);
     }
 
     ngOnDestroy() {
@@ -74,17 +53,21 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     initGroepen(): void {
         this.identityService.listGroups().subscribe(groepen => {
             this.groepen = groepen;
-            const validators: ValidatorFn[] = [];
+            const validators:ValidatorFn[] = [];
             validators.push(AutocompleteValidators.optionInList(groepen));
-            if (!this.data.groepOptioneel) {
+            if(this.data.groep.hasValidator(Validators.required)){
                 validators.push(Validators.required);
             }
-            this.groepControl.setValidators(validators);
-            this.filteredGroepen = this.groepControl.valueChanges.pipe(
+            this.data.groep.setValidators(validators);
+            this.data.groep.updateValueAndValidity();
+
+            this.filteredGroepen = this.data.groep.valueChanges.pipe(
                 startWith(''),
                 map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
             );
-            this.groepControl.setValue(this.data.defaultGroep);
+            if(this.data.groep.defaultValue){
+                this.data.groep.setValue(groepen.find(groep => groep.id === this.data.groep.defaultValue.id));
+            }
         });
     }
 
@@ -94,21 +77,29 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         this.getMedewerkers();
     }
 
-    private getMedewerkers() {
+    private getMedewerkers(defaultMedewerkerId?: string) {
         this.medewerkers = [];
         let observable: Observable<User[]>;
-        if (this.inGroep && this.groepControl.value) {
-            observable = this.identityService.listUsersInGroup(this.groepControl.value.id);
+        if (this.inGroep && this.data.groep.value) {
+            observable = this.identityService.listUsersInGroup(this.data.groep.value.id);
         } else {
             observable = this.identityService.listUsers();
         }
         observable.subscribe(medewerkers => {
             this.medewerkers = medewerkers;
-            this.medewerkerControl.setValidators(AutocompleteValidators.optionInList(medewerkers));
-            this.filteredMedewerkers = this.medewerkerControl.valueChanges.pipe(
+            const validators: ValidatorFn[] = [];
+            validators.push(AutocompleteValidators.optionInList(medewerkers));
+            if(this.data.medewerker.hasValidator(Validators.required)){
+                validators.push(Validators.required);
+            }
+            this.data.medewerker.setValidators(validators);
+            this.filteredMedewerkers = this.data.medewerker.valueChanges.pipe(
                 startWith(''),
                 map(medewerker => (medewerker ? this._filterMedewerkers(medewerker) : this.medewerkers.slice()))
             );
+            if (defaultMedewerkerId) {
+                this.data.medewerker.setValue(medewerkers.find(medewerker => medewerker.id === defaultMedewerkerId));
+            }
         });
     }
 
@@ -130,25 +121,5 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         }
         const filterValue = value.toLowerCase();
         return this.medewerkers.filter(medewerker => medewerker.naam.toLowerCase().includes(filterValue));
-    }
-
-    groepBlur(): void {
-        const val = this.groepControl.value;
-        if (typeof val === 'string') {
-            const result = this.groepen.find(groep => groep.naam === val);
-            if (result) {
-                this.groepControl.setValue(result);
-            }
-        }
-    }
-
-    medewerkerBlur(): void {
-        const val = this.medewerkerControl.value;
-        if (typeof val === 'string') {
-            const result = this.medewerkers.find(medewerker => medewerker.naam === val);
-            if (result) {
-                this.medewerkerControl.setValue(result);
-            }
-        }
     }
 }

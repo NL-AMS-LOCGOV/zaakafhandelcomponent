@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZoekObject} from '../zoek-object';
+import {ZoekObject, ZoekObjectType} from '../zoek-object';
 
 export class ZaakZoekObject implements ZoekObject {
     id: string;
-    type: string;
+    type: ZoekObjectType;
     identificatie: string;
     omschrijving: string;
     toelichting: string;

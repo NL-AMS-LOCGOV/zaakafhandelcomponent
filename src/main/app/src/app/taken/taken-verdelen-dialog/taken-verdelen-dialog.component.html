@@ -7,12 +7,11 @@
 <h1 *ngIf="data.length != 1" mat-dialog-title>{{ 'msg.verdelen.taken' | translate:{aantal: data.length} }}</h1>
 
 <div mat-dialog-content>
-    <mfb-form-field [field]="medewerkerFormField"></mfb-form-field>
+    <mfb-form-field [field]="medewerkerGroepFormField"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
     <button (click)="verdeel()"
-            [disabled]="medewerkerFormField.formControl.pending ||
-                        medewerkerFormField.formControl.invalid || loading" color="primary"
+            [disabled]="isDisabled()" color="primary"
             id="takenVerdelen_button"
             mat-button>
         <mat-icon *ngIf="loading">

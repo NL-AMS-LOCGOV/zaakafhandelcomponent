@@ -4,18 +4,18 @@
  */
 
 import {AbstractFormFieldBuilder} from '../../model/abstract-form-field-builder';
-import {HeadingFormField} from './heading-form-field';
+import {HeadingFormField, HeadingLevel} from './heading-form-field';
 
 export class HeadingFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: HeadingFormField;
+    readonly formField: HeadingFormField;
 
     constructor() {
         super();
         this.formField = new HeadingFormField();
     }
 
-    level(level: string): this {
+    level(level: HeadingLevel): this {
         this.formField.level = level;
         return this;
     }

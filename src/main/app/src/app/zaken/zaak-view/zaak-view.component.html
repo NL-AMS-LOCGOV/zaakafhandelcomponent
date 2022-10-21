@@ -8,41 +8,41 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-klant-zoek *ngSwitchCase="'ZOEK_INITIATOR'"
+        <zac-klant-zoek *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
                         (klantGegevens)="initiatorGeselecteerd($event.klant)"
                         [rechten]="zaak.rechten"
                         [initiator]="true"></zac-klant-zoek>
-        <zac-klant-zoek *ngSwitchCase="'ZOEK_BETROKKENE'"
+        <zac-klant-zoek *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
                         (klantGegevens)="betrokkeneGeselecteerd($event)"
                         [rechten]="zaak.rechten"
                         [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-zoek>
-        <zac-bag-adres-zoek *ngSwitchCase="'ZOEK_BAG_ADRES'"
+        <zac-bag-adres-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
                             (bagObject)="adresGeselecteerd($event)"></zac-bag-adres-zoek>
-        <zac-locatie-zoek *ngSwitchCase="'ZOEK_LOCATIE'"
+        <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
                           [huidigeLocatie]="zaakLocatie"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
-        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'"
+        <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
                                    [sideNav]="actionsSidenav"
                                    [zaak]="zaak"
                                    (document)="documentToegevoegd($event)"></zac-informatie-object-add>
-        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'"
+        <zac-informatie-object-create *ngSwitchCase="sideNavAction.DOCUMENT_MAKEN"
                                       [sideNav]="actionsSidenav"
                                       [zaakUUID]="zaak.uuid"
                                       (redirectUrl)="documentAanmakenStarten($event)"
                                       (melding)="documentAanmakenNietMogelijk($event)"></zac-informatie-object-create>
-        <zac-human-task-do *ngSwitchCase="'TAAK_STARTEN'"
+        <zac-human-task-do *ngSwitchCase="sideNavAction.TAAK_STARTEN"
                            (done)="taakGestart()"
                            [planItem]="actiefPlanItem"></zac-human-task-do>
-        <zac-mail-create *ngSwitchCase="'MAIL_VERSTUREN'"
+        <zac-mail-create *ngSwitchCase="sideNavAction.MAIL_VERSTUREN"
                          (mailVerstuurd)="mailVerstuurd()"
                          [zaak]="zaak"></zac-mail-create>
-        <zac-ontvangstbevestiging *ngSwitchCase="'ONTVANGSTBEVESTIGING'"
+        <zac-ontvangstbevestiging *ngSwitchCase="sideNavAction.ONTVANGSTBEVESTIGING"
                                   (ontvangstBevestigd)="ontvangstBevestigd()"
                                   [zaak]="zaak"></zac-ontvangstbevestiging>
-        <zac-besluit-create *ngSwitchCase="'BESLUIT_VASTLEGGEN'"
+        <zac-besluit-create *ngSwitchCase="sideNavAction.BESLUIT_VASTLEGGEN"
                             (besluitVastgelegd)="besluitVastgelegd($event)"
                             [zaak]="zaak"></zac-besluit-create>
-        <zac-besluit-edit *ngSwitchCase="'BESLUIT_WIJZIGEN'"
+        <zac-besluit-edit *ngSwitchCase="sideNavAction.BESLUIT_WIJZIGEN"
                           (besluitGewijzigd)="besluitVastgelegd($event)"
                           [zaak]="zaak"></zac-besluit-edit>
 
@@ -86,14 +86,12 @@
                                                      [readonly]="!zaak.rechten.wijzigen"
                                                      (onSave)="editZaakMetReden($event, 'vertrouwelijkheidaanduiding')">
                                     </zac-edit-select>
-                                    <zac-edit-groep [formField]="editFormFields.get('groep')"
-                                                    [reasonField]="editFormFields.get('reden')"
-                                                    [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
-                                                    (onSave)="editGroep($event)"></zac-edit-groep>
-                                    <zac-edit-behandelaar [formField]="editFormFields.get('behandelaar')"
-                                                          [reasonField]="editFormFields.get('reden')"
-                                                          [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
-                                                          (onSave)="editBehandelaar($event)"></zac-edit-behandelaar>
+                                    <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
+                                                                [reasonField]="editFormFields.get('reden')"
+                                                                [readonly]="!zaak.isOpen || !zaak.rechten.toekennen"
+                                                                (onSave)="editToewijzing($event)">
+                                    </zac-edit-groep-behandelaar>
+
                                 </div>
                                 <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">
                                     <div class="mat-divider-wrapper" fxHide fxShow.lt-sm>
@@ -146,9 +144,9 @@
                                                           [verlengReden]="zaak.redenVerlenging"
                                                           [verlengDuur]="zaak.duurVerlenging"
                                                           [readonly]="!zaak.rechten.wijzigen"
-                                                          [actieOpschorten]="zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.opschorten"
+                                                          [actieOpschorten]="zaak.zaaktype.opschortingMogelijk && zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.opschorten"
                                                           [actieHervatten]="zaak.isOpgeschort && zaak.rechten.hervatten"
-                                                          [actieVerlengen]="zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.verlengen"
+                                                          [actieVerlengen]="zaak.zaaktype.verlengingMogelijk && zaak.isOpen && !zaak.isHeropend && !zaak.isOpgeschort && zaak.rechten.verlengen"
                                                           (doOpschorting)="editOpschorting($event)"
                                                           (doVerlenging)="editVerlenging($event)"></zac-edit-datum-groep>
                                 </div>
@@ -182,8 +180,8 @@
                                         <th mat-header-cell *matHeaderCellDef></th>
                                         <td mat-cell *matCellDef="let row">
                                             <a *ngIf="row.rechten.lezen" mat-flat-button [routerLink]="['/zaken', row.identificatie]"
-                                                    (click)="$event.stopPropagation()"
-                                                    [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
+                                               (click)="$event.stopPropagation()"
+                                               [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                                                 <mat-icon>visibility</mat-icon>
                                             </a>
                                             <button *ngIf="row.rechten.koppelen" mat-flat-button (click)="startZaakOntkoppelenDialog(row)"
@@ -342,86 +340,86 @@
                         <div class="table-wrapper">
                             <table mat-table [dataSource]="takenDataSource" matSort multiTemplateDataRows #takenSort="matSort">
                                 <ng-container matColumnDef="collapse">
-                                <th mat-header-cell *matHeaderCellDef>
-                                    <mat-icon *ngIf="!allTakenExpanded" (click)="expandTaken(true)">expand_more</mat-icon>
-                                    <mat-icon *ngIf="allTakenExpanded" (click)="expandTaken(false)">expand_less</mat-icon>
-                                </th>
-                            </ng-container>
-                            <ng-container matColumnDef="naam">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'naam' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak" colspan="2"> {{taak.data.naam | empty}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="status">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'status' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak">
-                                    <zac-status-label [taakStatus]="taak.data.status"></zac-status-label>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="creatiedatumTijd">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'creatiedatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.data.creatiedatumTijd | datum | empty}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="toekenningsdatumTijd">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'toekenningsdatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.data.toekenningsdatumTijd | datum | empty}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="streefdatum">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'streefdatum' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.data.streefdatum | datum | empty}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="groep">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'groep' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.data.groep |empty:'naam'}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="behandelaar">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'behandelaar' | translate}} </th>
-                                <td mat-cell *matCellDef="let taak"> {{taak.data.behandelaar | empty:'naam'}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="id" stickyEnd id="taakButtons">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let row">
-                                    <a *ngIf="row.data.rechten.lezen" mat-flat-button [routerLink]="['/taken', row.data.id]"
-                                            (click)="$event.stopPropagation()"
-                                            [id]="'taakBekijken_' + row.data.id +'_button'"
-                                            title="{{ 'actie.taak.bekijken' | translate }}">
-                                        <mat-icon>visibility</mat-icon>
-                                    </a>
-                                    <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
-                                            [id]="'kenTaakAanMijToe_' + row.data.id +'_button'"
-                                            (click)="assignTaakToMe(row.data, $event)" *ngIf="showAssignTaakToMe(row.data)">
-                                        <mat-icon>person_add_alt_1</mat-icon>
-                                    </button>
-                                </td>
-                            </ng-container>
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <mat-icon *ngIf="!allTakenExpanded" (click)="expandTaken(true)">expand_more</mat-icon>
+                                        <mat-icon *ngIf="allTakenExpanded" (click)="expandTaken(false)">expand_less</mat-icon>
+                                    </th>
+                                </ng-container>
+                                <ng-container matColumnDef="naam">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'naam' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak" colspan="2"> {{taak.data.naam | empty}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="status">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'status' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak">
+                                        <zac-status-label [taakStatus]="taak.data.status"></zac-status-label>
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="creatiedatumTijd">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'creatiedatum' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.creatiedatumTijd | datum | empty}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="toekenningsdatumTijd">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'toekenningsdatum' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.toekenningsdatumTijd | datum | empty}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="streefdatum">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'streefdatum' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.streefdatum | datum | empty}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="groep">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'groep' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.groep |empty:'naam'}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="behandelaar">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'behandelaar' | translate}} </th>
+                                    <td mat-cell *matCellDef="let taak"> {{taak.data.behandelaar | empty:'naam'}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="id" stickyEnd id="taakButtons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <a *ngIf="row.data.rechten.lezen" mat-flat-button [routerLink]="['/taken', row.data.id]"
+                                           (click)="$event.stopPropagation()"
+                                           [id]="'taakBekijken_' + row.data.id +'_button'"
+                                           title="{{ 'actie.taak.bekijken' | translate }}">
+                                            <mat-icon>visibility</mat-icon>
+                                        </a>
+                                        <button mat-flat-button title="{{ 'actie.mij.toekennen' | translate }}"
+                                                [id]="'kenTaakAanMijToe_' + row.data.id +'_button'"
+                                                (click)="assignTaakToMe(row.data, $event)" *ngIf="showAssignTaakToMe(row.data)">
+                                            <mat-icon>person_add_alt_1</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="expandedTaakDetail">
-                                <td mat-cell *matCellDef="let row" colspan="9">
-                                    <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
-                                        <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
-                                            <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
-                                                             [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
-                                            <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlagen"
-                                                             [value]="row.data.taakinformatie?.bijlagen"></zac-static-text>
-                                            <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
-                                                             [value]="row.data.taakinformatie?.opmerking"></zac-static-text>
+                                <ng-container matColumnDef="expandedTaakDetail">
+                                    <td mat-cell *matCellDef="let row" colspan="9">
+                                        <div class="row-detail" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
+                                            <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
+                                                <zac-static-text fxFlex="50" [label]="'uitkomst' | translate"
+                                                                 [value]="row.data.taakinformatie?.uitkomst | translate"></zac-static-text>
+                                                <zac-static-text fxFlex="50" [label]="'bijlage' | translate" *ngIf="row.data.taakinformatie?.bijlagen"
+                                                                 [value]="row.data.taakinformatie?.bijlagen"></zac-static-text>
+                                                <zac-static-text [label]="'opmerking' | translate" *ngIf="row.data.taakinformatie?.opmerking"
+                                                                 [value]="row.data.taakinformatie?.opmerking"></zac-static-text>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="['collapse'].concat(takenColumnsToDisplay)"></tr>
-                            <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"
-                                class="row"
-                                [class.expanded-row]="row.expanded"
-                                (click)="expandTaak(row)"></tr>
-                            <tr mat-row *matRowDef="let row; columns: ['expandedTaakDetail']"
-                                class="collapsed-row"></tr>
-                            <tr class="mat-row" *matNoDataRow>
-                                <td class="mat-cell" colspan="9">
-                                    <zac-skeleton-loader [loading$]="taken$" [options]="{layout:'table'}">
-                                        <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
-                                    </zac-skeleton-loader>
-                                </td>
-                            </tr>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="['collapse'].concat(takenColumnsToDisplay)"></tr>
+                                <tr mat-row *matRowDef="let row; columns: takenColumnsToDisplay;"
+                                    class="row"
+                                    [class.expanded-row]="row.expanded"
+                                    (click)="expandTaak(row)"></tr>
+                                <tr mat-row *matRowDef="let row; columns: ['expandedTaakDetail']"
+                                    class="collapsed-row"></tr>
+                                <tr class="mat-row" *matNoDataRow>
+                                    <td class="mat-cell" colspan="9">
+                                        <zac-skeleton-loader [loading$]="taken$" [options]="{layout:skeletonLayout.TABLE}">
+                                            <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                                        </zac-skeleton-loader>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </mat-card-content>

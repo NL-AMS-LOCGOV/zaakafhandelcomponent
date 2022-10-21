@@ -4,6 +4,7 @@
  */
 
 import {Vertrouwelijkheidaanduiding} from '../../informatie-objecten/model/vertrouwelijkheidaanduiding.enum';
+import {ZaakafhandelParameters} from '../../admin/model/zaakafhandel-parameters';
 
 export class Zaaktype {
     uuid: string;
@@ -17,4 +18,7 @@ export class Zaaktype {
     eindeGeldigheid: string;
     nuGeldig: boolean;
     vertrouwelijkheidaanduiding: Vertrouwelijkheidaanduiding;
+    opschortingMogelijk: boolean;
+    verlengingMogelijk: boolean;
+    zaakafhandelparameters: ZaakafhandelParameters;
 }

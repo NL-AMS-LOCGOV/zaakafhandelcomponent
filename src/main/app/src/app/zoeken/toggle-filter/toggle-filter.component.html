@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 <button mat-icon-button [ngSwitch]="selected" (click)="toggle()">
-    <mat-icon *ngSwitchCase="'CHECKED'" color="primary">{{checkedIcon}}</mat-icon>
-    <mat-icon *ngSwitchCase="'UNCHECKED'" color="warn">{{unCheckedIcon}}</mat-icon>
-    <mat-icon *ngSwitchCase="'INDETERMINATE'">{{indeterminateIcon}}</mat-icon>
+    <mat-icon *ngSwitchCase="toggleSwitchOptions.CHECKED" color="primary">{{checkedIcon}}</mat-icon>
+    <mat-icon *ngSwitchCase="toggleSwitchOptions.UNCHECKED" color="warn">{{unCheckedIcon}}</mat-icon>
+    <mat-icon *ngSwitchCase="toggleSwitchOptions.INDETERMINATE">{{indeterminateIcon}}</mat-icon>
 </button>

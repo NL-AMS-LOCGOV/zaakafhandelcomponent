@@ -5,7 +5,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
-import {HeadingFormField} from './heading-form-field';
+import {HeadingFormField, HeadingLevel} from './heading-form-field';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -14,6 +14,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class HeadingComponent extends FormComponent implements OnInit {
 
+    readonly headingLevel = HeadingLevel;
     data: HeadingFormField;
 
     constructor(public translate: TranslateService) {

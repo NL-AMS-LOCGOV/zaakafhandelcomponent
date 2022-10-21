@@ -10,12 +10,12 @@ import {EnkelvoudigInformatieobject} from '../../../../informatie-objecten/model
 
 export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected readonly formField: DocumentenLijstFormField;
+    readonly formField: DocumentenLijstFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new DocumentenLijstFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
     }
 
     documenten(documenten$: Observable<EnkelvoudigInformatieobject[]>): this {
@@ -41,9 +41,5 @@ export class DocumentenLijstFieldBuilder extends AbstractFormFieldBuilder {
     verbergStatus(): this {
         this.formField.verbergStatus = true;
         return this;
-    }
-
-    build() {
-        return this.formField;
     }
 }

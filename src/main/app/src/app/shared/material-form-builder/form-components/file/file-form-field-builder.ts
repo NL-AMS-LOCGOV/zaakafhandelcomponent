@@ -7,12 +7,12 @@ import {FileFormField} from './file-form-field';
 import {AbstractFileFormFieldBuilder} from '../../model/abstract-file-form-field-builder';
 
 export class FileFormFieldBuilder extends AbstractFileFormFieldBuilder {
-    protected readonly formField: FileFormField;
+    readonly formField: FileFormField;
 
     constructor(value?: any) {
         super();
         this.formField = new FileFormField();
-        this.formField.initFormControl(value);
+        this.formField.initControl(value);
         this.updateHint();
     }
 

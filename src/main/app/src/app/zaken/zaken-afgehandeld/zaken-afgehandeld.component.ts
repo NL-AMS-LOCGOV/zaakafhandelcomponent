@@ -24,6 +24,7 @@ import {DatumVeld} from '../../zoeken/model/datum-veld';
 import {ZakenAfgehandeldDatasource} from './zaken-afgehandeld-datasource';
 import {TranslateService} from '@ngx-translate/core';
 import {CsvService} from '../../csv/csv.service';
+import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 
 @Component({
     templateUrl: './zaken-afgehandeld.component.html',
@@ -37,10 +38,11 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatTable) table: MatTable<ZaakZoekObject>;
     expandedRow: ZaakZoekObject | null;
-    ZoekVeld = ZoekVeld;
-    SorteerVeld = SorteerVeld;
-    FilterVeld = FilterVeld;
-    DatumVeld = DatumVeld;
+    readonly zoekenColumn = ZoekenColumn;
+    zoekVeld = ZoekVeld;
+    sorteerVeld = SorteerVeld;
+    filterVeld = FilterVeld;
+    datumVeld = DatumVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
@@ -58,21 +60,21 @@ export class ZakenAfgehandeldComponent implements AfterViewInit, OnInit {
         this.dataSource.initColumns(this.defaultColumns());
     }
 
-    defaultColumns(): Map<string, ColumnPickerValue> {
+    defaultColumns(): Map<ZoekenColumn, ColumnPickerValue> {
         return new Map([
-            ['zaak.identificatie', ColumnPickerValue.VISIBLE],
-            ['status', ColumnPickerValue.HIDDEN],
-            ['zaaktype', ColumnPickerValue.VISIBLE],
-            ['omschrijving', ColumnPickerValue.VISIBLE],
-            ['groep', ColumnPickerValue.HIDDEN],
-            ['startdatum', ColumnPickerValue.VISIBLE],
-            ['einddatum', ColumnPickerValue.VISIBLE],
-            ['einddatumGepland', ColumnPickerValue.HIDDEN],
-            ['behandelaar', ColumnPickerValue.VISIBLE],
-            ['uiterlijkeEinddatumAfdoening', ColumnPickerValue.HIDDEN],
-            ['toelichting', ColumnPickerValue.HIDDEN],
-            ['resultaat', ColumnPickerValue.VISIBLE],
-            ['url', ColumnPickerValue.STICKY]
+            [ZoekenColumn.ZAAK_DOT_IDENTIFICATIE, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.STATUS, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.ZAAKTYPE, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.OMSCHRIJVING, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.GROEP, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.STARTDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.EINDDATUM, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.EINDDATUM_GEPLAND, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.BEHANDELAAR, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.UITERLIJKE_EINDDATUM_AFDOENING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.TOELICHTING, ColumnPickerValue.HIDDEN],
+            [ZoekenColumn.RESULTAAT, ColumnPickerValue.VISIBLE],
+            [ZoekenColumn.URL, ColumnPickerValue.STICKY]
         ]);
     }
 

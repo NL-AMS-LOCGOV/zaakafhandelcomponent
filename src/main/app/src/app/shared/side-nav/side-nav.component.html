@@ -5,23 +5,23 @@
 
 <mat-nav-list [@sideNavToggle]="menuState" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
     <ng-container *ngFor="let menuItem of menu" [ngSwitch]="menuItem.type">
-        <h3 mat-subheader *ngSwitchCase="'HEADER'">
+        <h3 mat-subheader *ngSwitchCase="menuItemType.HEADER">
             <mat-icon *ngIf="menuState===MenuState.CLOSED">{{menuItem.icon ? menuItem.icon : 'more_horiz'}}</mat-icon>
             <span *ngIf="menuState===MenuState.OPEN"> {{menuItem.title | translate}}</span>
         </h3>
-        <mat-divider *ngSwitchCase="'HEADER'"></mat-divider>
+        <mat-divider *ngSwitchCase="menuItemType.HEADER"></mat-divider>
 
-        <a mat-list-item *ngSwitchCase="'LINK'" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
+        <a mat-list-item *ngSwitchCase="menuItemType.LINK" routerLink="{{asLinkMenuItem(menuItem).url}}" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>
         </a>
-        <a mat-list-item *ngSwitchCase="'BUTTON'" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
+        <a mat-list-item *ngSwitchCase="menuItemType.BUTTON" (click)="onClick(asButtonMenuItem(menuItem))" routerLinkActive="active">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>
         </a>
-        <a mat-list-item *ngSwitchCase="'HREF'" [href]="asHrefMenuItem(menuItem).url">
+        <a mat-list-item *ngSwitchCase="menuItemType.HREF" [href]="asHrefMenuItem(menuItem).url">
             <mat-icon [matTooltipDisabled]="menuState === MenuState.OPEN" matTooltipPosition="after" [matTooltip]="menuItem.title | translate"
                       mat-list-icon>{{menuItem.icon}}</mat-icon>
             <div mat-line>{{menuItem.title | translate}}</div>

@@ -10,6 +10,7 @@ import {MedewerkerGroepFieldBuilder} from '../shared/material-form-builder/form-
 import {HumanTaskData} from '../plan-items/model/human-task-data';
 import {DividerFormFieldBuilder} from '../shared/material-form-builder/form-components/divider/divider-form-field-builder';
 import {TaakStatus} from '../taken/model/taak-status.enum';
+import {Group} from '../identity/model/group';
 
 export class FormulierBuilder {
 
@@ -20,25 +21,32 @@ export class FormulierBuilder {
     }
 
     startForm(planItem: PlanItem): FormulierBuilder {
+        this._formulier.tabellen = planItem.tabellen;
         this._formulier.zaakUuid = planItem.zaakUuid;
         this._formulier.taakNaam = planItem.naam;
         this._formulier.humanTaskData = new HumanTaskData();
         this._formulier.humanTaskData.planItemInstanceId = planItem.id;
         this._formulier.initStartForm();
+        let groep = null;
+        if (planItem.groepId) {
+            groep = new Group();
+            groep.id = planItem.groepId;
+        }
         this._formulier.form.push(
             [new DividerFormFieldBuilder().build()],
-            [new MedewerkerGroepFieldBuilder().id(AbstractFormulier.TOEKENNING_FIELD)
-                                              .label('actie.taak.toewijzing')
-                                              .groepLabel('actie.taak.toekennen.groep')
-                                              .medewerkerLabel('actie.taak.toekennen.medewerker')
-                                              .defaultGroep(planItem.groep)
-                                              .build()]);
+            [new MedewerkerGroepFieldBuilder(groep).id(AbstractFormulier.TOEKENNING_FIELD)
+                                                   .label('actie.taak.toewijzing')
+                                                   .groepLabel('actie.taak.toekennen.groep')
+                                                   .groepRequired()
+                                                   .medewerkerLabel('actie.taak.toekennen.medewerker')
+                                                   .build()]);
         return this;
     }
 
     behandelForm(taak: Taak): FormulierBuilder {
         this._formulier.zaakUuid = taak.zaakUuid;
         this._formulier.taak = taak;
+        this._formulier.tabellen = taak.tabellen;
         this._formulier.dataElementen = taak.taakdata;
         this._formulier.initBehandelForm(taak.status === TaakStatus.Afgerond || !taak.rechten.wijzigenFormulier);
         return this;

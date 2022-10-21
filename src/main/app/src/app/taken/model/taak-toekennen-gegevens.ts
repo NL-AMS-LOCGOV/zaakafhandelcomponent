@@ -6,5 +6,6 @@
 export class TaakToekennenGegevens {
     taakId: string;
     zaakUuid: string;
-
+    groepId: string;
+    behandelaarId: string;
 }

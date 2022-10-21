@@ -26,7 +26,6 @@ import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {HistorieRegel} from '../../shared/historie/model/historie-regel';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {User} from '../../identity/model/user';
-import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {IdentityService} from '../../identity/identity.service';
 import {ScreenEvent} from '../../core/websocket/model/screen-event';
 import {DateFormFieldBuilder} from '../../shared/material-form-builder/form-components/date/date-form-field-builder';
@@ -56,7 +55,7 @@ import {UserEventListenerActie} from '../../plan-items/model/user-event-listener
 import {detailExpand} from '../../shared/animations/animations';
 import {map, tap} from 'rxjs/operators';
 import {ExpandableTableData} from '../../shared/dynamic-table/model/expandable-table-data';
-import {forkJoin, Observable, of, share, Subscription} from 'rxjs';
+import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
@@ -74,8 +73,10 @@ import {BAGObjecttype} from '../../bag/model/bagobjecttype';
 import {BAGService} from '../../bag/bag.service';
 import {ZaakAfhandelenDialogComponent} from '../zaak-afhandelen-dialog/zaak-afhandelen-dialog.component';
 import {MailService} from '../../mail/mail.service';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -84,12 +85,14 @@ import {TaakStatus} from '../../taken/model/taak-status.enum';
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
+    readonly skeletonLayout = SkeletonLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
     zaakOpschorting: ZaakOpschorting;
     actiefPlanItem: PlanItem;
     menu: MenuItem[];
-    action: string;
+    readonly sideNavAction = SideNavAction;
+    action: SideNavAction;
 
     taken$: Observable<ExpandableTableData<Taak>[]>;
     takenDataSource: MatTableDataSource<ExpandableTableData<Taak>> = new MatTableDataSource<ExpandableTableData<Taak>>();
@@ -238,17 +241,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                     .optionLabel('naam')
                                                                     .options(this.zakenService.listCommunicatiekanalen()).build());
 
-        this.editFormFields.set('behandelaar', new AutocompleteFormFieldBuilder(this.zaak.behandelaar).id('behandelaar').label('behandelaar')
-                                                                                                      .optionLabel('naam')
-                                                                                                      .options(
-                                                                                                          this.identityService.listUsers())
-                                                                                                      .maxlength(50)
-                                                                                                      .build());
-        this.editFormFields.set('groep', new AutocompleteFormFieldBuilder(this.zaak.groep).id('groep').label('groep')
-                                                                                          .optionLabel('naam')
-                                                                                          .options(this.identityService.listGroups())
-                                                                                          .maxlength(50)
-                                                                                          .build());
+        this.editFormFields.set('medewerker-groep',
+            new MedewerkerGroepFieldBuilder(this.zaak.groep, this.zaak.behandelaar).id('medewerker-groep')
+                                                                                   .groepLabel('groep.-kies-')
+                                                                                   .groepRequired()
+                                                                                   .medewerkerLabel('behandelaar.-kies-')
+                                                                                   .build());
         this.editFormFields.set('omschrijving', new TextareaFormFieldBuilder(this.zaak.omschrijving).id('omschrijving').label('omschrijving')
                                                                                                     .maxlength(80)
                                                                                                     .build());
@@ -375,16 +373,16 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
         forkJoin([
             this.planItemsService.listUserEventListenerPlanItems(this.zaak.uuid),
-            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid),
-            this.zaakafhandelParametersService.readZaakafhandelparameters(this.zaak.zaaktype.uuid)
-        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems, zaakafhandelParameters]) => {
+            this.planItemsService.listHumanTaskPlanItems(this.zaak.uuid)
+        ]).subscribe(([userEventListenerPlanItems, humanTaskPlanItems]) => {
             if (this.zaak.rechten.voortzetten && userEventListenerPlanItems.length > 0) {
                 this.menu = this.menu.concat(
                     userEventListenerPlanItems.map(
                         userEventListenerPlanItem => this.createUserEventListenerPlanItemMenuItem(userEventListenerPlanItem)
                     ).filter(menuItem => menuItem != null));
             }
-            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken && zaakafhandelParameters.zaakbeeindigParameters.length > 0) {
+            if (this.zaak.isOpen && !this.zaak.isHeropend && this.zaak.rechten.afbreken &&
+                this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
             }
             this.createKoppelingenMenuItems();
@@ -594,8 +592,26 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    editGroep(event: any): void {
-        this.zaak.groep = event.groep;
+    editToewijzing(event: any): void {
+        if (this.zaak.groep !== event['medewerker-groep'].groep && this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
+            this.zaak.groep = event['medewerker-groep'].groep;
+            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
+
+            this.websocketService.doubleSuspendListener(this.zaakRollenListener);
+            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
+                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+                this.init(zaak);
+            });
+
+        } else if (this.zaak.groep !== event['medewerker-groep'].groep) {
+            this.editGroep(event);
+        } else if (this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
+            this.editBehandelaar(event);
+        }
+    }
+
+    private editGroep(event: any): void {
+        this.zaak.groep = event['medewerker-groep'].groep;
         this.websocketService.doubleSuspendListener(this.zaakRollenListener);
         this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
             this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
@@ -603,11 +619,11 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         });
     }
 
-    editBehandelaar(event: any): void {
-        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+    private editBehandelaar(event: any): void {
+        if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id) {
             this.assignZaakToMe(event);
-        } else if (event.behandelaar) {
-            this.zaak.behandelaar = event.behandelaar;
+        } else if (event['medewerker-groep'].medewerker) {
+            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
                 this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
@@ -621,7 +637,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     private vrijgeven(reden: string): void {
         this.zaak.behandelaar = null;
         this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.vrijgeven([this.zaak.uuid], reden).subscribe(() => {
+        this.zakenService.vrijgeven(this.zaak.uuid, reden).subscribe(() => {
             this.init(this.zaak);
             this.utilService.openSnackbar('msg.zaak.vrijgegeven');
         });

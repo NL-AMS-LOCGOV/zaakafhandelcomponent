@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormField} from '../../model/abstract-form-field';
 import {FieldType} from '../../model/field-type.enum';
 import {ActionIcon} from '../../../edit/action-icon';
+import {AbstractFormControlField} from '../../model/abstract-form-control-field';
 
-export class InputFormField extends AbstractFormField {
+export class InputFormField extends AbstractFormControlField {
     fieldType: FieldType = FieldType.INPUT;
     icons: ActionIcon[];
     maxlength: number;

@@ -238,6 +238,10 @@ mat-card {
   .mat-card-header .mat-card-title {
     font-size: 14px;
   }
+
+  .mat-card-title-group .mat-card-title {
+    font-size: 14px;
+  }
 }
 
 [mat-subheader] {
@@ -255,6 +259,21 @@ mat-card {
 .mat-form-field-appearance-legacy {
   .mat-form-field-underline {
     display: none;
+  }
+}
+
+mat-form-field .mat-form-field {
+  &-wrapper {
+    padding-bottom: 1em;
+  }
+
+  &-underline {
+    position: relative;
+    bottom: auto;
+  }
+
+  &-subscript-wrapper {
+    position: static;
   }
 }
 

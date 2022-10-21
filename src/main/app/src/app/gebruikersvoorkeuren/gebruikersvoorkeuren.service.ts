@@ -11,6 +11,7 @@ import {HttpClient} from '@angular/common/http';
 import {FoutAfhandelingService} from '../fout-afhandeling/fout-afhandeling.service';
 import {Werklijst} from './model/werklijst';
 import {Zoekopdracht} from './model/zoekopdracht';
+import {DashboardCardInstelling} from '../dashboard/model/dashboard-card-instelling';
 
 @Injectable({
     providedIn: 'root'
@@ -48,6 +49,30 @@ export class GebruikersvoorkeurenService {
 
     removeZoekopdrachtActief(werklijst: Werklijst): Observable<void> {
         return this.http.delete<void>(`${this.basepath}/zoekopdracht/${werklijst}/actief`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    listDashboardCards(): Observable<DashboardCardInstelling[]> {
+        return this.http.get<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard/actief`).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    updateDashboardCards(cards: DashboardCardInstelling[]): Observable<DashboardCardInstelling[]> {
+        return this.http.put<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard/actief`, cards).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    addDashboardCard(card: DashboardCardInstelling): Observable<DashboardCardInstelling[]> {
+        return this.http.put<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard`, card).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    deleteDashboardCard(card: DashboardCardInstelling): Observable<DashboardCardInstelling[]> {
+        return this.http.delete<DashboardCardInstelling[]>(`${this.basepath}/dasboardcard`, {body: card}).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

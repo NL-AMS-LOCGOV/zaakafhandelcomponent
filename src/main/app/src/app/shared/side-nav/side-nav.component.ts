@@ -4,7 +4,7 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MenuItem} from './menu-item/menu-item';
+import {MenuItem, MenuItemType} from './menu-item/menu-item';
 import {ButtonMenuItem} from './menu-item/button-menu-item';
 import {HrefMenuItem} from './menu-item/href-menu-item';
 import {LinkMenuItem} from './menu-item/link-menu-item';
@@ -24,6 +24,7 @@ export class SideNavComponent implements OnInit {
     @Input() menu: MenuItem[];
     @Output() mode = new EventEmitter<string>();
 
+    readonly menuItemType = MenuItemType;
     menuMode = SideNavUtil.load();
     menuState: string;
 

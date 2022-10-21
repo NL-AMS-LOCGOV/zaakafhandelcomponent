@@ -16,7 +16,6 @@ import org.flowable.cmmn.model.UserEventListener;
 
 import net.atos.zac.app.admin.model.RESTCaseDefinition;
 import net.atos.zac.app.admin.model.RESTPlanItemDefinition;
-import net.atos.zac.app.planitems.model.HumanTaskFormulierKoppeling;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.TaskService;
 
@@ -28,12 +27,14 @@ public class RESTCaseDefinitionConverter {
     @Inject
     private TaskService taskService;
 
-    @Inject
-    private RESTHumanTaskReferentieTabelConverter restHumanTaskReferentieTabelConverter;
 
-    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, boolean inclusiefRelaties) {
+    public RESTCaseDefinition convertToRESTCaseDefinition(final String caseDefinitionKey, final boolean inclusiefRelaties) {
         final CaseDefinition caseDefinition = caseService.readCaseDefinition(caseDefinitionKey);
-        final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinitionKey);
+        return convertToRESTCaseDefinition(caseDefinition, inclusiefRelaties);
+    }
+
+    public RESTCaseDefinition convertToRESTCaseDefinition(final CaseDefinition caseDefinition, final boolean inclusiefRelaties) {
+        final RESTCaseDefinition restCaseDefinition = new RESTCaseDefinition(caseDefinition.getName(), caseDefinition.getKey());
         if (inclusiefRelaties) {
             restCaseDefinition.humanTaskDefinitions = taskService.listHumanTasks(caseDefinition.getId()).stream()
                     .map(this::convertHumanTaskDefinition)
@@ -46,10 +47,7 @@ public class RESTCaseDefinitionConverter {
     }
 
     private RESTPlanItemDefinition convertHumanTaskDefinition(final HumanTask humanTaskDefinition) {
-        final RESTPlanItemDefinition humanTask = new RESTPlanItemDefinition(humanTaskDefinition.getId(), humanTaskDefinition.getName(), HUMAN_TASK);
-        humanTask.referentieTabellen = restHumanTaskReferentieTabelConverter.convertDefault(
-                HumanTaskFormulierKoppeling.readFormulierVeldDefinities(humanTask.id));
-        return humanTask;
+        return new RESTPlanItemDefinition(humanTaskDefinition.getId(), humanTaskDefinition.getName(), HUMAN_TASK);
     }
 
     private RESTPlanItemDefinition convertUserEventListenerDefinition(final UserEventListener userEventListenerDefinition) {

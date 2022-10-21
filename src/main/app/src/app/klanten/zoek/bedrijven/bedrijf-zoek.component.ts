@@ -5,7 +5,6 @@
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {AbstractFormField} from '../../../shared/material-form-builder/model/abstract-form-field';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
@@ -16,6 +15,7 @@ import {KlantenService} from '../../klanten.service';
 import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
 import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 import {Subscription} from 'rxjs';
+import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -34,14 +34,14 @@ export class BedrijfZoekComponent implements OnInit, OnDestroy {
 
     types = ['HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
 
-    kvkFormField: AbstractFormField;
-    vestigingsnummerFormField: AbstractFormField;
-    rsinFormField: AbstractFormField;
-    handelsnaamFormField: AbstractFormField;
-    typeFormField: AbstractFormField;
-    postcodeFormField: AbstractFormField;
-    huisnummerFormField: AbstractFormField;
-    plaatsFormField: AbstractFormField;
+    kvkFormField: AbstractFormControlField;
+    vestigingsnummerFormField: AbstractFormControlField;
+    rsinFormField: AbstractFormControlField;
+    handelsnaamFormField: AbstractFormControlField;
+    typeFormField: AbstractFormControlField;
+    postcodeFormField: AbstractFormControlField;
+    huisnummerFormField: AbstractFormControlField;
+    plaatsFormField: AbstractFormControlField;
 
     subscriptions: Subscription[] = [];
 

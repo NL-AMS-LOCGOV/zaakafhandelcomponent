@@ -9,7 +9,7 @@ import {FormFieldHint} from './form-field-hint';
 
 export abstract class AbstractFileFormFieldBuilder extends AbstractFormFieldBuilder {
 
-    protected abstract readonly formField: AbstractFileFormField;
+    abstract readonly formField: AbstractFileFormField;
 
     constructor() {
         super();
@@ -37,11 +37,6 @@ export abstract class AbstractFileFormFieldBuilder extends AbstractFormFieldBuil
         if (!this.formField.uploadURL) {
             throw new Error('Missing value for restURL');
         }
-    }
-
-    build() {
-        this.validate();
-        return this.formField;
     }
 
     protected updateHint() {

@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Group} from '../../identity/model/group';
 import {PlanItemDefinition} from './plan-item-definition';
 import {HumanTaskReferentieTabel} from './human-task-referentie-tabel';
 
 export class HumanTaskParameter {
+    actief: boolean;
     planItemDefinition: PlanItemDefinition;
-    defaultGroep: Group;
+    formulierDefinitieId: string;
+    defaultGroepId: string;
     doorlooptijd: number;
     referentieTabellen: HumanTaskReferentieTabel[];
 }

@@ -4,15 +4,16 @@
  */
 
 import {PlanItemType} from './plan-item-type.enum';
-import {Group} from '../../identity/model/group';
 import {UserEventListenerActie} from './user-event-listener-actie-enum';
 
 export class PlanItem {
     id: string;
     naam: string;
+    actief: boolean;
     type: PlanItemType;
-    groep: Group;
+    groepId: string;
     formulierDefinitie: string;
+    tabellen: { [key: string]: string[] };
     zaakUuid: string;
     userEventListenerActie: UserEventListenerActie;
     toelichting: string;

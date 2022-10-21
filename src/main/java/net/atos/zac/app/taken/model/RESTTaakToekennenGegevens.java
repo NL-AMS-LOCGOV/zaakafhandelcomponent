@@ -12,4 +12,9 @@ public class RESTTaakToekennenGegevens {
     public String taakId;
 
     public UUID zaakUuid;
+
+    public String groepId;
+
+    public String behandelaarId;
+
 }

@@ -11,7 +11,7 @@
     <mfb-form-field [field]="redenFormField"></mfb-form-field>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="medewerkerGroepFormField.formControl.invalid || loading"
+    <button [disabled]="isDisabled()"
             mat-button color="primary" (click)="verdeel()" id="zakenVerdelen_button">
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20"></mat-spinner>

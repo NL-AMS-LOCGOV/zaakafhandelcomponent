@@ -4,17 +4,17 @@
  */
 
 import {SignaleringType} from '../../shared/signaleringen/signalering-type';
-import {ObjectType} from './object-type';
 import {DashboardCardType} from './dashboard-card-type';
+import {DashboardCardId} from './dashboard-card-id';
 
 export class DashboardCard {
-    type: DashboardCardType;
-    objectType: ObjectType;
-    signaleringType?: SignaleringType;
+    readonly id: DashboardCardId;
+    readonly type: DashboardCardType;
+    readonly signaleringType?: SignaleringType;
 
-    constructor(type: DashboardCardType, objectType: ObjectType, signaleringType?: SignaleringType) {
+    constructor(id: DashboardCardId, type: DashboardCardType, signaleringType?: SignaleringType) {
+        this.id = id;
         this.type = type;
-        this.objectType = objectType;
         this.signaleringType = signaleringType;
     }
 }

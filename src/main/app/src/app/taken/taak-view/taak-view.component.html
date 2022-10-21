@@ -8,9 +8,9 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-informatie-object-add *ngSwitchCase="'DOCUMENT_TOEVOEGEN'" [sideNav]="actionsSidenav"
+        <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN" [sideNav]="actionsSidenav"
                                    [taak]="taak" (document)="updateTaakdocumenten($event)"></zac-informatie-object-add>
-        <zac-informatie-object-create *ngSwitchCase="'DOCUMENT_MAKEN'" [sideNav]="actionsSidenav"
+        <zac-informatie-object-create *ngSwitchCase="sideNavAction.DOCUMENT_MAKEN" [sideNav]="actionsSidenav"
                                       [zaakUUID]="taak.zaakUuid" [taskId]="taak.id" (redirectUrl)="documentAangemaakt($event)"></zac-informatie-object-create>
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
@@ -41,13 +41,10 @@
                                     </div>
 
                                     <div [fxFlex]="100/3" fxFlex.lt-md="50">
-                                        <zac-edit-groep [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.toekennen"
-                                                        [formField]="editFormFields.get('groep')"
-                                                        (onSave)="editGroep($event)"></zac-edit-groep>
-                                        <zac-edit-behandelaar [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.toekennen"
-                                                              [formField]="editFormFields.get('behandelaar')"
-                                                              (onSave)="editBehandelaar($event)">
-                                        </zac-edit-behandelaar>
+                                        <zac-edit-groep-behandelaar [formField]="editFormFields.get('medewerker-groep')"
+                                                                    [readonly]="this.taak.status === this.TaakStatusAfgerond || !this.taak.rechten.toekennen"
+                                                                    (onSave)="editToewijzing($event)">
+                                        </zac-edit-groep-behandelaar>
                                     </div>
 
                                     <div [fxFlex]="100/3" fxFlex.lt-md="100" fxLayout.sm="row">

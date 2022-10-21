@@ -20,6 +20,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.sd.SmartDocumentsClient;
 import net.atos.client.sd.exception.BadRequestException;
+import net.atos.client.sd.model.Selection;
 import net.atos.client.sd.model.SmartDocument;
 import net.atos.client.sd.model.WizardResponse;
 import net.atos.client.zgw.zrc.ZRCClientService;
@@ -71,7 +72,7 @@ public class DocumentCreatieService {
         final LoggedInUser loggedInUser = loggedInUserInstance.get();
         final Registratie registratie = createRegistratie(documentCreatieGegevens);
         final Data data = dataConverter.createData(documentCreatieGegevens, loggedInUser);
-        final WizardRequest wizardRequest = new WizardRequest(new SmartDocument(), registratie, data);
+        final WizardRequest wizardRequest = new WizardRequest(createSmartDocument(documentCreatieGegevens), registratie, data);
         try {
             final WizardResponse wizardResponse = smartDocumentsClient.wizardDeposit(format("Basic %s", authenticationToken), loggedInUser.getId(),
                                                                                      wizardRequest);
@@ -80,6 +81,13 @@ public class DocumentCreatieService {
         } catch (final BadRequestException badRequestException) {
             return new DocumentCreatieResponse("Aanmaken van een document is helaas niet mogelijk. (ben je als user geregistreerd in SmartDocuments?)");
         }
+    }
+
+    private SmartDocument createSmartDocument(final DocumentCreatieGegevens documentCreatieGegevens) {
+        final SmartDocument smartDocument = new SmartDocument();
+        smartDocument.selection = new Selection();
+        smartDocument.selection.templateGroup = ztcClientService.readZaaktype(documentCreatieGegevens.getZaak().getZaaktype()).getOmschrijving();
+        return smartDocument;
     }
 
     private Registratie createRegistratie(final DocumentCreatieGegevens documentCreatieGegevens) {

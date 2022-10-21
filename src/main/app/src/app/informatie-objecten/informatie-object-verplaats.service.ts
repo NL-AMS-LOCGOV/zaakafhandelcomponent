@@ -8,7 +8,7 @@ import {EnkelvoudigInformatieobject} from './model/enkelvoudig-informatieobject'
 import {DocumentVerplaatsGegevens} from './model/document-verplaats-gegevens';
 import {SessionStorageUtil} from '../shared/storage/session-storage.util';
 import {Subject} from 'rxjs';
-import {ActionBarAction} from '../core/actionbar/model/action-bar-action';
+import {ActionBarAction, ActionEntityType} from '../core/actionbar/model/action-bar-action';
 import {ActionIcon} from '../shared/edit/action-icon';
 import {UtilService} from '../core/service/util.service';
 import {Router} from '@angular/router';
@@ -59,7 +59,7 @@ export class InformatieObjectVerplaatsService {
         if (!onInit) {
             SessionStorageUtil.setItem('teVerplaatsenDocumenten', teVerplaatsenDocumenten);
         }
-        const action: ActionBarAction = new ActionBarAction(document.documentTitel, 'DOCUMENT', document.bron,
+        const action: ActionBarAction = new ActionBarAction(document.documentTitel, ActionEntityType.DOCUMENT, document.bron,
             new ActionIcon('content_paste_go', 'actie.document.verplaatsen', verplaatsAction), dismiss, () => this.isVerplaatsenToegestaan(document.bron));
         this.utilService.addAction(action);
     }

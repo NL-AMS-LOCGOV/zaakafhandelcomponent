@@ -8,8 +8,10 @@ package net.atos.zac.gebruikersvoorkeuren;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -22,8 +24,11 @@ import javax.transaction.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import net.atos.zac.gebruikersvoorkeuren.model.DashboardCardInstelling;
 import net.atos.zac.gebruikersvoorkeuren.model.Zoekopdracht;
 import net.atos.zac.gebruikersvoorkeuren.model.ZoekopdrachtListParameters;
+import net.atos.zac.signalering.SignaleringenService;
+import net.atos.zac.signalering.model.SignaleringInstellingen;
 
 @ApplicationScoped
 @Transactional
@@ -31,6 +36,9 @@ public class GebruikersvoorkeurenService {
 
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
+
+    @Inject
+    private SignaleringenService signaleringenService;
 
     public Zoekopdracht createZoekopdracht(final Zoekopdracht zoekopdracht) {
         if (zoekopdracht.getId() != null) {
@@ -103,5 +111,67 @@ public class GebruikersvoorkeurenService {
             zoekopdracht.setActief(false);
             entityManager.merge(zoekopdracht);
         });
+    }
+
+    public List<DashboardCardInstelling> listDashboardCards(final String medewerkerId) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<DashboardCardInstelling> query = builder.createQuery(DashboardCardInstelling.class);
+        final Root<DashboardCardInstelling> root = query.from(DashboardCardInstelling.class);
+        final List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("medewerkerId"), medewerkerId));
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.asc(root.get("volgorde")));
+        final TypedQuery<DashboardCardInstelling> emQuery = entityManager.createQuery(query);
+        return emQuery.getResultList();
+    }
+
+    public void updateDashboardCards(final String medewerkerId, final List<DashboardCardInstelling> cards) {
+        final int[] volgorde = {0};
+        cards.forEach(card -> card.setVolgorde(volgorde[0]++));
+        final List<DashboardCardInstelling> existingCards = listDashboardCards(medewerkerId);
+        existingCards.forEach(existingCard -> {
+            final Optional<DashboardCardInstelling> updatedCard = cards.stream()
+                    .filter(card -> existingCard.getCardId().equals(card.getCardId()))
+                    .findAny();
+            if (updatedCard.isPresent()) {
+                existingCard.setVolgorde(updatedCard.get().getVolgorde());
+                entityManager.persist(existingCard);
+            } else {
+                entityManager.remove(existingCard);
+            }
+        });
+        cards.stream()
+                .filter(card -> card.getId() == null)
+                .forEach(newCard -> {
+                    newCard.setMedewerkerId(medewerkerId);
+                    entityManager.persist(newCard);
+                });
+    }
+
+    public void addDashboardCard(final String medewerkerId, final DashboardCardInstelling card) {
+        if (card.getSignaleringType() != null) {
+            final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(card.getSignaleringType(), medewerkerId);
+            if (instellingen.getId() != null) {
+                instellingen.setDashboard(true);
+                signaleringenService.createUpdateOrDeleteInstellingen(instellingen);
+            }
+        }
+        if (card.getId() == null) {
+            card.setMedewerkerId(medewerkerId);
+            entityManager.persist(card);
+        }
+    }
+
+    public void deleteDashboardCard(final String medewerkerId, final DashboardCardInstelling card) {
+        if (card.getSignaleringType() != null) {
+            final SignaleringInstellingen instellingen = signaleringenService.readInstellingenUser(card.getSignaleringType(), medewerkerId);
+            if (instellingen.getId() != null) {
+                instellingen.setDashboard(false);
+                signaleringenService.createUpdateOrDeleteInstellingen(instellingen);
+            }
+        }
+        if (card.getId() != null) {
+            entityManager.remove(entityManager.find(DashboardCardInstelling.class, card.getId()));
+        }
     }
 }

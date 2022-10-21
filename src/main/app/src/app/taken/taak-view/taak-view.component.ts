@@ -20,7 +20,6 @@ import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
 import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
-import {AutocompleteFormFieldBuilder} from '../../shared/material-form-builder/form-components/autocomplete/autocomplete-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {User} from '../../identity/model/user';
@@ -36,6 +35,7 @@ import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TaakStatus} from '../model/taak-status.enum';
+import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -50,7 +50,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taak: Taak;
     menu: MenuItem[] = [];
-    action: string;
+    readonly sideNavAction = SideNavAction;
+    action: SideNavAction;
 
     historieSrc: MatTableDataSource<TaakHistorieRegel> = new MatTableDataSource<TaakHistorieRegel>();
     historieColumns: string[] = ['datum', 'wijziging', 'oudeWaarde', 'nieuweWaarde'];
@@ -128,18 +129,12 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private setEditableFormFields(): void {
-        this.editFormFields.set('behandelaar',
-            new AutocompleteFormFieldBuilder(this.taak.behandelaar).id('behandelaar')
-                                                                   .label('behandelaar')
-                                                                   .optionLabel('naam')
-                                                                   .options(this.identityService.listUsers())
-                                                                   .build());
-        this.editFormFields.set('groep',
-            new AutocompleteFormFieldBuilder(this.taak.groep).id('groep')
-                                                             .label('groep')
-                                                             .optionLabel('naam')
-                                                             .options(this.identityService.listGroups())
-                                                             .build());
+        this.editFormFields.set('medewerker-groep',
+            new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar).id('medewerker-groep')
+                                                                                   .groepLabel('groep.-kies-')
+                                                                                   .groepRequired()
+                                                                                   .medewerkerLabel('behandelaar.-kies-')
+                                                                                   .build());
         this.editFormFields.set('toelichting',
             new TextareaFormFieldBuilder(this.taak.toelichting).id('toelichting')
                                                                .label('toelichting')
@@ -194,36 +189,23 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    editGroep(event: any): void {
-        this.taak.groep = event.groep;
-        this.takenService.assignGroup(this.taak).subscribe(() => {
-            this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.groep.naam});
-            this.init(this.taak);
-        });
-    }
-
-    editBehandelaar(event: any): void {
-        if (event.behandelaar && event.behandelaar.id === this.ingelogdeMedewerker.id) {
+    editToewijzing(event: any) {
+        if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id &&
+            this.taak.groep === event['medewerker-groep'].groep) {
             this.assignToMe();
-        } else if (event.behandelaar) {
-            this.taak.behandelaar = event.behandelaar;
+        } else {
+            this.taak.groep = event['medewerker-groep'].groep;
+            this.taak.behandelaar = event['medewerker-groep'].medewerker;
             this.websocketService.suspendListener(this.taakListener);
             this.takenService.assign(this.taak).subscribe(() => {
-                this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
+                if (this.taak.behandelaar) {
+                    this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
+                } else {
+                    this.utilService.openSnackbar('msg.vrijgegeven.taak');
+                }
                 this.init(this.taak);
             });
-        } else {
-            this.vrijgeven();
         }
-    }
-
-    private vrijgeven(): void {
-        this.taak.behandelaar = null;
-        this.websocketService.suspendListener(this.taakListener);
-        this.takenService.assign(this.taak).subscribe(() => {
-            this.utilService.openSnackbar('msg.taak.vrijgegeven');
-            this.init(this.taak);
-        });
     }
 
     partialEditTaak(value: string, field: string): void {

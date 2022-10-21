@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.enterprise.inject.Instance;
@@ -166,9 +167,24 @@ public class TakenRESTService {
     public void verdelen(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
-        restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
-            assignTaak(task.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam, task.zaakUuid);
-            taakIds.add(task.taakId);
+        restTaakVerdelenGegevens.taken.forEach(taak -> {
+            Task task = taskService.readOpenTask(taak.taakId);
+            boolean changed = false;
+            if (restTaakVerdelenGegevens.behandelaarGebruikersnaam != null) {
+                task = assignTaak(taak.taakId, restTaakVerdelenGegevens.behandelaarGebruikersnaam);
+                changed = true;
+            }
+
+            if (restTaakVerdelenGegevens.groepId != null) {
+                taskService.assignTaskToGroup(task, restTaakVerdelenGegevens.groepId);
+                changed = true;
+            }
+
+            if (changed) {
+                taakBehandelaarGewijzigd(task, taak.zaakUuid);
+                taakIds.add(taak.taakId);
+            }
+
         });
         indexeerService.indexeerDirect(taakIds, ZoekObjectType.TAAK);
     }
@@ -178,39 +194,48 @@ public class TakenRESTService {
     public void vrijgeven(final RESTTaakVerdelenGegevens restTaakVerdelenGegevens) {
         assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final List<String> taakIds = new ArrayList<>();
-        restTaakVerdelenGegevens.taakGegevens.forEach(task -> {
-            assignTaak(task.taakId, null, task.zaakUuid);
-            taakIds.add(task.taakId);
+        restTaakVerdelenGegevens.taken.forEach(taak -> {
+            final Task task = assignTaak(taak.taakId, null);
+            taakBehandelaarGewijzigd(task, taak.zaakUuid);
+            taakIds.add(taak.taakId);
         });
         indexeerService.indexeerDirect(taakIds, ZoekObjectType.TAAK);
     }
 
     @PATCH
     @Path("assign")
-    public void assignTaak(final RESTTaak restTaak) {
-        final TaskInfo task = taskService.readTask(restTaak.id);
+    public void assignTaak(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
+        final Task task = taskService.readOpenTask(restTaakToekennenGegevens.taakId);
         assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getToekennen());
-        assignTaak(restTaak.id, restTaak.behandelaar != null ? restTaak.behandelaar.id : null, restTaak.zaakUuid);
+
+        final String behandelaar = task.getAssignee();
+        final String groep = taakConverter.extractGroupId(task.getIdentityLinks());
+
+        boolean changed = false;
+        if (!Objects.equals(behandelaar, restTaakToekennenGegevens.behandelaarId)) {
+            assignTaak(restTaakToekennenGegevens.taakId, restTaakToekennenGegevens.behandelaarId);
+            changed = true;
+        }
+
+        if (!Objects.equals(groep, restTaakToekennenGegevens.groepId)) {
+            taskService.assignTaskToGroup(task, restTaakToekennenGegevens.groepId);
+            changed = true;
+        }
+        if (changed) {
+            taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
+        }
     }
 
     @PATCH
     @Path("assignTologgedOnUser")
     public RESTTaak assignToLoggedOnUser(final RESTTaakToekennenGegevens restTaakToekennenGegevens) {
-        TaskInfo task = taskService.readTask(restTaakToekennenGegevens.taakId);
+        Task task = taskService.readOpenTask(restTaakToekennenGegevens.taakId);
         assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readWerklijstRechten().getZakenTaken() &&
                              policyService.readTaakRechten(task).getToekennen());
-        task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId(), restTaakToekennenGegevens.zaakUuid);
+        task = assignTaak(restTaakToekennenGegevens.taakId, loggedInUserInstance.get().getId());
+        taakBehandelaarGewijzigd(task, restTaakToekennenGegevens.zaakUuid);
         indexeerService.indexeerDirect(restTaakToekennenGegevens.taakId, ZoekObjectType.TAAK);
         return taakConverter.convert(task, true);
-    }
-
-    @PATCH
-    @Path("assign/group")
-    public void assignGroup(final RESTTaak restTaak) {
-        Task task = taskService.readOpenTask(restTaak.id);
-        assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getToekennen());
-        task = taskService.assignTaskToGroup(task, restTaak.groep.id);
-        taakBehandelaarGewijzigd(task, restTaak.zaakUuid);
     }
 
     @PATCH
@@ -265,10 +290,9 @@ public class TakenRESTService {
         return taakHistorieConverter.convert(historicTaskLogEntries);
     }
 
-    private Task assignTaak(final String taakId, final String assignee, final UUID zaakUuid) {
+    private Task assignTaak(final String taakId, final String assignee) {
         final Task task = taskService.assignTaskToUser(taakId, assignee);
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.TAAK_OP_NAAM, task, loggedInUserInstance.get()));
-        taakBehandelaarGewijzigd(task, zaakUuid);
         return task;
     }
 

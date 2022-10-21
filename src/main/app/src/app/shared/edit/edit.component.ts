@@ -68,7 +68,7 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
     }
 
     save(): void {
-        if (this.formFields.valid) {
+        if (this.editing && this.formFields.dirty) {
             // Wait for an async validator if it is present.
             if (this.formField.formControl.pending) {
                 const sub = this.formField.formControl.statusChanges.subscribe(() => {
@@ -80,6 +80,8 @@ export abstract class EditComponent extends StaticTextComponent implements OnIni
             } else {
                 this.submitSave();
             }
+        } else {
+            this.cancel();
         }
     }
 
