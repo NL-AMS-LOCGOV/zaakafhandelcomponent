@@ -129,6 +129,7 @@ public class ZaakafhandelParameterBeheerService {
      */
     @CacheRemoveAll(cacheName = ZAC_ZAAKAFHANDELPARAMETERS)
     public void zaaktypeAangepast(final URI zaaktypeUri) {
+        ztcClientService.clearZaaktypeCache();
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUri);
         if (!zaaktype.getConcept()) {
             final String omschrijving = zaaktype.getOmschrijving();
