@@ -15,6 +15,8 @@ import {Goedkeuren} from './model/goedkeuren';
 import {ExternAdviesVastleggen} from './model/extern-advies-vastleggen';
 import {ZakenService} from '../zaken/zaken.service';
 import {ZaakafhandelParametersService} from '../admin/zaakafhandel-parameters.service';
+import {ExternAdviesMail} from './model/extern-advies-mail';
+import {FormulierDefinitieID} from '../admin/model/formulier-definitie';
 
 @Injectable({
     providedIn: 'root'
@@ -27,25 +29,25 @@ export class TaakFormulierenService {
                 private zakenService: ZakenService,
                 private zaakafhandelParametersService: ZaakafhandelParametersService) { }
 
-    public getFormulierBuilder(formulierNaam: string): FormulierBuilder {
-        switch (formulierNaam) {
-            case AanvullendeInformatie.formulierDefinitie:
+    public getFormulierBuilder(formulierDefinitie: FormulierDefinitieID): FormulierBuilder {
+        switch (formulierDefinitie) {
+            case 'DEFAULT_TAAKFORMULIER':
+                return new FormulierBuilder(new DefaultTaakformulier(this.translate, this.informatieObjectenService));
+            case 'AANVULLENDE_INFORMATIE':
+                return new FormulierBuilder(new AanvullendeInformatie(this.translate, this.takenService, this.informatieObjectenService));
+            case 'ADVIES':
+                return new FormulierBuilder(new Advies(
+                    this.translate, this.takenService, this.informatieObjectenService, this.zakenService, this.zaakafhandelParametersService));
+            case 'EXTERN_ADVIES_VASTLEGGEN':
+                return new FormulierBuilder(new ExternAdviesVastleggen(this.translate, this.takenService, this.informatieObjectenService));
+            case 'EXTERN_ADVIES_MAIL':
                 return new FormulierBuilder(
-                    new AanvullendeInformatie(this.translate, this.takenService, this.informatieObjectenService));
-            case Advies.formulierDefinitie:
-                return new FormulierBuilder(
-                    new Advies(this.translate, this.takenService, this.informatieObjectenService, this.zakenService, this.zaakafhandelParametersService));
-            case ExternAdviesVastleggen.formulierDefinitie:
-                return new FormulierBuilder(
-                    new ExternAdviesVastleggen(this.translate, this.takenService, this.informatieObjectenService));
-            case Goedkeuren.formulierDefinitie:
+                    new ExternAdviesMail(this.translate, this.takenService, this.informatieObjectenService));
+            case 'GOEDKEUREN':
                 return new FormulierBuilder(
                     new Goedkeuren(this.translate, this.takenService, this.informatieObjectenService));
-            case DefaultTaakformulier.formulierDefinitie:
-                return new FormulierBuilder(
-                    new DefaultTaakformulier(this.translate, this.informatieObjectenService));
             default:
-                throw new Error(`Onbekend formulier: ${formulierNaam}`);
+                throw new Error(`Onbekend formulier: ${formulierDefinitie}`);
         }
     }
 }
