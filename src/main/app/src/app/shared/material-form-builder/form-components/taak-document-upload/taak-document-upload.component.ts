@@ -65,7 +65,7 @@ export class TaakDocumentUploadComponent extends FormComponent implements OnInit
                 return;
             }
             if (!this.data.isBestandsgrootteToegestaan(file)) {
-                this.data.uploadError = `Het bestand is te groot (${this.data.getBestandsgrootteMB(file)}MB)`;
+                this.data.uploadError = `Het bestand is te groot (${this.data.getBestandsgrootteMiB(file)}MiB)`;
                 return;
             }
             this.uploadControl.setValue(file.name);
