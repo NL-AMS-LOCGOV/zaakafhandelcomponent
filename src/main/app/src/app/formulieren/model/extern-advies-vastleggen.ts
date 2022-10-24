@@ -15,8 +15,6 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 
 export class ExternAdviesVastleggen extends AbstractFormulier {
 
-    public static formulierDefinitie = 'EXTERN_ADVIES_VASTLEGGEN';
-
     fields = {
         VRAAG: 'vraag',
         ADVISEUR: 'adviseur',

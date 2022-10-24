@@ -18,8 +18,6 @@ import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/in
 
 export class ExternAdviesMail extends AbstractFormulier {
 
-    public static formulierDefinitie = 'EXTERN_ADVIES_MAIL';
-
     fields = {
         BODY: 'body',
         ADVISEUR: 'adviseur',

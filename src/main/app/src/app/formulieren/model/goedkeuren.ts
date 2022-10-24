@@ -19,8 +19,6 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 
 export class Goedkeuren extends AbstractFormulier {
 
-    public static formulierDefinitie = 'GOEDKEUREN';
-
     fields = {
         TOELICHTING: 'toelichtingGoedkeuring',
         VRAAG: 'vraag',
