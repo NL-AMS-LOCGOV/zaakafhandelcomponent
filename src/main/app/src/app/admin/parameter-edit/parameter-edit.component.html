@@ -91,7 +91,8 @@
 
                     <div class="button-group" fxLayout="row wrap">
                         <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
-                        <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                        <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
+                                (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                     </div>
                 </form>
             </mat-step>
@@ -159,7 +160,8 @@
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
                             <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
-                            <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
+                                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                         </div>
                     </form>
                 </ng-template>
@@ -191,7 +193,8 @@
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
                             <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
-                            <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
+                            <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
+                                    (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                         </div>
                     </form>
                 </ng-template>
@@ -237,7 +240,7 @@
                         </div>
                         <div class="button-group" fxLayout="row wrap">
                             <button mat-raised-button matStepperPrevious>{{"actie.terug" | translate}}</button>
-                            <button mat-raised-button color="primary" [disabled]="!isValid()"
+                            <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
                                     (click)="opslaan()">{{"actie.opslaan" | translate}}</button>
                         </div>
                     </form>
