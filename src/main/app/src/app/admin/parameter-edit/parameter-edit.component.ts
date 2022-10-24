@@ -62,6 +62,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     referentieTabellen: ReferentieTabel[];
     formulierDefinities: FormulierDefinitie[];
     zaakbeeindigRedenen: ZaakbeeindigReden[];
+    loading: boolean;
 
     constructor(public utilService: UtilService, public adminService: ZaakafhandelParametersService, private identityService: IdentityService,
                 private route: ActivatedRoute, private formBuilder: FormBuilder, private referentieTabelService: ReferentieTabelService) {
@@ -257,17 +258,20 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
     }
 
     opslaan(): void {
+        this.loading = true;
         Object.assign(this.parameters, this.algemeenFormGroup.value);
         this.humanTaskParameters.forEach(param => {
             param.formulierDefinitieId = this.getHumanTaskControl(param, 'formulierDefinitie').value;
             param.defaultGroepId = this.getHumanTaskControl(param, 'defaultGroep').value;
             param.actief = this.getHumanTaskControl(param, 'actief').value;
             param.doorlooptijd = this.getHumanTaskControl(param, 'doorlooptijd').value;
-            const old = this.parameters.humanTaskParameters.find(htp => htp.planItemDefinition.id === param.planItemDefinition.id).referentieTabellen;
+            const bestaandeHumanTaskParameter: HumanTaskParameter = this.parameters.humanTaskParameters.find(
+                htp => htp.planItemDefinition.id === param.planItemDefinition.id);
+            const bestaandeReferentietabellen = bestaandeHumanTaskParameter ? bestaandeHumanTaskParameter.referentieTabellen : [];
             param.referentieTabellen = [];
             this.getVeldDefinities(param.formulierDefinitieId).forEach(value => {
-                const oldHumanTaskReferentieTabel: HumanTaskReferentieTabel = old.find(o => o.veld === value.naam);
-                const tabel = oldHumanTaskReferentieTabel != null ? oldHumanTaskReferentieTabel : new HumanTaskReferentieTabel();
+                const bestaandeHumanTaskReferentieTabel: HumanTaskReferentieTabel = bestaandeReferentietabellen.find(o => o.veld === value.naam);
+                const tabel = bestaandeHumanTaskReferentieTabel != null ? bestaandeHumanTaskReferentieTabel : new HumanTaskReferentieTabel();
                 tabel.veld = value.naam;
                 tabel.tabel = this.getHumanTaskControl(param, 'referentieTabel' + tabel.veld).value;
                 param.referentieTabellen.push(tabel);
@@ -290,6 +294,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         });
 
         this.adminService.updateZaakafhandelparameters(this.parameters).subscribe(data => {
+            this.loading = false;
             this.utilService.openSnackbar('msg.zaakafhandelparameters.opgeslagen');
             this.parameters = data;
         });
