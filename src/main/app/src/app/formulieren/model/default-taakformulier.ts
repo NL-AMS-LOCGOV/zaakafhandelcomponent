@@ -12,8 +12,6 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 
 export class DefaultTaakformulier extends AbstractFormulier {
 
-    public static formulierDefinitie = 'DEFAULT_TAAKFORMULIER';
-
     fields = {
         REDEN_START: 'redenStart',
         AFHANDELING: 'afhandeling'
