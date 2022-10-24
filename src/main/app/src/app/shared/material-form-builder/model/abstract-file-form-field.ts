@@ -10,7 +10,7 @@ import {AbstractFormControlField} from './abstract-form-control-field';
 export abstract class AbstractFileFormField extends AbstractFormControlField {
 
     fileTypes: string = AppGlobals.ALLOWED_FILETYPES;
-    fileSizeMB: number = AppGlobals.FILE_MAX_SIZE;
+    fileSizeMiB: number = AppGlobals.FILE_MAX_SIZE;
     uploadURL: string;
     uploadError: string;
     fileUploaded$ = new Subject<string>();
@@ -18,6 +18,26 @@ export abstract class AbstractFileFormField extends AbstractFormControlField {
 
     protected constructor() {
         super();
+    }
+
+    isBestandstypeToegestaan(file: File): boolean {
+        const extensies = this.fileTypes.split(/\s*,\s*/).map(s => s.trim().toLowerCase());
+        return extensies.indexOf(this.getBestandsextensie(file)) > -1;
+    }
+
+    isBestandsgrootteToegestaan(file: File): boolean {
+        return file.size <= this.fileSizeMiB * 1024 * 1024;
+    }
+
+    getBestandsextensie(file: File) {
+        if (file.name.indexOf('.') < 1) {
+            return '-';
+        }
+        return '.' + file.name.split('.').pop().toLowerCase();
+    }
+
+    getBestandsgrootteMiB(file: File): string {
+        return parseFloat(String(file.size / 1024 / 1024)).toFixed(2);
     }
 
     get fileUploaded(): Observable<string> {
