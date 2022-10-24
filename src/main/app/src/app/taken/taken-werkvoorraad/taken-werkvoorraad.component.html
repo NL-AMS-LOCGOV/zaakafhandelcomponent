@@ -226,9 +226,13 @@
     </table>
 
     <ng-container *ngIf="dataSource.totalItems === 0"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></ng-container>
-    <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
-                   (page)="pageChange()" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
-    </mat-paginator>
+    <div class="pagination-wrapper">
+        <zac-csv-export-button [zoekParameters]="this.dataSource.zoekParameters"
+                               [filename]="'title.taken.werkvoorraad' | translate"></zac-csv-export-button>
+        <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
+                       (page)="pageChange()" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+        </mat-paginator>
+    </div>
 </div>
 
 <div class="buttons">
@@ -239,9 +243,5 @@
     <button *ngIf="isSelected()" (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button
             title="{{ 'actie.vrijgeven' | translate }}">{{'actie.vrijgeven' | translate}}
         <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary" matBadgeSize="small">clear_all</mat-icon>
-    </button>
-    <button (click)="downloadCSV()" color="accent" id="CSV_button" mat-raised-button
-            title="{{ 'actie.export.csv' | translate }}">{{'title.csv' | translate}}
-        <mat-icon>download_for_offline</mat-icon>
     </button>
 </div>

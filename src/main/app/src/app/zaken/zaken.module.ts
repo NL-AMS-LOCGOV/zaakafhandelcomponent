@@ -33,6 +33,7 @@ import {BesluitCreateComponent} from './besluit-create/besluit-create.component'
 import {BesluitViewComponent} from './besluit-view/besluit-view.component';
 import {BesluitEditComponent} from './besluit-edit/besluit-edit.component';
 import {IntakeAfrondenDialogComponent} from './intake-afronden-dialog/intake-afronden-dialog.component';
+import {CsvModule} from '../csv/csv.module';
 
 @NgModule({
     declarations: [
@@ -70,7 +71,8 @@ import {IntakeAfrondenDialogComponent} from './intake-afronden-dialog/intake-afr
         MailModule,
         ZoekenModule,
         GebruikersvoorkeurenModule,
-        BAGModule
+        BAGModule,
+        CsvModule
     ]
 })
 export class ZakenModule {
