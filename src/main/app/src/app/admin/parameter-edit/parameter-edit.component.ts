@@ -69,6 +69,8 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
         super(utilService);
         this.route.data.subscribe(data => {
             this.parameters = data.parameters;
+            this.parameters.intakeMail = this.parameters.intakeMail ? this.parameters.intakeMail : ZaakStatusmailOptie.BESCHIKBAAR_UIT;
+            this.parameters.afrondenMail = this.parameters.afrondenMail ? this.parameters.afrondenMail : ZaakStatusmailOptie.BESCHIKBAAR_UIT;
             this.userEventListenerParameters = this.parameters.userEventListenerParameters;
             this.humanTaskParameters = this.parameters.humanTaskParameters;
             adminService.listResultaattypes(this.parameters.zaaktype.uuid).subscribe(resultaattypes => this.resultaattypes = resultaattypes);
@@ -109,6 +111,7 @@ export class ParameterEditComponent extends AdminComponent implements OnInit {
             humanTaskParameter.defaultGroepId = this.parameters.defaultGroepId;
             humanTaskParameter.formulierDefinitieId = humanTaskDefinition.defaultFormulierDefinitie;
             humanTaskParameter.referentieTabellen = [];
+            humanTaskParameter.actief = true;
             this.humanTaskParameters.push(humanTaskParameter);
         });
         this.createHumanTasksForm();
