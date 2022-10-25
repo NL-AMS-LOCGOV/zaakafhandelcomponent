@@ -223,33 +223,21 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     }
 
     private openDocumentVerwijderenDialog(): void {
-        let openDialog;
+        const dialogData = new DialogData(this.zaak? [
+                new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
+                                           .validators(Validators.required)
+                                           .maxlength(100)
+                                           .build()] : [],
+            (results: any[]) => this.deleteEnkelvoudigInformatieObject$(results['reden']),
+            this.translate.instant('msg.document.verwijderen.bevestigen', {document: this.infoObject.titel})
+        );
 
-        if (this.zaak) {
-            const dialogData = new DialogData([
-                    new InputFormFieldBuilder().id('reden').label('actie.document.verwijderen.reden')
-                                               .validators(Validators.required)
-                                               .maxlength(100)
-                                               .build()],
-                (results: any[]) => this.deleteEnkelvoudigInformatieObject$(results['reden'])
-            );
+        dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
 
-            dialogData.confirmButtonActionKey = 'actie.document.verwijderen';
-
-            openDialog = this.dialog.open(DialogComponent, {data: dialogData});
-        } else {
-            const dialogData = new ConfirmDialogData(
-                this.translate.instant('msg.document.verwijderen.bevestigen', {document: this.infoObject.titel}),
-                this.deleteEnkelvoudigInformatieObject$()
-            );
-
-            openDialog = this.dialog.open(ConfirmDialogComponent, {data: dialogData});
-        }
-
-        openDialog.afterClosed().subscribe(result => {
+        this.dialog.open(DialogComponent, {data: dialogData}).afterClosed().subscribe(result => {
             if (result) {
                 this.utilService.openSnackbar('msg.document.verwijderen.uitgevoerd', {document: this.infoObject.titel});
-                this.router.navigate(this.zaak ? ['zaken', this.zaak.identificatie] : ['documenten', 'ontkoppelde']);
+                this.router.navigate(this.zaak ? ['/zaken', this.zaak.identificatie] : ['/documenten', 'ontkoppelde']);
             }
         });
     }
@@ -264,7 +252,10 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     private deleteEnkelvoudigInformatieObject$(reden?: string): Observable<void> {
         return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
-            tap(() => this.websocketService.suspendListener(this.documentListener))
+            tap(() => {
+                this.websocketService.doubleSuspendListener(this.documentListener);
+                this.websocketService.removeListener(this.documentListener);
+            })
         );
     }
 }
