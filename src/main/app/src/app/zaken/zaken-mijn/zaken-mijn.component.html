@@ -245,13 +245,11 @@
     </table>
 
     <ng-container *ngIf="dataSource.totalItems === 0"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></ng-container>
-    <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
-                   [pageSizeOptions]="[10, 25, 50, 100]" sticky>
-    </mat-paginator>
-</div>
-<div class="buttons">
-    <button (click)="downloadCSV()" color="accent" id="CSV_button" mat-raised-button
-            title="{{ 'actie.export.csv' | translate }}">{{'title.csv' | translate}}
-        <mat-icon>download_for_offline</mat-icon>
-    </button>
+    <div class="pagination-wrapper">
+        <zac-export-button [zoekParameters]="this.dataSource.zoekParameters"
+                           [filename]="'title.zaken.mijn' | translate"></zac-export-button>
+        <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
+                       [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+        </mat-paginator>
+    </div>
 </div>

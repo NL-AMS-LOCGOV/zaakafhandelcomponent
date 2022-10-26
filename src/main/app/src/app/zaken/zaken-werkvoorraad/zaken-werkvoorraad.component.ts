@@ -30,8 +30,6 @@ import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
 import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {PolicyService} from '../../policy/policy.service';
-import {TranslateService} from '@ngx-translate/core';
-import {CsvService} from '../../csv/csv.service';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 
@@ -62,8 +60,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
         'errorVerlopen_icon', 'msg.datum.overschreden', 'error');
 
     constructor(private zakenService: ZakenService, private zoekenService: ZoekenService, public utilService: UtilService,
-                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService,
-                public translateService: TranslateService, private csvService: CsvService) {
+                private identityService: IdentityService, public dialog: MatDialog, private policyService: PolicyService) {
         this.dataSource = new ZakenWerkvoorraadDatasource(this.zoekenService, this.utilService);
     }
 
@@ -208,12 +205,6 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
                 }
                 this.filtersChange();
             }
-        });
-    }
-
-    downloadCSV(): void {
-        this.csvService.exportToCSV(this.dataSource.zoekParameters).subscribe(response => {
-            this.utilService.downloadBlobResponse(response, this.translateService.instant('title.zaken.werkvoorraad'));
         });
     }
 }

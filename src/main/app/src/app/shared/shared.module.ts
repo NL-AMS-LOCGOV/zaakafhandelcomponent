@@ -43,6 +43,7 @@ import {DagenPipe} from './pipes/dagen.pipe';
 import {NotificationDialogComponent} from './notification-dialog/notification-dialog.component';
 import {EditInputComponent} from './edit/edit-input/edit-input.component';
 import {EditGroepBehandelaarComponent} from './edit/edit-groep-behandelaar/edit-groep-behandelaar.component';
+import {ExportButtonComponent} from './export-button/export-button.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +70,8 @@ import {EditGroepBehandelaarComponent} from './edit/edit-groep-behandelaar/edit-
         DocumentViewerComponent,
         SkeletonLoaderComponent,
         DagenPipe,
-        NotificationDialogComponent
+        NotificationDialogComponent,
+        ExportButtonComponent
     ],
     imports: [
         FormsModule,
@@ -113,7 +115,8 @@ import {EditGroepBehandelaarComponent} from './edit/edit-groep-behandelaar/edit-
         DocumentViewerComponent,
         ColumnPickerComponent,
         SkeletonLoaderComponent,
-        DagenPipe
+        DagenPipe,
+        ExportButtonComponent
     ],
     providers: [
         Title,
