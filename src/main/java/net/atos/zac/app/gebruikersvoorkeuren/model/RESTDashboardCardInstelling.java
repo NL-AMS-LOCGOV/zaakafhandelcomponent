@@ -15,4 +15,8 @@ public class RESTDashboardCardInstelling {
     public DashboardCardId cardId;
 
     public SignaleringType.Type signaleringType;
+
+    public int column;
+
+    public int row;
 }

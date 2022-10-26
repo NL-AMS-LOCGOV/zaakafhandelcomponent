@@ -3,8 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-.grid-container {
-  margin: 0 24px 32px;
+.grid {
+  padding: 0 16px;
+}
+
+.grid-column {
+  margin: 0 12px;
 }
 
 .draggable {
@@ -12,9 +16,10 @@
 }
 
 .placeholder {
-  background: #ccc;
-  border: dotted 1px #999;
-  min-width: 120px;
+  background: #ddd;
+  border: dotted 1px #aaa;
+  border-radius: 30px;
+  min-height: 60px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
@@ -30,6 +35,12 @@
   margin-bottom: -20px;
   position: relative;
   z-index: 2;
+}
+
+.mode-slider {
+  flex-shrink: 0;
+  height: 40px;
+  line-height: 40px;
 }
 
 .menu-title {

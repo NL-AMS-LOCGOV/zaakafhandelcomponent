@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {UtilService} from '../core/service/util.service';
 import * as moment from 'moment';
@@ -17,12 +17,15 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {GebruikersvoorkeurenService} from '../gebruikersvoorkeuren/gebruikersvoorkeuren.service';
 import {forkJoin} from 'rxjs';
 import {DashboardCardInstelling} from './model/dashboard-card-instelling';
+import {MatMenuTrigger} from '@angular/material/menu';
 
 @Component({
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent implements OnInit {
+
+    @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
     /** all cards that may be put on the dashboard */
     private cards: Array<DashboardCard> = [
@@ -36,7 +39,8 @@ export class DashboardComponent implements OnInit {
 
     dashboardCardType = DashboardCardType;
     width: number; // maximum number of cards horizontally
-    editmode: boolean = false;
+    editmode: boolean;
+    showHint: boolean;
 
     instellingen: DashboardCardInstelling[]; // the last loaded card settings
     available: DashboardCard[] = []; // cards that are not on the dashboard
@@ -75,11 +79,11 @@ export class DashboardComponent implements OnInit {
             for (const card of this.cards) {
                 if (card.id === instelling.cardId) {
                     if (card.signaleringType == null) {
-                        this.addCard(card);
+                        this.putCard(card, instelling.column);
                     } else {
                         const i: number = signaleringenInstellingen.indexOf(card.signaleringType);
                         if (0 <= i) {
-                            this.addCard(card);
+                            this.putCard(card, instelling.column);
                             signaleringenInstellingen.splice(i, 1); // prevent adding this one as a new card in the next step
                         }
                     }
@@ -101,25 +105,26 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    private addCard(card: DashboardCard): void {
-        const rows = this.grid.length;
-        if (rows < 1) {
-            this.putCard(card);
-        } else {
-            const columns = this.grid[rows - 1].length;
-            if (this.width <= columns) {
-                this.putCard(card, rows);
-            } else {
-                this.putCard(card, rows - 1, columns);
+    // find a good position for a new card
+    private addCard(card: DashboardCard): Position {
+        const columns = this.grid.length;
+        if (columns < this.width) {
+            return this.putCard(card, columns);
+        }
+        let shortest: number = -1;
+        for (let column: number = 0; column < columns; column++) {
+            if (shortest < 0 || this.grid[column].length < this.grid[shortest].length) {
+                shortest = column;
             }
         }
+        return this.putCard(card, shortest);
     }
 
-    private putCard(card: DashboardCard, row: number = 0, column: number = 0): void {
-        while (this.grid.length <= row) {
+    private putCard(card: DashboardCard, column: number = 0): Position {
+        while (this.grid.length <= column) {
             this.grid.push([]);
         }
-        this.grid[row][column] = card;
+        return new Position(column, this.grid[column].push(card) - 1);
     }
 
     private updateAvailable(): void {
@@ -129,12 +134,13 @@ export class DashboardComponent implements OnInit {
                 this.available.push(card);
             }
         }
+        this.showHint = this.available.length === this.cards.length;
     }
 
     private isAvailable(card: DashboardCard): boolean {
-        for (const row of this.grid) {
-            for (const cell of row) {
-                if (cell.id === card.id) {
+        for (const column of this.grid) {
+            for (const row of column) {
+                if (row.id === card.id) {
                     return false;
                 }
             }
@@ -143,31 +149,36 @@ export class DashboardComponent implements OnInit {
     }
 
     move(event: CdkDragDrop<DashboardCard[]>) {
-        const sameRow = event.previousContainer.data === event.container.data;
-        const sameColumn = event.previousIndex === event.currentIndex;
-        if (!sameRow || !sameColumn) {
-            if (sameRow) {
+        const sameColumn = event.previousContainer.data === event.container.data;
+        const sameRow = event.previousIndex === event.currentIndex;
+        if (!sameColumn || !sameRow) {
+            if (sameColumn) {
                 moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
             } else {
                 transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
             }
-            this.flow();
             this.saveCards();
         }
     }
 
+    hint(): void {
+        this.editmode = true;
+        setTimeout(() => {
+            this.menuTrigger.openMenu();
+        }, 666);
+    }
+
     add(card: DashboardCard): void {
-        this.addCard(card);
-        this.saveCard(card);
+        const position = this.addCard(card);
+        this.saveCard(card, position.column, position.row);
         this.updateAvailable();
     }
 
     delete(card: DashboardCard): void {
-        for (const row of this.grid) {
-            for (let column = 0; column < row.length; column++) {
-                if (row[column].id === card.id) {
-                    row[column] = null;
-                    this.flow();
+        for (const column of this.grid) {
+            for (let row = 0; row < column.length; row++) {
+                if (column[row].id === card.id) {
+                    column.splice(row, 1);
                     this.deleteCard(card);
                     this.updateAvailable();
                     return;
@@ -177,19 +188,13 @@ export class DashboardComponent implements OnInit {
     }
 
     private saveCards(): void {
-        const instellingen: DashboardCardInstelling[] = [];
-        for (const row of this.grid) {
-            for (const card of row) {
-                instellingen.push(this.getInstelling(card));
-            }
-        }
-        this.gebruikersvoorkeurenService.updateDashboardCards(instellingen).subscribe(dashboardInstellingen => {
+        this.gebruikersvoorkeurenService.updateDashboardCards(this.getInstellingen()).subscribe(dashboardInstellingen => {
             this.instellingen = dashboardInstellingen;
         });
     }
 
-    private saveCard(card: DashboardCard): void {
-        this.gebruikersvoorkeurenService.addDashboardCard(this.getInstelling(card)).subscribe(dashboardInstellingen => {
+    private saveCard(card: DashboardCard, column: number, row: number): void {
+        this.gebruikersvoorkeurenService.addDashboardCard(this.getInstellingAt(card, column, row)).subscribe(dashboardInstellingen => {
             this.instellingen = dashboardInstellingen;
         });
     }
@@ -198,6 +203,24 @@ export class DashboardComponent implements OnInit {
         this.gebruikersvoorkeurenService.deleteDashboardCard(this.getInstelling(card)).subscribe(dashboardInstellingen => {
             this.instellingen = dashboardInstellingen;
         });
+    }
+
+    private getInstellingen(): DashboardCardInstelling[] {
+        const instellingen: DashboardCardInstelling[] = [];
+        for (let column = 0; column < this.grid.length; column++) {
+            const rows = this.grid[column];
+            for (let row = 0; row < rows.length; row++) {
+                instellingen.push(this.getInstellingAt(rows[row], column, row));
+            }
+        }
+        return instellingen;
+    }
+
+    private getInstellingAt(card: DashboardCard, column: number, row: number): DashboardCardInstelling {
+        const instelling = this.getInstelling(card);
+        instelling.column = column;
+        instelling.row = row;
+        return instelling;
     }
 
     private getInstelling(card: DashboardCard): DashboardCardInstelling {
@@ -212,70 +235,6 @@ export class DashboardComponent implements OnInit {
         newInstelling.signaleringType = card.signaleringType;
         return newInstelling;
     }
-
-    private flow() {
-        for (let row = 0; row < this.grid.length; row++) {
-            this.flush(row);
-            this.compact(row);
-            this.fill(row);
-        }
-        this.trim();
-    }
-
-    // make sure the row does not contain too many cards (by pushing cards to the next row)
-    private flush(row: number): void {
-        const cards = this.grid[row];
-        while (this.width < cards.length) {
-            if (row === this.grid.length - 1) {
-                this.grid.push([]);
-            }
-            this.grid[row + 1].unshift(cards.pop());
-        }
-    }
-
-    // remove empty cells from the row (by pulling cards from the rest of the grid)
-    private compact(row: number): void {
-        const cards = this.grid[row];
-        for (let column = 0; column < cards.length; column++) {
-            if (cards[column] == null) {
-                cards[column] = this.pull(row, column + 1);
-            }
-        }
-    }
-
-    // try to fill the row with cards (by pulling cards from the rest of the grid)
-    private fill(row: number): void {
-        const cards = this.grid[row];
-        while (cards.length < this.width) {
-            cards.push(this.pull(row + 1, 0));
-        }
-    }
-
-    // find the first card, i.e. a nonempty cell in the grid starting from the given position
-    private pull(row: number, column: number): DashboardCard {
-        if (row < this.grid.length) {
-            if (column < this.grid[row].length) {
-                if (this.grid[row][column] != null) {
-                    const card = this.grid[row][column];
-                    this.grid[row][column] = null;
-                    return card;
-                }
-                return this.pull(row, column + 1);
-            }
-            return this.pull(row + 1, 0);
-        }
-        return null;
-    }
-
-    // remove trailing empty cells and rows from the grid
-    private trim() {
-        for (const row of this.grid) {
-            while (0 < row.length && row[row.length - 1] == null) {
-                row.length--;
-            }
-        }
-        while (0 < this.grid.length && this.grid[this.grid.length - 1].length < 1) {
-            this.grid.length--;
-        }
-    }
 }
+
+class Position {constructor(public column: number, public row: number) {}}
