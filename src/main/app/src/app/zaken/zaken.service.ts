@@ -115,18 +115,7 @@ export class ZakenService {
         toekennenGegevens.groepId = zaak.groep?.id;
         toekennenGegevens.reden = reden;
 
-        return this.http.put<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
-    toekennenGroep(zaak: Zaak, reden?: string): Observable<Zaak> {
-        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        toekennenGegevens.zaakUUID = zaak.uuid;
-        toekennenGegevens.groepId = zaak.groep?.id;
-        toekennenGegevens.reden = reden;
-
-        return this.http.put<Zaak>(`${this.basepath}/toekennen/groep`, toekennenGegevens).pipe(
+        return this.http.patch<Zaak>(`${this.basepath}/toekennen`, toekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -139,17 +128,6 @@ export class ZakenService {
         verdeelGegevens.reden = reden;
 
         return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
-
-    vrijgeven(uuid: string, reden?: string): Observable<void> {
-        const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        toekennenGegevens.zaakUUID = uuid;
-        toekennenGegevens.reden = reden;
-
-        return this.http.put<void>(`${this.basepath}/vrijgeven`, toekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

@@ -88,12 +88,12 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     }
 
     showAssignToMe(taakZoekObject: TaakZoekObject): boolean {
-        return this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
+        return taakZoekObject.rechten.toekennen && this.ingelogdeMedewerker && this.ingelogdeMedewerker.id !== taakZoekObject.behandelaarGebruikersnaam;
     }
 
     assignToMe(taakZoekObject: TaakZoekObject, event): void {
         event.stopPropagation();
-        this.takenService.assignToLoggedOnUser(taakZoekObject).subscribe(returnTaak => {
+        this.takenService.toekennenAanIngelogdeMedewerkerVanuitLijst(taakZoekObject).subscribe(returnTaak => {
             taakZoekObject.behandelaarNaam = returnTaak.behandelaar.naam;
             taakZoekObject.behandelaarGebruikersnaam = returnTaak.behandelaar.id;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: returnTaak.behandelaar.naam});

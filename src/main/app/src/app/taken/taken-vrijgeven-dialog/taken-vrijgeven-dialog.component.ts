@@ -28,7 +28,7 @@ export class TakenVrijgevenDialogComponent {
     vrijgeven() {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.takenService.vrijgeven(this.data).subscribe(() => {
+        this.takenService.vrijgevenLijst(this.data).subscribe(() => {
             this.dialogRef.close(true);
         });
     }

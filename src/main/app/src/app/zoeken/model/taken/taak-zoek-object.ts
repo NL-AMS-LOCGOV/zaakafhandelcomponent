@@ -4,6 +4,7 @@
  */
 
 import {ZoekObject, ZoekObjectType} from '../zoek-object';
+import {TaakRechten} from '../../../policy/model/taak-rechten';
 
 export class TaakZoekObject implements ZoekObject {
     id: string;
@@ -27,4 +28,5 @@ export class TaakZoekObject implements ZoekObject {
     behandelaarGebruikersnaam: string;
     taakData: string[];
     taakInformatie: string[];
+    rechten: TaakRechten;
 }
