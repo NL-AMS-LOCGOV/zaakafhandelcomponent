@@ -86,7 +86,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
             this.documentPreviewBeschikbaar = FileFormatUtil.isPreviewAvailable(this.infoObject.formaat);
             this.utilService.setTitle('title.document', {document: this.infoObject.identificatie});
 
-            this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
+            this.documentListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.infoObject.uuid,
                 (event) => {
                     this.loadInformatieObject(event);
                     this.toevoegenActies();
@@ -252,10 +252,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     private deleteEnkelvoudigInformatieObject$(reden?: string): Observable<void> {
         return this.informatieObjectenService.deleteEnkelvoudigInformatieObject(this.infoObject.uuid, this.zaak?.uuid, reden).pipe(
-            tap(() => {
-                this.websocketService.doubleSuspendListener(this.documentListener);
-                this.websocketService.removeListener(this.documentListener);
-            })
+            tap(() => this.websocketService.suspendListener(this.documentListener))
         );
     }
 }
