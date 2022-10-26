@@ -28,25 +28,29 @@ export class ZoekComponent implements AfterViewInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
     @Input() sideNav: MatSidenav;
+
+    @Input() set keywords(value: string) {
+        if (this.zoekenControl.value !== value) {
+            this.zoekenControl.setValue(value);
+            this.zoek.emit();
+        }
+    }
+
+    get keywords(): string {
+        return this.zoekenControl.value;
+    }
+
     readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
     isLoadingResults = true;
     slow = false;
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
-    once = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
 
     ngAfterViewInit(): void {
-        this.sideNav.openedChange.subscribe(() => {
-            if (!this.once) {
-                this.once = true;
-                this.zoek.emit();
-            }
-        });
-
         this.zoek.subscribe(() => {
             this.paginator.pageIndex = 0;
         });

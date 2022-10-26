@@ -7,8 +7,10 @@
     <div sticky-top fxLayout="row" fxLayoutGap="10px" fxFlexFill>
         <div fxFlex="100">
             <mat-form-field appearance="fill" class="full-width">
-                <mat-label>{{'trefwoorden' | translate}}</mat-label>
-                <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()" maxlength="100">
+                <mat-label>{{'actie.zoeken' | translate}}</mat-label>
+                <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()"
+                       placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
+                <mat-icon matSuffix (click)="zoek.emit()">search</mat-icon>
                 <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
             </mat-form-field>
         </div>

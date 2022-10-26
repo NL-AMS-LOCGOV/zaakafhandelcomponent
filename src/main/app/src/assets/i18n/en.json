@@ -540,6 +540,7 @@
   "msg.zaak.verlengen.meer" : "Enter the extra extension duur (previous extensions {{eerdereDuur}}).",
   "msg.zaakafhandelparameters.opgeslagen" : "The case handling parameters are saved",
   "msg.zoekopdracht.opgeslagen" : "The search query has been saved",
+  "msg.zoeken.trefwoorden.placeholder" : "Enter some keywords",
   " 8 " : ">>--> HEALTH-CHECK <--<<",
   "healthCheck.zaaktype.inrichtingscheck" : "Casetype configuration check",
   "healthCheck.zaaktype.zaakafhandelParametersOngeldig" : "The case handling parameters are not (fully) configured",
