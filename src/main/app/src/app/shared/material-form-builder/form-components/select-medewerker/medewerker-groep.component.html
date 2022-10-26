@@ -20,7 +20,7 @@
         <mat-autocomplete #medewerkerAC="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
         </mat-autocomplete>
-        <button mat-icon-button [title]="'filter.groep' | translate" type="button" matSuffix (click)="inGroepChanged($event)">
+        <button mat-icon-button [title]="(inGroep ? 'filter.groep' : 'filter.alle') | translate" type="button" matSuffix (click)="inGroepChanged($event)">
             <mat-icon [color]="inGroep ? 'primary' : 'warn'">{{inGroep ? 'group' : 'group_off'}}</mat-icon>
         </button>
     </mat-form-field>
