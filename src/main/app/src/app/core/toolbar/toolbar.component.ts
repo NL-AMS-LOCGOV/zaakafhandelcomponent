@@ -19,6 +19,7 @@ import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {PolicyService} from '../../policy/policy.service';
 import {OverigeRechten} from '../../policy/model/overige-rechten';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
+import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'zac-toolbar',
@@ -26,12 +27,15 @@ import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
-    @Output() zoekenClicked = new EventEmitter<void>();
+    @Output() openZoeken = new EventEmitter<string>();
+    zoekenFormControl = new FormControl<string>('');
+
     headerTitle$: Observable<string>;
     hasNewSignaleringen: boolean;
     ingelogdeMedewerker: User;
     overigeRechten = new OverigeRechten();
     werklijstRechten = new WerklijstRechten();
+    medewerkerNaamToolbar = '';
 
     private subscription$: Subscription;
     private signaleringListener: WebsocketListener;
@@ -44,6 +48,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this.headerTitle$ = this.utilService.headerTitle$;
         this.identityService.readLoggedInUser().subscribe(medewerker => {
             this.ingelogdeMedewerker = medewerker;
+            this.medewerkerNaamToolbar = medewerker.naam.split(' ').map(n => n[0]).join('');
             this.signaleringListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN,
                 medewerker.id,
                 () => this.signaleringenService.updateSignaleringen());
