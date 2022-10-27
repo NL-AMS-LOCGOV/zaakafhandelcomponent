@@ -50,7 +50,7 @@ export class TakenVerdelenDialogComponent implements OnInit {
         const toekenning: { groep?: Group, medewerker?: User } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.takenService.verdelen(this.data, toekenning.groep, toekenning.medewerker).subscribe(() => {
+        this.takenService.verdelenVanuitLijst(this.data, toekenning.groep, toekenning.medewerker).subscribe(() => {
             this.dialogRef.close(toekenning.groep || toekenning.medewerker);
         });
     }

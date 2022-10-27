@@ -12,6 +12,7 @@
         <mat-autocomplete #groepAC="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let groep of filteredGroepen | async" [value]="groep">{{ groep.naam }}</mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="data.groep.invalid">{{getMessage(data.groep, 'Groep')}}</mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>{{data.medewerkerLabel | translate}}</mat-label>
@@ -23,5 +24,6 @@
         <button mat-icon-button [title]="(inGroep ? 'filter.groep' : 'filter.alle') | translate" type="button" matSuffix (click)="inGroepChanged($event)">
             <mat-icon [color]="inGroep ? 'primary' : 'warn'">{{inGroep ? 'group' : 'group_off'}}</mat-icon>
         </button>
+        <mat-error *ngIf="data.medewerker.invalid">{{getMessage(data.medewerker, 'Medewerker')}}</mat-error>
     </mat-form-field>
 </fieldset>
