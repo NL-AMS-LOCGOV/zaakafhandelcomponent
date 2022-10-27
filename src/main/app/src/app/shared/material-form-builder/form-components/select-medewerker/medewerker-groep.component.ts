@@ -7,7 +7,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {IdentityService} from '../../../../identity/identity.service';
-import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormControl, ValidatorFn, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {Group} from '../../../../identity/model/group';
 import {User} from '../../../../identity/model/user';
@@ -53,9 +53,9 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
     initGroepen(): void {
         this.identityService.listGroups().subscribe(groepen => {
             this.groepen = groepen;
-            const validators:ValidatorFn[] = [];
+            const validators: ValidatorFn[] = [];
             validators.push(AutocompleteValidators.optionInList(groepen));
-            if(this.data.groep.hasValidator(Validators.required)){
+            if (this.data.groep.hasValidator(Validators.required)) {
                 validators.push(Validators.required);
             }
             this.data.groep.setValidators(validators);
@@ -65,7 +65,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
                 startWith(''),
                 map(groep => (groep ? this._filterGroepen(groep) : this.groepen.slice()))
             );
-            if(this.data.groep.defaultValue){
+            if (this.data.groep.defaultValue) {
                 this.data.groep.setValue(groepen.find(groep => groep.id === this.data.groep.defaultValue.id));
             }
         });
@@ -89,7 +89,7 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
             this.medewerkers = medewerkers;
             const validators: ValidatorFn[] = [];
             validators.push(AutocompleteValidators.optionInList(medewerkers));
-            if(this.data.medewerker.hasValidator(Validators.required)){
+            if (this.data.medewerker.hasValidator(Validators.required)) {
                 validators.push(Validators.required);
             }
             this.data.medewerker.setValidators(validators);
@@ -121,5 +121,12 @@ export class MedewerkerGroepComponent extends FormComponent implements OnInit, O
         }
         const filterValue = value.toLowerCase();
         return this.medewerkers.filter(medewerker => medewerker.naam.toLowerCase().includes(filterValue));
+    }
+
+    getMessage(formControl: FormControl, label: string): string {
+        if (formControl.hasError('required')) {
+            return this.translate.instant('msg.error.required', {label: label});
+        }
+        return '';
     }
 }
