@@ -539,6 +539,7 @@
   "msg.zaak.verlengen.meer": "Geef aan wat de extra duur van de verlenging is (eerdere verlengingen {{eerdereDuur}}).",
   "msg.zaakafhandelparameters.opgeslagen": "De zaakafhandelparameters zijn opgeslagen",
   "msg.zoekopdracht.opgeslagen": "De zoekopdracht is opgeslagen",
+  "msg.zoeken.trefwoorden.placeholder" : "Voer enkele trefwoorden in",
   " 8 ": ">>--> HEALTH-CHECK <--<<",
   "healthCheck.zaaktype.inrichtingscheck": "Zaaktype inrichtingscheck",
   "healthCheck.zaaktype.zaakafhandelParametersOngeldig": "De zaakafhandelparameters zijn niet (volledig) geconfigureerd",
