@@ -26,8 +26,6 @@ import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
 
 import {TakenMijnDatasource} from './taken-mijn-datasource';
-import {TranslateService} from '@ngx-translate/core';
-import {CsvService} from '../../csv/csv.service';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
 
 @Component({
@@ -52,8 +50,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
 
     constructor(private route: ActivatedRoute, private takenService: TakenService, public utilService: UtilService,
-                private identityService: IdentityService, private zoekenService: ZoekenService,
-                private translateService: TranslateService, private csvService: CsvService) {
+                private identityService: IdentityService, private zoekenService: ZoekenService) {
         this.dataSource = new TakenMijnDatasource(this.zoekenService, this.utilService);
     }
 
@@ -93,11 +90,5 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
 
     filtersChange(): void {
         this.dataSource.filtersChanged();
-    }
-
-    downloadCSV(): void {
-        this.csvService.exportToCSV(this.dataSource.zoekParameters).subscribe(response => {
-            this.utilService.downloadBlobResponse(response, this.translateService.instant('title.taken.mijn'));
-        });
     }
 }

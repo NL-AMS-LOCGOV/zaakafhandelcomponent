@@ -33,7 +33,7 @@ export class InboxDocumentenListComponent implements OnInit, AfterViewInit {
     dataSource: MatTableDataSource<InboxDocument> = new MatTableDataSource<InboxDocument>();
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    displayedColumns: string[] = ['identificatie', 'creatiedatum', 'titel', 'actions'];
+    displayedColumns: string[] = ['enkelvoudiginformatieobjectID', 'creatiedatum', 'titel', 'actions'];
     filterColumns: string[] = ['identificatie_filter', 'creatiedatum_filter', 'titel_filter', 'actions_filter'];
     listParameters: InboxDocumentListParameters;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
