@@ -4,6 +4,7 @@
  */
 
 import {ZoekObject, ZoekObjectType} from '../zoek-object';
+import {ZaakRechten} from '../../../policy/model/zaak-rechten';
 
 export class ZaakZoekObject implements ZoekObject {
     id: string;
@@ -39,4 +40,5 @@ export class ZaakZoekObject implements ZoekObject {
     indicatieHoofdzaak: boolean;
     indicatieHeropend: boolean;
     statusToelichting: string;
+    rechten: ZaakRechten;
 }

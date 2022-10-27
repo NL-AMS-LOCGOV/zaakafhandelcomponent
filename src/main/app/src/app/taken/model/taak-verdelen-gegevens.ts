@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {TaakToekennenGegevens} from './taak-toekennen-gegevens';
-
 export class TaakVerdelenGegevens {
 
-    taakGegevens: { taakId:string, zaakUuid:string }[];
+    taken: { taakId: string, zaakUuid: string }[];
     behandelaarGebruikersnaam: string;
     groepId: string;
 

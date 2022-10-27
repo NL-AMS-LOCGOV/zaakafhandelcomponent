@@ -8,6 +8,8 @@ package net.atos.zac.app.zoeken.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.atos.zac.app.zoeken.model.AbstractRESTZoekObject;
 import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.app.zoeken.model.RESTZoekResultaat;
@@ -17,6 +19,12 @@ import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 
 public class RESTZoekResultaatConverter {
+
+    @Inject
+    private RESTZaakZoekObjectConverter restZaakZoekObjectConverter;
+
+    @Inject
+    private RESTTaakZoekObjectConverter restTaakZoekObjectConverter;
 
     public RESTZoekResultaat<? extends AbstractRESTZoekObject> convert(
             final ZoekResultaat<? extends ZoekObject> zoekResultaat, final RESTZoekParameters zoekParameters) {
@@ -39,8 +47,8 @@ public class RESTZoekResultaatConverter {
 
     private AbstractRESTZoekObject convert(final ZoekObject zoekObject) {
         return switch (zoekObject.getType()) {
-            case ZAAK -> RESTZaakZoekObjectConverter.convert((ZaakZoekObject) zoekObject);
-            case TAAK -> RESTTaakZoekObjectConverter.convert((TaakZoekObject) zoekObject);
+            case ZAAK -> restZaakZoekObjectConverter.convert((ZaakZoekObject) zoekObject);
+            case TAAK -> restTaakZoekObjectConverter.convert((TaakZoekObject) zoekObject);
         };
     }
 }

@@ -50,23 +50,32 @@ export class TakenService {
         );
     }
 
-    assign(taak: Taak): Observable<void> {
-        const taakToekennenGegevens:TaakToekennenGegevens = new TaakToekennenGegevens();
+    toekennen(taak: Taak): Observable<void> {
+        const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUuid;
         taakToekennenGegevens.groepId = taak.groep?.id;
         taakToekennenGegevens.behandelaarId = taak.behandelaar?.id;
 
-        return this.http.patch<void>(`${this.basepath}/assign`, taakToekennenGegevens).pipe(
+        return this.http.patch<void>(`${this.basepath}/toekennen`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    assignToLoggedOnUser(taak: Taak | TaakZoekObject): Observable<Taak> {
+    toekennenAanIngelogdeMedewerker(taak: Taak): Observable<Taak> {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUuid;
-        return this.http.patch<Taak>(`${this.basepath}/assignTologgedOnUser`, taakToekennenGegevens).pipe(
+        return this.http.patch<Taak>(`${this.basepath}/toekennen/mij`, taakToekennenGegevens).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
+    toekennenAanIngelogdeMedewerkerVanuitLijst(taak: TaakZoekObject): Observable<Taak> {
+        const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
+        taakToekennenGegevens.taakId = taak.id;
+        taakToekennenGegevens.zaakUuid = taak.zaakUuid;
+        return this.http.patch<Taak>(`${this.basepath}/lijst/toekennen/mij`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -89,20 +98,20 @@ export class TakenService {
         );
     }
 
-    verdelen(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
+    verdelenVanuitLijst(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
+        taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
         taakBody.groepId = groep?.id;
-        return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
+        return this.http.put<void>(`${this.basepath}/lijst/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    vrijgeven(taken: TaakZoekObject[]): Observable<void> {
+    vrijgevenVanuitLijst(taken: TaakZoekObject[]): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
-        return this.http.put<void>(`${this.basepath}/vrijgeven`, taakBody).pipe(
+        taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
+        return this.http.put<void>(`${this.basepath}/lijst/vrijgeven`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
