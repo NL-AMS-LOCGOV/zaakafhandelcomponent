@@ -16,6 +16,7 @@ import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {Observable, of} from 'rxjs';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {Goedkeuring} from './goedkeuring.enum';
 
 export class Goedkeuren extends AbstractFormulier {
 
@@ -106,11 +107,7 @@ export class Goedkeuren extends AbstractFormulier {
     }
 
     getGoedkeurenOpties(): Observable<string[]> {
-        return of([
-            'actie.goedkeuren.akkoord',
-            'actie.goedkeuren.niet-akkoord',
-            'actie.goedkeuren.gedeeltelijk-akkoord'
-        ]);
+        return of(Object.keys(Goedkeuring).map(k => 'goedkeuren.' + Goedkeuring[k]));
     }
 
 }
