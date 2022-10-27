@@ -44,6 +44,10 @@ public class DashboardCardInstelling {
     private SignaleringType.Type signaleringType;
 
     @NotNull
+    @Column(name = "kolom", nullable = false)
+    private int kolom;
+
+    @NotNull
     @Column(name = "volgorde", nullable = false)
     private int volgorde;
 
@@ -77,6 +81,14 @@ public class DashboardCardInstelling {
 
     public void setSignaleringType(final SignaleringType.Type signaleringType) {
         this.signaleringType = signaleringType;
+    }
+
+    public int getKolom() {
+        return kolom;
+    }
+
+    public void setKolom(final int kolom) {
+        this.kolom = kolom;
     }
 
     public int getVolgorde() {
