@@ -120,24 +120,24 @@ export class ZakenService {
         );
     }
 
-    verdelen(uuids: string[], groep?: Group, medewerker?: User, reden?: string): Observable<void> {
+    verdelenVanuitLijst(uuids: string[], groep?: Group, medewerker?: User, reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         verdeelGegevens.uuids = uuids;
         verdeelGegevens.groepId = groep?.id;
         verdeelGegevens.behandelaarGebruikersnaam = medewerker?.id;
         verdeelGegevens.reden = reden;
 
-        return this.http.put<void>(`${this.basepath}/verdelen`, verdeelGegevens).pipe(
+        return this.http.put<void>(`${this.basepath}/lijst/verdelen`, verdeelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    vrijgevenLijst(uuids: string[], reden?: string): Observable<void> {
+    vrijgevenVanuitLijst(uuids: string[], reden?: string): Observable<void> {
         const verdeelGegevens: ZakenVerdeelGegevens = new ZakenVerdeelGegevens();
         verdeelGegevens.uuids = uuids;
         verdeelGegevens.reden = reden;
 
-        return this.http.put<void>(`${this.basepath}/vrijgeven/lijst`, verdeelGegevens).pipe(
+        return this.http.put<void>(`${this.basepath}/lijst/vrijgeven`, verdeelGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -199,16 +199,12 @@ export class ZakenService {
         );
     }
 
-    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakOverzicht | ZaakZoekObject, reden?: string): Observable<ZaakOverzicht> {
+    toekennenAanIngelogdeMedewerkerVanuitLijst(zaak: ZaakZoekObject, reden?: string): Observable<ZaakOverzicht> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
-        if ('id' in zaak) {
-            toekennenGegevens.zaakUUID = zaak.id;
-        } else {
-            toekennenGegevens.zaakUUID = zaak.uuid;
-        }
+        toekennenGegevens.zaakUUID = zaak.id;
         toekennenGegevens.reden = reden;
 
-        return this.http.put<ZaakOverzicht>(`${this.basepath}/toekennen/mij/lijst`, toekennenGegevens).pipe(
+        return this.http.put<ZaakOverzicht>(`${this.basepath}/lijst/toekennen/mij`, toekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

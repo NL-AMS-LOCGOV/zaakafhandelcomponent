@@ -53,7 +53,7 @@ export class ZakenVerdelenDialogComponent implements OnInit {
         const toekenning: { groep?: Group, medewerker?: User } = this.medewerkerGroepFormField.formControl.value;
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.verdelen(
+        this.zakenService.verdelenVanuitLijst(
             this.data.map(zaak => zaak.id),
             toekenning.groep,
             toekenning.medewerker,

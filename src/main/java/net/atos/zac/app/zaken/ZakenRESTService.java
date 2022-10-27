@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -493,7 +492,7 @@ public class ZakenRESTService {
 
         final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
 
-        if (!Objects.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
+        if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
             if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
                 // Toekennen of overdragen
                 final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
@@ -504,7 +503,7 @@ public class ZakenRESTService {
             }
         }
 
-        if (!Objects.equals(groep.getBetrokkeneIdentificatie().getIdentificatie(), toekennenGegevens.groepId)) {
+        if (!StringUtils.equals(groep.getBetrokkeneIdentificatie().getIdentificatie(), toekennenGegevens.groepId)) {
             final Group group = identityService.readGroup(toekennenGegevens.groepId);
             zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), toekennenGegevens.reden);
         }
@@ -513,9 +512,18 @@ public class ZakenRESTService {
     }
 
     @PUT
-    @Path("verdelen")
-    public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
+    @Path("lijst/toekennen/mij")
+    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
+        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
+        return zaakOverzichtConverter.convert(zaak);
+    }
+
+    @PUT
+    @Path("lijst/verdelen")
+    public void verdelenVanuitLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? identityService.readGroup(verdeelGegevens.groepId) : null;
         final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
                 identityService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
@@ -532,9 +540,9 @@ public class ZakenRESTService {
     }
 
     @PUT
-    @Path("vrijgeven/lijst")
-    public void vrijgevenLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
+    @Path("lijst/vrijgeven")
+    public void vrijgevenVanuitLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
@@ -606,15 +614,6 @@ public class ZakenRESTService {
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakConverter.convert(zaak);
-    }
-
-    @PUT
-    @Path("toekennen/mij/lijst")
-    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
-        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
-        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
-        return zaakOverzichtConverter.convert(zaak);
     }
 
     @GET

@@ -75,7 +75,7 @@ export class TakenService {
         const taakToekennenGegevens: TaakToekennenGegevens = new TaakToekennenGegevens();
         taakToekennenGegevens.taakId = taak.id;
         taakToekennenGegevens.zaakUuid = taak.zaakUuid;
-        return this.http.patch<Taak>(`${this.basepath}/toekennen/mij/lijst`, taakToekennenGegevens).pipe(
+        return this.http.patch<Taak>(`${this.basepath}/lijst/toekennen/mij`, taakToekennenGegevens).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
@@ -98,20 +98,20 @@ export class TakenService {
         );
     }
 
-    verdelen(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
+    verdelenVanuitLijst(taken: TaakZoekObject[], groep?: Group, medewerker?: User): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
+        taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
         taakBody.behandelaarGebruikersnaam = medewerker.id;
         taakBody.groepId = groep?.id;
-        return this.http.put<void>(`${this.basepath}/verdelen`, taakBody).pipe(
+        return this.http.put<void>(`${this.basepath}/lijst/verdelen`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }
 
-    vrijgevenLijst(taken: TaakZoekObject[]): Observable<void> {
+    vrijgevenVanuitLijst(taken: TaakZoekObject[]): Observable<void> {
         const taakBody: TaakVerdelenGegevens = new TaakVerdelenGegevens();
-        taakBody.taakGegevens = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
-        return this.http.put<void>(`${this.basepath}/vrijgeven/lijst`, taakBody).pipe(
+        taakBody.taken = taken.map(taak => ({taakId: taak.id, zaakUuid: taak.zaakUuid}));
+        return this.http.put<void>(`${this.basepath}/lijst/vrijgeven`, taakBody).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

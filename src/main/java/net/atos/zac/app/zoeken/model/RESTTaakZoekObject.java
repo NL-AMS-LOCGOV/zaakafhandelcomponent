@@ -8,8 +8,8 @@ package net.atos.zac.app.zoeken.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import net.atos.zac.app.policy.model.RESTTaakRechten;
 import net.atos.zac.app.taken.model.TaakStatus;
-import net.atos.zac.policy.output.TaakRechten;
 
 public class RESTTaakZoekObject extends AbstractRESTZoekObject {
 
@@ -51,6 +51,6 @@ public class RESTTaakZoekObject extends AbstractRESTZoekObject {
 
     public List<String> taakInformatie;
 
-    public TaakRechten rechten;
+    public RESTTaakRechten rechten;
 
 }
