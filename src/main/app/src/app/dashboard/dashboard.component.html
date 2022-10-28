@@ -4,11 +4,14 @@
   -->
 <div>
     <div fxFlex fxLayoutAlign="flex-end top">
-        <button *ngIf="!editmode"
-                id="dashboardEdit_button" mat-icon-button
-                title="{{ 'actie.dashboard.wijzigen' | translate }}" aria-label="Dashboard aanpassen"
-                (click)="editmode=true">
-            <mat-icon>grid_view</mat-icon>
+        <mat-slide-toggle class="mode-slider" color="primary"
+                          id="dashboardEdit_toggle"
+                          [(ngModel)]="editmode"
+                          aria-label="Dashboard aanpassen">
+            {{ 'actie.dashboard.wijzigen' | translate }}
+        </mat-slide-toggle>
+        <button *ngIf="!editmode" [disabled]="true"
+                id="spacer_button" mat-icon-button>
         </button>
         <button *ngIf="editmode" [disabled]="this.available.length==0"
                 id="cardToevoegen_button" mat-icon-button
@@ -28,12 +31,13 @@
         </mat-menu>
     </div>
 </div>
-<div cdkDropListGroup>
-    <ng-container *ngFor="let row of grid">
-        <div class="grid-container" [ngClass]="{'draggable':editmode}" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px"
-             cdkDropList cdkDropListOrientation="horizontal" cdkDropListDisabled="{{!editmode}}"
-             (cdkDropListDropped)="move($event)" [cdkDropListData]="row">
-            <mat-card *ngFor="let card of row " [fxFlex]="100/width+'%'" cdkDrag>
+<div class="grid" cdkDropListGroup>
+    <ng-container *ngFor="let column of grid">
+        <div class="grid-column" [ngClass]="{'draggable':editmode}" fxLayout="column" [fxFlex]="100/width"
+             fxLayoutGap="16px"
+             cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
+             (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
+            <mat-card *ngFor="let card of column " cdkDrag>
                 <div class="placeholder" *cdkDragPlaceholder></div>
                 <ng-container *ngIf="card!=null">
                     <mat-card-title-group>
@@ -75,4 +79,12 @@
             </mat-card>
         </div>
     </ng-container>
+</div>
+<div *ngIf="showHint" class="table-wrapper">
+    <p class="hint">
+        <button type="button" id="hint_button" mat-button
+                (click)="hint()">
+            {{'msg.geen.cards.hint' | translate }}
+        </button>
+    </p>
 </div>
