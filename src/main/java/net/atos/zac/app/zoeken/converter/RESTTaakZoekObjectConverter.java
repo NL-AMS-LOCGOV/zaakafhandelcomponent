@@ -7,13 +7,23 @@ package net.atos.zac.app.zoeken.converter;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
+
+import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTTaakZoekObject;
+import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.zoeken.model.TaakZoekObject;
 
 public class RESTTaakZoekObjectConverter {
 
-    public static RESTTaakZoekObject convert(final TaakZoekObject taakZoekObject) {
+    @Inject
+    private PolicyService policyService;
+
+    @Inject
+    private RESTRechtenConverter restRechtenConverter;
+
+    public RESTTaakZoekObject convert(final TaakZoekObject taakZoekObject) {
         final RESTTaakZoekObject restTaakZoekObject = new RESTTaakZoekObject();
         restTaakZoekObject.id = UUID.fromString(taakZoekObject.getId());
         restTaakZoekObject.type = taakZoekObject.getType();
@@ -31,6 +41,7 @@ public class RESTTaakZoekObjectConverter {
         restTaakZoekObject.zaakUuid = taakZoekObject.getZaakUUID();
         restTaakZoekObject.zaakToelichting = taakZoekObject.getZaakToelichting();
         restTaakZoekObject.zaakOmschrijving = taakZoekObject.getZaakOmschrijving();
+        restTaakZoekObject.rechten = restRechtenConverter.convert(policyService.readTaakRechten(taakZoekObject));
         return restTaakZoekObject;
     }
 }

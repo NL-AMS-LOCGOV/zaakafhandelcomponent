@@ -41,7 +41,7 @@ export class ZakenVrijgevenDialogComponent implements OnInit {
     vrijgeven(): void {
         this.dialogRef.disableClose = true;
         this.loading = true;
-        this.zakenService.vrijgevenLijst(this.data.map(zaak => zaak.id), this.redenFormField.formControl.value).subscribe(() => {
+        this.zakenService.vrijgevenVanuitLijst(this.data.map(zaak => zaak.id), this.redenFormField.formControl.value).subscribe(() => {
             this.dialogRef.close(true);
         });
     }

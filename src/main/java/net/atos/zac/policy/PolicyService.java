@@ -40,6 +40,8 @@ import net.atos.zac.policy.output.OverigeRechten;
 import net.atos.zac.policy.output.TaakRechten;
 import net.atos.zac.policy.output.WerklijstRechten;
 import net.atos.zac.policy.output.ZaakRechten;
+import net.atos.zac.zoeken.model.TaakZoekObject;
+import net.atos.zac.zoeken.model.ZaakZoekObject;
 
 @ApplicationScoped
 public class PolicyService {
@@ -77,6 +79,13 @@ public class PolicyService {
         return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
     }
 
+    public ZaakRechten readZaakRechten(final ZaakZoekObject zaakZoekObject) {
+        final ZaakData zaakData = new ZaakData();
+        zaakData.open = !zaakZoekObject.isAfgehandeld();
+        zaakData.zaaktype = zaakZoekObject.getZaaktypeOmschrijving();
+        return evaluationClient.readZaakRechten(new RuleQuery<>(new ZaakInput(loggedInUserInstance.get(), zaakData))).getResult();
+    }
+
     public DocumentRechten readDocumentRechten(final AbstractEnkelvoudigInformatieobject enkelvoudigInformatieobject) {
         return readDocumentRechten(enkelvoudigInformatieobject, null);
     }
@@ -108,6 +117,13 @@ public class PolicyService {
         final TaakData taakData = new TaakData();
         taakData.behandelaar = taskInfo.getAssignee();
         taakData.zaaktype = zaaktypeOmschrijving;
+        return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
+    }
+
+    public TaakRechten readTaakRechten(final TaakZoekObject taakZoekObject) {
+        final TaakData taakData = new TaakData();
+        taakData.behandelaar = taakZoekObject.getBehandelaarGebruikersnaam();
+        taakData.zaaktype = taakZoekObject.getZaaktypeOmschrijving();
         return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
     }
 
