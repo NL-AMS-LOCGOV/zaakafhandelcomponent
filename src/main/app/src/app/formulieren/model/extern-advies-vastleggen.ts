@@ -11,10 +11,9 @@ import {InformatieObjectenService} from '../../informatie-objecten/informatie-ob
 import {TakenService} from '../../taken/taken.service';
 import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 export class ExternAdviesVastleggen extends AbstractFormulier {
-
-    public static formulierDefinitie = 'EXTERN_ADVIES_VASTLEGGEN';
 
     fields = {
         VRAAG: 'vraag',
@@ -39,8 +38,8 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
         this.form.push(
             [new TextareaFormFieldBuilder().id(fields.VRAAG).label(fields.VRAAG).validators(Validators.required)
                                            .maxlength(1000).build()],
-            [new TextareaFormFieldBuilder().id(fields.ADVISEUR).label(fields.ADVISEUR).validators(Validators.required)
-                                           .maxlength(1000).build()],
+            [new InputFormFieldBuilder().id(fields.ADVISEUR).label(fields.ADVISEUR).validators(Validators.required)
+                                        .maxlength(1000).build()],
             [new TextareaFormFieldBuilder().id(fields.BRON).label(fields.BRON).validators(Validators.required)
                                            .maxlength(1000).build()]
         );
@@ -57,13 +56,18 @@ export class ExternAdviesVastleggen extends AbstractFormulier {
                                            .label(fields.ADVISEUR)
                                            .build()],
             [new ReadonlyFormFieldBuilder(this.getDataElement(fields.BRON)).id(fields.BRON)
-                                           .label(fields.BRON)
-                                           .build()],
+                                                                           .label(fields.BRON)
+                                                                           .build()],
             [new TextareaFormFieldBuilder(this.getDataElement(fields.EXTERNADVIES)).id(fields.EXTERNADVIES)
-                                           .label(fields.EXTERNADVIES)
-                                           .validators(Validators.required)
-                                           .readonly(this.readonly)
-                                           .maxlength(1000).build()]
+                                                                                   .label(fields.EXTERNADVIES)
+                                                                                   .validators(Validators.required)
+                                                                                   .readonly(this.readonly)
+                                                                                   .maxlength(1000).build()]
         );
     }
+
+    getBehandelTitel(): string {
+        return this.translate.instant('title.taak.extern-advies.verwerken');
+    }
+
 }

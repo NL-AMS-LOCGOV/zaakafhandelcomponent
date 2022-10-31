@@ -59,9 +59,9 @@
         <ng-container matColumnDef="zaaktype_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="zaaktype"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.ZAAK_ZAAKTYPE]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.ZAAK_ZAAKTYPE]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.ZAAK_ZAAKTYPE] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.ZAAKTYPE]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.ZAAKTYPE]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.ZAAKTYPE] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>
@@ -84,9 +84,9 @@
         <ng-container matColumnDef="groep_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="groep"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.ZAAK_GROEP]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.ZAAK_GROEP]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.ZAAK_GROEP] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.GROEP]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.GROEP]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.GROEP] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>
@@ -117,7 +117,7 @@
         <ng-container matColumnDef="einddatumGepland">
             <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_EINDDATUM_GEPLAND">{{ 'einddatumGepland' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | datum | empty }}
-                <mat-icon *ngIf="isAfterDate(row.einddatumGepland)" class="warning" [title]="'msg.datum.overschreden' | translate"></mat-icon>
+                <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate" *ngIf="isAfterDate(row.einddatumGepland)">warning</mat-icon>
             </td>
         </ng-container>
 
@@ -132,9 +132,9 @@
         <ng-container matColumnDef="behandelaar_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="behandelaar"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.ZAAK_BEHANDELAAR]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.ZAAK_BEHANDELAAR]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.ZAAK_BEHANDELAAR] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.BEHANDELAAR]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.BEHANDELAAR]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.BEHANDELAAR] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>
@@ -230,10 +230,10 @@
                      [@detailExpand]="row == expandedRow ? 'expanded' : 'collapsed'">
                     <div fxLayout="row wrap" fxLayoutGap="10px grid" fxFlexFill>
                         <ng-container *ngFor="let column of dataSource.detailExpandColumns" [ngSwitch]="column">
-                            <zac-static-text *ngSwitchCase="zoekenColumn.EINDDATUM_GEPLAND" [value]="row.einddatumGepland | datum" [icon]="einddatumGeplandIcon"
+                            <zac-static-text *ngSwitchCase="zoekenColumn.EINDDATUM_GEPLAND" [value]="row.einddatumGepland | datum"
+                                             [icon]="einddatumGeplandIcon"
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.DAGEN_TOT_STREEFDATUM" [value]="row.einddatumGepland | dagen"
-                                             [icon]="einddatumGeplandIcon"
                                              fxFlex="33" [label]="column | translate"></zac-static-text>
                             <zac-static-text *ngSwitchCase="zoekenColumn.UITERLIJKE_EINDDATUM_AFDOENING" [value]="row.uiterlijkeEinddatumAfdoening | datum"
                                              [icon]="uiterlijkeEinddatumAfdoeningIcon"
@@ -276,9 +276,13 @@
     </table>
 
     <ng-container *ngIf="dataSource.totalItems === 0"><p>{{'msg.geen.gegevens.gevonden' | translate}}</p></ng-container>
-    <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
-                   (page)="pageChange()" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
-    </mat-paginator>
+    <div class="pagination-wrapper">
+        <zac-export-button [zoekParameters]="this.dataSource.zoekParameters"
+                           [filename]="'title.zaken.werkvoorraad' | translate"></zac-export-button>
+        <mat-paginator #paginator [length]="dataSource.totalItems" [pageIndex]="dataSource.zoekParameters.page" [pageSize]="dataSource.zoekParameters.rows"
+                       (page)="pageChange()" [pageSizeOptions]="[10, 25, 50, 100]" sticky>
+        </mat-paginator>
+    </div>
 </div>
 
 <div class="buttons">
@@ -289,9 +293,5 @@
     <button *ngIf="isSelected()" (click)="openVrijgevenScherm()" color="accent" id="vrijgeven_button" mat-raised-button
             title="{{ 'actie.vrijgeven' | translate }}">{{'actie.vrijgeven' | translate}}
         <mat-icon [matBadgeHidden]="!isSelected()" [matBadge]=countSelected() matBadgeColor="primary" matBadgeSize="small">clear_all</mat-icon>
-    </button>
-    <button (click)="downloadCSV()" color="accent" id="CSV_button" mat-raised-button
-            title="{{ 'actie.export.csv' | translate }}">{{'title.csv' | translate}}
-        <mat-icon>download_for_offline</mat-icon>
     </button>
 </div>

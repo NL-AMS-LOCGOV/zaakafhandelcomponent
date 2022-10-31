@@ -229,7 +229,7 @@ export class ZaakCreateComponent implements OnInit {
             this.createZaakFields[index] = [this.medewerkerGroepFormField];
 
             // update reference of the array to apply changes
-            this.createZaakFields = Object.assign([], this.createZaakFields);
+            this.createZaakFields = [...this.createZaakFields];
 
             this.vertrouwelijkheidaanduidingField.formControl.setValue(
                 this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));

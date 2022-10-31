@@ -10,4 +10,6 @@ export class DashboardCardInstelling {
     id: number;
     cardId: DashboardCardId;
     signaleringType?: SignaleringType;
+    column: number;
+    row: number;
 }

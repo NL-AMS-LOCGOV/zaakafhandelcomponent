@@ -22,8 +22,6 @@ import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/in
 
 export class AanvullendeInformatie extends AbstractFormulier {
 
-    public static formulierDefinitie: string = 'AANVULLENDE_INFORMATIE';
-
     private bodyTemplate: string =
         'Beste klant,\n' +
         '\n' +

@@ -10,6 +10,12 @@ import java.util.stream.Stream;
 
 public enum FilterVeld {
 
+    TYPE("type"),
+    ZAAKTYPE("zaaktypeOmschrijving"),
+    BEHANDELAAR("behandelaarNaam"),
+    GROEP("groepNaam"),
+    TOEGEKEND("isToegekend"),
+
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_ZAAKTYPE("zaak_zaaktypeOmschrijving"),
     ZAAK_ZAAKTYPE_UUID("zaak_zaaktypeUuid"),
@@ -25,8 +31,8 @@ public enum FilterVeld {
 
     private final String veld;
 
-    FilterVeld(final String fieldList) {
-        this.veld = fieldList;
+    FilterVeld(final String veld) {
+        this.veld = veld;
     }
 
     public String getVeld() {
@@ -40,12 +46,16 @@ public enum FilterVeld {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Onbekend Filterveld '%s'", veld)));
     }
 
+    public static EnumSet<FilterVeld> getFacetten() {
+        return EnumSet.of(TYPE, ZAAKTYPE, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_RESULTAAT, TAAK_NAAM, TAAK_STATUS);
+    }
+
     public static EnumSet<FilterVeld> getTaakFacetten() {
-        return EnumSet.of(TAAK_NAAM, TAAK_STATUS, TAAK_GROEP, TAAK_BEHANDELAAR, TAAK_ZAAKTYPE);
+        return EnumSet.of(TAAK_NAAM, TAAK_STATUS, GROEP, BEHANDELAAR, ZAAKTYPE);
     }
 
     public static EnumSet<FilterVeld> getZaakFacetten() {
-        return EnumSet.of(ZAAK_ZAAKTYPE, ZAAK_STATUS, ZAAK_BEHANDELAAR, ZAAK_GROEP, ZAAK_RESULTAAT);
+        return EnumSet.of(ZAAKTYPE, ZAAK_STATUS, BEHANDELAAR, GROEP, ZAAK_RESULTAAT);
     }
 
 }

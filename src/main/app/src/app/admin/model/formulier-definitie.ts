@@ -6,6 +6,14 @@
 import {FormulierVeldDefinitie} from './formulier-veld-definitie';
 
 export class FormulierDefinitie {
-    id: string;
+    id: FormulierDefinitieID;
     veldDefinities: FormulierVeldDefinitie[];
 }
+
+export type FormulierDefinitieID =
+    'DEFAULT_TAAKFORMULIER' |
+    'AANVULLENDE_INFORMATIE' |
+    'ADVIES' |
+    'EXTERN_ADVIES_VASTLEGGEN' |
+    'EXTERN_ADVIES_MAIL' |
+    'GOEDKEUREN';

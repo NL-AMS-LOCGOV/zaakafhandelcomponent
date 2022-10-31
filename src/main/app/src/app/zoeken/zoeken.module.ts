@@ -14,23 +14,26 @@ import {FacetFilterComponent} from './facet-filter/facet-filter.component';
 import {TekstFilterComponent} from './tekst-filter/tekst-filter.component';
 import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-object.component';
 import {ToggleFilterComponent} from './toggle-filter/toggle-filter.component';
+import {MultiFacetFilterComponent} from './multi-facet-filter/multi-facet-filter.component';
 
 @NgModule({
     declarations: [
         ZoekComponent,
         DatumFilterComponent,
         FacetFilterComponent,
+        MultiFacetFilterComponent,
         TekstFilterComponent,
         ToggleFilterComponent,
         ZaakZoekObjectComponent,
-        TaakZoekObjectComponent,
+        TaakZoekObjectComponent
     ],
     exports: [
         ZoekComponent,
         DatumFilterComponent,
         TekstFilterComponent,
         ToggleFilterComponent,
-        FacetFilterComponent
+        FacetFilterComponent,
+        MultiFacetFilterComponent
     ],
     imports: [
         SharedModule

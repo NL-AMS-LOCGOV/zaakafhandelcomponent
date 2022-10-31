@@ -8,7 +8,6 @@ import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular
 import {ZoekObject, ZoekObjectType} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
-import {Resultaat} from '../../shared/model/resultaat';
 import {MatPaginator} from '@angular/material/paginator';
 import {merge} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -18,6 +17,7 @@ import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
 import {ZoekVeld} from '../model/zoek-veld';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
+import {ZoekResultaat} from '../model/zoek-resultaat';
 
 @Component({
     selector: 'zac-zoeken',
@@ -28,25 +28,30 @@ export class ZoekComponent implements AfterViewInit {
 
     @ViewChild('paginator') paginator: MatPaginator;
     @Input() sideNav: MatSidenav;
+
+    @Input() set keywords(value: string) {
+        if (this.zoekenControl.value !== value) {
+            this.zoekenControl.setValue(value);
+            this.zoek.emit();
+        }
+    }
+
+    get keywords(): string {
+        return this.zoekenControl.value;
+    }
+
     readonly zoekObjectType = ZoekObjectType;
-    zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
+    zoekResultaat: ZoekResultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: [], filters: null};
+    zoekParameters: ZoekParameters = new ZoekParameters();
     isLoadingResults = true;
     slow = false;
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
-    once = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
 
     ngAfterViewInit(): void {
-        this.sideNav.openedChange.subscribe(() => {
-            if (!this.once) {
-                this.once = true;
-                this.zoek.emit();
-            }
-        });
-
         this.zoek.subscribe(() => {
             this.paginator.pageIndex = 0;
         });
@@ -74,11 +79,10 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     getZoekParameters(): ZoekParameters {
-        const zoekParameters: ZoekParameters = new ZoekParameters();
-        zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
-        zoekParameters.page = this.paginator.pageIndex;
-        zoekParameters.rows = this.paginator.pageSize;
-        return zoekParameters;
+        this.zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
+        this.zoekParameters.page = this.paginator.pageIndex;
+        this.zoekParameters.rows = this.paginator.pageSize;
+        return this.zoekParameters;
     }
 
     getZaakZoekObject(zoekObject: ZoekObject): ZaakZoekObject {
@@ -88,4 +92,10 @@ export class ZoekComponent implements AfterViewInit {
     getTaakZoekObject(zoekObject: ZoekObject): TaakZoekObject {
         return zoekObject as TaakZoekObject;
     }
+
+    hasOption(options: string[]) {
+        return options.length ? !(options.length === 1 && options[0] === '-NULL-') : false;
+    }
+
+    originalOrder = () => 0;
 }

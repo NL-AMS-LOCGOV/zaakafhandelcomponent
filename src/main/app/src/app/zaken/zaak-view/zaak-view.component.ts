@@ -592,55 +592,23 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         }
     }
 
-    editToewijzing(event: any): void {
-        if (this.zaak.groep !== event['medewerker-groep'].groep && this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
+    editToewijzing(event: any) {
+        if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id &&
+            this.zaak.groep === event['medewerker-groep'].groep) {
+            this.assignZaakToMe(event);
+        } else {
             this.zaak.groep = event['medewerker-groep'].groep;
             this.zaak.behandelaar = event['medewerker-groep'].medewerker;
-
             this.websocketService.doubleSuspendListener(this.zaakRollenListener);
             this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
-                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
+                if (this.zaak.behandelaar) {
+                    this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: this.zaak.behandelaar.naam});
+                } else {
+                    this.utilService.openSnackbar('msg.vrijgegeven.zaak');
+                }
                 this.init(zaak);
             });
-
-        } else if (this.zaak.groep !== event['medewerker-groep'].groep) {
-            this.editGroep(event);
-        } else if (this.zaak.behandelaar !== event['medewerker-groep'].medewerker) {
-            this.editBehandelaar(event);
         }
-    }
-
-    private editGroep(event: any): void {
-        this.zaak.groep = event['medewerker-groep'].groep;
-        this.websocketService.doubleSuspendListener(this.zaakRollenListener);
-        this.zakenService.toekennenGroep(this.zaak, event.reden).subscribe(zaak => {
-            this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.groep.naam});
-            this.init(zaak);
-        });
-    }
-
-    private editBehandelaar(event: any): void {
-        if (event['medewerker-groep'].medewerker && event['medewerker-groep'].medewerker.id === this.ingelogdeMedewerker.id) {
-            this.assignZaakToMe(event);
-        } else if (event['medewerker-groep'].medewerker) {
-            this.zaak.behandelaar = event['medewerker-groep'].medewerker;
-            this.websocketService.doubleSuspendListener(this.zaakRollenListener);
-            this.zakenService.toekennen(this.zaak, event.reden).subscribe(zaak => {
-                this.utilService.openSnackbar('msg.zaak.toegekend', {behandelaar: zaak.behandelaar?.naam});
-                this.init(zaak);
-            });
-        } else {
-            this.vrijgeven(event.reden);
-        }
-    }
-
-    private vrijgeven(reden: string): void {
-        this.zaak.behandelaar = null;
-        this.websocketService.suspendListener(this.zaakRollenListener);
-        this.zakenService.vrijgeven(this.zaak.uuid, reden).subscribe(() => {
-            this.init(this.zaak);
-            this.utilService.openSnackbar('msg.zaak.vrijgegeven');
-        });
     }
 
     editZaakMetReden(event: any, field: string): void {
@@ -844,7 +812,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         $event.stopPropagation();
 
         this.websocketService.suspendListener(this.zaakTakenListener);
-        this.takenService.assignToLoggedOnUser(taak).subscribe(returnTaak => {
+        this.takenService.toekennenAanIngelogdeMedewerker(taak).subscribe(returnTaak => {
             taak.behandelaar = returnTaak.behandelaar;
             taak.status = returnTaak.status;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});

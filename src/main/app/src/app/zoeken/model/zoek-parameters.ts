@@ -12,7 +12,7 @@ export class ZoekParameters {
     alleenAfgeslotenZaken: boolean = false;
     alleenMijnTaken: boolean = false;
     zoeken: { [key: string]: string } = {};
-    filters: { [key: string]: string } = {};
+    filters: { [key: string]: [string] } = {};
     datums: { [key: string]: { van: string; tot: string } } = {
         ZAAK_STARTDATUM: {van: null, tot: null},
         ZAAK_EINDDATUM: {van: null, tot: null},

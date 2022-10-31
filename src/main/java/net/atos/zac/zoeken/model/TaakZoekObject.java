@@ -80,6 +80,9 @@ public class TaakZoekObject implements ZoekObject {
     @Field(ZaakZoekObject.OMSCHRIJVING_FIELD)
     private String zaakOmschrijving;
 
+    @Field(IS_TOEGEKEND_FIELD)
+    private boolean toegekend;
+
 
     public TaakZoekObject() {
     }
@@ -251,5 +254,13 @@ public class TaakZoekObject implements ZoekObject {
 
     public void setZaakOmschrijving(final String zaakOmschrijving) {
         this.zaakOmschrijving = zaakOmschrijving;
+    }
+
+    public boolean isToegekend() {
+        return toegekend;
+    }
+
+    public void setToegekend(final boolean toegekend) {
+        this.toegekend = toegekend;
     }
 }

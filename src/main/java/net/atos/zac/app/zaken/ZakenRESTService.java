@@ -481,54 +481,49 @@ public class ZakenRESTService {
         return policyService.filterAllowedZaaktypen(zaaktypen).stream().map(zaaktypeConverter::convert).toList();
     }
 
-    @PUT
+    @PATCH
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
-        if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
-            // Toekennen of overdragen
-            final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
-            zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
-        } else {
-            // Vrijgeven
-            zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
+
+        final RolMedewerker rolBehandelaar = zgwApiService.findBehandelaarForZaak(zaak);
+        String behandelaar = rolBehandelaar != null ? rolBehandelaar.getBetrokkeneIdentificatie().getIdentificatie() : null;
+
+        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
+
+        if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
+            if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
+                // Toekennen of overdragen
+                final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+                zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
+            } else {
+                // Vrijgeven
+                zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
+            }
         }
 
-        if (StringUtils.isNotEmpty(toekennenGegevens.groepId)) {
-            groepToekennen(zaak, toekennenGegevens);
+        if (!StringUtils.equals(groep.getBetrokkeneIdentificatie().getIdentificatie(), toekennenGegevens.groepId)) {
+            final Group group = identityService.readGroup(toekennenGegevens.groepId);
+            zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), toekennenGegevens.reden);
         }
+
         return zaakConverter.convert(zaak);
     }
 
     @PUT
-    @Path("toekennen/groep")
-    public RESTZaak groepToekennen(final RESTZaakToekennenGegevens toekennenGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        groepToekennen(zaak, toekennenGegevens);
-        return zaakConverter.convert(zaak);
-    }
-
-    private void groepToekennen(final Zaak zaak, final RESTZaakToekennenGegevens toekennenGegevens) {
-        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
-        final Group group = identityService.readGroup(toekennenGegevens.groepId);
-        zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), toekennenGegevens.reden);
+    @Path("lijst/toekennen/mij")
+    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
+        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
+        return zaakOverzichtConverter.convert(zaak);
     }
 
     @PUT
-    @Path("vrijgeven")
-    public void vrijgeven(final RESTZaakToekennenGegevens toekennenGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
-
-        zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
-        indexeerService.indexeerDirect(toekennenGegevens.zaakUUID.toString(), ZoekObjectType.ZAAK);
-    }
-
-    @PUT
-    @Path("verdelen")
-    public void verdelen(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
+    @Path("lijst/verdelen")
+    public void verdelenVanuitLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
         final Group group = !StringUtils.isEmpty(verdeelGegevens.groepId) ? identityService.readGroup(verdeelGegevens.groepId) : null;
         final User user = !StringUtils.isEmpty(verdeelGegevens.behandelaarGebruikersnaam) ?
                 identityService.readUser(verdeelGegevens.behandelaarGebruikersnaam) : null;
@@ -545,9 +540,9 @@ public class ZakenRESTService {
     }
 
     @PUT
-    @Path("vrijgeven/lijst")
-    public void vrijgevenLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTakenVerdelen());
+    @Path("lijst/vrijgeven")
+    public void vrijgevenVanuitLijst(final RESTZakenVerdeelGegevens verdeelGegevens) {
+        assertPolicy(policyService.readWerklijstRechten().getZakenTaken() && policyService.readWerklijstRechten().getZakenTakenVerdelen());
         verdeelGegevens.uuids.forEach(uuid -> {
             final Zaak zaak = zrcClientService.readZaak(uuid);
             zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, verdeelGegevens.reden);
@@ -617,20 +612,8 @@ public class ZakenRESTService {
     @PUT
     @Path("toekennen/mij")
     public RESTZaak toekennenAanIngelogdeMedewerker(final RESTZaakToekennenGegevens toekennenGegevens) {
-        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
-        ingelogdeMedewerkerToekennenAanZaak(zaak, toekennenGegevens);
+        final Zaak zaak = ingelogdeMedewerkerToekennenAanZaak(toekennenGegevens);
         return zaakConverter.convert(zaak);
-    }
-
-    @PUT
-    @Path("toekennen/mij/lijst")
-    public RESTZaakOverzicht toekennenAanIngelogdeMedewerkerVanuitLijst(final RESTZaakToekennenGegevens toekennenGegevens) {
-        assertPolicy(policyService.readWerklijstRechten().getZakenTaken());
-        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
-        ingelogdeMedewerkerToekennenAanZaak(zaak, toekennenGegevens);
-        indexeerService.indexeerDirect(zaak.getUuid().toString(), ZoekObjectType.ZAAK);
-        return zaakOverzichtConverter.convert(zaak);
     }
 
     @GET
@@ -746,9 +729,13 @@ public class ZakenRESTService {
         return resultaattypeConverter.convertResultaattypes(ztcClientService.readResultaattypen(ztcClientService.readZaaktype(zaaktypeUUID).getUrl()));
     }
 
-    private void ingelogdeMedewerkerToekennenAanZaak(final Zaak zaak, final RESTZaakToekennenGegevens toekennenGegevens) {
+    private Zaak ingelogdeMedewerkerToekennenAanZaak(final RESTZaakToekennenGegevens toekennenGegevens) {
+        final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
+
         final User user = identityService.readUser(loggedInUserInstance.get().getId());
         zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
+        return zaak;
     }
 
     private RolOrganisatorischeEenheid bepaalRolGroep(final Group group, final Zaak zaak) {

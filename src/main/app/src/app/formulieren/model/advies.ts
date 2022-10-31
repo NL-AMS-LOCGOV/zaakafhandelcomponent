@@ -21,8 +21,6 @@ import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters
 
 export class Advies extends AbstractFormulier {
 
-    public static formulierDefinitie = 'ADVIES';
-
     fields = {
         TOELICHTING: 'toelichtingAdvies',
         VRAAG: 'vraag',

@@ -35,7 +35,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
             this.loadDocument();
         }
 
-        this.documentListener = this.websocketService.addListener(Opcode.ANY, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
+        this.documentListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ENKELVOUDIG_INFORMATIEOBJECT, this.document.uuid,
             (event) => {
             this.loadInformatieObject(event);
 

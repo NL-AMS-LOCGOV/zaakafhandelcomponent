@@ -138,6 +138,8 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_aantalOpenstaandeTaken")
     private long aantalOpenstaandeTaken;
 
+    @Field(IS_TOEGEKEND_FIELD)
+    private boolean toegekend;
 
     public ZaakZoekObject() {
     }
@@ -446,5 +448,13 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setIndicatieHoofdzaak(final boolean indicatieHoofdzaak) {
         this.indicatieHoofdzaak = indicatieHoofdzaak;
+    }
+
+    public boolean isToegekend() {
+        return toegekend;
+    }
+
+    public void setToegekend(final boolean toegekend) {
+        this.toegekend = toegekend;
     }
 }

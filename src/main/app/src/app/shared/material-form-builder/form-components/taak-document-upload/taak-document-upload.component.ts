@@ -60,12 +60,12 @@ export class TaakDocumentUploadComponent extends FormComponent implements OnInit
     uploadFile(file: File) {
         this.data.uploadError = null;
         if (file) {
-            if (!this.isBestandstypeToegestaan(file)) {
-                this.data.uploadError = `Het bestandtype is niet toegestaan (${this.getBestandsextensie(file)})`;
+            if (!this.data.isBestandstypeToegestaan(file)) {
+                this.data.uploadError = `Het bestandstype is niet toegestaan (${this.data.getBestandsextensie(file)})`;
                 return;
             }
-            if (file.size > this.getMaxSizeBytes()) {
-                this.data.uploadError = `Bestand is te groot (${this.formatFileSizeMB(file.size)})`;
+            if (!this.data.isBestandsgrootteToegestaan(file)) {
+                this.data.uploadError = `Het bestand is te groot (${this.data.getBestandsgrootteMiB(file)}MiB)`;
                 return;
             }
             this.uploadControl.setValue(file.name);
@@ -103,27 +103,6 @@ export class TaakDocumentUploadComponent extends FormComponent implements OnInit
             this.uploadControl.setValue(null);
             this.updateValue();
         }
-    }
-
-    getMaxSizeBytes() {
-        return this.data.fileSizeMB * 1024 * 1024;
-    }
-
-    formatFileSizeMB(bytes: number): string {
-        return parseFloat(String(bytes / 1024 / 1024)).toFixed(2);
-    }
-
-    isBestandstypeToegestaan(file: File): boolean {
-        const extensies = this.data.fileTypes;
-        const extensiesArray = extensies.split(',').map(s => s.trim().toLowerCase());
-        return extensiesArray.indexOf('.' + this.getBestandsextensie(file)) > -1;
-    }
-
-    getBestandsextensie(file: File) {
-        if (file.name.indexOf('.') < 1) {
-            return '-';
-        }
-        return file.name.split('.').pop().toLowerCase();
     }
 
     reset($event: MouseEvent) {

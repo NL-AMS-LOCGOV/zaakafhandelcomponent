@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
+import {FileIcon} from './informatie-objecten/model/file-icon';
+
 export const AppGlobals = Object.freeze({
-    FILE_MAX_SIZE: 80, // 20mb
-    ALLOWED_FILETYPES: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.vsd,.png,.gif,.jpg,.jpeg,.txt,.bmp,.odt,.ods,.rtf'
+    FILE_MAX_SIZE: 80, // MB
+    ALLOWED_FILETYPES: FileIcon.fileIconList.map(fileIcon => fileIcon.getBestandsextensie()).join(', ')
 });
