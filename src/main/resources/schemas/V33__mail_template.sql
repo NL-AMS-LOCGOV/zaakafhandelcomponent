@@ -10,7 +10,7 @@ CREATE TABLE ${schema}.mail_template
     onderwerp                        VARCHAR NOT NULL,
     body                             VARCHAR NOT NULL,
     mail_template_enum               VARCHAR NOT NULL,
-    parent                           BIGINT
+    parent                           BIGINT,
     CONSTRAINT pk_mail_template PRIMARY KEY (id_mail_template),
     CONSTRAINT fk_mail_template_parent FOREIGN KEY (parent)
         REFERENCES ${schema}.mail_template (id_mail_template)
