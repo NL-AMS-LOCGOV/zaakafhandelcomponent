@@ -35,11 +35,15 @@ public class RESTZoekResultaatConverter {
         restZoekResultaat.filters.putAll(zoekResultaat.getFilters());
         zoekResultaat.getFilters().forEach((filterVeld, mogelijkeFilters) -> {
             //indien geen resultaten, de huidige filters laten staan
-            final String zoekFilter = zoekParameters.filters.get(filterVeld);
-            if (zoekFilter != null && !mogelijkeFilters.contains(zoekFilter)) {
-                final List<String> filters = new ArrayList<>(mogelijkeFilters);
-                filters.add(zoekFilter);
-                restZoekResultaat.filters.put(filterVeld, filters);
+            final List<String> zoekFilters = zoekParameters.filters.get(filterVeld);
+            if (zoekFilters != null) {
+                zoekFilters.forEach(zoekFilter -> {
+                    if (zoekFilter != null && !mogelijkeFilters.contains(zoekFilter)) {
+                        final List<String> filters = new ArrayList<>(mogelijkeFilters);
+                        filters.add(zoekFilter);
+                        restZoekResultaat.filters.put(filterVeld, filters);
+                    }
+                });
             }
         });
         return restZoekResultaat;

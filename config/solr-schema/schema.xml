@@ -119,6 +119,12 @@
     <field name="zaaktypeUuid" type="string" indexed="true" stored="true"/>
     <field name="zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
     <field name="zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="groepNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="isToegekend" type="boolean" indexed="true" stored="true" docValues="true"/>
+    <field name="startdatum" type="pdate" indexed="true" stored="true"/>
+    <field name="streefdatum" type="pdate" indexed="true" stored="true"/>
+
     <field name="zaak_identificatie" type="string" indexed="true" stored="true"/>
     <field name="zaak_omschrijving" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_toelichting" type="text_nl" indexed="true" stored="true"/>
@@ -306,6 +312,16 @@
     <copyField source="zaak_zaaktypeOmschrijving" dest="zaaktypeOmschrijving"/>
     <copyField source="taak_zaaktypeOmschrijving" dest="zaaktypeOmschrijving"/>
     <copyField source="informatieobject_zaaktypeOmschrijving" dest="zaaktypeOmschrijving"/>
+
+    <copyField source="zaak_behandelaarNaam" dest="behandelaarNaam"/>
+    <copyField source="taak_behandelaarNaam" dest="behandelaarNaam"/>
+    <copyField source="zaak_groepNaam" dest="groepNaam"/>
+    <copyField source="taak_groepNaam" dest="groepNaam"/>
+    <copyField source="taak_streefdatum" dest="streefdatum"/>
+    <copyField source="zaak_einddatumGepland" dest="streefdatum"/>
+    <copyField source="taak_creatiedatum" dest="startdatum"/>
+    <copyField source="zaak_startdatum" dest="startdatum"/>
+    <copyField source="informatieobject_registratiedatum" dest="startdatum"/>
 
     <!--  Above, multiple source fields are copied to the [text] field.
          Another way to map multiple source fields to the same
