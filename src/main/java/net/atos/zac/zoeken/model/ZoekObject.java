@@ -8,5 +8,8 @@ package net.atos.zac.zoeken.model;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public interface ZoekObject {
+
+    public static final String IS_TOEGEKEND_FIELD = "isToegekend";
+
     ZoekObjectType getType();
 }

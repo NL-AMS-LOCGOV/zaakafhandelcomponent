@@ -87,6 +87,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         if (behandelaar != null) {
             zaakZoekObject.setBehandelaarNaam(behandelaar.getFullName());
             zaakZoekObject.setBehandelaarGebruikersnaam(behandelaar.getId());
+            zaakZoekObject.setToegekend(true);
         }
 
         if (zaak.isVerlengd()) {

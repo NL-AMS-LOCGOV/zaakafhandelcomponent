@@ -8,6 +8,7 @@ package net.atos.zac.zoeken.model;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.atos.zac.shared.model.SorteerRichting;
@@ -25,7 +26,7 @@ public class ZoekParameters {
 
     private EnumMap<DatumVeld, DatumRange> datums = new EnumMap<>(DatumVeld.class);
 
-    private final EnumMap<FilterVeld, String> filters = new EnumMap<>(FilterVeld.class);
+    private final EnumMap<FilterVeld, List<String>> filters = new EnumMap<>(FilterVeld.class);
 
     private final HashMap<String, String> filterQueries = new HashMap<>();
 
@@ -78,7 +79,7 @@ public class ZoekParameters {
 
     public EnumSet<FilterVeld> getBeschikbareFilters() {
         if (type == null) {
-            return EnumSet.noneOf(FilterVeld.class);
+            return FilterVeld.getFacetten();
         }
         return switch (type) {
             case ZAAK -> FilterVeld.getZaakFacetten();
@@ -86,17 +87,21 @@ public class ZoekParameters {
         };
     }
 
-    public EnumMap<FilterVeld, String> getFilters() {
+    public EnumMap<FilterVeld, List<String>> getFilters() {
         return filters;
     }
 
-    public void setFilters(final EnumMap<FilterVeld, String> filters) {
+    public void setFilters(final EnumMap<FilterVeld, List<String>> filters) {
         this.filters.clear();
         this.filters.putAll(filters);
     }
 
-    public void addFilter(FilterVeld veld, String waarde) {
+    public void addFilter(FilterVeld veld, List<String> waarde) {
         this.filters.put(veld, waarde);
+    }
+
+    public void addFilter(FilterVeld veld, String waarde) {
+        this.filters.put(veld, List.of(waarde));
     }
 
     public void addFilterQuery(final String veld, final String waarde) {

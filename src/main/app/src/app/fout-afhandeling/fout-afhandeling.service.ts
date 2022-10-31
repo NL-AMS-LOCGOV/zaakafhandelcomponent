@@ -69,7 +69,14 @@ export class FoutAfhandelingService {
                 this.bericht = err.message;
             }
         }
-        this.router.navigate(['/fout-pagina']);
+        if (isDevMode()) {
+            this.snackbar.open(this.foutmelding, 'x');
+            if (this.stack) {
+                console.error(this.stack);
+            }
+        } else {
+            this.router.navigate(['/fout-pagina']);
+        }
         return throwError(() => `${this.foutmelding}: ${this.bericht}`);
     }
 

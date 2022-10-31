@@ -62,7 +62,9 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
             final User user = identityService.readUser(taskInfo.getAssignee());
             taakZoekObject.setBehandelaarNaam(user.getFullName());
             taakZoekObject.setBehandelaarGebruikersnaam(user.getId());
+            taakZoekObject.setToegekend(true);
         }
+
         taakZoekObject.setStatus(taskService.getTaakStatus(taskInfo));
         final String groupID = extractGroupId(taskInfo.getIdentityLinks());
         if (groupID != null) {
