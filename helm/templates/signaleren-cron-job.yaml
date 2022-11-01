@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "zaakafhandelcomponent.fullname" . }}-signaleren
+  labels:
+    {{- include "zaakafhandelcomponent.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.signalerenSchedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: {{ include "zaakafhandelcomponent.fullname" . }}-signaleren
+              image: curlimages/curl
+              imagePullPolicy: IfNotPresent
+              args:
+                - -s
+                - {{ printf "http://%s.%s/rest/signaleren" (include "zaakafhandelcomponent.fullname" .) .Release.Namespace }}

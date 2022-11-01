@@ -13,8 +13,10 @@ spec:
       {{- include "zaakafhandelcomponent.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -35,18 +37,58 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
-              protocol: TCP
+              containerPort: 8080
+            - name: debug
+              containerPort: 8787
+            - name: admin
+              containerPort: 9990
+          startupProbe:
+            httpGet:
+              port: admin
+              path: /health/live
+            periodSeconds: 10
+            failureThreshold: 10
+            initialDelaySeconds: 30
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              port: admin
+              path: /health/live
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              port: admin
+              path: /health/ready
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "zaakafhandelcomponent.fullname" . }}
+            - secretRef:
+                name: {{ include "zaakafhandelcomponent.fullname" . }}
+        - name: open-policy-agent
+          image: "{{ .Values.opa.image.repository }}:{{ .Values.opa.image.tag }}"
+          imagePullPolicy: {{ .Values.opa.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          ports:
+            - name: http
+              containerPort: 8181
+          args:
+            - run
+            - --server
+            - --ignore=.*  # exclude hidden dirs created by Kubernetes
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              port: 8181
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health?bundle=true  # Include bundle activation in readiness
+              scheme: HTTP
+              port: 8181
+            initialDelaySeconds: 5
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
