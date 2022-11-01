@@ -1,0 +1,34 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+        <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+        <mat-card>
+            <mat-card-content>
+                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                    <div fxFlex="33" fxFlex.lt-md="100">
+                        <zac-edit-input [formField]="naamFormField"
+                                        (onSave)="editMailtemplate($event, 'mailTemplateNaam')"></zac-edit-input>
+                    </div>
+                    <div fxFlex="33" fxFlex.lt-md="100">
+                        <zac-edit-input [formField]="enumFormField"
+                                        (onSave)="editMailtemplate($event, 'mailTemplateEnum')"></zac-edit-input>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                    <zac-edit-input [formField]="onderwerpFormField"
+                                    (onSave)="editMailtemplate($event, 'onderwerp')"></zac-edit-input>
+                </div>
+                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
+                    <zac-edit-input [formField]="bodyFormField"
+                                    (onSave)="editMailtemplate($event, 'body')"></zac-edit-input>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-sidenav-content>
+</mat-sidenav-container>

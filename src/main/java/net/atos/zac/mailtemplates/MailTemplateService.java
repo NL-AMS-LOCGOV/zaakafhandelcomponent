@@ -6,12 +6,18 @@
 package net.atos.zac.mailtemplates;
 
 import net.atos.zac.mailtemplates.model.MailTemplate;
-import net.atos.zac.mailtemplates.model.MailTemplateEnum;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+
+import java.util.List;
+
+import static net.atos.zac.util.ValidationUtil.valideerObject;
 
 @ApplicationScoped
 @Transactional
@@ -20,14 +26,7 @@ public class MailTemplateService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public MailTemplate create(final String mailTemplateNaam, final String onderwerp, final String body,
-            final MailTemplateEnum mailTemplateEnum, final Long parent) {
-        final MailTemplate mailTemplate = new MailTemplate();
-        mailTemplate.setOnderwerp(onderwerp);
-        mailTemplate.setBody(body);
-        mailTemplate.setMailTemplateNaam(mailTemplateNaam);
-        mailTemplate.setMailTemplateEnum(mailTemplateEnum);
-        mailTemplate.setParent(parent);
+    public MailTemplate create(final MailTemplate mailTemplate) {
         entityManager.persist(mailTemplate);
         return mailTemplate;
     }
@@ -42,4 +41,36 @@ public class MailTemplateService {
             entityManager.remove(mailTemplate);
         }
     }
+
+    public MailTemplate updateMailtemplate(final MailTemplate mailTemplate) {
+        valideerObject(mailTemplate);
+        final MailTemplate existing = find(mailTemplate.getId());
+        if (existing != null) {
+            return entityManager.merge(mailTemplate);
+        } else {
+            throw new RuntimeException(String.format("%s with naam=%d not found", MailTemplate.class.getSimpleName(),
+                                                     mailTemplate.getId()));
+        }
+    }
+
+    public MailTemplate readMailtemplate(final long id) {
+        final MailTemplate mailTemplate = entityManager.find(MailTemplate.class, id);
+        if (mailTemplate != null) {
+            return mailTemplate;
+        } else {
+            throw new RuntimeException(String.format("%s with id=%d not found", MailTemplate.class.getSimpleName(), id));
+        }
+    }
+
+    public List<MailTemplate> listMailtemplates() {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<net.atos.zac.mailtemplates.model.MailTemplate> query = builder.createQuery(
+                net.atos.zac.mailtemplates.model.MailTemplate.class);
+        final Root<net.atos.zac.mailtemplates.model.MailTemplate> root = query.from(
+                net.atos.zac.mailtemplates.model.MailTemplate.class);
+        query.orderBy(builder.asc(root.get("mailTemplateNaam")));
+        query.select(root);
+        return entityManager.createQuery(query).getResultList();
+    }
+
 }
