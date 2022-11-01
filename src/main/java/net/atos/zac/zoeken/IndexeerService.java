@@ -48,7 +48,7 @@ import net.atos.zac.flowable.TaskService;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.converter.AbstractZoekObjectConverter;
 import net.atos.zac.zoeken.model.ZoekObject;
-import net.atos.zac.zoeken.model.index.HerindexeerInfo;
+import net.atos.zac.zoeken.model.index.HerindexerenInfo;
 import net.atos.zac.zoeken.model.index.IndexStatus;
 import net.atos.zac.zoeken.model.index.ZoekIndexEntity;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -95,7 +95,7 @@ public class IndexeerService {
         objectIds.stream().map(this::findEntityByObjectId).filter(Objects::nonNull).forEach(entity -> entityManager.remove(entity));
     }
 
-    public HerindexeerInfo herindexeren(final ZoekObjectType type) {
+    public HerindexerenInfo herindexeren(final ZoekObjectType type) {
         deleteEntities(type);
         processSolrIndex(type);
         switch (type) {
@@ -107,7 +107,7 @@ public class IndexeerService {
         final int delete = deleteEntities(type, IndexStatus.INDEXED);
         final int add = countEntities(type, IndexStatus.ADD);
         final int update = countEntities(type, IndexStatus.UPDATE);
-        return new HerindexeerInfo(add, update, delete);
+        return new HerindexerenInfo(add, update, delete);
     }
 
     public int indexeer(int batchGrootte, ZoekObjectType type) {

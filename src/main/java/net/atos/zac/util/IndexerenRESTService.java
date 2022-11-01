@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 import net.atos.zac.authentication.ActiveSession;
 import net.atos.zac.authentication.SecurityUtil;
 import net.atos.zac.zoeken.IndexeerService;
-import net.atos.zac.zoeken.model.index.HerindexeerInfo;
+import net.atos.zac.zoeken.model.index.HerindexerenInfo;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 @Path("indexeren")
@@ -37,7 +37,7 @@ public class IndexerenRESTService {
 
     @GET
     @Path("herindexeren/{type}")
-    public HerindexeerInfo herindexeer(@PathParam("type") ZoekObjectType type) {
+    public HerindexerenInfo herindexeren(@PathParam("type") ZoekObjectType type) {
         return indexeerService.herindexeren(type);
     }
 
@@ -50,7 +50,7 @@ public class IndexerenRESTService {
     @GET
     @Path("{aantal}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String indexeer(@PathParam("aantal") int aantal) {
+    public String indexeren(@PathParam("aantal") int aantal) {
         SecurityUtil.setFunctioneelGebruiker(httpSession.get());
         final StringBuilder info = new StringBuilder();
         Arrays.stream(ZoekObjectType.values()).forEach(type -> {

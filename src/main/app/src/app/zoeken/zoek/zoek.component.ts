@@ -47,6 +47,7 @@ export class ZoekComponent implements AfterViewInit {
     slow = false;
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
+    hasSearched = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
@@ -73,9 +74,9 @@ export class ZoekComponent implements AfterViewInit {
             })
         ).subscribe(data => {
             this.paginator.length = data.totaal;
+            this.hasSearched = true;
             this.zoekResultaat = data;
         });
-
     }
 
     getZoekParameters(): ZoekParameters {

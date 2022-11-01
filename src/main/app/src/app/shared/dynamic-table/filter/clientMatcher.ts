@@ -1,7 +1,7 @@
 import * as moment from 'moment/moment';
 
 export class ClientMatcher {
-    static matchDatum(dataField: string, filterField: { van: string, tot: string }): boolean {
+    static matchDatum(dataField: string, filterField: { van: string | Date, tot: string | Date }): boolean {
         if (!dataField) {
             return false;
         }

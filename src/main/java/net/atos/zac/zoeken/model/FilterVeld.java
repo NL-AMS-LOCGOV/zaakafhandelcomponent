@@ -47,7 +47,7 @@ public enum FilterVeld {
     }
 
     public static EnumSet<FilterVeld> getFacetten() {
-        return EnumSet.of(TYPE, ZAAKTYPE, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_RESULTAAT, TAAK_NAAM, TAAK_STATUS);
+        return EnumSet.of(TYPE, ZAAKTYPE, TOEGEKEND, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_RESULTAAT, TAAK_NAAM, TAAK_STATUS);
     }
 
     public static EnumSet<FilterVeld> getTaakFacetten() {

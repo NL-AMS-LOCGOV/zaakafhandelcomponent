@@ -31,10 +31,8 @@
         <zac-static-text [label]="'uiterlijkeEinddatumAfdoening' | translate"
                          [value]="zaak.uiterlijkeEinddatumAfdoening | datum"></zac-static-text>
     </div>
-    <div [fxFlex]="100" class="toelichting">
-        <zac-static-text [label]="'omschrijving' | translate"
-                         [value]="zaak.omschrijving"></zac-static-text>
-        <zac-static-text [label]="'toelichting' | translate"
-                         [value]="zaak.toelichting"></zac-static-text>
-    </div>
+</div>
+<div class="toelichting">
+    <zac-static-text [label]="'omschrijving' | translate" [value]="zaak.omschrijving"></zac-static-text>
+    <zac-static-text [label]="'toelichting' | translate" [value]="zaak.toelichting"></zac-static-text>
 </div>
