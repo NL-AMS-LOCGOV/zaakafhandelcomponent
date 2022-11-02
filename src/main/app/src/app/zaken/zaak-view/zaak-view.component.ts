@@ -59,7 +59,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -100,8 +103,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     toonAfgerondeTaken = false;
     takenFilter: any = {};
     takenColumnsToDisplay: string[] = ['naam', 'status', 'creatiedatumTijd', 'streefdatum', 'groep', 'behandelaar', 'id'];
-
-    toegevoegdDocument: EnkelvoudigInformatieobject;
 
     historie: MatTableDataSource<HistorieRegel> = new MatTableDataSource<HistorieRegel>();
     historieColumns: string[] = ['datum', 'gebruiker', 'wijziging', 'oudeWaarde', 'nieuweWaarde', 'toelichting'];
@@ -847,7 +848,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     documentToegevoegd(informatieobject: EnkelvoudigInformatieobject): void {
-        this.toegevoegdDocument = informatieobject;
         this.updateZaak();
     }
 

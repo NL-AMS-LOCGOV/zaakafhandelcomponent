@@ -6,7 +6,6 @@
 package net.atos.client.zgw.shared;
 
 import static net.atos.client.zgw.shared.util.DateTimeUtil.convertToDateTime;
-import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -202,7 +201,6 @@ public class ZGWApiService {
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
         final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
-        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(zaak));
         eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, loggedInUserInstance.get()));
         return created;
     }

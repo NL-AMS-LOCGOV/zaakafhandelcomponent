@@ -10,7 +10,7 @@ import javax.json.bind.annotation.JsonbTransient;
 import net.atos.zac.event.AbstractEvent;
 import net.atos.zac.event.Opcode;
 
-public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
+public class ScreenEvent extends AbstractEvent<ScreenEventType, ScreenEventId> {
 
     private static final long serialVersionUID = -740125186878024703L;
 
@@ -23,7 +23,7 @@ public class ScreenEvent extends AbstractEvent<ScreenEventType, String> {
         super();
     }
 
-    public ScreenEvent(final Opcode opcode, final ScreenEventType objectType, final String objectId) {
+    public ScreenEvent(final Opcode opcode, final ScreenEventType objectType, final ScreenEventId objectId) {
         super(opcode, objectId);
         this.objectType = objectType;
     }

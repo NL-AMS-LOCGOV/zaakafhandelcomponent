@@ -21,15 +21,15 @@
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"
                           [huidigeLocatie]="zaakLocatie"
                           (locatie)="locatieGeselecteerd($event)"></zac-locatie-zoek>
-        <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
-                                   [sideNav]="actionsSidenav"
-                                   [zaak]="zaak"
-                                   (document)="documentToegevoegd($event)"></zac-informatie-object-add>
         <zac-informatie-object-create *ngSwitchCase="sideNavAction.DOCUMENT_MAKEN"
                                       [sideNav]="actionsSidenav"
                                       [zaakUUID]="zaak.uuid"
                                       (redirectUrl)="documentAanmakenStarten($event)"
                                       (melding)="documentAanmakenNietMogelijk($event)"></zac-informatie-object-create>
+        <zac-informatie-object-add *ngSwitchCase="sideNavAction.DOCUMENT_TOEVOEGEN"
+                                   [sideNav]="actionsSidenav"
+                                   [zaak]="zaak"
+                                   (document)="documentToegevoegd($event)"></zac-informatie-object-add>
         <zac-human-task-do *ngSwitchCase="sideNavAction.TAAK_STARTEN"
                            (done)="taakGestart()"
                            [planItem]="actiefPlanItem"></zac-human-task-do>
@@ -426,7 +426,7 @@
                 </mat-card>
             </div>
         </div>
-        <zac-zaak-documenten [zaak]="zaak" [documentToegevoegd]="toegevoegdDocument"></zac-zaak-documenten>
+        <zac-zaak-documenten [zaak]="zaak"></zac-zaak-documenten>
         <zac-notities [uuid]="zaak.uuid" [type]="notitieType"></zac-notities>
     </mat-drawer-content>
 </mat-drawer-container>

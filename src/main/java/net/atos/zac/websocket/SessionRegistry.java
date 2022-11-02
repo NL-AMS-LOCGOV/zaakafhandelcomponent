@@ -21,6 +21,7 @@ import com.google.common.collect.SetMultimap;
 
 import net.atos.zac.event.Opcode;
 import net.atos.zac.websocket.event.ScreenEvent;
+import net.atos.zac.websocket.event.ScreenEventId;
 import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
@@ -32,7 +33,8 @@ public class SessionRegistry {
 
     private static final Pattern QUOTED = Pattern.compile("^\"(.*)\"$");
 
-    private final SetMultimap<ScreenEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    private final SetMultimap<ScreenEvent, Session> eventSessions = Multimaps.synchronizedSetMultimap(
+            HashMultimap.create());
 
     /**
      * Return a set of all active sessions for a particular event.
@@ -81,7 +83,8 @@ public class SessionRegistry {
     private List<ScreenEvent> glob(final ScreenEvent event) {
         if (event.getOpcode() == Opcode.ANY) {
             final Set<Opcode> anyOpcode = Opcode.any();
-            anyOpcode.remove(Opcode.CREATED);// There will not be any websocket subscriptions with this opcode, so skip it in globbing.
+            anyOpcode.remove(
+                    Opcode.CREATED);// There will not be any websocket subscriptions with this opcode, so skip it in globbing.
             if (event.getObjectType() == ScreenEventType.ANY) {
                 return anyOpcode.stream()
                         .flatMap(operation -> ScreenEventType.any().stream()
@@ -120,7 +123,22 @@ public class SessionRegistry {
      * @return an event in which the objectId is stripped of any quotes
      */
     public ScreenEvent fix(final ScreenEvent event) {
-        final Matcher matcher = QUOTED.matcher(event.getObjectId());
-        return matcher.matches() ? fix(new ScreenEvent(event.getOpcode(), event.getObjectType(), matcher.replaceAll("$1"))) : event;
+        final String resource = fix(event.getObjectId().getResource());
+        final String detail = fix(event.getObjectId().getDetail());
+        if (resource != null || detail != null) {
+            return new ScreenEvent(event.getOpcode(), event.getObjectType(),
+                                   new ScreenEventId(resource, detail));
+        }
+        return event;
+    }
+
+    private String fix(final String id) {
+        if (id != null) {
+            final Matcher matcher = QUOTED.matcher(id);
+            if (matcher.matches()) {
+                return fix(matcher.replaceAll("$1"));
+            }
+        }
+        return id;
     }
 }

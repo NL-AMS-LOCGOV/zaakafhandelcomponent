@@ -59,7 +59,8 @@ export class UtilService {
      * Check whether there is an active edit overlay on the screen eg. autocomplete or datepicker
      */
     hasEditOverlay(): boolean {
-        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-select-panel', 'mat-datepicker-popup', 'zac-is-invalid');
+        const overlayElements: any[] = this.getOverlayElements('mat-autocomplete-panel', 'mat-select-panel',
+            'mat-datepicker-popup', 'zac-is-invalid');
         return overlayElements.length > 0;
     }
 
@@ -97,8 +98,20 @@ export class UtilService {
         return list;
     }
 
-    openSnackbar(message: string, params?: {}) {
-        this.snackbar.open(this.translate.instant(message, params), this.translate.instant('actie.sluiten'), {duration: 3000});
+    openSnackbarError(message: string, params?: {}) {
+        this.openSnackbar(message, params, null);
+    }
+
+    openSnackbar(message: string, params?: {}, duration: number = 3) {
+        this.openSnackbarAction(message, 'actie.sluiten', params, 3);
+    }
+
+    openSnackbarAction(message: string, action: string, params?: {}, durationSeconden?: number): Observable<void> {
+        return this.snackbar.open(
+            this.translate.instant(message, params),
+            this.translate.instant(action, params),
+            durationSeconden != null ? {duration: durationSeconden * 1000} : null
+        ).onAction();
     }
 
     addAction(action: ActionBarAction) {
