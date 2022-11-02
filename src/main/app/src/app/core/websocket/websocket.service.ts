@@ -17,6 +17,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {WebsocketListener} from './model/websocket-listener';
 import {EventSuspension} from './model/event-suspension';
 import {UtilService} from '../service/util.service';
+import {ScreenEventId} from './model/screen-event-id';
 
 @Injectable({
     providedIn: 'root'
@@ -109,7 +110,8 @@ export class WebsocketService implements OnDestroy {
 
     private onMessage = (message: any) => {
         // message is a JSON representation of ScreenEvent.java
-        const event: ScreenEvent = new ScreenEvent(message.opcode, message.objectType, message.objectId, message.timestamp);
+        const event: ScreenEvent = new ScreenEvent(message.opcode, message.objectType, message.objectId,
+            message.timestamp);
         this.dispatch(event, event.key);
         this.dispatch(event, event.keyAnyOpcode);
         this.dispatch(event, event.keyAnyObjectType);
@@ -138,10 +140,10 @@ export class WebsocketService implements OnDestroy {
     }
 
     public addListener(opcode: Opcode, objectType: ObjectType, objectId: string, callback: EventCallback): WebsocketListener {
-        const event: ScreenEvent = new ScreenEvent(opcode, objectType, objectId);
+        const event: ScreenEvent = new ScreenEvent(opcode, objectType, new ScreenEventId(objectId));
         const listener: WebsocketListener = this.addCallback(event, callback);
         this.send(new SubscriptionMessage(SubscriptionType.CREATE, event));
-        console.debug('listener added: ' + listener.key);
+        console.log('listener added: ' + listener.key);
         return listener;
     }
 
@@ -149,7 +151,8 @@ export class WebsocketService implements OnDestroy {
         return this.addListener(opcode, objectType, objectId, (event) => {
             forkJoin({
                 msgPart1: this.translate.get('msg.gewijzigd.objecttype.' + event.objectType),
-                msgPart2: this.translate.get(event.objectType.indexOf('_') < 0 ? 'msg.gewijzigd.2' : 'msg.gewijzigd.2.details'),
+                msgPart2: this.translate.get(
+                    event.objectType.indexOf('_') < 0 ? 'msg.gewijzigd.2' : 'msg.gewijzigd.2.details'),
                 msgPart3: this.translate.get('msg.gewijzigd.operatie.' + event.opcode),
                 msgPart4: this.translate.get('msg.gewijzigd.4')
             }).subscribe(result => {
@@ -167,7 +170,7 @@ export class WebsocketService implements OnDestroy {
             } else {
                 this.suspended[listener.id] = new EventSuspension(timeout);
             }
-            console.debug('listener suspended: ' + listener.key);
+            console.log('listener suspended: ' + listener.key);
         }
     }
 
@@ -180,7 +183,7 @@ export class WebsocketService implements OnDestroy {
         if (listener) {
             this.removeCallback(listener);
             this.send(new SubscriptionMessage(SubscriptionType.DELETE, listener.event));
-            console.debug('listener removed: ' + listener.key);
+            console.log('listener removed: ' + listener.key);
         }
     }
 
