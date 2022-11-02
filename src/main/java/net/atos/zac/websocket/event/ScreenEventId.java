@@ -5,7 +5,7 @@
 
 package net.atos.zac.websocket.event;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ScreenEventId {
     private final String resource;

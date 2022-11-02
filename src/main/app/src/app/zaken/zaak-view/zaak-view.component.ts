@@ -632,7 +632,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private updateZaak(event?: ScreenEvent): void {
         if (event) {
-            console.log('callback updateZaak: ' + event.key);
+            console.debug('callback updateZaak: ' + event.key);
         }
         this.zakenService.readZaak(this.zaak.uuid).subscribe(zaak => {
             this.init(zaak);
@@ -676,7 +676,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private loadTaken(event?: ScreenEvent): void {
         if (event) {
-            console.log('callback loadTaken: ' + event.key);
+            console.debug('callback loadTaken: ' + event.key);
         }
 
         this.taken$ = this.takenService.listTakenVoorZaak(this.zaak.uuid)
