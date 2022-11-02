@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "zaakafhandelcomponent.fullname" . }}
+  labels:
+    {{- include "zaakafhandelcomponent.labels" . | nindent 4 }}
+data:
+  CONTEXT_URL: {{ required "Valid .Values.contextUrl entry required!" .Values.contextUrl }}
+  DB_HOST: {{ required "Valid .Values.db.host entry required!" .Values.db.host }}
+  DB_NAME: {{ required "Valid .Values.db.name entry required!" .Values.db.name }}
+  AUTH_SERVER: {{ required "Valid .Values.auth.server entry required!" .Values.auth.server }}
+  AUTH_REALM: {{ required "Valid .Values.auth.realm entry required!" .Values.auth.realm }}
+  LDAP_URL: {{ required "Valid .Values.ldap.url entry required!" .Values.ldap.url }}
+  LDAP_DN: {{ required "Valid .Values.ldap.dn entry required!" .Values.ldap.dn }}
+  MAIL_DOMEIN: {{ required "Valid .Values.mail.domein entry required!" .Values.mail.domein }}
+  ZGW_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.zgwApis.url entry required!" .Values.zgwApis.url }}
+  ZGW_API_URL_EXTERN: {{ required "Valid .Values.zgwApis.urlExtern entry required!" .Values.zgwApis.urlExtern }}
+  OBJECTS_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objectenApi.url entry required!" .Values.objectenApi.url }}
+  OBJECTTYPES_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.objecttypenApi.url entry required!" .Values.objecttypenApi.url }}
+  BRP_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.brpApi.url entry required!" .Values.brpApi.url }}
+  KVK_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.kvkApi.url entry required!" .Values.kvkApi.url }}
+  BAG_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.bagApi.url entry required!" .Values.bagApi.url }}
+  VRL_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.vrlApi.url entry required!" .Values.vrlApi.url }}
+  OPEN_FORMS_URL: {{ required "Valid .Values.openForms.url entry required!" .Values.openForms.url }}
+  SD_CLIENT_MP_REST_URL: {{ required "Valid .Values.smartDocuments.url entry required!" .Values.smartDocuments.url }}
+  SOLR_URL: {{ printf "http://%s-solr.%s" (include "zaakafhandelcomponent.fullname" .) .Release.Namespace }}
+  OPA_API_CLIENT_MP_REST_URL: http://localhost:8181
+  TZ: Europe/Amsterdam
+  MP_HEALTH_EMPTY_LIVENESS_CHECKS_STATUS: DOWN
+  MP_HEALTH_EMPTY_READINESS_CHECKS_STATUS: DOWN
