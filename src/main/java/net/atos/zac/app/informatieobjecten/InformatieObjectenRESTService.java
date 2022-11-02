@@ -308,7 +308,7 @@ public class InformatieObjectenRESTService {
 
     @GET
     @Path("zaakinformatieobject/{uuid}/informatieobject")
-    public RESTEnkelvoudigInformatieobject readZaakInformatieobjectEnkelvoudigInformatieobject(
+    public RESTEnkelvoudigInformatieobject readEnkelvoudigInformatieobjectByZaakInformatieobjectUUID(
             @PathParam("uuid") final UUID uuid) {
         return informatieobjectConverter.convertToREST(
                 drcClientService.readEnkelvoudigInformatieobject(

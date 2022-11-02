@@ -182,7 +182,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     private loadInformatieObject(event?: ScreenEvent) {
         if (event) {
-            console.log('callback loadInformatieObject: ' + event.key);
+            console.debug('callback loadInformatieObject: ' + event.key);
         }
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.infoObject.uuid, this.zaak?.uuid).subscribe(infoObject => {
             this.infoObject = infoObject;

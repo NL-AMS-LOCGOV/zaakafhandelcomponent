@@ -98,7 +98,7 @@ export class InformatieObjectenService {
                    );
     }
 
-    readZaakInformatieobjectEnkelvoudigInformatieobject(uuid: string): Observable<EnkelvoudigInformatieobject> {
+    readEnkelvoudigInformatieobjectByZaakInformatieobjectUUID(uuid: string): Observable<EnkelvoudigInformatieobject> {
         return this.http.get<ZaakInformatieobject>(`${this.basepath}/zaakinformatieobject/${uuid}/informatieobject`)
                    .pipe(
                        catchError(err => this.foutAfhandelingService.foutAfhandelen(err))

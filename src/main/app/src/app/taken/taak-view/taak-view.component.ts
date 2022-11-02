@@ -219,7 +219,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private ophalenTaak(event?: ScreenEvent) {
         if (event) {
-            console.log('callback ophalenTaak: ' + event.key);
+            console.debug('callback ophalenTaak: ' + event.key);
         }
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {

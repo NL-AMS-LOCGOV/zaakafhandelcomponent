@@ -90,8 +90,9 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
         if (event) {
-            console.log('callback loadInformatieObjecten: ' + event.key);
-            this.informatieObjectenService.readZaakInformatieobjectEnkelvoudigInformatieobject(event.objectId.detail)
+            console.debug('callback loadInformatieObjecten: ' + event.key);
+            this.informatieObjectenService.readEnkelvoudigInformatieobjectByZaakInformatieobjectUUID(
+                event.objectId.detail)
                 .subscribe(enkelvoudigInformatieobject => {
                     this.utilService.openSnackbarAction(
                         'msg.document.toegevoegd.aan.zaak',
