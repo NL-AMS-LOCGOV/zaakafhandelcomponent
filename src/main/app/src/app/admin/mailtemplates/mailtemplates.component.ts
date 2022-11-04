@@ -13,7 +13,7 @@ import {IdentityService} from '../../identity/identity.service';
 import {MatDialog} from '@angular/material/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '../../core/service/util.service';
-import {MailtemplateService} from '../mailtemplate.service';
+import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 
 @Component({
     templateUrl: './mailtemplates.component.html',
@@ -29,7 +29,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     dataSource: MatTableDataSource<Mailtemplate> = new MatTableDataSource<Mailtemplate>();
 
     constructor(private identityService: IdentityService,
-                private service: MailtemplateService,
+                private service: MailtemplateBeheerService,
                 public dialog: MatDialog,
                 private translate: TranslateService,
                 public utilService: UtilService) {

@@ -14,7 +14,7 @@ import {ReferentieTabelResolver} from './referentie-tabel-resolver.service';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
 import {MailtemplatesComponent} from './mailtemplates/mailtemplates.component';
-import {MailtemplateComponent} from './mailtemplates/mailtemplate.component';
+import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
 import {MailtemplateResolver} from './mailtemplate-resolver.service';
 
 const routes: Routes = [

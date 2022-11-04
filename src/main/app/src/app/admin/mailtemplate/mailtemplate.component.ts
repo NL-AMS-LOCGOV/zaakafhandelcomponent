@@ -15,7 +15,7 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {Validators} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {MailtemplateService} from '../mailtemplate.service';
+import {MailtemplateBeheerService} from '../mailtemplate-beheer.service';
 import {ReadonlyFormField} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field';
 import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 
@@ -38,7 +38,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
     isLoadingResults: boolean = false;
 
     constructor(private identityService: IdentityService,
-                private service: MailtemplateService,
+                private service: MailtemplateBeheerService,
                 public utilService: UtilService,
                 private route: ActivatedRoute) {
         super(utilService);
@@ -84,9 +84,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
     }
 
     private persistMailtemplate(): void {
-        const persistMailtemplate: Observable<Mailtemplate> = this.template.id != null
-            ? this.service.updateMailtemplate(this.template)
-            : this.service.createMailtemplate(this.template);
+        const persistMailtemplate: Observable<Mailtemplate> = this.service.persistMailtemplate(this.template);
         persistMailtemplate.pipe(catchError(error => of(this.template)))
                            .subscribe(persistedMailtemplate => {
                                this.init(persistedMailtemplate);

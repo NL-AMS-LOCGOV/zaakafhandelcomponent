@@ -13,7 +13,7 @@ import {Mailtemplate} from './model/mailtemplate';
 @Injectable({
     providedIn: 'root'
 })
-export class MailtemplateService {
+export class MailtemplateBeheerService {
 
     private basepath: string = '/rest/mailtemplates';
 
@@ -38,14 +38,8 @@ export class MailtemplateService {
         );
     }
 
-    updateMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
+    persistMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
         return this.http.put<Mailtemplate>(`${this.basepath}/${mailtemplate.id}`, mailtemplate).pipe(
-            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
-        );
-    }
-
-    createMailtemplate(mailtemplate: Mailtemplate): Observable<Mailtemplate> {
-        return this.http.post<Mailtemplate>(`${this.basepath}`, mailtemplate).pipe(
             catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
         );
     }

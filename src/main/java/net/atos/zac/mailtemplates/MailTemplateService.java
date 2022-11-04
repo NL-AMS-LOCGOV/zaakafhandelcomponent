@@ -26,11 +26,6 @@ public class MailTemplateService {
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
 
-    public MailTemplate create(final MailTemplate mailTemplate) {
-        entityManager.persist(mailTemplate);
-        return mailTemplate;
-    }
-
     public MailTemplate find(final long id) {
         return entityManager.find(MailTemplate.class, id);
     }
@@ -42,14 +37,14 @@ public class MailTemplateService {
         }
     }
 
-    public MailTemplate updateMailtemplate(final MailTemplate mailTemplate) {
+    public MailTemplate persistMailtemplate(final MailTemplate mailTemplate) {
         valideerObject(mailTemplate);
         final MailTemplate existing = find(mailTemplate.getId());
         if (existing != null) {
             return entityManager.merge(mailTemplate);
         } else {
-            throw new RuntimeException(String.format("%s with naam=%d not found", MailTemplate.class.getSimpleName(),
-                                                     mailTemplate.getId()));
+            entityManager.persist(mailTemplate);
+            return mailTemplate;
         }
     }
 

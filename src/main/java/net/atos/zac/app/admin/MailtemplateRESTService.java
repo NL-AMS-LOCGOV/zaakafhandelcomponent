@@ -65,19 +65,12 @@ public class MailtemplateRESTService {
         mailTemplateService.delete(id);
     }
 
-    @POST
-    public RESTMailtemplate createMailtemplate(final RESTMailtemplate mailtemplate) {
-        assertPolicy(policyService.readOverigeRechten().getBeheren());
-        return restMailtemplateConverter.convert(
-                mailTemplateService.create(restMailtemplateConverter.convert(mailtemplate)));
-    }
-
     @PUT
     @Path("{id}")
-    public RESTMailtemplate updateMailtemplate(@PathParam("id") final long id,
+    public RESTMailtemplate persistMailtemplate(@PathParam("id") final long id,
             final RESTMailtemplate mailtemplate) {
         assertPolicy(policyService.readOverigeRechten().getBeheren());
         return restMailtemplateConverter.convert(
-                mailTemplateService.updateMailtemplate(restMailtemplateConverter.convert(mailtemplate)));
+                mailTemplateService.persistMailtemplate(restMailtemplateConverter.convert(mailtemplate)));
     }
 }
