@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
@@ -40,7 +41,7 @@ public class MailTemplate {
     @Column(name = "body", nullable = false)
     private String body;
 
-    @NotBlank
+    @NotNull
     @Column(name = "mail_template_enum", nullable = false)
     @Enumerated(EnumType.STRING)
     private MailTemplateEnum mailTemplateEnum;

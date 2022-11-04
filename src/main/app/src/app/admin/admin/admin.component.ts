@@ -28,6 +28,7 @@ export abstract class AdminComponent extends ViewComponent {
         this.menu.push(this.getMenuLink('title.referentietabellen', '/admin/referentietabellen', 'schema'));
         this.menu.push(this.getMenuLink('title.parameters', '/admin/parameters', 'tune'));
         this.menu.push(this.getMenuLink('title.inrichtingscheck', '/admin/check', 'health_and_safety'));
+        this.menu.push(this.getMenuLink('title.mailtemplates', '/admin/mailtemplates', 'mail'));
     }
 
     private getMenuLink(title: string, url: string, icon: string): MenuItem {
