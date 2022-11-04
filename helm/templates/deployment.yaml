@@ -38,10 +38,12 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-            - name: debug
-              containerPort: 8787
             - name: admin
               containerPort: 9990
+            {{- if .Values.remoteDebug }}
+            - name: debug
+              containerPort: 8787
+            {{- end }}
           startupProbe:
             httpGet:
               port: admin
@@ -49,6 +51,7 @@ spec:
             periodSeconds: 10
             failureThreshold: 10
             initialDelaySeconds: 30
+          {{- if not .Values.remoteDebug }}
           livenessProbe:
             httpGet:
               port: admin
@@ -57,6 +60,7 @@ spec:
             httpGet:
               port: admin
               path: /health/ready
+          {{- end}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
@@ -64,6 +68,13 @@ spec:
                 name: {{ include "zaakafhandelcomponent.fullname" . }}
             - secretRef:
                 name: {{ include "zaakafhandelcomponent.fullname" . }}
+          {{- if .Values.remoteDebug }}
+          command:
+            - java
+            - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
+            - -jar
+            - zaakafhandelcomponent.jar
+          {{- end }}
         - name: open-policy-agent
           image: "{{ .Values.opa.image.repository }}:{{ .Values.opa.image.tag }}"
           imagePullPolicy: {{ .Values.opa.image.pullPolicy }}

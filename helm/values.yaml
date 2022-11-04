@@ -89,6 +89,9 @@ indexerenSchedule: "*/1 * * * *"
 # Schedule of the signaleren job in CRON job format
 signalerenSchedule: "0 2 * * *"
 
+# Enable Java remote debugging
+remoteDebug: false
+
 replicaCount: 1
 
 image:
