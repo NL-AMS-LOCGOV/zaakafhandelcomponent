@@ -59,10 +59,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -357,7 +354,8 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
-        if (this.zaak.isOpen && !this.zaak.besluit && !this.isIntake(this.zaak) && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.vastleggenBesluit) {
+        console.warn(this.zaak.isInIntakeFase);
+        if (this.zaak.isOpen && !this.zaak.besluit && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.vastleggenBesluit) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.BESLUIT_VASTLEGGEN;
@@ -889,9 +887,5 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     besluitWijzigen(): void {
         this.action = SideNavAction.BESLUIT_WIJZIGEN;
         this.actionsSidenav.open();
-    }
-
-    private isIntake(zaak: Zaak): boolean {
-        return zaak.status.naam === 'Intake';
     }
 }
