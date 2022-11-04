@@ -6,6 +6,7 @@
 package net.atos.client.zgw.ztc.model;
 
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
+import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_INTAKE;
 
 import java.net.URI;
 
@@ -165,5 +166,10 @@ public class Statustype {
     @JsonbTransient
     public static boolean isHeropend(final Statustype statustype) {
         return statustype != null && STATUSTYPE_OMSCHRIJVING_HEROPEND.equals(statustype.getOmschrijving());
+    }
+
+    @JsonbTransient
+    public static boolean isIntake(final Statustype statustype) {
+        return statustype != null && STATUSTYPE_OMSCHRIJVING_INTAKE.equals(statustype.getOmschrijving());
     }
 }
