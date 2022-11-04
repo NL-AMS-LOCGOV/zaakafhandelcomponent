@@ -660,7 +660,7 @@ public class ZakenRESTService {
         assertPolicy(zaak.isOpen() && brcClientService.findBesluit(zaak) == null &&
                              isNotEmpty(zaaktype.getBesluittypen()) &&
                              policyService.readZaakRechten(zaak, zaaktype).getVastleggenBesluit() &&
-                             isIntake(zaakStatustype));
+                             !isIntake(zaakStatustype));
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, null);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
