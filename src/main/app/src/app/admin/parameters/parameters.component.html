@@ -56,14 +56,14 @@
                         </ng-container>
                         <ng-container matColumnDef="beginGeldigheid_filter">
                             <th mat-header-cell *matHeaderCellDef="let row">
-                                <zac-datum-filter label="begin.geldigheid" [range]="filterParameters.beginGeldigheid"
-                                                  (changed)="applyFilter()"></zac-datum-filter>
+                                <zac-date-range-filter label="begin.geldigheid" [range]="filterParameters.beginGeldigheid"
+                                                       (changed)="applyFilter()"></zac-date-range-filter>
                             </th>
                         </ng-container>
                         <ng-container matColumnDef="eindeGeldigheid_filter">
                             <th mat-header-cell *matHeaderCellDef="let row">
-                                <zac-datum-filter label="einde.geldigheid" [range]="filterParameters.eindeGeldigheid"
-                                                  (changed)="applyFilter()"></zac-datum-filter>
+                                <zac-date-range-filter label="einde.geldigheid" [range]="filterParameters.eindeGeldigheid"
+                                                       (changed)="applyFilter()"></zac-date-range-filter>
                             </th>
                         </ng-container>
                         <ng-container matColumnDef="url_filter">

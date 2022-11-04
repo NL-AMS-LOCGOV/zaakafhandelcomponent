@@ -14,7 +14,7 @@ public class RESTDatumRange {
     public LocalDate tot;
 
     public boolean hasValue() {
-        return this.van != null && this.tot != null;
+        return this.van != null || this.tot != null;
     }
 
 }

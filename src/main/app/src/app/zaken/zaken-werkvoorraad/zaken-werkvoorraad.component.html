@@ -97,9 +97,9 @@
 
         <ng-container matColumnDef="startdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="startdatum"
-                                  [range]="dataSource.zoekParameters.datums[datumVeld.ZAAK_STARTDATUM]" (changed)="filtersChange()">
-                </zac-datum-filter>
+                <zac-date-range-filter label="startdatum"
+                                       [range]="dataSource.zoekParameters.datums[datumVeld.STARTDATUM]" (changed)="filtersChange()">
+                </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="startdatum">
@@ -109,9 +109,9 @@
 
         <ng-container matColumnDef="einddatumGepland_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="streefdatum"
-                                  [range]="dataSource.zoekParameters.datums[datumVeld.ZAAK_EINDDATUM_GEPLAND]" (changed)="filtersChange()">
-                </zac-datum-filter>
+                <zac-date-range-filter label="streefdatum"
+                                       [range]="dataSource.zoekParameters.datums[datumVeld.STREEFDATUM]" (changed)="filtersChange()">
+                </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="einddatumGepland">
@@ -145,9 +145,9 @@
 
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="uiterlijkedatumafdoening"
-                                  [range]="dataSource.zoekParameters.datums[datumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING]" (changed)="filtersChange()">
-                </zac-datum-filter>
+                <zac-date-range-filter label="uiterlijkedatumafdoening"
+                                       [range]="dataSource.zoekParameters.datums[datumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING]" (changed)="filtersChange()">
+                </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">

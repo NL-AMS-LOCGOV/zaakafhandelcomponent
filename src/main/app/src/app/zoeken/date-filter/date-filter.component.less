@@ -1,0 +1,33 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+@import "src/variables";
+
+.mat-expansion-panel {
+  background-color: @body-background-color;
+  margin: 10px;
+
+  .mat-expansion-panel-header {
+    padding: 0 24px 0 0;
+  }
+}
+
+.datepicker-content {
+  font-size: 12px;
+
+  .mat-datepicker-toggle {
+    font-size: 10px;
+  }
+
+  mat-form-field::ng-deep {
+    .mat-form-field-flex {
+      padding-top: 0;
+    }
+
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+}

@@ -11,7 +11,7 @@ import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
 import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
 
 import java.io.IOException;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +91,8 @@ public class ZoekenService {
             if (datum != null) {
                 query.addFilterQuery(
                         format("%s:[%s TO %s]", datumVeld.getVeld(),
-                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
-                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
+                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneId.systemDefault())),
+                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneId.systemDefault()))));
             }
         });
 
@@ -102,7 +102,6 @@ public class ZoekenService {
         zoekParameters.getFilters().forEach((filter, waardes) -> {
             if (CollectionUtils.isNotEmpty(waardes)) {
                 final String waarde = String.join("\" OR \"", waardes);
-//            waardes.forEach(waarde -> {
                 if (LEEG.is(waarde)) {
                     query.addFilterQuery(format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
                 } else if (NIET_LEEG.is(waarde)) {
@@ -110,7 +109,6 @@ public class ZoekenService {
                 } else {
                     query.addFilterQuery(format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
                 }
-//            });
             }
         });
 

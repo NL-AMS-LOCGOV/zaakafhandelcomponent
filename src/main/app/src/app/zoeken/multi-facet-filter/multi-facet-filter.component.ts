@@ -22,7 +22,8 @@ export class MultiFacetFilterComponent implements OnInit {
     /* veld: prefix */
     public VERTAALBAARE_FACETTEN = {
         TAAK_STATUS: 'taak.status',
-        TYPE: 'type'
+        TYPE: 'type',
+        TOEGEKEND: 'zoeken.filter.jaNee'
     };
 
     constructor(private _formBuilder: FormBuilder) {}

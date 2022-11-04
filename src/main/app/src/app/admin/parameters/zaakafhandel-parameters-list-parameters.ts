@@ -12,11 +12,11 @@ import {ToggleSwitchOptions} from '../../zoeken/toggle-filter/toggle-switch-opti
 export class ZaakafhandelParametersListParameters extends ListParameters {
 
     valide: ToggleSwitchOptions = ToggleSwitchOptions.INDETERMINATE;
-    geldig:  ToggleSwitchOptions = ToggleSwitchOptions.INDETERMINATE;
+    geldig: ToggleSwitchOptions = ToggleSwitchOptions.INDETERMINATE;
     zaaktype: Zaaktype = null;
     caseDefinition: CaseDefinition = null;
-    beginGeldigheid: { van: string, tot: string } = {van: null, tot: null};
-    eindeGeldigheid: { van: string, tot: string } = {van: null, tot: null};
+    beginGeldigheid: { van: Date, tot: Date } = {van: null, tot: null};
+    eindeGeldigheid: { van: Date, tot: Date } = {van: null, tot: null};
 
     constructor(sort: string, order: SortDirection) {
         super(sort, order);

@@ -5,13 +5,16 @@
 
 <div class="form" [class.loading]="utilService.loading$ | async">
     <div sticky-top fxLayout="row" fxLayoutGap="10px" fxFlexFill>
-        <mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="fill" fxFlex="grow">
             <mat-label>{{'actie.zoeken' | translate}}</mat-label>
             <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
             <mat-icon matSuffix (click)="zoek.emit()">search</mat-icon>
             <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
         </mat-form-field>
+        <button mat-icon-button color="primary" (click)="sideNav.close()">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
 
     <div fxLayout="row" fxLayoutGap="10px">
@@ -23,6 +26,18 @@
                                         (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
                 </zac-multi-facet-filter>
             </div>
+            <zac-date-filter *ngIf="hasSearched" label="startdatum"
+                             [range]="zoekParameters.datums['STARTDATUM']" (changed)="zoek.emit()">
+            </zac-date-filter>
+            <zac-date-filter *ngIf="hasSearched" label="streefdatum"
+                             [range]="zoekParameters.datums['STREEFDATUM']" (changed)="zoek.emit()">
+            </zac-date-filter>
+            <zac-date-filter *ngIf="hasSearched" label="zaak.fataleDatum"
+                             [range]="zoekParameters.datums['ZAAK_UITERLIJKE_EINDDATUM_AFDOENING']" (changed)="zoek.emit()">
+            </zac-date-filter>
+            <zac-date-filter *ngIf="hasSearched" label="zaak.einddatum"
+                             [range]="zoekParameters.datums['ZAAK_EINDDATUM']" (changed)="zoek.emit()">
+            </zac-date-filter>
         </div>
         <div fxFlex="grow">
             <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
@@ -32,10 +47,11 @@
                 </ng-container>
                 <mat-divider></mat-divider>
             </ng-container>
+            <p class="geen-resultaat" *ngIf="zoekResultaat.totaal == 0 && !isLoadingResults">{{'msg.geen.gegevens.gevonden' | translate}}</p>
         </div>
     </div>
 
-    <p *ngIf="zoekResultaat.totaal == 0 && !isLoadingResults">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+
     <mat-paginator #paginator
                    [pageIndex]="0"
                    [pageSize]="10"
