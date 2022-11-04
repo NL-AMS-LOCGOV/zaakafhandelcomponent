@@ -71,7 +71,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     private loadInformatieObject(event?: ScreenEvent) {
         if (event) {
-            console.log('callback loadInformatieObject: ' + event.key);
+            console.debug('callback loadInformatieObject: ' + event.key);
         }
         this.informatieObjectenService.readEnkelvoudigInformatieobject(this.document.uuid)
             .subscribe(informatieObject => {

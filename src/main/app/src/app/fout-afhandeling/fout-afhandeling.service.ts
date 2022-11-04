@@ -7,10 +7,9 @@ import {Injectable, isDevMode} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
 import {FoutDialogComponent} from './dialog/fout-dialog.component';
+import {UtilService} from '../core/service/util.service';
 
 @Injectable({
     providedIn: 'root'
@@ -22,8 +21,9 @@ export class FoutAfhandelingService {
     stack: string;
     exception: string;
 
-    constructor(private router: Router, private snackbar: MatSnackBar,
-                private translate: TranslateService, private dialog: MatDialog) {
+    constructor(private router: Router,
+                private dialog: MatDialog,
+                private utilService: UtilService) {
     }
 
     public foutAfhandelen(err: HttpErrorResponse): Observable<any> {
@@ -70,7 +70,7 @@ export class FoutAfhandelingService {
             }
         }
         if (isDevMode()) {
-            this.snackbar.open(this.foutmelding, 'x');
+            this.utilService.openSnackbarError(this.foutmelding);
             if (this.stack) {
                 console.error(this.stack);
             }
@@ -83,9 +83,7 @@ export class FoutAfhandelingService {
     public log(melding): (error: HttpErrorResponse) => Observable<any> {
         return (error: any): Observable<never> => {
             console.error(error); // log to console instead
-            this.translate.get('actie.sluiten').subscribe(action => {
-                this.snackbar.open(melding, action);
-            });
+            this.utilService.openSnackbarError(melding);
             return throwError(error);
         };
     }

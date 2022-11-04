@@ -147,19 +147,19 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
+        if (this.taak.rechten.creeerenDocument) {
+            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_MAKEN;
+            }, 'note_add'));
+        }
+
         if (this.taak.status !== TaakStatus.Afgerond) {
             if (this.taak.rechten.toevoegenDocument) {
                 this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
                 }, 'upload_file'));
-            }
-
-            if (this.taak.rechten.creeerenDocument) {
-                this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                    this.actionsSidenav.open();
-                    this.action = SideNavAction.DOCUMENT_MAKEN;
-                }, 'note_add'));
             }
         }
     }
@@ -219,7 +219,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private ophalenTaak(event?: ScreenEvent) {
         if (event) {
-            console.log('callback ophalenTaak: ' + event.key);
+            console.debug('callback ophalenTaak: ' + event.key);
         }
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {

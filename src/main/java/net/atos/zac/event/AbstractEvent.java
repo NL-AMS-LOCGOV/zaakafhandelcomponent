@@ -8,8 +8,6 @@ package net.atos.zac.event;
 import java.io.Serializable;
 import java.time.Instant;
 
-import net.atos.zac.websocket.event.ScreenEvent;
-
 public abstract class AbstractEvent<TYPE, ID> implements Serializable {
 
     private long timestamp;
@@ -56,11 +54,11 @@ public abstract class AbstractEvent<TYPE, ID> implements Serializable {
             return false;
         }
         // cast en vergelijk
-        final ScreenEvent other = (ScreenEvent) obj;
+        final AbstractEvent<?, ?> other = (AbstractEvent<?, ?>) obj;
         if (getOpcode() != other.getOpcode()) {
             return false;
         }
-        if (getObjectType() != other.getObjectType()) {
+        if (!getObjectType().equals(other.getObjectType())) {
             return false;
         }
         return getObjectId().equals(other.getObjectId());

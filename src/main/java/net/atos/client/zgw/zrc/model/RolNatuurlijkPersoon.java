@@ -8,7 +8,7 @@ package net.atos.client.zgw.zrc.model;
 import java.net.URI;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class RolNatuurlijkPersoon extends Rol<NatuurlijkPersoon> {
 

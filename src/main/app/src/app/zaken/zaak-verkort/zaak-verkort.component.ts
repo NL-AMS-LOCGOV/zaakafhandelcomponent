@@ -50,7 +50,7 @@ export class ZaakVerkortComponent implements OnInit, OnDestroy {
 
     private loadZaak(event?: ScreenEvent) {
         if (event) {
-            console.log('callback loadZaak: ' + event.key);
+            console.debug('callback loadZaak: ' + event.key);
         }
 
         this.zaak$ = this.zakenService.readZaak(this.zaakUuid).pipe(share());

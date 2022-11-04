@@ -13,7 +13,6 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.flowable.task.api.TaskInfo;
 
@@ -89,51 +88,61 @@ public enum ScreenEventType {
         return EnumSet.complementOf(EnumSet.of(ANY));
     }
 
-    private static final Logger LOG = Logger.getLogger(ScreenEventType.class.getName());
-
     // This is the factory method.
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final String id) {
-        return new ScreenEvent(opcode, type, id);
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final String id,
+            final String detail) {
+        return new ScreenEvent(opcode, type, new ScreenEventId(id, detail));
     }
 
     // In these methods you determine what is used as an id, make sure that this is consistent with the other methods
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final UUID uuid) {
-        return instance(opcode, type, uuid.toString());
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final UUID uuid,
+            final UUID detail) {
+        return instance(opcode, type,
+                        uuid.toString(),
+                        detail != null ? detail.toString() : null);
     }
 
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final URI url) {
-        return instance(opcode, type, URIUtil.parseUUIDFromResourceURI(url));
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final URI url,
+            final URI detail) {
+        return instance(opcode, type,
+                        URIUtil.parseUUIDFromResourceURI(url),
+                        detail != null ? URIUtil.parseUUIDFromResourceURI(detail) : null);
     }
 
     // These methods determine what is used as an id, so that it is the same everywhere
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Zaak zaak) {
-        return instance(opcode, type, zaak.getUuid());
+        return instance(opcode, type, zaak.getUuid(), null);
     }
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
             final EnkelvoudigInformatieobject enkelvoudigInformatieobject) {
-        return instance(opcode, type, enkelvoudigInformatieobject.getUrl());
+        return instance(opcode, type, enkelvoudigInformatieobject.getUrl(), null);
     }
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final TaskInfo taak) {
-        return instance(opcode, type, taak.getId());
+        return instance(opcode, type, taak.getId(), null);
     }
 
-    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type, final Signalering signalering) {
-        return instance(opcode, type, signalering.getTarget());
+    private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
+            final Signalering signalering) {
+        return instance(opcode, type, signalering.getTarget(), null);
     }
 
     // These methods determine on which object types the different arguments are allowed
     private ScreenEvent event(final Opcode opcode, final UUID uuid) {
-        return instance(opcode, this, uuid); // Allowed with all object types
+        return instance(opcode, this, uuid, null); // Allowed with all object types
     }
 
     private ScreenEvent event(final Opcode opcode, final URI url) {
-        return instance(opcode, this, url); // Allowed with all object types
+        return instance(opcode, this, url, null); // Allowed with all object types
     }
 
-    private ScreenEvent event(final Opcode opcode, final Notificatie.ResourceInfo resource) {
-        return instance(opcode, this, resource.getUrl()); // Allowed with all object types
+    private ScreenEvent event(final Opcode opcode,
+            final Notificatie.ResourceInfo resource,
+            final Notificatie.ResourceInfo detail) {
+        return instance(opcode, this,
+                        resource.getUrl(),
+                        detail != null ? detail.getUrl() : null); // Allowed with all object types
     }
 
     public ScreenEvent event(final Opcode opcode, final Zaak zaak) {
@@ -265,17 +274,18 @@ public enum ScreenEventType {
         return event(DELETED, taak);
     }
 
-    private void addEvent(final Set<ScreenEvent> events, final Notificatie.ResourceInfo resource) {
+    private void addEvent(final Set<ScreenEvent> events, final Notificatie.ResourceInfo resource,
+            final Notificatie.ResourceInfo detail) {
         switch (resource.getAction()) {
             case CREATE:
                 // There cannot be any websockets listeners for Opcode.CREATED, so don't send the event.
                 // (The new objectId would have to be known client side before it exists to subscribe to it. ;-)
                 break;
             case UPDATE:
-                events.add(event(UPDATED, resource));
+                events.add(event(UPDATED, resource, detail));
                 break;
             case DELETE:
-                events.add(event(DELETED, resource));
+                events.add(event(DELETED, resource, detail));
                 break;
             default:
                 break;
@@ -297,41 +307,41 @@ public enum ScreenEventType {
             case INFORMATIEOBJECTEN:
                 switch (resource.getType()) {
                     case INFORMATIEOBJECT:
-                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, resource);
+                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, resource, null);
                         break;
                     case GEBRUIKSRECHTEN:
-                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, mainResource);
+                        ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT.addEvent(events, mainResource, resource);
                         break;
                 }
                 break;
             case ZAKEN:
                 switch (resource.getType()) {
                     case ZAAK:
-                        ScreenEventType.ZAAK.addEvent(events, resource);
+                        ScreenEventType.ZAAK.addEvent(events, resource, null);
                         break;
                     case STATUS:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case ZAAKOBJECT:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case ZAAKINFORMATIEOBJECT:
-                        ScreenEventType.ZAAK_INFORMATIEOBJECTEN.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK_INFORMATIEOBJECTEN.addEvent(events, mainResource, resource);
                         break;
                     case ZAAKEIGENSCHAP:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case KLANTCONTACT:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case ROL:
-                        ScreenEventType.ZAAK_ROLLEN.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK_ROLLEN.addEvent(events, mainResource, resource);
                         break;
                     case RESULTAAT:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                     case ZAAKBESLUIT:
-                        ScreenEventType.ZAAK.addEvent(events, mainResource);
+                        ScreenEventType.ZAAK.addEvent(events, mainResource, resource);
                         break;
                 }
                 break;
