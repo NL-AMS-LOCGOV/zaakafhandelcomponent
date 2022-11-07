@@ -115,13 +115,15 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createTaakForm(taak: Taak): void {
-        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigenFormulier) {
-            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
+        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
+            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden')
+                                                     .build();
         } else {
             this.formConfig = null;
         }
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie)
+                             .behandelForm(taak).build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
@@ -133,7 +135,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar).id('medewerker-groep')
                                                                                    .groepLabel('groep.-kies-')
                                                                                    .groepRequired()
-                                                                                   .medewerkerLabel('behandelaar.-kies-')
+                                                                                   .medewerkerLabel(
+                                                                                       'behandelaar.-kies-')
                                                                                    .build());
         this.editFormFields.set('toelichting',
             new TextareaFormFieldBuilder(this.taak.toelichting).id('toelichting')
@@ -141,21 +144,20 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                .maxlength(1000)
                                                                .build());
 
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+            'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (this.taak.rechten.creeerenDocument) {
+        if (this.taak.rechten.wijzigen) {
             this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
                 this.actionsSidenav.open();
                 this.action = SideNavAction.DOCUMENT_MAKEN;
             }, 'note_add'));
-        }
 
-        if (this.taak.status !== TaakStatus.Afgerond) {
-            if (this.taak.rechten.toevoegenDocument) {
+            if (this.taak.status !== TaakStatus.Afgerond) {
                 this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_TOEVOEGEN;

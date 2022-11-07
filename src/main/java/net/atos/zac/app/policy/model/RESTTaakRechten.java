@@ -9,13 +9,7 @@ public class RESTTaakRechten {
 
     public boolean lezen;
 
-    public boolean toekennen;
-
-    public boolean wijzigenFormulier;
-
     public boolean wijzigen;
 
-    public boolean creeerenDocument;
-
-    public boolean toevoegenDocument;
+    public boolean toekennen;
 }

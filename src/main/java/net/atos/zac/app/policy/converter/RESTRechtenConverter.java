@@ -32,11 +32,8 @@ public class RESTRechtenConverter {
     public RESTTaakRechten convert(final TaakRechten taakRechten) {
         final RESTTaakRechten restTaakRechten = new RESTTaakRechten();
         restTaakRechten.lezen = taakRechten.getLezen();
-        restTaakRechten.toekennen = taakRechten.getToekennen();
-        restTaakRechten.wijzigenFormulier = taakRechten.getWijzigenFormulier();
         restTaakRechten.wijzigen = taakRechten.getWijzigen();
-        restTaakRechten.creeerenDocument = taakRechten.getCreeerenDocument();
-        restTaakRechten.toevoegenDocument = taakRechten.getToevoegenDocument();
+        restTaakRechten.toekennen = taakRechten.getToekennen();
         return restTaakRechten;
     }
 
