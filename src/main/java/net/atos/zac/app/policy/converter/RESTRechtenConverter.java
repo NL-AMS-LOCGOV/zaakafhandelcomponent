@@ -21,13 +21,10 @@ public class RESTRechtenConverter {
     public RESTDocumentRechten convert(final DocumentRechten documentRechten) {
         final RESTDocumentRechten restDocumentRechten = new RESTDocumentRechten();
         restDocumentRechten.lezen = documentRechten.getLezen();
-        restDocumentRechten.koppelen = documentRechten.getKoppelen();
         restDocumentRechten.wijzigen = documentRechten.getWijzigen();
-        restDocumentRechten.downloaden = documentRechten.getDownloaden();
         restDocumentRechten.ontgrendelen = documentRechten.getOntgrendelen();
         restDocumentRechten.vergrendelen = documentRechten.getVergrendelen();
         restDocumentRechten.verwijderen = documentRechten.getVerwijderen();
-        restDocumentRechten.toevoegenNieuweVersie = documentRechten.getToevoegenNieuweVersie();
         restDocumentRechten.ondertekenen = documentRechten.getOndertekenen();
         return restDocumentRechten;
     }

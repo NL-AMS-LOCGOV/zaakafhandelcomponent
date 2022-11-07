@@ -9,15 +9,9 @@ public class RESTDocumentRechten {
 
     public boolean lezen;
 
-    public boolean koppelen;
+    public boolean wijzigen;
 
     public boolean verwijderen;
-
-    public boolean downloaden;
-
-    public boolean toevoegenNieuweVersie;
-
-    public boolean wijzigen;
 
     public boolean vergrendelen;
 

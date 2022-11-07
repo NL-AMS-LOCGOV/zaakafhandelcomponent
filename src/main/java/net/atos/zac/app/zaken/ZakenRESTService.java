@@ -406,7 +406,7 @@ public class ZakenRESTService {
     public void ontkoppelInformatieObject(final RESTDocumentOntkoppelGegevens ontkoppelGegevens) {
         final Zaak zaak = zrcClientService.readZaak(ontkoppelGegevens.zaakUUID);
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppelGegevens.documentUUID);
-        assertPolicy(policyService.readDocumentRechten(informatieobject, zaak).getKoppelen());
+        assertPolicy(policyService.readDocumentRechten(informatieobject, zaak).getWijzigen());
         final ZaakInformatieobjectListParameters parameters = new ZaakInformatieobjectListParameters();
         parameters.setInformatieobject(informatieobject.getUrl());
         parameters.setZaak(zaak.getUrl());
