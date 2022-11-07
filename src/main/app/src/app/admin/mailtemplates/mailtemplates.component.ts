@@ -25,7 +25,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
 
     isLoadingResults: boolean = false;
-    columns: string[] = ['mailTemplateNaam', 'mailTemplateEnum', 'onderwerp', 'body', 'parent', 'id'];
+    columns: string[] = ['mailTemplateNaam', 'mailTemplateEnum', 'onderwerp', 'parent', 'id'];
     dataSource: MatTableDataSource<Mailtemplate> = new MatTableDataSource<Mailtemplate>();
 
     constructor(private identityService: IdentityService,
@@ -57,7 +57,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
             )
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.utilService.openSnackbar('msg.tabel.verwijderen.uitgevoerd');
+                this.utilService.openSnackbar('msg.mailtemplate.verwijderen.uitgevoerd');
                 this.laadMailtemplates();
             }
         });

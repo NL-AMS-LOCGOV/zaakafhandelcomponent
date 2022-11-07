@@ -25,6 +25,7 @@ import {ParagraphComponent} from './form-components/paragraph/paragraph.componen
 import {MedewerkerGroepComponent} from './form-components/select-medewerker/medewerker-groep.component';
 import {DividerComponent} from './form-components/divider/divider.component';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
+import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
 
 @Injectable({
     providedIn: 'root'
@@ -62,6 +63,8 @@ export class MaterialFormBuilderService {
                 return HeadingComponent;
             case FieldType.HIDDEN:
                 return HiddenComponent;
+            case FieldType.HTML_EDITOR:
+                return HtmlEditorComponent;
             case FieldType.SELECT:
                 return SelectComponent;
             case FieldType.MEDEWERKER_GROEP:

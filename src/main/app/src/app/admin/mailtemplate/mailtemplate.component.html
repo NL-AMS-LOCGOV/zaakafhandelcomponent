@@ -10,23 +10,25 @@
     <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
         <mat-card>
             <mat-card-content>
-                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
-                    <div fxFlex="33" fxFlex.lt-md="100">
-                        <zac-edit-input [formField]="naamFormField"
-                                        (onSave)="editMailtemplate($event, 'mailTemplateNaam')"></zac-edit-input>
-                    </div>
-                    <div fxFlex="33" fxFlex.lt-md="100">
-                        <zac-edit-input [formField]="enumFormField"
-                                        (onSave)="editMailtemplate($event, 'mailTemplateEnum')"></zac-edit-input>
-                    </div>
-                </div>
-                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
-                    <zac-edit-input [formField]="onderwerpFormField"
-                                    (onSave)="editMailtemplate($event, 'onderwerp')"></zac-edit-input>
-                </div>
-                <div fxLayout="row wrap" fxLayoutGap.gt-sm="20px">
-                    <zac-edit-input [formField]="bodyFormField"
-                                    (onSave)="editMailtemplate($event, 'body')"></zac-edit-input>
+                <mfb-form-field [field]="naamFormField" (click)="$event.stopPropagation()"></mfb-form-field>
+                <mfb-form-field [field]="enumFormField" (click)="$event.stopPropagation()"></mfb-form-field>
+                <mfb-form-field [field]="onderwerpFormField" (click)="$event.stopPropagation()"></mfb-form-field>
+                <mfb-form-field [field]="bodyFormField" (click)="$event.stopPropagation()"></mfb-form-field>
+
+                <div class="button-group" fxLayout="row" fxLayoutAlign="start">
+                    <button mat-flat-button color="primary"
+                            id="opslaan_button"
+                            type="submit"
+                            [disabled]="isInvalid()"
+                            (click)="saveMailtemplate()">
+                        {{"save" | translate}}
+                    </button>
+                    <button mat-flat-button
+                            id="annuleren_button"
+                            type="button"
+                            (click)="cancel()">
+                        {{"cancel" | translate}}
+                    </button>
                 </div>
             </mat-card-content>
         </mat-card>
