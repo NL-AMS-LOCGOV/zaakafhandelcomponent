@@ -40,29 +40,11 @@ public class RESTRechtenConverter {
     public RESTZaakRechten convert(final ZaakRechten zaakRechten) {
         final RESTZaakRechten restZaakRechten = new RESTZaakRechten();
         restZaakRechten.lezen = zaakRechten.getLezen();
-        restZaakRechten.opschorten = zaakRechten.getOpschorten();
-        restZaakRechten.verlengen = zaakRechten.getVerlengen();
-        restZaakRechten.hervatten = zaakRechten.getHervatten();
-        restZaakRechten.afbreken = zaakRechten.getAfbreken();
-        restZaakRechten.voortzetten = zaakRechten.getVoortzetten();
-        restZaakRechten.heropenen = zaakRechten.getHeropenen();
-        restZaakRechten.creeerenDocument = zaakRechten.getCreeerenDocument();
-        restZaakRechten.toevoegenDocument = zaakRechten.getToevoegenDocument();
-        restZaakRechten.koppelen = zaakRechten.getKoppelen();
-        restZaakRechten.versturenEmail = zaakRechten.getVersturenEmail();
-        restZaakRechten.versturenOntvangstbevestiging = zaakRechten.getVersturenOntvangstbevestiging();
-        restZaakRechten.toevoegenBAGObject = zaakRechten.getToevoegenBAGObject();
-        restZaakRechten.toevoegenInitiatorPersoon = zaakRechten.getToevoegenInitiatorPersoon();
-        restZaakRechten.toevoegenInitiatorBedrijf = zaakRechten.getToevoegenInitiatorBedrijf();
-        restZaakRechten.verwijderenInitiator = zaakRechten.getVerwijderenInitiator();
-        restZaakRechten.toevoegenBetrokkenePersoon = zaakRechten.getToevoegenBetrokkenePersoon();
-        restZaakRechten.toevoegenBetrokkeneBedrijf = zaakRechten.getToevoegenBetrokkeneBedrijf();
-        restZaakRechten.verwijderenBetrokkene = zaakRechten.getVerwijderenBetrokkene();
-        restZaakRechten.toekennen = zaakRechten.getToekennen();
         restZaakRechten.wijzigen = zaakRechten.getWijzigen();
-        restZaakRechten.aanmakenTaak = zaakRechten.getAanmakenTaak();
-        restZaakRechten.vastleggenBesluit = zaakRechten.getVastleggenBesluit();
-        restZaakRechten.wijzigenBesluit = zaakRechten.getWijzigenBesluit();
+        restZaakRechten.toekennen = zaakRechten.getToekennen();
+        restZaakRechten.behandelen = zaakRechten.getBehandelen();
+        restZaakRechten.afbreken = zaakRechten.getAfbreken();
+        restZaakRechten.heropenen = zaakRechten.getHeropenen();
         return restZaakRechten;
     }
 

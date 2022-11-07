@@ -231,7 +231,7 @@ public class InformatieObjectenRESTService {
             @QueryParam("taakObject") final boolean taakObject,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        assertPolicy(policyService.readZaakRechten(zaak).getToevoegenDocument());
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieId);
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = taakObject ?
                 informatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject, file) :
@@ -260,8 +260,8 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        assertPolicy(policyService.readDocumentRechten(informatieobject).getWijzigen());
-        assertPolicy(policyService.readZaakRechten(nieuweZaak).getKoppelen());
+        assertPolicy(policyService.readDocumentRechten(informatieobject).getWijzigen() &&
+                             policyService.readZaakRechten(nieuweZaak).getWijzigen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron,
                                                                     nieuweZaak.getIdentificatie());
         if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
@@ -485,7 +485,7 @@ public class InformatieObjectenRESTService {
     @Path("/documentcreatie")
     public RESTDocumentCreatieResponse createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restDocumentCreatieGegevens.zaakUUID);
-        assertPolicy(policyService.readZaakRechten(zaak).getCreeerenDocument());
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(zaak,
                                                                                             restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);
