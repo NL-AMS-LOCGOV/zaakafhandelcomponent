@@ -71,7 +71,7 @@ public class RESTTaakConverter {
         final UUID zaaktypeUuid = caseVariablesService.readZaaktypeUUID(taskInfo.getScopeId());
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUuid);
         final String zaaktypeOmschrijving = zaakafhandelParameters.getZaaktypeOmschrijving();
-        final TaakRechten rechten = policyService.readTaakRechten(taskInfo, zaaktypeOmschrijving);
+        final TaakRechten rechten = policyService.readTaakRechten(zaaktypeOmschrijving);
         final RESTTaak restTaak = new RESTTaak();
         restTaak.id = taskInfo.getId();
         restTaak.rechten = rechtenConverter.convert(rechten);

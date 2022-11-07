@@ -110,19 +110,18 @@ public class PolicyService {
     }
 
     public TaakRechten readTaakRechten(final TaskInfo taskInfo) {
-        return readTaakRechten(taskInfo, caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
+        return readTaakRechten(caseVariablesService.readZaaktypeOmschrijving(taskInfo.getScopeId()));
     }
 
-    public TaakRechten readTaakRechten(final TaskInfo taskInfo, final String zaaktypeOmschrijving) {
+    public TaakRechten readTaakRechten(final String zaaktypeOmschrijving) {
         final TaakData taakData = new TaakData();
-        taakData.behandelaar = taskInfo.getAssignee();
         taakData.zaaktype = zaaktypeOmschrijving;
-        return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
+        return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData)))
+                .getResult();
     }
 
     public TaakRechten readTaakRechten(final TaakZoekObject taakZoekObject) {
         final TaakData taakData = new TaakData();
-        taakData.behandelaar = taakZoekObject.getBehandelaarGebruikersnaam();
         taakData.zaaktype = taakZoekObject.getZaaktypeOmschrijving();
         return evaluationClient.readTaakRechten(new RuleQuery<>(new TaakInput(loggedInUserInstance.get(), taakData))).getResult();
     }

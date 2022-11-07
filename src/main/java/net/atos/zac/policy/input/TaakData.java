@@ -7,7 +7,5 @@ package net.atos.zac.policy.input;
 
 public class TaakData {
 
-    public String behandelaar;
-
     public String zaaktype;
 }
