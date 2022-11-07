@@ -354,7 +354,6 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
             }, 'upload_file'));
         }
 
-        console.warn(this.zaak.isInIntakeFase);
         if (this.zaak.isOpen && !this.zaak.besluit && !this.zaak.isInIntakeFase && this.zaak.isBesluittypeAanwezig && this.zaak.rechten.vastleggenBesluit) {
             this.menu.push(new ButtonMenuItem('actie.besluit.vastleggen', () => {
                 this.actionsSidenav.open();
