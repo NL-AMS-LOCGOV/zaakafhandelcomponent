@@ -94,5 +94,7 @@ public class RESTZaak {
 
     public boolean isBesluittypeAanwezig;
 
+    public boolean isInIntakeFase;
+
     public RESTZaakRechten rechten;
 }

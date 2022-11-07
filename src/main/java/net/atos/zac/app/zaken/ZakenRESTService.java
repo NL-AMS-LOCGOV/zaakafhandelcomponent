@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken;
 
 import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
+import static net.atos.client.zgw.ztc.model.Statustype.isIntake;
 import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_EFORMULIER;
 import static net.atos.zac.configuratie.ConfiguratieService.STATUSTYPE_OMSCHRIJVING_HEROPEND;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
@@ -654,8 +655,12 @@ public class ZakenRESTService {
     public RESTBesluit createBesluit(final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
+        final Status zaakStatus = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
+        final Statustype zaakStatustype = zaakStatus != null ? ztcClientService.readStatustype(zaakStatus.getStatustype()) : null;
         assertPolicy(zaak.isOpen() && brcClientService.findBesluit(zaak) == null &&
-                             isNotEmpty(zaaktype.getBesluittypen()) && policyService.readZaakRechten(zaak, zaaktype).getVastleggenBesluit());
+                             isNotEmpty(zaaktype.getBesluittypen()) &&
+                             policyService.readZaakRechten(zaak, zaaktype).getVastleggenBesluit() &&
+                             !isIntake(zaakStatustype));
         final Besluit besluit = besluitConverter.convertToBesluit(zaak, besluitToevoegenGegevens);
         zgwApiService.createResultaatForZaak(zaak, besluitToevoegenGegevens.resultaattypeUuid, null);
         final RESTBesluit resultaat = besluitConverter.convertToRESTBesluit(brcClientService.createBesluit(besluit));
