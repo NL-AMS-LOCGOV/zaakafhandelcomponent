@@ -12,10 +12,7 @@ import input.document
 document_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
-    "toevoegen_nieuwe_versie": toevoegen_nieuwe_versie,
-    "koppelen": koppelen,
     "verwijderen": verwijderen,
-    "downloaden": downloaden,
     "vergrendelen": vergrendelen,
     "ontgrendelen": ontgrendelen,
     "ondertekenen": ondertekenen
