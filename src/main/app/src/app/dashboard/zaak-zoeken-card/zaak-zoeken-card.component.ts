@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
@@ -16,7 +16,7 @@ import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
     templateUrl: './zaak-zoeken-card.component.html',
     styleUrls: ['../dashboard-card/dashboard-card.component.less', './zaak-zoeken-card.component.less']
 })
-export class ZaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> implements OnInit {
+export class ZaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> {
 
     columns: string[] = ['identificatie', 'startdatum', 'zaaktypeOmschrijving', 'omschrijving', 'url'];
 
@@ -24,12 +24,13 @@ export class ZaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> 
         super();
     }
 
-    ngOnInit(): void {
+    protected onLoad(afterLoad: () => void): void {
         const zoekParameters: ZoekParameters = ZakenMijnDatasource.mijnLopendeZaken(new ZoekParameters());
         zoekParameters.sorteerVeld = SorteerVeld.ZAAK_EINDDATUM_GEPLAND;
         zoekParameters.sorteerRichting = 'asc';
         this.zoekenService.list(zoekParameters).subscribe(zoekResultaat => {
             this.dataSource.data = zoekResultaat.resultaten;
+            afterLoad();
         });
     }
 }

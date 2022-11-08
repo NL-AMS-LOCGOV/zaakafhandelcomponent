@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {SignaleringenService} from '../../signaleringen.service';
 import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
@@ -13,7 +13,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
     templateUrl: './informatieobjecten-card.component.html',
     styleUrls: ['../dashboard-card/dashboard-card.component.less', './informatieobjecten-card.component.less']
 })
-export class InformatieobjectenCardComponent extends DashboardCardComponent<EnkelvoudigInformatieobject> implements OnInit {
+export class InformatieobjectenCardComponent extends DashboardCardComponent<EnkelvoudigInformatieobject> {
 
     columns: string[] = ['titel', 'registratiedatumTijd', 'informatieobjectType', 'auteur', 'url'];
 
@@ -21,10 +21,11 @@ export class InformatieobjectenCardComponent extends DashboardCardComponent<Enke
         super();
     }
 
-    ngOnInit(): void {
-        this.signaleringenService.listInformatieobjectenSignalering(this.data.signaleringType).subscribe(informatieobjecten => {
-            this.dataSource.data = informatieobjecten;
-        });
+    protected onLoad(afterLoad: () => void): void {
+        this.signaleringenService.listInformatieobjectenSignalering(this.data.signaleringType)
+            .subscribe(informatieobjecten => {
+                this.dataSource.data = informatieobjecten;
+                afterLoad();
+            });
     }
-
 }
