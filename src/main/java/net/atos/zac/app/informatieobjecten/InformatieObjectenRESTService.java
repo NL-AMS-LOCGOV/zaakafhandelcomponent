@@ -460,6 +460,7 @@ public class InformatieObjectenRESTService {
                         zrcClientService.readZaak(zaakUUID))
                 .getVergrendelen());
         enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
+        // Hiervoor wordt door open zaak geen notificatie verstuurd. Dus zelf het ScreenEvent versturen!
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }
@@ -473,6 +474,7 @@ public class InformatieObjectenRESTService {
                 enkelvoudigInformatieobject,
                 zrcClientService.readZaak(zaakUUID)).getOntgrendelen());
         enkelvoudigInformatieObjectLockService.deleteLock(uuid);
+        // Hiervoor wordt door open zaak geen notificatie verstuurd. Dus zelf het ScreenEvent versturen!
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }
@@ -525,7 +527,6 @@ public class InformatieObjectenRESTService {
                              policyService.readDocumentRechten(enkelvoudigInformatieobject,
                                                                zrcClientService.readZaak(zaakUUID)).getOndertekenen());
         enkelvoudigInformatieObjectOndertekenService.ondertekenEnkelvoudigInformatieObject(uuid);
-        eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
     }
 
