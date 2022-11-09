@@ -8,6 +8,7 @@ package net.atos.zac.identity;
 import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.eclipse.microprofile.config.ConfigProvider.getConfig;
 
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class IdentityService {
         final String filter = String.format("(&(objectClass=%s))", USER_OBJECT_CLASS);
         return search(usersDN, filter, USER_ATTRIBUTES).stream()
                 .map(this::convertToUser)
+                .sorted(Comparator.comparing(User::getFullName))
                 .toList();
     }
 
@@ -114,6 +116,7 @@ public class IdentityService {
         return search(groupsDN, filter, GROUP_MEMBERSHIP_ATTRIBUTES).stream()
                 .map(this::convertToMembers)
                 .flatMap(this::readUsers)
+                .sorted(Comparator.comparing(User::getFullName))
                 .toList();
     }
 
