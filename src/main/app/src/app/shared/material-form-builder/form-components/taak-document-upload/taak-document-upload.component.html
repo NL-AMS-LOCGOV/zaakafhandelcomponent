@@ -20,7 +20,8 @@
         <mat-hint class="mat-error" *ngIf="(data.formControl.invalid && data.formControl.touched) || data.uploadError">
             {{getErrorMessage()}}
         </mat-hint>
-        <input hidden="hidden" type="file" [accept]="data.fileTypes" #fileInput [id]="data.id + '_file'" (change)="uploadFile($event.target.files[0])"
+        <input hidden="hidden" type="file" [accept]="data.getAllowedFileTypes()" #fileInput [id]="data.id + '_file'"
+               (change)="uploadFile($event.target.files[0])"
                name="uploadFile">
     </mat-form-field>
     <mat-form-field class="full-width" appearance="fill" *ngIf="uploadControl.value">

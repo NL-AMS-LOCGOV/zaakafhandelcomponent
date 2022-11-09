@@ -23,6 +23,10 @@ data:
   VRL_API_CLIENT_MP_REST_URL: {{ required "Valid .Values.vrlApi.url entry required!" .Values.vrlApi.url }}
   OPEN_FORMS_URL: {{ required "Valid .Values.openForms.url entry required!" .Values.openForms.url }}
   SD_CLIENT_MP_REST_URL: {{ required "Valid .Values.smartDocuments.url entry required!" .Values.smartDocuments.url }}
+  MAX_FILE_SIZE_MB: {{ required "Valid .Values.maxFileSizeMB entry required!" .Values.maxFileSizeMB | quote }}
+  {{- if .Values.additionalAllowedFileTypes }}
+  ADDITIONAL_ALLOWED_FILE_TYPES: {{ .Values.additionalAllowedFileTypes }}
+  {{- end}}
   SOLR_URL: {{ printf "http://%s-solr.%s" (include "zaakafhandelcomponent.fullname" .) .Release.Namespace }}
   OPA_API_CLIENT_MP_REST_URL: http://localhost:8181
   TZ: Europe/Amsterdam

@@ -20,12 +20,12 @@
                                 {{row.mailTemplateNaam}}
                             </td>
                         </ng-container>
-                        <ng-container matColumnDef="mailTemplateEnum">
+                        <ng-container matColumnDef="mail">
                             <th mat-header-cell *matHeaderCellDef>
-                                {{'mailTemplateEnum' | translate}}
+                                {{'mail' | translate}}
                             </th>
                             <td mat-cell *matCellDef="let row">
-                                {{row.mailTemplateEnum}}
+                                {{'mail.' + row.mail | translate}}
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="onderwerp">
@@ -36,20 +36,13 @@
                                 {{row.onderwerp}}
                             </td>
                         </ng-container>
-                        <ng-container matColumnDef="body">
-                            <th mat-header-cell *matHeaderCellDef>
-                                {{'body' | translate}}
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row.body}}
-                            </td>
-                        </ng-container>
                         <ng-container matColumnDef="parent">
                             <th mat-header-cell *matHeaderCellDef>
                                 {{'parent' | translate}}
                             </th>
                             <td mat-cell *matCellDef="let row">
-                                {{row.parent ? ('actie.nee' | translate) : ('actie.ja' | translate)}}
+                                <mat-icon *ngIf="!row.parent" color="primary">done</mat-icon>
+                                <mat-icon *ngIf="row.parent">close</mat-icon>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="id" stickyEnd>

@@ -45,4 +45,16 @@ public class ConfiguratieRESTService {
     public RESTTaal readDefaultTaal() {
         return taalConverter.convert(configuratieService.findDefaultTaal());
     }
+
+    @GET
+    @Path("maxFileSizeMB")
+    public long readMaxFileSizeMB() {
+        return configuratieService.readMaxFileSizeMB();
+    }
+
+    @GET
+    @Path("additionalAllowedFileTypes")
+    public List<String> readAdditionalAllowedFileTypes() {
+        return configuratieService.readAdditionalAllowedFileTypes();
+    }
 }

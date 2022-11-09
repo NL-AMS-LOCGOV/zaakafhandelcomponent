@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AppGlobals} from '../../../app.globals';
 import {Observable, Subject} from 'rxjs';
 import {AbstractFormControlField} from './abstract-form-control-field';
+import {FileIcon} from '../../../informatie-objecten/model/file-icon';
 
 export abstract class AbstractFileFormField extends AbstractFormControlField {
 
-    fileTypes: string = AppGlobals.ALLOWED_FILETYPES;
-    fileSizeMiB: number = AppGlobals.FILE_MAX_SIZE;
+    fileIcons = [...FileIcon.fileIcons];
+    maxFileSizeMB: number;
     uploadURL: string;
     uploadError: string;
     fileUploaded$ = new Subject<string>();
@@ -21,23 +21,27 @@ export abstract class AbstractFileFormField extends AbstractFormControlField {
     }
 
     isBestandstypeToegestaan(file: File): boolean {
-        const extensies = this.fileTypes.split(/\s*,\s*/).map(s => s.trim().toLowerCase());
-        return extensies.indexOf(this.getBestandsextensie(file)) > -1;
+        if (!file.name.includes('.')) {
+            return false;
+        } else {
+            const type = this.getType(file);
+            return this.fileIcons.some(fileIcon => fileIcon.type === type);
+        }
     }
 
     isBestandsgrootteToegestaan(file: File): boolean {
-        return file.size <= this.fileSizeMiB * 1024 * 1024;
+        return file.size <= this.maxFileSizeMB * 1000000;
     }
 
     getBestandsextensie(file: File) {
         if (file.name.indexOf('.') < 1) {
             return '-';
         }
-        return '.' + file.name.split('.').pop().toLowerCase();
+        return '.' + this.getType(file);
     }
 
-    getBestandsgrootteMiB(file: File): string {
-        return parseFloat(String(file.size / 1024 / 1024)).toFixed(2);
+    getBestandsgrootteMB(file: File): string {
+        return parseFloat(String(file.size / 1000000)).toFixed(2);
     }
 
     get fileUploaded(): Observable<string> {
@@ -46,5 +50,13 @@ export abstract class AbstractFileFormField extends AbstractFormControlField {
 
     reset() {
         this.reset$.next();
+    }
+
+    getAllowedFileTypes(): string {
+        return this.fileIcons.map(fileIcon => fileIcon.getBestandsextensie()).join(', ');
+    }
+
+    private getType(file: File): string {
+        return file.name.split('.').pop().toLowerCase();
     }
 }

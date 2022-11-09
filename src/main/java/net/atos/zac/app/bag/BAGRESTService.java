@@ -77,7 +77,7 @@ public class BAGRESTService {
     @Path("")
     public void createBAGObject(final RESTBAGObjectGegevens bagObjectGegevens) {
         final Zaak zaak = zrcClientService.readZaak(bagObjectGegevens.zaakUUID);
-        assertPolicy(policyService.readZaakRechten(zaak).getToevoegenBAGObject());
+        assertPolicy(policyService.readZaakRechten(zaak).getBehandelen());
         final Zaakobject zaakobject = new Zaakobject();
         zaakobject.setZaak(zaak.getUrl());
         zaakobject.setObject(bagObjectGegevens.bagObject);
