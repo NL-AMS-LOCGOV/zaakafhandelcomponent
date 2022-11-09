@@ -132,12 +132,10 @@ export class ZaakCreateComponent implements OnInit {
                                                        .label('locatie')
                                                        .build();
         this.locatieField.formControl.disable({onlySelf: true});
-        const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
-        zaaktypeEnInitiator.push(this.initiatorField);
 
         this.createZaakFields = [
             [titel],
-            zaaktypeEnInitiator,
+            [zaaktype, this.initiatorField],
             [startdatum, this.locatieField],
             [toekennenGegevensTitel],
             [this.medewerkerGroepFormField],
@@ -146,7 +144,6 @@ export class ZaakCreateComponent implements OnInit {
             [omschrijving],
             [toelichting]
         ];
-
     }
 
     onFormSubmit(formGroup: FormGroup): void {
