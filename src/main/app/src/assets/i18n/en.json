@@ -585,6 +585,7 @@
   "zoeken.filter.toegekend": "Assigned",
   "zoeken.filter.zaak_status": "Case status",
   "zoeken.filter.zaak_resultaat": "Case result",
+  "zoeken.filter.zaak_initiator": "Case initiator",
   "zoeken.filter.taak_naam": "Task name",
   "zoeken.filter.taak_status": "Task status",
   "zoeken.filter.jaNee.true": "Yes",
