@@ -91,6 +91,7 @@ public class IdentityService {
         final String filter = String.format("(&(objectClass=%s))", GROUP_OBJECT_CLASS);
         return search(groupsDN, filter, GROUP_ATTRIBUTES).stream()
                 .map(this::convertToGroup)
+                .sorted(Comparator.comparing(Group::getName))
                 .toList();
     }
 
