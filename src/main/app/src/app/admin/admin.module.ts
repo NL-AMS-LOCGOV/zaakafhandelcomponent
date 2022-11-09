@@ -16,6 +16,7 @@ import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.comp
 import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
 import {MailtemplatesComponent} from './mailtemplates/mailtemplates.component';
 import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
+import {NgxEditorModule} from 'ngx-editor';
 
 @NgModule({
     declarations: [
@@ -32,7 +33,8 @@ import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
     imports: [
         SharedModule,
         ZoekenModule,
-        AdminRoutingModule
+        AdminRoutingModule,
+        NgxEditorModule
     ]
 })
 export class AdminModule {

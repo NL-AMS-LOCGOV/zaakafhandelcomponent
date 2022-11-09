@@ -8,6 +8,6 @@ export class Mailtemplate {
     mailTemplateNaam: string;
     onderwerp: string;
     body: string;
-    mailTemplateEnum: string;
+    mail: string;
     parent: number;
 }

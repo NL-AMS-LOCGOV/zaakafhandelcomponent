@@ -44,7 +44,7 @@ public class MailTemplate {
     @NotNull
     @Column(name = "mail_template_enum", nullable = false)
     @Enumerated(EnumType.STRING)
-    private MailTemplateEnum mailTemplateEnum;
+    private Mail mail;
 
     @Column(name = "parent")
     private Long parent;
@@ -81,12 +81,12 @@ public class MailTemplate {
         this.body = body;
     }
 
-    public MailTemplateEnum getMailTemplateEnum() {
-        return mailTemplateEnum;
+    public Mail getMail() {
+        return mail;
     }
 
-    public void setMailTemplateEnum(final MailTemplateEnum mailTemplateEnum) {
-        this.mailTemplateEnum = mailTemplateEnum;
+    public void setMail(final Mail mail) {
+        this.mail = mail;
     }
 
     public Long getParent() {
