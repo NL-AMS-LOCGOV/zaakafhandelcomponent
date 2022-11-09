@@ -120,19 +120,22 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
     private toevoegenActies() {
         this.menu = [new HeaderMenuItem('informatieobject')];
 
-        if (this.laatsteVersieInfoObject.rechten.downloaden) {
+        if (this.laatsteVersieInfoObject.rechten.lezen) {
             this.menu.push(
-                new HrefMenuItem('actie.downloaden', this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie), 'save_alt')
+                new HrefMenuItem('actie.downloaden',
+                    this.informatieObjectenService.getDownloadURL(this.infoObject.uuid, this.infoObject.versie),
+                    'save_alt')
             );
         }
 
-        if (this.laatsteVersieInfoObject.rechten.toevoegenNieuweVersie) {
+        if (this.laatsteVersieInfoObject.rechten.wijzigen) {
             this.menu.push(new ButtonMenuItem('actie.nieuwe.versie.toevoegen', () => {
-                this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid).subscribe(nieuweVersie => {
-                    this.documentNieuweVersieGegevens = nieuweVersie;
-                    this.actionsSidenav.open();
-                    this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
-                });
+                this.informatieObjectenService.readHuidigeVersieEnkelvoudigInformatieObject(this.infoObject.uuid)
+                    .subscribe(nieuweVersie => {
+                        this.documentNieuweVersieGegevens = nieuweVersie;
+                        this.actionsSidenav.open();
+                        this.action = SideNavAction.DOCUMENT_VERSIE_TOEVOEGEN;
+                    });
             }, 'difference'));
         }
 

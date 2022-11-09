@@ -9,49 +9,13 @@ public class RESTZaakRechten {
 
     public boolean lezen;
 
-    public boolean opschorten;
-
-    public boolean verlengen;
-
-    public boolean hervatten;
-
-    public boolean afbreken;
-
-    public boolean voortzetten;
-
-    public boolean heropenen;
-
-    public boolean creeerenDocument;
-
-    public boolean toevoegenDocument;
-
-    public boolean koppelen;
-
-    public boolean versturenEmail;
-
-    public boolean versturenOntvangstbevestiging;
-
-    public boolean toevoegenBAGObject;
-
-    public boolean toevoegenInitiatorPersoon;
-
-    public boolean toevoegenInitiatorBedrijf;
-
-    public boolean verwijderenInitiator;
-
-    public boolean toevoegenBetrokkenePersoon;
-
-    public boolean toevoegenBetrokkeneBedrijf;
-
-    public boolean verwijderenBetrokkene;
+    public boolean wijzigen;
 
     public boolean toekennen;
 
-    public boolean wijzigen;
+    public boolean behandelen;
 
-    public boolean aanmakenTaak;
+    public boolean afbreken;
 
-    public boolean vastleggenBesluit;
-
-    public boolean wijzigenBesluit;
+    public boolean heropenen;
 }

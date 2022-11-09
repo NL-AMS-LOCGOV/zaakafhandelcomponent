@@ -155,7 +155,7 @@ public class TakenRESTService {
     @Path("taakdata")
     public RESTTaak updateTaakdata(final RESTTaak restTaak) {
         final TaskInfo task = taskService.readTask(restTaak.id);
-        assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigenFormulier());
+        assertPolicy(taskService.getTaakStatus(task) != AFGEROND && policyService.readTaakRechten(task).getWijzigen());
         taskVariablesService.setTaakdata(restTaak.id, restTaak.taakdata);
         taskVariablesService.setTaakinformatie(restTaak.id, restTaak.taakinformatie);
         return restTaak;

@@ -231,7 +231,7 @@ public class InformatieObjectenRESTService {
             @QueryParam("taakObject") final boolean taakObject,
             final RESTEnkelvoudigInformatieobject restEnkelvoudigInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(zaakUuid);
-        assertPolicy(policyService.readZaakRechten(zaak).getToevoegenDocument());
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final RESTFileUpload file = (RESTFileUpload) httpSession.get().getAttribute("FILE_" + documentReferentieId);
         final EnkelvoudigInformatieobjectWithInhoud enkelvoudigInformatieobjectWithInhoud = taakObject ?
                 informatieobjectConverter.convertTaakObject(restEnkelvoudigInformatieobject, file) :
@@ -260,8 +260,8 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject informatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieobjectUUID);
         final Zaak nieuweZaak = zrcClientService.readZaakByID(documentVerplaatsGegevens.nieuweZaakID);
-        assertPolicy(policyService.readDocumentRechten(informatieobject).getKoppelen());
-        assertPolicy(policyService.readZaakRechten(nieuweZaak).getKoppelen());
+        assertPolicy(policyService.readDocumentRechten(informatieobject).getWijzigen() &&
+                             policyService.readZaakRechten(nieuweZaak).getWijzigen());
         final String toelichting = "Verplaatst: %s -> %s".formatted(documentVerplaatsGegevens.bron,
                                                                     nieuweZaak.getIdentificatie());
         if (documentVerplaatsGegevens.vanuitOntkoppeldeDocumenten()) {
@@ -373,7 +373,7 @@ public class InformatieObjectenRESTService {
     public Response readFile(@PathParam("uuid") final UUID uuid, @PathParam("versie") final Integer versie) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieObject = drcClientService.readEnkelvoudigInformatieobject(
                 uuid);
-        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieObject).getDownloaden());
+        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieObject).getLezen());
         try (final ByteArrayInputStream inhoud = (versie != null) ?
                 drcClientService.downloadEnkelvoudigInformatieobjectVersie(uuid, versie) :
                 drcClientService.downloadEnkelvoudigInformatieobject(uuid)) {
@@ -394,7 +394,7 @@ public class InformatieObjectenRESTService {
                 .map(drcClientService::readEnkelvoudigInformatieobject)
                 .toList();
         informatieobjecten.forEach(
-                informatieobject -> assertPolicy(policyService.readDocumentRechten(informatieobject).getDownloaden()));
+                informatieobject -> assertPolicy(policyService.readDocumentRechten(informatieobject).getLezen()));
         final StreamingOutput streamingOutput = enkelvoudigInformatieObjectDownloadService.getZipStreamOutput(
                 informatieobjecten);
         return Response.ok(streamingOutput).header("Content-Type", "application/zip").build();
@@ -417,10 +417,8 @@ public class InformatieObjectenRESTService {
             final RESTEnkelvoudigInformatieObjectVersieGegevens enkelvoudigInformatieObjectVersieGegevens) {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 enkelvoudigInformatieObjectVersieGegevens.uuid);
-        assertPolicy(
-                policyService.readDocumentRechten(enkelvoudigInformatieobject, zrcClientService.readZaak(
-                                enkelvoudigInformatieObjectVersieGegevens.zaakUuid))
-                        .getToevoegenNieuweVersie());
+        assertPolicy(policyService.readDocumentRechten(enkelvoudigInformatieobject, zrcClientService.readZaak(
+                enkelvoudigInformatieObjectVersieGegevens.zaakUuid)).getWijzigen());
         final String loggedInUserId = loggedInUserInstance.get().getId();
         boolean tempLock = false;
 
@@ -453,12 +451,10 @@ public class InformatieObjectenRESTService {
     @POST
     @Path("/informatieobject/{uuid}/lock")
     public Response lockDocument(@PathParam("uuid") final UUID uuid, @QueryParam("zaak") final UUID zaakUUID) {
-        final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
-                uuid);
+        final EnkelvoudigInformatieobject enkelvoudigInformatieobject =
+                drcClientService.readEnkelvoudigInformatieobject(uuid);
         assertPolicy(isFalse(enkelvoudigInformatieobject.getLocked()) && policyService.readDocumentRechten(
-                        enkelvoudigInformatieobject,
-                        zrcClientService.readZaak(zaakUUID))
-                .getVergrendelen());
+                enkelvoudigInformatieobject, zrcClientService.readZaak(zaakUUID)).getVergrendelen());
         enkelvoudigInformatieObjectLockService.createLock(uuid, loggedInUserInstance.get().getId());
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -470,8 +466,7 @@ public class InformatieObjectenRESTService {
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(
                 uuid);
         assertPolicy(enkelvoudigInformatieobject.getLocked() && policyService.readDocumentRechten(
-                enkelvoudigInformatieobject,
-                zrcClientService.readZaak(zaakUUID)).getOntgrendelen());
+                enkelvoudigInformatieobject, zrcClientService.readZaak(zaakUUID)).getOntgrendelen());
         enkelvoudigInformatieObjectLockService.deleteLock(uuid);
         eventingService.send(ENKELVOUDIG_INFORMATIEOBJECT.updated(uuid));
         return Response.ok().build();
@@ -490,7 +485,7 @@ public class InformatieObjectenRESTService {
     @Path("/documentcreatie")
     public RESTDocumentCreatieResponse createDocument(final RESTDocumentCreatieGegevens restDocumentCreatieGegevens) {
         final Zaak zaak = zrcClientService.readZaak(restDocumentCreatieGegevens.zaakUUID);
-        assertPolicy(policyService.readZaakRechten(zaak).getCreeerenDocument());
+        assertPolicy(policyService.readZaakRechten(zaak).getWijzigen());
         final DocumentCreatieGegevens documentCreatieGegevens = new DocumentCreatieGegevens(zaak,
                                                                                             restDocumentCreatieGegevens.informatieobjecttypeUUID,
                                                                                             restDocumentCreatieGegevens.taskId);

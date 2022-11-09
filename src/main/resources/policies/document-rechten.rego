@@ -12,10 +12,7 @@ import input.document
 document_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
-    "toevoegen_nieuwe_versie": toevoegen_nieuwe_versie,
-    "koppelen": koppelen,
     "verwijderen": verwijderen,
-    "downloaden": downloaden,
     "vergrendelen": vergrendelen,
     "ontgrendelen": ontgrendelen,
     "ondertekenen": ondertekenen
@@ -62,40 +59,9 @@ wijzigen {
     zaaktype_allowed
 }
 
-default toevoegen_nieuwe_versie := false
-toevoegen_nieuwe_versie {
-    behandelaar.rol in user.rollen
-    zaaktype_allowed
-    document.zaak_open == true
-    document.definitief == false
-    onvergrendeld_of_vergrendeld_door_user == true
-}
-toevoegen_nieuwe_versie {
-    recordmanager.rol in user.rollen
-    zaaktype_allowed
-}
-
-default koppelen := false
-koppelen {
-    behandelaar.rol in user.rollen
-    zaaktype_allowed
-    document.definitief == false
-    document.vergrendeld == false
-}
-koppelen {
-    recordmanager.rol in user.rollen
-    zaaktype_allowed
-}
-
 default verwijderen := false
 verwijderen {
     recordmanager.rol in user.rollen
-    zaaktype_allowed
-}
-
-default downloaden := false
-downloaden {
-    { behandelaar, coordinator, recordmanager }[_].rol in user.rollen
     zaaktype_allowed
 }
 

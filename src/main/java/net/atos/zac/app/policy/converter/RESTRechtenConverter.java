@@ -21,13 +21,10 @@ public class RESTRechtenConverter {
     public RESTDocumentRechten convert(final DocumentRechten documentRechten) {
         final RESTDocumentRechten restDocumentRechten = new RESTDocumentRechten();
         restDocumentRechten.lezen = documentRechten.getLezen();
-        restDocumentRechten.koppelen = documentRechten.getKoppelen();
         restDocumentRechten.wijzigen = documentRechten.getWijzigen();
-        restDocumentRechten.downloaden = documentRechten.getDownloaden();
         restDocumentRechten.ontgrendelen = documentRechten.getOntgrendelen();
         restDocumentRechten.vergrendelen = documentRechten.getVergrendelen();
         restDocumentRechten.verwijderen = documentRechten.getVerwijderen();
-        restDocumentRechten.toevoegenNieuweVersie = documentRechten.getToevoegenNieuweVersie();
         restDocumentRechten.ondertekenen = documentRechten.getOndertekenen();
         return restDocumentRechten;
     }
@@ -35,40 +32,19 @@ public class RESTRechtenConverter {
     public RESTTaakRechten convert(final TaakRechten taakRechten) {
         final RESTTaakRechten restTaakRechten = new RESTTaakRechten();
         restTaakRechten.lezen = taakRechten.getLezen();
-        restTaakRechten.toekennen = taakRechten.getToekennen();
-        restTaakRechten.wijzigenFormulier = taakRechten.getWijzigenFormulier();
         restTaakRechten.wijzigen = taakRechten.getWijzigen();
-        restTaakRechten.creeerenDocument = taakRechten.getCreeerenDocument();
-        restTaakRechten.toevoegenDocument = taakRechten.getToevoegenDocument();
+        restTaakRechten.toekennen = taakRechten.getToekennen();
         return restTaakRechten;
     }
 
     public RESTZaakRechten convert(final ZaakRechten zaakRechten) {
         final RESTZaakRechten restZaakRechten = new RESTZaakRechten();
         restZaakRechten.lezen = zaakRechten.getLezen();
-        restZaakRechten.opschorten = zaakRechten.getOpschorten();
-        restZaakRechten.verlengen = zaakRechten.getVerlengen();
-        restZaakRechten.hervatten = zaakRechten.getHervatten();
-        restZaakRechten.afbreken = zaakRechten.getAfbreken();
-        restZaakRechten.voortzetten = zaakRechten.getVoortzetten();
-        restZaakRechten.heropenen = zaakRechten.getHeropenen();
-        restZaakRechten.creeerenDocument = zaakRechten.getCreeerenDocument();
-        restZaakRechten.toevoegenDocument = zaakRechten.getToevoegenDocument();
-        restZaakRechten.koppelen = zaakRechten.getKoppelen();
-        restZaakRechten.versturenEmail = zaakRechten.getVersturenEmail();
-        restZaakRechten.versturenOntvangstbevestiging = zaakRechten.getVersturenOntvangstbevestiging();
-        restZaakRechten.toevoegenBAGObject = zaakRechten.getToevoegenBAGObject();
-        restZaakRechten.toevoegenInitiatorPersoon = zaakRechten.getToevoegenInitiatorPersoon();
-        restZaakRechten.toevoegenInitiatorBedrijf = zaakRechten.getToevoegenInitiatorBedrijf();
-        restZaakRechten.verwijderenInitiator = zaakRechten.getVerwijderenInitiator();
-        restZaakRechten.toevoegenBetrokkenePersoon = zaakRechten.getToevoegenBetrokkenePersoon();
-        restZaakRechten.toevoegenBetrokkeneBedrijf = zaakRechten.getToevoegenBetrokkeneBedrijf();
-        restZaakRechten.verwijderenBetrokkene = zaakRechten.getVerwijderenBetrokkene();
-        restZaakRechten.toekennen = zaakRechten.getToekennen();
         restZaakRechten.wijzigen = zaakRechten.getWijzigen();
-        restZaakRechten.aanmakenTaak = zaakRechten.getAanmakenTaak();
-        restZaakRechten.vastleggenBesluit = zaakRechten.getVastleggenBesluit();
-        restZaakRechten.wijzigenBesluit = zaakRechten.getWijzigenBesluit();
+        restZaakRechten.toekennen = zaakRechten.getToekennen();
+        restZaakRechten.behandelen = zaakRechten.getBehandelen();
+        restZaakRechten.afbreken = zaakRechten.getAfbreken();
+        restZaakRechten.heropenen = zaakRechten.getHeropenen();
         return restZaakRechten;
     }
 
