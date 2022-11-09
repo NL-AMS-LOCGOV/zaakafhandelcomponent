@@ -13,7 +13,5 @@ export class FileFormFieldBuilder extends AbstractFileFormFieldBuilder {
         super();
         this.formField = new FileFormField();
         this.formField.initControl(value);
-        this.updateHint();
     }
-
 }

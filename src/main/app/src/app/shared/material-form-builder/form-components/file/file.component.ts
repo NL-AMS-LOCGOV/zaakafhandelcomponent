@@ -48,7 +48,7 @@ export class FileComponent extends FormComponent implements OnInit {
             }
 
             if (!this.data.isBestandsgrootteToegestaan(file)) {
-                this.data.uploadError = `Het bestand is te groot (${this.data.getBestandsgrootteMiB(file)}MiB)`;
+                this.data.uploadError = `Het bestand is te groot (${this.data.getBestandsgrootteMB(file)}MB)`;
                 return;
             }
 

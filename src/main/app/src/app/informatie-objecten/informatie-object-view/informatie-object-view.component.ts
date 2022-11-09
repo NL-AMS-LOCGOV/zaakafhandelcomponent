@@ -206,7 +206,7 @@ export class InformatieObjectViewComponent extends ActionsViewComponent implemen
 
     getFileIcon(filename) {
         const extension = filename.split('.').pop();
-        const obj = FileIcon.fileIconList.filter(row => {
+        const obj = FileIcon.fileIcons.filter(row => {
             if (row.type === extension) {
                 return true;
             }
