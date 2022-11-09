@@ -7,7 +7,7 @@ package net.atos.zac.app.admin.converter;
 
 import net.atos.zac.app.admin.model.RESTMailtemplate;
 import net.atos.zac.mailtemplates.model.MailTemplate;
-import net.atos.zac.mailtemplates.model.MailTemplateEnum;
+import net.atos.zac.mailtemplates.model.Mail;
 
 public class RESTMailtemplateConverter {
 
@@ -15,7 +15,7 @@ public class RESTMailtemplateConverter {
         final RESTMailtemplate restMailtemplate = new RESTMailtemplate();
         restMailtemplate.id = mailTemplate.getId();
         restMailtemplate.mailTemplateNaam = mailTemplate.getMailTemplateNaam();
-        restMailtemplate.mailTemplateEnum = mailTemplate.getMailTemplateEnum().name();
+        restMailtemplate.mail = mailTemplate.getMail().name();
         restMailtemplate.onderwerp = mailTemplate.getOnderwerp();
         restMailtemplate.body = mailTemplate.getBody();
         restMailtemplate.parent = mailTemplate.getParent();
@@ -26,7 +26,7 @@ public class RESTMailtemplateConverter {
     public MailTemplate convert(final RESTMailtemplate restMailtemplate) {
         final MailTemplate mailTemplate = new MailTemplate();
         mailTemplate.setId(restMailtemplate.id);
-        mailTemplate.setMailTemplateEnum(MailTemplateEnum.valueOf(restMailtemplate.mailTemplateEnum));
+        mailTemplate.setMail(Mail.valueOf(restMailtemplate.mail));
         mailTemplate.setMailTemplateNaam(restMailtemplate.mailTemplateNaam);
         mailTemplate.setOnderwerp(restMailtemplate.onderwerp);
         mailTemplate.setBody(restMailtemplate.body);

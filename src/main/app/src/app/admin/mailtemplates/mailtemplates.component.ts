@@ -25,7 +25,7 @@ export class MailtemplatesComponent extends AdminComponent implements OnInit, Af
     @ViewChild('menuSidenav') menuSidenav: MatSidenav;
 
     isLoadingResults: boolean = false;
-    columns: string[] = ['mailTemplateNaam', 'mailTemplateEnum', 'onderwerp', 'parent', 'id'];
+    columns: string[] = ['mailTemplateNaam', 'mail', 'onderwerp', 'parent', 'id'];
     dataSource: MatTableDataSource<Mailtemplate> = new MatTableDataSource<Mailtemplate>();
 
     constructor(private identityService: IdentityService,

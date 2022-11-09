@@ -8,7 +8,7 @@ package net.atos.zac.mailtemplates.model;
 import java.util.Collections;
 import java.util.Set;
 
-public enum MailTemplateEnum {
+public enum Mail {
 
     ZAAK_ONTVANKELIJK(MailTemplateVariabelen.ZAAKSTATUSMAIL_VARIABELEN),
     ZAAK_NIET_ONTVANKELIJK(MailTemplateVariabelen.ZAAKSTATUSMAIL_VARIABELEN),
@@ -24,7 +24,7 @@ public enum MailTemplateEnum {
 
     private final Set<MailTemplateVariabelen> variabelen;
 
-    MailTemplateEnum(final Set<MailTemplateVariabelen> variabelen) {
+    Mail(final Set<MailTemplateVariabelen> variabelen) {
         this.variabelen = Collections.unmodifiableSet(variabelen);
     }
 

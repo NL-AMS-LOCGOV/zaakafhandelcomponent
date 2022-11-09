@@ -1,5 +1,5 @@
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
-VALUES (nextval('${schema}.sq_mail_template'), 'Zaak ontvankelijk', 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknummer}',
+VALUES (nextval('${schema}.sq_mail_template'), 'Zaak ontvankelijk', 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknummer})',
         '<pre><code>Beste klant,
 
 Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.
@@ -9,7 +9,7 @@ Met vriendelijke groet,
 Gemeente</code></pre>', 'ZAAK_ONTVANKELIJK');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
-VALUES (nextval('${schema}.sq_mail_template'), 'Zaak niet ontvankelijk', 'Wij hebben uw verzoek niet ontvankelijk verklaard (zaaknummer: {zaaknummer}',
+VALUES (nextval('${schema}.sq_mail_template'), 'Zaak niet ontvankelijk', 'Wij hebben uw verzoek niet ontvankelijk verklaard (zaaknummer: {zaaknummer})',
         '<pre><code>Beste klant,
 
 Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is niet ontvankelijk verklaard. Voor meer informatie gaat u naar Mijn loket.
@@ -19,7 +19,7 @@ Met vriendelijke groet,
 Gemeente</code></pre>', 'ZAAK_NIET_ONTVANKELIJK');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
-VALUES (nextval('${schema}.sq_mail_template'), 'Zaak afgehandeld', 'Wij hebben uw verzoek afgehandeld (zaaknummer: {zaaknummer}',
+VALUES (nextval('${schema}.sq_mail_template'), 'Zaak afgehandeld', 'Wij hebben uw verzoek afgehandeld (zaaknummer: {zaaknummer})',
         '<pre><code>Beste klant,
 
 Uw verzoek betreffende {zaaktypenaam} met zaaknummer {zaaknummer} is afgehandeld. Voor meer informatie gaat u naar Mijn loket.

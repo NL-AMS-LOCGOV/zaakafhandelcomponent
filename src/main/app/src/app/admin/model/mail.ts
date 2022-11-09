@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-export enum MailtemplateEnum {
+export enum Mail {
     'ZAAK_ONTVANKELIJK' = 'ZAAK_ONTVANKELIJK',
     'ZAAK_NIET_ONTVANKELIJK' = 'ZAAK_NIET_ONTVANKELIJK',
     'ZAAK_AFGEHANDELD' = 'ZAAK_AFGEHANDELD',
