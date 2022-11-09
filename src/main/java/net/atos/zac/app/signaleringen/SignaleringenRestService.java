@@ -7,7 +7,9 @@ package net.atos.zac.app.signaleringen;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -35,6 +37,7 @@ import net.atos.zac.flowable.TaskService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.signalering.SignaleringenService;
+import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
 import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -79,8 +82,14 @@ public class SignaleringenRestService {
     @GET
     @Path("/latest")
     public ZonedDateTime latestSignaleringen() {
-        final SignaleringZoekParameters parameters = new SignaleringZoekParameters(loggedInUserInstance.get());
-        return signaleringenService.latestSignalering(parameters);
+        final SignaleringZoekParameters signaleringParameters = new SignaleringZoekParameters(loggedInUserInstance.get());
+        SignaleringInstellingenZoekParameters instellingenParameters = new SignaleringInstellingenZoekParameters(loggedInUserInstance.get());
+        Set<SignaleringType.Type> toegestaneTypes = signaleringenService.listInstellingen(instellingenParameters).stream()
+                .filter(SignaleringInstellingen::isDashboard)
+                .map(instelling -> instelling.getType().getType())
+                .collect(Collectors.toSet());
+        signaleringParameters.types(toegestaneTypes);
+        return signaleringenService.latestSignalering(signaleringParameters);
     }
 
     @GET

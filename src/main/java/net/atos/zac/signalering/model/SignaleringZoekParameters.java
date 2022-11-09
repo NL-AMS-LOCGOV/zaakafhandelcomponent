@@ -66,6 +66,11 @@ public class SignaleringZoekParameters {
         return this;
     }
 
+    public SignaleringZoekParameters types(final Set<SignaleringType.Type> types) {
+        this.types = EnumSet.copyOf(types);
+        return this;
+    }
+
     public SignaleringZoekParameters types(final SignaleringType.Type type) {
         this.types = EnumSet.of(type);
         return this;
