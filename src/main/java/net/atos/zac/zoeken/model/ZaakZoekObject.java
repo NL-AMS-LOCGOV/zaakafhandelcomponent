@@ -81,6 +81,9 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_initiatorIdentificatie")
     private String initiatorIdentificatie;
 
+    @Field("zaak_initiatorType")
+    private String initiatorType;
+
     @Field("zaak_locatie")
     private String locatie;
 
@@ -140,6 +143,7 @@ public class ZaakZoekObject implements ZoekObject {
 
     @Field(IS_TOEGEKEND_FIELD)
     private boolean toegekend;
+
 
     public ZaakZoekObject() {
     }
@@ -296,9 +300,10 @@ public class ZaakZoekObject implements ZoekObject {
         return initiatorIdentificatie;
     }
 
-    public void setInitiatorIdentificatie(final Rol<?> initiator) {
+    public void setInitiator(final Rol<?> initiator) {
         if (initiator != null) {
             this.initiatorIdentificatie = initiator.getIdentificatienummer();
+            this.initiatorType = initiator.getBetrokkeneType().toValue();
         }
     }
 
