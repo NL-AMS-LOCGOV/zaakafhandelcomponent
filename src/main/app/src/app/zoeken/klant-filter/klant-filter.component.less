@@ -1,0 +1,34 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Atos
+ * SPDX-License-Identifier: EUPL-1.2+
+ */
+
+@import "src/variables";
+
+.mat-card {
+  background-color: @body-background-color;
+  margin: 10px;
+
+  .mat-card-title {
+    font-size: 14px;
+  }
+}
+
+
+.klant-filter {
+  font-size: 12px;
+
+  mat-icon.active {
+    color: @primary-background-color;
+  }
+
+  mat-form-field::ng-deep {
+    .mat-form-field-flex {
+      padding-top: 0;
+    }
+
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+}

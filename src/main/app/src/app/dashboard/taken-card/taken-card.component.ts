@@ -7,6 +7,8 @@ import {Component} from '@angular/core';
 import {SignaleringenService} from '../../signaleringen.service';
 import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 import {Taak} from '../../taken/model/taak';
+import {IdentityService} from '../../identity/identity.service';
+import {WebsocketService} from '../../core/websocket/websocket.service';
 
 @Component({
     selector: 'zac-taken-card',
@@ -17,8 +19,10 @@ export class TakenCardComponent extends DashboardCardComponent<Taak> {
 
     columns: string[] = ['naam', 'creatiedatumTijd', 'zaakIdentificatie', 'zaaktypeOmschrijving', 'url'];
 
-    constructor(private signaleringenService: SignaleringenService) {
-        super();
+    constructor(private signaleringenService: SignaleringenService,
+                protected identityService: IdentityService,
+                protected websocketService: WebsocketService) {
+        super(identityService, websocketService);
     }
 
     protected onLoad(afterLoad: () => void): void {

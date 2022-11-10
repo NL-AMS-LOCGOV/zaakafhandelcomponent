@@ -8,12 +8,12 @@
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
     <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
-        <zac-klant-zoek *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
-                        (klantGegevens)="initiatorGeselecteerd($event.klant)"
-                        [initiator]="true"></zac-klant-zoek>
-        <zac-klant-zoek *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
-                        (klantGegevens)="betrokkeneGeselecteerd($event)"
-                        [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-zoek>
+        <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
+                          (klantGegevens)="initiatorGeselecteerd($event.klant)"
+                          [initiator]="true"></zac-klant-koppel>
+        <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_BETROKKENE"
+                          (klantGegevens)="betrokkeneGeselecteerd($event)"
+                          [zaaktypeUUID]="zaak.zaaktype.uuid"></zac-klant-koppel>
         <zac-bag-adres-zoek *ngSwitchCase="sideNavAction.ZOEK_BAG_ADRES"
                             (bagObject)="adresGeselecteerd($event)"></zac-bag-adres-zoek>
         <zac-locatie-zoek *ngSwitchCase="sideNavAction.ZOEK_LOCATIE"

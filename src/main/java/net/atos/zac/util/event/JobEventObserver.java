@@ -25,6 +25,7 @@ public class JobEventObserver {
     private SignaleringenJob signaleringenJob;
 
     public void onFire(final @ObservesAsync JobEvent event) {
+        LOG.fine(() -> String.format("Job event ontvangen: %s", event.toString()));
         try {
             switch (event.getJobId()) {
                 case SIGNALERINGEN_JOB -> signaleringenJob.signaleringenVerzenden();
