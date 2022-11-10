@@ -125,7 +125,7 @@ public enum ScreenEventType {
 
     private static ScreenEvent instance(final Opcode opcode, final ScreenEventType type,
             final Signalering signalering) {
-        return instance(opcode, type, signalering.getTarget(), null);
+        return instance(opcode, type, signalering.getTarget(), signalering.getType().getType().name());
     }
 
     // These methods determine on which object types the different arguments are allowed
@@ -153,7 +153,7 @@ public enum ScreenEventType {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 
-    public ScreenEvent event(final Opcode opcode, final Signalering signalalering) {
+    public ScreenEvent event(final Opcode opcode, final Signalering signalering) {
         throw new IllegalArgumentException(); // Not allowed except for object types where this method has an override
     }
 

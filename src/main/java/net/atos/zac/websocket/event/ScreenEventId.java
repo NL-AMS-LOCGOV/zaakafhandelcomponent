@@ -48,6 +48,6 @@ public class ScreenEventId {
 
     @Override
     public String toString() {
-        return detail != null ? String.format("%s.%s", resource, detail) : resource;
+        return detail != null ? String.format("%s;%s", resource, detail) : resource;
     }
 }
