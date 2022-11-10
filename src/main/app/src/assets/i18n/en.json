@@ -306,6 +306,7 @@
   "mail.ZAAK_AFGEHANDELD": "Case closed",
   "mail.PROCES_AANVULLENDE_INFORMATIE": "Process additional information",
   "mail.PROCES_ONTVANGSTBEVESTIGING": "Receipt process",
+  "mail.PROCES_ADVIES": "Proces advice",
   "mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD": "Alert case document added",
   "mail.SIGNALERING_ZAAK_OP_NAAM": "Alert case by name",
   "mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM": "Alert case expired target date",
