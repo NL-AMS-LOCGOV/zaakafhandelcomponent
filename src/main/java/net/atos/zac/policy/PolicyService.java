@@ -101,6 +101,8 @@ public class PolicyService {
         documentData.definitief = enkelvoudigInformatieobject.getStatus() == DEFINITIEF;
         documentData.vergrendeld = enkelvoudigInformatieobject.getLocked();
         documentData.vergrendeldDoor = lock != null ? lock.getUserId() : null;
+        // Dubbele null-check lijkt vreemd, maar is nodig vanwege datastructuur in OpenZaak
+        documentData.ondertekend = enkelvoudigInformatieobject.getOndertekening() != null && enkelvoudigInformatieobject.getOndertekening().getSoort() != null;
         if (zaak != null) {
             documentData.zaakOpen = zaak.isOpen();
             documentData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();

@@ -93,6 +93,7 @@ ondertekenen {
     behandelaar.rol in user.rollen
     zaaktype_allowed
     document.zaak_open == true
+    document.ondertekend == false
     onvergrendeld_of_vergrendeld_door_user == true
 }
 
