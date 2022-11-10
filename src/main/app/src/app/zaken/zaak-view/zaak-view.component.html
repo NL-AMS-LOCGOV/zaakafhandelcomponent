@@ -186,8 +186,10 @@
                                                [id]="'zaakBekijken_' + row.identificatie +'_button'" title="{{ 'actie.zaak.bekijken' | translate }}">
                                                 <mat-icon>visibility</mat-icon>
                                             </a>
-                                            <button *ngIf="row.rechten.koppelen" mat-flat-button (click)="startZaakOntkoppelenDialog(row)"
-                                                    [id]="'zaakOntkoppelen_' + row.identificatie +'_button'" title="{{ 'actie.zaak.ontkoppelen' | translate }}">
+                                            <button *ngIf="row.rechten.wijzigen" mat-flat-button
+                                                    (click)="startZaakOntkoppelenDialog(row)"
+                                                    [id]="'zaakOntkoppelen_' + row.identificatie +'_button'"
+                                                    title="{{ 'actie.zaak.ontkoppelen' | translate }}">
                                                 <mat-icon>link_off</mat-icon>
                                             </button>
                                         </td>
