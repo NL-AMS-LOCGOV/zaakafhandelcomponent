@@ -9,6 +9,7 @@ export enum FieldType {
     FILE = 'FILE',
     HEADING = 'HEADING',
     HIDDEN = 'HIDDEN',
+    HTML_EDITOR = 'HTML_EDITOR',
     PARAGRAPH = 'PARAGRAPH',
     TEXTAREA = 'TEXTAREA',
     DATE = 'DATE',

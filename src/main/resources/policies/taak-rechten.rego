@@ -12,9 +12,6 @@ taak_rechten := {
     "lezen": lezen,
     "wijzigen": wijzigen,
     "toekennen": toekennen,
-    "wijzigen_formulier": wijzigen_formulier,
-    "creeeren_document": creeeren_document,
-    "toevoegen_document": toevoegen_document
 }
 
 default zaaktype_allowed := false
@@ -44,24 +41,3 @@ toekennen {
     behandelaar.rol in user.rollen
     zaaktype_allowed == true
 }
-
-default wijzigen_formulier := false
-wijzigen_formulier {
-    { behandelaar, recordmanager }[_].rol in user.rollen
-    zaaktype_allowed == true
-}
-
-default creeeren_document := false
-creeeren_document {
-    { behandelaar, recordmanager }[_].rol in user.rollen
-    zaaktype_allowed == true
-}
-
-default toevoegen_document := false
-toevoegen_document {
-    { behandelaar, recordmanager }[_].rol in user.rollen
-    zaaktype_allowed == true
-}
-
-
-

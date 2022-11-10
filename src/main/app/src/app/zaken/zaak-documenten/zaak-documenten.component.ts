@@ -32,6 +32,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {Validators} from '@angular/forms';
 import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -42,12 +43,6 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
-
-    @Input() set documentToegevoegd(informatieobject: EnkelvoudigInformatieobject) {
-        if (informatieobject) {
-            this.enkelvoudigInformatieObjecten.data = [...this.enkelvoudigInformatieObjecten.data, informatieobject];
-        }
-    }
 
     readonly skeletonLayout = SkeletonLayout;
     taakModus: boolean;
@@ -72,12 +67,14 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                 private zakenService: ZakenService,
                 private dialog: MatDialog,
                 private translate: TranslateService,
-                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService) { }
+                private informatieObjectVerplaatsService: InformatieObjectVerplaatsService,
+                private router: Router) { }
 
     ngOnInit(): void {
         this.taakModus = !!this.zaakUUID;
 
-        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED, ObjectType.ZAAK_INFORMATIEOBJECTEN, this.getZaakUuid(),
+        this.zaakDocumentenListener = this.websocketService.addListener(Opcode.UPDATED,
+            ObjectType.ZAAK_INFORMATIEOBJECTEN, this.getZaakUuid(),
             (event) => this.loadInformatieObjecten(event));
 
         this.loadInformatieObjecten();
@@ -93,13 +90,25 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
 
     private loadInformatieObjecten(event?: ScreenEvent): void {
         if (event) {
-            console.log('callback loadInformatieObjecten: ' + event.key);
+            console.debug('callback loadInformatieObjecten: ' + event.key);
+            this.informatieObjectenService.readEnkelvoudigInformatieobjectByZaakInformatieobjectUUID(
+                event.objectId.detail)
+                .subscribe(enkelvoudigInformatieobject => {
+                    this.utilService.openSnackbarAction(
+                        'msg.document.toegevoegd.aan.zaak',
+                        'actie.document.bekijken',
+                        {document: enkelvoudigInformatieobject.titel},
+                        7).subscribe(() => {
+                        this.router.navigate(['/informatie-objecten', enkelvoudigInformatieobject.uuid]);
+                    });
+                });
         }
         const zoekParameters = new InformatieobjectZoekParameters();
         zoekParameters.zaakUUID = this.getZaakUuid();
         zoekParameters.gekoppeldeZaakDocumenten = this.toonGekoppeldeZaakDocumenten;
 
-        this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters).pipe(share());
+        this.informatieObjecten$ = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekParameters)
+                                       .pipe(share());
 
         this.informatieObjecten$.subscribe(objecten => {
             this.enkelvoudigInformatieObjecten.data = objecten;
@@ -128,20 +137,23 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
                     melding = this.translate.instant('msg.document.ontkoppelen.meerdere.zaken.bevestigen',
                         {zaken: zaakIDs, document: informatieobject.titel});
                 } else {
-                    melding = this.translate.instant('msg.document.ontkoppelen.bevestigen', {document: informatieobject.titel});
+                    melding = this.translate.instant('msg.document.ontkoppelen.bevestigen',
+                        {document: informatieobject.titel});
                 }
                 const dialogData = new DialogData([
                         new TextareaFormFieldBuilder().id('reden')
                                                       .label('reden')
                                                       .validators(Validators.required)
                                                       .build()],
-                    (results: any[]) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid, informatieobject.uuid, results['reden']),
+                    (results: any[]) => this.zakenService.ontkoppelInformatieObject(this.zaak.uuid,
+                        informatieobject.uuid, results['reden']),
                     melding);
                 this.dialog.open(DialogComponent, {
                     data: dialogData
                 }).afterClosed().subscribe(result => {
                     if (result) {
-                        this.utilService.openSnackbar('msg.document.ontkoppelen.uitgevoerd', {document: informatieobject.titel});
+                        this.utilService.openSnackbar('msg.document.ontkoppelen.uitgevoerd',
+                            {document: informatieobject.titel});
                         this.websocketService.suspendListener(this.zaakDocumentenListener);
                         this.loadInformatieObjecten();
                     }
@@ -155,7 +167,8 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     isOntkoppelenDisabled(informatieobject: EnkelvoudigInformatieobject): boolean {
-        return informatieobject['loading'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(informatieobject);
+        return informatieobject['loading'] || this.informatieObjectVerplaatsService.isReedsTeVerplaatsen(
+            informatieobject);
     }
 
     isPreviewBeschikbaar(formaat: FileFormat): boolean {

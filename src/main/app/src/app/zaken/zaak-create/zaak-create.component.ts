@@ -28,7 +28,6 @@ import {Klant} from '../../klanten/model/klanten/klant';
 import {SideNavAction} from '../../shared/side-nav/side-nav-action';
 import {LocationUtil} from '../../shared/location/location-util';
 import {AddressResult} from '../../shared/location/location.service';
-import {ZaakRechten} from '../../policy/model/zaak-rechten';
 import {Zaaktype} from '../model/zaaktype';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {MedewerkerGroepFormField} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-form-field';
@@ -50,7 +49,6 @@ export class ZaakCreateComponent implements OnInit {
     @ViewChild('actionsSideNav') actionsSidenav: MatSidenav;
     readonly sideNavAction = SideNavAction;
     action: SideNavAction;
-    rechten: ZaakRechten;
     private initiatorField: InputFormField;
     private locatieField: InputFormField;
     private medewerkerGroepFormField: MedewerkerGroepFormField;
@@ -72,11 +70,6 @@ export class ZaakCreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Dummy policy rechten, since there is no way yet to get rechten for a new not yet existing case.
-        this.rechten = new ZaakRechten();
-        this.rechten.toevoegenInitiatorPersoon = true;
-        this.rechten.toevoegenInitiatorBedrijf = true;
-
         this.initiatorToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_INITIATOR));
         this.locatieToevoegenIcon.iconClicked.subscribe(this.iconNext(SideNavAction.ZOEK_LOCATIE));
 
@@ -87,11 +80,14 @@ export class ZaakCreateComponent implements OnInit {
         this.vertrouwelijkheidaanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
             Vertrouwelijkheidaanduiding);
 
-        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken').level(HeadingLevel.H1).build();
+        const titel = new HeadingFormFieldBuilder().id('aanmakenZaak').label('actie.zaak.aanmaken')
+                                                   .level(HeadingLevel.H1).build();
 
-        const toekennenGegevensTitel = new HeadingFormFieldBuilder().id('toekennengegevens').label('gegevens.toekennen').level(HeadingLevel.H2).build();
+        const toekennenGegevensTitel = new HeadingFormFieldBuilder().id('toekennengegevens').label('gegevens.toekennen')
+                                                                    .level(HeadingLevel.H2).build();
 
-        const overigeGegevensTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig').level(HeadingLevel.H2).build();
+        const overigeGegevensTitel = new HeadingFormFieldBuilder().id('overigegegevens').label('gegevens.overig')
+                                                                  .level(HeadingLevel.H2).build();
 
         const zaaktype = new SelectFormFieldBuilder().id('zaaktype').label('zaaktype')
                                                      .validators(Validators.required)
@@ -136,14 +132,10 @@ export class ZaakCreateComponent implements OnInit {
                                                        .label('locatie')
                                                        .build();
         this.locatieField.formControl.disable({onlySelf: true});
-        const zaaktypeEnInitiator: AbstractFormField[] = [zaaktype];
-        if (this.rechten.toevoegenInitiatorPersoon || this.rechten.toevoegenInitiatorBedrijf) {
-            zaaktypeEnInitiator.push(this.initiatorField);
-        }
 
         this.createZaakFields = [
             [titel],
-            zaaktypeEnInitiator,
+            [zaaktype, this.initiatorField],
             [startdatum, this.locatieField],
             [toekennenGegevensTitel],
             [this.medewerkerGroepFormField],
@@ -152,7 +144,6 @@ export class ZaakCreateComponent implements OnInit {
             [omschrijving],
             [toelichting]
         ];
-
     }
 
     onFormSubmit(formGroup: FormGroup): void {
@@ -225,11 +216,12 @@ export class ZaakCreateComponent implements OnInit {
         if (zaaktype) {
             this.medewerkerGroepFormField = this.getMedewerkerGroupFormField(
                 zaaktype.zaakafhandelparameters.defaultGroepId, zaaktype.zaakafhandelparameters.defaultBehandelaarId);
-            const index = this.createZaakFields.findIndex(formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
+            const index = this.createZaakFields.findIndex(
+                formRow => formRow.find(formField => formField.fieldType === FieldType.MEDEWERKER_GROEP));
             this.createZaakFields[index] = [this.medewerkerGroepFormField];
 
             // update reference of the array to apply changes
-            this.createZaakFields = Object.assign([], this.createZaakFields);
+            this.createZaakFields = [...this.createZaakFields];
 
             this.vertrouwelijkheidaanduidingField.formControl.setValue(
                 this.vertrouwelijkheidaanduidingen.find(o => o.value === zaaktype.vertrouwelijkheidaanduiding));

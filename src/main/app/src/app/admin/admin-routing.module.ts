@@ -13,6 +13,9 @@ import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabe
 import {ReferentieTabelResolver} from './referentie-tabel-resolver.service';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
+import {MailtemplatesComponent} from './mailtemplates/mailtemplates.component';
+import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
+import {MailtemplateResolver} from './mailtemplate-resolver.service';
 
 const routes: Routes = [
     {
@@ -23,7 +26,9 @@ const routes: Routes = [
             {path: 'parameters/:uuid', component: ParameterEditComponent, resolve: {parameters: ZaakafhandelParametersResolver}},
             {path: 'referentietabellen', component: ReferentieTabellenComponent},
             {path: 'referentietabellen/:id', component: ReferentieTabelComponent, resolve: {tabel: ReferentieTabelResolver}},
-            {path: 'check', component: InrichtingscheckComponent}
+            {path: 'check', component: InrichtingscheckComponent},
+            {path: 'mailtemplates', component: MailtemplatesComponent},
+            {path: 'mailtemplates/:id', component: MailtemplateComponent, resolve: {template: MailtemplateResolver}}
         ]
     }
 ];

@@ -6,7 +6,9 @@
 <div class="static-text">
     <label class="static-text-label">{{label}}</label>
     <div class="static-text-content">
-        <span *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></span>  {{value | empty}}
+        <span *ngIf="fileIcon" class="fa-solid {{fileIcon.icon}} {{fileIcon.color}}"></span>
+        <read-more *ngIf="maxLength" [maxLength]="maxLength" text="{{value | empty}}"></read-more>
+        <ng-container *ngIf="!maxLength">{{value | empty}}</ng-container>
         <mat-icon class="label-icon"
                   [ngClass]="icon.styleClass"
                   *ngIf="hasIcon"

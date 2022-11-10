@@ -126,14 +126,13 @@ public class GebruikersvoorkeurenService {
     }
 
     public void updateDashboardCards(final String medewerkerId, final List<DashboardCardInstelling> cards) {
-        final int[] volgorde = {0};
-        cards.forEach(card -> card.setVolgorde(volgorde[0]++));
         final List<DashboardCardInstelling> existingCards = listDashboardCards(medewerkerId);
         existingCards.forEach(existingCard -> {
             final Optional<DashboardCardInstelling> updatedCard = cards.stream()
                     .filter(card -> existingCard.getCardId().equals(card.getCardId()))
                     .findAny();
             if (updatedCard.isPresent()) {
+                existingCard.setKolom(updatedCard.get().getKolom());
                 existingCard.setVolgorde(updatedCard.get().getVolgorde());
                 entityManager.persist(existingCard);
             } else {

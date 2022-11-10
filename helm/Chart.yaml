@@ -1,0 +1,9 @@
+apiVersion: v2
+name: zaakafhandelcomponent
+description: A Helm chart for installing Zaakafhandelcomponent
+version: 0.1.0
+appVersion: "latest"
+dependencies:
+  - name: solr
+    version: ~6.2.3
+    repository: https://charts.bitnami.com/bitnami

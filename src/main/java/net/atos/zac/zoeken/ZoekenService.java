@@ -11,7 +11,7 @@ import static net.atos.zac.zoeken.model.FilterWaarde.LEEG;
 import static net.atos.zac.zoeken.model.FilterWaarde.NIET_LEEG;
 
 import java.io.IOException;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -90,28 +91,31 @@ public class ZoekenService {
             if (datum != null) {
                 query.addFilterQuery(
                         format("%s:[%s TO %s]", datumVeld.getVeld(),
-                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneOffset.UTC)),
-                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneOffset.UTC))));
+                               datum.van() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.van().atStartOfDay(ZoneId.systemDefault())),
+                               datum.tot() == null ? "*" : DateTimeFormatter.ISO_INSTANT.format(datum.tot().atStartOfDay(ZoneId.systemDefault()))));
             }
         });
 
         zoekParameters.getBeschikbareFilters()
                 .forEach(facetVeld -> query.addFacetField(format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
 
-        zoekParameters.getFilters().forEach((filter, waarde) -> {
-            if (LEEG.is(waarde)) {
-                query.addFilterQuery(format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
-            } else if (NIET_LEEG.is(waarde)) {
-                query.addFilterQuery(format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
-            } else {
-                query.addFilterQuery(format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+        zoekParameters.getFilters().forEach((filter, waardes) -> {
+            if (CollectionUtils.isNotEmpty(waardes)) {
+                final String waarde = String.join("\" OR \"", waardes);
+                if (LEEG.is(waarde)) {
+                    query.addFilterQuery(format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
+                } else if (NIET_LEEG.is(waarde)) {
+                    query.addFilterQuery(format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
+                } else {
+                    query.addFilterQuery(format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                }
             }
         });
 
         zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
-        query.setFacetMissing(true);
+        query.setFacetMissing(zoekParameters.getType() != null);
         query.setFacet(true);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekParameters.getRows());

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ZaakOverzicht} from '../../zaken/model/zaak-overzicht';
 import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 import {ZakenService} from '../../zaken/zaken.service';
@@ -14,7 +14,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
     templateUrl: './zaak-waarschuwingen-card.component.html',
     styleUrls: ['../dashboard-card/dashboard-card.component.less', './zaak-waarschuwingen-card.component.less']
 })
-export class ZaakWaarschuwingenCardComponent extends DashboardCardComponent<ZaakOverzicht> implements OnInit {
+export class ZaakWaarschuwingenCardComponent extends DashboardCardComponent<ZaakOverzicht> {
 
     columns: string[] = ['identificatie', 'streefdatum', 'dagenTotStreefdatum', 'fataledatum', 'dagenTotFataledatum', 'url'];
 
@@ -26,10 +26,10 @@ export class ZaakWaarschuwingenCardComponent extends DashboardCardComponent<Zaak
         return Conditionals.isOverschreden(datum, actual);
     }
 
-    ngOnInit(): void {
+    protected onLoad(afterLoad: () => void): void {
         this.zakenService.listZaakWaarschuwingen().subscribe(zaken => {
             this.dataSource.data = zaken;
+            afterLoad();
         });
     }
-
 }

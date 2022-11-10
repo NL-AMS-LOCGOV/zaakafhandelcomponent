@@ -67,77 +67,98 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
         this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
         this.getIngelogdeMedewerker();
 
-        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
+        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+            Vertrouwelijkheidaanduiding);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status',
+            InformatieobjectStatus);
 
-        const titel = new InputFormFieldBuilder().id('titel').label('titel')
-                                                 .validators(Validators.required)
-                                                 .maxlength(100)
-                                                 .build();
+        const titel = new InputFormFieldBuilder()
+        .id('titel')
+        .label('titel')
+        .validators(Validators.required)
+        .maxlength(100)
+        .build();
 
-        const beschrijving = new InputFormFieldBuilder().id('beschrijving')
-                                                        .label('beschrijving')
-                                                        .maxlength(100)
-                                                        .build();
+        const beschrijving = new InputFormFieldBuilder()
+        .id('beschrijving')
+        .label('beschrijving')
+        .maxlength(100)
+        .build();
 
-        const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                      .uploadURL(this.zaak ?
-                                                          this.informatieObjectenService.getUploadURL(this.zaak.uuid) :
-                                                          this.informatieObjectenService.getUploadURL(this.taak.id))
-                                                      .validators(Validators.required)
-                                                      .build();
+        const inhoudField = new FileFormFieldBuilder()
+        .id('bestandsnaam')
+        .label('bestandsnaam')
+        .uploadURL(this.zaak ?
+            this.informatieObjectenService.getUploadURL(this.zaak.uuid) :
+            this.informatieObjectenService.getUploadURL(this.taak.id))
+        .validators(Validators.required)
+        .maxFileSizeMB(this.configuratieService.readMaxFileSizeMB())
+        .additionalAllowedFileTypes(this.configuratieService.readAdditionalAllowedFileTypes())
+        .build();
 
-        const beginRegistratie = new DateFormFieldBuilder(moment()).id('creatiedatum')
-                                                                   .label('creatiedatum')
-                                                                   .validators(Validators.required)
-                                                                   .build();
+        const beginRegistratie = new DateFormFieldBuilder(moment())
+        .id('creatiedatum')
+        .label('creatiedatum')
+        .validators(Validators.required)
+        .build();
 
-        const taal = new SelectFormFieldBuilder(this.configuratieService.defaultTaal()).id('taal').label('taal')
-                                                                                       .optionLabel('naam').options(this.configuratieService.listTalen())
-                                                                                       .value$(this.configuratieService.defaultTaal())
-                                                                                       .validators(Validators.required)
-                                                                                       .build();
+        const taal = new SelectFormFieldBuilder(this.configuratieService.readDefaultTaal())
+        .id('taal')
+        .label('taal')
+        .optionLabel('naam')
+        .options(this.configuratieService.listTalen())
+        .value$(this.configuratieService.readDefaultTaal())
+        .validators(Validators.required)
+        .build();
 
-        const status = new SelectFormFieldBuilder().id('status').label('status')
-                                                   .validators(Validators.required)
-                                                   .optionLabel('label').options(informatieobjectStatussen)
-                                                   .build();
+        const status = new SelectFormFieldBuilder()
+        .id('status')
+        .label('status')
+        .validators(Validators.required)
+        .optionLabel('label')
+        .options(informatieobjectStatussen)
+        .build();
 
-        const informatieobjectType = new SelectFormFieldBuilder().id('informatieobjectTypeUUID')
-                                                                 .label('informatieobjectType')
-                                                                 .options(this.zaak ?
-                                                                     this.informatieObjectenService.listInformatieobjecttypesForZaak(this.zaak.uuid) :
-                                                                     this.informatieObjectenService.listInformatieobjecttypesForZaak(this.taak.zaakUuid))
-                                                                 .optionLabel('omschrijving')
-                                                                 .validators(Validators.required)
-                                                                 .build();
+        const informatieobjectType = new SelectFormFieldBuilder()
+        .id('informatieobjectTypeUUID')
+        .label('informatieobjectType')
+        .options(this.zaak ?
+            this.informatieObjectenService.listInformatieobjecttypesForZaak(this.zaak.uuid) :
+            this.informatieObjectenService.listInformatieobjecttypesForZaak(this.taak.zaakUuid))
+        .optionLabel('omschrijving')
+        .validators(Validators.required)
+        .build();
 
-        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam).id('auteur').label('auteur')
-                                                                               .validators(Validators.required, Validators.pattern('\\S.*'))
-                                                                               .maxlength(50)
-                                                                               .build();
+        const auteur = new InputFormFieldBuilder(this.ingelogdeMedewerker.naam)
+        .id('auteur')
+        .label('auteur')
+        .validators(Validators.required, Validators.pattern('\\S.*'))
+        .maxlength(50)
+        .build();
 
-        const vertrouwelijk = new SelectFormFieldBuilder().id('vertrouwelijkheidaanduiding')
-                                                          .label('vertrouwelijkheidaanduiding')
-                                                          .optionLabel('label')
-                                                          .options(vertrouwelijkheidsAanduidingen)
-                                                          .validators(Validators.required)
-                                                          .build();
+        const vertrouwelijk = new SelectFormFieldBuilder()
+        .id('vertrouwelijkheidaanduiding')
+        .label('vertrouwelijkheidaanduiding')
+        .optionLabel('label')
+        .options(vertrouwelijkheidsAanduidingen)
+        .validators(Validators.required)
+        .build();
 
-        const ontvangstDatum = new DateFormFieldBuilder().id('ontvangstdatum')
-                                                         .label('ontvangstdatum')
-                                                         .hint(new FormFieldHint(this.translateService.instant(
-                                                             'msg.document.ontvangstdatum.hint')))
-                                                         .build();
+        const ontvangstDatum = new DateFormFieldBuilder()
+        .id('ontvangstdatum')
+        .label('ontvangstdatum')
+        .hint(new FormFieldHint(this.translateService.instant('msg.document.ontvangstdatum.hint')))
+        .build();
 
-        const verzendDatum = new DateFormFieldBuilder().id('verzenddatum')
-                                                       .label('verzenddatum')
-                                                       .build();
+        const verzendDatum = new DateFormFieldBuilder()
+        .id('verzenddatum')
+        .label('verzenddatum')
+        .build();
 
-        const nogmaals = new CheckboxFormFieldBuilder().id('nogmaals')
-                                                       .label(this.translateService.instant(
-                                                           'actie.document.toevoegen.nogmaals'))
-                                                       .build();
+        const nogmaals = new CheckboxFormFieldBuilder()
+        .id('nogmaals')
+        .label(this.translateService.instant('actie.document.toevoegen.nogmaals'))
+        .build();
 
         if (this.zaak) {
             this.fields =
@@ -158,7 +179,8 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
 
         this.subscriptions$.push(informatieobjectType.formControl.valueChanges.subscribe(value => {
             if (value) {
-                vertrouwelijk.formControl.setValue(vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
+                vertrouwelijk.formControl.setValue(
+                    vertrouwelijkheidsAanduidingen.find(option => option.value === value.vertrouwelijkheidaanduiding));
             }
         }));
 
@@ -208,11 +230,11 @@ export class InformatieObjectAddComponent implements OnInit, OnDestroy {
                 }
             });
 
-            this.informatieObjectenService.createEnkelvoudigInformatieobject(this.zaak ? this.zaak.uuid : this.taak.zaakUuid,
+            this.informatieObjectenService.createEnkelvoudigInformatieobject(
+                this.zaak ? this.zaak.uuid : this.taak.zaakUuid,
                 this.zaak ? this.zaak.uuid : this.taak.id, infoObject, !!this.taak)
                 .subscribe((document) => {
                     this.document.emit(document);
-                    this.utilService.openSnackbar('msg.document.toegevoegd.aan.zaak');
                     if (formGroup.get('nogmaals').value) {
                         this.resetForm(formGroup);
                     } else {

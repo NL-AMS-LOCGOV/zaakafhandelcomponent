@@ -48,7 +48,7 @@ export class FormulierBuilder {
         this._formulier.taak = taak;
         this._formulier.tabellen = taak.tabellen;
         this._formulier.dataElementen = taak.taakdata;
-        this._formulier.initBehandelForm(taak.status === TaakStatus.Afgerond || !taak.rechten.wijzigenFormulier);
+        this._formulier.initBehandelForm(taak.status === TaakStatus.Afgerond || !taak.rechten.wijzigen);
         return this;
     }
 

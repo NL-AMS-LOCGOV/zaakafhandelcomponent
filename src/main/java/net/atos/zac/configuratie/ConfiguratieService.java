@@ -6,6 +6,7 @@
 package net.atos.zac.configuratie;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +31,18 @@ import net.atos.zac.configuratie.model.Taal;
 @Transactional
 public class ConfiguratieService {
 
+    private static final String NONE = "<NONE>";
+
     @PersistenceContext(unitName = "ZaakafhandelcomponentPU")
     private EntityManager entityManager;
+
+    @Inject
+    @ConfigProperty(name = "MAX_FILE_SIZE_MB")
+    private Long maxFileSizeMB;
+
+    @Inject
+    @ConfigProperty(name = "ADDITIONAL_ALLOWED_FILE_TYPES", defaultValue = NONE)
+    private String additionalAllowedFileTypes;
 
     public List<Taal> listTalen() {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -58,6 +69,15 @@ public class ConfiguratieService {
         final TypedQuery<Taal> emQuery = entityManager.createQuery(query);
         final List<Taal> talen = emQuery.getResultList();
         return talen.isEmpty() ? null : talen.get(0);
+    }
+
+    public long readMaxFileSizeMB() {
+        return maxFileSizeMB;
+    }
+
+    public List<String> readAdditionalAllowedFileTypes() {
+        return additionalAllowedFileTypes.equals(NONE) ? Collections.emptyList() :
+                List.of(additionalAllowedFileTypes.split(","));
     }
 
     //TODO zaakafhandelcomponent#1468 vervangen van onderstaande placeholders

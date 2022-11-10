@@ -16,8 +16,7 @@
     <name>Zaakafhandelcomponent</name>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -184,6 +183,15 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.10.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -267,7 +275,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.2.0</version>
+                <version>6.2.1</version>
                 <executions>
                     <execution>
                         <id>kvk-zoeken-client</id>
@@ -278,7 +286,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/zoeken-openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
-                            <library>microprofile</library>
                             <modelPackage>net.atos.client.kvk.zoeken.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
@@ -287,9 +294,12 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <strictSpec>true</strictSpec>
                             <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
-                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <disallowAdditionalPropertiesIfNotPresent>false
+                                </disallowAdditionalPropertiesIfNotPresent>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -302,7 +312,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-specs/kvk/basisprofiel-openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
-                            <library>microprofile</library>
                             <modelPackage>net.atos.client.kvk.basisprofiel.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
@@ -311,9 +320,12 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <strictSpec>true</strictSpec>
                             <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
-                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <disallowAdditionalPropertiesIfNotPresent>false
+                                </disallowAdditionalPropertiesIfNotPresent>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -326,7 +338,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-specs/brp/openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
-                            <library>microprofile</library>
                             <modelPackage>net.atos.client.brp.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
@@ -335,9 +346,12 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <strictSpec>true</strictSpec>
                             <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
-                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <disallowAdditionalPropertiesIfNotPresent>false
+                                </disallowAdditionalPropertiesIfNotPresent>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -350,7 +364,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-specs/vrl/openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
-                            <library>microprofile</library>
                             <modelPackage>net.atos.client.vrl.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
@@ -359,9 +372,12 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <strictSpec>true</strictSpec>
                             <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
-                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <disallowAdditionalPropertiesIfNotPresent>false
+                                </disallowAdditionalPropertiesIfNotPresent>
                                 <openApiNullable>false</openApiNullable>
                             </configOptions>
                         </configuration>
@@ -375,7 +391,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-specs/bag/openapi.yaml</inputSpec>
                             <output>${project.basedir}</output>
                             <generatorName>java</generatorName>
-                            <library>microprofile</library>
                             <modelPackage>net.atos.client.bag.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
@@ -384,9 +399,12 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <strictSpec>true</strictSpec>
                             <configOptions>
+                                <library>microprofile</library>
+                                <microprofileRestClientVersion>2.0</microprofileRestClientVersion>
                                 <sourceFolder>src/generated/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
-                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <disallowAdditionalPropertiesIfNotPresent>false
+                                </disallowAdditionalPropertiesIfNotPresent>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -486,7 +504,7 @@
                     <plugin>
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.3.1</version>
                         <configuration>
                             <containerizingMode>packaged</containerizingMode>
                             <from>
@@ -498,7 +516,6 @@
                             <container>
                                 <ports>
                                     <port>8080</port>
-                                    <port>8787</port>
                                     <port>9990</port>
                                 </ports>
                                 <entrypoint>

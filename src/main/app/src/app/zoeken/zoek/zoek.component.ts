@@ -8,7 +8,6 @@ import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular
 import {ZoekObject, ZoekObjectType} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
-import {Resultaat} from '../../shared/model/resultaat';
 import {MatPaginator} from '@angular/material/paginator';
 import {merge} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -18,6 +17,7 @@ import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
 import {ZoekVeld} from '../model/zoek-veld';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
+import {ZoekResultaat} from '../model/zoek-resultaat';
 
 @Component({
     selector: 'zac-zoeken',
@@ -41,11 +41,13 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     readonly zoekObjectType = ZoekObjectType;
-    zoekResultaat: Resultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: []};
+    zoekResultaat: ZoekResultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: [], filters: null};
+    zoekParameters: ZoekParameters = new ZoekParameters();
     isLoadingResults = true;
     slow = false;
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
+    hasSearched = false;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
@@ -72,17 +74,16 @@ export class ZoekComponent implements AfterViewInit {
             })
         ).subscribe(data => {
             this.paginator.length = data.totaal;
+            this.hasSearched = true;
             this.zoekResultaat = data;
         });
-
     }
 
     getZoekParameters(): ZoekParameters {
-        const zoekParameters: ZoekParameters = new ZoekParameters();
-        zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
-        zoekParameters.page = this.paginator.pageIndex;
-        zoekParameters.rows = this.paginator.pageSize;
-        return zoekParameters;
+        this.zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
+        this.zoekParameters.page = this.paginator.pageIndex;
+        this.zoekParameters.rows = this.paginator.pageSize;
+        return this.zoekParameters;
     }
 
     getZaakZoekObject(zoekObject: ZoekObject): ZaakZoekObject {
@@ -92,4 +93,10 @@ export class ZoekComponent implements AfterViewInit {
     getTaakZoekObject(zoekObject: ZoekObject): TaakZoekObject {
         return zoekObject as TaakZoekObject;
     }
+
+    hasOption(options: string[]) {
+        return options.length ? !(options.length === 1 && options[0] === '-NULL-') : false;
+    }
+
+    originalOrder = () => 0;
 }

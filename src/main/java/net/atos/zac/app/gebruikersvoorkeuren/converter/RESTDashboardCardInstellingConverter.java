@@ -16,6 +16,8 @@ public class RESTDashboardCardInstellingConverter {
         final RESTDashboardCardInstelling restCard = new RESTDashboardCardInstelling();
         restCard.id = card.getId();
         restCard.cardId = card.getCardId();
+        restCard.column = card.getKolom();
+        restCard.row = card.getVolgorde();
         return restCard;
     }
 
@@ -24,6 +26,8 @@ public class RESTDashboardCardInstellingConverter {
         card.setId(restCard.id);
         card.setCardId(restCard.cardId);
         card.setSignaleringType(restCard.signaleringType);
+        card.setKolom(restCard.column);
+        card.setVolgorde(restCard.row);
         return card;
     }
 

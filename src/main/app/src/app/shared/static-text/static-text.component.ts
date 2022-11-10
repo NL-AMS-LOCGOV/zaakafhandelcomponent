@@ -18,6 +18,7 @@ export class StaticTextComponent implements OnInit, OnChanges {
     @Input() value: any;
     @Input() icon: TextIcon;
     @Input() fileIcon: any;
+    @Input() maxLength: number;
     @Output() iconClicked = new EventEmitter<void>();
 
     showIcon: boolean;

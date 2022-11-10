@@ -11,8 +11,8 @@ export class OntkoppeldDocumentListParameters extends ListParameters {
 
     zaakID: string;
     ontkoppeldDoor: User;
-    ontkoppeldOp: { van: string, tot: string } = {van: null, tot: null};
-    creatiedatum: { van: string, tot: string } = {van: null, tot: null};
+    ontkoppeldOp: { van: Date, tot: Date } = {van: null, tot: null};
+    creatiedatum: { van: Date, tot: Date } = {van: null, tot: null};
     titel: string;
     reden: string;
 

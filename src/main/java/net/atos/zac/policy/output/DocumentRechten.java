@@ -12,16 +12,9 @@ public class DocumentRechten {
 
     private final boolean lezen;
 
-    private final boolean verwijderen;
-
-    // (ont)koppelen of verplaatsen van het enkelvoudig informatieobject
-    private final boolean koppelen;
-
-    private final boolean downloaden;
-
-    private final boolean toevoegenNieuweVersie;
-
     private final boolean wijzigen;
+
+    private final boolean verwijderen;
 
     private final boolean vergrendelen;
 
@@ -32,19 +25,13 @@ public class DocumentRechten {
     @JsonbCreator
     public DocumentRechten(
             @JsonbProperty("lezen") final boolean lezen,
-            @JsonbProperty("verwijderen") final boolean verwijderen,
-            @JsonbProperty("koppelen") final boolean koppelen,
-            @JsonbProperty("downloaden") final boolean downloaden,
-            @JsonbProperty("toevoegen_nieuwe_versie") final boolean toevoegenNieuweVersie,
             @JsonbProperty("wijzigen") final boolean wijzigen,
+            @JsonbProperty("verwijderen") final boolean verwijderen,
             @JsonbProperty("vergrendelen") final boolean vergrendelen,
             @JsonbProperty("ontgrendelen") final boolean ontgrendelen,
             @JsonbProperty("ondertekenen") final boolean ondertekenen) {
         this.lezen = lezen;
         this.verwijderen = verwijderen;
-        this.koppelen = koppelen;
-        this.downloaden = downloaden;
-        this.toevoegenNieuweVersie = toevoegenNieuweVersie;
         this.wijzigen = wijzigen;
         this.vergrendelen = vergrendelen;
         this.ontgrendelen = ontgrendelen;
@@ -57,18 +44,6 @@ public class DocumentRechten {
 
     public boolean getVerwijderen() {
         return verwijderen;
-    }
-
-    public boolean getKoppelen() {
-        return koppelen;
-    }
-
-    public boolean getDownloaden() {
-        return downloaden;
-    }
-
-    public boolean getToevoegenNieuweVersie() {
-        return toevoegenNieuweVersie;
     }
 
     public boolean getWijzigen() {

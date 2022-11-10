@@ -6,6 +6,7 @@
 package net.atos.zac.app.zaken.converter;
 
 import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
+import static net.atos.client.zgw.ztc.model.Statustype.isIntake;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.BSN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
@@ -194,6 +195,7 @@ public class RESTZaakConverter {
         restZaak.isDeelzaak = zaak.isDeelzaak();
         restZaak.isOpen = zaak.isOpen();
         restZaak.isHeropend = isHeropend(statustype);
+        restZaak.isInIntakeFase = isIntake(statustype);
         restZaak.isOntvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));

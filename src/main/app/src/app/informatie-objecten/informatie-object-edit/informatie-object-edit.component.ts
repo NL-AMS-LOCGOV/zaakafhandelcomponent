@@ -64,20 +64,29 @@ export class InformatieObjectEditComponent implements OnInit, OnDestroy {
         this.formConfig = new FormConfigBuilder().saveText('actie.toevoegen').cancelText('actie.annuleren').build();
         this.getIngelogdeMedewerker();
 
-        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding', Vertrouwelijkheidaanduiding);
-        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status', InformatieobjectStatus);
+        const vertrouwelijkheidsAanduidingen = this.utilService.getEnumAsSelectList('vertrouwelijkheidaanduiding',
+            Vertrouwelijkheidaanduiding);
+        const informatieobjectStatussen = this.utilService.getEnumAsSelectList('informatieobject.status',
+            InformatieobjectStatus);
 
-        const inhoudField = new FileFormFieldBuilder().id('bestandsnaam').label('bestandsnaam')
-                                                      .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
-                                                      .build();
+        const inhoudField = new FileFormFieldBuilder()
+        .id('bestandsnaam')
+        .label('bestandsnaam')
+        .uploadURL(this.informatieObjectenService.getUploadURL(this.zaakUuid))
+        .maxFileSizeMB(this.configuratieService.readMaxFileSizeMB())
+        .additionalAllowedFileTypes(this.configuratieService.readAdditionalAllowedFileTypes())
+        .build();
 
-        const titel = new InputFormFieldBuilder(this.infoObject.titel).id('titel').label('titel')
-                                                                      .validators(Validators.required)
-                                                                      .build();
+        const titel = new InputFormFieldBuilder(this.infoObject.titel)
+        .id('titel')
+        .label('titel')
+        .validators(Validators.required)
+        .build();
 
-        const beschrijving = new InputFormFieldBuilder(this.infoObject.beschrijving).id('beschrijving')
-                                                                                    .label('beschrijving')
-                                                                                    .build();
+        const beschrijving = new InputFormFieldBuilder(this.infoObject.beschrijving)
+        .id('beschrijving')
+        .label('beschrijving')
+        .build();
 
         const taal = new SelectFormFieldBuilder({
             naam: this.translateService.instant(this.infoObject.taal.naam),

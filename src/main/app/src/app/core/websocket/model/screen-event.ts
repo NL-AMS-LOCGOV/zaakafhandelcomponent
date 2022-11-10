@@ -5,15 +5,16 @@
 
 import {ObjectType} from './object-type';
 import {Opcode} from './opcode';
+import {ScreenEventId} from './screen-event-id';
 
 export class ScreenEvent {
     private _timestamp: number;
     opcode: Opcode;
     objectType: ObjectType;
-    objectId: string;
+    objectId: ScreenEventId;
     private _key: string;
 
-    constructor(opcode: Opcode, objectType: ObjectType, objectId: string, timestamp?: number) {
+    constructor(opcode: Opcode, objectType: ObjectType, objectId: ScreenEventId, timestamp?: number) {
         this._timestamp = timestamp;
         this.opcode = opcode;
         this.objectType = objectType;
@@ -41,7 +42,7 @@ export class ScreenEvent {
         return this.makeKey(Opcode.ANY, ObjectType.ANY, this.objectId);
     }
 
-    private makeKey(opcode: Opcode, objectType: ObjectType, objectId: string): string {
-        return opcode + ';' + objectType + ';' + objectId;
+    private makeKey(opcode: Opcode, objectType: ObjectType, objectId: ScreenEventId): string {
+        return opcode + ';' + objectType + ';' + objectId.resource;
     }
 }

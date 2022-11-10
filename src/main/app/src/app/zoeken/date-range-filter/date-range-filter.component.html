@@ -6,8 +6,8 @@
 <mat-form-field appearance="standard">
     <mat-label>{{label | translate}}</mat-label>
     <mat-date-range-input [rangePicker]="datumPicker">
-        <input matStartDate placeholder="van" [(ngModel)]="range.van" (dateChange)="changed.emit()">
-        <input matEndDate placeholder="tot" [(ngModel)]="range.tot" (dateChange)="changed.emit()">
+        <input matStartDate placeholder="van" [(ngModel)]="range.van">
+        <input matEndDate placeholder="tot" [(ngModel)]="range.tot" (dateChange)="dateChange()">
     </mat-date-range-input>
     <mat-datepicker-toggle *ngIf="!hasDate()" matSuffix [for]="datumPicker"></mat-datepicker-toggle>
     <mat-icon *ngIf="hasDate()" matSuffix (click)="clearDate($event)">clear</mat-icon>

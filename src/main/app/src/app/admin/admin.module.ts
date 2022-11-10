@@ -14,6 +14,9 @@ import {GroepSignaleringenComponent} from './groep-signaleringen/groep-signaleri
 import {ReferentieTabellenComponent} from './referentie-tabellen/referentie-tabellen.component';
 import {ReferentieTabelComponent} from './referentie-tabel/referentie-tabel.component';
 import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.component';
+import {MailtemplatesComponent} from './mailtemplates/mailtemplates.component';
+import {MailtemplateComponent} from './mailtemplate/mailtemplate.component';
+import {NgxEditorModule} from 'ngx-editor';
 
 @NgModule({
     declarations: [
@@ -22,13 +25,16 @@ import {InrichtingscheckComponent} from './inrichtingscheck/inrichtingscheck.com
         ParameterEditComponent,
         ReferentieTabellenComponent,
         ReferentieTabelComponent,
-        InrichtingscheckComponent
+        InrichtingscheckComponent,
+        MailtemplatesComponent,
+        MailtemplateComponent
     ],
     exports: [],
     imports: [
         SharedModule,
         ZoekenModule,
-        AdminRoutingModule
+        AdminRoutingModule,
+        NgxEditorModule
     ]
 })
 export class AdminModule {

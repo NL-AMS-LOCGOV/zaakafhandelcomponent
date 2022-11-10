@@ -115,13 +115,15 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     private createTaakForm(taak: Taak): void {
-        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigenFormulier) {
-            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden').build();
+        if (this.taak.status !== TaakStatus.Afgerond && this.taak.rechten.wijzigen) {
+            this.formConfig = new FormConfigBuilder().partialText('actie.opslaan').saveText('actie.opslaan.afronden')
+                                                     .build();
         } else {
             this.formConfig = null;
         }
 
-        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie).behandelForm(taak).build();
+        this.formulier = this.taakFormulierenService.getFormulierBuilder(this.taak.formulierDefinitie)
+                             .behandelForm(taak).build();
         if (this.formulier.disablePartialSave && this.formConfig) {
             this.formConfig.partialButtonText = null;
         }
@@ -133,7 +135,8 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             new MedewerkerGroepFieldBuilder(this.taak.groep, this.taak.behandelaar).id('medewerker-groep')
                                                                                    .groepLabel('groep.-kies-')
                                                                                    .groepRequired()
-                                                                                   .medewerkerLabel('behandelaar.-kies-')
+                                                                                   .medewerkerLabel(
+                                                                                       'behandelaar.-kies-')
                                                                                    .build());
         this.editFormFields.set('toelichting',
             new TextareaFormFieldBuilder(this.taak.toelichting).id('toelichting')
@@ -141,25 +144,24 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
                                                                .maxlength(1000)
                                                                .build());
 
-        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon', 'msg.datum.overschreden', 'warning');
+        this.streefdatumIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem', 'warningTaakVerlopen_icon',
+            'msg.datum.overschreden', 'warning');
     }
 
     private setupMenu(): void {
         this.menu.push(new HeaderMenuItem('taak'));
 
-        if (this.taak.status !== TaakStatus.Afgerond) {
-            if (this.taak.rechten.toevoegenDocument) {
+        if (this.taak.rechten.wijzigen) {
+            this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
+                this.actionsSidenav.open();
+                this.action = SideNavAction.DOCUMENT_MAKEN;
+            }, 'note_add'));
+
+            if (this.taak.status !== TaakStatus.Afgerond) {
                 this.menu.push(new ButtonMenuItem('actie.document.toevoegen', () => {
                     this.actionsSidenav.open();
                     this.action = SideNavAction.DOCUMENT_TOEVOEGEN;
                 }, 'upload_file'));
-            }
-
-            if (this.taak.rechten.creeerenDocument) {
-                this.menu.push(new ButtonMenuItem('actie.document.maken', () => {
-                    this.actionsSidenav.open();
-                    this.action = SideNavAction.DOCUMENT_MAKEN;
-                }, 'note_add'));
             }
         }
     }
@@ -197,7 +199,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
             this.taak.groep = event['medewerker-groep'].groep;
             this.taak.behandelaar = event['medewerker-groep'].medewerker;
             this.websocketService.suspendListener(this.taakListener);
-            this.takenService.assign(this.taak).subscribe(() => {
+            this.takenService.toekennen(this.taak).subscribe(() => {
                 if (this.taak.behandelaar) {
                     this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: this.taak.behandelaar.naam});
                 } else {
@@ -219,7 +221,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private ophalenTaak(event?: ScreenEvent) {
         if (event) {
-            console.log('callback ophalenTaak: ' + event.key);
+            console.debug('callback ophalenTaak: ' + event.key);
         }
         this.subscriptions$.push(this.route.data.subscribe(data => {
             this.takenService.readTaak(data['taak'].id).subscribe(taak => {
@@ -236,7 +238,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     private assignToMe(): void {
         this.websocketService.suspendListener(this.taakListener);
-        this.takenService.assignToLoggedOnUser(this.taak).subscribe(taak => {
+        this.takenService.toekennenAanIngelogdeMedewerker(this.taak).subscribe(taak => {
             this.taak.behandelaar = taak.behandelaar;
             this.utilService.openSnackbar('msg.taak.toegekend', {behandelaar: taak.behandelaar.naam});
             this.init(this.taak);

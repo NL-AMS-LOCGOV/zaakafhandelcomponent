@@ -15,14 +15,14 @@ import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonValue;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import net.atos.zac.event.Opcode;
-import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.websocket.event.ScreenEvent;
+import net.atos.zac.websocket.event.ScreenEventId;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 /**
  * Converts websocket messages to SubscriptionType.SubscriptionMessage objects
@@ -41,6 +41,8 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
 
     private static final String EVENT_OBJECT_ID = "objectId";
 
+    private static final String EVENT_RESOURCE = "resource";
+
     @Override
     public SubscriptionType.SubscriptionMessage decode(final String jsonMessage) throws DecodeException {
         try (final JsonReader jsonReader = Json.createReader(new StringReader(jsonMessage))) {
@@ -54,8 +56,8 @@ public class WebSocketSubscriptionMessageDecoder implements Decoder.Text<Subscri
             final JsonObject jsonEvent = jsonObject.getJsonObject(EVENT);
             final Opcode operatie = Opcode.valueOf(jsonEvent.getString(EVENT_OPCODE));
             final ScreenEventType objectType = ScreenEventType.valueOf(jsonEvent.getString(EVENT_TYPE));
-            final JsonValue objectId = jsonEvent.get(EVENT_OBJECT_ID);
-            return subscriptionType.message(new ScreenEvent(operatie, objectType, objectId != null ? objectId.toString() : null));
+            final String resource = jsonEvent.getJsonObject(EVENT_OBJECT_ID).getString(EVENT_RESOURCE);
+            return subscriptionType.message(new ScreenEvent(operatie, objectType, new ScreenEventId(resource, null)));
         }
     }
 

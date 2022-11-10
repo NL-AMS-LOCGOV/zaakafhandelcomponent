@@ -27,8 +27,9 @@ import org.junit.jupiter.api.Test;
 
 import net.atos.zac.event.Opcode;
 import net.atos.zac.websocket.SessionRegistry;
-import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.websocket.event.ScreenEvent;
+import net.atos.zac.websocket.event.ScreenEventId;
+import net.atos.zac.websocket.event.ScreenEventType;
 
 public class SessionRegistryTest {
 
@@ -328,43 +329,61 @@ public class SessionRegistryTest {
         }
     };
 
-    private static final ScreenEvent CREATED_ZAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, "1");
+    private static final ScreenEventId ID1 = new ScreenEventId("1", null);
 
-    private static final ScreenEvent CREATED_TAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.TAAK, "1");
+    private static final ScreenEventId ID1A = new ScreenEventId("\"1\"", null);
 
-    private static final ScreenEvent CREATED_DOCUMENT1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
+    private static final ScreenEventId ID1B = new ScreenEventId("\"\"1\"\"", null);
 
-    private static final ScreenEvent UPDATED_ZAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "1");
+    private static final ScreenEventId ID2 = new ScreenEventId("2", null);
 
-    private static final ScreenEvent UPDATED_ZAAK1a = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "\"1\"");
+    private static final ScreenEvent CREATED_ZAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.ZAAK, ID1);
 
-    private static final ScreenEvent UPDATED_ZAAK1b = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "\"\"1\"\"");
+    private static final ScreenEvent CREATED_TAAK1 = new ScreenEvent(Opcode.CREATED, ScreenEventType.TAAK, ID1);
 
-    private static final ScreenEvent UPDATED_ZAAK2 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, "2");
+    private static final ScreenEvent CREATED_DOCUMENT1 = new ScreenEvent(Opcode.CREATED,
+                                                                         ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT,
+                                                                         ID1);
 
-    private static final ScreenEvent DELETED_ZAAK2 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, "2");
+    private static final ScreenEvent UPDATED_ZAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, ID1);
 
-    private static final ScreenEvent UPDATED_TAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.TAAK, "1");
+    private static final ScreenEvent UPDATED_ZAAK1a = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, ID1A);
 
-    private static final ScreenEvent UPDATED_DOCUMENT1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
+    private static final ScreenEvent UPDATED_ZAAK1b = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, ID1B);
 
-    private static final ScreenEvent UPDATED_ZAAKROLLEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_ROLLEN, "1");
+    private static final ScreenEvent UPDATED_ZAAK2 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK, ID2);
 
-    private static final ScreenEvent UPDATED_ZAAKTAKEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_TAKEN, "1");
+    private static final ScreenEvent DELETED_ZAAK2 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, ID2);
 
-    private static final ScreenEvent UPDATED_ZAAKDOCUMENTEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_INFORMATIEOBJECTEN, "1");
+    private static final ScreenEvent UPDATED_TAAK1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.TAAK, ID1);
 
-    private static final ScreenEvent DELETED_ZAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, "1");
+    private static final ScreenEvent UPDATED_DOCUMENT1 = new ScreenEvent(Opcode.UPDATED,
+                                                                         ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT,
+                                                                         ID1);
 
-    private static final ScreenEvent DELETED_TAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.TAAK, "1");
+    private static final ScreenEvent UPDATED_ZAAKROLLEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_ROLLEN,
+                                                                           ID1);
 
-    private static final ScreenEvent DELETED_DOCUMENT1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT, "1");
+    private static final ScreenEvent UPDATED_ZAAKTAKEN1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ZAAK_TAKEN,
+                                                                          ID1);
 
-    private static final ScreenEvent ANY_ZAAK1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ZAAK, "1");
+    private static final ScreenEvent UPDATED_ZAAKDOCUMENTEN1 = new ScreenEvent(Opcode.UPDATED,
+                                                                               ScreenEventType.ZAAK_INFORMATIEOBJECTEN,
+                                                                               ID1);
 
-    private static final ScreenEvent UPDATED_ANY1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ANY, "1");
+    private static final ScreenEvent DELETED_ZAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.ZAAK, ID1);
 
-    private static final ScreenEvent ANY_ANY1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ANY, "1");
+    private static final ScreenEvent DELETED_TAAK1 = new ScreenEvent(Opcode.DELETED, ScreenEventType.TAAK, ID1);
+
+    private static final ScreenEvent DELETED_DOCUMENT1 = new ScreenEvent(Opcode.DELETED,
+                                                                         ScreenEventType.ENKELVOUDIG_INFORMATIEOBJECT,
+                                                                         ID1);
+
+    private static final ScreenEvent ANY_ZAAK1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ZAAK, ID1);
+
+    private static final ScreenEvent UPDATED_ANY1 = new ScreenEvent(Opcode.UPDATED, ScreenEventType.ANY, ID1);
+
+    private static final ScreenEvent ANY_ANY1 = new ScreenEvent(Opcode.ANY, ScreenEventType.ANY, ID1);
 
     @Test
     public void testFixGelijk() {

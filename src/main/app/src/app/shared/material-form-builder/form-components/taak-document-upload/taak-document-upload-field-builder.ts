@@ -13,7 +13,6 @@ export class TaakDocumentUploadFieldBuilder extends AbstractFileFormFieldBuilder
         super();
         this.formField = new TaakDocumentUploadFormField();
         this.formField.initControl(value);
-        this.updateHint();
     }
 
     defaultTitel(titel: string): this {
@@ -32,5 +31,4 @@ export class TaakDocumentUploadFieldBuilder extends AbstractFileFormFieldBuilder
             throw new Error('zaakUUID is required');
         }
     }
-
 }

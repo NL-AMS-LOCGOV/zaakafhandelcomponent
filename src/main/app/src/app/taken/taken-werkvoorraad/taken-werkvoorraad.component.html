@@ -59,9 +59,9 @@
         <ng-container matColumnDef="zaaktypeOmschrijving_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="zaaktype"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.TAAK_ZAAKTYPE]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.TAAK_ZAAKTYPE]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.TAAK_ZAAKTYPE] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.ZAAKTYPE]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.ZAAKTYPE]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.ZAAKTYPE] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>
@@ -72,9 +72,9 @@
 
         <ng-container matColumnDef="creatiedatum_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="creatiedatum"
-                                  [range]="dataSource.zoekParameters.datums[datumVeld.TAAK_CREATIEDATUM]" (changed)="filtersChange()">
-                </zac-datum-filter>
+                <zac-date-range-filter label="creatiedatum"
+                                       [range]="dataSource.zoekParameters.datums[datumVeld.STARTDATUM]" (changed)="filtersChange()">
+                </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="creatiedatum">
@@ -84,9 +84,9 @@
 
         <ng-container matColumnDef="streefdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
-                <zac-datum-filter label="streefdatum"
-                                  [range]="dataSource.zoekParameters.datums[datumVeld.TAAK_STREEFDATUM]" (changed)="filtersChange()">
-                </zac-datum-filter>
+                <zac-date-range-filter label="streefdatum"
+                                       [range]="dataSource.zoekParameters.datums[datumVeld.STREEFDATUM]" (changed)="filtersChange()">
+                </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="streefdatum">
@@ -107,9 +107,9 @@
         <ng-container matColumnDef="groep_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="groep"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.TAAK_GROEP]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.TAAK_GROEP]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.TAAK_GROEP] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.GROEP]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.GROEP]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.GROEP] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>
@@ -121,9 +121,9 @@
         <ng-container matColumnDef="behandelaar_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="behandelaar"
-                                  [selected]="dataSource.zoekParameters.filters[filterVeld.TAAK_BEHANDELAAR]"
-                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.TAAK_BEHANDELAAR]"
-                                  (changed)="dataSource.zoekParameters.filters[filterVeld.TAAK_BEHANDELAAR] = $event; filtersChange()">
+                                  [selected]="dataSource.zoekParameters.filters[filterVeld.BEHANDELAAR]"
+                                  [opties]="this.dataSource.beschikbareFilters[filterVeld.BEHANDELAAR]"
+                                  (changed)="dataSource.zoekParameters.filters[filterVeld.BEHANDELAAR] = $event; filtersChange()">
                 </zac-facet-filter>
             </th>
         </ng-container>

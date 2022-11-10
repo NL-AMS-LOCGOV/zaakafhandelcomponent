@@ -6,12 +6,12 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
-    selector: 'zac-datum-filter',
-    templateUrl: './datum-filter.component.html',
-    styleUrls: ['./datum-filter.component.less']
+    selector: 'zac-date-range-filter',
+    templateUrl: './date-range-filter.component.html',
+    styleUrls: ['./date-range-filter.component.less']
 })
-export class DatumFilterComponent {
-    @Input() range: { van, tot };
+export class DateRangeFilterComponent {
+    @Input() range: { van: Date, tot: Date };
     @Input() label: string;
     @Output() changed = new EventEmitter<void>();
 
@@ -23,6 +23,12 @@ export class DatumFilterComponent {
     }
 
     hasDate(): boolean {
-        return this.range.van != null;
+        return this.range.van != null && this.range.tot != null;
+    }
+
+    dateChange(): void {
+        if (this.hasDate()) {
+            this.changed.emit();
+        }
     }
 }
