@@ -57,7 +57,7 @@
                     <td mat-cell *matCellDef="let document">
                         <mat-checkbox (click)="$event.stopPropagation()"
                                       (change)="updateTeOndertekenen($event, document)"
-                                      [checked]="teOndertekenenSelection.isSelected(document)"
+                                      [checked]="teOndertekenenSelection.isSelected(document) || document.ondertekening"
                                       [disabled]="!document.rechten.ondertekenen">
                         </mat-checkbox>
                     </td>
