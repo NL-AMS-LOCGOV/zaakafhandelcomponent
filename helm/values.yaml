@@ -89,6 +89,12 @@ indexerenSchedule: "*/1 * * * *"
 # Schedule of the signaleren job in CRON job format
 signalerenSchedule: "0 2 * * *"
 
+# Maximum size (in Mega Bytes) of files that can be uploaded.
+maxFileSizeMB: 80
+
+# An optional list of additional file extensions that can be uploaded
+# additionalAllowedFileTypes: aaa,bbb,ccc
+
 # Enable Java remote debugging
 remoteDebug: false
 

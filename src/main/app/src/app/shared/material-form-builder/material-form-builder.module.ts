@@ -49,6 +49,8 @@ import {MedewerkerGroepComponent} from './form-components/select-medewerker/mede
 import {DividerComponent} from './form-components/divider/divider.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
+import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
+import {NgxEditorModule} from 'ngx-editor';
 
 @NgModule({
     declarations: [
@@ -56,6 +58,7 @@ import {HiddenComponent} from './form-components/hidden/hidden.component';
         FormFieldComponent,
         DateComponent,
         HeadingComponent,
+        HtmlEditorComponent,
         InputComponent,
         FileComponent,
         SelectComponent,
@@ -97,13 +100,15 @@ import {HiddenComponent} from './form-components/hidden/hidden.component';
         RouterModule,
         FormsModule,
         MatProgressSpinnerModule,
-        MatDividerModule
+        MatDividerModule,
+        NgxEditorModule
     ],
     exports: [
         FormComponent,
         FormFieldComponent,
         DateComponent,
         HeadingComponent,
+        HtmlEditorComponent,
         InputComponent,
         FileComponent,
         SelectComponent,

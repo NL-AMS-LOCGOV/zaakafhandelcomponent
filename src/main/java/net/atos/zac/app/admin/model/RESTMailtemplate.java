@@ -15,7 +15,7 @@ public class RESTMailtemplate {
 
     public String body;
 
-    public String mailTemplateEnum;
+    public String mail;
 
     public Long parent;
 
