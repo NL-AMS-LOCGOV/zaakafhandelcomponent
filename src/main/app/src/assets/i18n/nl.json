@@ -306,6 +306,7 @@
   "mail.ZAAK_AFGEHANDELD": "Zaak afgehandeld",
   "mail.PROCES_AANVULLENDE_INFORMATIE": "Proces aanvullende informatie",
   "mail.PROCES_ONTVANGSTBEVESTIGING": "Proces ontvangstbevestiging",
+  "mail.PROCES_ADVIES": "Proces advies",
   "mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD": "Signalering zaak document toegevoegd",
   "mail.SIGNALERING_ZAAK_OP_NAAM": "Signalering zaak op naam",
   "mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM": "Signalering zaak verlopend streefdatum",

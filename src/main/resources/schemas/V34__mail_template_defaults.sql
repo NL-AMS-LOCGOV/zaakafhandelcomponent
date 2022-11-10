@@ -1,53 +1,26 @@
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Zaak ontvankelijk', 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknummer})',
-        '<pre><code>Beste klant,
-
-Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.
-
-Met vriendelijke groet,
-
-Gemeente</code></pre>', 'ZAAK_ONTVANKELIJK');
+        '<p>Beste klant,</p><p></p><p>Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is in behandeling genomen. Voor meer informatie gaat u naar Mijn Loket.</p><p></p><p>Met vriendelijke groet,</p><p>Gemeente</p>', 'ZAAK_ONTVANKELIJK');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Zaak niet ontvankelijk', 'Wij hebben uw verzoek niet ontvankelijk verklaard (zaaknummer: {zaaknummer})',
-        '<pre><code>Beste klant,
-
-Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is niet ontvankelijk verklaard. Voor meer informatie gaat u naar Mijn loket.
-
-Met vriendelijke groet,
-
-Gemeente</code></pre>', 'ZAAK_NIET_ONTVANKELIJK');
+        '<p>Beste klant,</p><p></p><p>Uw verzoek over {zaaktypenaam} met zaaknummer {zaaknummer} is niet ontvankelijk verklaard. Voor meer informatie gaat u naar Mijn Loket.</p><p></p><p>Met vriendelijke groet,</p><p>Gemeente</p>', 'ZAAK_NIET_ONTVANKELIJK');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Zaak afgehandeld', 'Wij hebben uw verzoek afgehandeld (zaaknummer: {zaaknummer})',
-        '<pre><code>Beste klant,
-
-Uw verzoek betreffende {zaaktypenaam} met zaaknummer {zaaknummer} is afgehandeld. Voor meer informatie gaat u naar Mijn loket.
-
-Met vriendelijke groet,
-
-Gemeente</code></pre>', 'ZAAK_AFGEHANDELD');
+        '<p>Beste klant,</p><p></p><p>Uw verzoek betreffende {zaaktypenaam} met zaaknummer {zaaknummer} is afgehandeld. Voor meer informatie gaat u naar Mijn Loket.</p><p></p><p>Met vriendelijke groet,</p><p>Gemeente</p>', 'ZAAK_AFGEHANDELD');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Proces aanvullende informatie', 'Aanvullende informatie nodig voor zaak',
-        '<pre><code>Beste klant,
+        '<p>Beste klant,</p><p></p><p>Voor het behandelen van de zaak hebben wij de volgende informatie van u nodig</p><ul><li><p>Omschrijf informatie 1</p></li><li><p>Omschrijf informatie 2</p></li></ul><p>We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres X. Vermeld op de informatie ook het zaaknummer van uw zaak.</p><p></p><p>Met vriendelijke groet,</p><p>Gemeente</p>', 'PROCES_AANVULLENDE_INFORMATIE');
 
-Voor het behandelen van de zaak hebben wij de volgende informatie van u nodig:
-- omschrijf informatie 1
-- omschrijf informatie 2
-
-We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres Y.
-Vermeld op de informatie ook het zaaknummer van uw zaak.
-
-Met vriendelijke groet,
-
-Gemeente</code></pre>', 'PROCES_AANVULLENDE_INFORMATIE');
+INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
+VALUES (nextval('${schema}.sq_mail_template'), 'Proces advies', 'Advies nodig voor zaak',
+        '', 'PROCES_ADVIES');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Proces ontvangsbevestiging', 'Ontvangstbevestiging van zaak {zaaknummer}',
-        '<pre><code>Beste,
-
-Dit is de ontvangstbevestiging van zaak {zaaknummer}.</code></pre>', 'PROCES_ONTVANGSTBEVESTIGING');
+        '<p>Beste,</p><p></p><p>Dit is de ontvangstbevestiging van zaak {zaaknummer}.</p>', 'PROCES_ONTVANGSTBEVESTIGING');
 
 INSERT INTO ${schema}.mail_template(id_mail_template, mail_template_naam, onderwerp, body, mail_template_enum)
 VALUES (nextval('${schema}.sq_mail_template'), 'Signalering zaak document toegevoegd', 'Zaakdocument toegevoegd',
