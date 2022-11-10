@@ -43,6 +43,7 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
 
     @Override
     public void onFire(final @ObservesAsync CmmnEvent event) {
+        LOG.fine(() -> String.format("CMMN event ontvangen: %s", event.toString()));
         try {
             startZaakAfhandeling(zrcClientService.readZaak(event.getObjectId()));
         } catch (final Throwable ex) {
