@@ -18,6 +18,8 @@ import {FormControl} from '@angular/forms';
 import {ZoekVeld} from '../model/zoek-veld';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 import {ZoekResultaat} from '../model/zoek-resultaat';
+import {DatumVeld} from '../model/datum-veld';
+import {ZoekType} from '../model/zoek-type';
 
 @Component({
     selector: 'zac-zoeken',
@@ -40,6 +42,8 @@ export class ZoekComponent implements AfterViewInit {
         return this.zoekenControl.value;
     }
 
+    zoekType: ZoekType = ZoekType.ZAC;
+    ZoekType = ZoekType;
     readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: ZoekResultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: [], filters: null};
     zoekParameters: ZoekParameters = new ZoekParameters();
@@ -48,6 +52,8 @@ export class ZoekComponent implements AfterViewInit {
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
     hasSearched = false;
+    ZoekVeld = ZoekVeld;
+    DatumVeld = DatumVeld;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
@@ -99,4 +105,14 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     originalOrder = () => 0;
+
+    setZoektype(zoekType: ZoekType): void {
+        this.zoekType = zoekType;
+        if (zoekType === ZoekType.ZAC) {
+            this.zoekenControl.enable();
+        } else {
+            this.zoekenControl.disable();
+        }
+
+    }
 }

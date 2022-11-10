@@ -11,6 +11,7 @@ public enum ZoekVeld {
     ZAAK_IDENTIFICATIE("zaak_identificatie"),
     ZAAK_OMSCHRIJVING("zaak_omschrijving"),
     ZAAK_TOELICHTING("zaak_toelichting"),
+    ZAAK_INITIATOR("zaak_initiatorIdentificatie"),
 
     TAAK_ZAAK_ID("taak_zaakId"),
     TAAK_TOELICHTING("taak_toelichting");

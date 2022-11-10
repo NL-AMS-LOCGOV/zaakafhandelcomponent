@@ -4,10 +4,6 @@
   -->
 
 <div class="form">
-    <div *ngIf="betrokkeneRoltypeField" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
-        <mfb-form-field fxFlex="33" [field]="betrokkeneRoltypeField"></mfb-form-field>
-        <mfb-form-field fxFlex [field]="betrokkeneToelichtingField"></mfb-form-field>
-    </div>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" fxFlexFill>
         <mfb-form-field fxFlex [field]="bsnFormField"></mfb-form-field>
         <mfb-form-field fxFlex="33" [field]="geboortedatumFormField"></mfb-form-field>
@@ -53,9 +49,13 @@
         <ng-container matColumnDef="acties" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-                <button mat-flat-button color="primary" (click)="selectPersoon(row)" title="{{ 'actie.selecteren' | translate}}">
+                <button *ngIf="persoon.observed" mat-flat-button color="primary" (click)="selectPersoon(row)" title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>emoji_people</mat-icon>
                 </button>
+                <a *ngIf="!persoon.observed" mat-flat-button [routerLink]="['/persoon', row.identificatie]" (click)="$event.stopPropagation()"
+                   [id]="'persoonBekijken_' + row.identificatie +'_button'" title="{{ 'actie.persoon.bekijken' | translate }}">
+                    <mat-icon>visibility</mat-icon>
+                </a>
             </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="persoonColumns; sticky: true"></tr>

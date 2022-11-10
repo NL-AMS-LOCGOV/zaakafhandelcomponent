@@ -12,6 +12,8 @@ import {BedrijfZoekComponent} from './zoek/bedrijven/bedrijf-zoek.component';
 import {PersoonsgegevensComponent} from './persoonsgegevens/persoonsgegevens.component';
 import {BedrijfsgegevensComponent} from './bedrijfsgegevens/bedrijfsgegevens.component';
 import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
+import {KlantKoppelComponent} from './koppel/klanten/klant-koppel.component';
+import {RouterLinkWithHref} from '@angular/router';
 
 @NgModule({
     declarations: [
@@ -19,17 +21,20 @@ import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
         PersoonsgegevensComponent,
-        KlantZoekComponent
+        KlantZoekComponent,
+        KlantKoppelComponent
     ],
     exports: [
         BedrijfZoekComponent,
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
         PersoonsgegevensComponent,
-        KlantZoekComponent
+        KlantZoekComponent,
+        KlantKoppelComponent
     ],
     imports: [
-        SharedModule
+        SharedModule,
+        RouterLinkWithHref
     ]
 })
 export class KlantenModule {

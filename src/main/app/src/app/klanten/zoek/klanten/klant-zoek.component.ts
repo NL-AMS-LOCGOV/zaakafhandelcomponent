@@ -3,15 +3,8 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Klant} from '../../model/klanten/klant';
-import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
-import {Validators} from '@angular/forms';
-import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {KlantenService} from '../../klanten.service';
-import {KlantGegevens} from '../../model/klanten/klant-gegevens';
-import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
-import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 
 @Component({
     selector: 'zac-klant-zoek',
@@ -19,35 +12,15 @@ import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-
     styleUrls: ['./klant-zoek.component.less']
 })
 export class KlantZoekComponent implements OnInit {
-    @Input() initiator: boolean;
-    @Input() zaaktypeUUID: string;
-    @Output() klantGegevens = new EventEmitter<KlantGegevens>();
-    betrokkeneRoltype: SelectFormField;
-    betrokkeneToelichting: InputFormField;
+    @Output() klant = new EventEmitter<Klant>();
 
-    constructor(private klantenService: KlantenService) {
+    constructor() {
     }
 
     ngOnInit(): void {
-        this.betrokkeneRoltype = new SelectFormFieldBuilder().id('betrokkeneType')
-                                                             .label('betrokkeneRoltype')
-                                                             .optionLabel('naam')
-                                                             .options(this.klantenService.listBetrokkeneRoltypen(this.zaaktypeUUID))
-                                                             .validators(Validators.required)
-                                                             .build();
-        this.betrokkeneToelichting = new InputFormFieldBuilder().id('betrokkenToelichting')
-                                                                .label('toelichting')
-                                                                .validators(Validators.required)
-                                                                .maxlength(75)
-                                                                .build();
     }
 
     klantGeselecteerd(klant: Klant): void {
-        const klantGegevens: KlantGegevens = new KlantGegevens(klant);
-        if (!this.initiator) {
-            klantGegevens.betrokkeneRoltype = this.betrokkeneRoltype.formControl.value;
-            klantGegevens.betrokkeneToelichting = this.betrokkeneToelichting.formControl.value;
-        }
-        this.klantGegevens.emit(klantGegevens);
+        this.klant.emit(klant);
     }
 }
