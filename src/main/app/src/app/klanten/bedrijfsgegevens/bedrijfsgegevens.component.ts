@@ -8,7 +8,6 @@ import {KlantenService} from '../klanten.service';
 import {Bedrijf} from '../model/bedrijven/bedrijf';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {Observable, share} from 'rxjs';
-import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-bedrijfsgegevens',
@@ -38,7 +37,6 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
         return this._rsin;
     }
 
-    readonly skeletonLayout = SkeletonLayout;
     bedrijf: Bedrijf;
     bedrijf$: Observable<Bedrijf>;
     klantExpanded: boolean;

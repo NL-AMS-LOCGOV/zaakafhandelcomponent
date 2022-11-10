@@ -104,6 +104,12 @@ export class ZoekComponent implements AfterViewInit {
         return options.length ? !(options.length === 1 && options[0] === '-NULL-') : false;
     }
 
+    keywordsChange() {
+        if (this.zoekenControl.value !== this.zoekParameters.zoeken[ZoekVeld.ALLE]) {
+            this.zoek.emit();
+        }
+    }
+
     originalOrder = () => 0;
 
     setZoektype(zoekType: ZoekType): void {

@@ -7,7 +7,8 @@
     <div sticky-top fxLayout="row" fxLayoutGap="10px" fxFlexFill>
         <mat-form-field appearance="fill" fxFlex="grow">
             <mat-label>{{'actie.zoeken' | translate}}</mat-label>
-            <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()"
+            <input [formControl]="zoekenControl" id="zoekVeld" matInput
+                   (blur)="keywordsChange()" (keyup.enter)="keywordsChange()"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
             <button mat-icon-button type="button" matSuffix
                     title="{{'zaken' | translate}}"
@@ -73,10 +74,10 @@
         </div>
     </ng-container>
     <ng-container *ngIf="zoekType===ZoekType.PERSONEN">
-        <zac-persoon-zoek></zac-persoon-zoek>
+        <zac-persoon-zoek [sideNav]="sideNav"></zac-persoon-zoek>
     </ng-container>
     <ng-container *ngIf="zoekType===ZoekType.BEDRIJVEN">
-        <zac-bedrijf-zoek></zac-bedrijf-zoek>
+        <zac-bedrijf-zoek [sideNav]="sideNav"></zac-bedrijf-zoek>
     </ng-container>
     <mat-paginator [fxHide]="zoekType !== ZoekType.ZAC"
                    #paginator

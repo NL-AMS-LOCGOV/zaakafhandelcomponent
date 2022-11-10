@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {combineLatest, distinctUntilChanged, mapTo, merge, Observable, timer} from 'rxjs';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {NgxSkeletonLoaderConfigTheme} from 'ngx-skeleton-loader';
-import {SkeletonLayout, SkeletonLoaderOptions} from './skeleton-loader-options';
+import {SkeletonLoaderOptions} from './skeleton-loader-options';
 import {loadingFadeIn} from '../animations/animations';
 
 @Component({
@@ -18,8 +18,6 @@ export class SkeletonLoaderComponent implements OnInit {
 
     private delay: number = 0;
     private duration: number = 400;
-
-    readonly skeletonLayout = SkeletonLayout;
     showLoader$: Observable<boolean>;
 
     cardHeaderTheme: NgxSkeletonLoaderConfigTheme = {
@@ -95,5 +93,5 @@ export class SkeletonLoaderComponent implements OnInit {
                 });
             });
         };
-    };
+    }
 }

@@ -1,0 +1,22 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{'persoonsgegevens' | translate}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <zac-skeleton-loader [loading$]="persoon$" [options]="{layout: 'FIELDS', fields:4, fieldsPerRow:4}">
+            <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
+                <zac-static-text fxFlex="" [label]="'naam' | translate" [value]="persoon?.naam"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'inschrijfadres' | translate" [value]="persoon?.inschrijfadres"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'geboortedatum' | translate" [value]="persoon?.geboortedatum | datum"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'burgerservicenummer' | translate" [value]="bsn"></zac-static-text>
+            </div>
+        </zac-skeleton-loader>
+    </mat-card-content>
+</mat-card>
+
+<zac-klant-zaken-tabel [klantIdentificatie]="bsn"></zac-klant-zaken-tabel>

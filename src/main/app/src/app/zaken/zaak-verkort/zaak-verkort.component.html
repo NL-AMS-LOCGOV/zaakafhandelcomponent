@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:skeletonLayout.CARD, fields:4, fieldsPerRow:2}">
+<zac-skeleton-loader [loading$]="zaak$" [options]="{layout:'CARD', fields:4, fieldsPerRow:2}">
     <mat-card class="zaak-gegevens" *ngIf="zaak$ | async as zaak">
         <mat-card-header>
             <mat-card-title>
