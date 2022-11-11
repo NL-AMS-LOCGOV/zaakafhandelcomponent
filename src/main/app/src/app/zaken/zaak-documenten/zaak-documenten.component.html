@@ -111,7 +111,7 @@
 
                     <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell" colspan="10">
-                            <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:'TABLE'}">
+                            <zac-skeleton-loader [loading$]="informatieObjecten$" [options]="{layout:skeletonLayout.TABLE}">
                                 <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                             </zac-skeleton-loader>
                         </td>

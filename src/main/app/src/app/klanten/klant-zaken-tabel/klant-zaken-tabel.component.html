@@ -12,8 +12,8 @@
             <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="identificatie_filter">
                     <th mat-header-cell *matHeaderCellDef>
-                        <zac-tekst-filter [value]="zoekParameters.zoeken[zoekVeld.ZAAK_IDENTIFICATIE]"
-                                          (changed)="zoekParameters.zoeken[zoekVeld.ZAAK_IDENTIFICATIE] = $event; filtersChanged()"></zac-tekst-filter>
+                        <zac-tekst-filter [value]="zoekParameters.zoeken.ZAAK_IDENTIFICATIE"
+                                          (changed)="zoekParameters.zoeken.ZAAK_IDENTIFICATIE = $event; filtersChanged()"></zac-tekst-filter>
                     </th>
                 </ng-container>
                 <ng-container matColumnDef="identificatie">
@@ -25,9 +25,9 @@
                 <ng-container matColumnDef="status_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="status"
-                                          [selected]="zoekParameters.filters[filterVeld.ZAAK_STATUS]"
-                                          [opties]="this.beschikbareFilters[filterVeld.ZAAK_STATUS]"
-                                          (changed)="zoekParameters.filters[filterVeld.ZAAK_STATUS] = $event; filtersChanged()">
+                                          [selected]="zoekParameters.filters.ZAAK_STATUS"
+                                          [opties]="this.zoekResultaat.filters.ZAAK_STATUS"
+                                          (changed)="zoekParameters.filters.ZAAK_STATUS = $event; filtersChanged()">
                         </zac-facet-filter>
                     </th>
                 </ng-container>
@@ -39,7 +39,7 @@
                 <ng-container matColumnDef="startdatum_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-date-range-filter label="startdatum"
-                                               [range]="zoekParameters.datums[datumVeld.STARTDATUM]" (changed)="filtersChanged()">
+                                               [range]="zoekParameters.datums.STARTDATUM" (changed)="filtersChanged()">
                         </zac-date-range-filter>
                     </th>
                 </ng-container>
@@ -53,9 +53,9 @@
                 <ng-container matColumnDef="zaaktype_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="zaaktype"
-                                          [selected]="zoekParameters.filters[filterVeld.ZAAKTYPE]"
-                                          [opties]="this.beschikbareFilters[filterVeld.ZAAKTYPE]"
-                                          (changed)="zoekParameters.filters[filterVeld.ZAAKTYPE] = $event; filtersChanged()">
+                                          [selected]="zoekParameters.filters.ZAAKTYPE"
+                                          [opties]="zoekResultaat.filters.ZAAKTYPE"
+                                          (changed)="zoekParameters.filters.ZAAKTYPE = $event; filtersChanged()">
                         </zac-facet-filter>
                     </th>
                 </ng-container>
@@ -67,8 +67,8 @@
 
                 <ng-container matColumnDef="omschrijving_filter">
                     <th mat-header-cell *matHeaderCellDef id="omschrijving_filter">
-                        <zac-tekst-filter [value]="zoekParameters.zoeken[zoekVeld.ZAAK_OMSCHRIJVING]"
-                                          (changed)="zoekParameters.zoeken[zoekVeld.ZAAK_OMSCHRIJVING] = $event; filtersChanged()"></zac-tekst-filter>
+                        <zac-tekst-filter [value]="zoekParameters.zoeken.ZAAK_OMSCHRIJVING"
+                                          (changed)="zoekParameters.zoeken.ZAAK_OMSCHRIJVING = $event; filtersChanged()"></zac-tekst-filter>
                     </th>
                 </ng-container>
                 <ng-container matColumnDef="omschrijving">

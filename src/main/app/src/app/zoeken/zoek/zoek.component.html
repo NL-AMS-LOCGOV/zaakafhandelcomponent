@@ -42,22 +42,21 @@
                     </zac-multi-facet-filter>
                 </div>
                 <zac-klant-filter *ngIf="hasSearched" label="zaak_initiator"
-                                  [value]="zoekParameters.zoeken[ZoekVeld.ZAAK_INITIATOR]"
-                                  (changed)="zoekParameters.zoeken[ZoekVeld.ZAAK_INITIATOR] = $event; zoek.emit()">
+                                  [value]="zoekParameters.zoeken.ZAAK_INITIATOR"
+                                  (changed)="zoekParameters.zoeken.ZAAK_INITIATOR = $event; zoek.emit()">
                 </zac-klant-filter>
                 <zac-date-filter *ngIf="hasSearched" label="startdatum"
-                                 [range]="zoekParameters.datums[DatumVeld.STARTDATUM]" (changed)="zoek.emit()">
+                                 [range]="zoekParameters.datums.STARTDATUM" (changed)="zoek.emit()">
                 </zac-date-filter>
                 <zac-date-filter *ngIf="hasSearched" label="streefdatum"
-                                 [range]="zoekParameters.datums[DatumVeld.STREEFDATUM]" (changed)="zoek.emit()">
+                                 [range]="zoekParameters.datums.STREEFDATUM" (changed)="zoek.emit()">
                 </zac-date-filter>
                 <zac-date-filter *ngIf="hasSearched" label="zaak.fataleDatum"
-                                 [range]="zoekParameters.datums[DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING]" (changed)="zoek.emit()">
+                                 [range]="zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING" (changed)="zoek.emit()">
                 </zac-date-filter>
                 <zac-date-filter *ngIf="hasSearched" label="zaak.einddatum"
-                                 [range]="zoekParameters.datums[DatumVeld.ZAAK_EINDDATUM]" (changed)="zoek.emit()">
+                                 [range]="zoekParameters.datums.ZAAK_EINDDATUM" (changed)="zoek.emit()">
                 </zac-date-filter>
-
             </div>
             <div fxFlex="grow">
                 <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">

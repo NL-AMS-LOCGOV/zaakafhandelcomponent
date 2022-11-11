@@ -10,15 +10,12 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
-import {ZoekVeld} from '../../zoeken/model/zoek-veld';
 import {ZoekObjectType} from '../../zoeken/model/zoek-object';
 import {ZoekResultaat} from '../../zoeken/model/zoek-resultaat';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {map, startWith, switchMap} from 'rxjs/operators';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
-import {FilterVeld} from '../../zoeken/model/filter-veld';
-import {DatumVeld} from '../../zoeken/model/datum-veld';
 
 @Component({
     selector: 'zac-klant-zaken-tabel',
@@ -34,25 +31,22 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
     filerColumns: string[] = this.columns.map(n => n + '_filter');
     isLoadingResults = true;
     sorteerVeld = SorteerVeld;
-    zoekVeld = ZoekVeld;
-    filterVeld = FilterVeld;
-    datumVeld = DatumVeld;
     filterChange: EventEmitter<void> = new EventEmitter<void>();
     zoekParameters = new ZoekParameters();
-    beschikbareFilters: { [key: string]: string[] } = {};
+    zoekResultaat: ZoekResultaat<ZaakZoekObject> = new ZoekResultaat<ZaakZoekObject>();
     init: boolean;
 
     constructor(private utilService: UtilService, private zoekenService: ZoekenService) {}
 
     ngOnInit(): void {
         this.zoekParameters.type = ZoekObjectType.ZAAK;
-        this.zoekParameters.zoeken[ZoekVeld.ZAAK_INITIATOR] = this.klantIdentificatie;
+        this.zoekParameters.zoeken.ZAAK_INITIATOR = this.klantIdentificatie;
     }
 
     private loadZaken(): Observable<ZoekResultaat<ZaakZoekObject>> {
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.sorteerRichting = this.sort.direction;
-        this.zoekParameters.sorteerVeld = this.sort.active;
+        this.zoekParameters.sorteerVeld = SorteerVeld[this.sort.active];
         this.zoekParameters.rows = this.paginator.pageSize;
         return this.zoekenService.list(this.zoekParameters) as Observable<ZoekResultaat<ZaakZoekObject>>;
     }
@@ -74,7 +68,7 @@ export class KlantZakenTabelComponent implements OnInit, AfterViewInit, OnChange
                 return data;
             })
         ).subscribe(data => {
-            this.beschikbareFilters = data.filters;
+            this.zoekResultaat = data;
             this.paginator.length = data.totaal;
             this.dataSource.data = data.resultaten;
         });

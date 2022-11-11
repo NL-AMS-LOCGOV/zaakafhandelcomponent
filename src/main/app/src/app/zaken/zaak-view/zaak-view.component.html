@@ -418,7 +418,7 @@
                                     class="collapsed-row"></tr>
                                 <tr class="mat-row" *matNoDataRow>
                                     <td class="mat-cell" colspan="9">
-                                        <zac-skeleton-loader [loading$]="taken$" [options]="{layout:'TABLE'}">
+                                        <zac-skeleton-loader [loading$]="taken$" [options]="{layout:skeletonLayout.TABLE}">
                                             <p>{{'msg.geen.gegevens.gevonden' | translate}}</p>
                                         </zac-skeleton-loader>
                                     </td>

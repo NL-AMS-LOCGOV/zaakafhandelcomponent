@@ -1,5 +1,7 @@
 export class SkeletonLoaderOptions {
-    layout?: 'CARD' | 'TABLE' | 'FIELDS';
-    fields?: number;
-    fieldsPerRow?: number;
+    layout: SkeletonLayout;
+    fields: number;
+    fieldsPerRow: number;
 }
+
+export enum SkeletonLayout {CARD = 'CARD', TABLE = 'TABLE', FIELDS = 'FIELDS'}

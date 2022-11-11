@@ -9,6 +9,7 @@ import {ActivatedRoute, ParamMap} from '@angular/router';
 import {Persoon} from '../model/personen/persoon';
 import {KlantenService} from '../klanten.service';
 import {Observable, share} from 'rxjs';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     templateUrl: './persoon-view.component.html',
@@ -19,6 +20,7 @@ export class PersoonViewComponent implements OnInit {
     bsn: string = null;
     persoon: Persoon;
     persoon$: Observable<Persoon>;
+    skeletonLayout = SkeletonLayout;
 
     constructor(private utilService: UtilService, private _route: ActivatedRoute, private klantenService: KlantenService) {
     }

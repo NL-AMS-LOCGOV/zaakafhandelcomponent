@@ -8,6 +8,7 @@ import {KlantenService} from '../klanten.service';
 import {Bedrijf} from '../model/bedrijven/bedrijf';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
 import {Observable, share} from 'rxjs';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-bedrijfsgegevens',
@@ -16,6 +17,7 @@ import {Observable, share} from 'rxjs';
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
+    skeletonLayout = SkeletonLayout;
 
     private _vestigingsnummer: string;
     @Input() set vestigingsnummer(identificatie: string) {
