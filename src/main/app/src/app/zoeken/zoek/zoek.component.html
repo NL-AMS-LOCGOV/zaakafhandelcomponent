@@ -9,50 +9,77 @@
             <mat-label>{{'actie.zoeken' | translate}}</mat-label>
             <input [formControl]="zoekenControl" id="zoekVeld" matInput (keyup.enter)="zoek.emit()"
                    placeholder="{{'msg.zoeken.trefwoorden.placeholder' | translate}}" maxlength="100">
-            <mat-icon matSuffix (click)="zoek.emit()">search</mat-icon>
+            <button mat-icon-button type="button" matSuffix
+                    title="{{'zaken' | translate}}"
+                    [color]="zoekType === ZoekType.ZAC ? 'primary' : null"
+                    (click)="setZoektype(ZoekType.ZAC)">
+                <mat-icon>cases</mat-icon>
+            </button>
+            <button mat-icon-button type="button" matSuffix
+                    title="{{'personen' | translate}}"
+                    [color]="zoekType === ZoekType.PERSONEN ? 'primary' : null"
+                    (click)="setZoektype(ZoekType.PERSONEN)">
+                <mat-icon>person</mat-icon>
+            </button>
+            <button mat-icon-button type="button" matSuffix
+                    title="{{'bedrijven' | translate}}"
+                    [color]="zoekType === ZoekType.BEDRIJVEN ? 'primary' : null"
+                    (click)="setZoektype(ZoekType.BEDRIJVEN)">
+                <mat-icon>domain</mat-icon>
+            </button>
             <mat-progress-bar *ngIf="isLoadingResults && slow" mode="indeterminate"></mat-progress-bar>
         </mat-form-field>
-        <button mat-icon-button color="primary" (click)="sideNav.close()">
-            <mat-icon>close</mat-icon>
-        </button>
     </div>
+    <ng-container *ngIf="zoekType===ZoekType.ZAC">
+        <div fxLayout="row" fxLayoutGap="10px">
+            <div fxFlex="">
+                <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
+                    <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
+                                            [selected]="zoekParameters.filters[filter.key]"
+                                            [opties]="filter.value"
+                                            (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
+                    </zac-multi-facet-filter>
+                </div>
+                <zac-klant-filter *ngIf="hasSearched" label="zaak_initiator"
+                                  [value]="zoekParameters.zoeken[ZoekVeld.ZAAK_INITIATOR]"
+                                  (changed)="zoekParameters.zoeken[ZoekVeld.ZAAK_INITIATOR] = $event; zoek.emit()">
+                </zac-klant-filter>
+                <zac-date-filter *ngIf="hasSearched" label="startdatum"
+                                 [range]="zoekParameters.datums[DatumVeld.STARTDATUM]" (changed)="zoek.emit()">
+                </zac-date-filter>
+                <zac-date-filter *ngIf="hasSearched" label="streefdatum"
+                                 [range]="zoekParameters.datums[DatumVeld.STREEFDATUM]" (changed)="zoek.emit()">
+                </zac-date-filter>
+                <zac-date-filter *ngIf="hasSearched" label="zaak.fataleDatum"
+                                 [range]="zoekParameters.datums[DatumVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING]" (changed)="zoek.emit()">
+                </zac-date-filter>
+                <zac-date-filter *ngIf="hasSearched" label="zaak.einddatum"
+                                 [range]="zoekParameters.datums[DatumVeld.ZAAK_EINDDATUM]" (changed)="zoek.emit()">
+                </zac-date-filter>
 
-    <div fxLayout="row" fxLayoutGap="10px">
-        <div fxFlex="">
-            <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
-                <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
-                                        [selected]="zoekParameters.filters[filter.key]"
-                                        [opties]="filter.value"
-                                        (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
-                </zac-multi-facet-filter>
             </div>
-            <zac-date-filter *ngIf="hasSearched" label="startdatum"
-                             [range]="zoekParameters.datums['STARTDATUM']" (changed)="zoek.emit()">
-            </zac-date-filter>
-            <zac-date-filter *ngIf="hasSearched" label="streefdatum"
-                             [range]="zoekParameters.datums['STREEFDATUM']" (changed)="zoek.emit()">
-            </zac-date-filter>
-            <zac-date-filter *ngIf="hasSearched" label="zaak.fataleDatum"
-                             [range]="zoekParameters.datums['ZAAK_UITERLIJKE_EINDDATUM_AFDOENING']" (changed)="zoek.emit()">
-            </zac-date-filter>
-            <zac-date-filter *ngIf="hasSearched" label="zaak.einddatum"
-                             [range]="zoekParameters.datums['ZAAK_EINDDATUM']" (changed)="zoek.emit()">
-            </zac-date-filter>
-        </div>
-        <div fxFlex="grow">
-            <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
-                <ng-container [ngSwitch]="zoekObject.type">
-                    <zac-zaak-zoek-object *ngSwitchCase="zoekObjectType.ZAAK" [sideNav]="sideNav" [zaak]="getZaakZoekObject(zoekObject)"></zac-zaak-zoek-object>
-                    <zac-taak-zoek-object *ngSwitchCase="zoekObjectType.TAAK" [sideNav]="sideNav" [taak]="getTaakZoekObject(zoekObject)"></zac-taak-zoek-object>
+            <div fxFlex="grow">
+                <ng-container *ngFor="let zoekObject of zoekResultaat.resultaten">
+                    <ng-container [ngSwitch]="zoekObject.type">
+                        <zac-zaak-zoek-object *ngSwitchCase="zoekObjectType.ZAAK" [sideNav]="sideNav"
+                                              [zaak]="getZaakZoekObject(zoekObject)"></zac-zaak-zoek-object>
+                        <zac-taak-zoek-object *ngSwitchCase="zoekObjectType.TAAK" [sideNav]="sideNav"
+                                              [taak]="getTaakZoekObject(zoekObject)"></zac-taak-zoek-object>
+                    </ng-container>
+                    <mat-divider></mat-divider>
                 </ng-container>
-                <mat-divider></mat-divider>
-            </ng-container>
-            <p class="geen-resultaat" *ngIf="zoekResultaat.totaal == 0 && !isLoadingResults">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+                <p class="geen-resultaat" *ngIf="zoekResultaat.totaal == 0 && !isLoadingResults">{{'msg.geen.gegevens.gevonden' | translate}}</p>
+            </div>
         </div>
-    </div>
-
-
-    <mat-paginator #paginator
+    </ng-container>
+    <ng-container *ngIf="zoekType===ZoekType.PERSONEN">
+        <zac-persoon-zoek></zac-persoon-zoek>
+    </ng-container>
+    <ng-container *ngIf="zoekType===ZoekType.BEDRIJVEN">
+        <zac-bedrijf-zoek></zac-bedrijf-zoek>
+    </ng-container>
+    <mat-paginator [fxHide]="zoekType !== ZoekType.ZAC"
+                   #paginator
                    [pageIndex]="0"
                    [pageSize]="10"
                    [pageSizeOptions]="[10, 25, 50, 100]"

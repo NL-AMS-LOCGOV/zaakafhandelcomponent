@@ -142,6 +142,7 @@
     <field name="zaak_behandelaarNaam" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_behandelaarGebruikersnaam" type="string" indexed="true" stored="true"/>
     <field name="zaak_initiatorIdentificatie" type="string" indexed="true" stored="true"/>
+    <field name="zaak_initiatorType" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_locatie" type="location" indexed="true" stored="true"/>
     <field name="zaak_locatie_adres" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_indicatieOpschorting" type="boolean" indexed="true" stored="true" docValues="true"/>
@@ -181,6 +182,7 @@
     <field name="taak_data" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="taak_informatie" type="string" indexed="true" stored="true" multiValued="true"/>
 
+    <field name="informatieobject_identificatie" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_titel" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_beschrijving" type="text_nl" indexed="true" stored="true"/>
     <field name="informatieobject_zaaktypeUuid" type="string" indexed="true" stored="true"/>
@@ -273,6 +275,7 @@
     <copyField source="taak_zaaktypeOmschrijving" dest="text"/>
     <copyField source="taak_data" dest="text"/>
 
+    <copyField source="informatieobject_identificatie" dest="text"/>
     <copyField source="informatieobject_beschrijving" dest="text"/>
     <copyField source="informatieobject_titel" dest="text"/>
     <copyField source="informatieobject_auteur" dest="text"/>
@@ -294,6 +297,7 @@
     <copyField source="taak_zaaktypeOmschrijving" dest="text_exact"/>
     <copyField source="taak_status" dest="text_exact"/>
 
+    <copyField source="informatieobject_identificatie" dest="text_exact"/>
     <copyField source="informatieobject_zaakUuid" dest="text_exact"/>
     <copyField source="informatieobject_zaakId" dest="text_exact"/>
 

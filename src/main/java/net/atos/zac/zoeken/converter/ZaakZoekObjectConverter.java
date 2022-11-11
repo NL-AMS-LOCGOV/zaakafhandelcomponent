@@ -69,7 +69,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
-        zaakZoekObject.setInitiatorIdentificatie(zgwApiService.findInitiatorForZaak(zaak));
+        zaakZoekObject.setInitiator(zgwApiService.findInitiatorForZaak(zaak));
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
         final CommunicatieKanaal kanaal = findCommunicatieKanaal(zaak);

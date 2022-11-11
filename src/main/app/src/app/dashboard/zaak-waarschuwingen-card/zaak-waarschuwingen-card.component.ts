@@ -8,6 +8,8 @@ import {ZaakOverzicht} from '../../zaken/model/zaak-overzicht';
 import {DashboardCardComponent} from '../dashboard-card/dashboard-card.component';
 import {ZakenService} from '../../zaken/zaken.service';
 import {Conditionals} from '../../shared/edit/conditional-fn';
+import {IdentityService} from '../../identity/identity.service';
+import {WebsocketService} from '../../core/websocket/websocket.service';
 
 @Component({
     selector: 'zac-zaak-waarschuwingen-card',
@@ -18,8 +20,10 @@ export class ZaakWaarschuwingenCardComponent extends DashboardCardComponent<Zaak
 
     columns: string[] = ['identificatie', 'streefdatum', 'dagenTotStreefdatum', 'fataledatum', 'dagenTotFataledatum', 'url'];
 
-    constructor(private zakenService: ZakenService) {
-        super();
+    constructor(private zakenService: ZakenService,
+                protected identityService: IdentityService,
+                protected websocketService: WebsocketService) {
+        super(identityService, websocketService);
     }
 
     isAfterDate(datum, actual): boolean {

@@ -38,6 +38,7 @@ public class ScreenEventObserver extends AbstractEventObserver<ScreenEvent> {
     private SessionRegistry sessionRegistry;
 
     public void onFire(final @ObservesAsync ScreenEvent event) {
+        LOG.fine(() -> String.format("Scherm event ontvangen: %s", event.toString()));
         try {
             if (event.isDelay()) {
                 try {

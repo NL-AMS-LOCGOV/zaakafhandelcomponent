@@ -43,8 +43,6 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.signalering.event.SignaleringEventUtil;
-import net.atos.zac.signalering.model.SignaleringType;
 
 /**
  * Careful!
@@ -200,9 +198,7 @@ public class ZGWApiService {
         zaakInformatieObject.setInformatieobject(newInformatieobject.getUrl());
         zaakInformatieObject.setTitel(titel);
         zaakInformatieObject.setBeschrijving(beschrijving);
-        final ZaakInformatieobject created = zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
-        eventingService.send(SignaleringEventUtil.event(SignaleringType.Type.ZAAK_DOCUMENT_TOEGEVOEGD, zaak, loggedInUserInstance.get()));
-        return created;
+        return zrcClientService.createZaakInformatieobject(zaakInformatieObject, StringUtils.EMPTY);
     }
 
     /**
