@@ -16,6 +16,9 @@ import {TaakZoekObjectComponent} from './zoek-object/taak-zoek-object/taak-zoek-
 import {ToggleFilterComponent} from './toggle-filter/toggle-filter.component';
 import {MultiFacetFilterComponent} from './multi-facet-filter/multi-facet-filter.component';
 import {DateFilterComponent} from './date-filter/date-filter.component';
+import {KlantFilterComponent} from './klant-filter/klant-filter.component';
+import {KlantFilterDialog} from './klant-filter/klant-filter.dialog';
+import {KlantenModule} from '../klanten/klanten.module';
 
 @NgModule({
     declarations: [
@@ -27,7 +30,9 @@ import {DateFilterComponent} from './date-filter/date-filter.component';
         TekstFilterComponent,
         ToggleFilterComponent,
         ZaakZoekObjectComponent,
-        TaakZoekObjectComponent
+        TaakZoekObjectComponent,
+        KlantFilterComponent,
+        KlantFilterDialog
     ],
     exports: [
         ZoekComponent,
@@ -36,10 +41,12 @@ import {DateFilterComponent} from './date-filter/date-filter.component';
         ToggleFilterComponent,
         FacetFilterComponent,
         MultiFacetFilterComponent,
-        DateFilterComponent
+        DateFilterComponent,
+        KlantFilterComponent
     ],
     imports: [
-        SharedModule
+        SharedModule,
+        KlantenModule
     ]
 })
 export class ZoekenModule {

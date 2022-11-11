@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -90,7 +91,8 @@ public class SignaleringenService {
      * @param ownerId          the id of the owner of the instellingen to construct
      * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
      */
-    public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType, final SignaleringTarget ownerType,
+    public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType,
+            final SignaleringTarget ownerType,
             final String ownerId) {
         return new SignaleringInstellingen(signaleringTypeInstance(signaleringsType), ownerType, ownerId);
     }
@@ -102,7 +104,8 @@ public class SignaleringenService {
      * @param field       the field the signalering has been sent for
      * @return the constructed instance (all members have been set)
      */
-    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering, final SignaleringSubjectField field) {
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering,
+            final SignaleringSubjectField field) {
         final SignaleringVerzonden instance = new SignaleringVerzonden();
         instance.setTijdstip(ZonedDateTime.now());
         instance.setType(signaleringTypeInstance(signalering.getType().getType()));
@@ -132,13 +135,15 @@ public class SignaleringenService {
         return created;
     }
 
-    public void deleteSignalering(final Signalering signalering) {
-        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
-        entityManager.remove(signalering);
-    }
-
     public void deleteSignaleringen(final SignaleringZoekParameters parameters) {
-        findSignaleringen(parameters).forEach(this::deleteSignalering);
+        final Map<String, Signalering> removed = new HashMap<>();
+        findSignaleringen(parameters)
+                .forEach(signalering -> {
+                    removed.put(signalering.getTarget() + ';' + signalering.getType().getType(), signalering);
+                    entityManager.remove(signalering);
+                });
+        removed.values()
+                .forEach(signalering -> eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering)));
     }
 
     public List<Signalering> findSignaleringen(final SignaleringZoekParameters parameters) {
@@ -171,14 +176,16 @@ public class SignaleringenService {
         }
     }
 
-    private Predicate getSignaleringWhere(final SignaleringZoekParameters parameters, final CriteriaBuilder builder, final Root<Signalering> root) {
+    private Predicate getSignaleringWhere(final SignaleringZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<Signalering> root) {
         final List<Predicate> where = new ArrayList<>();
         where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
         if (parameters.getTarget() != null) {
             where.add(builder.equal(root.get("target"), parameters.getTarget()));
         }
         if (!parameters.getTypes().isEmpty()) {
-            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+            where.add(root.get("type").get("id")
+                              .in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
         }
         if (parameters.getSubjecttype() != null) {
             where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));
@@ -252,7 +259,8 @@ public class SignaleringenService {
     }
 
     public SignaleringInstellingen readInstellingen(final Signalering signalering) {
-        final List<SignaleringInstellingen> instellingen = findInstellingen(new SignaleringInstellingenZoekParameters(signalering));
+        final List<SignaleringInstellingen> instellingen = findInstellingen(
+                new SignaleringInstellingenZoekParameters(signalering));
         if (instellingen.size() == 1) {
             return instellingen.get(0);
         }
@@ -269,7 +277,8 @@ public class SignaleringenService {
                 .getResultList();
     }
 
-    private Predicate getSignaleringInstellingenWhere(final SignaleringInstellingenZoekParameters parameters, final CriteriaBuilder builder,
+    private Predicate getSignaleringInstellingenWhere(final SignaleringInstellingenZoekParameters parameters,
+            final CriteriaBuilder builder,
             final Root<SignaleringInstellingen> root) {
         final List<Predicate> where = new ArrayList<>();
         if (parameters.getOwner() != null) {
@@ -300,7 +309,8 @@ public class SignaleringenService {
         Arrays.stream(SignaleringType.Type.values())
                 .filter(type -> type.isTarget(parameters.getOwnertype()))
                 .filter(type -> !map.containsKey(type))
-                .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(), parameters.getOwner())));
+                .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(),
+                                                                               parameters.getOwner())));
         return map.values().stream()
                 .sorted(Comparator.comparing(SignaleringInstellingen::getType))
                 .toList();
@@ -310,7 +320,8 @@ public class SignaleringenService {
         return SignaleringType.Type.values().length;
     }
 
-    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering, final SignaleringSubjectField field) {
+    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering,
+            final SignaleringSubjectField field) {
         final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering, field);
         valideerObject(signaleringVerzonden);
         return entityManager.merge(signaleringVerzonden);
@@ -334,7 +345,8 @@ public class SignaleringenService {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters, final CriteriaBuilder builder,
+    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters,
+            final CriteriaBuilder builder,
             final Root<SignaleringVerzonden> root) {
         final List<Predicate> where = new ArrayList<>();
         where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
@@ -342,7 +354,8 @@ public class SignaleringenService {
             where.add(builder.equal(root.get("target"), parameters.getTarget()));
         }
         if (!parameters.getTypes().isEmpty()) {
-            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+            where.add(root.get("type").get("id")
+                              .in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
         }
         if (parameters.getSubjecttype() != null) {
             where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));

@@ -5,8 +5,6 @@
 
 package net.atos.client.zgw.zrc;
 
-import static net.atos.zac.websocket.event.ScreenEventType.ZAAK_INFORMATIEOBJECTEN;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -379,8 +377,6 @@ public class ZRCClientService {
         final String toelichting = "%s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
         deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst");
-        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(oudeZaak));
-        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }
 
     public void koppelInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak nieuweZaak, final String toelichting) {
@@ -395,7 +391,6 @@ public class ZRCClientService {
         nieuweZaakInformatieObject.setTitel(informatieobject.getTitel());
         nieuweZaakInformatieObject.setBeschrijving(informatieobject.getBeschrijving());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
-        eventingService.send(ZAAK_INFORMATIEOBJECTEN.updated(nieuweZaak));
     }
 
     /**
