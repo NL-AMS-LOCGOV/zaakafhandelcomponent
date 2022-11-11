@@ -96,6 +96,7 @@ public class IndexeerService {
     }
 
     public HerindexerenInfo herindexeren(final ZoekObjectType type) {
+        LOG.info("[%s] Starten met herindexeren".formatted(type.toString()));
         deleteEntities(type);
         processSolrIndex(type);
         switch (type) {
@@ -107,6 +108,7 @@ public class IndexeerService {
         final int delete = deleteEntities(type, IndexStatus.INDEXED);
         final int add = countEntities(type, IndexStatus.ADD);
         final int update = countEntities(type, IndexStatus.UPDATE);
+        LOG.info("[%s] Herindexeren gereed".formatted(type.toString()));
         return new HerindexerenInfo(add, update, delete);
     }
 

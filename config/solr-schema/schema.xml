@@ -345,6 +345,7 @@
     <fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
     <!--  boolean type: "true" or "false"  -->
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+    <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
     <!--  sortMissingLast and sortMissingFirst attributes are optional attributes are
              currently supported on types that are sorted internally as strings
              and on numeric types.
@@ -682,7 +683,7 @@
           -->
     <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
     <!--  A specialized field for geospatial search. If indexed, this fieldType must not be multivalued.  -->
-    <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
+    <fieldType name="location" class="solr.LatLonPointSpatialField" docValues="true"/>
     <!--  An alternative geospatial field type new to Solr 4.  It supports multiValued and polygon shapes.
           For more information about this and other Spatial fields new to Solr 4, see:
           http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4
