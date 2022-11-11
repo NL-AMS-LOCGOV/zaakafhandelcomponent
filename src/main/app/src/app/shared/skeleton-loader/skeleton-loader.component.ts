@@ -13,13 +13,12 @@ import {loadingFadeIn} from '../animations/animations';
 })
 export class SkeletonLoaderComponent implements OnInit {
 
-    @Input() options: SkeletonLoaderOptions = {};
+    @Input() options: Partial<SkeletonLoaderOptions> = {};
     @Input() loading$: Observable<any>;
 
     private delay: number = 0;
     private duration: number = 400;
-
-    readonly skeletonLayout = SkeletonLayout;
+    readonly layoutOptions = SkeletonLayout;
     showLoader$: Observable<boolean>;
 
     cardHeaderTheme: NgxSkeletonLoaderConfigTheme = {
@@ -95,5 +94,5 @@ export class SkeletonLoaderComponent implements OnInit {
                 });
             });
         };
-    };
+    }
 }

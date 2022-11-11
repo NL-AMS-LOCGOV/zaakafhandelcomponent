@@ -4,7 +4,8 @@
  */
 
 import {Resultaat} from '../../shared/model/resultaat';
+import {FilterVeld} from './filter-veld';
 
 export class ZoekResultaat<TYPE> extends Resultaat<TYPE> {
-    filters: { [key: string]: string[] };
+    filters: Partial<Record<FilterVeld, string[]>> = {};
 }

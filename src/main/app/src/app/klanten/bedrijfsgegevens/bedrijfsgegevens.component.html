@@ -21,7 +21,7 @@
                 </button>
             </mat-panel-description>
         </mat-expansion-panel-header>
-        <zac-skeleton-loader [loading$]="bedrijf$" [options]="{layout:skeletonLayout.FIELDS, fields:5, fieldsPerRow:5}">
+        <zac-skeleton-loader [loading$]="bedrijf$" [options]="{layout: skeletonLayout.FIELDS, fields:5, fieldsPerRow:5}">
             <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <div [fxFlex]="100/5" fxFlex.lt-md="50">
                     <zac-static-text [label]="'handelsnaam' | translate"

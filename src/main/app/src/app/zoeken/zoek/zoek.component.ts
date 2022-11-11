@@ -15,10 +15,8 @@ import {UtilService} from '../../core/service/util.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
-import {ZoekVeld} from '../model/zoek-veld';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 import {ZoekResultaat} from '../model/zoek-resultaat';
-import {DatumVeld} from '../model/datum-veld';
 import {ZoekType} from '../model/zoek-type';
 
 @Component({
@@ -52,8 +50,6 @@ export class ZoekComponent implements AfterViewInit {
     zoekenControl = new FormControl('');
     zoek = new EventEmitter<void>();
     hasSearched = false;
-    ZoekVeld = ZoekVeld;
-    DatumVeld = DatumVeld;
 
     constructor(private zoekService: ZoekenService, public utilService: UtilService) {
     }
@@ -86,7 +82,7 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     getZoekParameters(): ZoekParameters {
-        this.zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
+        this.zoekParameters.zoeken.ALLE = this.zoekenControl.value;
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         return this.zoekParameters;
@@ -102,6 +98,12 @@ export class ZoekComponent implements AfterViewInit {
 
     hasOption(options: string[]) {
         return options.length ? !(options.length === 1 && options[0] === '-NULL-') : false;
+    }
+
+    keywordsChange() {
+        if (this.zoekenControl.value !== this.zoekParameters.zoeken.ALLE) {
+            this.zoek.emit();
+        }
     }
 
     originalOrder = () => 0;

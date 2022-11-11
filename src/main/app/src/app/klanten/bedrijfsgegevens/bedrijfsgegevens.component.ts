@@ -17,6 +17,7 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
     @Input() isVerwijderbaar: boolean;
     @Output() delete = new EventEmitter<Bedrijf>();
+    skeletonLayout = SkeletonLayout;
 
     private _vestigingsnummer: string;
     @Input() set vestigingsnummer(identificatie: string) {
@@ -38,7 +39,6 @@ export class BedrijfsgegevensComponent implements OnInit, AfterViewInit {
         return this._rsin;
     }
 
-    readonly skeletonLayout = SkeletonLayout;
     bedrijf: Bedrijf;
     bedrijf$: Observable<Bedrijf>;
     klantExpanded: boolean;

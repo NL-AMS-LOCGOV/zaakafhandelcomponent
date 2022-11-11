@@ -7,7 +7,7 @@ import {SortDirection} from '@angular/material/sort';
 import {ListParameters} from '../../shared/model/list-parameters';
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from '../model/case-definition';
-import {ToggleSwitchOptions} from '../../zoeken/toggle-filter/toggle-switch-options';
+import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter/toggle-switch-options';
 
 export class ZaakafhandelParametersListParameters extends ListParameters {
 

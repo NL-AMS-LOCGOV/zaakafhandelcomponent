@@ -23,7 +23,7 @@
             </mat-panel-description>
 
         </mat-expansion-panel-header>
-        <zac-skeleton-loader [loading$]="persoon$" [options]="{layout:skeletonLayout.FIELDS, fields:4, fieldsPerRow:5}">
+        <zac-skeleton-loader [loading$]="persoon$" [options]="{layout: skeletonLayout.FIELDS, fields:4, fieldsPerRow:5}">
             <div id="persoonsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
                 <div [fxFlex]="100/5" fxFlex.lt-md="50">
                     <zac-static-text [label]="'naam' | translate"

@@ -28,9 +28,9 @@ export class PersoonsgegevensComponent implements OnInit, AfterViewInit {
         return this._bsn;
     }
 
-    readonly skeletonLayout = SkeletonLayout;
     persoon: Persoon;
     persoon$: Observable<Persoon>;
+    skeletonLayout = SkeletonLayout;
     klantExpanded: boolean;
     viewInitialized = false;
 

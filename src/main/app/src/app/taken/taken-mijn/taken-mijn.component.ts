@@ -16,11 +16,7 @@ import {MatSort} from '@angular/material/sort';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
-
-import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
-import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
-import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
 import {TakenService} from '../taken.service';
 import {ActivatedRoute} from '@angular/router';
@@ -41,10 +37,7 @@ export class TakenMijnComponent implements AfterViewInit, OnInit {
     @ViewChild(MatTable) table: MatTable<TaakZoekObject>;
     expandedRow: TaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
-    zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
-    filterVeld = FilterVeld;
-    datumVeld = DatumVeld;
 
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');

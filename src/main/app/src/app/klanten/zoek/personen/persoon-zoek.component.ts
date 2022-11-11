@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DateFormFieldBuilder} from '../../../shared/material-form-builder/form-components/date/date-form-field-builder';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
@@ -13,6 +13,7 @@ import {Persoon} from '../../model/personen/persoon';
 import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -20,7 +21,8 @@ import {AbstractFormControlField} from '../../../shared/material-form-builder/mo
     styleUrls: ['./persoon-zoek.component.less']
 })
 export class PersoonZoekComponent implements OnInit {
-    @Output() persoon = new EventEmitter<Persoon>();
+    @Output() persoon? = new EventEmitter<Persoon>();
+    @Input() sideNav?: MatSidenav;
     foutmelding: string;
     bsnFormField: AbstractFormControlField;
     geslachtsnaamFormField: AbstractFormControlField;

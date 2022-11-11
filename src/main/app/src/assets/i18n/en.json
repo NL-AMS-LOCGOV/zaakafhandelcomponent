@@ -608,6 +608,8 @@
   "zoeken.filter.jaNee.true": "Yes",
   "zoeken.filter.jaNee.false": "No",
   " 10 ": ">>--> ??? <--<<",
+  "persoonsgegevens": "Personal data",
+  "bedrijfsgegevens": "Company details",
   "initiator.titel": "Initiator",
   "burgerservicenummer": "Citizen Service Number",
   "vestigingsnummer": "Branch code",
