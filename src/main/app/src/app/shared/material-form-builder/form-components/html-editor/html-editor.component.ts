@@ -33,6 +33,16 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
 
     ngOnInit(): void {
         this.editor = new Editor();
+        if (this.data.mailtemplateBody$) {
+            this.data.mailtemplateBody$.subscribe(mailtemplate => {
+                this.data.value(mailtemplate.body);
+            });
+        }
+        if (this.data.mailtemplateOnderwerp$) {
+            this.data.mailtemplateOnderwerp$.subscribe(mailtemplate => {
+                this.data.value(mailtemplate.onderwerp);
+            });
+        }
     }
 
     ngOnDestroy(): void {

@@ -9,5 +9,5 @@ public class RESTTaakStuurGegevens {
 
     public boolean sendMail;
 
-    public String onderwerp;
+    public String mail;
 }

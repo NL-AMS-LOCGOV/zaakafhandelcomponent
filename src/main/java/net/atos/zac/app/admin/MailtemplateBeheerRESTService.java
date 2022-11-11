@@ -27,10 +27,10 @@ import java.util.List;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 @Singleton
-@Path("mailtemplates")
+@Path("beheer/mailtemplates")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class MailtemplateRESTService {
+public class MailtemplateBeheerRESTService {
 
     @Inject
     private MailTemplateService mailTemplateService;

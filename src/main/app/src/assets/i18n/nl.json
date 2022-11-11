@@ -527,8 +527,6 @@
   "msg.mailtemplate.opgeslagen": "Mailtemplate opgeslagen",
   "msg.mailtemplate.verwijderen.bevestigen": "Mailtemplate verwijderen?",
   "msg.mailtemplate.verwijderen.uitgevoerd": "Mailtemplate is verwijderd",
-  "msg.ontvangstbevestiging.bericht": "Beste,\n\nDit is de ontvangstbevestiging van zaak {{zaakIdentificatie}}.",
-  "msg.ontvangstbevestiging.onderwerp": "Ontvangstbevestiging van zaak {{zaakIdentificatie}}",
   "msg.pagina": "van",
   "msg.pagina.items": "Items per pagina",
   "msg.planitem.uitgevoerd.INTAKE_AFRONDEN": "De intake is afgerond",

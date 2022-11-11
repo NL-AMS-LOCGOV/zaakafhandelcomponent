@@ -22,6 +22,8 @@ import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters
 import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
 import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {Mail} from '../../admin/model/mail';
 
 @Component({
     templateUrl: 'intake-afronden-dialog.component.html',
@@ -36,28 +38,12 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
     ontvangerFormField: AbstractFormField;
     private ngDestroy = new Subject<void>();
 
-    onderwerpOntvankelijk: string = 'Wij hebben uw verzoek in behandeling genomen (zaaknummer: {zaaknr}';
-    bodyOntvankelijk: string = 'Beste klant,\n' +
-        '\n' +
-        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is in behandeling genomen. Voor meer informatie gaat u naar Mijn loket.\n' +
-        '\n' +
-        'Met vriendelijke groet,\n' +
-        '\n' +
-        'Gemeente';
-    onderwerpNietOntvankelijk: string = 'Wij hebben uw verzoek niet ontvankelijk verklaard (zaaknummer: {zaaknr}';
-    bodyNietOntvankelijk: string = 'Beste klant,\n' +
-        '\n' +
-        'Uw verzoek over {zaaktype naam} met zaaknummer {zaaknr} is niet ontvankelijk verklaard. Voor meer informatie gaat u naar Mijn loket.\n' +
-        '\n' +
-        'Met vriendelijke groet,\n' +
-        '\n' +
-        'Gemeente';
-
     constructor(public dialogRef: MatDialogRef<IntakeAfrondenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
-                private zaakafhandelParametersService: ZaakafhandelParametersService) {
+                private zaakafhandelParametersService: ZaakafhandelParametersService,
+                private mailtemplateService: MailtemplateService) {
     }
 
     ngOnInit(): void {
@@ -123,20 +109,23 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
         userEventListenerData.zaakOntvankelijk = this.radioFormField.formControl.value.value;
         userEventListenerData.resultaatToelichting = this.redenFormField.formControl.value;
 
-        let onderwerp = userEventListenerData.zaakOntvankelijk ? this.onderwerpOntvankelijk : this.onderwerpNietOntvankelijk;
-        onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-        let body = userEventListenerData.zaakOntvankelijk ? this.bodyOntvankelijk : this.bodyNietOntvankelijk;
-        body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie).replace('{zaaknr}', this.data.zaak.identificatie);
-
         if (this.sendMailFormField.formControl.value) {
-            const mailObject: MailObject = new MailObject();
-            mailObject.createDocumentFromMail = true;
-            mailObject.onderwerp = onderwerp;
-            mailObject.body = body;
-            mailObject.ontvanger = this.ontvangerFormField.formControl.value;
-            this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
-        }
+            this.mailtemplateService.findMailtemplate(userEventListenerData.zaakOntvankelijk ?
+                Mail.ZAAK_ONTVANKELIJK : Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid)
+                .subscribe(mailtemplate => {
+                    let onderwerp = mailtemplate.onderwerp;
+                    onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
+                    let body = mailtemplate.body;
+                    body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie).replace('{zaaknr}', this.data.zaak.identificatie);
 
+                    const mailObject: MailObject = new MailObject();
+                    mailObject.createDocumentFromMail = true;
+                    mailObject.onderwerp = onderwerp;
+                    mailObject.body = body;
+                    mailObject.ontvanger = this.ontvangerFormField.formControl.value;
+                    this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
+            });
+        }
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({
             next: () => this.dialogRef.close(true),
             error: () => this.dialogRef.close(false)

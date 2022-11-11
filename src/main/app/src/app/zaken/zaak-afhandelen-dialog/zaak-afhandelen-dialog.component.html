@@ -11,7 +11,7 @@
     <mfb-form-field [field]="toelichtingFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.enabled" [field]="sendMailFormField"></mfb-form-field>
     <mfb-form-field *ngIf="sendMailFormField.formControl.value" [field]="ontvangerFormField"></mfb-form-field>
-    <p *ngIf="sendMailFormField.formControl.value" class="readonly" [innerHTML]="body"></p>
+    <p *ngIf="sendMailFormField.formControl.value" class="readonly" [innerHTML]="mailtemplate.body"></p>
 </div>
 <div mat-dialog-actions>
     <button *ngIf="!besluitVastleggen" [disabled]="loading || formFieldsInvalid()"

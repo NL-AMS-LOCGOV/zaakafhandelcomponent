@@ -19,22 +19,12 @@ import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {HiddenFormFieldBuilder} from '../../shared/material-form-builder/form-components/hidden/hidden-form-field-builder';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {Mailtemplate} from '../../admin/model/mailtemplate';
+import {Mail} from '../../admin/model/mail';
 
 export class AanvullendeInformatie extends AbstractFormulier {
-
-    private bodyTemplate: string =
-        'Beste klant,\n' +
-        '\n' +
-        'Voor het behandelen van de zaak hebben wij de volgende informatie van u nodig:\n' +
-        '- omschrijf informatie 1\n' +
-        '- omschrijf informatie 2\n' +
-        '\n' +
-        'We ontvangen de informatie graag uiterlijk op datum x. U kunt dit aanleveren door deze per e-mail te sturen naar mailadres Y. ' +
-        'Vermeld op de informatie ook het zaaknummer van uw zaak.\n' +
-        '\n' +
-        'Met vriendelijke groet,\n' +
-        '\n' +
-        'Gemeente';
 
     fields = {
         EMAILADRES: 'emailadres',
@@ -51,27 +41,43 @@ export class AanvullendeInformatie extends AbstractFormulier {
         opmerking: this.fields.OPMERKINGEN
     };
 
+    mailtemplate$: Observable<Mailtemplate>;
+
     constructor(translate: TranslateService, public takenService: TakenService,
-                public informatieObjectenService: InformatieObjectenService) {
+                public informatieObjectenService: InformatieObjectenService,
+                private mailtemplateService: MailtemplateService) {
         super(translate, informatieObjectenService);
     }
 
     _initStartForm() {
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.humanTaskData.taakStuurGegevens.onderwerp = 'Aanvullende informatie nodig voor zaak';
+        this.mailtemplate$ = this.mailtemplateService.findMailtemplate(Mail.PROCES_AANVULLENDE_INFORMATIE, this.zaakUuid);
+        this.humanTaskData.taakStuurGegevens.mail = Mail.PROCES_AANVULLENDE_INFORMATIE;
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
         const fields = this.fields;
         this.form.push(
-            [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
-                                        .validators(Validators.required, CustomValidators.emails).build()],
-            [new TextareaFormFieldBuilder(this.bodyTemplate).id(fields.BODY).label(fields.BODY)
-                                                            .validators(Validators.required).maxlength(1000).build()],
-            [new HiddenFormFieldBuilder(moment()).id(fields.DATUMGEVRAAGD).label(fields.DATUMGEVRAAGD)
-                                                 .build()],
-            [new DocumentenLijstFieldBuilder().id(fields.BIJLAGEN).label(fields.BIJLAGEN)
-                                              .documenten(documenten).build()]
+            [new InputFormFieldBuilder()
+            .id(fields.EMAILADRES)
+            .label(fields.EMAILADRES)
+            .validators(Validators.required, CustomValidators.emails)
+            .build()],
+            [new HtmlEditorFormFieldBuilder()
+            .id(fields.BODY)
+            .label(fields.BODY)
+            .validators(Validators.required)
+            .mailtemplateBody(this.mailtemplate$)
+            .maxlength(1000)
+            .build()],
+            [new HiddenFormFieldBuilder(moment())
+            .id(fields.DATUMGEVRAAGD)
+            .label(fields.DATUMGEVRAAGD)
+            .build()],
+            [new DocumentenLijstFieldBuilder()
+            .id(fields.BIJLAGEN)
+            .label(fields.BIJLAGEN)
+            .documenten(documenten).build()]
         );
     }
 

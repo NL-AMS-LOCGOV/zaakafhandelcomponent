@@ -22,6 +22,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.Mail;
+
+import net.atos.zac.mailtemplates.model.MailTemplate;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -82,6 +87,9 @@ public class PlanItemsRESTService {
     private MailService mailService;
 
     @Inject
+    private MailTemplateService mailTemplateService;
+
+    @Inject
     private PolicyService policyService;
 
     @GET
@@ -127,7 +135,10 @@ public class PlanItemsRESTService {
                 bijlagen = humanTaskData.taakdata.get(BIJLAGEN);
             }
 
-            mailService.sendMail(humanTaskData.taakdata.get("emailadres"), humanTaskData.taakStuurGegevens.onderwerp,
+            final MailTemplate mailTemplate =
+                    mailTemplateService.findMailtemplate(Mail.valueOf(humanTaskData.taakStuurGegevens.mail));
+
+            mailService.sendMail(humanTaskData.taakdata.get("emailadres"), mailTemplate.getOnderwerp(),
                                  humanTaskData.taakdata.get("body"), bijlagen, true, zaak);
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
