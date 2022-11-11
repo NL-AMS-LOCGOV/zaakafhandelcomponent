@@ -20,6 +20,4 @@ public class DocumentData {
 
     @JsonbProperty("zaak_open")
     public Boolean zaakOpen;
-
-    public Boolean ondertekend;
 }
