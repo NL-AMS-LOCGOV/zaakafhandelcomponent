@@ -112,7 +112,7 @@ public class IndexeerService {
         return new HerindexerenInfo(add, update, delete);
     }
 
-    public int indexeer(int batchGrootte, ZoekObjectType type) {
+    public int indexeer(final int batchGrootte, final ZoekObjectType type) {
         if (isHerindexeren(type)) {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
             return batchGrootte;
