@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {MatTableDataSource} from '@angular/material/table';
@@ -13,6 +13,7 @@ import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form
 import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-parameters';
 import {KlantenService} from '../../klanten.service';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -20,7 +21,8 @@ import {AbstractFormControlField} from '../../../shared/material-form-builder/mo
     styleUrls: ['./bedrijf-zoek.component.less']
 })
 export class BedrijfZoekComponent implements OnInit {
-    @Output() bedrijf = new EventEmitter<Bedrijf>();
+    @Output() bedrijf? = new EventEmitter<Bedrijf>();
+    @Input() sideNav?: MatSidenav;
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
     foutmelding: string;
     formGroup: FormGroup;

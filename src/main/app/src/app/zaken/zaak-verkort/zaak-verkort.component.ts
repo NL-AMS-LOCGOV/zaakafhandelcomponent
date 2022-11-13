@@ -27,9 +27,9 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
 export class ZaakVerkortComponent implements OnInit, OnDestroy {
     @Input() zaakUuid: string;
 
-    readonly skeletonLayout = SkeletonLayout;
     einddatumGeplandIcon: TextIcon;
     zaak$: Observable<Zaak>;
+    skeletonLayout = SkeletonLayout;
 
     private zaakListener: WebsocketListener;
     private zaakRollenListener: WebsocketListener;

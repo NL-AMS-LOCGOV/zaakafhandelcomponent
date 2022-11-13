@@ -1,0 +1,107 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{'zaken' | translate}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="identificatie_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-tekst-filter [value]="zoekParameters.zoeken.ZAAK_IDENTIFICATIE"
+                                          (changed)="zoekParameters.zoeken.ZAAK_IDENTIFICATIE = $event; filtersChanged()"></zac-tekst-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="identificatie">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_IDENTIFICATIE"> {{'zaak.identificatie' | translate}} </th>
+                    <td mat-cell *matCellDef="let object"> {{object.identificatie | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-facet-filter label="status"
+                                          [selected]="zoekParameters.filters.ZAAK_STATUS"
+                                          [opties]="this.zoekResultaat.filters.ZAAK_STATUS"
+                                          (changed)="zoekParameters.filters.ZAAK_STATUS = $event; filtersChanged()">
+                        </zac-facet-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell cdkDrag *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_STATUS">{{ 'status' | translate }}</th>
+                    <td mat-cell *matCellDef="let object">{{ object.statustypeOmschrijving | empty }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="startdatum_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-date-range-filter label="startdatum"
+                                               [range]="zoekParameters.datums.STARTDATUM" (changed)="filtersChanged()">
+                        </zac-date-range-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="startdatum">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_STARTDATUM"> {{'startdatum' | translate}} </th>
+                    <td mat-cell *matCellDef="let object"> {{object.startdatum | datum | empty}} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="zaaktype_filter">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <zac-facet-filter label="zaaktype"
+                                          [selected]="zoekParameters.filters.ZAAKTYPE"
+                                          [opties]="zoekResultaat.filters.ZAAKTYPE"
+                                          (changed)="zoekParameters.filters.ZAAKTYPE = $event; filtersChanged()">
+                        </zac-facet-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="zaaktype">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_ZAAKTYPE"> {{'zaaktype' | translate}} </th>
+                    <td mat-cell *matCellDef="let object"> {{object.zaaktypeOmschrijving}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="omschrijving_filter">
+                    <th mat-header-cell *matHeaderCellDef id="omschrijving_filter">
+                        <zac-tekst-filter [value]="zoekParameters.zoeken.ZAAK_OMSCHRIJVING"
+                                          (changed)="zoekParameters.zoeken.ZAAK_OMSCHRIJVING = $event; filtersChanged()"></zac-tekst-filter>
+                    </th>
+                </ng-container>
+                <ng-container matColumnDef="omschrijving">
+                    <th mat-header-cell *matHeaderCellDef
+                        [mat-sort-header]="sorteerVeld.ZAAK_OMSCHRIJVING"> {{'omschrijving' | translate}} </th>
+                    <td mat-cell *matCellDef="let object"> {{object.omschrijving | empty}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="url_filter" stickyEnd>
+                    <th mat-header-cell *matHeaderCellDef id="url_filter"></th>
+                </ng-container>
+                <ng-container matColumnDef="url" stickyEnd id="zaakButtons">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let object">
+                        <a mat-flat-button [routerLink]="['/zaken', object.identificatie]"
+                           [id]="'zaakBekijken_' + object.uuid +'_button'"
+                           title="{{ 'actie.zaak.bekijken' | translate }}">
+                            <mat-icon>visibility</mat-icon>
+                        </a>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+                <tr mat-header-row *matHeaderRowDef="filerColumns; sticky:true"></tr>
+                <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+            </table>
+        </div>
+        <mat-paginator #paginator
+                       [pageIndex]="0"
+                       [pageSize]="10"
+                       [pageSizeOptions]="[10, 25, 50, 100]"
+                       sticky>
+        </mat-paginator>
+    </mat-card-content>
+</mat-card>

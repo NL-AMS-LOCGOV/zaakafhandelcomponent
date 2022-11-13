@@ -59,7 +59,10 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
+import {
+    NotificationDialogComponent,
+    NotificationDialogData
+} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -76,7 +79,7 @@ import {MailService} from '../../mail/mail.service';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
 import {IntakeAfrondenDialogComponent} from '../intake-afronden-dialog/intake-afronden-dialog.component';
 import {TaakStatus} from '../../taken/model/taak-status.enum';
-import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
+import {SkeletonLayout} from 'src/app/shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     templateUrl: './zaak-view.component.html',
@@ -84,7 +87,6 @@ import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-optio
     animations: [detailExpand]
 })
 export class ZaakViewComponent extends ActionsViewComponent implements OnInit, AfterViewInit, OnDestroy {
-
     readonly skeletonLayout = SkeletonLayout;
     zaak: Zaak;
     zaakLocatie: AddressResult;
