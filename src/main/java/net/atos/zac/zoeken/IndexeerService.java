@@ -126,7 +126,8 @@ public class IndexeerService {
         if (count == 0) {
             return 0;
         }
-        LOG.info("[%s] aantal te indexeren: %d".formatted(type.toString(), count));
+        LOG.info("[%s] aantal te indexeren: %d (%d)".formatted(type.toString(),
+                                                               batchGrootte <= count ? batchGrootte : count, count));
         final List<ZoekIndexEntity> entities = listEntities(type, batchGrootte);
         final List<ZoekObject> addOrUpdateList = new ArrayList<>();
         final List<String> removeList = new ArrayList<>();
