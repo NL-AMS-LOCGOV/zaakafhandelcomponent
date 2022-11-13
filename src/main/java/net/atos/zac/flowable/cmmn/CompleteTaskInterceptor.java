@@ -20,6 +20,6 @@ public class CompleteTaskInterceptor extends DefaultCmmnIdentityLinkInterceptor 
     @Override
     public void handleCompleteTask(final TaskEntity task) {
         super.handleCompleteTask(task);
-        FlowableHelper.getInstance().getIndexeerService().removeTaak(task.getId());
+        FlowableHelper.getInstance().getIndexeerService().createTaakZoekIndexEntityRemove(task.getId());
     }
 }
