@@ -15,6 +15,9 @@ import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-com
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {Mail} from '../../admin/model/mail';
+import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
 
 export class ExternAdviesMail extends AbstractFormulier {
 
@@ -34,29 +37,44 @@ export class ExternAdviesMail extends AbstractFormulier {
     constructor(
         translate: TranslateService,
         public takenService: TakenService,
-        public informatieObjectenService: InformatieObjectenService) {
+        public informatieObjectenService: InformatieObjectenService,
+        public mailtemplateService: MailtemplateService) {
         super(translate, informatieObjectenService);
     }
 
     _initStartForm() {
         const fields = this.fields;
         this.humanTaskData.taakStuurGegevens.sendMail = true;
-        this.humanTaskData.taakStuurGegevens.onderwerp = 'Advies nodig voor zaak';
+        this.humanTaskData.taakStuurGegevens.mail = Mail.PROCES_ADVIES;
 
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaakUuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.PROCES_ADVIES, this.zaakUuid);
 
         this.form.push(
-            [new InputFormFieldBuilder().id(fields.ADVISEUR).label(fields.ADVISEUR).validators(Validators.required)
-                                        .maxlength(1000).build()],
-            [new InputFormFieldBuilder().id(fields.EMAILADRES).label(fields.EMAILADRES)
-                                        .validators(Validators.required, CustomValidators.emails).build()],
-            [new TextareaFormFieldBuilder().id(fields.BODY).label(fields.BODY)
-                                           .validators(Validators.required)
-                                           .maxlength(1000).build()],
-            [new DocumentenLijstFieldBuilder().id(fields.BIJLAGEN).label(fields.BIJLAGEN)
-                                              .documenten(documenten).build()]
+            [new InputFormFieldBuilder()
+            .id(fields.ADVISEUR)
+            .label(fields.ADVISEUR)
+            .validators(Validators.required)
+            .maxlength(1000)
+            .build()],
+            [new InputFormFieldBuilder()
+            .id(fields.EMAILADRES)
+            .label(fields.EMAILADRES)
+            .validators(Validators.required, CustomValidators.emails)
+            .build()],
+            [new HtmlEditorFormFieldBuilder()
+            .id(fields.BODY)
+            .label(fields.BODY)
+            .validators(Validators.required)
+            .mailtemplateBody(mailtemplate)
+            .maxlength(1000)
+            .build()],
+            [new DocumentenLijstFieldBuilder()
+            .id(fields.BIJLAGEN)
+            .label(fields.BIJLAGEN)
+            .documenten(documenten).build()]
         );
     }
 

@@ -529,8 +529,6 @@
   "msg.mailtemplate.opgeslagen": "Mailtemplate saved",
   "msg.mailtemplate.verwijderen.bevestigen": "Delete mailtemplate?",
   "msg.mailtemplate.verwijderen.uitgevoerd": "Mailtemplate has been deleted",
-  "msg.ontvangstbevestiging.bericht": "Hello,\n\nThis is the acknowledgment of receipt of case {{zaakIdentificatie}}.",
-  "msg.ontvangstbevestiging.onderwerp": "Acknowledgment of receipt of case {{zaakIdentificatie}}",
   "msg.pagina": "of",
   "msg.pagina.items": "Items per page",
   "msg.planitem.uitgevoerd.INTAKE_AFRONDEN": "The intake has been finished",

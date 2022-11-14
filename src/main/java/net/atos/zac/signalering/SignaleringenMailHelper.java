@@ -105,28 +105,4 @@ public class SignaleringenMailHelper {
     public Ontvanger formatTo(final SignaleringTarget.Mail mail) {
         return new Ontvanger(mail.emailadres, mail.naam);
     }
-
-    public String formatSubject(final SignaleringType.Type signaleringType, final SignaleringSubject.Link link) {
-        return String.format("Signalering: %s [%s]",
-                             signaleringType.getNaam(),
-                             link.id);
-    }
-
-    public String formatBody(final SignaleringType.Type signaleringType, final SignaleringTarget.Mail mail, final SignaleringSubject.Link link,
-            final String bericht) {
-        return String.format("Beste %s,\n\n%s\n\nHet betreft %s.\n\n%s",
-                             html(mail.naam),
-                             html(bericht != null ? bericht : signaleringType.getBericht()),
-                             html(link.naam),
-                             link(link));
-    }
-
-    private String link(final SignaleringSubject.Link link) {
-        return String.format("<a href=\"%s\" title\"Klik om naar de zaakafhandelcomponent te gaan.\">%s</a>", link.url, html(link.id));
-    }
-
-    private String html(final String raw) {
-        return StringEscapeUtils.escapeHtml4(raw);
-    }
-
 }

@@ -24,6 +24,9 @@ import {AbstractFormField} from '../../shared/material-form-builder/model/abstra
 import {TranslateService} from '@ngx-translate/core';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
+import {Mail} from '../../admin/model/mail';
 
 @Component({
     selector: 'zac-ontvangstbevestiging',
@@ -45,6 +48,7 @@ export class OntvangstbevestigingComponent implements OnInit {
                 private navigation: NavigationService,
                 private http: HttpClient,
                 private mailService: MailService,
+                private mailtemplateService: MailtemplateService,
                 public takenService: TakenService,
                 public utilService: UtilService,
                 public translateService: TranslateService) { }
@@ -56,30 +60,33 @@ export class OntvangstbevestigingComponent implements OnInit {
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
 
-        const ontvangstOnderwerp = this.translateService.instant('msg.ontvangstbevestiging.onderwerp',
-            {zaakIdentificatie: this.zaak.identificatie});
+        const mailtemplate = this.mailtemplateService.findMailtemplate(Mail.PROCES_ONTVANGSTBEVESTIGING, this.zaak.uuid);
 
-        const ontvangstBericht = this.translateService.instant('msg.ontvangstbevestiging.bericht',
-            {zaakIdentificatie: this.zaak.identificatie});
-
-        const ontvanger = new InputFormFieldBuilder().id('ontvanger')
-                                                     .label('ontvanger')
-                                                     .validators(Validators.required, CustomValidators.email)
-                                                     .maxlength(200)
-                                                     .build();
-        const onderwerp = new InputFormFieldBuilder(ontvangstOnderwerp).id('onderwerp')
-                                                     .label('onderwerp')
-                                                     .validators(Validators.required).maxlength(100)
-                                                     .build();
-        const body = new TextareaFormFieldBuilder(ontvangstBericht).id('body')
-                                                   .label('body')
-                                                   .validators(Validators.required)
-                                                   .maxlength(1000)
-                                                   .build();
-        const bijlagen = new DocumentenLijstFieldBuilder().id('bijlagen')
-                                                          .label('bijlagen')
-                                                          .documenten(documenten)
-                                                          .build();
+        const ontvanger = new InputFormFieldBuilder()
+        .id('ontvanger')
+        .label('ontvanger')
+        .validators(Validators.required, CustomValidators.email)
+        .maxlength(200)
+        .build();
+        const onderwerp = new HtmlEditorFormFieldBuilder()
+        .id('onderwerp')
+        .label('onderwerp')
+        .validators(Validators.required)
+        .mailtemplateOnderwerp(mailtemplate)
+        .maxlength(100)
+        .build();
+        const body = new HtmlEditorFormFieldBuilder()
+        .id('body')
+        .label('body')
+        .validators(Validators.required)
+        .mailtemplateBody(mailtemplate)
+        .maxlength(1000)
+        .build();
+        const bijlagen = new DocumentenLijstFieldBuilder()
+        .id('bijlagen')
+        .label('bijlagen')
+        .documenten(documenten)
+        .build();
 
         this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
 

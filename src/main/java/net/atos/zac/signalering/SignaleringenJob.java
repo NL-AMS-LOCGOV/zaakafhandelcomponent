@@ -147,8 +147,7 @@ public class SignaleringenJob {
     }
 
     private int verzendZaakSignalering(final Signalering signalering, final SignaleringSubjectField field) {
-        final String bericht = SignaleringType.Type.ZAAK_VERLOPEND.getBericht().split(SignaleringType.SEPARATOR)[field.ordinal()];
-        signaleringenService.sendSignalering(signalering, bericht);
+        signaleringenService.sendSignalering(signalering, field);
         signaleringenService.createSignaleringVerzonden(signalering, field);
         return 1;
     }

@@ -32,10 +32,12 @@ import javax.transaction.Transactional;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
-import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -57,6 +59,9 @@ public class SignaleringenService {
 
     @Inject
     private MailService mailService;
+
+    @Inject
+    private MailTemplateService mailTemplateService;
 
     @Inject
     private SignaleringenMailHelper signaleringenMailHelper;
@@ -191,17 +196,39 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering, final String bericht) {
+    public void sendSignalering(final Signalering signalering, final SignaleringSubjectField field) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
             final Ontvanger to = signaleringenMailHelper.formatTo(mail);
-            final SignaleringType.Type type = signalering.getType().getType();
-            final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
-            final String subject = signaleringenMailHelper.formatSubject(type, link);
-            final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
-            mailService.sendMail(to, subject, body, Collections.emptyList());
+            final MailTemplate mailTemplate = getMailtemplate(signalering.getType().getType(), field);
+            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(), Collections.emptyList());
         }
+    }
+
+    private MailTemplate getMailtemplate(final SignaleringType.Type type, final SignaleringSubjectField field) {
+        Mail mail = null;
+        switch (type) {
+            case TAAK_OP_NAAM -> mail = Mail.SIGNALERING_TAAK_OP_NAAM;
+            case TAAK_VERLOPEN -> mail = Mail.SIGNALERING_TAAK_VERLOPEN;
+            case ZAAK_DOCUMENT_TOEGEVOEGD -> mail = Mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD;
+            case ZAAK_OP_NAAM -> mail = Mail.SIGNALERING_ZAAK_OP_NAAM;
+            case ZAAK_VERLOPEND -> {
+                switch (field) {
+                    case DUE -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM;
+                    case FATAL -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_FATALE_DATUM;
+                }
+            }
+            default -> {
+                final MailTemplate mailTemplate = new MailTemplate();
+                final String defaultMail = String.format("Signalering: %s ", type.getNaam());
+                mailTemplate.setOnderwerp(defaultMail);
+                mailTemplate.setBody(defaultMail);
+                return mailTemplate;
+            }
+        }
+
+        return mailTemplateService.findMailtemplate(mail);
     }
 
     public void sendSignalering(final Signalering signalering) {

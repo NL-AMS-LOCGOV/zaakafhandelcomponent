@@ -6,8 +6,6 @@
     <label [for]="data.id" class="label">
         <div>{{data.label | translate}}</div>
     </label>
-    <div [id]="data.id" class="value">
-        {{data.formControl.value | datum | empty}}
-    </div>
+    <div [id]="data.id" [innerHTML]="data.formControl.value | datum | empty" class="value"></div>
 </div>
 
