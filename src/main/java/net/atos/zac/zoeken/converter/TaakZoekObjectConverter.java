@@ -1,7 +1,7 @@
 package net.atos.zac.zoeken.converter;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -85,12 +85,12 @@ public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoe
         taakZoekObject.setZaakOmschrijving(zaak.getOmschrijving());
         taakZoekObject.setZaakToelichting(zaak.getToelichting());
 
-        final HashMap<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
+        final Map<String, String> taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
         if (MapUtils.isNotEmpty(taakdata)) {
             taakZoekObject.setTaakData(taakdata.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }
 
-        final HashMap<String, String> taakinformatie = taskVariablesService.findTaakinformatie(taskInfo.getId());
+        final Map<String, String> taakinformatie = taskVariablesService.findTaakinformatie(taskInfo.getId());
         if (MapUtils.isNotEmpty(taakinformatie)) {
             taakZoekObject.setTaakInformatie(taakinformatie.entrySet().stream().map((es) -> "%s|%s".formatted(es.getKey(), es.getValue())).toList());
         }
