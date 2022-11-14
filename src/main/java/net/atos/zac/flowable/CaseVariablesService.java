@@ -25,6 +25,8 @@ public class CaseVariablesService {
 
     public static final String VAR_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
 
+    public static final String VAR_ZAAK_DATA = "zaakData";
+
     private static final String VAR_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
     private static final String VAR_DATUMTIJD_OPGESCHORT = "datumTijdOpgeschort";

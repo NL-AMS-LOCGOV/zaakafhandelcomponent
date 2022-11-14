@@ -62,6 +62,4 @@ public class CmmnEventObserver extends AbstractEventObserver<CmmnEvent> {
             LOG.warning(String.format("Zaaktype '%s': Geen zaakafhandelParameters gevonden", zaaktype.getIdentificatie()));
         }
     }
-
-
 }
