@@ -8,7 +8,7 @@ import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject
 import {ZakenService} from '../../zaken/zaken.service';
 import {InformatieObjectenService} from '../informatie-objecten.service';
 import {UtilService} from '../../core/service/util.service';
-import {MatSidenav} from '@angular/material/sidenav';
+import {MatDrawer} from '@angular/material/sidenav';
 import {InformatieobjectStatus} from '../model/informatieobject-status.enum';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
 import {Vertrouwelijkheidaanduiding} from '../model/vertrouwelijkheidaanduiding.enum';
@@ -38,7 +38,7 @@ import {Subscription} from 'rxjs';
 export class InformatieObjectEditComponent implements OnInit, OnDestroy {
 
     @Input() infoObject: EnkelvoudigInformatieObjectVersieGegevens;
-    @Input() sideNav: MatSidenav;
+    @Input() sideNav: MatDrawer;
     @Input() zaakUuid: string;
     @Output() document = new EventEmitter<EnkelvoudigInformatieobject>();
 

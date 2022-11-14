@@ -44,6 +44,10 @@ import {NotificationDialogComponent} from './notification-dialog/notification-di
 import {EditInputComponent} from './edit/edit-input/edit-input.component';
 import {EditGroepBehandelaarComponent} from './edit/edit-groep-behandelaar/edit-groep-behandelaar.component';
 import {ExportButtonComponent} from './export-button/export-button.component';
+import {DateRangeFilterComponent} from './table-zoek-filters/date-range-filter/date-range-filter.component';
+import {FacetFilterComponent} from './table-zoek-filters/facet-filter/facet-filter.component';
+import {TekstFilterComponent} from './table-zoek-filters/tekst-filter/tekst-filter.component';
+import {ToggleFilterComponent} from './table-zoek-filters/toggle-filter/toggle-filter.component';
 
 @NgModule({
     declarations: [
@@ -62,6 +66,10 @@ import {ExportButtonComponent} from './export-button/export-button.component';
         EditInputComponent,
         EditTekstComponent,
         EditSelectComponent,
+        DateRangeFilterComponent,
+        FacetFilterComponent,
+        TekstFilterComponent,
+        ToggleFilterComponent,
         ConfirmDialogComponent,
         DialogComponent,
         NoStickyColumnPipe,
@@ -108,6 +116,10 @@ import {ExportButtonComponent} from './export-button/export-button.component';
         EditInputComponent,
         EditTekstComponent,
         EditSelectComponent,
+        DateRangeFilterComponent,
+        FacetFilterComponent,
+        TekstFilterComponent,
+        ToggleFilterComponent,
         DialogComponent,
         ConfirmDialogComponent,
         NoStickyColumnPipe,

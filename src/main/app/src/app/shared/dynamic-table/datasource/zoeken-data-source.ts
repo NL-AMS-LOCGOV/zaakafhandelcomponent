@@ -20,11 +20,13 @@ import {Werklijst} from '../../../gebruikersvoorkeuren/model/werklijst';
 import {Zoekopdracht} from '../../../gebruikersvoorkeuren/model/zoekopdracht';
 import {EventEmitter} from '@angular/core';
 import {ZoekenColumn} from '../model/zoeken-column';
+import {SorteerVeld} from '../../../zoeken/model/sorteer-veld';
+import {FilterVeld} from '../../../zoeken/model/filter-veld';
 
 export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
     zoekParameters: ZoekParameters;
-    beschikbareFilters: { [key: string]: string[] } = {};
+    beschikbareFilters: Partial<Record<FilterVeld, string[]>> = {};
     totalItems: number = 0;
     paginator: MatPaginator;
     sort: MatSort;
@@ -55,7 +57,7 @@ export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSo
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         this.zoekParameters.sorteerRichting = this.sort.direction;
-        this.zoekParameters.sorteerVeld = this.sort.active;
+        this.zoekParameters.sorteerVeld = SorteerVeld[this.sort.active];
 
         return SessionStorageUtil.setItem(this.werklijst + '_ZOEKPARAMETERS', this.zoekParameters);
     }

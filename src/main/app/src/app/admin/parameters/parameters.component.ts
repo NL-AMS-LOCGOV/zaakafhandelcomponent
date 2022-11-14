@@ -16,7 +16,7 @@ import {AdminComponent} from '../admin/admin.component';
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from '../model/case-definition';
 import {SessionStorageUtil} from '../../shared/storage/session-storage.util';
-import {ToggleSwitchOptions} from '../../zoeken/toggle-filter/toggle-switch-options';
+import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter/toggle-switch-options';
 
 @Component({
     templateUrl: './parameters.component.html',

@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<h1 mat-dialog-title>{{'title.zaak.koppelen' | translate:{doel: teKoppelenZaak.identificatie} }}</h1>
+<h1 mat-dialog-title>{{'title.zaak.koppelen' | translate:{doel: teKoppelenZaak?.identificatie} }}</h1>
 
 <div mat-dialog-content>
     <mfb-form-field *ngIf="koppelSelectFormField" [field]="koppelSelectFormField"></mfb-form-field>

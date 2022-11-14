@@ -3,19 +3,19 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-sidenav-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
-    <mat-sidenav #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
+<mat-drawer-container class="inner-sidenav-container" #sideNavContainer [class]="sideNaveMode">
+    <mat-drawer #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
-    </mat-sidenav>
-    <mat-sidenav #actionsSidenav mode="over" position="end" [ngSwitch]="action">
+    </mat-drawer>
+    <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
         <zac-informatie-object-edit *ngSwitchCase="sideNavAction.DOCUMENT_VERSIE_TOEVOEGEN"
                                     [sideNav]="actionsSidenav"
                                     [infoObject]="documentNieuweVersieGegevens"
                                     [zaakUuid]="zaak.uuid"
                                     (document)="versieToegevoegd($event)">
         </zac-informatie-object-edit>
-    </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutGap="20px">
+    </mat-drawer>
+    <mat-drawer-content fxLayout="column" fxLayoutGap="20px">
         <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="20px">
             <mat-card fxFlex="calc(60%-20px)" fxFlex.lt-lg="100">
                 <mat-card-header>
@@ -189,5 +189,5 @@
                 <zac-document-viewer [document]="infoObject"></zac-document-viewer>
             </mat-expansion-panel>
         </div>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+    </mat-drawer-content>
+</mat-drawer-container>
