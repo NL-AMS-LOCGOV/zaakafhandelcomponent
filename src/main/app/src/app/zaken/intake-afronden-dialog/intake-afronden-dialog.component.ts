@@ -113,17 +113,20 @@ export class IntakeAfrondenDialogComponent implements OnInit, OnDestroy {
             this.mailtemplateService.findMailtemplate(userEventListenerData.zaakOntvankelijk ?
                 Mail.ZAAK_ONTVANKELIJK : Mail.ZAAK_NIET_ONTVANKELIJK, this.data.zaak.uuid)
                 .subscribe(mailtemplate => {
-                    let onderwerp = mailtemplate.onderwerp;
-                    onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-                    let body = mailtemplate.body;
-                    body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie).replace('{zaaknr}', this.data.zaak.identificatie);
+                    if (mailtemplate) {
+                        let onderwerp = mailtemplate.onderwerp;
+                        onderwerp = onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
+                        let body = mailtemplate.body;
+                        body = body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
+                                   .replace('{zaaknr}', this.data.zaak.identificatie);
 
-                    const mailObject: MailObject = new MailObject();
-                    mailObject.createDocumentFromMail = true;
-                    mailObject.onderwerp = onderwerp;
-                    mailObject.body = body;
-                    mailObject.ontvanger = this.ontvangerFormField.formControl.value;
-                    this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
+                        const mailObject: MailObject = new MailObject();
+                        mailObject.createDocumentFromMail = true;
+                        mailObject.onderwerp = onderwerp;
+                        mailObject.body = body;
+                        mailObject.ontvanger = this.ontvangerFormField.formControl.value;
+                        this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
+                    }
             });
         }
         this.planItemsService.doUserEventListenerPlanItem(userEventListenerData).subscribe({

@@ -118,7 +118,7 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.disableClose = true;
         this.loading = true;
 
-        if (this.sendMailFormField.formControl.value) {
+        if (this.sendMailFormField.formControl.value && this.mailtemplate) {
             const mailObject: MailObject = new MailObject();
             mailObject.createDocumentFromMail = true;
             mailObject.onderwerp = this.mailtemplate.onderwerp;

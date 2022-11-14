@@ -4,6 +4,7 @@ import net.atos.zac.app.admin.converter.RESTMailtemplateConverter;
 import net.atos.zac.app.admin.model.RESTMailtemplate;
 import net.atos.zac.mailtemplates.MailTemplateService;
 import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,7 +34,7 @@ public class MailtemplateRESTService {
     public RESTMailtemplate findMailtemplate(@PathParam("mailtemplateEnum") final Mail mail,
             @PathParam("zaakUUID") final UUID zaakUUID) {
         // TODO Controleren adhv het zaakUUID of er een ander mailtemplate dan de default is ingesteld op het zaaktype.
-
-        return restMailtemplateConverter.convert(mailTemplateService.findMailtemplate(mail));
+        final MailTemplate mailTemplate = mailTemplateService.findMailtemplate(mail);
+        return mailTemplate != null ? restMailtemplateConverter.convert(mailTemplate) : null;
     }
 }
