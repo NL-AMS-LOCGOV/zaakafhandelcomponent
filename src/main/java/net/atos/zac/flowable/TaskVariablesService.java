@@ -5,7 +5,6 @@
 
 package net.atos.zac.flowable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,16 +33,16 @@ public class TaskVariablesService {
     @Inject
     private CmmnHistoryService cmmnHistoryService;
 
-    public HashMap<String, String> findTaakdata(final String taskId) {
-        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TAAKDATA);
+    public Map<String, String> findTaakdata(final String taskId) {
+        return (Map<String, String>) findTaskVariable(taskId, VAR_TAAKDATA);
     }
 
     public void setTaakdata(final String taskId, final Map<String, String> taakdata) {
         setTaskVariable(taskId, VAR_TAAKDATA, taakdata);
     }
 
-    public HashMap<String, String> findTaakinformatie(final String taskId) {
-        return (HashMap<String, String>) findTaskVariable(taskId, VAR_TAAKINFORMATIE);
+    public Map<String, String> findTaakinformatie(final String taskId) {
+        return (Map<String, String>) findTaskVariable(taskId, VAR_TAAKINFORMATIE);
     }
 
     public void setTaakinformatie(final String taskId, final Map<String, String> taakinformatie) {
