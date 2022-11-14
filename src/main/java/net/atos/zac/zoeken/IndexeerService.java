@@ -80,13 +80,15 @@ public class IndexeerService {
 
     private SolrClient solrClient;
 
+    private boolean isHerindexerenBezig = false;
+
     public IndexeerService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
         solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
     public void indexeerDirect(final String id, final ZoekObjectType type) {
-        addToOrUpdateInSolr(List.of(getConverter(type).convert(id)));
+        commitToSolrIndex(List.of(getConverter(type).convert(id)));
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(id);
         if (entity != null) {
             entityManager.remove(entity);
@@ -96,31 +98,40 @@ public class IndexeerService {
     public void indexeerDirect(final List<String> objectIds, final ZoekObjectType type) {
         final List<ZoekObject> zoekObjecten = objectIds.stream().map(objectId -> getConverter(type).convert(objectId))
                 .collect(Collectors.toList());
-        addToOrUpdateInSolr(zoekObjecten);
+        commitToSolrIndex(zoekObjecten);
         objectIds.stream().map(this::findZoekIndexEntityByObjectId).filter(Objects::nonNull)
                 .forEach(entity -> entityManager.remove(entity));
     }
 
     public HerindexerenInfo herindexeren(final ZoekObjectType type) {
-        LOG.info("[%s] Starten met herindexeren".formatted(type.toString()));
-        deleteAllZoekIndexEntities(type);
-        addExistingSOLREntitiesAsZoekIndexEntitiesToBeRemoved(type);
-        switch (type) {
-            case ZAAK -> addZakenAsZaakZoekIndexEntitiesToBeAddedOrUpdated();
-            case TAAK -> addTakenAsTaakZoekIndexEntitiesToBeAddedOrUpdated();
+        if (isHerindexerenBezig) {
+            LOG.info("Herindexeren is nog bezig ...");
+            return new HerindexerenInfo(0, 0, 0);
         }
+        isHerindexerenBezig = true;
+        try {
+            LOG.info("[%s] Starten met herindexeren".formatted(type.toString()));
+            deleteAllZoekIndexEntities(type);
+            readAllSolrEntitiesAndMarkToRemoveFromSolrIndex(type);
+            switch (type) {
+                case ZAAK -> readAllZakenAndMarkToAddOrUpdateInSolrIndex();
+                case TAAK -> readAllTakenAndMarkToAddOrUpdateInSolrIndex();
+            }
 
-        final int removeCount = countZoekIndexEntities(type, IndexStatus.REMOVE);
-        final int addCount = countZoekIndexEntities(type, IndexStatus.ADD);
-        final int updateCount = countZoekIndexEntities(type, IndexStatus.UPDATE);
-        LOG.info("[%s] Herindexeren gereed".formatted(type.toString()));
-        return new HerindexerenInfo(addCount, updateCount, removeCount);
+            final int removeCount = countZoekIndexEntities(type, IndexStatus.REMOVE);
+            final int addCount = countZoekIndexEntities(type, IndexStatus.ADD);
+            final int updateCount = countZoekIndexEntities(type, IndexStatus.UPDATE);
+            LOG.info("[%s] Herindexeren gereed".formatted(type.toString()));
+            return new HerindexerenInfo(addCount, updateCount, removeCount);
+        } finally {
+            isHerindexerenBezig = false;
+        }
     }
 
     public int indexeer(final int batchGrootte, final ZoekObjectType type) {
-        if (isHerindexeren(type)) {
+        if (isHerindexerenBezig) {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
-            return batchGrootte;
+            return 0;
         }
         final int count = countZoekIndexEntities(type);
         if (count == 0) {
@@ -137,9 +148,6 @@ public class IndexeerService {
                 switch (IndexStatus.valueOf(zoekIndexEntity.getStatus())) {
                     case ADD, UPDATE -> addOrUpdateList.add(converter.convert(zoekIndexEntity.getObjectId()));
                     case REMOVE -> removeList.add(zoekIndexEntity.getObjectId());
-                    case INDEXED -> {
-                        // skip..
-                    }
                 }
             } catch (RuntimeException e) {
                 LOG.warning("[%s] Skipped %s: %s".formatted(type.toString(), zoekIndexEntity.getObjectId(),
@@ -147,13 +155,13 @@ public class IndexeerService {
                 entityManager.remove(zoekIndexEntity);
             }
         });
-        addToOrUpdateInSolr(addOrUpdateList);
-        removeFromSolr(removeList);
+        commitToSolrIndex(addOrUpdateList);
+        removeFromSolrIndex(removeList);
         entities.forEach(entity -> entityManager.remove(entity));
         return countZoekIndexEntities(type);
     }
 
-    private void addZakenAsZaakZoekIndexEntitiesToBeAddedOrUpdated() {
+    private void readAllZakenAndMarkToAddOrUpdateInSolrIndex() {
         final ZaakListParameters listParameters = new ZaakListParameters();
         listParameters.setOrdering("-identificatie");
         listParameters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
@@ -167,7 +175,7 @@ public class IndexeerService {
         }
     }
 
-    private void addTakenAsTaakZoekIndexEntitiesToBeAddedOrUpdated() {
+    private void readAllTakenAndMarkToAddOrUpdateInSolrIndex() {
         int page = 0;
         final int maxResults = TAKEN_MAX_RESULTS;
         boolean hasNext = true;
@@ -200,7 +208,7 @@ public class IndexeerService {
         entityManager.createQuery(query).executeUpdate();
     }
 
-    public int countZoekIndexEntities(final ZoekObjectType type, final IndexStatus status) {
+    private int countZoekIndexEntities(final ZoekObjectType type, final IndexStatus status) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> query = builder.createQuery(Long.class);
         final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
@@ -216,7 +224,7 @@ public class IndexeerService {
         return result.intValue();
     }
 
-    public int countZoekIndexEntities(final ZoekObjectType type) {
+    private int countZoekIndexEntities(final ZoekObjectType type) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> query = builder.createQuery(Long.class);
         final Root<ZoekIndexEntity> root = query.from(ZoekIndexEntity.class);
@@ -258,11 +266,7 @@ public class IndexeerService {
         }
     }
 
-    private boolean isHerindexeren(final ZoekObjectType type) {
-        return countZoekIndexEntities(type, IndexStatus.INDEXED) > 0;
-    }
-
-    private void addExistingSOLREntitiesAsZoekIndexEntitiesToBeRemoved(final ZoekObjectType type) {
+    private void readAllSolrEntitiesAndMarkToRemoveFromSolrIndex(final ZoekObjectType type) {
         final SolrQuery query = new SolrQuery("*:*");
         query.setFields("id");
         query.addFilterQuery("type:%s".formatted(type.toString()));
@@ -291,7 +295,7 @@ public class IndexeerService {
         }
     }
 
-    private void addToOrUpdateInSolr(final List<ZoekObject> zoekObjecten) {
+    private void commitToSolrIndex(final List<ZoekObject> zoekObjecten) {
         if (CollectionUtils.isNotEmpty(zoekObjecten)) {
             try {
                 solrClient.addBeans(zoekObjecten);
@@ -302,7 +306,7 @@ public class IndexeerService {
         }
     }
 
-    private void removeFromSolr(final List<String> ids) {
+    private void removeFromSolrIndex(final List<String> ids) {
         if (CollectionUtils.isNotEmpty(ids)) {
             try {
                 solrClient.deleteById(ids);
@@ -339,7 +343,7 @@ public class IndexeerService {
         createZoekIndexEntityAddOrUpdate(taskID, ZoekObjectType.TAAK);
     }
 
-    public void createTaakZoekIndexEntityRemove(final String taskID) {
+    public void removeTaak(final String taskID) {
         createZoekIndexEntity(taskID, ZoekObjectType.TAAK, IndexStatus.REMOVE);
     }
 
