@@ -71,8 +71,10 @@
                 <button *ngIf="bedrijf.observed" mat-flat-button color="primary" (click)="bedrijf.emit(row)" title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>business</mat-icon>
                 </button>
-                <a *ngIf="!bedrijf.observed" mat-flat-button [routerLink]="['/bedrijf', row.identificatie]" (click)="sideNav?.close(); $event.stopPropagation()"
-                   [id]="'bedrijfBekijken_' + row.identificatie +'_button'" title="{{ 'actie.bedrijf.bekijken' | translate }}">
+                <a *ngIf="!bedrijf.observed" mat-flat-button [routerLink]="['/bedrijf', row.identificatie]"
+                   (click)="sideNav?.close(); $event.stopPropagation()"
+                   [id]="'bedrijfBekijken_' + row.identificatie +'_button'"
+                   title="{{ 'actie.bedrijf.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
                 </a>
             </td>

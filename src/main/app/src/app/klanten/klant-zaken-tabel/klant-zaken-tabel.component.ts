@@ -4,7 +4,16 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {merge, Observable} from 'rxjs';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';

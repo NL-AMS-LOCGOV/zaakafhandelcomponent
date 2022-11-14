@@ -73,7 +73,8 @@
         <ng-container matColumnDef="creatiedatum_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="creatiedatum"
-                                       [range]="dataSource.zoekParameters.datums.STARTDATUM" (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.STARTDATUM"
+                                       (changed)="filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
@@ -85,7 +86,8 @@
         <ng-container matColumnDef="streefdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="streefdatum"
-                                       [range]="dataSource.zoekParameters.datums.STREEFDATUM" (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.STREEFDATUM"
+                                       (changed)="filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>

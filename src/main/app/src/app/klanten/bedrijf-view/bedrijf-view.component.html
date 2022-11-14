@@ -8,15 +8,20 @@
         <mat-card-title>{{'bedrijfsgegevens' | translate}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <zac-skeleton-loader [loading$]="bedrijf$" [options]="{layout: skeletonLoaderLayout.FIELDS, fields:5, fieldsPerRow:5}">
+        <zac-skeleton-loader [loading$]="bedrijf$"
+                             [options]="{layout: skeletonLoaderLayout.FIELDS, fields:5, fieldsPerRow:5}">
             <div id="bedrijfsgegevens" class="content" fxLayout="row wrap" fxLayout.lt-sm="column wrap">
-                <zac-static-text fxFlex="" [label]="'handelsnaam' | translate" [value]="bedrijf?.naam"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'handelsnaam' | translate"
+                                 [value]="bedrijf?.naam"></zac-static-text>
                 <zac-static-text fxFlex="" [label]="'adres' | translate" [value]="bedrijf?.adres"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'kvknummer' | translate" [value]="bedrijf?.kvkNummer"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'kvknummer' | translate"
+                                 [value]="bedrijf?.kvkNummer"></zac-static-text>
                 <zac-static-text *ngIf="vestigingsnummer" fxFlex="" [label]="'vestigingsnummer' | translate"
                                  [value]="bedrijf?.vestigingsnummer"></zac-static-text>
-                <zac-static-text *ngIf="rsin" fxFlex="" [label]="'rsin' | translate" [value]="bedrijf?.rsin"></zac-static-text>
-                <zac-static-text fxFlex="" [label]="'type' | translate" [value]="bedrijf?.type | translate"></zac-static-text>
+                <zac-static-text *ngIf="rsin" fxFlex="" [label]="'rsin' | translate"
+                                 [value]="bedrijf?.rsin"></zac-static-text>
+                <zac-static-text fxFlex="" [label]="'type' | translate"
+                                 [value]="bedrijf?.type | translate"></zac-static-text>
             </div>
         </zac-skeleton-loader>
     </mat-card-content>

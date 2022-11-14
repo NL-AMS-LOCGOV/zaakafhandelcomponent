@@ -188,20 +188,18 @@ opa:
     pullPolicy: IfNotPresent
 
 solr:
+  coreNames: [ "zac" ]
   persistence:
     size: 1Gi
-  image:
-    tag: 8.11.2
-  coreNames: [ "zac" ]
-  cloudEnabled: false
+  replicaCount: 1
+  collectionReplicas: 1
   cloudBootstrap: false
+  cloudEnabled: false
   # Liveness and readiness probes give exception in SOLR pod when cloudEnabled=false
   livenessProbe:
     enabled: false
   readinessProbe:
     enabled: false
-  replicaCount: 1
-  collectionReplicas: 1
   service:
     ports:
       http: 80

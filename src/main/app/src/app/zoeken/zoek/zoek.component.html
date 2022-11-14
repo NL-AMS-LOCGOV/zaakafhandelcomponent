@@ -52,7 +52,8 @@
                                  [range]="zoekParameters.datums.STREEFDATUM" (changed)="zoek.emit()">
                 </zac-date-filter>
                 <zac-date-filter *ngIf="hasSearched" label="zaak.fataleDatum"
-                                 [range]="zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING" (changed)="zoek.emit()">
+                                 [range]="zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING"
+                                 (changed)="zoek.emit()">
                 </zac-date-filter>
                 <zac-date-filter *ngIf="hasSearched" label="zaak.einddatum"
                                  [range]="zoekParameters.datums.ZAAK_EINDDATUM" (changed)="zoek.emit()">

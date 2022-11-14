@@ -98,7 +98,8 @@
         <ng-container matColumnDef="startdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="startdatum"
-                                       [range]="dataSource.zoekParameters.datums.STARTDATUM" (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.STARTDATUM"
+                                       (changed)="filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
@@ -110,7 +111,8 @@
         <ng-container matColumnDef="einddatumGepland_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="streefdatum"
-                                       [range]="dataSource.zoekParameters.datums.STREEFDATUM" (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.STREEFDATUM"
+                                       (changed)="filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
@@ -146,7 +148,8 @@
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="uiterlijkedatumafdoening"
-                                       [range]="dataSource.zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING" (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING"
+                                       (changed)="filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
