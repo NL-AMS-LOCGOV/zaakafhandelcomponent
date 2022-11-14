@@ -194,7 +194,8 @@
             <th mat-header-cell *matHeaderCellDef></th>
         </ng-container>
         <ng-container matColumnDef="indicaties">
-            <th mat-header-cell cdkDrag *matHeaderCellDef>{{ 'indicaties' | translate | empty}}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef
+                [mat-sort-header]="sorteerVeld.ZAAK_INDICATIES">{{ 'indicaties' | translate | empty}}</th>
             <td mat-cell *matCellDef="let row">
                 <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
             </td>
