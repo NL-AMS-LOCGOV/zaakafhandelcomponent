@@ -7,24 +7,24 @@
     <mat-chip *ngIf="zaakZoekObject.indicatieOpschorting" color="accent" selected
               [matTooltip]="('indicatieOpschorting' | translate) +': '+ zaakZoekObject.redenOpschorting">O
     </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieVerlenging" color="accent" selected
+    <mat-chip *ngIf="zaakZoekObject.indicatieVerlenging"
               [matTooltip]="('indicatieVerlenging' | translate) +': '+ zaakZoekObject.redenVerlenging">V
     </mat-chip>
     <mat-chip *ngIf="zaakZoekObject.indicatieHeropend" color="accent" selected
               [matTooltip]="('indicatieHeropend' | translate) +': '+ zaakZoekObject.statusToelichting">H
     </mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieDeelzaak" color="accent" selected [matTooltip]="'indicatieDeelzaak' | translate">DZ</mat-chip>
-    <mat-chip *ngIf="zaakZoekObject.indicatieHoofdzaak" color="accent" selected [matTooltip]="'indicatieHoofdzaak' | translate">HZ</mat-chip>
+    <mat-chip *ngIf="zaakZoekObject.indicatieDeelzaak" [matTooltip]="'indicatieDeelzaak' | translate">DZ</mat-chip>
+    <mat-chip *ngIf="zaakZoekObject.indicatieHoofdzaak" [matTooltip]="'indicatieHoofdzaak' | translate">HZ</mat-chip>
 </mat-chip-list>
 
 <mat-chip-list class="view" *ngIf="zaak" selectable="false" fxLayout="row">
     <mat-chip *ngIf="zaak.isOpgeschort" color="accent" selected [matTooltip]="zaak.redenOpschorting">{{'indicatieOpschorting' | translate}}</mat-chip>
-    <mat-chip *ngIf="zaak.isVerlengd" color="accent" selected [matTooltip]="zaak.redenVerlenging">{{'indicatieVerlenging' | translate}}</mat-chip>
+    <mat-chip *ngIf="zaak.isVerlengd" [matTooltip]="zaak.redenVerlenging">{{'indicatieVerlenging' | translate}}</mat-chip>
     <mat-chip *ngIf="zaak.isHeropend" color="accent" selected [matTooltip]="zaak.status.toelichting">{{'indicatieHeropend' | translate}}</mat-chip>
-    <mat-chip *ngIf="zaak.isDeelzaak" color="accent" selected
+    <mat-chip *ngIf="zaak.isDeelzaak"
               [matTooltip]="'indicatie.relatie.toelichting' | translate: {'identificatie': getHoofdzaakID()}">{{'indicatieDeelzaak' | translate}}
     </mat-chip>
-    <mat-chip *ngIf="zaak.isHoofdzaak" color="accent" selected
+    <mat-chip *ngIf="zaak.isHoofdzaak"
               [matTooltip]="getDeelZaakToelichting() | translate: getDeelZaakArgs()">{{'indicatieHoofdzaak' | translate}}
     </mat-chip>
 </mat-chip-list>
