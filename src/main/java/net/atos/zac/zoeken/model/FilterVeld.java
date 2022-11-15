@@ -32,7 +32,7 @@ public enum FilterVeld {
     DOCUMENT_STATUS("informatieobject_status"),
     DOCUMENT_TYPE("informatieobject_documentType"),
     DOCUMENT_VERGRENDELD("informatieobject_indicatieVergrendeld"),
-    DOCUMENT_VERGRENDELD_DOOR("informatieobject_vergrendeldDoor");
+    DOCUMENT_VERGRENDELD_DOOR("informatieobject_vergrendeldDoorNaam");
 
 
     private final String veld;

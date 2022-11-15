@@ -15,6 +15,7 @@ import {DateFilterComponent} from './zoek/filters/date-filter/date-filter.compon
 import {KlantFilterComponent} from './zoek/filters/klant-filter/klant-filter.component';
 import {KlantFilterDialog} from './zoek/filters/klant-filter/klant-filter.dialog';
 import {KlantenModule} from '../klanten/klanten.module';
+import {DocumentZoekObjectComponent} from './zoek-object/document-zoek-object/document-zoek-object.component';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {KlantenModule} from '../klanten/klanten.module';
         DateFilterComponent,
         ZaakZoekObjectComponent,
         TaakZoekObjectComponent,
+        DocumentZoekObjectComponent,
         KlantFilterComponent,
         KlantFilterDialog
     ],

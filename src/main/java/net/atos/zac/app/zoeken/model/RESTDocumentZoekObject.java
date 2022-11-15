@@ -5,7 +5,7 @@
 
 package net.atos.zac.app.zoeken.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import net.atos.zac.app.policy.model.RESTDocumentRechten;
 
@@ -27,15 +27,15 @@ public class RESTDocumentZoekObject extends AbstractRESTZoekObject {
 
     public String zaakRelatie;
 
-    public Date creatiedatum;
+    public LocalDate creatiedatum;
 
-    public Date registratiedatum;
+    public LocalDate registratiedatum;
 
-    public Date ontvangstdatum;
+    public LocalDate ontvangstdatum;
 
-    public Date verzenddatum;
+    public LocalDate verzenddatum;
 
-    public Date ondertekeningDatum;
+    public LocalDate ondertekeningDatum;
 
     public String vertrouwelijkheidaanduiding;
 

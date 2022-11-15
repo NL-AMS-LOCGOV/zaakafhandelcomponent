@@ -66,6 +66,8 @@
                                               [zaak]="getZaakZoekObject(zoekObject)"></zac-zaak-zoek-object>
                         <zac-taak-zoek-object *ngSwitchCase="zoekObjectType.TAAK" [sideNav]="sideNav"
                                               [taak]="getTaakZoekObject(zoekObject)"></zac-taak-zoek-object>
+                        <zac-document-zoek-object *ngSwitchCase="zoekObjectType.DOCUMENT" [sideNav]="sideNav"
+                                                  [document]="getDocumentZoekObject(zoekObject)"></zac-document-zoek-object>
                     </ng-container>
                     <mat-divider></mat-divider>
                 </ng-container>

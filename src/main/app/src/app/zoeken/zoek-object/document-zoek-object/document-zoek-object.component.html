@@ -1,0 +1,37 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<div fxLayout="row wrap" class="document-wrapper">
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'Document' | translate"
+                         [icon]="viewIcon"
+                         class="type-label"
+                         (iconClicked)="open(document)"
+                         [value]="document.titel"></zac-static-text>
+        <zac-static-text [label]="'zaaktype' | translate"
+                         [value]="document.zaaktypeOmschrijving"></zac-static-text>
+        <zac-static-text [label]="'status' | translate"
+                         [value]="'informatieobject.status.'+document.status | translate"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'zaakIdentificatie' | translate"
+                         [value]="document.zaakId"></zac-static-text>
+        <zac-static-text [label]="'documentType' | translate"
+                         [value]="document.documentType"></zac-static-text>
+        <zac-static-text [label]="'auteur' | translate"
+                         [value]="document.auteur"></zac-static-text>
+    </div>
+    <div [fxFlex]="100/3">
+        <zac-static-text [label]="'creatiedatum' | translate"
+                         [value]="document.creatiedatum | datum"></zac-static-text>
+        <zac-static-text [label]="'verzenddatum' | translate"
+                         [value]="document.verzenddatum | datum"></zac-static-text>
+        <zac-static-text [label]="'ontvangstdatum' | translate"
+                         [value]="document.ontvangstdatum | datum"></zac-static-text>
+    </div>
+</div>
+<div class="beschrijving">
+    <zac-static-text [label]="'beschrijving' | translate" [value]="document.beschrijving"></zac-static-text>
+</div>
