@@ -75,9 +75,10 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .label(this.fields.NAAM)
         .validators(Validators.required)
         .build();
-        this.mailFormField = new SelectFormFieldBuilder(mail)
+        this.mailFormField = new SelectFormFieldBuilder(this.template.parent == null ? mail.label : mail)
         .id(this.fields.MAIL)
         .label(this.fields.MAIL)
+        .readonly(this.template.parent == null)
         .optionLabel('label')
         .options(mails)
         .validators(Validators.required)
@@ -105,7 +106,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
 
     saveMailtemplate(): void {
         this.template.mailTemplateNaam = this.naamFormField.formControl.value;
-        this.template.mail = this.mailFormField.formControl.value.value;
+        this.template.mail = this.template.parent == null ? this.template.mail : this.mailFormField.formControl.value.value;
         this.template.parent = this.parentFormField.formControl.value;
         this.template.onderwerp = this.onderwerpFormField.formControl.value;
         this.template.body = this.bodyFormField.formControl.value;
