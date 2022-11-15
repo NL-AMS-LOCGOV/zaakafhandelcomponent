@@ -84,6 +84,7 @@ public class ZoekParameters {
         return switch (type) {
             case ZAAK -> FilterVeld.getZaakFacetten();
             case TAAK -> FilterVeld.getTaakFacetten();
+            case DOCUMENT -> FilterVeld.getDocumentFacetten();
         };
     }
 

@@ -27,7 +27,13 @@ public enum FilterVeld {
     TAAK_STATUS("taak_status"),
     TAAK_ZAAKTYPE("taak_zaaktypeOmschrijving"),
     TAAK_BEHANDELAAR("taak_behandelaarNaam"),
-    TAAK_GROEP("taak_groepNaam");
+    TAAK_GROEP("taak_groepNaam"),
+
+    DOCUMENT_STATUS("informatieobject_status"),
+    DOCUMENT_TYPE("informatieobject_documentType"),
+    DOCUMENT_VERGRENDELD("informatieobject_indicatieVergrendeld"),
+    DOCUMENT_VERGRENDELD_DOOR("informatieobject_vergrendeldDoor");
+
 
     private final String veld;
 
@@ -47,11 +53,16 @@ public enum FilterVeld {
     }
 
     public static EnumSet<FilterVeld> getFacetten() {
-        return EnumSet.of(TYPE, ZAAKTYPE, TOEGEKEND, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_RESULTAAT, TAAK_NAAM, TAAK_STATUS);
+        return EnumSet.of(TYPE, ZAAKTYPE, TOEGEKEND, BEHANDELAAR, GROEP, ZAAK_STATUS, ZAAK_RESULTAAT, TAAK_NAAM, TAAK_STATUS, DOCUMENT_STATUS, DOCUMENT_TYPE,
+                          DOCUMENT_VERGRENDELD, DOCUMENT_VERGRENDELD_DOOR);
     }
 
     public static EnumSet<FilterVeld> getTaakFacetten() {
         return EnumSet.of(TAAK_NAAM, TAAK_STATUS, GROEP, BEHANDELAAR, ZAAKTYPE);
+    }
+
+    public static EnumSet<FilterVeld> getDocumentFacetten() {
+        return EnumSet.of(DOCUMENT_STATUS, DOCUMENT_TYPE, DOCUMENT_VERGRENDELD, DOCUMENT_VERGRENDELD_DOOR, ZAAKTYPE);
     }
 
     public static EnumSet<FilterVeld> getZaakFacetten() {

@@ -39,6 +39,9 @@ import org.apache.solr.common.params.CursorMarkParams;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.flowable.task.api.Task;
 
+import net.atos.client.zgw.drc.DRCClientService;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
@@ -71,6 +74,9 @@ public class IndexeerService {
 
     @Inject
     private ZRCClientService zrcClientService;
+
+    @Inject
+    private DRCClientService drcClientService;
 
     @Inject
     private TaskService taskService;
@@ -112,10 +118,11 @@ public class IndexeerService {
         try {
             LOG.info("[%s] Starten met herindexeren".formatted(type.toString()));
             deleteAllZoekIndexEntities(type);
-            readAllSolrEntitiesAndMarkToRemoveFromSolrIndex(type);
+            solrIndexMarkAllForRemoval(type);
             switch (type) {
-                case ZAAK -> readAllZakenAndMarkToAddOrUpdateInSolrIndex();
-                case TAAK -> readAllTakenAndMarkToAddOrUpdateInSolrIndex();
+                case ZAAK -> markAllZakenForReindexing();
+                case TAAK -> markAllTakenForReindexing();
+                case DOCUMENT -> markAllInformatieobjectenForReindexing();
             }
 
             final int removeCount = countZoekIndexEntities(type, IndexStatus.REMOVE);
@@ -161,7 +168,7 @@ public class IndexeerService {
         return countZoekIndexEntities(type);
     }
 
-    private void readAllZakenAndMarkToAddOrUpdateInSolrIndex() {
+    private void markAllZakenForReindexing() {
         final ZaakListParameters listParameters = new ZaakListParameters();
         listParameters.setOrdering("-identificatie");
         listParameters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
@@ -169,13 +176,25 @@ public class IndexeerService {
         while (hasNext) {
             final Results<Zaak> results = zrcClientService.listZaken(listParameters);
             results.getResults()
-                    .forEach(zaak -> createZoekIndexEntityAddOrUpdate(zaak.getUuid().toString(), ZoekObjectType.ZAAK));
+                    .forEach(zaak -> markItemForAddOrUpdateInSolrIndex(zaak.getUuid().toString(), ZoekObjectType.ZAAK));
             hasNext = results.getNext() != null;
             listParameters.setPage(listParameters.getPage() + 1);
         }
     }
 
-    private void readAllTakenAndMarkToAddOrUpdateInSolrIndex() {
+    private void markAllInformatieobjectenForReindexing() {
+        final EnkelvoudigInformatieobjectListParameters listParameters = new EnkelvoudigInformatieobjectListParameters();
+        listParameters.setPage(2);
+        boolean hasNext = true;
+        while (hasNext) {
+            final Results<EnkelvoudigInformatieobject> results = drcClientService.listEnkelvoudigInformatieObjecten(listParameters);
+            results.getResults().forEach(informatieobject -> markItemForAddOrUpdateInSolrIndex(informatieobject.getUUID().toString(), ZoekObjectType.DOCUMENT));
+            hasNext = results.getNext() != null;
+            listParameters.setPage(listParameters.getPage() + 1);
+        }
+    }
+
+    private void markAllTakenForReindexing() {
         int page = 0;
         final int maxResults = TAKEN_MAX_RESULTS;
         boolean hasNext = true;
@@ -183,7 +202,7 @@ public class IndexeerService {
             final int firstResult = page * maxResults;
             final List<Task> tasks = taskService.listOpenTasks(TaakSortering.CREATIEDATUM, SorteerRichting.DESCENDING,
                                                                firstResult, maxResults);
-            tasks.forEach(taak -> createZoekIndexEntityAddOrUpdate(taak.getId(), ZoekObjectType.TAAK));
+            tasks.forEach(taak -> markItemForAddOrUpdateInSolrIndex(taak.getId(), ZoekObjectType.TAAK));
             page++;
             hasNext = CollectionUtils.isNotEmpty(tasks);
         }
@@ -246,7 +265,7 @@ public class IndexeerService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void createZoekIndexEntityAddOrUpdate(final String objectId, final ZoekObjectType type) {
+    private void markItemForAddOrUpdateInSolrIndex(final String objectId, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(objectId);
         if (entity != null) {
             entity.setStatus(IndexStatus.UPDATE);
@@ -256,17 +275,17 @@ public class IndexeerService {
         }
     }
 
-    private void createZoekIndexEntity(final String id, final ZoekObjectType type, final IndexStatus status) {
+    private void markItemForRemovalFromSolrIndex(final String id, final ZoekObjectType type) {
         final ZoekIndexEntity entity = findZoekIndexEntityByObjectId(id);
         if (entity != null) {
-            entity.setStatus(status);
+            entity.setStatus(IndexStatus.REMOVE);
             entityManager.merge(entity);
         } else {
-            entityManager.persist(new ZoekIndexEntity(id, type, status));
+            entityManager.persist(new ZoekIndexEntity(id, type, IndexStatus.REMOVE));
         }
     }
 
-    private void readAllSolrEntitiesAndMarkToRemoveFromSolrIndex(final ZoekObjectType type) {
+    private void solrIndexMarkAllForRemoval(final ZoekObjectType type) {
         final SolrQuery query = new SolrQuery("*:*");
         query.setFields("id");
         query.addFilterQuery("type:%s".formatted(type.toString()));
@@ -284,7 +303,7 @@ public class IndexeerService {
             }
             for (final SolrDocument document : response.getResults()) {
                 final String objectId = String.valueOf(document.get("id"));
-                createZoekIndexEntity(objectId, type, IndexStatus.REMOVE);
+                markItemForRemovalFromSolrIndex(objectId, type);
             }
             final String nextCursorMark = response.getNextCursorMark();
             if (cursorMark.equals(nextCursorMark)) {
@@ -296,9 +315,10 @@ public class IndexeerService {
     }
 
     private void commitToSolrIndex(final List<ZoekObject> zoekObjecten) {
-        if (CollectionUtils.isNotEmpty(zoekObjecten)) {
+        final List<ZoekObject> zoekObjectenWithoutNulls = zoekObjecten.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(zoekObjectenWithoutNulls)) {
             try {
-                solrClient.addBeans(zoekObjecten);
+                solrClient.addBeans(zoekObjectenWithoutNulls);
                 solrClient.commit();
             } catch (final IOException | SolrServerException e) {
                 throw new RuntimeException(e);
@@ -327,7 +347,7 @@ public class IndexeerService {
     }
 
     public void addZaak(final UUID zaakUUID, boolean inclusieTaken) {
-        createZoekIndexEntityAddOrUpdate(zaakUUID.toString(), ZoekObjectType.ZAAK);
+        markItemForAddOrUpdateInSolrIndex(zaakUUID.toString(), ZoekObjectType.ZAAK);
         if (inclusieTaken) {
             taskService.listTasksForCase(zaakUUID).forEach(taskInfo -> {
                 addTaak(taskInfo.getId());
@@ -336,15 +356,23 @@ public class IndexeerService {
     }
 
     public void removeZaak(final UUID zaakUUID) {
-        createZoekIndexEntity(zaakUUID.toString(), ZoekObjectType.ZAAK, IndexStatus.REMOVE);
+        markItemForRemovalFromSolrIndex(zaakUUID.toString(), ZoekObjectType.ZAAK);
+    }
+
+    public void addInformatieobject(final UUID informatieobjectUUID) {
+        markItemForAddOrUpdateInSolrIndex(informatieobjectUUID.toString(), ZoekObjectType.DOCUMENT);
+    }
+
+    public void removeInformatieobject(final UUID informatieobjectUUID) {
+        markItemForRemovalFromSolrIndex(informatieobjectUUID.toString(), ZoekObjectType.DOCUMENT);
     }
 
     public void addTaak(final String taskID) {
-        createZoekIndexEntityAddOrUpdate(taskID, ZoekObjectType.TAAK);
+        markItemForAddOrUpdateInSolrIndex(taskID, ZoekObjectType.TAAK);
     }
 
     public void removeTaak(final String taskID) {
-        createZoekIndexEntity(taskID, ZoekObjectType.TAAK, IndexStatus.REMOVE);
+        markItemForRemovalFromSolrIndex(taskID, ZoekObjectType.TAAK);
     }
 
 }

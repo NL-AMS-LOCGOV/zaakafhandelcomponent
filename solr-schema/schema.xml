@@ -191,6 +191,7 @@
     <field name="informatieobject_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_zaakId" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakAfgehandeld" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_creatiedatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
@@ -209,7 +210,8 @@
     <field name="informatieobject_indicatieOndertekend" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_indicatieVergrendeld" type="boolean" indexed="true" stored="true" docValues="true"/>
-    <field name="informatieobject_vergrendeldDoor" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_vergrendeldDoorNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_vergrendeldDoorGebruikersnaam" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_indicaties" type="plong" indexed="true" docValues="true"/>
 
     <!--  non-tokenized version of field to make it easier to sort or group

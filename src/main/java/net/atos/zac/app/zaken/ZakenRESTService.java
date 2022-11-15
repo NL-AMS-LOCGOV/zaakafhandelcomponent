@@ -434,7 +434,7 @@ public class ZakenRESTService {
         }
         zaakInformatieobjecten.forEach(zaakInformatieobject ->
                                                zrcClientService.deleteZaakInformatieobject(
-                                                       zaakInformatieobject.getUuid(),
+                                                       zaakInformatieobject,
                                                        ontkoppelGegevens.reden,
                                                        "Ontkoppeld"));
         if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {

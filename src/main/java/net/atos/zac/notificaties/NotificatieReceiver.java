@@ -170,6 +170,15 @@ public class NotificatieReceiver {
                 indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
             }
         }
+        if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
+            if (notificatie.getResource() == INFORMATIEOBJECT) {
+                if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                    indexeerService.addInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                } else if (notificatie.getAction() == DELETE) {
+                    indexeerService.removeInformatieobject(uuidFromURI(notificatie.getResourceUrl()));
+                }
+            }
+        }
     }
 
     private void handleInboxDocumenten(final Notificatie notificatie) {

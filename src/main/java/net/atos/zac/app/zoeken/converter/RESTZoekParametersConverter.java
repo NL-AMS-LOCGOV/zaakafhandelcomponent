@@ -14,9 +14,9 @@ import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.DatumRange;
-import net.atos.zac.zoeken.model.TaakZoekObject;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
+import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 public class RESTZoekParametersConverter {
 

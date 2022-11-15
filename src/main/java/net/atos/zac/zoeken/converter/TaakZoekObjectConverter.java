@@ -22,8 +22,8 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zoeken.model.TaakZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
+import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
 
 public class TaakZoekObjectConverter extends AbstractZoekObjectConverter<TaakZoekObject> {
 

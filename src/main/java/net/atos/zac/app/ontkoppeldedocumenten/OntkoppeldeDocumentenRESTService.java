@@ -92,7 +92,7 @@ public class OntkoppeldeDocumentenRESTService {
         assertPolicy(policyService.readWerklijstRechten().getDocumentenOntkoppeldVerwijderen());
         final OntkoppeldDocument ontkoppeldDocument = ontkoppeldeDocumentenService.find(id);
         if (ontkoppeldDocument == null) {
-            return; // reeds verwijderd
+            return; // al verwijderd
         }
         final EnkelvoudigInformatieobject enkelvoudigInformatieobject = drcClientService.readEnkelvoudigInformatieobject(ontkoppeldDocument.getDocumentUUID());
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(enkelvoudigInformatieobject);
