@@ -53,6 +53,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         final Informatieobjecttype informatieobjecttype = ztcClientService.readInformatieobjecttype(informatieobject.getInformatieobjecttype());
         final DocumentZoekObject documentZoekObject = new DocumentZoekObject();
+        documentZoekObject.setType(ZoekObjectType.DOCUMENT);
         documentZoekObject.setUuid(informatieobject.getUUID().toString());
         documentZoekObject.setIdentificatie(informatieobject.getIdentificatie());
         documentZoekObject.setTitel(informatieobject.getTitel());

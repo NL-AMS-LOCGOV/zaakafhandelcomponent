@@ -15,7 +15,10 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 public class DocumentZoekObject implements ZoekObject {
 
     @Field
-    private String uuid;
+    private String id;
+
+    @Field
+    private String type;
 
     @Field("informatieobject_identificatie")
     private String identificatie;
@@ -109,15 +112,19 @@ public class DocumentZoekObject implements ZoekObject {
 
     @Override
     public ZoekObjectType getType() {
-        return ZoekObjectType.DOCUMENT;
+        return ZoekObjectType.valueOf(type);
     }
 
     public String getUuid() {
-        return uuid;
+        return id;
     }
 
     public void setUuid(final String uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
+    }
+
+    public void setType(final ZoekObjectType type) {
+        this.type = type.toString();
     }
 
     public String getIdentificatie() {
