@@ -9,5 +9,6 @@ export class Mailtemplate {
     onderwerp: string;
     body: string;
     mail: string;
+    variabelen: string[];
     parent: number;
 }

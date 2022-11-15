@@ -82,15 +82,18 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .options(mails)
         .validators(Validators.required)
         .build();
-        this.onderwerpFormField = new InputFormFieldBuilder(this.template.onderwerp)
+        this.onderwerpFormField = new HtmlEditorFormFieldBuilder(this.template.onderwerp)
         .id(this.fields.ONDERWERP)
         .label(this.fields.ONDERWERP)
+        .variabelen(this.template.variabelen)
+        .emptyToolbar()
         .validators(Validators.required)
         .maxlength(100)
         .build();
         this.bodyFormField = new HtmlEditorFormFieldBuilder(this.template.body)
         .id(this.fields.BODY)
         .label(this.fields.BODY)
+        .variabelen(this.template.variabelen)
         .validators(Validators.required)
         .maxlength(1000)
         .build();

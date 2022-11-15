@@ -14,6 +14,9 @@ export class HtmlEditorFormField extends AbstractFormControlField {
     icons: ActionIcon[];
     mailtemplateBody$: Observable<Mailtemplate>;
     mailtemplateOnderwerp$: Observable<Mailtemplate>;
+    variabelen: string[] = ['ZAAKNUMMER', 'ZAAKTYPE', 'ZAAKSTATUS', 'REGISTRATIEDATUM', 'STARTDATUM', 'STREEFDATUM', 'FATALEDATUM',
+        'OMSCHRIJVINGZAAK', 'TOELICHTINGZAAK'];
+    emptyToolbar: boolean;
     maxlength: number;
     showCount: boolean = false;
 
