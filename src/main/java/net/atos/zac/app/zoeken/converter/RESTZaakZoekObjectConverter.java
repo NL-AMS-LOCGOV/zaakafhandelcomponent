@@ -13,6 +13,7 @@ import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.DateTimeConverterUtil;
+import net.atos.zac.zoeken.model.ZaakIndicatie;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 
 public class RESTZaakZoekObjectConverter {
@@ -34,7 +35,8 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.startdatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getStartdatum());
         restZoekItem.einddatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getEinddatum());
         restZoekItem.einddatumGepland = DateTimeConverterUtil.convertToLocalDate(zoekItem.getEinddatumGepland());
-        restZoekItem.uiterlijkeEinddatumAfdoening = DateTimeConverterUtil.convertToLocalDate(zoekItem.getUiterlijkeEinddatumAfdoening());
+        restZoekItem.uiterlijkeEinddatumAfdoening = DateTimeConverterUtil.convertToLocalDate(
+                zoekItem.getUiterlijkeEinddatumAfdoening());
         restZoekItem.publicatiedatum = DateTimeConverterUtil.convertToLocalDate(zoekItem.getPublicatiedatum());
         restZoekItem.communicatiekanaal = zoekItem.getCommunicatiekanaal();
         restZoekItem.vertrouwelijkheidaanduiding = zoekItem.getVertrouwelijkheidaanduiding();
@@ -47,13 +49,13 @@ public class RESTZaakZoekObjectConverter {
         restZoekItem.statustypeOmschrijving = zoekItem.getStatustypeOmschrijving();
         restZoekItem.resultaattypeOmschrijving = zoekItem.getResultaattypeOmschrijving();
         restZoekItem.aantalOpenstaandeTaken = zoekItem.getAantalOpenstaandeTaken();
-        restZoekItem.indicatieVerlenging = zoekItem.isIndicatieVerlenging();
+        restZoekItem.indicatieVerlenging = zoekItem.isIndicatie(ZaakIndicatie.VERLENGD);
         restZoekItem.redenVerlenging = zoekItem.getRedenVerlenging();
-        restZoekItem.indicatieOpschorting = zoekItem.isIndicatieOpschorting();
+        restZoekItem.indicatieOpschorting = zoekItem.isIndicatie(ZaakIndicatie.OPSCHORTING);
         restZoekItem.redenOpschorting = zoekItem.getRedenOpschorting();
-        restZoekItem.indicatieDeelzaak = zoekItem.isIndicatieDeelzaak();
-        restZoekItem.indicatieHoofdzaak = zoekItem.isIndicatieHoofdzaak();
-        restZoekItem.indicatieHeropend = zoekItem.isIndicatieHeropend();
+        restZoekItem.indicatieDeelzaak = zoekItem.isIndicatie(ZaakIndicatie.DEELZAAK);
+        restZoekItem.indicatieHoofdzaak = zoekItem.isIndicatie(ZaakIndicatie.HOOFDZAAK);
+        restZoekItem.indicatieHeropend = zoekItem.isIndicatie(ZaakIndicatie.HEROPEND);
         restZoekItem.statusToelichting = zoekItem.getStatusToelichting();
         restZoekItem.rechten = restRechtenConverter.convert(policyService.readZaakRechten(zoekItem));
         return restZoekItem;
