@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.flowable.cmmn.api.runtime.PlanItemDefinitionType;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
-import net.atos.zac.app.identity.converter.RESTGroupConverter;
 import net.atos.zac.app.planitems.model.DefaultHumanTaskFormulierKoppeling;
 import net.atos.zac.app.planitems.model.PlanItemType;
 import net.atos.zac.app.planitems.model.RESTPlanItem;
@@ -34,9 +33,6 @@ import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
  *
  */
 public class RESTPlanItemConverter {
-
-    @Inject
-    private RESTGroupConverter groepConverter;
 
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
@@ -80,7 +76,7 @@ public class RESTPlanItemConverter {
                 restPlanItem.formulierDefinitie =
                         DefaultHumanTaskFormulierKoppeling.readFormulierDefinitie(planItem.getPlanItemDefinitionId());
             }
-            restPlanItem.groep = groepConverter.convertGroupId(parameters.getGroepID());
+            restPlanItem.groepId = parameters.getGroepID();
         }
         return restPlanItem;
     }
