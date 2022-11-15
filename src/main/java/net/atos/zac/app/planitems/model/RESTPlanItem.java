@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.atos.zac.app.identity.model.RESTGroup;
 import net.atos.zac.zaaksturing.model.FormulierDefinitie;
 
 public class RESTPlanItem {
@@ -21,7 +20,7 @@ public class RESTPlanItem {
 
     public PlanItemType type;
 
-    public RESTGroup groep;
+    public String groepId;
 
     public boolean actief;
 
