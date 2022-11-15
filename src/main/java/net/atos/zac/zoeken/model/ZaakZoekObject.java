@@ -446,12 +446,12 @@ public class ZaakZoekObject implements ZoekObject {
         updateIndicaties(indicatie, value);
     }
 
-    private void updateIndicaties(ZaakIndicatie indicatie, boolean value) {
+    private void updateIndicaties(final ZaakIndicatie indicatie, boolean value) {
         final int bit = ZaakIndicatie.values().length - 1 - indicatie.ordinal();
         if (value) {
-            this.indicaties |= 1L >> bit;
+            this.indicaties |= 1L << bit;
         } else {
-            this.indicaties &= ~(1L >> bit);
+            this.indicaties &= ~(1L << bit);
         }
     }
 }
