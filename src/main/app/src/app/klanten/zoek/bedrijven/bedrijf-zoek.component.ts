@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
 import {MatTableDataSource} from '@angular/material/table';
@@ -12,26 +12,22 @@ import {Bedrijf} from '../../model/bedrijven/bedrijf';
 import {SelectFormFieldBuilder} from '../../../shared/material-form-builder/form-components/select/select-form-field-builder';
 import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-parameters';
 import {KlantenService} from '../../klanten.service';
-import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
-import {Subscription} from 'rxjs';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
     templateUrl: './bedrijf-zoek.component.html',
     styleUrls: ['./bedrijf-zoek.component.less']
 })
-export class BedrijfZoekComponent implements OnInit, OnDestroy {
-    @Input() betrokkeneRoltypeField: SelectFormField;
-    @Input() betrokkeneToelichtingField: InputFormField;
-    @Output() bedrijf = new EventEmitter<Bedrijf>();
+export class BedrijfZoekComponent implements OnInit {
+    @Output() bedrijf? = new EventEmitter<Bedrijf>();
+    @Input() sideNav?: MatSidenav;
     bedrijven: MatTableDataSource<Bedrijf> = new MatTableDataSource<Bedrijf>();
     foutmelding: string;
     formGroup: FormGroup;
     bedrijfColumns: string[] = ['naam', 'kvk', 'vestigingsnummer', 'type', 'adres', 'acties'];
     loading = false;
-
     types = ['HOOFDVESTIGING', 'NEVENVESTIGING', 'RECHTSPERSOON'];
 
     kvkFormField: AbstractFormControlField;
@@ -42,8 +38,6 @@ export class BedrijfZoekComponent implements OnInit, OnDestroy {
     postcodeFormField: AbstractFormControlField;
     huisnummerFormField: AbstractFormControlField;
     plaatsFormField: AbstractFormControlField;
-
-    subscriptions: Subscription[] = [];
 
     constructor(private klantenService: KlantenService, private formBuilder: FormBuilder) {
     }
@@ -76,24 +70,12 @@ export class BedrijfZoekComponent implements OnInit, OnDestroy {
             plaats: this.plaatsFormField.formControl,
             type: this.typeFormField.formControl
         });
-        this.subscriptions.push(this.typeFormField.formControl.valueChanges.subscribe(value => {
-            this.rsinFormField.required = value === 'RECHTSPERSOON';
-        }));
-    }
-
-    ngOnDestroy(): void {
-        for (const subscription of this.subscriptions) {
-            subscription.unsubscribe();
-        }
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid ||
-            (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid) ||
-            (this.betrokkeneToelichtingField && !this.betrokkeneToelichtingField.formControl.valid)) {
+        if (!this.formGroup.valid) {
             return false;
         }
-
         const kvkNummer = this.kvkFormField.formControl.value;
         const handelsnaam = this.handelsnaamFormField.formControl.value;
         const vestigingsnummer = this.vestigingsnummerFormField.formControl.value;
@@ -116,5 +98,9 @@ export class BedrijfZoekComponent implements OnInit, OnDestroy {
             this.foutmelding = bedrijven.foutmelding;
             this.loading = false;
         });
+    }
+
+    typeChanged(type: any): void {
+        this.rsinFormField.required = type === 'RECHTSPERSOON';
     }
 }

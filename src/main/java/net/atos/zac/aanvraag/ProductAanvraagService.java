@@ -51,6 +51,11 @@ public class ProductAanvraagService {
 
     public static final String OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG = "ProductAanvraag";
 
+    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT = "naamEvenement";
+
+    private static final String FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT =
+            "omschrijvingEvenement";
+
     private static final Logger LOG = Logger.getLogger(ProductAanvraagService.class.getName());
 
     private static final String ZAAK_INFORMATIEOBJECT_BESCHRIJVING = "PDF document met de aanvraag gegevens van de zaak";
@@ -88,17 +93,21 @@ public class ProductAanvraagService {
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
         final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
 
-        final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(productAanvraag.getType());
+        final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(
+                productAanvraag.getType());
         if (zaaktypeUUID == null) {
-            LOG.warning(String.format("Er is geen zaaktype gevonden voor productaanvraag type: '%s'. Er wordt geen zaak aangemaakt.",
-                                      productAanvraag.getType()));
+            LOG.warning(String.format(
+                    "Er is geen zaaktype gevonden voor productaanvraag type: '%s'. Er wordt geen zaak aangemaakt.",
+                    productAanvraag.getType()));
             return;
         }
 
         Zaak zaak = new Zaak();
         zaak.setZaaktype(ztcClientService.readZaaktype(zaaktypeUUID).getUrl());
-        zaak.setOmschrijving((String) productAanvraag.getData().get("naamEvenement"));
-        zaak.setToelichting((String) productAanvraag.getData().get("omschrijvingEvenement"));
+        zaak.setOmschrijving((String) productAanvraag.getData()
+                .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
+        zaak.setToelichting((String) productAanvraag.getData()
+                .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_OMSCHRIJVING_EVENEMENT));
 
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);

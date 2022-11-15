@@ -26,6 +26,7 @@ import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.zoeken.model.ZaakIndicatie;
 import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
@@ -65,11 +66,12 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setStartdatum(DateTimeConverterUtil.convertToDate(zaak.getStartdatum()));
         zaakZoekObject.setEinddatumGepland(DateTimeConverterUtil.convertToDate(zaak.getEinddatumGepland()));
         zaakZoekObject.setEinddatum(DateTimeConverterUtil.convertToDate(zaak.getEinddatum()));
-        zaakZoekObject.setUiterlijkeEinddatumAfdoening(DateTimeConverterUtil.convertToDate(zaak.getUiterlijkeEinddatumAfdoening()));
+        zaakZoekObject.setUiterlijkeEinddatumAfdoening(
+                DateTimeConverterUtil.convertToDate(zaak.getUiterlijkeEinddatumAfdoening()));
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
-        zaakZoekObject.setInitiatorIdentificatie(zgwApiService.findInitiatorForZaak(zaak));
+        zaakZoekObject.setInitiator(zgwApiService.findInitiatorForZaak(zaak));
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
         final CommunicatieKanaal kanaal = findCommunicatieKanaal(zaak);
@@ -91,18 +93,18 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         }
 
         if (zaak.isVerlengd()) {
-            zaakZoekObject.setIndicatieVerlenging(true);
+            zaakZoekObject.setIndicatie(ZaakIndicatie.VERLENGD, true);
             zaakZoekObject.setDuurVerlenging(String.valueOf(zaak.getVerlenging().getDuur()));
             zaakZoekObject.setRedenVerlenging(zaak.getVerlenging().getReden());
         }
 
         if (zaak.isOpgeschort()) {
             zaakZoekObject.setRedenOpschorting(zaak.getOpschorting().getReden());
-            zaakZoekObject.setIndicatieOpschorting(true);
+            zaakZoekObject.setIndicatie(ZaakIndicatie.OPSCHORTING, true);
         }
 
-        zaakZoekObject.setIndicatieDeelzaak(zaak.isDeelzaak());
-        zaakZoekObject.setIndicatieHoofdzaak(zaak.is_Hoofdzaak());
+        zaakZoekObject.setIndicatie(ZaakIndicatie.DEELZAAK, zaak.isDeelzaak());
+        zaakZoekObject.setIndicatie(ZaakIndicatie.HOOFDZAAK, zaak.is_Hoofdzaak());
 
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         zaakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
@@ -116,7 +118,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
             final Statustype statustype = ztcClientService.readStatustype(status.getStatustype());
             zaakZoekObject.setStatustypeOmschrijving(statustype.getOmschrijving());
             zaakZoekObject.setStatusEindstatus(statustype.getEindstatus());
-            zaakZoekObject.setIndicatieHeropend(isHeropend(statustype));
+            zaakZoekObject.setIndicatie(ZaakIndicatie.HEROPEND, isHeropend(statustype));
         }
 
         zaakZoekObject.setAantalOpenstaandeTaken(taskService.countOpenTasks(zaak.getUuid()));
@@ -141,7 +143,8 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
 
     private User findBehandelaar(final Zaak zaak) {
         final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        return behandelaar != null ? identityService.readUser(behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
+        return behandelaar != null ? identityService.readUser(
+                behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
     }
 
 

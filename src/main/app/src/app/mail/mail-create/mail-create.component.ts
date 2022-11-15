@@ -13,7 +13,6 @@ import {UtilService} from '../../core/service/util.service';
 import {Zaak} from '../../zaken/model/zaak';
 import {ZakenService} from '../../zaken/zaken.service';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
 import {NavigationService} from '../../shared/navigation/navigation.service';
 import {HttpClient} from '@angular/common/http';
@@ -25,6 +24,8 @@ import {MailObject} from '../model/mailobject';
 import {CustomValidators} from '../../shared/validators/customValidators';
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
+import {AbstractFormControlField} from '../../shared/material-form-builder/model/abstract-form-control-field';
 
 @Component({
     selector: 'zac-mail-create',
@@ -33,11 +34,23 @@ import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/in
 })
 export class MailCreateComponent implements OnInit {
 
+    fieldNames = {
+        ONTVANGER: 'ontvanger',
+        BODY: 'body',
+        ONDERWERP: 'onderwerp',
+        BIJLAGEN: 'bijlagen'
+    };
+
     formConfig: FormConfig;
     @Input() zaak: Zaak;
     @Output() mailVerstuurd = new EventEmitter<boolean>();
     fields: Array<AbstractFormField[]>;
     ingelogdeMedewerker: User;
+
+    ontvangerFormField: AbstractFormControlField;
+    onderwerpFormField: AbstractFormControlField;
+    bodyFormField: AbstractFormControlField;
+    bijlagenFormField: AbstractFormControlField;
 
     constructor(private zakenService: ZakenService,
                 private informatieObjectenService: InformatieObjectenService,
@@ -59,25 +72,39 @@ export class MailCreateComponent implements OnInit {
         const zoekparameters = new InformatieobjectZoekParameters();
         zoekparameters.zaakUUID = this.zaak.uuid;
         const documenten = this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters);
-        const ontvanger = new InputFormFieldBuilder().id('ontvanger').label('ontvanger')
-                                                     .validators(Validators.required, CustomValidators.emails)
-                                                     .maxlength(200).build();
-        const onderwerp = new InputFormFieldBuilder().id('onderwerp').label('onderwerp').validators(Validators.required)
-                                                     .maxlength(100).build();
-        const body = new TextareaFormFieldBuilder().id('body').label('body').validators(Validators.required)
-                                                   .maxlength(1000).build();
-        const bijlagen = new DocumentenLijstFieldBuilder().id('bijlagen').label('bijlagen')
-                                          .documenten(documenten).build();
-        this.fields = [[ontvanger], [onderwerp], [body], [bijlagen]];
+        this.ontvangerFormField = new InputFormFieldBuilder()
+        .id(this.fieldNames.ONTVANGER)
+        .label(this.fieldNames.ONTVANGER)
+        .validators(Validators.required, CustomValidators.emails)
+        .maxlength(200)
+        .build();
+        this.onderwerpFormField = new HtmlEditorFormFieldBuilder()
+        .id(this.fieldNames.ONDERWERP)
+        .label(this.fieldNames.ONDERWERP)
+        .validators(Validators.required)
+        .maxlength(100)
+        .build();
+        this.bodyFormField = new HtmlEditorFormFieldBuilder()
+        .id(this.fieldNames.BODY)
+        .label(this.fieldNames.BODY)
+        .validators(Validators.required)
+        .maxlength(1000)
+        .build();
+        this.bijlagenFormField = new DocumentenLijstFieldBuilder()
+        .id(this.fieldNames.BIJLAGEN)
+        .label(this.fieldNames.BIJLAGEN)
+        .documenten(documenten)
+        .build();
+        this.fields = [[this.ontvangerFormField], [this.onderwerpFormField], [this.bodyFormField], [this.bijlagenFormField]];
     }
 
     onFormSubmit(formGroup: FormGroup): void {
         if (formGroup) {
             const mailObject = new MailObject();
-            mailObject.ontvanger = formGroup.controls['ontvanger'].value;
-            mailObject.onderwerp = formGroup.controls['onderwerp'].value;
-            mailObject.body = formGroup.controls['body'].value;
-            mailObject.bijlagen = formGroup.controls['bijlagen'].value;
+            mailObject.ontvanger = this.ontvangerFormField.formControl.value;
+            mailObject.onderwerp = this.onderwerpFormField.formControl.value;
+            mailObject.body = this.bodyFormField.formControl.value;
+            mailObject.bijlagen = this.bijlagenFormField.formControl.value;
             mailObject.createDocumentFromMail = true;
 
             this.mailService.sendMail(this.zaak.uuid, mailObject).subscribe(() => {

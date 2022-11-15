@@ -10,6 +10,8 @@ import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ZoekObject} from '../../zoeken/model/zoek-object';
 import {ZakenMijnDatasource} from '../../zaken/zaken-mijn/zaken-mijn-datasource';
 import {SorteerVeld} from '../../zoeken/model/sorteer-veld';
+import {IdentityService} from '../../identity/identity.service';
+import {WebsocketService} from '../../core/websocket/websocket.service';
 
 @Component({
     selector: 'zac-zaak-zoeken-card',
@@ -20,8 +22,10 @@ export class ZaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> 
 
     columns: string[] = ['identificatie', 'startdatum', 'zaaktypeOmschrijving', 'omschrijving', 'url'];
 
-    constructor(private zoekenService: ZoekenService) {
-        super();
+    constructor(private zoekenService: ZoekenService,
+                protected identityService: IdentityService,
+                protected websocketService: WebsocketService) {
+        super(identityService, websocketService);
     }
 
     protected onLoad(afterLoad: () => void): void {

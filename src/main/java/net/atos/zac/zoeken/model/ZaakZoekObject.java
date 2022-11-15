@@ -81,11 +81,14 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_initiatorIdentificatie")
     private String initiatorIdentificatie;
 
+    @Field("zaak_initiatorType")
+    private String initiatorType;
+
     @Field("zaak_locatie")
     private String locatie;
 
     @Field("zaak_indicatieVerlenging")
-    private boolean IndicatieVerlenging;
+    private boolean indicatieVerlenging;
 
     @Field("zaak_duurVerlenging")
     private String duurVerlenging;
@@ -140,6 +143,9 @@ public class ZaakZoekObject implements ZoekObject {
 
     @Field(IS_TOEGEKEND_FIELD)
     private boolean toegekend;
+
+    @Field("zaak_indicaties")
+    private long indicaties;
 
     public ZaakZoekObject() {
     }
@@ -296,9 +302,10 @@ public class ZaakZoekObject implements ZoekObject {
         return initiatorIdentificatie;
     }
 
-    public void setInitiatorIdentificatie(final Rol<?> initiator) {
+    public void setInitiator(final Rol<?> initiator) {
         if (initiator != null) {
             this.initiatorIdentificatie = initiator.getIdentificatienummer();
+            this.initiatorType = initiator.getBetrokkeneType().toValue();
         }
     }
 
@@ -308,14 +315,6 @@ public class ZaakZoekObject implements ZoekObject {
 
     public void setLocatie(final String locatie) {
         this.locatie = locatie;
-    }
-
-    public boolean isIndicatieVerlenging() {
-        return IndicatieVerlenging;
-    }
-
-    public void setIndicatieVerlenging(final boolean indicatieVerlenging) {
-        IndicatieVerlenging = indicatieVerlenging;
     }
 
     public String getDuurVerlenging() {
@@ -418,43 +417,41 @@ public class ZaakZoekObject implements ZoekObject {
         this.aantalOpenstaandeTaken = aantalOpenstaandeTaken;
     }
 
-    public boolean isIndicatieOpschorting() {
-        return indicatieOpschorting;
-    }
-
-    public void setIndicatieOpschorting(final boolean indicatieOpschorting) {
-        this.indicatieOpschorting = indicatieOpschorting;
-    }
-
-    public boolean isIndicatieHeropend() {
-        return indicatieHeropend;
-    }
-
-    public void setIndicatieHeropend(final boolean indicatieHeropend) {
-        this.indicatieHeropend = indicatieHeropend;
-    }
-
-    public boolean isIndicatieDeelzaak() {
-        return indicatieDeelzaak;
-    }
-
-    public void setIndicatieDeelzaak(final boolean indicatieDeelzaak) {
-        this.indicatieDeelzaak = indicatieDeelzaak;
-    }
-
-    public boolean isIndicatieHoofdzaak() {
-        return indicatieHoofdzaak;
-    }
-
-    public void setIndicatieHoofdzaak(final boolean indicatieHoofdzaak) {
-        this.indicatieHoofdzaak = indicatieHoofdzaak;
-    }
-
     public boolean isToegekend() {
         return toegekend;
     }
 
     public void setToegekend(final boolean toegekend) {
         this.toegekend = toegekend;
+    }
+
+    public boolean isIndicatie(final ZaakIndicatie indicatie) {
+        return switch (indicatie) {
+            case OPSCHORTING -> this.indicatieOpschorting;
+            case HEROPEND -> this.indicatieHeropend;
+            case HOOFDZAAK -> this.indicatieHoofdzaak;
+            case DEELZAAK -> this.indicatieDeelzaak;
+            case VERLENGD -> this.indicatieVerlenging;
+        };
+    }
+
+    public void setIndicatie(final ZaakIndicatie indicatie, final boolean value) {
+        switch (indicatie) {
+            case OPSCHORTING -> this.indicatieOpschorting = value;
+            case HEROPEND -> this.indicatieHeropend = value;
+            case HOOFDZAAK -> this.indicatieHoofdzaak = value;
+            case DEELZAAK -> this.indicatieDeelzaak = value;
+            case VERLENGD -> this.indicatieVerlenging = value;
+        }
+        updateIndicaties(indicatie, value);
+    }
+
+    private void updateIndicaties(final ZaakIndicatie indicatie, boolean value) {
+        final int bit = ZaakIndicatie.values().length - 1 - indicatie.ordinal();
+        if (value) {
+            this.indicaties |= 1L << bit;
+        } else {
+            this.indicaties &= ~(1L << bit);
+        }
     }
 }

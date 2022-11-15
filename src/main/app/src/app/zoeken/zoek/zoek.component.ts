@@ -15,9 +15,9 @@ import {UtilService} from '../../core/service/util.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ZaakZoekObject} from '../model/zaken/zaak-zoek-object';
 import {FormControl} from '@angular/forms';
-import {ZoekVeld} from '../model/zoek-veld';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 import {ZoekResultaat} from '../model/zoek-resultaat';
+import {ZoekType} from '../model/zoek-type';
 
 @Component({
     selector: 'zac-zoeken',
@@ -40,6 +40,8 @@ export class ZoekComponent implements AfterViewInit {
         return this.zoekenControl.value;
     }
 
+    zoekType: ZoekType = ZoekType.ZAC;
+    ZoekType = ZoekType;
     readonly zoekObjectType = ZoekObjectType;
     zoekResultaat: ZoekResultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: [], filters: null};
     zoekParameters: ZoekParameters = new ZoekParameters();
@@ -80,7 +82,7 @@ export class ZoekComponent implements AfterViewInit {
     }
 
     getZoekParameters(): ZoekParameters {
-        this.zoekParameters.zoeken[ZoekVeld.ALLE] = this.zoekenControl.value;
+        this.zoekParameters.zoeken.ALLE = this.zoekenControl.value;
         this.zoekParameters.page = this.paginator.pageIndex;
         this.zoekParameters.rows = this.paginator.pageSize;
         return this.zoekParameters;
@@ -98,5 +100,21 @@ export class ZoekComponent implements AfterViewInit {
         return options.length ? !(options.length === 1 && options[0] === '-NULL-') : false;
     }
 
+    keywordsChange() {
+        if (this.zoekenControl.value !== this.zoekParameters.zoeken.ALLE) {
+            this.zoek.emit();
+        }
+    }
+
     originalOrder = () => 0;
+
+    setZoektype(zoekType: ZoekType): void {
+        this.zoekType = zoekType;
+        if (zoekType === ZoekType.ZAC) {
+            this.zoekenControl.enable();
+        } else {
+            this.zoekenControl.disable();
+        }
+
+    }
 }

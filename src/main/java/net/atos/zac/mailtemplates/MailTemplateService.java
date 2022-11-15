@@ -5,6 +5,7 @@
 
 package net.atos.zac.mailtemplates;
 
+import net.atos.zac.mailtemplates.model.Mail;
 import net.atos.zac.mailtemplates.model.MailTemplate;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -46,6 +47,15 @@ public class MailTemplateService {
             entityManager.persist(mailTemplate);
             return mailTemplate;
         }
+    }
+
+    public MailTemplate findMailtemplate(final Mail mail) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<MailTemplate> query = builder.createQuery(MailTemplate.class);
+        final Root<MailTemplate> root = query.from(MailTemplate.class);
+        query.select(root).where(builder.equal(root.get(MailTemplate.MAIL), mail));
+        final List<MailTemplate> resultList = entityManager.createQuery(query).getResultList();
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
 
     public MailTemplate readMailtemplate(final long id) {

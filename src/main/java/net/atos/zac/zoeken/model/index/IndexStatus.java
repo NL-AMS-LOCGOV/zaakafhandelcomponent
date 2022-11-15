@@ -6,5 +6,5 @@
 package net.atos.zac.zoeken.model.index;
 
 public enum IndexStatus {
-    ADD, UPDATE, REMOVE, INDEXED
+    ADD, UPDATE, REMOVE
 }

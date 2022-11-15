@@ -8,7 +8,13 @@ import {DashboardCard} from '../model/dashboard-card';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {interval, Observable, Subscription} from 'rxjs';
+import {interval, Observable, Subject, Subscription} from 'rxjs';
+import {Opcode} from '../../core/websocket/model/opcode';
+import {ObjectType} from '../../core/websocket/model/object-type';
+import {ScreenEvent} from '../../core/websocket/model/screen-event';
+import {IdentityService} from '../../identity/identity.service';
+import {WebsocketService} from '../../core/websocket/websocket.service';
+import {SignaleringType} from '../../shared/signaleringen/signalering-type';
 
 @Component({
     template: '',
@@ -16,7 +22,7 @@ import {interval, Observable, Subscription} from 'rxjs';
 })
 export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
-    private readonly RELOAD_INTERVAL: number = 5 * 60 * 1000; // 5 min.
+    private readonly RELOAD_INTERVAL: number = 60; // 1 min.
 
     @Input() data: DashboardCard;
 
@@ -29,7 +35,8 @@ export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit
 
     abstract columns: string[];
 
-    constructor() { }
+    constructor(protected identityService: IdentityService,
+                protected websocketService: WebsocketService) { }
 
     ngOnInit(): void {
         this.onLoad(this.afterLoad);
@@ -37,7 +44,11 @@ export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit
 
     ngAfterViewInit(): void {
         if (this.reload == null) {
-            this.reload = interval(this.RELOAD_INTERVAL);
+            if (this.data.signaleringType != null) {
+                this.reload = this.refreshOnSignalering(this.data.signaleringType);
+            } else {
+                this.reload = this.refreshTimed(this.RELOAD_INTERVAL);
+            }
         }
         this.reloader = this.reload.subscribe(next => {
             this.onLoad(this.afterLoad);
@@ -54,4 +65,21 @@ export abstract class DashboardCardComponent<T> implements OnInit, AfterViewInit
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
     };
+
+    protected refreshTimed(seconds: number): Observable<number> {
+        return interval(seconds * 1000);
+    }
+
+    protected refreshOnSignalering(signaleringType: SignaleringType): Observable<void> {
+        const reload$: Subject<void> = new Subject<void>();
+        this.identityService.readLoggedInUser().subscribe(medewerker => {
+            this.websocketService.addListener(Opcode.UPDATED, ObjectType.SIGNALERINGEN, medewerker.id,
+                (event: ScreenEvent) => {
+                    if (event.objectId.detail === signaleringType) {
+                        reload$.next();
+                    }
+                });
+        });
+        return reload$;
+    }
 }

@@ -9,7 +9,7 @@ import {MatSidenav, MatSidenavContainer} from '@angular/material/sidenav';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {AdminComponent} from '../admin/admin.component';
-import {ToggleSwitchOptions} from '../../zoeken/toggle-filter/toggle-switch-options';
+import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter/toggle-switch-options';
 import {HealthCheckService} from '../health-check.service';
 import {ZaaktypeInrichtingscheck} from '../model/zaaktype-inrichtingscheck';
 import {animate, state, style, transition, trigger} from '@angular/animations';

@@ -1,6 +1,8 @@
 package net.atos.zac.flowable;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,6 +26,8 @@ public class CaseVariablesService {
     public static final String VAR_ZAAKTYPE_UUUID = "zaaktypeUUID";
 
     public static final String VAR_ZAAKTYPE_OMSCHRIJVING = "zaaktypeOmschrijving";
+
+    public static final String VAR_ZAAK_DATA = "zaakData";
 
     private static final String VAR_ONTVANGSTBEVESTIGING_VERSTUURD = "ontvangstbevestigingVerstuurd";
 
@@ -91,6 +95,11 @@ public class CaseVariablesService {
         removeVariable(zaakUUID, VAR_VERWACHTE_DAGEN_OPGESCHORT);
     }
 
+    public Map<String, Object> readZaakdata(final UUID zaakUUID) {
+        final Map<String, Object> zaakdate = (Map<String, Object>) findCaseVariable(zaakUUID, VAR_ZAAK_DATA);
+        return zaakdate != null ? zaakdate : Collections.emptyMap();
+    }
+
     private Object readCaseVariable(final String caseInstanceId, final String variableName) {
         if (cmmnRuntimeService.createCaseInstanceQuery().caseInstanceId(caseInstanceId).singleResult() != null) {
             return readOpenCaseVariable(caseInstanceId, variableName);
@@ -104,7 +113,9 @@ public class CaseVariablesService {
         if (value != null) {
             return value;
         } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for open case instance id '%s'", variableName, caseInstanceId));
+            throw new RuntimeException(
+                    String.format("No variable found with name '%s' for open case instance id '%s'", variableName,
+                                  caseInstanceId));
         }
     }
 
@@ -117,7 +128,9 @@ public class CaseVariablesService {
         if (value != null) {
             return value;
         } else {
-            throw new RuntimeException(String.format("No variable found with name '%s' for closed case instance id '%s'", variableName, caseInstanceId));
+            throw new RuntimeException(
+                    String.format("No variable found with name '%s' for closed case instance id '%s'", variableName,
+                                  caseInstanceId));
         }
     }
 
@@ -151,7 +164,8 @@ public class CaseVariablesService {
         if (caseInstance != null) {
             cmmnRuntimeService.setVariable(caseInstance.getId(), variableName, value);
         } else {
-            throw new RuntimeException(String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
+            throw new RuntimeException(
+                    String.format("No case instance found for zaak with UUID: '%s'", zaakUUID.toString()));
         }
     }
 

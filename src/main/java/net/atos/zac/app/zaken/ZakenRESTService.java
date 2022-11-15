@@ -893,12 +893,17 @@ public class ZakenRESTService {
     private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
         final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
         zrcClientService.updateZaak(deelzaakUUID, deelzaak);
+        System.out.println("koppelHoofdEnDeelzaak ZAAK.updated " + hoofdzaak.getUuid());
+        // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
+        // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
         eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
     }
 
     private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
         final HoofdzaakPatch deelzaak = new HoofdzaakPatch(null);
         zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
+        // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
+        // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
         eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 }

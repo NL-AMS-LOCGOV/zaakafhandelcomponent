@@ -25,10 +25,7 @@ import {Conditionals} from '../../shared/edit/conditional-fn';
 import {ZakenVerdelenDialogComponent} from '../zaken-verdelen-dialog/zaken-verdelen-dialog.component';
 import {ZakenVrijgevenDialogComponent} from '../zaken-vrijgeven-dialog/zaken-vrijgeven-dialog.component';
 import {ZakenWerkvoorraadDatasource} from './zaken-werkvoorraad-datasource';
-import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
-import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
-import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {PolicyService} from '../../policy/policy.service';
 import {WerklijstRechten} from '../../policy/model/werklijst-rechten';
 import {ZoekenColumn} from '../../shared/dynamic-table/model/zoeken-column';
@@ -49,10 +46,7 @@ export class ZakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ingelogdeMedewerker: User;
     expandedRow: ZaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
-    zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
-    filterVeld = FilterVeld;
-    datumVeld = DatumVeld;
 
     einddatumGeplandIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');

@@ -25,8 +25,10 @@ import {SelectFormField} from '../../shared/material-form-builder/form-component
 import {takeUntil} from 'rxjs/operators';
 import {Resultaattype} from '../model/resultaattype';
 import {Subject} from 'rxjs';
-import {ZaakafhandelParametersService} from '../../admin/zaakafhandel-parameters.service';
 import {ZaakStatusmailOptie} from '../model/zaak-statusmail-optie';
+import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {Mail} from '../../admin/model/mail';
+import {Mailtemplate} from '../../admin/model/mailtemplate';
 
 @Component({
     templateUrl: 'zaak-afhandelen-dialog.component.html',
@@ -42,29 +44,21 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
     ontvangerFormField: AbstractFormField;
     private ngDestroy = new Subject<void>();
     besluitVastleggen = false;
-
-    onderwerp: string = 'Wij hebben uw verzoek afgehandeld (zaaknummer: {zaaknr}';
-    body: string = 'Beste klant,\n' +
-        '\n' +
-        'Uw verzoek betreffende {zaaktype naam} met zaaknummer {zaaknr} is afgehandeld. Voor meer informatie gaat u naar Mijn loket.\n' +
-        '\n' +
-        'Met vriendelijke groet,\n' +
-        '\n' +
-        'Gemeente';
+    mailtemplate: Mailtemplate;
 
     constructor(public dialogRef: MatDialogRef<ZaakAfhandelenDialogComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: { zaak: Zaak, planItem: PlanItem },
                 private zakenService: ZakenService,
                 private planItemsService: PlanItemsService,
                 private mailService: MailService,
-                private zaakafhandelParametersService: ZaakafhandelParametersService) {
+                private mailtemplateService: MailtemplateService) {
     }
 
     ngOnInit(): void {
         const zaakafhandelParameters = this.data.zaak.zaaktype.zaakafhandelparameters;
-        this.onderwerp = this.onderwerp.replace('{zaaknr}', this.data.zaak.identificatie);
-        this.body = this.body.replace('{zaaktype naam}', this.data.zaak.zaaktype.identificatie)
-                        .replace('{zaaknr}', this.data.zaak.identificatie);
+        this.mailtemplateService.findMailtemplate(Mail.ZAAK_AFGEHANDELD, this.data.zaak.uuid).subscribe(mailtemplate => {
+            this.mailtemplate = mailtemplate;
+        });
 
         if (this.data.zaak.besluit) {
             this.resultaatFormField = new ReadonlyFormFieldBuilder(this.data.zaak.resultaat.resultaattype.naam).id('resultaattype')
@@ -124,11 +118,11 @@ export class ZaakAfhandelenDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.disableClose = true;
         this.loading = true;
 
-        if (this.sendMailFormField.formControl.value) {
+        if (this.sendMailFormField.formControl.value && this.mailtemplate) {
             const mailObject: MailObject = new MailObject();
             mailObject.createDocumentFromMail = true;
-            mailObject.onderwerp = this.onderwerp;
-            mailObject.body = this.body;
+            mailObject.onderwerp = this.mailtemplate.onderwerp;
+            mailObject.body = this.mailtemplate.body;
             mailObject.ontvanger = this.ontvangerFormField.formControl.value;
             this.mailService.sendMail(this.data.zaak.uuid, mailObject).subscribe(() => {});
         }

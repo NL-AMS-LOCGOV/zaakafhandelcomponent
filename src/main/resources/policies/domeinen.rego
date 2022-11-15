@@ -8,12 +8,12 @@ domein_elk_zaaktype := {
 domeinen := [
     domein_elk_zaaktype,
     {
-        "rol": "domeina",
-        "zaaktypen": { "zaaktype1", "zaaktype2" }
+        "rol": "domein_voorzieningen_verstrekken",
+        "zaaktypen": { "subsidie" }
     },
     {
-        "rol": "domeinb",
-        "zaaktypen": { "zaaktype1", "zaaktype3" }
+        "rol": "domein_toestemming_verlenen",
+        "zaaktypen": { "melding klein evenement", "aanleg uitweg" }
     }
 ]
 

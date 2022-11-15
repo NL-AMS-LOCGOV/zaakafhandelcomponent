@@ -1,0 +1,14 @@
+<!--
+  ~ SPDX-FileCopyrightText: 2022 Atos
+  ~ SPDX-License-Identifier: EUPL-1.2+
+  -->
+
+<mat-form-field appearance="standard">
+    <mat-select id="{{label+'_filter'}}" (selectionChange)="_selected ? changed.emit([_selected]) : changed.emit()"
+                placeholder="{{ (label+'.-kies-') | translate }}"
+                [(ngModel)]="_selected">
+        <mat-option>{{ (label + '.-kies-') | translate }}</mat-option>
+        <mat-option *ngFor="let value of getFilters()"
+                    [value]="value">{{ value == '-NULL-' ? (label + '.-geen-' | translate) : value }}</mat-option>
+    </mat-select>
+</mat-form-field>

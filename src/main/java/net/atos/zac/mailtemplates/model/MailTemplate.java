@@ -24,6 +24,11 @@ import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 @SequenceGenerator(schema = SCHEMA, name = "sq_mail_template", sequenceName = "sq_mail_template", allocationSize = 1)
 public class MailTemplate {
 
+    /**
+     * Naam van property: {@link MailTemplate#mail}
+     */
+    public static final String MAIL = "mail";
+
     @Id
     @GeneratedValue(generator = "sq_mail_template", strategy = GenerationType.SEQUENCE)
     @Column(name = "id_mail_template")

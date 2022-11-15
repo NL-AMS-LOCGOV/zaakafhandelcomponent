@@ -31,8 +31,8 @@ import {GekoppeldeZaakEnkelvoudigInformatieobject} from '../../informatie-object
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatCheckboxChange} from '@angular/material/checkbox';
 import {Validators} from '@angular/forms';
-import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 import {Router} from '@angular/router';
+import {SkeletonLayout} from '../../shared/skeleton-loader/skeleton-loader-options';
 
 @Component({
     selector: 'zac-zaak-documenten',
@@ -44,7 +44,6 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     @Input() zaak: Zaak;
     @Input() zaakUUID: string;
 
-    readonly skeletonLayout = SkeletonLayout;
     taakModus: boolean;
     selectAll = false;
     toonGekoppeldeZaakDocumenten = false;
@@ -53,6 +52,7 @@ export class ZaakDocumentenComponent implements OnInit, AfterViewInit, OnDestroy
     @ViewChild('documentenTable', {read: MatSort, static: true}) docSort: MatSort;
 
     informatieObjecten$: Observable<EnkelvoudigInformatieobject[]>;
+    skeletonLayout = SkeletonLayout;
 
     enkelvoudigInformatieObjecten: MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject> =
         new MatTableDataSource<GekoppeldeZaakEnkelvoudigInformatieobject>();

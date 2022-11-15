@@ -12,6 +12,12 @@ import {BedrijfZoekComponent} from './zoek/bedrijven/bedrijf-zoek.component';
 import {PersoonsgegevensComponent} from './persoonsgegevens/persoonsgegevens.component';
 import {BedrijfsgegevensComponent} from './bedrijfsgegevens/bedrijfsgegevens.component';
 import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
+import {KlantKoppelComponent} from './koppel/klanten/klant-koppel.component';
+import {RouterLinkWithHref} from '@angular/router';
+import {KlantenRoutingModule} from './klanten-routing.module';
+import {PersoonViewComponent} from './persoon-view/persoon-view.component';
+import {BedrijfViewComponent} from './bedrijf-view/bedrijf-view.component';
+import {KlantZakenTabelComponent} from './klant-zaken-tabel/klant-zaken-tabel.component';
 
 @NgModule({
     declarations: [
@@ -19,17 +25,24 @@ import {KlantZoekComponent} from './zoek/klanten/klant-zoek.component';
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
         PersoonsgegevensComponent,
-        KlantZoekComponent
+        KlantZakenTabelComponent,
+        KlantZoekComponent,
+        KlantKoppelComponent,
+        PersoonViewComponent,
+        BedrijfViewComponent
     ],
     exports: [
         BedrijfZoekComponent,
         BedrijfsgegevensComponent,
         PersoonZoekComponent,
         PersoonsgegevensComponent,
-        KlantZoekComponent
+        KlantZoekComponent,
+        KlantKoppelComponent
     ],
     imports: [
-        SharedModule
+        SharedModule,
+        RouterLinkWithHref,
+        KlantenRoutingModule
     ]
 })
 export class KlantenModule {

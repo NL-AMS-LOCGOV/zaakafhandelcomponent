@@ -8,7 +8,7 @@
     <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>{{data.groepLabel| translate}}</mat-label>
         <input placeholder="{{(data.required ? 'groep.-kies-' : 'groep.-geen-') | translate}}" [formControl]="data.groep"
-               [matAutocomplete]="groepAC" matInput type="text" [maxlength]="data.maxlength">
+               [id]="data.id + '_groep'" [matAutocomplete]="groepAC" matInput type="text" [maxlength]="data.maxlength">
         <mat-autocomplete #groepAC="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let groep of filteredGroepen | async" [value]="groep">{{ groep.naam }}</mat-option>
         </mat-autocomplete>
@@ -17,7 +17,7 @@
     <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>{{data.medewerkerLabel | translate}}</mat-label>
         <input placeholder="{{'behandelaar.-geen-' | translate}}" [formControl]="data.medewerker" [matAutocomplete]="medewerkerAC"
-               matInput type="text" [maxlength]="data.maxlength">
+               [id]="data.id + '_medewerker'" matInput type="text" [maxlength]="data.maxlength">
         <mat-autocomplete #medewerkerAC="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let medewerker of filteredMedewerkers | async" [value]="medewerker">{{ medewerker.naam }}</mat-option>
         </mat-autocomplete>

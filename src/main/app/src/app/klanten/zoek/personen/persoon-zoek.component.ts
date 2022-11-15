@@ -12,9 +12,8 @@ import {KlantenService} from '../../klanten.service';
 import {Persoon} from '../../model/personen/persoon';
 import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
-import {SelectFormField} from '../../../shared/material-form-builder/form-components/select/select-form-field';
-import {InputFormField} from '../../../shared/material-form-builder/form-components/input/input-form-field';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -22,9 +21,8 @@ import {AbstractFormControlField} from '../../../shared/material-form-builder/mo
     styleUrls: ['./persoon-zoek.component.less']
 })
 export class PersoonZoekComponent implements OnInit {
-    @Input() betrokkeneRoltypeField: SelectFormField;
-    @Input() betrokkeneToelichtingField: InputFormField;
-    @Output() persoon = new EventEmitter<Persoon>();
+    @Output() persoon? = new EventEmitter<Persoon>();
+    @Input() sideNav?: MatSidenav;
     foutmelding: string;
     bsnFormField: AbstractFormControlField;
     geslachtsnaamFormField: AbstractFormControlField;
@@ -76,9 +74,7 @@ export class PersoonZoekComponent implements OnInit {
     }
 
     isValid(): boolean {
-        if (!this.formGroup.valid ||
-            (this.betrokkeneRoltypeField && !this.betrokkeneRoltypeField.formControl.valid) ||
-            (this.betrokkeneToelichtingField && !this.betrokkeneToelichtingField.formControl.valid)) {
+        if (!this.formGroup.valid) {
             return false;
         }
 

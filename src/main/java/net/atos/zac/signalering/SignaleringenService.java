@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,10 +32,12 @@ import javax.transaction.Transactional;
 import net.atos.zac.event.EventingService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
-import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -56,6 +59,9 @@ public class SignaleringenService {
 
     @Inject
     private MailService mailService;
+
+    @Inject
+    private MailTemplateService mailTemplateService;
 
     @Inject
     private SignaleringenMailHelper signaleringenMailHelper;
@@ -85,7 +91,8 @@ public class SignaleringenService {
      * @param ownerId          the id of the owner of the instellingen to construct
      * @return the constructed instance (subject and target are still null, type and tijdstip have been set)
      */
-    public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType, final SignaleringTarget ownerType,
+    public SignaleringInstellingen signaleringInstellingenInstance(final SignaleringType.Type signaleringsType,
+            final SignaleringTarget ownerType,
             final String ownerId) {
         return new SignaleringInstellingen(signaleringTypeInstance(signaleringsType), ownerType, ownerId);
     }
@@ -97,7 +104,8 @@ public class SignaleringenService {
      * @param field       the field the signalering has been sent for
      * @return the constructed instance (all members have been set)
      */
-    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering, final SignaleringSubjectField field) {
+    public SignaleringVerzonden signaleringVerzondenInstance(final Signalering signalering,
+            final SignaleringSubjectField field) {
         final SignaleringVerzonden instance = new SignaleringVerzonden();
         instance.setTijdstip(ZonedDateTime.now());
         instance.setType(signaleringTypeInstance(signalering.getType().getType()));
@@ -127,13 +135,15 @@ public class SignaleringenService {
         return created;
     }
 
-    public void deleteSignalering(final Signalering signalering) {
-        eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering));
-        entityManager.remove(signalering);
-    }
-
     public void deleteSignaleringen(final SignaleringZoekParameters parameters) {
-        findSignaleringen(parameters).forEach(this::deleteSignalering);
+        final Map<String, Signalering> removed = new HashMap<>();
+        findSignaleringen(parameters)
+                .forEach(signalering -> {
+                    removed.put(signalering.getTarget() + ';' + signalering.getType().getType(), signalering);
+                    entityManager.remove(signalering);
+                });
+        removed.values()
+                .forEach(signalering -> eventingService.send(ScreenEventType.SIGNALERINGEN.updated(signalering)));
     }
 
     public List<Signalering> findSignaleringen(final SignaleringZoekParameters parameters) {
@@ -166,14 +176,16 @@ public class SignaleringenService {
         }
     }
 
-    private Predicate getSignaleringWhere(final SignaleringZoekParameters parameters, final CriteriaBuilder builder, final Root<Signalering> root) {
+    private Predicate getSignaleringWhere(final SignaleringZoekParameters parameters, final CriteriaBuilder builder,
+            final Root<Signalering> root) {
         final List<Predicate> where = new ArrayList<>();
         where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
         if (parameters.getTarget() != null) {
             where.add(builder.equal(root.get("target"), parameters.getTarget()));
         }
         if (!parameters.getTypes().isEmpty()) {
-            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+            where.add(root.get("type").get("id")
+                              .in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
         }
         if (parameters.getSubjecttype() != null) {
             where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));
@@ -184,17 +196,39 @@ public class SignaleringenService {
         return builder.and(where.toArray(new Predicate[0]));
     }
 
-    public void sendSignalering(final Signalering signalering, final String bericht) {
+    public void sendSignalering(final Signalering signalering, final SignaleringSubjectField field) {
         valideerObject(signalering);
         final SignaleringTarget.Mail mail = signaleringenMailHelper.getTargetMail(signalering);
         if (mail != null) {
             final Ontvanger to = signaleringenMailHelper.formatTo(mail);
-            final SignaleringType.Type type = signalering.getType().getType();
-            final SignaleringSubject.Link link = signaleringenMailHelper.getSubjectLink(signalering);
-            final String subject = signaleringenMailHelper.formatSubject(type, link);
-            final String body = signaleringenMailHelper.formatBody(type, mail, link, bericht);
-            mailService.sendMail(to, subject, body, Collections.emptyList());
+            final MailTemplate mailTemplate = getMailtemplate(signalering.getType().getType(), field);
+            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(), Collections.emptyList());
         }
+    }
+
+    private MailTemplate getMailtemplate(final SignaleringType.Type type, final SignaleringSubjectField field) {
+        Mail mail = null;
+        switch (type) {
+            case TAAK_OP_NAAM -> mail = Mail.SIGNALERING_TAAK_OP_NAAM;
+            case TAAK_VERLOPEN -> mail = Mail.SIGNALERING_TAAK_VERLOPEN;
+            case ZAAK_DOCUMENT_TOEGEVOEGD -> mail = Mail.SIGNALERING_ZAAK_DOCUMENT_TOEGEVOEGD;
+            case ZAAK_OP_NAAM -> mail = Mail.SIGNALERING_ZAAK_OP_NAAM;
+            case ZAAK_VERLOPEND -> {
+                switch (field) {
+                    case DUE -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_STREEFDATUM;
+                    case FATAL -> mail = Mail.SIGNALERING_ZAAK_VERLOPEND_FATALE_DATUM;
+                }
+            }
+            default -> {
+                final MailTemplate mailTemplate = new MailTemplate();
+                final String defaultMail = String.format("Signalering: %s ", type.getNaam());
+                mailTemplate.setOnderwerp(defaultMail);
+                mailTemplate.setBody(defaultMail);
+                return mailTemplate;
+            }
+        }
+
+        return mailTemplateService.findMailtemplate(mail);
     }
 
     public void sendSignalering(final Signalering signalering) {
@@ -225,7 +259,8 @@ public class SignaleringenService {
     }
 
     public SignaleringInstellingen readInstellingen(final Signalering signalering) {
-        final List<SignaleringInstellingen> instellingen = findInstellingen(new SignaleringInstellingenZoekParameters(signalering));
+        final List<SignaleringInstellingen> instellingen = findInstellingen(
+                new SignaleringInstellingenZoekParameters(signalering));
         if (instellingen.size() == 1) {
             return instellingen.get(0);
         }
@@ -242,7 +277,8 @@ public class SignaleringenService {
                 .getResultList();
     }
 
-    private Predicate getSignaleringInstellingenWhere(final SignaleringInstellingenZoekParameters parameters, final CriteriaBuilder builder,
+    private Predicate getSignaleringInstellingenWhere(final SignaleringInstellingenZoekParameters parameters,
+            final CriteriaBuilder builder,
             final Root<SignaleringInstellingen> root) {
         final List<Predicate> where = new ArrayList<>();
         if (parameters.getOwner() != null) {
@@ -273,7 +309,8 @@ public class SignaleringenService {
         Arrays.stream(SignaleringType.Type.values())
                 .filter(type -> type.isTarget(parameters.getOwnertype()))
                 .filter(type -> !map.containsKey(type))
-                .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(), parameters.getOwner())));
+                .forEach(type -> map.put(type, signaleringInstellingenInstance(type, parameters.getOwnertype(),
+                                                                               parameters.getOwner())));
         return map.values().stream()
                 .sorted(Comparator.comparing(SignaleringInstellingen::getType))
                 .toList();
@@ -283,7 +320,8 @@ public class SignaleringenService {
         return SignaleringType.Type.values().length;
     }
 
-    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering, final SignaleringSubjectField field) {
+    public SignaleringVerzonden createSignaleringVerzonden(final Signalering signalering,
+            final SignaleringSubjectField field) {
         final SignaleringVerzonden signaleringVerzonden = signaleringVerzondenInstance(signalering, field);
         valideerObject(signaleringVerzonden);
         return entityManager.merge(signaleringVerzonden);
@@ -307,7 +345,8 @@ public class SignaleringenService {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters, final CriteriaBuilder builder,
+    private Predicate getSignaleringVerzondenWhere(final SignaleringVerzondenZoekParameters parameters,
+            final CriteriaBuilder builder,
             final Root<SignaleringVerzonden> root) {
         final List<Predicate> where = new ArrayList<>();
         where.add(builder.equal(root.get("targettype"), parameters.getTargettype()));
@@ -315,7 +354,8 @@ public class SignaleringenService {
             where.add(builder.equal(root.get("target"), parameters.getTarget()));
         }
         if (!parameters.getTypes().isEmpty()) {
-            where.add(root.get("type").get("id").in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
+            where.add(root.get("type").get("id")
+                              .in(parameters.getTypes().stream().map(Enum::toString).collect(Collectors.toList())));
         }
         if (parameters.getSubjecttype() != null) {
             where.add(builder.equal(root.get("type").get("subjecttype"), parameters.getSubjecttype()));

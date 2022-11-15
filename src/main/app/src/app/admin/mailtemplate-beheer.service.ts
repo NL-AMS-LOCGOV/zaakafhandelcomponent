@@ -15,7 +15,7 @@ import {Mailtemplate} from './model/mailtemplate';
 })
 export class MailtemplateBeheerService {
 
-    private basepath: string = '/rest/mailtemplates';
+    private basepath: string = '/rest/beheer/mailtemplates';
 
     constructor(private http: HttpClient, private foutAfhandelingService: FoutAfhandelingService) {
     }

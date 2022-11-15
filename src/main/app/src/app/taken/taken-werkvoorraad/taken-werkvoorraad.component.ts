@@ -19,11 +19,7 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {User} from '../../identity/model/user';
 import {TextIcon} from '../../shared/edit/text-icon';
 import {Conditionals} from '../../shared/edit/conditional-fn';
-
-import {FilterVeld} from 'src/app/zoeken/model/filter-veld';
-import {ZoekVeld} from 'src/app/zoeken/model/zoek-veld';
 import {SorteerVeld} from 'src/app/zoeken/model/sorteer-veld';
-import {DatumVeld} from 'src/app/zoeken/model/datum-veld';
 import {TaakZoekObject} from '../../zoeken/model/taken/taak-zoek-object';
 import {TakenWerkvoorraadDatasource} from './taken-werkvoorraad-datasource';
 import {TakenService} from '../taken.service';
@@ -50,10 +46,7 @@ export class TakenWerkvoorraadComponent implements AfterViewInit, OnInit {
     ingelogdeMedewerker: User;
     expandedRow: TaakZoekObject | null;
     readonly zoekenColumn = ZoekenColumn;
-    zoekVeld = ZoekVeld;
     sorteerVeld = SorteerVeld;
-    filterVeld = FilterVeld;
-    datumVeld = DatumVeld;
 
     streefdatumIcon: TextIcon = new TextIcon(Conditionals.isAfterDate(), 'report_problem',
         'warningVerlopen_icon', 'msg.datum.overschreden', 'warning');
