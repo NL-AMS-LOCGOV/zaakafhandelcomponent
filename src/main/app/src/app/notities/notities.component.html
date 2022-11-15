@@ -37,7 +37,8 @@
                     <div *ngIf="geselecteerdeNotitieId === notitie.id">
                         <mat-form-field class="textareaNotitie" appearance="fill">
                             <mat-label>{{ 'actie.notitie.wijzigen' | translate }}</mat-label>
-                            <textarea matInput cdkTextareaAutosize [maxLength]="maxLengteTextArea" #notitieTekst>{{ notitie.tekst }}</textarea>
+                            <textarea matInput cdkTextareaAutosize id="notitie_wijzigen" [maxLength]="maxLengteTextArea"
+                                      #notitieTekst>{{ notitie.tekst }}</textarea>
                         </mat-form-field>
                         <div class="notitieContentFooter">
                             <button mat-icon-button aria-label="Opslaan" color="primary"
@@ -73,7 +74,7 @@
         <mat-form-field class="textareaNotitie">
             <mat-label>{{ 'actie.notitie.aanmaken' | translate }}</mat-label>
             <textarea #notitieTekst cdkAutosizeMaxRows="2" cdkAutosizeMinRows="2" cdkTextareaAutosize matInput
-                      maxlength="1000" [disabled]="geselecteerdeNotitieId != null"></textarea>
+                      id="nieuwe_notitie_aanmaken" maxlength="1000" [disabled]="geselecteerdeNotitieId != null"></textarea>
         </mat-form-field>
         <button (click)="maakNotitieAan(notitieTekst.value)" aria-label="Opslaan" color="primary"
                 id="notitieOpslaan_button" mat-mini-fab
