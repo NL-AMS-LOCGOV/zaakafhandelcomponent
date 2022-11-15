@@ -10,11 +10,11 @@ import static net.atos.zac.util.ValidationUtil.valideerObject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -29,7 +29,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+import org.flowable.task.api.TaskInfo;
+
+import net.atos.client.zgw.zrc.ZRCClientService;
+import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.zac.event.EventingService;
+import net.atos.zac.flowable.TaskService;
 import net.atos.zac.mail.MailService;
 import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.mailtemplates.MailTemplateService;
@@ -38,6 +44,7 @@ import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.signalering.model.Signalering;
 import net.atos.zac.signalering.model.SignaleringInstellingen;
 import net.atos.zac.signalering.model.SignaleringInstellingenZoekParameters;
+import net.atos.zac.signalering.model.SignaleringSubject;
 import net.atos.zac.signalering.model.SignaleringSubjectField;
 import net.atos.zac.signalering.model.SignaleringTarget;
 import net.atos.zac.signalering.model.SignaleringType;
@@ -65,6 +72,12 @@ public class SignaleringenService {
 
     @Inject
     private SignaleringenMailHelper signaleringenMailHelper;
+
+    @Inject
+    private ZRCClientService zrcClientService;
+
+    @Inject
+    private TaskService taskService;
 
     private SignaleringType signaleringTypeInstance(final SignaleringType.Type signaleringsType) {
         return entityManager.find(SignaleringType.class, signaleringsType.toString());
@@ -202,7 +215,13 @@ public class SignaleringenService {
         if (mail != null) {
             final Ontvanger to = signaleringenMailHelper.formatTo(mail);
             final MailTemplate mailTemplate = getMailtemplate(signalering.getType().getType(), field);
-            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(), Collections.emptyList());
+            final Zaak zaak = signalering.getSubjecttype() == SignaleringSubject.ZAAK ?
+                    zrcClientService.readZaak(UUID.fromString(signalering.getSubject())) : null;
+            final TaskInfo taskInfo = signalering.getSubjecttype() == SignaleringSubject.TAAK ?
+                    taskService.readTask(signalering.getSubject()) : null;
+
+            mailService.sendMail(to, mailTemplate.getOnderwerp(), mailTemplate.getBody(),
+                                 StringUtils.EMPTY, false, zaak, taskInfo);
         }
     }
 

@@ -29,6 +29,16 @@ export class HtmlEditorFormFieldBuilder extends AbstractFormFieldBuilder {
         return this;
     }
 
+    variabelen(variabelen: string[]): this {
+        this.formField.variabelen = variabelen;
+        return this;
+    }
+
+    emptyToolbar(): this {
+        this.formField.emptyToolbar = true;
+        return this;
+    }
+
     icon(icon: ActionIcon): this {
         this.formField.icons = [icon];
         return this;

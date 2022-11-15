@@ -28,6 +28,7 @@ import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.zac.app.mail.model.RESTMailObject;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Ontvanger;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.ValidationUtil;
 
@@ -60,8 +61,8 @@ public class MailRESTService {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
+        mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak, null);
     }
 
     @POST
@@ -73,8 +74,8 @@ public class MailRESTService {
         if (!ValidationUtil.isValidEmail(restMailObject.ontvanger)) {
             throw new RuntimeException(String.format("email '%s' is not valid", restMailObject.ontvanger));
         }
-        mailService.sendMail(restMailObject.ontvanger, restMailObject.onderwerp, restMailObject.body,
-                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak);
+        mailService.sendMail(new Ontvanger(restMailObject.ontvanger), restMailObject.onderwerp, restMailObject.body,
+                             restMailObject.bijlagen, restMailObject.createDocumentFromMail, zaak, null);
 
         final Statustype statustype = zaak.getStatus() != null ?
                 ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()) : null;

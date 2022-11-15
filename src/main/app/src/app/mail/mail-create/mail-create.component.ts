@@ -81,6 +81,7 @@ export class MailCreateComponent implements OnInit {
         this.onderwerpFormField = new HtmlEditorFormFieldBuilder()
         .id(this.fieldNames.ONDERWERP)
         .label(this.fieldNames.ONDERWERP)
+        .emptyToolbar()
         .validators(Validators.required)
         .maxlength(100)
         .build();
@@ -99,7 +100,7 @@ export class MailCreateComponent implements OnInit {
     }
 
     onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup) {
+        if (formGroup && formGroup.valid) {
             const mailObject = new MailObject();
             mailObject.ontvanger = this.ontvangerFormField.formControl.value;
             mailObject.onderwerp = this.onderwerpFormField.formControl.value;

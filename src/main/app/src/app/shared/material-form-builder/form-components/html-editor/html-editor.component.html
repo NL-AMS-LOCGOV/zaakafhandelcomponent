@@ -5,12 +5,18 @@
 <div class="html-editor-form-field">
     <mat-label>{{data.label | translate}}</mat-label>
     <div class="editor">
-        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+        <ngx-editor-menu [editor]="editor"
+                         [toolbar]="toolbar"
+                         [customMenuRef]="variabelenKiesMenu">
+        </ngx-editor-menu>
         <ngx-editor
                 [editor]="editor"
                 [formControl]="data.formControl"
                 [placeholder]="'mailTemplatePlaceholder' | translate">
         </ngx-editor>
+        <ng-template #variabelenKiesMenu>
+            <variabelen-kies-menu [editor]="editor" [variabelen]="data.variabelen"></variabelen-kies-menu>
+        </ng-template>
     </div>
     <mat-hint *ngIf="data.hint" [align]="data.hint.align">{{data.hint.label | translate}}</mat-hint>
     <mat-hint *ngIf="data.showCount && data.formControl.value && data.formControl.dirty">{{data.formControl.value.length}}/{{data.maxlength}}</mat-hint>
