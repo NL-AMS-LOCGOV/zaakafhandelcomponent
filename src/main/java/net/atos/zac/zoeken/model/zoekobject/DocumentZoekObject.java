@@ -14,8 +14,8 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public class DocumentZoekObject implements ZoekObject {
 
-    @Field
-    private String id;
+    @Field("id")
+    private String uuid;
 
     @Field
     private String type;
@@ -39,7 +39,7 @@ public class DocumentZoekObject implements ZoekObject {
     private String zaaktypeOmschrijving;
 
     @Field("informatieobject_zaakId")
-    private String zaakId;
+    private String zaakIdentificatie;
 
     @Field("informatieobject_zaakUuid")
     private String zaakUuid;
@@ -65,6 +65,9 @@ public class DocumentZoekObject implements ZoekObject {
     @Field("informatieobject_ondertekeningDatum")
     private Date ondertekeningDatum;
 
+    @Field("informatieobject_ondertekeningSoort")
+    private String ondertekeningSoort;
+
     @Field("informatieobject_vertrouwelijkheidaanduiding")
     private String vertrouwelijkheidaanduiding;
 
@@ -88,9 +91,6 @@ public class DocumentZoekObject implements ZoekObject {
 
     @Field("informatieobject_documentType")
     private String documentType;
-
-    @Field("informatieobject_ondertekeningSoort")
-    private String ondertekeningSoort;
 
     @Field("informatieobject_indicatieOndertekend")
     private boolean indicatieOndertekend;
@@ -116,11 +116,11 @@ public class DocumentZoekObject implements ZoekObject {
     }
 
     public String getUuid() {
-        return id;
+        return uuid;
     }
 
     public void setUuid(final String uuid) {
-        this.id = uuid;
+        this.uuid = uuid;
     }
 
     public void setType(final ZoekObjectType type) {
@@ -175,12 +175,12 @@ public class DocumentZoekObject implements ZoekObject {
         this.zaaktypeOmschrijving = zaaktypeOmschrijving;
     }
 
-    public String getZaakId() {
-        return zaakId;
+    public String getZaakIdentificatie() {
+        return zaakIdentificatie;
     }
 
-    public void setZaakId(final String zaakId) {
-        this.zaakId = zaakId;
+    public void setZaakIdentificatie(final String zaakIdentificatie) {
+        this.zaakIdentificatie = zaakIdentificatie;
     }
 
     public String getZaakUuid() {

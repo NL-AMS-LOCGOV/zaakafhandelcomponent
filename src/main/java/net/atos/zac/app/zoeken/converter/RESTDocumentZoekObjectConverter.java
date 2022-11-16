@@ -33,7 +33,7 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.zaaktypeUuid = documentZoekObject.getZaaktypeUuid();
         restDocumentZoekObject.zaaktypeIdentificatie = documentZoekObject.getZaaktypeIdentificatie();
         restDocumentZoekObject.zaaktypeOmschrijving = documentZoekObject.getZaaktypeOmschrijving();
-        restDocumentZoekObject.zaakId = documentZoekObject.getZaakId();
+        restDocumentZoekObject.zaakIdentificatie = documentZoekObject.getZaakIdentificatie();
         restDocumentZoekObject.zaakUuid = documentZoekObject.getZaakUuid();
         restDocumentZoekObject.zaakRelatie = documentZoekObject.getZaakRelatie();
         restDocumentZoekObject.creatiedatum = DateTimeConverterUtil.convertToLocalDate(documentZoekObject.getCreatiedatum());

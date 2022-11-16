@@ -15,7 +15,7 @@ export class DocumentZoekObject implements ZoekObject {
     zaaktypeUuid: string;
     zaaktypeIdentificatie: string;
     zaaktypeOmschrijving: string;
-    zaakId: string;
+    zaakIdentificatie: string;
     zaakUuid: string;
     zaakRelatie: string;
     creatiedatum: string;
@@ -23,6 +23,7 @@ export class DocumentZoekObject implements ZoekObject {
     ontvangstdatum: string;
     verzenddatum: string;
     ondertekeningDatum: string;
+    ondertekeningSoort: string;
     vertrouwelijkheidaanduiding: string;
     auteur: string;
     status: string;
@@ -31,7 +32,7 @@ export class DocumentZoekObject implements ZoekObject {
     bestandsnaam: string;
     bestandsomvang: number;
     documentType: string;
-    ondertekeningSoort: string;
+
     indicatieOndertekend: boolean;
     inhoudUrl: string;
     indicatieVergrendeld: boolean;

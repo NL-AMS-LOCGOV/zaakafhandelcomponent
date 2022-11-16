@@ -61,7 +61,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         documentZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
         documentZoekObject.setZaaktypeUuid(zaaktype.getUUID().toString());
         documentZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
-        documentZoekObject.setZaakId(zaak.getIdentificatie());
+        documentZoekObject.setZaakIdentificatie(zaak.getIdentificatie());
         documentZoekObject.setZaakUuid(zaak.getUuid().toString());
         if (gekoppeldeZaakInformatieobject.getAardRelatieWeergave() != null) {
             documentZoekObject.setZaakRelatie(gekoppeldeZaakInformatieobject.getAardRelatieWeergave().toValue());
