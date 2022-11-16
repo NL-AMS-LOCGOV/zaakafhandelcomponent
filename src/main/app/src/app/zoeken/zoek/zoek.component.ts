@@ -18,6 +18,7 @@ import {FormControl} from '@angular/forms';
 import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 import {ZoekResultaat} from '../model/zoek-resultaat';
 import {ZoekType} from '../model/zoek-type';
+import {DocumentZoekObject} from '../model/documenten/document-zoek-object';
 
 @Component({
     selector: 'zac-zoeken',
@@ -94,6 +95,10 @@ export class ZoekComponent implements AfterViewInit {
 
     getTaakZoekObject(zoekObject: ZoekObject): TaakZoekObject {
         return zoekObject as TaakZoekObject;
+    }
+
+    getDocumentZoekObject(zoekObject: ZoekObject): DocumentZoekObject {
+        return zoekObject as DocumentZoekObject;
     }
 
     hasOption(options: string[]) {

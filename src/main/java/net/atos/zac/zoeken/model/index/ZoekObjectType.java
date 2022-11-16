@@ -5,13 +5,15 @@
 
 package net.atos.zac.zoeken.model.index;
 
-import net.atos.zac.zoeken.model.TaakZoekObject;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 public enum ZoekObjectType {
     TAAK(TaakZoekObject.class),
-    ZAAK(ZaakZoekObject.class);
+    ZAAK(ZaakZoekObject.class),
+    DOCUMENT(DocumentZoekObject.class);
 
     private final Class<? extends ZoekObject> zoekObjectClass;
 

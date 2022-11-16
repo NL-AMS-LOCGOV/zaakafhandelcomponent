@@ -2,7 +2,6 @@
   ~ SPDX-FileCopyrightText: 2022 Atos
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
-
 <div fxLayout="row wrap" class="zaak-wrapper">
     <div [fxFlex]="100/3">
         <zac-static-text [label]="'Zaak' | translate"
@@ -14,10 +13,11 @@
                          [value]="zaak.zaaktypeOmschrijving"></zac-static-text>
         <zac-static-text [label]="'status' | translate"
                          [value]="zaak.statustypeOmschrijving"></zac-static-text>
+
     </div>
     <div [fxFlex]="100/3">
-        <zac-static-text [label]="'initiator' | translate"
-                         [value]="zaak.initiatorIdentificatie"></zac-static-text>
+        <zac-static-text [label]="'groep' | translate"
+                         [value]="zaak.groepNaam"></zac-static-text>
         <zac-static-text [label]="'behandelaar' | translate"
                          [value]="zaak.behandelaarNaam"></zac-static-text>
         <zac-static-text [label]="'resultaat' | translate"

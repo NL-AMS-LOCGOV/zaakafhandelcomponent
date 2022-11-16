@@ -14,7 +14,7 @@ import net.atos.zac.app.zoeken.model.RESTZaakZoekObject;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.zoeken.model.ZaakIndicatie;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 public class RESTZaakZoekObjectConverter {
 

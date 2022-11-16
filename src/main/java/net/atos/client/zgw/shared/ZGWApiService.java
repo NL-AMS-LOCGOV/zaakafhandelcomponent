@@ -215,7 +215,7 @@ public class ZGWApiService {
         // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
         zaakInformatieobjecten.stream()
                 .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
-                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(), toelichting, "Verwijderd"));
+                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject, toelichting, "Verwijderd"));
 
         // If the EnkelvoudigInformatieobject has no relationship(s) with other zaken it can be deleted.
         if (!zaakInformatieobjecten.stream().anyMatch(zaakInformatieobject -> !zaakInformatieobject.getZaakUUID().equals(zaakUUID))) {

@@ -21,7 +21,7 @@ public class EnkelvoudigInformatieobjectListParameters extends AbstractListParam
     private String identificatie;
 
     /**
-     * et RSIN van de Niet-natuurlijk persoon zijnde de organisatie die het informatieobject heeft gecreeerd of heeft ontvangen
+     * het RSIN van de Niet-natuurlijk persoon zijnde de organisatie die het informatieobject heeft gecreëerd of heeft ontvangen
      * en als eerste in een samenwerkingsketen heeft vastgelegd.
      */
     @QueryParam("bronorganisatie")

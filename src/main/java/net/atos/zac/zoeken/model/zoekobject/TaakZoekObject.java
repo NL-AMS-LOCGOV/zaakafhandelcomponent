@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.zoeken.model;
+package net.atos.zac.zoeken.model.zoekobject;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.beans.Field;
 
 import net.atos.zac.app.taken.model.TaakStatus;
+import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public class TaakZoekObject implements ZoekObject {

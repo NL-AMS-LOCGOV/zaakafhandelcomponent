@@ -36,9 +36,9 @@ import net.atos.zac.zoeken.ZoekenService;
 import net.atos.zac.zoeken.model.DatumRange;
 import net.atos.zac.zoeken.model.DatumVeld;
 import net.atos.zac.zoeken.model.FilterVeld;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.ZoekParameters;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 @ApplicationScoped
 @Transactional

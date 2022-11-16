@@ -4,6 +4,7 @@ export interface ZoekObject {
 }
 
 export enum ZoekObjectType {
+    DOCUMENT = 'DOCUMENT',
     TAAK = 'TAAK',
     ZAAK = 'ZAAK'
 }
