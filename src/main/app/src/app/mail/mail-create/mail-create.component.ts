@@ -100,7 +100,7 @@ export class MailCreateComponent implements OnInit {
     }
 
     onFormSubmit(formGroup: FormGroup): void {
-        if (formGroup && formGroup.valid) {
+        if (formGroup?.valid) {
             const mailObject = new MailObject();
             mailObject.ontvanger = this.ontvangerFormField.formControl.value;
             mailObject.onderwerp = this.onderwerpFormField.formControl.value;

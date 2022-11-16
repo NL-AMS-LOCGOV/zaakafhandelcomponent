@@ -8,6 +8,7 @@ import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {Editor, Toolbar} from 'ngx-editor';
 import {HtmlEditorFormField} from './html-editor-form-field';
+import {MailtemplateVariabele} from '../../../../admin/model/mailtemplate-variabele';
 
 @Component({
     templateUrl: './html-editor.component.html',
@@ -52,7 +53,7 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
         this.sorteer(this.data.variabelen);
     }
 
-    sorteer(array: string[]): string[] {
+    sorteer(array: MailtemplateVariabele[]): MailtemplateVariabele[] {
         return array.sort((a,b) => a.localeCompare(b));
     }
 
