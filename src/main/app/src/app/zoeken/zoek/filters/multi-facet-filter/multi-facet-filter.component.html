@@ -6,11 +6,12 @@
 <mat-card [formGroup]="formGroup">
     <mat-card-title>{{'zoeken.filter.' + (label | lowercase) | translate}}</mat-card-title>
     <mat-card-content>
-        <div *ngFor="let name of opties;">
-            <mat-checkbox (change)="checkboxChange()" [formControlName]="name">
-                <read-more *ngIf="isVertaalbaar(label)" [text]="VERTAALBAARE_FACETTEN[label]+'.'+name | translate" [maxLength]="30"></read-more>
-                <read-more *ngIf="!isVertaalbaar(label)" [text]="name" [maxLength]="30"></read-more>
+        <div *ngFor="let facetWaarde of opties;" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-checkbox (change)="checkboxChange()" [formControlName]="facetWaarde.naam">
+                <read-more *ngIf="isVertaalbaar(label)" [text]="VERTAALBAARE_FACETTEN[label]+'.'+facetWaarde.naam | translate" [maxLength]="30"></read-more>
+                <read-more *ngIf="!isVertaalbaar(label)" [text]="facetWaarde.naam" [maxLength]="30"></read-more>
             </mat-checkbox>
+            <span class="waarde">{{facetWaarde.aantal}}</span>
         </div>
     </mat-card-content>
 </mat-card>

@@ -7,12 +7,14 @@ package net.atos.zac.app.zoeken.converter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 import net.atos.zac.app.zoeken.model.AbstractRESTZoekObject;
 import net.atos.zac.app.zoeken.model.RESTZoekParameters;
 import net.atos.zac.app.zoeken.model.RESTZoekResultaat;
+import net.atos.zac.zoeken.model.FilterResultaat;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.ZoekResultaat;
 import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
@@ -42,10 +44,12 @@ public class RESTZoekResultaatConverter {
             final List<String> zoekFilters = zoekParameters.filters.get(filterVeld);
             if (zoekFilters != null) {
                 zoekFilters.forEach(zoekFilter -> {
-                    if (zoekFilter != null && !mogelijkeFilters.contains(zoekFilter)) {
-                        final List<String> filters = new ArrayList<>(mogelijkeFilters);
-                        filters.add(zoekFilter);
-                        restZoekResultaat.filters.put(filterVeld, filters);
+                    if (zoekFilter != null) {
+                        if (mogelijkeFilters.stream().noneMatch(fw -> Objects.equals(fw.naam(), zoekFilter))) {
+                            final List<FilterResultaat> filters = new ArrayList<>(mogelijkeFilters);
+                            filters.add(new FilterResultaat(zoekFilter, 0));
+                            restZoekResultaat.filters.put(filterVeld, filters);
+                        }
                     }
                 });
             }

@@ -22,11 +22,12 @@ import {EventEmitter} from '@angular/core';
 import {ZoekenColumn} from '../model/zoeken-column';
 import {SorteerVeld} from '../../../zoeken/model/sorteer-veld';
 import {FilterVeld} from '../../../zoeken/model/filter-veld';
+import {FilterResultaat} from '../../../zoeken/model/filter-resultaat';
 
 export abstract class ZoekenDataSource<OBJECT extends ZoekObject> extends DataSource<OBJECT> {
 
     zoekParameters: ZoekParameters;
-    beschikbareFilters: Partial<Record<FilterVeld, string[]>> = {};
+    beschikbareFilters: Partial<Record<FilterVeld, FilterResultaat[]>> = {};
     totalItems: number = 0;
     paginator: MatPaginator;
     sort: MatSort;

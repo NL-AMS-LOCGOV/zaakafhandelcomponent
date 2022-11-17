@@ -71,12 +71,12 @@
                 <button *ngIf="bedrijf.observed" mat-flat-button color="primary" (click)="bedrijf.emit(row)" title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>business</mat-icon>
                 </button>
-                <a *ngIf="!bedrijf.observed" mat-flat-button [routerLink]="['/bedrijf', row.identificatie]"
-                   (click)="sideNav?.close(); $event.stopPropagation()"
-                   [id]="'bedrijfBekijken_' + row.identificatie +'_button'"
-                   title="{{ 'actie.bedrijf.bekijken' | translate }}">
+                <button *ngIf="!bedrijf.observed" mat-flat-button
+                        (click)="openBedrijfPagina(row)"
+                        [id]="'bedrijfBekijken_' + row.identificatie +'_button'"
+                        title="{{ 'actie.bedrijf.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
-                </a>
+                </button>
             </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="bedrijfColumns; sticky: true"></tr>

@@ -5,6 +5,7 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FilterResultaat} from '../../../model/filter-resultaat';
 
 @Component({
     selector: 'zac-multi-facet-filter',
@@ -15,7 +16,7 @@ export class MultiFacetFilterComponent implements OnInit {
 
     formGroup: FormGroup;
     @Input() selected: string[];
-    @Input() opties: string[];
+    @Input() opties: FilterResultaat[];
     @Input() label: string;
     @Output() changed = new EventEmitter<string[]>();
 
@@ -32,7 +33,7 @@ export class MultiFacetFilterComponent implements OnInit {
     ngOnInit(): void {
         this.formGroup = this._formBuilder.group({});
         this.opties.forEach((value, index) => {
-            this.formGroup.addControl(value, new FormControl(!!this.selected?.find(s => s === value)));
+            this.formGroup.addControl(value.naam, new FormControl(!!this.selected?.find(s => s === value.naam)));
         });
     }
 

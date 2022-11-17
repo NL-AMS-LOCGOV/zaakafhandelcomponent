@@ -15,10 +15,18 @@
                 <zac-skeleton-loader [loading$]="bedrijf$">
                     {{bedrijf?.naam}}
                 </zac-skeleton-loader>
-                <button *ngIf="bedrijf && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
-                        (click)="$event.stopPropagation(); delete.emit(bedrijf)">
-                    <mat-icon>delete</mat-icon>
-                </button>
+                <div>
+                    <button *ngIf="bedrijf && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
+                            (click)="$event.stopPropagation(); delete.emit(bedrijf)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <a *ngIf="bedrijf" mat-flat-button [routerLink]="['/bedrijf', bedrijf.identificatie]"
+                       (click)="$event.stopPropagation()"
+                       [id]="'bedrijfBekijken_' + bedrijf.identificatie +'_button'"
+                       title="{{ 'actie.bedrijf.bekijken' | translate }}">
+                        <mat-icon>visibility</mat-icon>
+                    </a>
+                </div>
             </mat-panel-description>
         </mat-expansion-panel-header>
         <zac-skeleton-loader [loading$]="bedrijf$"

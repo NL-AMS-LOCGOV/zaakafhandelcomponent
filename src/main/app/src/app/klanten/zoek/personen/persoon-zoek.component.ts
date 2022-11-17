@@ -14,6 +14,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {CustomValidators} from '../../../shared/validators/customValidators';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 import {MatSidenav} from '@angular/material/sidenav';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'zac-persoon-zoek',
@@ -38,7 +39,7 @@ export class PersoonZoekComponent implements OnInit {
     persoonColumns: string[] = ['bsn', 'naam', 'geboortedatum', 'inschrijfadres', 'acties'];
     loading = false;
 
-    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder) {
+    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder, private router: Router) {
     }
 
     ngOnInit(): void {
@@ -111,5 +112,10 @@ export class PersoonZoekComponent implements OnInit {
 
     selectPersoon(persoon: Persoon): void {
         this.persoon.emit(persoon);
+    }
+
+    openPersoonPagina(persoon: Persoon): void {
+        this.sideNav?.close();
+        this.router.navigate(['/persoon/', persoon.identificatie]);
     }
 }
