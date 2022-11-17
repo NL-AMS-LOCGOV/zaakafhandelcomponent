@@ -22,11 +22,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.zac.mailtemplates.MailTemplateService;
-import net.atos.zac.mailtemplates.model.Mail;
-
-import net.atos.zac.mailtemplates.model.MailTemplate;
-
 import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
@@ -43,6 +38,10 @@ import net.atos.zac.app.planitems.model.RESTUserEventListenerData;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.flowable.CaseVariablesService;
 import net.atos.zac.mail.MailService;
+import net.atos.zac.mail.model.Ontvanger;
+import net.atos.zac.mailtemplates.MailTemplateService;
+import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterService;
@@ -138,8 +137,8 @@ public class PlanItemsRESTService {
             final MailTemplate mailTemplate =
                     mailTemplateService.findMailtemplate(Mail.valueOf(humanTaskData.taakStuurGegevens.mail));
 
-            mailService.sendMail(humanTaskData.taakdata.get("emailadres"), mailTemplate.getOnderwerp(),
-                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaak);
+            mailService.sendMail(new Ontvanger(humanTaskData.taakdata.get("emailadres")), mailTemplate.getOnderwerp(),
+                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaak, null);
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,

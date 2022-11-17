@@ -5,6 +5,8 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.util.List;
+
 public class RESTMailtemplate {
 
     public Long id;
@@ -17,9 +19,7 @@ public class RESTMailtemplate {
 
     public String mail;
 
+    public List<String> variabelen;
+
     public Long parent;
-
-    public RESTMailtemplate() {
-    }
-
 }

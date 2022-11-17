@@ -16,6 +16,7 @@ public class RESTMailtemplateConverter {
         restMailtemplate.id = mailTemplate.getId();
         restMailtemplate.mailTemplateNaam = mailTemplate.getMailTemplateNaam();
         restMailtemplate.mail = mailTemplate.getMail().name();
+        restMailtemplate.variabelen = mailTemplate.getMail().getVariabelen().stream().map(Object::toString).toList();
         restMailtemplate.onderwerp = mailTemplate.getOnderwerp();
         restMailtemplate.body = mailTemplate.getBody();
         restMailtemplate.parent = mailTemplate.getParent();

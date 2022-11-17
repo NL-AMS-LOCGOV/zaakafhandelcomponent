@@ -57,7 +57,7 @@ public class DataConverter {
 
     public static final String DATE_FORMAT = "dd-MM-yyyy";
 
-    private static final String FIELDS_PERSOON =
+    public static final String FIELDS_PERSOON =
             "burgerservicenummer," +
                     "naam.voornamen," +
                     "naam.voorvoegsel," +

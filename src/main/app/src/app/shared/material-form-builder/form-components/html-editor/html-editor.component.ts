@@ -25,6 +25,7 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
         ['link', 'image'],
         ['text_color', 'background_color'],
         ['align_left', 'align_center', 'align_right', 'align_justify'],
+        []
     ];
 
     constructor(public translate: TranslateService) {
@@ -36,13 +37,23 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
         if (this.data.mailtemplateBody$) {
             this.data.mailtemplateBody$.subscribe(mailtemplate => {
                 this.data.value(mailtemplate.body);
+                this.data.variabelen = this.sorteer(mailtemplate.variabelen);
             });
         }
         if (this.data.mailtemplateOnderwerp$) {
             this.data.mailtemplateOnderwerp$.subscribe(mailtemplate => {
                 this.data.value(mailtemplate.onderwerp);
+                this.data.variabelen = this.sorteer(mailtemplate.variabelen);
             });
         }
+        if (this.data.emptyToolbar) {
+            this.toolbar = [];
+        }
+        this.sorteer(this.data.variabelen);
+    }
+
+    sorteer(array: string[]): string[] {
+        return array.sort((a,b) => a.localeCompare(b));
     }
 
     ngOnDestroy(): void {
