@@ -5,8 +5,6 @@
 
 package net.atos.zac.flowable;
 
-import static net.atos.client.zgw.zrc.model.Objecttype.OVERIGE;
-import static net.atos.zac.aanvraag.ProductAanvraagService.OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG;
 import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_OMSCHRIJVING;
 import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAKTYPE_UUUID;
 import static net.atos.zac.flowable.CaseVariablesService.VAR_ZAAK_DATA;
@@ -22,7 +20,6 @@ import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.HUMAN_TASK;
 import static org.flowable.cmmn.api.runtime.PlanItemDefinitionType.USER_EVENT_LISTENER;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,20 +37,18 @@ import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.history.HistoricCaseInstance;
 import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.runtime.CaseInstance;
+import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.UserEventListener;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 
 import net.atos.client.or.object.ObjectsClientService;
-import net.atos.client.or.object.model.ORObject;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.Zaakobject;
-import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.aanvraag.ProductAanvraag;
 import net.atos.zac.authentication.LoggedInUser;
+import net.atos.zac.zaaksturing.model.ZaakafhandelParameters;
 
 @ApplicationScoped
 @Transactional
@@ -95,20 +90,25 @@ public class CaseService {
                 .list();
     }
 
-    public void startCase(final String caseDefinitionKey, final Zaak zaak, final Zaaktype zaaktype) {
+    public void startCase(final Zaak zaak, final Zaaktype zaaktype, final ZaakafhandelParameters zaakafhandelParameters,
+            final Map<String, Object> zaakData) {
+        final String caseDefinitionKey = zaakafhandelParameters.getCaseDefinitionID();
+        LOG.info(() -> String.format("Zaak %s: Starten zaak met CMMN model '%s'", zaak.getUuid(), caseDefinitionKey));
         try {
-            cmmnRuntimeService.createCaseInstanceBuilder()
+            final CaseInstanceBuilder caseInstanceBuilder = cmmnRuntimeService.createCaseInstanceBuilder()
                     .caseDefinitionKey(caseDefinitionKey)
                     .businessKey(zaak.getUuid().toString())
                     .variable(VAR_ZAAK_UUID, zaak.getUuid())
                     .variable(VAR_ZAAK_IDENTIFICATIE, zaak.getIdentificatie())
                     .variable(VAR_ZAAKTYPE_UUUID, uuidFromURI(zaaktype.getUrl()))
-                    .variable(VAR_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving())
-                    .variable(VAR_ZAAK_DATA, readZaakData(zaak))
-                    .start();
+                    .variable(VAR_ZAAKTYPE_OMSCHRIJVING, zaaktype.getOmschrijving());
+            if (zaakData != null) {
+                caseInstanceBuilder.variable(VAR_ZAAK_DATA, zaakData);
+            }
+            caseInstanceBuilder.start();
         } catch (final FlowableObjectNotFoundException flowableObjectNotFoundException) {
-            LOG.warning(String.format("Zaak %s: Case with definition key '%s' not found. No Case started.",
-                                      caseDefinitionKey, zaak.getUuid()));
+            LOG.severe(String.format("Zaak %s: CMMN model '%s' bestaat niet. Zaak is niet gestart.", zaak.getUuid(),
+                                     caseDefinitionKey));
         }
     }
 
@@ -200,22 +200,5 @@ public class CaseService {
         return cmmnHistoryService.createHistoricCaseInstanceQuery()
                 .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .singleResult();
-    }
-
-    private Map<String, Object> readZaakData(final Zaak zaak) {
-        final ZaakobjectListParameters zaakobjectListParameters = new ZaakobjectListParameters();
-        zaakobjectListParameters.setZaak(zaak.getUrl());
-        zaakobjectListParameters.setObjectType(OVERIGE);
-        return zrcClientService.listZaakobjecten(zaakobjectListParameters).getSinglePageResults().stream()
-                .filter(zaakobject -> OBJECT_TYPE_OVERIGE_PRODUCT_AANVRAAG.equals(zaakobject.getObjectTypeOverige()))
-                .map(this::readZaakData)
-                .findAny()
-                .orElse(Collections.emptyMap());
-    }
-
-    private Map<String, Object> readZaakData(final Zaakobject zaakobject) {
-        final ORObject object = objectsClientService.readObject(uuidFromURI(zaakobject.getObject()));
-        final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        return productAanvraag.getData();
     }
 }
