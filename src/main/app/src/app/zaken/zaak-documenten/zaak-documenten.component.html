@@ -82,13 +82,13 @@
                                title="{{ 'actie.document.bekijken' | translate}}">
                                 <mat-icon>visibility</mat-icon>
                             </a>
-                            <button *ngIf="!taakModus && row.rechten.wijzigen" mat-flat-button
+                            <button *ngIf="!taakModus && row.rechten.wijzigen && !row.relatieType" mat-flat-button
                                     [disabled]="isOntkoppelenDisabled(row)"
                                     (click)="documentOntkoppelen(row)"
                                     title="{{ 'actie.document.ontkoppelen' | translate}}">
                                 <mat-icon>link_off</mat-icon>
                             </button>
-                            <button *ngIf="!taakModus && row.rechten.wijzigen" mat-flat-button
+                            <button *ngIf="!taakModus && row.rechten.wijzigen && !row.relatieType" mat-flat-button
                                     [disabled]="isDocumentVerplaatsenDisabled(row)"
                                     (click)="documentVerplaatsen(row)"
                                     title="{{ 'actie.document.verplaatsen' | translate}}">
