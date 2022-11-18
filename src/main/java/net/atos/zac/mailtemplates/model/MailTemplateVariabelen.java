@@ -51,4 +51,8 @@ public enum MailTemplateVariabelen {
         returnSet.addAll(extraVariabelen);
         return returnSet;
     }
+
+    public String getVariabele() {
+        return String.format("{%s}", this);
+    }
 }
