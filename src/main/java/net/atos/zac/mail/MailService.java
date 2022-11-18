@@ -250,56 +250,11 @@ public class MailService {
         }
 
         if (resolvedTekst.contains(MailTemplateVariabelen.INITIATOR.getVariabele())) {
-            final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-            if (initiator != null) {
-                String initiatorNaam = null;
-                if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
-                    final IngeschrevenPersoonHal persoon =
-                            brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
-                    if (persoon != null) {
-                        initiatorNaam = String.format("%s %s", persoon.getNaam().getVoornamen(),
-                                                      persoon.getNaam().getGeslachtsnaam());
-                    }
-                } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
-                        initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
-                    final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
-                            kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
-                            kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
-                    if (resultaatItem != null) {
-                        initiatorNaam = resultaatItem.getHandelsnaam();
-                    }
-                }
-                resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.INITIATOR, initiatorNaam);
-            }
+            resolvedTekst = resolveInitiator(resolvedTekst, zaak);
         }
 
         if (resolvedTekst.contains(MailTemplateVariabelen.ADRESINITIATOR.getVariabele())) {
-            final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-            if (initiator != null) {
-                String initiatorAdres = null;
-                if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
-                    final IngeschrevenPersoonHal persoon =
-                            brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
-                    if (persoon != null) {
-                        initiatorAdres = String.format("%s %s", persoon.getVerblijfplaats().getAdresregel1(),
-                                                       persoon.getVerblijfplaats().getAdresregel2());
-                    }
-                } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
-                        initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
-                    final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
-                            kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
-                            kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
-                    if (resultaatItem != null) {
-                        initiatorAdres = String.format("%s %s %s %s", resultaatItem.getStraatnaam(),
-                                                       resultaatItem.getHuisnummer(), resultaatItem.getPostcode(),
-                                                       resultaatItem.getPlaats());
-                    }
-                }
-                if (initiatorAdres != null) {
-                    resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ADRESINITIATOR,
-                                                     initiatorAdres);
-                }
-            }
+            resolvedTekst = resolveAdresInitiator(resolvedTekst, zaak);
         }
 
         if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGROEPZAAK.getVariabele())) {
@@ -347,6 +302,61 @@ public class MailService {
         resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TAAKURL,
                                          configuratieService.taakTonenUrl(taskInfo.getId()).toString());
 
+        return resolvedTekst;
+    }
+
+    private String resolveInitiator(final String resolvedTekst, final Zaak zaak) {
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
+        if (initiator != null) {
+            String initiatorNaam = null;
+            if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
+                final IngeschrevenPersoonHal persoon =
+                        brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
+                if (persoon != null) {
+                    initiatorNaam = String.format("%s %s", persoon.getNaam().getVoornamen(),
+                                                  persoon.getNaam().getGeslachtsnaam());
+                }
+            } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
+                    initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
+                final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
+                        kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
+                        kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
+                if (resultaatItem != null) {
+                    initiatorNaam = resultaatItem.getHandelsnaam();
+                }
+            }
+            return replaceVariabele(resolvedTekst, MailTemplateVariabelen.INITIATOR, initiatorNaam);
+        }
+
+        return resolvedTekst;
+    }
+
+    private String resolveAdresInitiator(final String resolvedTekst, final Zaak zaak) {
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
+        if (initiator != null) {
+            String initiatorAdres = null;
+            if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
+                final IngeschrevenPersoonHal persoon =
+                        brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
+                if (persoon != null) {
+                    initiatorAdres = String.format("%s %s", persoon.getVerblijfplaats().getAdresregel1(),
+                                                   persoon.getVerblijfplaats().getAdresregel2());
+                }
+            } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
+                    initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
+                final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
+                        kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
+                        kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
+                if (resultaatItem != null) {
+                    initiatorAdres = String.format("%s %s %s %s", resultaatItem.getStraatnaam(),
+                                                   resultaatItem.getHuisnummer(), resultaatItem.getPostcode(),
+                                                   resultaatItem.getPlaats());
+                }
+            }
+            if (initiatorAdres != null) {
+                return replaceVariabele(resolvedTekst, MailTemplateVariabelen.ADRESINITIATOR, initiatorAdres);
+            }
+        }
         return resolvedTekst;
     }
 
