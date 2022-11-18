@@ -89,6 +89,10 @@
                         </mat-form-field>
                     </div>
 
+                    <div fxLayout="row wrap" fxLayoutGap="5px" fxLayoutAlign="left center">
+                        <mat-icon color="warn">warning</mat-icon>
+                        <small>{{'msg.zaakafhandelparameters.waarschuwing' | translate}}</small>
+                    </div>
                     <div class="button-group" fxLayout="row wrap">
                         <button mat-raised-button matStepperNext>{{"actie.volgende" | translate}}</button>
                         <button mat-raised-button color="primary" [disabled]="!isValid() || loading"
