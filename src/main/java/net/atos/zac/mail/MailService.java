@@ -79,7 +79,6 @@ public class MailService {
 
     private static final String MAILJET_API_SECRET_KEY = ConfigProvider.getConfig().getValue("mailjet.api.secret.key",
                                                                                              String.class);
-    private static final String MAIL_VARIABLE = "{%s}";
 
     private static final String HTML_TAG_REGEX = "\\<[^>]*>";
 
@@ -200,8 +199,8 @@ public class MailService {
         return attachments;
     }
 
-    private String resolveVariabelen(final String target, Zaak zaak, final TaskInfo taskInfo) {
-        String resolvedTekst = target;
+    private String resolveVariabelen(final String tekst, Zaak zaak, final TaskInfo taskInfo) {
+        String resolvedTekst = tekst;
 
         if (zaak == null && taskInfo != null) {
             zaak = zrcClientService.readZaak(caseVariablesService.readZaakUUID(taskInfo.getScopeId()));
@@ -216,48 +215,27 @@ public class MailService {
         return resolvedTekst;
     }
 
-    private String resolveZaakVariabelen(final String target, final Zaak zaak) {
-        String resolvedTekst = target;
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.ZAAKNUMMER))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ZAAKNUMMER, zaak.getIdentificatie());
-        }
+    private String resolveZaakVariabelen(final String tekst, final Zaak zaak) {
+        String resolvedTekst = tekst;
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ZAAKNUMMER, zaak.getIdentificatie());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ZAAKURL,
+                                         configuratieService.zaakTonenUrl(zaak.getIdentificatie()).toString());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.OMSCHRIJVINGZAAK, zaak.getOmschrijving());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOELICHTINGZAAK, zaak.getToelichting());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.REGISTRATIEDATUM, zaak.getRegistratiedatum().toString());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.STARTDATUM, zaak.getStartdatum().toString());
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.ZAAKURL))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ZAAKURL,
-                                             configuratieService.zaakTonenUrl(zaak.getIdentificatie()).toString());
-        }
-
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.OMSCHRIJVINGZAAK))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.OMSCHRIJVINGZAAK, zaak.getOmschrijving());
-        }
-
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TOELICHTINGZAAK))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOELICHTINGZAAK, zaak.getToelichting());
-        }
-
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.REGISTRATIEDATUM))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.REGISTRATIEDATUM,
-                                             zaak.getRegistratiedatum().toString());
-        }
-
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.STARTDATUM))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.STARTDATUM,
-                                             zaak.getStartdatum().toString());
-        }
-
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.STREEFDATUM)) &&
-                zaak.getEinddatumGepland() != null) {
+        if (zaak.getEinddatumGepland() != null) {
             resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.STREEFDATUM,
                                              zaak.getEinddatumGepland().toString());
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.FATALEDATUM)) &&
-                zaak.getUiterlijkeEinddatumAfdoening() != null) {
+        if (zaak.getUiterlijkeEinddatumAfdoening() != null) {
             resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.FATALEDATUM,
                                              zaak.getUiterlijkeEinddatumAfdoening().toString());
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.ZAAKSTATUS))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.ZAAKSTATUS.getVariabele())) {
             final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
             final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
             if (statustype != null) {
@@ -266,49 +244,20 @@ public class MailService {
             }
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.ZAAKTYPE))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.ZAAKTYPE.getVariabele())) {
             final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
             resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ZAAKTYPE, zaaktype.getOmschrijving());
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.INITIATOR))) {
-            final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-            if (initiator != null) {
-                resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.INITIATOR,
-                                                 initiator.getNaam());
-            }
+        if (resolvedTekst.contains(MailTemplateVariabelen.INITIATOR.getVariabele())) {
+            resolvedTekst = resolveInitiator(resolvedTekst, zaak);
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.ADRESINITIATOR))) {
-            final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-            if (initiator != null) {
-                String initiatorAdres = null;
-                if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
-                    final IngeschrevenPersoonHal persoon =
-                            brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
-                    if (persoon != null) {
-                        initiatorAdres = String.format("%s %s", persoon.getVerblijfplaats().getAdresregel1(),
-                                                       persoon.getVerblijfplaats().getAdresregel2());
-                    }
-                } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
-                        initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
-                    final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
-                            kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
-                            kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
-                    if (resultaatItem != null) {
-                        initiatorAdres = String.format("%s %s %s %s", resultaatItem.getStraatnaam(),
-                                                       resultaatItem.getHuisnummer(), resultaatItem.getPostcode(),
-                                                       resultaatItem.getPlaats());
-                    }
-                }
-                if (initiatorAdres != null) {
-                    resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.ADRESINITIATOR,
-                                                     initiatorAdres);
-                }
-            }
+        if (resolvedTekst.contains(MailTemplateVariabelen.ADRESINITIATOR.getVariabele())) {
+            resolvedTekst = resolveAdresInitiator(resolvedTekst, zaak);
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TOEGEWEZENGROEPZAAK))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGROEPZAAK.getVariabele())) {
             final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
             if (groep != null) {
                 resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOEGEWEZENGROEPZAAK,
@@ -316,7 +265,7 @@ public class MailService {
             }
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TOEGEWEZENGEBRUIKERZAAK))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGEBRUIKERZAAK.getVariabele())) {
             final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
             if (behandelaar != null) {
                 resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOEGEWEZENGEBRUIKERZAAK,
@@ -327,10 +276,10 @@ public class MailService {
         return resolvedTekst;
     }
 
-    private String resolveTaakVariabelen(final String target, final TaskInfo taskInfo) {
-        String resolvedTekst = target;
+    private String resolveTaakVariabelen(final String tekst, final TaskInfo taskInfo) {
+        String resolvedTekst = tekst;
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TOEGEWEZENGROEPTAAK))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGROEPTAAK.getVariabele())) {
             final String groepId = taskInfo.getIdentityLinks().stream()
                     .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                     .findAny()
@@ -342,7 +291,7 @@ public class MailService {
             }
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK))) {
+        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK.getVariabele())) {
             final User user = taskInfo.getAssignee() != null ? identityService.readUser(taskInfo.getAssignee()) : null;
             if (user != null) {
                 resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK,
@@ -350,19 +299,68 @@ public class MailService {
             }
         }
 
-        if (resolvedTekst.contains(getVariabele(MailTemplateVariabelen.TAAKURL))) {
-            resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TAAKURL,
-                                             configuratieService.taakTonenUrl(taskInfo.getId()).toString());
+        resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TAAKURL,
+                                         configuratieService.taakTonenUrl(taskInfo.getId()).toString());
+
+        return resolvedTekst;
+    }
+
+    private String resolveInitiator(final String resolvedTekst, final Zaak zaak) {
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
+        if (initiator != null) {
+            String initiatorNaam = null;
+            if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
+                final IngeschrevenPersoonHal persoon =
+                        brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
+                if (persoon != null) {
+                    initiatorNaam = String.format("%s %s", persoon.getNaam().getVoornamen(),
+                                                  persoon.getNaam().getGeslachtsnaam());
+                }
+            } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
+                    initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
+                final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
+                        kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
+                        kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
+                if (resultaatItem != null) {
+                    initiatorNaam = resultaatItem.getHandelsnaam();
+                }
+            }
+            return replaceVariabele(resolvedTekst, MailTemplateVariabelen.INITIATOR, initiatorNaam);
         }
 
         return resolvedTekst;
     }
 
-    private String replaceVariabele(final String target, final MailTemplateVariabelen variabele, final String waarde) {
-        return StringUtils.replace(target, getVariabele(variabele), waarde);
+    private String resolveAdresInitiator(final String resolvedTekst, final Zaak zaak) {
+        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
+        if (initiator != null) {
+            String initiatorAdres = null;
+            if (initiator.getBetrokkeneType() == BetrokkeneType.NATUURLIJK_PERSOON) {
+                final IngeschrevenPersoonHal persoon =
+                        brpClientService.findPersoon(initiator.getIdentificatienummer(), DataConverter.FIELDS_PERSOON);
+                if (persoon != null) {
+                    initiatorAdres = String.format("%s %s", persoon.getVerblijfplaats().getAdresregel1(),
+                                                   persoon.getVerblijfplaats().getAdresregel2());
+                }
+            } else if (initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ||
+                    initiator.getBetrokkeneType() == BetrokkeneType.NIET_NATUURLIJK_PERSOON) {
+                final ResultaatItem resultaatItem = initiator.getBetrokkeneType() == BetrokkeneType.VESTIGING ?
+                        kvkClientService.findVestiging(initiator.getIdentificatienummer()) :
+                        kvkClientService.findRechtspersoon(initiator.getIdentificatienummer());
+                if (resultaatItem != null) {
+                    initiatorAdres = String.format("%s %s %s %s", resultaatItem.getStraatnaam(),
+                                                   resultaatItem.getHuisnummer(), resultaatItem.getPostcode(),
+                                                   resultaatItem.getPlaats());
+                }
+            }
+            if (initiatorAdres != null) {
+                return replaceVariabele(resolvedTekst, MailTemplateVariabelen.ADRESINITIATOR, initiatorAdres);
+            }
+        }
+        return resolvedTekst;
     }
 
-    private String getVariabele(final MailTemplateVariabelen variabele) {
-        return String.format(MAIL_VARIABLE, variabele);
+    private String replaceVariabele(final String target, final MailTemplateVariabelen variabele, final String waarde) {
+        return StringUtils.replace(target, variabele.getVariabele(), waarde);
     }
 }

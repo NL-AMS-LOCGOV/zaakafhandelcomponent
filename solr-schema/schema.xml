@@ -163,7 +163,8 @@
     <field name="zaak_resultaattypeOmschrijving" type="string" indexed="true" stored="true"/>
     <field name="zaak_resultaatToelichting" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_aantalOpenstaandeTaken" type="pint" indexed="true" stored="true"/>
-    <field name="zaak_indicaties" type="plong" indexed="true" docValues="true"/>
+    <field name="zaak_indicaties" type="string" multiValued="true" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_indicaties_sort" type="plong" indexed="true" docValues="true"/>
 
     <field name="taak_naam" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="taak_toelichting" type="text_nl" indexed="true" stored="true"/>
@@ -212,7 +213,9 @@
     <field name="informatieobject_indicatieVergrendeld" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_vergrendeldDoorNaam" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_vergrendeldDoorGebruikersnaam" type="string" indexed="true" stored="true"/>
-    <field name="informatieobject_indicaties" type="plong" indexed="true" docValues="true"/>
+    <field name="informatieobject_indicaties" type="string" multiValued="true" indexed="true" stored="true"
+           docValues="true"/>
+    <field name="informatieobject_indicaties_sort" type="plong" indexed="true" docValues="true"/>
 
     <!--  non-tokenized version of field to make it easier to sort or group
              results by field. copied from "field" via copyField  -->

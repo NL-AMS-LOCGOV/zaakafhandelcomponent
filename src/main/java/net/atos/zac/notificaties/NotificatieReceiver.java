@@ -43,7 +43,6 @@ import net.atos.zac.authentication.SecurityUtil;
 import net.atos.zac.configuratie.ConfiguratieService;
 import net.atos.zac.documenten.InboxDocumentenService;
 import net.atos.zac.event.EventingService;
-import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.websocket.event.ScreenEventType;
 import net.atos.zac.zaaksturing.ZaakafhandelParameterBeheerService;
@@ -100,7 +99,6 @@ public class NotificatieReceiver {
             handleWebsockets(notificatie);
             if (!configuratieService.isLocalDevelopment()) {
                 handleSignaleringen(notificatie);
-                handleCmmn(notificatie);
                 handleProductAanvraag(notificatie);
                 handleIndexering(notificatie);
                 handleInboxDocumenten(notificatie);
@@ -135,12 +133,6 @@ public class NotificatieReceiver {
         if (notificatie.getChannel() != null && notificatie.getResource() != null) {
             SignaleringEventUtil.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo())
                     .forEach(eventingService::send);
-        }
-    }
-
-    private void handleCmmn(final Notificatie notificatie) {
-        if (notificatie.getChannel() != null && notificatie.getResource() != null) {
-            CmmnEventType.getEvents(notificatie.getChannel(), notificatie.getMainResourceInfo(), notificatie.getResourceInfo()).forEach(eventingService::send);
         }
     }
 

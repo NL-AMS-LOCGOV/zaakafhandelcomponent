@@ -9,8 +9,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import net.atos.zac.flowable.cmmn.event.CmmnEvent;
-import net.atos.zac.flowable.cmmn.event.CmmnEventType;
 import net.atos.zac.signalering.event.SignaleringEvent;
 import net.atos.zac.signalering.event.SignaleringEventUtil;
 import net.atos.zac.util.event.JobEvent;
@@ -24,25 +22,10 @@ public class EventingService {
     private Event<ScreenEvent> screenUpdateEvent;
 
     @Inject
-    private Event<CmmnEvent> cmmnUpdateEvent;
-
-    @Inject
     private Event<SignaleringEvent<?>> signaleringEvent;
 
     @Inject
     private Event<JobEvent> signaleringJobEvent;
-
-    /**
-     * Send {@link CmmnEvent}s to Observer(s),
-     * These will be used to update Flowable.
-     * <p>
-     * Prefer using the factory methods on {@link CmmnEventType} to create these event!
-     *
-     * @param event the event that will be sent.
-     */
-    public void send(final CmmnEvent event) {
-        cmmnUpdateEvent.fireAsync(event);
-    }
 
     /**
      * Send {@link ScreenEvent}s to Observer(s),

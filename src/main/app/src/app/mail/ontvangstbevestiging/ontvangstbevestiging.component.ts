@@ -73,6 +73,7 @@ export class OntvangstbevestigingComponent implements OnInit {
         .label('onderwerp')
         .validators(Validators.required)
         .mailtemplateOnderwerp(mailtemplate)
+        .emptyToolbar()
         .maxlength(100)
         .build();
         const body = new HtmlEditorFormFieldBuilder()
