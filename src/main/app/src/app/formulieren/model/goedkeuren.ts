@@ -20,6 +20,8 @@ import {Goedkeuring} from './goedkeuring.enum';
 
 export class Goedkeuren extends AbstractFormulier {
 
+    private readonly GOEDKEUREN_ENUM_PREFIX: string = 'goedkeuren.';
+
     fields = {
         TOELICHTING: 'toelichtingGoedkeuring',
         VRAAG: 'vraag',
@@ -73,7 +75,7 @@ export class Goedkeuren extends AbstractFormulier {
             [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
                 this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
                                                                                       .label(fields.GOEDKEUREN)
-                                                                                      .options(this.getGoedkeurenOpties())
+                                                                                      .options(this.getGoedkeurenOpties$())
                                                                                       .validators(Validators.required)
                                                                                       .readonly(this.readonly)
                                                                                       .build()],
@@ -106,8 +108,8 @@ export class Goedkeuren extends AbstractFormulier {
         }
     }
 
-    getGoedkeurenOpties(): Observable<string[]> {
-        return of(Object.keys(Goedkeuring).map(k => 'goedkeuren.' + Goedkeuring[k]));
+    getGoedkeurenOpties$(): Observable<string[]> {
+        return of(Object.keys(Goedkeuring).map(k => this.GOEDKEUREN_ENUM_PREFIX + Goedkeuring[k]));
     }
 
 }
