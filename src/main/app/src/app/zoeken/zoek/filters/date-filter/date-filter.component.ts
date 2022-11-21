@@ -17,15 +17,15 @@ export class DateFilterComponent implements OnInit {
     @Input() label: string;
     @Output() changed = new EventEmitter<DatumRange>();
 
-    dateVan: FormControl<Date>;
-    dateTM: FormControl<Date>;
+    dateVan: FormControl<Date> = new FormControl<Date>(null);
+    dateTM: FormControl<Date> = new FormControl<Date>(null);
 
     ngOnInit(): void {
         if (this.range == null) {
             this.range = new DatumRange();
         }
-        this.dateVan = new FormControl(this.range.van);
-        this.dateTM = new FormControl(this.range.tot);
+        this.dateVan.setValue(this.range.van);
+        this.dateTM.setValue(this.range.tot);
     }
 
     change(): void {

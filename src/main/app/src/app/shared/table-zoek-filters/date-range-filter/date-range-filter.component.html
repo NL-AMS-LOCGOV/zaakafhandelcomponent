@@ -9,7 +9,7 @@
         <input matStartDate placeholder="van" [formControl]="dateVan">
         <input matEndDate placeholder="tot" [formControl]="dateTM">
     </mat-date-range-input>
-    <mat-datepicker-toggle *ngIf="!range.hasRange()" matSuffix [for]="datumPicker"></mat-datepicker-toggle>
-    <mat-icon *ngIf="range.hasRange()" matSuffix (click)="clearDate($event)">clear</mat-icon>
+    <mat-datepicker-toggle *ngIf="!hasRange()" matSuffix [for]="datumPicker"></mat-datepicker-toggle>
+    <mat-icon *ngIf="hasRange()" matSuffix (click)="clearDate($event)">clear</mat-icon>
     <mat-date-range-picker (closed)="change()" disabled="false" #datumPicker></mat-date-range-picker>
 </mat-form-field>
