@@ -5,7 +5,7 @@
 
 import {AfterViewInit, Component, EventEmitter, Input, ViewChild} from '@angular/core';
 
-import {ZoekObject, ZoekObjectType} from '../model/zoek-object';
+import {ZoekObject} from '../model/zoek-object';
 import {ZoekenService} from '../zoeken.service';
 import {ZoekParameters} from '../model/zoek-parameters';
 import {MatPaginator} from '@angular/material/paginator';
@@ -19,6 +19,7 @@ import {TaakZoekObject} from '../model/taken/taak-zoek-object';
 import {ZoekResultaat} from '../model/zoek-resultaat';
 import {ZoekType} from '../model/zoek-type';
 import {DocumentZoekObject} from '../model/documenten/document-zoek-object';
+import {ZoekObjectType} from '../model/zoek-object-type';
 
 @Component({
     selector: 'zac-zoeken',
@@ -81,9 +82,9 @@ export class ZoekComponent implements AfterViewInit {
             this.paginator.length = data.totaal;
             this.hasSearched = true;
             this.zoekResultaat = data;
-            this.hasZaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === 'ZAAK')?.aantal > 0;
-            this.hasTaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === 'TAAK')?.aantal > 0;
-            this.hasDocument = this.zoekResultaat.filters.TYPE.find(f => f.naam === 'DOCUMENTEN')?.aantal > 0;
+            this.hasZaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.ZAAK)?.aantal > 0;
+            this.hasTaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.TAAK)?.aantal > 0;
+            this.hasDocument = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.DOCUMENT)?.aantal > 0;
         });
     }
 

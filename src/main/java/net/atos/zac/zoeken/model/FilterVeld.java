@@ -34,7 +34,6 @@ public enum FilterVeld {
     DOCUMENT_VERGRENDELD("informatieobject_indicatieVergrendeld"),
     DOCUMENT_VERGRENDELD_DOOR("informatieobject_vergrendeldDoorNaam");
 
-
     private final String veld;
 
     FilterVeld(final String veld) {

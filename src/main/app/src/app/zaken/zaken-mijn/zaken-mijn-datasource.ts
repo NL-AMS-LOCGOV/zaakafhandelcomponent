@@ -9,7 +9,7 @@ import {ZoekenService} from '../../zoeken/zoeken.service';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {Werklijst} from '../../gebruikersvoorkeuren/model/werklijst';
 import {ZoekenDataSource} from '../../shared/dynamic-table/datasource/zoeken-data-source';
-import {ZoekObjectType} from '../../zoeken/model/zoek-object';
+import {ZoekObjectType} from '../../zoeken/model/zoek-object-type';
 
 /**
  * Datasource voor de mijn zaken. Via deze class wordt de data voor de tabel opgehaald
