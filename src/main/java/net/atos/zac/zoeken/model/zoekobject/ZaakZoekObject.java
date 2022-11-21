@@ -146,7 +146,7 @@ public class ZaakZoekObject implements ZoekObject {
     @Field(IS_TOEGEKEND_FIELD)
     private boolean toegekend;
 
-    @Field("zaak_indicaties")
+    @Field("zaak_indicaties_sort")
     private long indicaties;
 
     public ZaakZoekObject() {
