@@ -14,6 +14,7 @@ import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTDocumentZoekObject;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.DateTimeConverterUtil;
+import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
 
 public class RESTDocumentZoekObjectConverter {
@@ -50,9 +51,9 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.bestandsomvang = documentZoekObject.getBestandsomvang();
         restDocumentZoekObject.documentType = documentZoekObject.getDocumentType();
         restDocumentZoekObject.ondertekeningSoort = documentZoekObject.getOndertekeningSoort();
-        restDocumentZoekObject.indicatieOndertekend = documentZoekObject.isIndicatieOndertekend();
+        restDocumentZoekObject.indicatieOndertekend = documentZoekObject.isIndicatie(DocumentIndicatie.ONDERTEKEND);
         restDocumentZoekObject.inhoudUrl = documentZoekObject.getInhoudUrl();
-        restDocumentZoekObject.indicatieVergrendeld = documentZoekObject.isIndicatieVergrendeld();
+        restDocumentZoekObject.indicatieVergrendeld = documentZoekObject.isIndicatie(DocumentIndicatie.VERGRENDELD);
         restDocumentZoekObject.vergrendeldDoor = documentZoekObject.getVergrendeldDoorNaam();
         restDocumentZoekObject.rechten = restRechtenConverter.convert(policyService.readDocumentRechten(documentZoekObject));
         return restDocumentZoekObject;
