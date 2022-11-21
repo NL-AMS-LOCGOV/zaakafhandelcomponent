@@ -40,6 +40,7 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     @Input() einddatumGeplandIcon: TextIcon;
     @Input() uiterlijkeEinddatumAfdoeningIcon: TextIcon;
     @Input() reasonField: InputFormField;
+    @Input() hervat: boolean;
     @Input() opgeschort: boolean;
     @Input() opschortReden: string;
     @Input() opschortDuur: number;

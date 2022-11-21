@@ -96,5 +96,7 @@ public class RESTZaak {
 
     public boolean isInIntakeFase;
 
+    public boolean isHervat;
+
     public RESTZaakRechten rechten;
 }

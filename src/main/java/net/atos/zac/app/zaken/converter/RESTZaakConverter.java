@@ -142,7 +142,8 @@ public class RESTZaakConverter {
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         restZaak.isOpgeschort = zaak.isOpgeschort();
-        if (zaak.isOpgeschort()) {
+        restZaak.isHervat = !zaak.getOpschorting().getReden().isEmpty() && !zaak.isOpgeschort();
+        if (restZaak.isOpgeschort || restZaak.isHervat) {
             restZaak.redenOpschorting = zaak.getOpschorting().getReden();
         }
 

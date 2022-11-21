@@ -73,6 +73,11 @@
                     <mat-icon class="play-button">pause_circle_outline</mat-icon>
                 </button>
             </div>
+            <div *ngIf="hervat" class="play-control">
+                <button mat-icon-button color="primary" disabled title="{{ 'msg.zaak.opschorten.niet.toegestaan' | translate:{reden: opschortReden} }}">
+                    <mat-icon>play_arrow</mat-icon>
+                </button>
+            </div>
             <div *ngIf="actieHervatten" class="play-control">
                 <button mat-icon-button color="primary" (click)="hervatten()" title="{{ 'actie.zaak.hervatten' | translate}}">
                     <mat-icon class="play-icon">pause</mat-icon>
