@@ -27,8 +27,8 @@ import net.atos.zac.identity.model.User;
 import net.atos.zac.util.DateTimeConverterUtil;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.ZaakIndicatie;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoekObject> {
 

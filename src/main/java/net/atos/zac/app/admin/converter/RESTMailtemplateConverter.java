@@ -6,8 +6,8 @@
 package net.atos.zac.app.admin.converter;
 
 import net.atos.zac.app.admin.model.RESTMailtemplate;
-import net.atos.zac.mailtemplates.model.MailTemplate;
 import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 
 public class RESTMailtemplateConverter {
 
@@ -16,6 +16,7 @@ public class RESTMailtemplateConverter {
         restMailtemplate.id = mailTemplate.getId();
         restMailtemplate.mailTemplateNaam = mailTemplate.getMailTemplateNaam();
         restMailtemplate.mail = mailTemplate.getMail().name();
+        restMailtemplate.variabelen = mailTemplate.getMail().getVariabelen();
         restMailtemplate.onderwerp = mailTemplate.getOnderwerp();
         restMailtemplate.body = mailTemplate.getBody();
         restMailtemplate.parent = mailTemplate.getParent();

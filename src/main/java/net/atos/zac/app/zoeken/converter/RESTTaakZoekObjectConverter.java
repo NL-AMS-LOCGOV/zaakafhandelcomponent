@@ -13,7 +13,7 @@ import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTTaakZoekObject;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.util.DateTimeConverterUtil;
-import net.atos.zac.zoeken.model.TaakZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
 
 public class RESTTaakZoekObjectConverter {
 

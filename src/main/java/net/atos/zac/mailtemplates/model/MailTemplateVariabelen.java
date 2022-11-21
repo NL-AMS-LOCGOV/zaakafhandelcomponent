@@ -6,6 +6,7 @@
 package net.atos.zac.mailtemplates.model;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 public enum MailTemplateVariabelen {
@@ -26,9 +27,7 @@ public enum MailTemplateVariabelen {
     TOEGEWEZENGROEPTAAK,
     TOEGEWEZENGEBRUIKERTAAK,
     ZAAKURL,
-    TAAKURL,
-    DOCUMENTURL,
-    DOCUMENTTITEL;
+    TAAKURL;
 
     private static final Set<MailTemplateVariabelen> DEFAULT =
             EnumSet.of(ZAAKNUMMER, ZAAKTYPE, ZAAKSTATUS, REGISTRATIEDATUM, STARTDATUM, STREEFDATUM, FATALEDATUM,
@@ -46,11 +45,14 @@ public enum MailTemplateVariabelen {
     public static final Set<MailTemplateVariabelen> TAAKSIGNALERINGMAIL_VARIABELEN =
             addToDefault(EnumSet.of(TAAKURL, TOEGEWEZENGROEPTAAK, TOEGEWEZENGEBRUIKERTAAK));
 
-    public static final Set<MailTemplateVariabelen> DOCUMENTSIGNALERINGMAIL_VARIABELEN =
-            addToDefault(EnumSet.of(ZAAKURL, TOEGEWEZENGROEPZAAK, TOEGEWEZENGEBRUIKERZAAK, DOCUMENTTITEL, DOCUMENTURL));
-
     private static Set<MailTemplateVariabelen> addToDefault(final Set<MailTemplateVariabelen> extraVariabelen) {
-        MailTemplateVariabelen.DEFAULT.addAll(extraVariabelen);
-        return MailTemplateVariabelen.DEFAULT;
+        final Set<MailTemplateVariabelen> returnSet = new HashSet<>();
+        returnSet.addAll(DEFAULT);
+        returnSet.addAll(extraVariabelen);
+        return returnSet;
+    }
+
+    public String getVariabele() {
+        return String.format("{%s}", this);
     }
 }

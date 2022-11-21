@@ -8,6 +8,7 @@ import {ActionIcon} from '../../../edit/action-icon';
 import {HtmlEditorFormField} from './html-editor-form-field';
 import {Observable} from 'rxjs';
 import {Mailtemplate} from '../../../../admin/model/mailtemplate';
+import {MailtemplateVariabele} from '../../../../admin/model/mailtemplate-variabele';
 
 export class HtmlEditorFormFieldBuilder extends AbstractFormFieldBuilder {
 
@@ -26,6 +27,16 @@ export class HtmlEditorFormFieldBuilder extends AbstractFormFieldBuilder {
 
     mailtemplateOnderwerp(mailtemplate$: Observable<Mailtemplate>): this {
         this.formField.mailtemplateOnderwerp$ = mailtemplate$;
+        return this;
+    }
+
+    variabelen(variabelen: MailtemplateVariabele[]): this {
+        this.formField.variabelen = variabelen;
+        return this;
+    }
+
+    emptyToolbar(): this {
+        this.formField.emptyToolbar = true;
         return this;
     }
 

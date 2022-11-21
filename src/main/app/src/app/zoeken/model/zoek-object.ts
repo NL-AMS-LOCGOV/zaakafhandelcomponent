@@ -1,9 +1,6 @@
+import {ZoekObjectType} from './zoek-object-type';
+
 export interface ZoekObject {
     id: string;
     type: ZoekObjectType;
-}
-
-export enum ZoekObjectType {
-    TAAK = 'TAAK',
-    ZAAK = 'ZAAK'
 }

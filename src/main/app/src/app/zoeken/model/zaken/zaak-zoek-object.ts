@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZoekObject, ZoekObjectType} from '../zoek-object';
+import {ZoekObject} from '../zoek-object';
 import {ZaakRechten} from '../../../policy/model/zaak-rechten';
+import {ZoekObjectType} from '../zoek-object-type';
 
 export class ZaakZoekObject implements ZoekObject {
     id: string;

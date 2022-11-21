@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {ZoekopdrachtSaveDialogComponent} from '../zoekopdracht-save-dialog/zoekopdracht-save-dialog.component';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
 import {ListParameters} from '../../shared/model/list-parameters';
+import {DatumRange} from '../../zoeken/model/datum-range';
 
 @Component({
     selector: 'zac-zoekopdracht',
@@ -67,8 +68,8 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
             if (parameters.datums) {
                 for (const field in parameters.datums) {
                     if (parameters.datums.hasOwnProperty(field)) {
-                        const datum = parameters.datums[field];
-                        if (datum.van != null || datum.tot != null) {
+                        const datum: DatumRange = parameters.datums[field];
+                        if (datum && datum.hasValue()) {
                             return true;
                         }
                     }

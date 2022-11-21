@@ -6,10 +6,10 @@
 package net.atos.zac.zoeken.model;
 
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -77,13 +77,14 @@ public class ZoekParameters {
     }
 
 
-    public EnumSet<FilterVeld> getBeschikbareFilters() {
+    public Set<FilterVeld> getBeschikbareFilters() {
         if (type == null) {
             return FilterVeld.getFacetten();
         }
         return switch (type) {
             case ZAAK -> FilterVeld.getZaakFacetten();
             case TAAK -> FilterVeld.getTaakFacetten();
+            case DOCUMENT -> FilterVeld.getDocumentFacetten();
         };
     }
 
@@ -122,5 +123,9 @@ public class ZoekParameters {
 
     public ZoekObjectType getType() {
         return type;
+    }
+
+    public boolean isGlobaalZoeken() {
+        return this.type == null;
     }
 }

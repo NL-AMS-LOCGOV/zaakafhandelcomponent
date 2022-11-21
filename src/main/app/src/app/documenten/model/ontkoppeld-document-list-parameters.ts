@@ -6,13 +6,14 @@
 import {SortDirection} from '@angular/material/sort';
 import {ListParameters} from '../../shared/model/list-parameters';
 import {User} from '../../identity/model/user';
+import {DatumRange} from '../../zoeken/model/datum-range';
 
 export class OntkoppeldDocumentListParameters extends ListParameters {
 
     zaakID: string;
     ontkoppeldDoor: User;
-    ontkoppeldOp: { van: Date, tot: Date } = {van: null, tot: null};
-    creatiedatum: { van: Date, tot: Date } = {van: null, tot: null};
+    ontkoppeldOp = new DatumRange();
+    creatiedatum = new DatumRange();
     titel: string;
     reden: string;
 

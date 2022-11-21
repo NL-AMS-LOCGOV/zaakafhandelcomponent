@@ -15,16 +15,16 @@ public enum SorteerVeld {
     ZAAK_GROEP("zaak_groepNaam"),
     ZAAK_REGISTRATIEDATUM("zaak_registratiedatum"),
     ZAAK_STARTDATUM("zaak_startdatum"),
-    ZAAK_EINDDATUM_GEPLAND("zaak_einddatumGepland"),
+    ZAAK_STREEFDATUM("zaak_einddatumGepland"),
     ZAAK_EINDDATUM("zaak_einddatum"),
-    ZAAK_UITERLIJKE_EINDDATUM_AFDOENING("zaak_uiterlijkeEinddatumAfdoening"),
+    ZAAK_FATALE_DATUM("zaak_uiterlijkeEinddatumAfdoening"),
     ZAAK_COMMUNICATIEKANAAL("zaak_communicatiekanaal"),
     ZAAK_STATUS("zaak_statustypeOmschrijving"),
     ZAAK_RESULTAAT("zaak_resultaattypeOmschrijving"),
     ZAAK_AANTAL_OPENSTAANDE_TAKEN("zaak_aantalOpenstaandeTaken"),
     ZAAK_OMSCHRIJVING("zaak_omschrijving"),
     ZAAK_TOELICHTING("zaak_toelichting"),
-    ZAAK_INDICATIES("zaak_indicaties"),
+    ZAAK_INDICATIES_SORT("zaak_indicaties_sort"),
 
     TAAK_NAAM("taak_naam"),
     TAAK_STATUS("taak_status"),
@@ -45,7 +45,7 @@ public enum SorteerVeld {
     INFORMATIEOBJECT_DOCUMENTTYPE("informatieobject_documentType"),
     INFORMATIEOBJECT_ONTVANGSTDATUM("informatieobject_ontvangstdatum"),
     INFORMATIEOBJECT_VERZENDDATUM("informatieobject_verzenddatum"),
-    INFORMATIEOBJECT_INDICATIES("informatieobject_indicaties");
+    INFORMATIEOBJECT_INDICATIES_SORT("informatieobject_indicaties_sort");
 
     private final String veld;
 

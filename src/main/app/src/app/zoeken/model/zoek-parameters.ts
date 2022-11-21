@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZoekObjectType} from './zoek-object';
 import {DatumVeld} from './datum-veld';
 import {ZoekVeld} from './zoek-veld';
 import {FilterVeld} from './filter-veld';
 import {SorteerVeld} from './sorteer-veld';
+import {ZoekObjectType} from './zoek-object-type';
+import {DatumRange} from './datum-range';
 
 export class ZoekParameters {
     type: ZoekObjectType;
@@ -17,13 +18,7 @@ export class ZoekParameters {
     alleenMijnTaken: boolean = false;
     zoeken: Partial<Record<ZoekVeld, string>> = {};
     filters: Partial<Record<FilterVeld, string[]>> = {};
-    datums: Partial<Record<DatumVeld, { van: Date; tot: Date }>> = {
-        STARTDATUM: {van: null, tot: null},
-        STREEFDATUM: {van: null, tot: null},
-        ZAAK_EINDDATUM: {van: null, tot: null},
-        ZAAK_UITERLIJKE_EINDDATUM_AFDOENING: {van: null, tot: null},
-        TAAK_TOEKENNINGSDATUM: {van: null, tot: null}
-    };
+    datums: Partial<Record<DatumVeld, DatumRange>> = {};
     sorteerVeld: SorteerVeld;
     sorteerRichting: 'desc' | 'asc' | '';
     rows: number = 25;

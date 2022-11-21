@@ -317,21 +317,22 @@ public class ZakenRESTService {
     public RESTZaak createZaak(final RESTZaak restZaak) {
         assertPolicy(policyService.readOverigeRechten().getStartenZaak() && policyService.isZaaktypeAllowed(
                 restZaak.zaaktype.omschrijving));
-        restZaak.registratiedatum = LocalDate.now();
-        final Zaak zaak = zaakConverter.convert(restZaak);
-        final Zaak nieuweZaak = zgwApiService.createZaak(zaak);
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(restZaak.zaaktype.uuid);
+        final Zaak zaak = zgwApiService.createZaak(zaakConverter.convert(restZaak, zaaktype.getUrl()));
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
-            addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, nieuweZaak);
+            addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, zaak);
         }
         if (restZaak.groep != null) {
             final Group group = identityService.readGroup(restZaak.groep.id);
-            zrcClientService.updateRol(nieuweZaak, bepaalRolGroep(group, nieuweZaak), AANMAKEN_ZAAK_REDEN);
+            zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), AANMAKEN_ZAAK_REDEN);
         }
         if (restZaak.behandelaar != null) {
             final User user = identityService.readUser(restZaak.behandelaar.id);
-            zrcClientService.updateRol(nieuweZaak, bepaalRolMedewerker(user, nieuweZaak), AANMAKEN_ZAAK_REDEN);
+            zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), AANMAKEN_ZAAK_REDEN);
         }
-        return zaakConverter.convert(nieuweZaak);
+        caseService.startCase(zaak, zaaktype,
+                              zaakafhandelParameterService.readZaakafhandelParameters(zaaktype.getUUID()), null);
+        return zaakConverter.convert(zaak);
     }
 
     @PATCH
@@ -434,7 +435,7 @@ public class ZakenRESTService {
         }
         zaakInformatieobjecten.forEach(zaakInformatieobject ->
                                                zrcClientService.deleteZaakInformatieobject(
-                                                       zaakInformatieobject.getUuid(),
+                                                       zaakInformatieobject,
                                                        ontkoppelGegevens.reden,
                                                        "Ontkoppeld"));
         if (zrcClientService.listZaakinformatieobjecten(informatieobject).isEmpty()) {
@@ -694,7 +695,8 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(besluitToevoegenGegevens.zaakUuid);
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         final Status zaakStatus = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
-        final Statustype zaakStatustype = zaakStatus != null ? ztcClientService.readStatustype(zaakStatus.getStatustype()) : null;
+        final Statustype zaakStatustype = zaakStatus != null ? ztcClientService.readStatustype(
+                zaakStatus.getStatustype()) : null;
         assertPolicy(zaak.isOpen() && brcClientService.findBesluit(zaak) == null &&
                              isNotEmpty(zaaktype.getBesluittypen()) &&
                              policyService.readZaakRechten(zaak, zaaktype).getBehandelen() &&

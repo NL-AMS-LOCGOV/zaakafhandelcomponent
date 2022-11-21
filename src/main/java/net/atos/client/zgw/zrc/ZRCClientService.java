@@ -44,8 +44,8 @@ import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.zrc.model.ZaakobjectListParameters;
-import net.atos.zac.event.EventingService;
 import net.atos.zac.util.UriUtil;
+import net.atos.zac.zoeken.IndexeerService;
 
 /**
  * Careful!
@@ -73,7 +73,7 @@ public class ZRCClientService {
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
     @Inject
-    private EventingService eventingService;
+    private IndexeerService indexeerService;
 
     /**
      * Create {@link Rol}.
@@ -132,15 +132,16 @@ public class ZRCClientService {
     /**
      * delete {@link ZaakInformatieobject}
      *
-     * @param zaakInformatieobjectUuid uuid
+     * @param zaakInformatieobject zaakInformatieobject
      */
-    public void deleteZaakInformatieobject(final UUID zaakInformatieobjectUuid, final String toelichting,
+    public void deleteZaakInformatieobject(final ZaakInformatieobject zaakInformatieobject, final String toelichting,
             final String toelichtingPrefix) {
         final String fullToelichting = StringUtils.isEmpty(toelichting) ?
                 toelichtingPrefix :
                 String.format("%s: %s", toelichtingPrefix, toelichting);
         zgwClientHeadersFactory.setAuditToelichting(fullToelichting);
-        zrcClient.zaakinformatieobjectDelete(zaakInformatieobjectUuid);
+        zrcClient.zaakinformatieobjectDelete(zaakInformatieobject.getUuid());
+        indexeerService.removeInformatieobject(UriUtil.uuidFromURI(zaakInformatieobject.getInformatieobject()));
     }
 
     /**
@@ -376,7 +377,7 @@ public class ZRCClientService {
 
         final String toelichting = "%s -> %s".formatted(oudeZaak.getIdentificatie(), nieuweZaak.getIdentificatie());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
-        deleteZaakInformatieobject(oudeZaakInformatieobject.getUuid(), toelichting, "Verplaatst");
+        deleteZaakInformatieobject(oudeZaakInformatieobject, toelichting, "Verplaatst");
     }
 
     public void koppelInformatieobject(final EnkelvoudigInformatieobject informatieobject, final Zaak nieuweZaak, final String toelichting) {
@@ -391,6 +392,7 @@ public class ZRCClientService {
         nieuweZaakInformatieObject.setTitel(informatieobject.getTitel());
         nieuweZaakInformatieObject.setBeschrijving(informatieobject.getBeschrijving());
         createZaakInformatieobject(nieuweZaakInformatieObject, toelichting);
+        indexeerService.addInformatieobject(informatieobject.getUUID());
     }
 
     /**

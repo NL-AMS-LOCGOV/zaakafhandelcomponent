@@ -145,13 +145,8 @@
     <field name="zaak_initiatorType" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_locatie" type="location" indexed="true" stored="true"/>
     <field name="zaak_locatie_adres" type="text_nl" indexed="true" stored="true"/>
-    <field name="zaak_indicatieOpschorting" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_redenOpschorting" type="text_nl" indexed="true" stored="true"/>
-    <field name="zaak_indicatieVerlenging" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_redenVerlenging" type="text_nl" indexed="true" stored="true"/>
-    <field name="zaak_indicatieHeropend" type="boolean" indexed="true" stored="true" docValues="true"/>
-    <field name="zaak_indicatieDeelzaak" type="boolean" indexed="true" stored="true" docValues="true"/>
-    <field name="zaak_indicatieHoofdzaak" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_duurVerlenging" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="zaak_zaaktypeUuid" type="string" indexed="true" stored="true"/>
     <field name="zaak_zaaktypeIdentificatie" type="string" indexed="true" stored="true"/>
@@ -163,7 +158,8 @@
     <field name="zaak_resultaattypeOmschrijving" type="string" indexed="true" stored="true"/>
     <field name="zaak_resultaatToelichting" type="text_nl" indexed="true" stored="true"/>
     <field name="zaak_aantalOpenstaandeTaken" type="pint" indexed="true" stored="true"/>
-    <field name="zaak_indicaties" type="plong" indexed="true" docValues="true"/>
+    <field name="zaak_indicaties" type="string" multiValued="true" indexed="true" stored="true" docValues="true"/>
+    <field name="zaak_indicaties_sort" type="plong" indexed="true" docValues="true"/>
 
     <field name="taak_naam" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="taak_toelichting" type="text_nl" indexed="true" stored="true"/>
@@ -191,6 +187,7 @@
     <field name="informatieobject_zaaktypeOmschrijving" type="string" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_zaakId" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_zaakUuid" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_zaakAfgehandeld" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_zaakRelatie" type="string" indexed="true" stored="true"/>
     <field name="informatieobject_creatiedatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_vertrouwelijkheidaanduiding" type="string" indexed="true" stored="true" docValues="true"/>
@@ -206,11 +203,12 @@
     <field name="informatieobject_verzenddatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_ondertekeningDatum" type="pdate" indexed="true" stored="true"/>
     <field name="informatieobject_ondertekeningSoort" type="string" indexed="true" stored="true"/>
-    <field name="informatieobject_indicatieOndertekend" type="boolean" indexed="true" stored="true" docValues="true"/>
     <field name="informatieobject_inhoudUrl" type="string" indexed="true" stored="true"/>
-    <field name="informatieobject_indicatieVergrendeld" type="boolean" indexed="true" stored="true" docValues="true"/>
-    <field name="informatieobject_vergrendeldDoor" type="string" indexed="true" stored="true"/>
-    <field name="informatieobject_indicaties" type="plong" indexed="true" docValues="true"/>
+    <field name="informatieobject_vergrendeldDoorNaam" type="string" indexed="true" stored="true" docValues="true"/>
+    <field name="informatieobject_vergrendeldDoorGebruikersnaam" type="string" indexed="true" stored="true"/>
+    <field name="informatieobject_indicaties" type="string" multiValued="true" indexed="true" stored="true"
+           docValues="true"/>
+    <field name="informatieobject_indicaties_sort" type="plong" indexed="true" docValues="true"/>
 
     <!--  non-tokenized version of field to make it easier to sort or group
              results by field. copied from "field" via copyField  -->

@@ -7,9 +7,7 @@ package net.atos.client.zgw.drc;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,10 +23,12 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import net.atos.client.util.ClientFactory;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
+import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoud;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectWithInhoudAndLock;
 import net.atos.client.zgw.drc.model.Gebruiksrechten;
 import net.atos.client.zgw.drc.model.Lock;
+import net.atos.client.zgw.shared.model.Results;
 import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.ZGWClientHeadersFactory;
 
@@ -161,6 +161,16 @@ public class DRCClientService {
      */
     public List<AuditTrailRegel> listAuditTrail(final UUID enkelvoudigInformatieobjectUUID) {
         return drcClient.listAuditTrail(enkelvoudigInformatieobjectUUID);
+    }
+
+    /**
+     * List instances of {@link EnkelvoudigInformatieobject} filtered by {@link EnkelvoudigInformatieobjectListParameters}.
+     *
+     * @param filter {@link EnkelvoudigInformatieobjectListParameters}.
+     * @return List of {@EnkelvoudigInformatieobject} instances.
+     */
+    public Results<EnkelvoudigInformatieobject> listEnkelvoudigInformatieObjecten(final EnkelvoudigInformatieobjectListParameters filter) {
+        return drcClient.enkelvoudigInformatieobjectList(filter);
     }
 
     public EnkelvoudigInformatieobjectWithInhoud createEnkelvoudigInformatieobject(final EnkelvoudigInformatieobjectWithInhoud informatieobject) {

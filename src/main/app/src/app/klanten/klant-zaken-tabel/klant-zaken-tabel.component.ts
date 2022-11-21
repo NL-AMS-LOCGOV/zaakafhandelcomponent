@@ -4,22 +4,13 @@
  */
 
 import {UtilService} from '../../core/service/util.service';
-import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    SimpleChanges,
-    ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {merge, Observable} from 'rxjs';
 import {ZoekenService} from '../../zoeken/zoeken.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
-import {ZoekObjectType} from '../../zoeken/model/zoek-object';
+import {ZoekObjectType} from '../../zoeken/model/zoek-object-type';
 import {ZoekResultaat} from '../../zoeken/model/zoek-resultaat';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';

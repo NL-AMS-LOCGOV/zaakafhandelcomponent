@@ -13,6 +13,8 @@ import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
+import java.net.URI;
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +82,6 @@ public class RESTZaakConverter {
 
     @Inject
     private RESTUserConverter userConverter;
-
-    @Inject
-    private RESTZaakEigenschappenConverter zaakEigenschappenConverter;
 
     @Inject
     private RESTBesluitConverter besluitConverter;
@@ -158,14 +157,17 @@ public class RESTZaakConverter {
         restZaak.zaakgeometrie = restGeometryConverter.convert(zaak.getZaakgeometrie());
 
         if (zaak.getKenmerken() != null) {
-            restZaak.kenmerken = zaak.getKenmerken().stream().map(zaakKenmerk -> new RESTZaakKenmerk(zaakKenmerk.getKenmerk(), zaakKenmerk.getBron()))
+            restZaak.kenmerken = zaak.getKenmerken().stream()
+                    .map(zaakKenmerk -> new RESTZaakKenmerk(zaakKenmerk.getKenmerk(), zaakKenmerk.getBron()))
                     .collect(Collectors.toList());
         }
 
         if (zaak.getCommunicatiekanaal() != null) {
             final UUID communicatiekanaalUUID = UriUtil.uuidFromURI(zaak.getCommunicatiekanaal());
-            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(communicatiekanaalUUID);
-            restZaak.communicatiekanaal = communicatiekanaalConverter.convert(communicatieKanaal, communicatiekanaalUUID);
+            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(
+                    communicatiekanaalUUID);
+            restZaak.communicatiekanaal = communicatiekanaalConverter.convert(communicatieKanaal,
+                                                                              communicatiekanaalUUID);
         }
 
         restZaak.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toString();
@@ -177,7 +179,8 @@ public class RESTZaakConverter {
 
         final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
         if (behandelaar != null) {
-            restZaak.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
+            restZaak.behandelaar = userConverter.convertUserId(
+                    behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
         }
 
         final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
@@ -196,30 +199,32 @@ public class RESTZaakConverter {
         restZaak.isOpen = zaak.isOpen();
         restZaak.isHeropend = isHeropend(statustype);
         restZaak.isInIntakeFase = isIntake(statustype);
-        restZaak.isOntvangstbevestigingVerstuurd = isTrue(caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.isOntvangstbevestigingVerstuurd = isTrue(
+                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 
         return restZaak;
     }
 
-    public Zaak convert(final RESTZaak restZaak) {
+    public Zaak convert(final RESTZaak restZaak, final URI zaaktypeURL) {
 
-        final Zaak zaak = new Zaak(ztcClientService.readZaaktype(restZaak.zaaktype.uuid).getUrl(), restZaak.startdatum,
-                                   ConfiguratieService.BRON_ORGANISATIE, ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
+        final Zaak zaak = new Zaak(zaaktypeURL, restZaak.startdatum, ConfiguratieService.BRON_ORGANISATIE,
+                                   ConfiguratieService.VERANTWOORDELIJKE_ORGANISATIE);
         //aanvullen
         zaak.setOmschrijving(restZaak.omschrijving);
         zaak.setToelichting(restZaak.toelichting);
-
-        zaak.setRegistratiedatum(restZaak.registratiedatum);
+        zaak.setRegistratiedatum(LocalDate.now());
 
         if (restZaak.communicatiekanaal != null) {
-            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(restZaak.communicatiekanaal.uuid);
+            final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(
+                    restZaak.communicatiekanaal.uuid);
             zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
         }
 
         if (restZaak.vertrouwelijkheidaanduiding != null) {
-            zaak.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
+            zaak.setVertrouwelijkheidaanduiding(
+                    Vertrouwelijkheidaanduiding.fromValue(restZaak.vertrouwelijkheidaanduiding));
         }
 
         zaak.setZaakgeometrie(restGeometryConverter.convert(restZaak.zaakgeometrie));
@@ -253,8 +258,10 @@ public class RESTZaakConverter {
         zaak.setUiterlijkeEinddatumAfdoening(verlengGegevens.uiterlijkeEinddatumAfdoening);
         final Verlenging verlenging = zrcClientService.readZaak(zaakUUID).getVerlenging();
         zaak.setVerlenging(verlenging != null && verlenging.getDuur() != null
-                                   ? new Verlenging(verlengGegevens.redenVerlenging, verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
-                                   : new Verlenging(verlengGegevens.redenVerlenging, Period.ofDays(verlengGegevens.duurDagen)));
+                                   ? new Verlenging(verlengGegevens.redenVerlenging,
+                                                    verlenging.getDuur().plusDays(verlengGegevens.duurDagen))
+                                   : new Verlenging(verlengGegevens.redenVerlenging,
+                                                    Period.ofDays(verlengGegevens.duurDagen)));
         return zaak;
     }
 
@@ -263,7 +270,8 @@ public class RESTZaakConverter {
         zaak.setEinddatumGepland(restZaakOpschortGegevens.einddatumGepland);
         zaak.setUiterlijkeEinddatumAfdoening(restZaakOpschortGegevens.uiterlijkeEinddatumAfdoening);
         if (restZaakOpschortGegevens.redenOpschorting != null) {
-            zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting, restZaakOpschortGegevens.redenOpschorting));
+            zaak.setOpschorting(new Opschorting(restZaakOpschortGegevens.indicatieOpschorting,
+                                                restZaakOpschortGegevens.redenOpschorting));
         }
         return zaak;
     }
@@ -271,7 +279,8 @@ public class RESTZaakConverter {
     private List<RESTGerelateerdeZaak> convertGerelateerdeZaken(final Zaak zaak) {
         final List<RESTGerelateerdeZaak> gerelateerdeZaken = new ArrayList<>();
         if (zaak.getHoofdzaak() != null) {
-            gerelateerdeZaken.add(gerelateerdeZaakConverter.convert(zrcClientService.readZaak(zaak.getHoofdzaak()), RelatieType.HOOFDZAAK));
+            gerelateerdeZaken.add(gerelateerdeZaakConverter.convert(zrcClientService.readZaak(zaak.getHoofdzaak()),
+                                                                    RelatieType.HOOFDZAAK));
         }
         zaak.getDeelzaken().stream()
                 .map(zrcClientService::readZaak)

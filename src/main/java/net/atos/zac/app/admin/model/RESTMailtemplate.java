@@ -5,6 +5,10 @@
 
 package net.atos.zac.app.admin.model;
 
+import java.util.Set;
+
+import net.atos.zac.mailtemplates.model.MailTemplateVariabelen;
+
 public class RESTMailtemplate {
 
     public Long id;
@@ -17,9 +21,7 @@ public class RESTMailtemplate {
 
     public String mail;
 
+    public Set<MailTemplateVariabelen> variabelen;
+
     public Long parent;
-
-    public RESTMailtemplate() {
-    }
-
 }

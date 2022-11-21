@@ -40,7 +40,8 @@
                 <ng-container matColumnDef="startdatum_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-date-range-filter label="startdatum"
-                                               [range]="zoekParameters.datums.STARTDATUM" (changed)="filtersChanged()">
+                                               [range]="zoekParameters.datums.ZAAK_STARTDATUM"
+                                               (changed)="zoekParameters.datums.ZAAK_STARTDATUM = $event; filtersChanged()">
                         </zac-date-range-filter>
                     </th>
                 </ng-container>

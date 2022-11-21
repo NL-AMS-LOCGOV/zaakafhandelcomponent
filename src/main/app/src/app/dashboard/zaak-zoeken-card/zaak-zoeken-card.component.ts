@@ -30,7 +30,7 @@ export class ZaakZoekenCardComponent extends DashboardCardComponent<ZoekObject> 
 
     protected onLoad(afterLoad: () => void): void {
         const zoekParameters: ZoekParameters = ZakenMijnDatasource.mijnLopendeZaken(new ZoekParameters());
-        zoekParameters.sorteerVeld = SorteerVeld.ZAAK_EINDDATUM_GEPLAND;
+        zoekParameters.sorteerVeld = SorteerVeld.ZAAK_STREEFDATUM;
         zoekParameters.sorteerRichting = 'asc';
         this.zoekenService.list(zoekParameters).subscribe(zoekResultaat => {
             this.dataSource.data = zoekResultaat.resultaten;

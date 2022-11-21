@@ -8,6 +8,7 @@ import {FormComponent} from '../../model/form-component';
 import {TranslateService} from '@ngx-translate/core';
 import {Editor, Toolbar} from 'ngx-editor';
 import {HtmlEditorFormField} from './html-editor-form-field';
+import {MailtemplateVariabele} from '../../../../admin/model/mailtemplate-variabele';
 
 @Component({
     templateUrl: './html-editor.component.html',
@@ -25,6 +26,7 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
         ['link', 'image'],
         ['text_color', 'background_color'],
         ['align_left', 'align_center', 'align_right', 'align_justify'],
+        []
     ];
 
     constructor(public translate: TranslateService) {
@@ -36,13 +38,23 @@ export class HtmlEditorComponent extends FormComponent implements OnInit, OnDest
         if (this.data.mailtemplateBody$) {
             this.data.mailtemplateBody$.subscribe(mailtemplate => {
                 this.data.value(mailtemplate.body);
+                this.data.variabelen = this.sorteer(mailtemplate.variabelen);
             });
         }
         if (this.data.mailtemplateOnderwerp$) {
             this.data.mailtemplateOnderwerp$.subscribe(mailtemplate => {
                 this.data.value(mailtemplate.onderwerp);
+                this.data.variabelen = this.sorteer(mailtemplate.variabelen);
             });
         }
+        if (this.data.emptyToolbar) {
+            this.toolbar = [];
+        }
+        this.sorteer(this.data.variabelen);
+    }
+
+    sorteer(array: MailtemplateVariabele[]): MailtemplateVariabele[] {
+        return array.sort((a,b) => a.localeCompare(b));
     }
 
     ngOnDestroy(): void {

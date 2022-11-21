@@ -38,6 +38,8 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
+import net.atos.client.zgw.ztc.model.Zaaktype;
+import net.atos.zac.flowable.CaseService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
@@ -88,10 +90,14 @@ public class ProductAanvraagService {
     @Inject
     private ZaakafhandelParameterService zaakafhandelParameterService;
 
+    @Inject
+    private CaseService caseService;
+
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER);
+        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(
+                COMMUNICATIEKANAAL_EFORMULIER);
 
         final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(
                 productAanvraag.getType());
@@ -103,7 +109,8 @@ public class ProductAanvraagService {
         }
 
         Zaak zaak = new Zaak();
-        zaak.setZaaktype(ztcClientService.readZaaktype(zaaktypeUUID).getUrl());
+        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUUID);
+        zaak.setZaaktype(zaaktype.getUrl());
         zaak.setOmschrijving((String) productAanvraag.getData()
                 .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
         zaak.setToelichting((String) productAanvraag.getData()
@@ -118,7 +125,8 @@ public class ProductAanvraagService {
 
         zaak = zgwApiService.createZaak(zaak);
 
-        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(zaaktypeUUID);
+        final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
+                zaaktypeUUID);
         toekennenZaak(zaak, zaakafhandelParameters);
 
         pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
@@ -126,6 +134,8 @@ public class ProductAanvraagService {
         if (productAanvraag.getBsn() != null || productAanvraag.getKvk() != null) {
             addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), zaak.getUrl(), zaak.getZaaktype());
         }
+
+        caseService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
     }
 
     private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
@@ -193,5 +203,4 @@ public class ProductAanvraagService {
         final Roltype roltype = ztcClientService.readRoltype(AardVanRol.BEHANDELAAR, zaak.getZaaktype());
         return new RolMedewerker(zaak.getUrl(), roltype.getUrl(), "behandelaar", medewerker);
     }
-
 }

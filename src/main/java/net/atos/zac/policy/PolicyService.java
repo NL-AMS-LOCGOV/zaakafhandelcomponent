@@ -40,8 +40,10 @@ import net.atos.zac.policy.output.OverigeRechten;
 import net.atos.zac.policy.output.TaakRechten;
 import net.atos.zac.policy.output.WerklijstRechten;
 import net.atos.zac.policy.output.ZaakRechten;
-import net.atos.zac.zoeken.model.TaakZoekObject;
-import net.atos.zac.zoeken.model.ZaakZoekObject;
+import net.atos.zac.zoeken.model.DocumentIndicatie;
+import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.TaakZoekObject;
+import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
 
 @ApplicationScoped
 public class PolicyService {
@@ -105,6 +107,17 @@ public class PolicyService {
             documentData.zaakOpen = zaak.isOpen();
             documentData.zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype()).getOmschrijving();
         }
+        return evaluationClient.readDocumentRechten(
+                new RuleQuery<>(new DocumentInput(loggedInUserInstance.get(), documentData))).getResult();
+    }
+
+    public DocumentRechten readDocumentRechten(final DocumentZoekObject enkelvoudigInformatieobject) {
+        final DocumentData documentData = new DocumentData();
+        documentData.definitief = DEFINITIEF.toValue().equals(enkelvoudigInformatieobject.getStatus());
+        documentData.vergrendeld = enkelvoudigInformatieobject.isIndicatie(DocumentIndicatie.VERGRENDELD);
+        documentData.vergrendeldDoor = enkelvoudigInformatieobject.getVergrendeldDoorGebruikersnaam();
+        documentData.zaakOpen = !enkelvoudigInformatieobject.isZaakAfgehandeld();
+        documentData.zaaktype = enkelvoudigInformatieobject.getZaaktypeOmschrijving();
         return evaluationClient.readDocumentRechten(
                 new RuleQuery<>(new DocumentInput(loggedInUserInstance.get(), documentData))).getResult();
     }

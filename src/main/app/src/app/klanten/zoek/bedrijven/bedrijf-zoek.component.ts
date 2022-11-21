@@ -14,6 +14,7 @@ import {ListBedrijvenParameters} from '../../model/bedrijven/list-bedrijven-para
 import {KlantenService} from '../../klanten.service';
 import {AbstractFormControlField} from '../../../shared/material-form-builder/model/abstract-form-control-field';
 import {MatSidenav} from '@angular/material/sidenav';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'zac-bedrijf-zoek',
@@ -39,7 +40,7 @@ export class BedrijfZoekComponent implements OnInit {
     huisnummerFormField: AbstractFormControlField;
     plaatsFormField: AbstractFormControlField;
 
-    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder) {
+    constructor(private klantenService: KlantenService, private formBuilder: FormBuilder, private router: Router) {
     }
 
     ngOnInit(): void {
@@ -102,5 +103,10 @@ export class BedrijfZoekComponent implements OnInit {
 
     typeChanged(type: any): void {
         this.rsinFormField.required = type === 'RECHTSPERSOON';
+    }
+
+    openBedrijfPagina(bedrijf: Bedrijf): void {
+        this.sideNav?.close();
+        this.router.navigate(['/bedrijf/', bedrijf.identificatie]);
     }
 }

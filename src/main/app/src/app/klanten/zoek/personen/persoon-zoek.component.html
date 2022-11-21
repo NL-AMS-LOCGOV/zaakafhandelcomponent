@@ -52,12 +52,12 @@
                 <button *ngIf="persoon.observed" mat-flat-button color="primary" (click)="selectPersoon(row)" title="{{ 'actie.selecteren' | translate}}">
                     <mat-icon>emoji_people</mat-icon>
                 </button>
-                <a *ngIf="!persoon.observed" mat-flat-button [routerLink]="['/persoon', row.identificatie]"
-                   (click)="sideNav?.close(); $event.stopPropagation()"
-                   [id]="'persoonBekijken_' + row.identificatie +'_button'"
-                   title="{{ 'actie.persoon.bekijken' | translate }}">
+                <button *ngIf="!persoon.observed" mat-flat-button
+                        (click)="openPersoonPagina(row)"
+                        [id]="'persoonBekijken_' + row.identificatie +'_button'"
+                        title="{{ 'actie.persoon.bekijken' | translate }}">
                     <mat-icon>visibility</mat-icon>
-                </a>
+                </button>
             </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="persoonColumns; sticky: true"></tr>

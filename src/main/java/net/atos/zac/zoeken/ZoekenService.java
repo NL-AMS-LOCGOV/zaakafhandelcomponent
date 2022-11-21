@@ -35,6 +35,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import net.atos.zac.authentication.LoggedInUser;
 import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.model.SorteerRichting;
+import net.atos.zac.zoeken.model.FilterResultaat;
 import net.atos.zac.zoeken.model.FilterVeld;
 import net.atos.zac.zoeken.model.SorteerVeld;
 import net.atos.zac.zoeken.model.ZoekObject;
@@ -115,7 +116,7 @@ public class ZoekenService {
         zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
-        query.setFacetMissing(zoekParameters.getType() != null);
+        query.setFacetMissing(!zoekParameters.isGlobaalZoeken());
         query.setFacet(true);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekParameters.getRows());
@@ -142,10 +143,10 @@ public class ZoekenService {
             final ZoekResultaat<? extends ZoekObject> zoekResultaat = new ZoekResultaat<>(zoekObjecten, response.getResults().getNumFound());
             response.getFacetFields().forEach(facetField -> {
                 final FilterVeld facetVeld = FilterVeld.fromValue(facetField.getName());
-                final List<String> waardes = new ArrayList<>();
+                final List<FilterResultaat> waardes = new ArrayList<>();
                 facetField.getValues().stream()
                         .filter(facet -> facet.getCount() > 0)
-                        .forEach(facet -> waardes.add(facet.getName() == null ? LEEG.toString() : facet.getName()));
+                        .forEach(facet -> waardes.add(new FilterResultaat(facet.getName() == null ? LEEG.toString() : facet.getName(), facet.getCount())));
                 zoekResultaat.addFilter(facetVeld, waardes);
             });
             return zoekResultaat;

@@ -51,6 +51,8 @@ import {MatDividerModule} from '@angular/material/divider';
 import {HiddenComponent} from './form-components/hidden/hidden.component';
 import {HtmlEditorComponent} from './form-components/html-editor/html-editor.component';
 import {NgxEditorModule} from 'ngx-editor';
+import {HtmlEditorVariabelenKiesMenuComponent} from './form-components/html-editor/html-editor-variabelen-kies-menu.component';
+import {MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
     declarations: [
@@ -59,6 +61,7 @@ import {NgxEditorModule} from 'ngx-editor';
         DateComponent,
         HeadingComponent,
         HtmlEditorComponent,
+        HtmlEditorVariabelenKiesMenuComponent,
         InputComponent,
         FileComponent,
         SelectComponent,
@@ -101,7 +104,8 @@ import {NgxEditorModule} from 'ngx-editor';
         FormsModule,
         MatProgressSpinnerModule,
         MatDividerModule,
-        NgxEditorModule
+        NgxEditorModule,
+        MatMenuModule
     ],
     exports: [
         FormComponent,
