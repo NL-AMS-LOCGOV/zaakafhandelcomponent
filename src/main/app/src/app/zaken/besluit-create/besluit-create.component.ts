@@ -61,6 +61,9 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
             (vervaldatumField as DateFormField).minDate = value;
         });
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
+            if (!value) {
+                return;
+            }
             const zoekparameters = new InformatieobjectZoekParameters();
             zoekparameters.zaakUUID = this.zaak.uuid;
             zoekparameters.besluittypeUUID = value.id;
