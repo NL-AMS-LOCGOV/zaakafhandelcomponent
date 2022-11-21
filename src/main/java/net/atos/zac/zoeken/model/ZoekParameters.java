@@ -124,4 +124,8 @@ public class ZoekParameters {
     public ZoekObjectType getType() {
         return type;
     }
+
+    public boolean isGlobaalZoeken() {
+        return this.type == null;
+    }
 }

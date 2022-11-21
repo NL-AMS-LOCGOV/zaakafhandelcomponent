@@ -68,7 +68,8 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
                 for (const field in parameters.datums) {
                     if (parameters.datums.hasOwnProperty(field)) {
                         const datum = parameters.datums[field];
-                        if (datum.van != null || datum.tot != null) {
+
+                        if (datum && datum.van != null || datum.tot != null) {
                             return true;
                         }
                     }

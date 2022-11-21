@@ -8,6 +8,7 @@ import {ListParameters} from '../../shared/model/list-parameters';
 import {Zaaktype} from '../../zaken/model/zaaktype';
 import {CaseDefinition} from '../model/case-definition';
 import {ToggleSwitchOptions} from '../../shared/table-zoek-filters/toggle-filter/toggle-switch-options';
+import {DatumRange} from '../../zoeken/model/datum-range';
 
 export class ZaakafhandelParametersListParameters extends ListParameters {
 
@@ -15,8 +16,8 @@ export class ZaakafhandelParametersListParameters extends ListParameters {
     geldig: ToggleSwitchOptions = ToggleSwitchOptions.INDETERMINATE;
     zaaktype: Zaaktype = null;
     caseDefinition: CaseDefinition = null;
-    beginGeldigheid: { van: Date, tot: Date } = {van: null, tot: null};
-    eindeGeldigheid: { van: Date, tot: Date } = {van: null, tot: null};
+    beginGeldigheid = new DatumRange();
+    eindeGeldigheid = new DatumRange();
 
     constructor(sort: string, order: SortDirection) {
         super(sort, order);

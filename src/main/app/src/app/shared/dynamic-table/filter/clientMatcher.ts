@@ -1,7 +1,8 @@
 import * as moment from 'moment/moment';
+import {DatumRange} from '../../../zoeken/model/datum-range';
 
 export class ClientMatcher {
-    static matchDatum(dataField: string, filterField: { van: string | Date, tot: string | Date }): boolean {
+    static matchDatum(dataField: string, filterField: DatumRange): boolean {
         if (!dataField) {
             return false;
         }

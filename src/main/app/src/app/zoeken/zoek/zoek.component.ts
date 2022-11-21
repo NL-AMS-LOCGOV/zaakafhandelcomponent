@@ -20,6 +20,8 @@ import {ZoekResultaat} from '../model/zoek-resultaat';
 import {ZoekType} from '../model/zoek-type';
 import {DocumentZoekObject} from '../model/documenten/document-zoek-object';
 import {ZoekObjectType} from '../model/zoek-object-type';
+import {FilterVeld} from '../model/filter-veld';
+import {DatumVeld} from '../model/datum-veld';
 
 @Component({
     selector: 'zac-zoeken',
@@ -126,6 +128,57 @@ export class ZoekComponent implements AfterViewInit {
         } else {
             this.zoekenControl.disable();
         }
-
     }
+
+    getFilterObjectType(filter: FilterVeld): ZoekObjectType[] {
+        switch (filter) {
+            case FilterVeld.TYPE:
+                return [ZoekObjectType.ZAAK, ZoekObjectType.TAAK, ZoekObjectType.DOCUMENT];
+            case FilterVeld.ZAAKTYPE:
+                return [ZoekObjectType.ZAAK, ZoekObjectType.TAAK, ZoekObjectType.DOCUMENT];
+            case FilterVeld.BEHANDELAAR:
+                return [ZoekObjectType.ZAAK, ZoekObjectType.TAAK];
+            case FilterVeld.GROEP:
+                return [ZoekObjectType.ZAAK, ZoekObjectType.TAAK];
+            case FilterVeld.ZAAK_STATUS:
+                return [ZoekObjectType.ZAAK];
+            case FilterVeld.ZAAK_RESULTAAT:
+                return [ZoekObjectType.ZAAK];
+            case FilterVeld.TAAK_NAAM:
+                return [ZoekObjectType.TAAK];
+            case FilterVeld.TAAK_STATUS:
+                return [ZoekObjectType.TAAK];
+        }
+        return [];
+    }
+
+    getDatumVeldObjectType(filter: DatumVeld): ZoekObjectType[] {
+        switch (filter) {
+            case DatumVeld.STARTDATUM:
+                break;
+            case DatumVeld.STREEFDATUM:
+                break;
+            case DatumVeld.ZAAK_EINDDATUM:
+                break;
+            case DatumVeld.ZAAK_FATALE_DATUM:
+                break;
+            case DatumVeld.ZAAK_REGISTRATIEDATUM:
+                break;
+            case DatumVeld.ZAAK_PUBLICATIEDATUM:
+                break;
+            case DatumVeld.ZAAK_STATUS_DATUM_GEZET:
+                break;
+            case DatumVeld.TAAK_TOEKENNINGSDATUM:
+                break;
+            case DatumVeld.INFORMATIEOBJECT_CREATIEDATUM:
+                break;
+            case DatumVeld.INFORMATIEOBJECT_ONTVANGSTDATUM:
+                break;
+            case DatumVeld.INFORMATIEOBJECT_VERZENDDATUM:
+                break;
+
+        }
+        return [];
+    }
+
 }

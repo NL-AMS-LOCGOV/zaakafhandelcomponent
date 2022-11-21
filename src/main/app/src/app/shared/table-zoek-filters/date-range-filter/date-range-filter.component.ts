@@ -3,32 +3,45 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {DatumRange} from '../../../zoeken/model/datum-range';
+import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'zac-date-range-filter',
     templateUrl: './date-range-filter.component.html',
     styleUrls: ['./date-range-filter.component.less']
 })
-export class DateRangeFilterComponent {
-    @Input() range: { van: Date, tot: Date };
+export class DateRangeFilterComponent implements OnChanges {
+    @Input() range: DatumRange;
     @Input() label: string;
-    @Output() changed = new EventEmitter<void>();
+    @Output() changed = new EventEmitter<DatumRange>();
+
+    dateVan: FormControl<Date>;
+    dateTM: FormControl<Date>;
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (!this.range) {
+            this.range = new DatumRange();
+            this.dateVan = new FormControl(this.range.van);
+            this.dateTM = new FormControl(this.range.tot);
+        }
+    }
 
     clearDate($event: MouseEvent): void {
         $event.stopPropagation();
+        this.dateVan.setValue(null);
+        this.dateTM.setValue(null);
         this.range.van = null;
         this.range.tot = null;
-        this.changed.emit();
+        this.changed.emit(this.range);
     }
 
-    hasDate(): boolean {
-        return this.range.van != null && this.range.tot != null;
-    }
-
-    dateChange(): void {
-        if (this.hasDate()) {
-            this.changed.emit();
+    change(): void {
+        this.range.van = this.dateVan.value;
+        this.range.tot = this.dateTM.value;
+        if (this.range.hasRange()) {
+            this.changed.emit(this.range);
         }
     }
 }
