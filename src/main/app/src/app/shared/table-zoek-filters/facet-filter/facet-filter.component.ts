@@ -20,7 +20,7 @@ export class FacetFilterComponent implements OnInit, OnChanges {
 
     getFilters(): FilterResultaat[] {
         if (this.opties) {
-            return this.opties.sort((a, b) => a.naam.localeCompare(b.naam));
+            return this.opties.sort((a, b) => a.naam?.localeCompare(b.naam));
         }
     }
 
