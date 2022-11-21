@@ -126,6 +126,5 @@ export class ZoekComponent implements AfterViewInit {
         } else {
             this.zoekenControl.disable();
         }
-
     }
 }
