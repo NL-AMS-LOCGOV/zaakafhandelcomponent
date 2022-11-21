@@ -4,6 +4,7 @@
  */
 
 export enum FilterVeld {
+    TYPE = 'TYPE',
     ZAAKTYPE = 'ZAAKTYPE',
     BEHANDELAAR = 'BEHANDELAAR',
     GROEP = 'GROEP',

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZoekObjectType} from './zoek-object';
 import {DatumVeld} from './datum-veld';
 import {ZoekVeld} from './zoek-veld';
 import {FilterVeld} from './filter-veld';
 import {SorteerVeld} from './sorteer-veld';
+import {ZoekObjectType} from './zoek-object-type';
 
 export class ZoekParameters {
     type: ZoekObjectType;

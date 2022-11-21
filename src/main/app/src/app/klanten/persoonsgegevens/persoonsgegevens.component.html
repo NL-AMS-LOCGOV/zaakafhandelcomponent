@@ -15,11 +15,18 @@
                 <zac-skeleton-loader [loading$]="persoon$">
                     {{persoon?.naam}}
                 </zac-skeleton-loader>
-
-                <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
-                        (click)="$event.stopPropagation(); delete.emit(persoon)">
-                    <mat-icon>delete</mat-icon>
-                </button>
+                <div>
+                    <button *ngIf="persoon && isVerwijderbaar" [title]="'actie.verwijderen' | translate" mat-icon-button
+                            (click)="$event.stopPropagation(); delete.emit(persoon)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <a *ngIf="persoon" mat-flat-button [routerLink]="['/persoon', persoon.bsn]"
+                       (click)="$event.stopPropagation()"
+                       [id]="'persoonBekijken_' + persoon.bsn +'_button'"
+                       title="{{ 'actie.persoon.bekijken' | translate }}">
+                        <mat-icon>visibility</mat-icon>
+                    </a>
+                </div>
             </mat-panel-description>
 
         </mat-expansion-panel-header>

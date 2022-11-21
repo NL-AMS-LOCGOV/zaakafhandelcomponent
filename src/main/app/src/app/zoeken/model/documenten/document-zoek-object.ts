@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {ZoekObject, ZoekObjectType} from '../zoek-object';
+import {ZoekObject} from '../zoek-object';
 import {DocumentRechten} from '../../../policy/model/document-rechten';
+import {ZoekObjectType} from '../zoek-object-type';
 
 export class DocumentZoekObject implements ZoekObject {
     id: string;
