@@ -20,6 +20,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import net.atos.client.brp.exception.PersoonNotFoundException;
 import net.atos.client.brp.exception.PersoonNotFoundExceptionMapper;
 import net.atos.client.brp.exception.RuntimeExceptionMapper;
 import net.atos.client.brp.model.IngeschrevenPersoonHal;
@@ -93,5 +94,6 @@ public interface IngeschrevenpersonenClient {
      */
     @GET
     @Path("{burgerservicenummer}")
-    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer, @QueryParam("fields") final String fields);
+    IngeschrevenPersoonHal readPersoon(@PathParam("burgerservicenummer") final String burgerservicenummer,
+            @QueryParam("fields") final String fields) throws PersoonNotFoundException;
 }

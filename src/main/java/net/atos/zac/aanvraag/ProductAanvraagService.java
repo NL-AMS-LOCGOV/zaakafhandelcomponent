@@ -11,6 +11,7 @@ import static net.atos.zac.configuratie.ConfiguratieService.COMMUNICATIEKANAAL_E
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -38,7 +39,6 @@ import net.atos.client.zgw.zrc.model.Zaakobject;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.AardVanRol;
 import net.atos.client.zgw.ztc.model.Roltype;
-import net.atos.client.zgw.ztc.model.Zaaktype;
 import net.atos.zac.flowable.CaseService;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
@@ -96,8 +96,6 @@ public class ProductAanvraagService {
     public void verwerkProductAanvraag(final URI productAanvraagUrl) {
         final ORObject object = objectsClientService.readObject(uuidFromURI(productAanvraagUrl));
         final ProductAanvraag productAanvraag = new ProductAanvraag(object.getRecord().getData());
-        final CommunicatieKanaal communicatieKanaal = vrlClientService.findCommunicatiekanaal(
-                COMMUNICATIEKANAAL_EFORMULIER);
 
         final UUID zaaktypeUUID = zaakafhandelParameterService.findZaaktypeUUIDByProductaanvraagType(
                 productAanvraag.getType());
@@ -108,8 +106,8 @@ public class ProductAanvraagService {
             return;
         }
 
-        Zaak zaak = new Zaak();
-        final Zaaktype zaaktype = ztcClientService.readZaaktype(zaaktypeUUID);
+        final var zaak = new Zaak();
+        final var zaaktype = ztcClientService.readZaaktype(zaaktypeUUID);
         zaak.setZaaktype(zaaktype.getUrl());
         zaak.setOmschrijving((String) productAanvraag.getData()
                 .get(FORMULIER_KLEINE_EVENEMENTEN_MELDING_EIGENSCHAPNAAM_NAAM_EVENEMENT));
@@ -119,20 +117,21 @@ public class ProductAanvraagService {
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
-        if (communicatieKanaal != null) {
-            zaak.setCommunicatiekanaal(communicatieKanaal.getUrl());
-        }
+        vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER)
+                .map(CommunicatieKanaal::getUrl)
+                .ifPresent(communicatieKanaal -> zaak.setCommunicatiekanaal(communicatieKanaal));
 
-        zaak = zgwApiService.createZaak(zaak);
+        final var createdZaak = zgwApiService.createZaak(zaak);
 
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 zaaktypeUUID);
-        toekennenZaak(zaak, zaakafhandelParameters);
+        toekennenZaak(createdZaak, zaakafhandelParameters);
 
-        pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
-        pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
+        pairProductAanvraagWithZaak(productAanvraagUrl, createdZaak.getUrl());
+        pairAanvraagPDFWithZaak(productAanvraag, createdZaak.getUrl());
         if (productAanvraag.getBsn() != null || productAanvraag.getKvk() != null) {
-            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), zaak.getUrl(), zaak.getZaaktype());
+            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), createdZaak.getUrl(),
+                         createdZaak.getZaaktype());
         }
 
         caseService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
@@ -141,17 +140,21 @@ public class ProductAanvraagService {
     private void addInitiator(final String bsn, final String kvkNummer, final URI zaak, final URI zaaktype) {
         if (bsn != null) {
             final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
-            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(), ROL_TOELICHTING, new NatuurlijkPersoon(bsn));
+            final RolNatuurlijkPersoon rolNatuurlijkPersoon = new RolNatuurlijkPersoon(zaak, initiator.getUrl(),
+                                                                                       ROL_TOELICHTING,
+                                                                                       new NatuurlijkPersoon(bsn));
             zrcClientService.createRol(rolNatuurlijkPersoon);
         } else {
-            final ResultaatItem hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
-            if (hoofdvestiging != null) {
+            final Optional<ResultaatItem> hoofdvestiging = kvkClientService.findHoofdvestiging(kvkNummer);
+            if (hoofdvestiging.isPresent()) {
                 final Roltype initiator = ztcClientService.readRoltype(AardVanRol.INITIATOR, zaaktype);
                 final RolVestiging rolVestiging = new RolVestiging(zaak, initiator.getUrl(), ROL_TOELICHTING,
-                                                                   new net.atos.client.zgw.zrc.model.Vestiging(hoofdvestiging.getVestigingsnummer()));
+                                                                   new net.atos.client.zgw.zrc.model.Vestiging(
+                                                                           hoofdvestiging.get().getVestigingsnummer()));
                 zrcClientService.createRol(rolVestiging);
             } else {
-                LOG.warning(() -> String.format("Geen hoofdvestiging gevonden voor bedrijf met kvk nummer '%s'", kvkNummer));
+                LOG.warning(() -> String.format("Geen hoofdvestiging gevonden voor bedrijf met kvk nummer '%s'",
+                                                kvkNummer));
             }
         }
     }
@@ -176,11 +179,13 @@ public class ProductAanvraagService {
 
     private void toekennenZaak(final Zaak zaak, final ZaakafhandelParameters zaakafhandelParameters) {
         if (zaakafhandelParameters.getGroepID() != null) {
-            LOG.info(String.format("Zaak %s: toegekend aan groep '%s'", zaak.getUuid(), zaakafhandelParameters.getGroepID()));
+            LOG.info(String.format("Zaak %s: toegekend aan groep '%s'", zaak.getUuid(),
+                                   zaakafhandelParameters.getGroepID()));
             zrcClientService.createRol(creeerRolGroep(zaakafhandelParameters.getGroepID(), zaak));
         }
         if (zaakafhandelParameters.getGebruikersnaamMedewerker() != null) {
-            LOG.info(String.format("Zaak %s: toegekend aan behandelaar '%s'", zaak.getUuid(), zaakafhandelParameters.getGebruikersnaamMedewerker()));
+            LOG.info(String.format("Zaak %s: toegekend aan behandelaar '%s'", zaak.getUuid(),
+                                   zaakafhandelParameters.getGebruikersnaamMedewerker()));
             zrcClientService.createRol(creeerRolMedewerker(zaakafhandelParameters.getGebruikersnaamMedewerker(), zaak));
         }
     }

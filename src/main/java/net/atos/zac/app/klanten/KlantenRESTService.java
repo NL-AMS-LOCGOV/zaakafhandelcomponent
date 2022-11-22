@@ -6,6 +6,7 @@
 package net.atos.zac.app.klanten;
 
 import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.FIELDS_PERSOON;
+import static net.atos.zac.app.klanten.converter.RESTPersoonConverter.ONBEKEND;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +27,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.client.brp.BRPClientService;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
 import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
 import net.atos.client.brp.model.ListPersonenParameters;
 import net.atos.client.kvk.KVKClientService;
@@ -52,9 +52,11 @@ import net.atos.zac.app.shared.RESTResultaat;
 @Singleton
 public class KlantenRESTService {
 
+    public static final Set<AardVanRol> betrokkenen;
+
     private static final Logger LOG = Logger.getLogger(KlantenRESTService.class.getName());
 
-    public static final Set<AardVanRol> betrokkenen;
+    private static final RESTPersoon ONBEKEND_PERSOON = new RESTPersoon(ONBEKEND, ONBEKEND, ONBEKEND);
 
     static {
         betrokkenen = EnumSet.allOf(AardVanRol.class);
@@ -83,20 +85,25 @@ public class KlantenRESTService {
     @GET
     @Path("persoon/{bsn}")
     public RESTPersoon readPersoon(@PathParam("bsn") final String bsn) {
-        final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON);
-        return persoonConverter.convertToPersoon(persoon);
+        return brpClientService.findPersoon(bsn, FIELDS_PERSOON)
+                .map(persoonConverter::convertToPersoon)
+                .orElse(ONBEKEND_PERSOON);
     }
 
     @GET
     @Path("vestiging/{vestigingsnummer}")
     public RESTBedrijf readVestiging(@PathParam("vestigingsnummer") final String vestigingsnummer) {
-        return bedrijfConverter.convert(kvkClientService.findVestiging(vestigingsnummer));
+        return kvkClientService.findVestiging(vestigingsnummer)
+                .map(bedrijfConverter::convert)
+                .orElse(new RESTBedrijf());
     }
 
     @GET
     @Path("rechtspersoon/{rsin}")
     public RESTBedrijf readRechtspersoon(@PathParam("rsin") final String rsin) {
-        return bedrijfConverter.convert(kvkClientService.findRechtspersoon(rsin));
+        return kvkClientService.findRechtspersoon(rsin)
+                .map(bedrijfConverter::convert)
+                .orElse(new RESTBedrijf());
     }
 
     @PUT
@@ -104,8 +111,10 @@ public class KlantenRESTService {
     public RESTResultaat<RESTPersoon> listPersonen(final RESTListPersonenParameters restListPersonenParameters) {
         try {
             final ListPersonenParameters listPersonenParameters = persoonConverter.convert(restListPersonenParameters);
-            final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(listPersonenParameters);
-            return new RESTResultaat<>(persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
+            final IngeschrevenPersoonHalCollectie ingeschrevenPersoonHalCollectie = brpClientService.listPersonen(
+                    listPersonenParameters);
+            return new RESTResultaat<>(
+                    persoonConverter.convert(ingeschrevenPersoonHalCollectie.getEmbedded().getIngeschrevenpersonen()));
         } catch (final RuntimeException e) {
             LOG.severe(() -> String.format("Error while calling listPersonen: %s", e.getMessage()));
             return new RESTResultaat<>(e.getMessage());
