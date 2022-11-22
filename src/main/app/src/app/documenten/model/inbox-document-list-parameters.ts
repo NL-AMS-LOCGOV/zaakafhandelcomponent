@@ -5,11 +5,12 @@
 
 import {SortDirection} from '@angular/material/sort';
 import {ListParameters} from '../../shared/model/list-parameters';
+import {DatumRange} from '../../zoeken/model/datum-range';
 
 export class InboxDocumentListParameters extends ListParameters {
 
     identificatie: string;
-    creatiedatum: { van: Date, tot: Date } = {van: null, tot: null};
+    creatiedatum = new DatumRange();
     titel: string;
 
     constructor(sort: string, order: SortDirection) {

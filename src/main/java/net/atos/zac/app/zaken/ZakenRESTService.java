@@ -277,10 +277,8 @@ public class ZakenRESTService {
     @Path("initiator")
     public RESTZaak updateInitiator(final RESTZaakBetrokkeneGegevens gegevens) {
         final Zaak zaak = zrcClientService.readZaak(gegevens.zaakUUID);
-        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-        if (initiator != null) {
-            removeInitiator(zaak, initiator);
-        }
+        zgwApiService.findInitiatorForZaak(zaak)
+                .ifPresent(initiator -> removeInitiator(zaak, initiator));
         addInitiator(gegevens.betrokkeneIdentificatieType, gegevens.betrokkeneIdentificatie, zaak);
         return zaakConverter.convert(zaak);
     }
@@ -289,8 +287,8 @@ public class ZakenRESTService {
     @Path("{uuid}/initiator")
     public RESTZaak deleteInitiator(@PathParam("uuid") final UUID zaakUUID) {
         final Zaak zaak = zrcClientService.readZaak(zaakUUID);
-        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-        removeInitiator(zaak, initiator);
+        zgwApiService.findInitiatorForZaak(zaak)
+                .ifPresent(initiator -> removeInitiator(zaak, initiator));
         return zaakConverter.convert(zaak);
     }
 
@@ -318,7 +316,7 @@ public class ZakenRESTService {
         assertPolicy(policyService.readOverigeRechten().getStartenZaak() && policyService.isZaaktypeAllowed(
                 restZaak.zaaktype.omschrijving));
         final Zaaktype zaaktype = ztcClientService.readZaaktype(restZaak.zaaktype.uuid);
-        final Zaak zaak = zgwApiService.createZaak(zaakConverter.convert(restZaak, zaaktype.getUrl()));
+        final Zaak zaak = zgwApiService.createZaak(zaakConverter.convert(restZaak, zaaktype));
         if (StringUtils.isNotEmpty(restZaak.initiatorIdentificatie)) {
             addInitiator(restZaak.initiatorIdentificatieType, restZaak.initiatorIdentificatie, zaak);
         }
@@ -510,27 +508,29 @@ public class ZakenRESTService {
         final Zaak zaak = zrcClientService.readZaak(toekennenGegevens.zaakUUID);
         assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getToekennen());
 
-        final RolMedewerker rolBehandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        String behandelaar = rolBehandelaar != null ? rolBehandelaar.getBetrokkeneIdentificatie()
-                .getIdentificatie() : null;
+        zgwApiService.findBehandelaarForZaak(zaak)
+                .map(rolBehandelaar -> rolBehandelaar.getBetrokkeneIdentificatie().getIdentificatie())
+                .ifPresent(behandelaar -> {
+                    if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
+                        if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
+                            // Toekennen of overdragen
+                            final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
+                            zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
+                        } else {
+                            // Vrijgeven
+                            zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
+                        }
+                    }
+                });
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
-
-        if (!StringUtils.equals(behandelaar, toekennenGegevens.behandelaarGebruikersnaam)) {
-            if (StringUtils.isNotEmpty(toekennenGegevens.behandelaarGebruikersnaam)) {
-                // Toekennen of overdragen
-                final User user = identityService.readUser(toekennenGegevens.behandelaarGebruikersnaam);
-                zrcClientService.updateRol(zaak, bepaalRolMedewerker(user, zaak), toekennenGegevens.reden);
-            } else {
-                // Vrijgeven
-                zrcClientService.deleteRol(zaak, BetrokkeneType.MEDEWERKER, toekennenGegevens.reden);
-            }
-        }
-
-        if (!StringUtils.equals(groep.getBetrokkeneIdentificatie().getIdentificatie(), toekennenGegevens.groepId)) {
-            final Group group = identityService.readGroup(toekennenGegevens.groepId);
-            zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), toekennenGegevens.reden);
-        }
+        zgwApiService.findGroepForZaak(zaak)
+                .ifPresent(groep -> {
+                    if (!StringUtils.equals(groep.getBetrokkeneIdentificatie().getIdentificatie(),
+                                            toekennenGegevens.groepId)) {
+                        final Group group = identityService.readGroup(toekennenGegevens.groepId);
+                        zrcClientService.updateRol(zaak, bepaalRolGroep(group, zaak), toekennenGegevens.reden);
+                    }
+                });
 
         return zaakConverter.convert(zaak);
     }
@@ -685,8 +685,9 @@ public class ZakenRESTService {
     @GET
     @Path("besluit/zaakUuid/{zaakUuid}")
     public RESTBesluit findBesluitByZaakUUID(@PathParam("zaakUuid") final UUID zaakUuid) {
-        final Besluit besluit = brcClientService.findBesluit(zrcClientService.readZaak(zaakUuid));
-        return besluitConverter.convertToRESTBesluit(besluit);
+        return brcClientService.findBesluit(zrcClientService.readZaak(zaakUuid))
+                .map(besluitConverter::convertToRESTBesluit)
+                .orElse(null);
     }
 
     @POST
@@ -697,7 +698,7 @@ public class ZakenRESTService {
         final Status zaakStatus = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
         final Statustype zaakStatustype = zaakStatus != null ? ztcClientService.readStatustype(
                 zaakStatus.getStatustype()) : null;
-        assertPolicy(zaak.isOpen() && brcClientService.findBesluit(zaak) == null &&
+        assertPolicy(zaak.isOpen() && !brcClientService.findBesluit(zaak).isPresent() &&
                              isNotEmpty(zaaktype.getBesluittypen()) &&
                              policyService.readZaakRechten(zaak, zaaktype).getBehandelen() &&
                              !isIntake(zaakStatustype));

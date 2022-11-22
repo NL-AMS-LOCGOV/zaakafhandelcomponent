@@ -5,19 +5,20 @@
 
 package net.atos.client.brp;
 
-import java.util.logging.Logger;
+import net.atos.client.brp.exception.PersoonNotFoundException;
+import net.atos.client.brp.model.IngeschrevenPersoonHal;
+import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
+import net.atos.client.brp.model.ListPersonenParameters;
+
+import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 
-import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
-import net.atos.client.brp.exception.PersoonNotFoundException;
-import net.atos.client.brp.model.IngeschrevenPersoonHal;
-import net.atos.client.brp.model.IngeschrevenPersoonHalCollectie;
-import net.atos.client.brp.model.ListPersonenParameters;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 @ApplicationScoped
 public class BRPClientService {
@@ -70,13 +71,13 @@ public class BRPClientService {
      * Gebruik de fields parameter als je alleen specifieke velden in het antwoord wil zien,
      * [zie functionele specificaties fields-parameter](https://github.com/VNG-Realisatie/Haal-Centraal-BRP-bevragen/blob/v1.1.0/features/fields_extensie.feature).
      */
-    public IngeschrevenPersoonHal findPersoon(final String burgerservicenummer, final String fields) {
+    public Optional<IngeschrevenPersoonHal> findPersoon(final String burgerservicenummer, final String fields) {
         try {
-            return ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields);
+            return Optional.of(ingeschrevenpersonenClient.readPersoon(burgerservicenummer, fields));
         } catch (final PersoonNotFoundException e) {
         } catch (final TimeoutException | ProcessingException e) {
             LOG.severe(() -> String.format("Error while calling BRP bevragen provider: %s", e.getMessage()));
         }
-        return null;
+        return Optional.empty();
     }
 }

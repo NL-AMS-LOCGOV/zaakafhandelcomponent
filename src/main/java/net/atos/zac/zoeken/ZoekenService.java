@@ -116,7 +116,7 @@ public class ZoekenService {
         zoekParameters.getFilterQueries().forEach((veld, waarde) -> query.addFilterQuery(format("%s:\"%s\"", veld, waarde)));
 
         query.setFacetMinCount(1);
-        query.setFacetMissing(zoekParameters.getType() != null);
+        query.setFacetMissing(!zoekParameters.isGlobaalZoeken());
         query.setFacet(true);
         query.setParam("q.op", SimpleParams.AND_OPERATOR);
         query.setRows(zoekParameters.getRows());

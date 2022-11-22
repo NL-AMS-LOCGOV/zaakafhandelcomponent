@@ -26,7 +26,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.flowable.cmmn.api.runtime.PlanItemInstance;
 
 import net.atos.client.zgw.brc.BRCClientService;
-import net.atos.client.zgw.brc.model.Besluit;
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Resultaat;
@@ -164,8 +163,7 @@ public class PlanItemsRESTService {
             }
             case ZAAK_AFHANDELEN -> {
                 assertPolicy(!zrcClientService.heeftOpenDeelzaken(zaak));
-                final Besluit besluit = brcClientService.findBesluit(zaak);
-                if (besluit != null) {
+                if (brcClientService.findBesluit(zaak).isPresent()) {
                     final Resultaat resultaat = zrcClientService.readResultaat(zaak.getResultaat());
                     resultaat.setToelichting(userEventListenerData.resultaatToelichting);
                     zrcClientService.updateResultaat(resultaat);

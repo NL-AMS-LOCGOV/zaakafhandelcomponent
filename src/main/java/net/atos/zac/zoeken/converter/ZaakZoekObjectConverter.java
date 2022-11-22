@@ -1,6 +1,7 @@
 package net.atos.zac.zoeken.converter;
 
 import static net.atos.client.zgw.ztc.model.Statustype.isHeropend;
+import static net.atos.zac.util.UriUtil.uuidFromURI;
 
 import java.util.UUID;
 
@@ -12,8 +13,6 @@ import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Resultaat;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
@@ -25,7 +24,6 @@ import net.atos.zac.identity.IdentityService;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 import net.atos.zac.util.DateTimeConverterUtil;
-import net.atos.zac.util.UriUtil;
 import net.atos.zac.zoeken.model.ZaakIndicatie;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.ZaakZoekObject;
@@ -71,12 +69,14 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         zaakZoekObject.setPublicatiedatum(DateTimeConverterUtil.convertToDate(zaak.getPublicatiedatum()));
         zaakZoekObject.setVertrouwelijkheidaanduiding(zaak.getVertrouwelijkheidaanduiding().toValue());
         zaakZoekObject.setAfgehandeld(zaak.getEinddatum() != null);
-        zaakZoekObject.setInitiator(zgwApiService.findInitiatorForZaak(zaak));
+        zgwApiService.findInitiatorForZaak(zaak).ifPresent(initiator -> zaakZoekObject.setInitiator(initiator));
         zaakZoekObject.setLocatie(convertToLocatie(zaak.getZaakgeometrie()));
 
-        final CommunicatieKanaal kanaal = findCommunicatieKanaal(zaak);
-        if (kanaal != null) {
-            zaakZoekObject.setCommunicatiekanaal(kanaal.getNaam());
+        if (zaak.getCommunicatiekanaal() != null) {
+            vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()))
+                    .map(CommunicatieKanaal::getNaam)
+                    .ifPresent(
+                            communicatieKanaal -> zaakZoekObject.setCommunicatiekanaal(communicatieKanaal));
         }
 
         final Group groep = findGroep(zaak);
@@ -109,7 +109,7 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
         zaakZoekObject.setZaaktypeIdentificatie(zaaktype.getIdentificatie());
         zaakZoekObject.setZaaktypeOmschrijving(zaaktype.getOmschrijving());
-        zaakZoekObject.setZaaktypeUuid(UriUtil.uuidFromURI(zaaktype.getUrl()).toString());
+        zaakZoekObject.setZaaktypeUuid(uuidFromURI(zaaktype.getUrl()).toString());
 
         if (zaak.getStatus() != null) {
             final Status status = zrcClientService.readStatus(zaak.getStatus());
@@ -142,23 +142,17 @@ public class ZaakZoekObjectConverter extends AbstractZoekObjectConverter<ZaakZoe
     }
 
     private User findBehandelaar(final Zaak zaak) {
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        return behandelaar != null ? identityService.readUser(
-                behandelaar.getBetrokkeneIdentificatie().getIdentificatie()) : null;
+        return zgwApiService.findBehandelaarForZaak(zaak)
+                .map(behandelaar -> identityService.readUser(
+                        behandelaar.getBetrokkeneIdentificatie().getIdentificatie()))
+                .orElse(null);
     }
 
 
     private Group findGroep(final Zaak zaak) {
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
-        return groep != null ? identityService.readGroup(groep.getBetrokkeneIdentificatie().getIdentificatie()) : null;
-    }
-
-    private CommunicatieKanaal findCommunicatieKanaal(final Zaak zaak) {
-        if (zaak.getCommunicatiekanaal() != null) {
-            final UUID communicatiekanaalUUID = UriUtil.uuidFromURI(zaak.getCommunicatiekanaal());
-            return vrlClientService.findCommunicatiekanaal(communicatiekanaalUUID);
-        }
-        return null;
+        return zgwApiService.findGroepForZaak(zaak)
+                .map(groep -> identityService.readGroup(groep.getBetrokkeneIdentificatie().getIdentificatie()))
+                .orElse(null);
     }
 
     @Override

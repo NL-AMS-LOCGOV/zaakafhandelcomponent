@@ -22,6 +22,15 @@ public class RESTPersoon extends RESTKlant {
 
     public String inschrijfadres;
 
+    public RESTPersoon() {
+    }
+
+    public RESTPersoon(final String naam, final String geboortedatum, final String inschrijfadres) {
+        this.naam = naam;
+        this.geboortedatum = geboortedatum;
+        this.inschrijfadres = inschrijfadres;
+    }
+
     @Override
     public IdentificatieType getIdentificatieType() {
         return bsn != null ? BSN : null;

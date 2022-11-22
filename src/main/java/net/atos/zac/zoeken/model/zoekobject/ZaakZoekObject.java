@@ -5,7 +5,9 @@
 
 package net.atos.zac.zoeken.model.zoekobject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -89,29 +91,15 @@ public class ZaakZoekObject implements ZoekObject {
     @Field("zaak_locatie")
     private String locatie;
 
-    @Field("zaak_indicatieVerlenging")
-    private boolean indicatieVerlenging;
-
     @Field("zaak_duurVerlenging")
     private String duurVerlenging;
 
     @Field("zaak_redenVerlenging")
     private String redenVerlenging;
 
-    @Field("zaak_indicatieOpschorting")
-    private boolean indicatieOpschorting;
 
     @Field("zaak_redenOpschorting")
     private String redenOpschorting;
-
-    @Field("zaak_indicatieHeropend")
-    private boolean indicatieHeropend;
-
-    @Field("zaak_indicatieDeelzaak")
-    private boolean indicatieDeelzaak;
-
-    @Field("zaak_indicatieHoofdzaak")
-    private boolean indicatieHoofdzaak;
 
     @Field("zaak_zaaktypeUuid")
     private String zaaktypeUuid;
@@ -146,8 +134,11 @@ public class ZaakZoekObject implements ZoekObject {
     @Field(IS_TOEGEKEND_FIELD)
     private boolean toegekend;
 
+    @Field("zaak_indicaties")
+    private List<String> indicaties;
+
     @Field("zaak_indicaties_sort")
-    private long indicaties;
+    private long indicatiesVolgorde;
 
     public ZaakZoekObject() {
     }
@@ -428,32 +419,34 @@ public class ZaakZoekObject implements ZoekObject {
     }
 
     public boolean isIndicatie(final ZaakIndicatie indicatie) {
-        return switch (indicatie) {
-            case OPSCHORTING -> this.indicatieOpschorting;
-            case HEROPEND -> this.indicatieHeropend;
-            case HOOFDZAAK -> this.indicatieHoofdzaak;
-            case DEELZAAK -> this.indicatieDeelzaak;
-            case VERLENGD -> this.indicatieVerlenging;
-        };
+        return this.indicaties != null && this.indicaties.contains(indicatie.name());
     }
 
     public void setIndicatie(final ZaakIndicatie indicatie, final boolean value) {
-        switch (indicatie) {
-            case OPSCHORTING -> this.indicatieOpschorting = value;
-            case HEROPEND -> this.indicatieHeropend = value;
-            case HOOFDZAAK -> this.indicatieHoofdzaak = value;
-            case DEELZAAK -> this.indicatieDeelzaak = value;
-            case VERLENGD -> this.indicatieVerlenging = value;
-        }
         updateIndicaties(indicatie, value);
+        updateIndicatieVolgorde(indicatie, value);
     }
 
-    private void updateIndicaties(final ZaakIndicatie indicatie, boolean value) {
+    private void updateIndicaties(ZaakIndicatie indicatie, boolean value) {
+        final String key = indicatie.name();
+        if (this.indicaties == null) {
+            this.indicaties = new ArrayList<>();
+        }
+        if (value) {
+            if (!this.indicaties.contains(key)) {
+                this.indicaties.add(key);
+            }
+        } else {
+            this.indicaties.remove(key);
+        }
+    }
+
+    private void updateIndicatieVolgorde(final ZaakIndicatie indicatie, boolean value) {
         final int bit = ZaakIndicatie.values().length - 1 - indicatie.ordinal();
         if (value) {
-            this.indicaties |= 1L << bit;
+            this.indicatiesVolgorde |= 1L << bit;
         } else {
-            this.indicaties &= ~(1L << bit);
+            this.indicatiesVolgorde &= ~(1L << bit);
         }
     }
 }
