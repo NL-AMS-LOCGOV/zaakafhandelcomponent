@@ -363,7 +363,7 @@ public class ZakenRESTService {
         final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
         final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort()); //&& is niet hervat
+            assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort() && StringUtils.isEmpty(zaak.getOpschorting().getReden()));
         } else {
             assertPolicy(zaak.isOpgeschort());
         }
