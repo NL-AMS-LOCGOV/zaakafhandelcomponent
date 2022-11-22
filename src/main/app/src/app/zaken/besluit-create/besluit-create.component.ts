@@ -53,22 +53,20 @@ export class BesluitCreateComponent implements OnInit, OnDestroy {
         this.fields = [[resultaattypeField], [besluittypeField], [ingangsdatumField], [vervaldatumField], [toelichtingField], [documentenField]];
 
         resultaattypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            if (!value) {
-                return;
+            if (value) {
+                vervaldatumField.required = (value as Resultaattype).vervaldatumBesluitVerplicht;
             }
-            vervaldatumField.required = (value as Resultaattype).vervaldatumBesluitVerplicht;
         });
         ingangsdatumField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
             (vervaldatumField as DateFormField).minDate = value;
         });
         besluittypeField.formControl.valueChanges.pipe(takeUntil(this.ngDestroy)).subscribe(value => {
-            if (!value) {
-                return;
+            if (value) {
+                const zoekparameters = new InformatieobjectZoekParameters();
+                zoekparameters.zaakUUID = this.zaak.uuid;
+                zoekparameters.besluittypeUUID = value.id;
+                documentenField.setDocumenten$(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
             }
-            const zoekparameters = new InformatieobjectZoekParameters();
-            zoekparameters.zaakUUID = this.zaak.uuid;
-            zoekparameters.besluittypeUUID = value.id;
-            documentenField.setDocumenten$(this.informatieObjectenService.listEnkelvoudigInformatieobjecten(zoekparameters));
         });
     }
 
