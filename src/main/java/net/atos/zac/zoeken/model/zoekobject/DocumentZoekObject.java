@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
@@ -266,12 +267,12 @@ public class DocumentZoekObject implements ZoekObject {
         this.auteur = auteur;
     }
 
-    public String getStatus() {
-        return status;
+    public InformatieobjectStatus getStatus() {
+        return InformatieobjectStatus.valueOf(status);
     }
 
-    public void setStatus(final String status) {
-        this.status = status;
+    public void setStatus(final InformatieobjectStatus status) {
+        this.status = status.toString();
     }
 
     public String getFormaat() {
