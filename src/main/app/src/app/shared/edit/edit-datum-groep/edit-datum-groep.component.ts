@@ -40,7 +40,6 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
     @Input() einddatumGeplandIcon: TextIcon;
     @Input() uiterlijkeEinddatumAfdoeningIcon: TextIcon;
     @Input() reasonField: InputFormField;
-    @Input() hervat: boolean;
     @Input() opgeschort: boolean;
     @Input() opschortReden: string;
     @Input() opschortDuur: number;
@@ -297,6 +296,10 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
         if (value != null) {
             this.updateDatums(moment(value).diff(vorigeUiterlijkeEinddatumAfdoening, 'days'), vorigeEinddatumGeplandDatum, vorigeUiterlijkeEinddatumAfdoening);
         }
+    }
+
+    get isHervat() {
+        return !this.opgeschort && this.opschortReden;
     }
 
     private updateDatums(duur: number, vorigeEinddatumGeplandDatum: Moment, vorigeUiterlijkeEinddatumAfdoening: Moment) {

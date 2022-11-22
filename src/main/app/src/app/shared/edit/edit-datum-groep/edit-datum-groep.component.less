@@ -64,24 +64,23 @@
 }
 
 .play-control {
-  &:hover {
+  &:hover, &.hervat {
     .play-icon {
-      visibility: hidden;
+      display: none;
     }
 
     .play-button {
-      visibility: visible;
+      display: inline-block;
     }
   }
 
   .play-icon {
-    visibility: visible;
+    display: inline-block;
     color: black;
   }
 
   .play-button {
-    visibility: hidden;
-    margin-left: -24px;
+    display: none;
   }
 
   float: right;
