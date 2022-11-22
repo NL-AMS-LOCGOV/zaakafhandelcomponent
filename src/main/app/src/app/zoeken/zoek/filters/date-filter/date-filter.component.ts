@@ -5,6 +5,7 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {DatumRange} from '../../../model/datum-range';
 
 @Component({
     selector: 'zac-date-filter',
@@ -12,22 +13,25 @@ import {FormControl} from '@angular/forms';
     styleUrls: ['./date-filter.component.less']
 })
 export class DateFilterComponent implements OnInit {
-    @Input() range: { van: Date, tot: Date };
+    @Input() range: DatumRange;
     @Input() label: string;
-    @Output() changed = new EventEmitter<void>();
+    @Output() changed = new EventEmitter<DatumRange>();
 
-    dateVan: FormControl<Date>;
-    dateTM: FormControl<Date>;
+    dateVan: FormControl<Date> = new FormControl<Date>(null);
+    dateTM: FormControl<Date> = new FormControl<Date>(null);
 
     ngOnInit(): void {
-        this.dateVan = new FormControl(this.range.van);
-        this.dateTM = new FormControl(this.range.tot);
+        if (this.range == null) {
+            this.range = new DatumRange();
+        }
+        this.dateVan.setValue(this.range.van);
+        this.dateTM.setValue(this.range.tot);
     }
 
     change(): void {
         this.range.van = this.dateVan.value;
         this.range.tot = this.dateTM.value;
-        this.changed.emit();
+        this.changed.emit(this.range);
     }
 
     expanded(): boolean {

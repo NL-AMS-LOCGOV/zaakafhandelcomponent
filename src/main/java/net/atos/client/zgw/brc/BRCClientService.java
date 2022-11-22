@@ -7,6 +7,7 @@ package net.atos.client.zgw.brc;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -36,13 +37,14 @@ public class BRCClientService {
     @Inject
     private ZGWClientHeadersFactory zgwClientHeadersFactory;
 
-    public Besluit findBesluit(final Zaak zaak) {
+    public Optional<Besluit> findBesluit(final Zaak zaak) {
         final BesluitenListParameters listParameters = new BesluitenListParameters(zaak.getUrl());
         final Results<Besluit> results = brcClient.besluitList(listParameters);
         if (results.getCount() > 0) {
-            return results.getResults().get(0);
+            return Optional.of(results.getResults().get(0));
+        } else {
+            return Optional.empty();
         }
-        return null;
     }
 
     public Besluit createBesluit(final Besluit besluit) {
@@ -64,7 +66,8 @@ public class BRCClientService {
         return brcClient.besluitRead(uuid);
     }
 
-    public BesluitInformatieobject createBesluitInformatieobject(final BesluitInformatieobject besluitInformatieobject, final String toelichting) {
+    public BesluitInformatieobject createBesluitInformatieobject(final BesluitInformatieobject besluitInformatieobject,
+            final String toelichting) {
         zgwClientHeadersFactory.setAuditToelichting(toelichting);
         return brcClient.besluitinformatieobjectCreate(besluitInformatieobject);
     }

@@ -5,10 +5,13 @@
 
 package net.atos.zac.zoeken.model.zoekobject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.ZoekObject;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
@@ -44,7 +47,7 @@ public class DocumentZoekObject implements ZoekObject {
     @Field("informatieobject_zaakUuid")
     private String zaakUuid;
 
-    @Field("informatieobject_indicatieVergrendeld")
+    @Field("informatieobject_zaakAfgehandeld")
     private boolean zaakAfgehandeld;
 
     @Field("informatieobject_zaakRelatie")
@@ -92,20 +95,20 @@ public class DocumentZoekObject implements ZoekObject {
     @Field("informatieobject_documentType")
     private String documentType;
 
-    @Field("informatieobject_indicatieOndertekend")
-    private boolean indicatieOndertekend;
-
     @Field("informatieobject_inhoudUrl")
     private String inhoudUrl;
-
-    @Field("informatieobject_indicatieVergrendeld")
-    private boolean indicatieVergrendeld;
 
     @Field("informatieobject_vergrendeldDoorNaam")
     private String vergrendeldDoorNaam;
 
     @Field("informatieobject_vergrendeldDoorGebruikersnaam")
     private String vergrendeldDoorGebruikersnaam;
+
+    @Field("informatieobject_indicaties")
+    private List<String> indicaties;
+
+    @Field("informatieobject_indicaties_sort")
+    private long indicatiesVolgorde;
 
     public DocumentZoekObject() {
     }
@@ -319,28 +322,12 @@ public class DocumentZoekObject implements ZoekObject {
         this.ondertekeningSoort = ondertekeningSoort;
     }
 
-    public boolean isIndicatieOndertekend() {
-        return indicatieOndertekend;
-    }
-
-    public void setIndicatieOndertekend(final boolean indicatieOndertekend) {
-        this.indicatieOndertekend = indicatieOndertekend;
-    }
-
     public String getInhoudUrl() {
         return inhoudUrl;
     }
 
     public void setInhoudUrl(final String inhoudUrl) {
         this.inhoudUrl = inhoudUrl;
-    }
-
-    public boolean isIndicatieVergrendeld() {
-        return indicatieVergrendeld;
-    }
-
-    public void setIndicatieVergrendeld(final boolean indicatieVergrendeld) {
-        this.indicatieVergrendeld = indicatieVergrendeld;
     }
 
     public String getVergrendeldDoorNaam() {
@@ -357,5 +344,37 @@ public class DocumentZoekObject implements ZoekObject {
 
     public void setVergrendeldDoorGebruikersnaam(final String vergrendeldDoorGebruikersnaam) {
         this.vergrendeldDoorGebruikersnaam = vergrendeldDoorGebruikersnaam;
+    }
+
+    public boolean isIndicatie(final DocumentIndicatie indicatie) {
+        return this.indicaties != null && this.indicaties.contains(indicatie.name());
+    }
+
+    public void setIndicatie(final DocumentIndicatie indicatie, final boolean value) {
+        updateIndicaties(indicatie, value);
+        updateIndicatieVolgorde(indicatie, value);
+    }
+
+    private void updateIndicaties(DocumentIndicatie indicatie, boolean value) {
+        final String key = indicatie.name();
+        if (this.indicaties == null) {
+            this.indicaties = new ArrayList<>();
+        }
+        if (value) {
+            if (!this.indicaties.contains(key)) {
+                this.indicaties.add(key);
+            }
+        } else {
+            this.indicaties.remove(key);
+        }
+    }
+
+    private void updateIndicatieVolgorde(final DocumentIndicatie indicatie, boolean value) {
+        final int bit = DocumentIndicatie.values().length - 1 - indicatie.ordinal();
+        if (value) {
+            this.indicatiesVolgorde |= 1L << bit;
+        } else {
+            this.indicatiesVolgorde &= ~(1L << bit);
+        }
     }
 }

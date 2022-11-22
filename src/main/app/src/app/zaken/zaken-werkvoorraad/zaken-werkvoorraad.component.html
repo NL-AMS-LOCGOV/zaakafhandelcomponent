@@ -98,8 +98,8 @@
         <ng-container matColumnDef="startdatum_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="startdatum"
-                                       [range]="dataSource.zoekParameters.datums.STARTDATUM"
-                                       (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_STARTDATUM"
+                                       (changed)="dataSource.zoekParameters.datums.ZAAK_STARTDATUM = $event; filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
@@ -111,13 +111,13 @@
         <ng-container matColumnDef="einddatumGepland_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="streefdatum"
-                                       [range]="dataSource.zoekParameters.datums.STREEFDATUM"
-                                       (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_STREEFDATUM"
+                                       (changed)="dataSource.zoekParameters.datums.ZAAK_STREEFDATUM = $event; filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="einddatumGepland">
-            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_EINDDATUM_GEPLAND">{{ 'einddatumGepland' | translate }}</th>
+            <th mat-header-cell cdkDrag *matHeaderCellDef [mat-sort-header]="sorteerVeld.ZAAK_STREEFDATUM">{{ 'einddatumGepland' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.einddatumGepland | datum | empty }}
                 <mat-icon class="warning" [title]="'msg.datum.overschreden' | translate" *ngIf="isAfterDate(row.einddatumGepland)">warning</mat-icon>
             </td>
@@ -148,14 +148,14 @@
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-date-range-filter label="uiterlijkedatumafdoening"
-                                       [range]="dataSource.zoekParameters.datums.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING"
-                                       (changed)="filtersChange()">
+                                       [range]="dataSource.zoekParameters.datums.ZAAK_FATALE_DATUM"
+                                       (changed)="dataSource.zoekParameters.datums.ZAAK_FATALE_DATUM = $event; filtersChange()">
                 </zac-date-range-filter>
             </th>
         </ng-container>
         <ng-container matColumnDef="uiterlijkeEinddatumAfdoening">
             <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="sorteerVeld.ZAAK_UITERLIJKE_EINDDATUM_AFDOENING">{{ 'uiterlijkeEinddatumAfdoening' | translate }}</th>
+                [mat-sort-header]="sorteerVeld.ZAAK_FATALE_DATUM">{{ 'uiterlijkeEinddatumAfdoening' | translate }}</th>
             <td mat-cell *matCellDef="let row">
                 {{ row.uiterlijkeEinddatumAfdoening | datum | empty }}
                 <mat-icon class="error" [title]="'msg.datum.overschreden' | translate" *ngIf="isAfterDate(row.uiterlijkeEinddatumAfdoening)">warning</mat-icon>
@@ -195,7 +195,7 @@
         </ng-container>
         <ng-container matColumnDef="indicaties">
             <th mat-header-cell cdkDrag *matHeaderCellDef
-                [mat-sort-header]="sorteerVeld.ZAAK_INDICATIES">{{ 'indicaties' | translate | empty}}</th>
+                [mat-sort-header]="sorteerVeld.ZAAK_INDICATIES_SORT">{{ 'indicaties' | translate | empty}}</th>
             <td mat-cell *matCellDef="let row">
                 <zac-zaak-indicaties [zaakZoekObject]="row"></zac-zaak-indicaties>
             </td>

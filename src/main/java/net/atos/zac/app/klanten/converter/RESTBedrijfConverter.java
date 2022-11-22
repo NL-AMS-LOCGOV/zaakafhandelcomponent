@@ -55,10 +55,7 @@ public class RESTBedrijfConverter {
     }
 
     public RESTBedrijf convert(final ResultaatItem bedrijf) {
-        if (bedrijf == null) {
-            return new RESTBedrijf();
-        }
-        RESTBedrijf restBedrijf = new RESTBedrijf();
+        final RESTBedrijf restBedrijf = new RESTBedrijf();
         restBedrijf.kvkNummer = bedrijf.getKvkNummer();
         restBedrijf.vestigingsnummer = bedrijf.getVestigingsnummer();
         restBedrijf.handelsnaam = bedrijf.getHandelsnaam();

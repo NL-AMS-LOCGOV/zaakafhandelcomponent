@@ -21,11 +21,12 @@ export class MultiFacetFilterComponent implements OnInit {
     @Output() changed = new EventEmitter<string[]>();
 
     /* veld: prefix */
-    public VERTAALBAARE_FACETTEN = {
+    public VERTAALBARE_FACETTEN = {
         TAAK_STATUS: 'taak.status',
         TYPE: 'type',
         TOEGEKEND: 'zoeken.filter.jaNee',
-        DOCUMENT_VERGRENDELD: 'zoeken.filter.jaNee'
+        ZAAK_INDICATIES: 'zoeken.filter.indicatie.zaak',
+        DOCUMENT_INDICATIES: 'zoeken.filter.indicatie.document'
     };
 
     constructor(private _formBuilder: FormBuilder) {}
@@ -48,6 +49,6 @@ export class MultiFacetFilterComponent implements OnInit {
     }
 
     isVertaalbaar(veld: string): boolean {
-        return this.VERTAALBAARE_FACETTEN[veld] !== undefined;
+        return this.VERTAALBARE_FACETTEN[veld] !== undefined;
     }
 }

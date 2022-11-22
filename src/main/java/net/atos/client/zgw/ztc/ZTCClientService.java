@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -269,8 +270,8 @@ public class ZTCClientService implements Caching {
      * @return {@link Roltype} or NULL
      */
     @CacheResult(cacheName = ZTC_ROLTYPE)
-    public Roltype findRoltype(final URI zaaktypeURI, final AardVanRol aardVanRol) {
-        return ztcClient.roltypeList(new RoltypeListParameters(zaaktypeURI, aardVanRol)).getSingleResult().orElse(null);
+    public Optional<Roltype> findRoltype(final URI zaaktypeURI, final AardVanRol aardVanRol) {
+        return ztcClient.roltypeList(new RoltypeListParameters(zaaktypeURI, aardVanRol)).getSingleResult();
     }
 
     /**

@@ -17,6 +17,7 @@ import net.atos.zac.enkelvoudiginformatieobject.EnkelvoudigInformatieObjectLockS
 import net.atos.zac.enkelvoudiginformatieobject.model.EnkelvoudigInformatieObjectLock;
 import net.atos.zac.identity.IdentityService;
 import net.atos.zac.util.DateTimeConverterUtil;
+import net.atos.zac.zoeken.model.DocumentIndicatie;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 import net.atos.zac.zoeken.model.zoekobject.DocumentZoekObject;
 
@@ -40,7 +41,8 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
 
     @Override
     public DocumentZoekObject convert(final String documentUUID) {
-        final EnkelvoudigInformatieobject document = drcClientService.readEnkelvoudigInformatieobject(UUID.fromString(documentUUID));
+        final EnkelvoudigInformatieobject document = drcClientService.readEnkelvoudigInformatieobject(
+                UUID.fromString(documentUUID));
         final List<ZaakInformatieobject> zaakInformatieobjecten = zrcClientService.listZaakinformatieobjecten(document);
         if (zaakInformatieobjecten.isEmpty()) {
             return null;
@@ -48,10 +50,12 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         return convert(document, zaakInformatieobjecten.get(0));
     }
 
-    private DocumentZoekObject convert(final EnkelvoudigInformatieobject informatieobject, final ZaakInformatieobject gekoppeldeZaakInformatieobject) {
+    private DocumentZoekObject convert(final EnkelvoudigInformatieobject informatieobject,
+            final ZaakInformatieobject gekoppeldeZaakInformatieobject) {
         final Zaak zaak = zrcClientService.readZaak(gekoppeldeZaakInformatieobject.getZaakUUID());
         final Zaaktype zaaktype = ztcClientService.readZaaktype(zaak.getZaaktype());
-        final Informatieobjecttype informatieobjecttype = ztcClientService.readInformatieobjecttype(informatieobject.getInformatieobjecttype());
+        final Informatieobjecttype informatieobjecttype = ztcClientService.readInformatieobjecttype(
+                informatieobject.getInformatieobjecttype());
         final DocumentZoekObject documentZoekObject = new DocumentZoekObject();
         documentZoekObject.setType(ZoekObjectType.DOCUMENT);
         documentZoekObject.setUuid(informatieobject.getUUID().toString());
@@ -68,10 +72,12 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         }
         documentZoekObject.setZaakAfgehandeld(zaak.isOpen());
         documentZoekObject.setCreatiedatum(DateTimeConverterUtil.convertToDate(informatieobject.getCreatiedatum()));
-        documentZoekObject.setRegistratiedatum(DateTimeConverterUtil.convertToDate(informatieobject.getBeginRegistratie()));
+        documentZoekObject.setRegistratiedatum(
+                DateTimeConverterUtil.convertToDate(informatieobject.getBeginRegistratie()));
         documentZoekObject.setOntvangstdatum(DateTimeConverterUtil.convertToDate(informatieobject.getOntvangstdatum()));
         documentZoekObject.setVerzenddatum(DateTimeConverterUtil.convertToDate(informatieobject.getVerzenddatum()));
-        documentZoekObject.setOndertekeningDatum(DateTimeConverterUtil.convertToDate(informatieobject.getOntvangstdatum()));
+        documentZoekObject.setOndertekeningDatum(
+                DateTimeConverterUtil.convertToDate(informatieobject.getOntvangstdatum()));
         documentZoekObject.setVertrouwelijkheidaanduiding(informatieobject.getVertrouwelijkheidaanduiding().toValue());
         documentZoekObject.setAuteur(informatieobject.getAuteur());
         if (informatieobject.getStatus() != null) {
@@ -87,12 +93,14 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
             if (informatieobject.getOndertekening().getSoort() != null) {
                 documentZoekObject.setOndertekeningSoort(informatieobject.getOndertekening().getSoort().toValue());
             }
-            documentZoekObject.setOndertekeningDatum(DateTimeConverterUtil.convertToDate(informatieobject.getOndertekening().getDatum()));
-            documentZoekObject.setIndicatieOndertekend(true);
+            documentZoekObject.setOndertekeningDatum(
+                    DateTimeConverterUtil.convertToDate(informatieobject.getOndertekening().getDatum()));
+            documentZoekObject.setIndicatie(DocumentIndicatie.ONDERTEKEND, true);
         }
-        documentZoekObject.setIndicatieVergrendeld(informatieobject.getLocked());
+        documentZoekObject.setIndicatie(DocumentIndicatie.VERGRENDELD, informatieobject.getLocked());
         if (informatieobject.getLocked()) {
-            final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.findLock(informatieobject.getUUID());
+            final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.findLock(
+                    informatieobject.getUUID());
             documentZoekObject.setVergrendeldDoorGebruikersnaam(lock.getUserId());
             documentZoekObject.setVergrendeldDoorNaam(identityService.readUser(lock.getUserId()).getFullName());
         }

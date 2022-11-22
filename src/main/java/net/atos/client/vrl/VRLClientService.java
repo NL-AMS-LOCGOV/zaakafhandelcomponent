@@ -6,6 +6,7 @@
 package net.atos.client.vrl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -33,18 +34,17 @@ public class VRLClientService {
         }
     }
 
-    public CommunicatieKanaal findCommunicatiekanaal(final UUID communicatiekanaalUUID) {
+    public Optional<CommunicatieKanaal> findCommunicatiekanaal(final UUID communicatiekanaalUUID) {
         try {
-            return communicatiekanalenClient.communicatiekanaalRead(communicatiekanaalUUID);
+            return Optional.of(communicatiekanalenClient.communicatiekanaalRead(communicatiekanaalUUID));
         } catch (final CommunicatiekanaalNotFoundException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
-    public CommunicatieKanaal findCommunicatiekanaal(final String communicatiekanaalNaam) {
+    public Optional<CommunicatieKanaal> findCommunicatiekanaal(final String communicatiekanaalNaam) {
         return listCommunicatiekanalen().stream()
                 .filter(communicatieKanaal -> communicatieKanaal.getNaam().equals(communicatiekanaalNaam))
-                .findAny()
-                .orElse(null);
+                .findAny();
     }
 }

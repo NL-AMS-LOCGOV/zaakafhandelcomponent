@@ -36,21 +36,15 @@ public class RESTPersoonConverter {
                     "verblijfplaats.huisletter," +
                     "verblijfplaats.woonplaats";
 
-    private static final String ONBEKEND = "<onbekend>";
+    public static final String ONBEKEND = "<onbekend>";
 
     public RESTPersoon convertToPersoon(final IngeschrevenPersoonHal persoon) {
         final RESTPersoon restPersoon = new RESTPersoon();
-        if (persoon != null) {
-            restPersoon.bsn = persoon.getBurgerservicenummer();
-            restPersoon.geslacht = persoon.getGeslachtsaanduiding().toString();
-            restPersoon.naam = convertToNaam(persoon.getNaam());
-            restPersoon.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
-            restPersoon.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
-        } else {
-            restPersoon.naam = ONBEKEND;
-            restPersoon.geboortedatum = ONBEKEND;
-            restPersoon.inschrijfadres = ONBEKEND;
-        }
+        restPersoon.bsn = persoon.getBurgerservicenummer();
+        restPersoon.geslacht = persoon.getGeslachtsaanduiding().toString();
+        restPersoon.naam = convertToNaam(persoon.getNaam());
+        restPersoon.geboortedatum = convertToGeboortedatum(persoon.getGeboorte());
+        restPersoon.inschrijfadres = convertToInschrijfadres(persoon.getVerblijfplaats());
         return restPersoon;
     }
 
@@ -77,7 +71,8 @@ public class RESTPersoonConverter {
             listPersonenParameters.setVerblijfplaatsStraat(restListPersonenParameters.straat);
         }
         if (StringUtils.isNotBlank(restListPersonenParameters.gemeenteVanInschrijving)) {
-            listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(restListPersonenParameters.gemeenteVanInschrijving);
+            listPersonenParameters.setVerblijfplaatsGemeenteVanInschrijving(
+                    restListPersonenParameters.gemeenteVanInschrijving);
         }
         if (StringUtils.isNotBlank(restListPersonenParameters.postcode)) {
             listPersonenParameters.setVerblijfplaatsPostcode(restListPersonenParameters.postcode);
