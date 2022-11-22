@@ -9,8 +9,6 @@ import javax.inject.Inject;
 
 import net.atos.client.zgw.shared.ZGWApiService;
 import net.atos.client.zgw.zrc.ZRCClientService;
-import net.atos.client.zgw.zrc.model.RolMedewerker;
-import net.atos.client.zgw.zrc.model.RolOrganisatorischeEenheid;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.client.zgw.ztc.model.Zaaktype;
@@ -68,16 +66,16 @@ public class RESTZaakOverzichtConverter {
             restZaakOverzicht.openstaandeTaken = openstaandeTakenConverter.convert(zaak.getUuid());
             restZaakOverzicht.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
             if (zaak.getStatus() != null) {
-                restZaakOverzicht.status = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
+                restZaakOverzicht.status = ztcClientService.readStatustype(
+                        zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
             }
-            final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-            if (behandelaar != null) {
-                restZaakOverzicht.behandelaar = userConverter.convertUserId(behandelaar.getBetrokkeneIdentificatie().getIdentificatie());
-            }
-            final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
-            if (groep != null) {
-                restZaakOverzicht.groep = groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie());
-            }
+            zgwApiService.findBehandelaarForZaak(zaak)
+                    .map(behandelaar -> userConverter.convertUserId(
+                            behandelaar.getBetrokkeneIdentificatie().getIdentificatie()))
+                    .ifPresent(behandelaar -> restZaakOverzicht.behandelaar = behandelaar);
+            zgwApiService.findGroepForZaak(zaak)
+                    .map(groep -> groupConverter.convertGroupId(groep.getBetrokkeneIdentificatie().getIdentificatie()))
+                    .ifPresent(groep -> restZaakOverzicht.groep = groep);
         }
         return restZaakOverzicht;
     }

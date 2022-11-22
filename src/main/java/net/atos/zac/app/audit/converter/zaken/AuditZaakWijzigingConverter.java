@@ -5,14 +5,14 @@
 
 package net.atos.zac.app.audit.converter.zaken;
 
+import static net.atos.zac.util.UriUtil.uuidFromURI;
+
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
-
-import net.atos.client.zgw.zrc.ZRCClientService;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +21,12 @@ import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.shared.model.ObjectType;
 import net.atos.client.zgw.shared.model.audit.zaken.ZaakWijziging;
+import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Geometry;
 import net.atos.client.zgw.zrc.model.Zaak;
 import net.atos.client.zgw.ztc.ZTCClientService;
 import net.atos.zac.app.audit.converter.AbstractAuditWijzigingConverter;
 import net.atos.zac.app.audit.model.RESTHistorieRegel;
-import net.atos.zac.util.UriUtil;
 
 public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter<ZaakWijziging> {
 
@@ -109,9 +109,9 @@ public class AuditZaakWijzigingConverter extends AbstractAuditWijzigingConverter
             return null;
         }
 
-        final CommunicatieKanaal communicatieKanaal =
-                vrlClientService.findCommunicatiekanaal(UriUtil.uuidFromURI(kanaal));
-        return communicatieKanaal != null ? communicatieKanaal.getNaam() : null;
+        return vrlClientService.findCommunicatiekanaal(uuidFromURI(kanaal))
+                .map(CommunicatieKanaal::getNaam)
+                .orElse(null);
     }
 
     private String geoMetrieToWaarde(final Geometry geometry) {
