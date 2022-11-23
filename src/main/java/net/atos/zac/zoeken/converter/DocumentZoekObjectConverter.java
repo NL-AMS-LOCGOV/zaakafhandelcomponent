@@ -81,7 +81,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
         documentZoekObject.setVertrouwelijkheidaanduiding(informatieobject.getVertrouwelijkheidaanduiding().toValue());
         documentZoekObject.setAuteur(informatieobject.getAuteur());
         if (informatieobject.getStatus() != null) {
-            documentZoekObject.setStatus(informatieobject.getStatus().toValue());
+            documentZoekObject.setStatus(informatieobject.getStatus());
         }
         documentZoekObject.setFormaat(informatieobject.getFormaat());
         documentZoekObject.setVersie(informatieobject.getVersie());
