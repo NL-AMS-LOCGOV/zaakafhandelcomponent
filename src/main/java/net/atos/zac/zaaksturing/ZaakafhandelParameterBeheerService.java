@@ -102,6 +102,7 @@ public class ZaakafhandelParameterBeheerService {
         final CriteriaQuery<UUID> query = builder.createQuery(UUID.class);
         final Root<ZaakafhandelParameters> root = query.from(ZaakafhandelParameters.class);
         query.select(root.get(ZAAKTYPE_UUID)).where(builder.equal(root.get(PRODUCTAANVRAAGTYPE), productaanvraagType));
+        query.orderBy(builder.desc(root.get(CREATIEDATUM)));
         final List<UUID> resultList = entityManager.createQuery(query).getResultList();
         if (!resultList.isEmpty()) {
             if(resultList.size() > 1){

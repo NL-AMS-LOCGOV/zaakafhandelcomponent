@@ -11,9 +11,9 @@ import {FormGroup} from '@angular/forms';
 import {PlanItem} from '../model/plan-item';
 import {PlanItemType} from '../model/plan-item-type.enum';
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
-import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
+import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {FormConfigBuilder} from '../../shared/material-form-builder/model/form-config-builder';
+import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 
 @Component({
     selector: 'zac-human-task-do',
@@ -24,7 +24,7 @@ export class HumanTaskDoComponent implements OnInit {
 
     formItems: Array<AbstractFormField[]>;
     formConfig: FormConfig;
-    private formulier: AbstractFormulier;
+    private formulier: AbstractTaakFormulier;
     @Input() planItem: PlanItem;
     @Output() done = new EventEmitter<void>();
 

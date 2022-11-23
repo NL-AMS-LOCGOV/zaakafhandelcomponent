@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormulier} from './abstract-formulier';
 import {Validators} from '@angular/forms';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
-import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
-import {TakenService} from '../../taken/taken.service';
-import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
-import {CustomValidators} from '../../shared/validators/customValidators';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
-import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
-import {Mail} from '../../admin/model/mail';
-import {HtmlEditorFormFieldBuilder} from '../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
-import {MailtemplateService} from '../../mailtemplate/mailtemplate.service';
+import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
+import {TakenService} from '../../../taken/taken.service';
+import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {CustomValidators} from '../../../shared/validators/customValidators';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {Mail} from '../../../admin/model/mail';
+import {HtmlEditorFormFieldBuilder} from '../../../shared/material-form-builder/form-components/html-editor/html-editor-form-field-builder';
+import {MailtemplateService} from '../../../mailtemplate/mailtemplate.service';
+import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 
-export class ExternAdviesMail extends AbstractFormulier {
+export class ExternAdviesMail extends AbstractTaakFormulier {
 
     fields = {
         BODY: 'body',

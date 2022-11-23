@@ -502,6 +502,16 @@ public class ZakenRESTService {
         return policyService.filterAllowedZaaktypen(zaaktypen).stream().map(zaaktypeConverter::convert).toList();
     }
 
+    @PUT
+    @Path("zaakdata")
+    public RESTZaak updateZaakdata(final RESTZaak restZaak) {
+        final Zaak zaak = zrcClientService.readZaak(restZaak.uuid);
+        assertPolicy(zaak.isOpen() && policyService.readZaakRechten(zaak).getWijzigen());
+
+        caseVariablesService.setZaakdata(restZaak.uuid, restZaak.zaakdata);
+        return restZaak;
+    }
+
     @PATCH
     @Path("toekennen")
     public RESTZaak toekennen(final RESTZaakToekennenGegevens toekennenGegevens) {

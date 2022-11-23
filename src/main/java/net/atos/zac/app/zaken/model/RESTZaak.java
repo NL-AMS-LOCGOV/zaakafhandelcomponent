@@ -7,6 +7,7 @@ package net.atos.zac.app.zaken.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import net.atos.zac.app.identity.model.RESTGroup;
@@ -77,6 +78,8 @@ public class RESTZaak {
     public List<RESTZaakKenmerk> kenmerken;
 
     public List<RESTZaakEigenschap> eigenschappen;
+
+    public Map<String, Object> zaakdata;
 
     public IdentificatieType initiatorIdentificatieType;
 

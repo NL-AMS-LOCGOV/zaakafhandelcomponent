@@ -96,8 +96,12 @@ public class CaseVariablesService {
     }
 
     public Map<String, Object> readZaakdata(final UUID zaakUUID) {
-        final Map<String, Object> zaakdate = (Map<String, Object>) findCaseVariable(zaakUUID, VAR_ZAAK_DATA);
-        return zaakdate != null ? zaakdate : Collections.emptyMap();
+        final Map<String, Object> zaakdata = (Map<String, Object>) findCaseVariable(zaakUUID, VAR_ZAAK_DATA);
+        return zaakdata != null ? zaakdata : Collections.emptyMap();
+    }
+
+    public void setZaakdata(final UUID zaakUUID, final Map<String, Object> zaakdata) {
+        setVariable(zaakUUID, VAR_ZAAK_DATA, zaakdata);
     }
 
     private Object readCaseVariable(final String caseInstanceId, final String variableName) {
