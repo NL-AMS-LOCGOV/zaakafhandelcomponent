@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,8 +40,6 @@ import net.atos.client.zgw.ztc.model.BrondatumArchiefprocedure;
 import net.atos.client.zgw.ztc.model.Resultaattype;
 import net.atos.client.zgw.ztc.model.Statustype;
 import net.atos.client.zgw.ztc.model.Zaaktype;
-import net.atos.zac.authentication.LoggedInUser;
-import net.atos.zac.event.EventingService;
 
 /**
  * Careful!
@@ -67,12 +64,6 @@ public class ZGWApiService {
 
     @Inject
     private DRCClientService drcClientService;
-
-    @Inject
-    private EventingService eventingService;
-
-    @Inject
-    private Instance<LoggedInUser> loggedInUserInstance;
 
     /**
      * Create {@link Zaak} and calculate Doorlooptijden.
@@ -226,7 +217,7 @@ public class ZGWApiService {
         // Delete the relationship of the EnkelvoudigInformatieobject with the zaak.
         zaakInformatieobjecten.stream()
                 .filter(zaakInformatieobject -> zaakInformatieobject.getZaakUUID().equals(zaakUUID))
-                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject,
+                .forEach(zaakInformatieobject -> zrcClientService.deleteZaakInformatieobject(zaakInformatieobject.getUuid(),
                                                                                              toelichting,
                                                                                              "Verwijderd"));
 

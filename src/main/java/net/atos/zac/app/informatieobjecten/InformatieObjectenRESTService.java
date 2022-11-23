@@ -90,6 +90,7 @@ import net.atos.zac.policy.PolicyService;
 import net.atos.zac.shared.exception.FoutmeldingException;
 import net.atos.zac.util.UriUtil;
 import net.atos.zac.webdav.WebdavHelper;
+import net.atos.zac.zoeken.IndexeerService;
 
 @Singleton
 @Path("informatieobjecten")
@@ -123,6 +124,9 @@ public class InformatieObjectenRESTService {
 
     @Inject
     private EventingService eventingService;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     @Inject
     private RESTZaakInformatieobjectConverter zaakInformatieobjectConverter;
@@ -362,7 +366,6 @@ public class InformatieObjectenRESTService {
         if (documentVerwijderenGegevens.zaakUuid == null) {
             ontkoppeldeDocumentenService.delete(uuid);
         }
-
         return Response.noContent().build();
     }
 
