@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
 import net.atos.client.zgw.brc.BRCClientService;
@@ -140,7 +142,7 @@ public class RESTZaakConverter {
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         restZaak.isOpgeschort = zaak.isOpgeschort();
-        if (zaak.isOpgeschort()) {
+        if (zaak.isOpgeschort() || StringUtils.isNotEmpty(zaak.getOpschorting().getReden())) {
             restZaak.redenOpschorting = zaak.getOpschorting().getReden();
         }
 

@@ -298,6 +298,10 @@ export class EditDatumGroepComponent extends EditComponent implements OnChanges,
         }
     }
 
+    get isHervat(): boolean {
+        return !this.opgeschort && !!this.opschortReden;
+    }
+
     private updateDatums(duur: number, vorigeEinddatumGeplandDatum: Moment, vorigeUiterlijkeEinddatumAfdoening: Moment) {
         if (0 < duur) {
             this.duurField.formControl.setValue(duur, {emitEvent: false});
