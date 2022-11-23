@@ -27,7 +27,7 @@ export class MultiFacetFilterComponent implements OnInit {
         TOEGEKEND: 'zoeken.filter.jaNee.',
         ZAAK_INDICATIES: 'indicatie.',
         DOCUMENT_INDICATIES: 'indicatie.',
-        DOCUMENT_STATUS: 'informatieobject.status'
+        DOCUMENT_STATUS: 'informatieobject.status.'
     };
 
     constructor(private _formBuilder: FormBuilder) {}
