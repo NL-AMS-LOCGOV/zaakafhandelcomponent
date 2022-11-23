@@ -36,22 +36,17 @@ public class RESTZoekResultaatConverter {
 
         final RESTZoekResultaat<? extends AbstractRESTZoekObject> restZoekResultaat =
                 new RESTZoekResultaat<>(zoekResultaat.getItems().stream().map(this::convert).toList(), zoekResultaat.getCount());
-
         restZoekResultaat.filters.putAll(zoekResultaat.getFilters());
-        zoekResultaat.getFilters().forEach((filterVeld, mogelijkeFilters) -> {
-            //indien geen resultaten, de huidige filters laten staan
-            final List<String> zoekFilters = zoekParameters.filters.get(filterVeld);
-            if (zoekFilters != null) {
-                zoekFilters.forEach(zoekFilter -> {
-                    if (zoekFilter != null) {
-                        if (mogelijkeFilters.stream().noneMatch(fw -> zoekFilter.equals(fw.naam()))) {
-                            final List<FilterResultaat> filters = new ArrayList<>(mogelijkeFilters);
-                            filters.add(new FilterResultaat(zoekFilter, 0));
-                            restZoekResultaat.filters.put(filterVeld, filters);
-                        }
-                    }
-                });
-            }
+
+        //indien geen resultaten, de huidige filters laten staan
+        zoekParameters.filters.forEach((filterVeld, filters) -> {
+            final List<FilterResultaat> filterResultaten = restZoekResultaat.filters.getOrDefault(filterVeld, new ArrayList<>());
+            filters.forEach(filter -> {
+                if (filterResultaten.stream().noneMatch(filterResultaat -> filterResultaat.naam().equals(filter))) {
+                    filterResultaten.add(new FilterResultaat(filter, 0));
+                }
+            });
+            restZoekResultaat.filters.put(filterVeld, filterResultaten);
         });
         return restZoekResultaat;
     }
