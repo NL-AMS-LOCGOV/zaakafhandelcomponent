@@ -136,8 +136,12 @@ public class PlanItemsRESTService {
             final MailTemplate mailTemplate =
                     mailTemplateService.findMailtemplate(Mail.valueOf(humanTaskData.taakStuurGegevens.mail));
 
-            mailService.sendMail(new Ontvanger(humanTaskData.taakdata.get("emailadres")), mailTemplate.getOnderwerp(),
-                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaak, null);
+            humanTaskData.taakdata.put("body",
+                                       mailService.sendMail(new Ontvanger(humanTaskData.taakdata.get("emailadres")),
+                                                            mailTemplate.getOnderwerp(),
+                                                            humanTaskData.taakdata.get("body"),
+                                                            bijlagen, true, zaak,
+                                                            null));
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
