@@ -9,7 +9,7 @@
         <div *ngFor="let facetWaarde of opties;" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-checkbox (change)="checkboxChange()" [formControlName]="facetWaarde.naam">
                 <read-more *ngIf="isVertaalbaar(label)"
-                           [text]="VERTAALBARE_FACETTEN[label]+'.'+facetWaarde.naam | translate"
+                           [text]="VERTAALBARE_FACETTEN[label]+facetWaarde.naam | translate"
                            [maxLength]="30"></read-more>
                 <read-more *ngIf="!isVertaalbaar(label)" [text]="facetWaarde.naam" [maxLength]="30"></read-more>
             </mat-checkbox>
