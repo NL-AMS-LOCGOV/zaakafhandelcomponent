@@ -59,10 +59,7 @@ import {forkJoin, Observable, share, Subscription} from 'rxjs';
 import {ZaakOpschorting} from '../model/zaak-opschorting';
 import {ZaakVerlengGegevens} from '../model/zaak-verleng-gegevens';
 import {ZaakOpschortGegevens} from '../model/zaak-opschort-gegevens';
-import {
-    NotificationDialogComponent,
-    NotificationDialogData
-} from '../../shared/notification-dialog/notification-dialog.component';
+import {NotificationDialogComponent, NotificationDialogData} from '../../shared/notification-dialog/notification-dialog.component';
 import {ZaakKoppelenService} from '../zaak-koppelen/zaak-koppelen.service';
 import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
 import {ZaakOntkoppelGegevens} from '../model/zaak-ontkoppel-gegevens';
@@ -397,6 +394,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
                 this.zaak.zaaktype.zaakafhandelparameters.zaakbeeindigParameters.length > 0) {
                 this.menu.push(
                     new ButtonMenuItem('actie.zaak.afbreken', () => this.openZaakAfbrekenDialog(), 'thumb_down_alt'));
+            }
+            if (this.zaak.rechten.wijzigen) {
+                this.menu.push(new ButtonMenuItem('actie.zaakdata.wijzigen', () => {
+                    this.actionsSidenav.open();
+                    this.action = SideNavAction.ZAAKDATA_WIJZIGEN;
+                }, 'folder_copy'));
             }
             this.createKoppelingenMenuItems();
             if (this.zaak.rechten.behandelen && humanTaskPlanItems.length > 0) {
@@ -844,19 +847,22 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
 
     taakGestart(): void {
         this.actiefPlanItem = null;
-        this.actionsSidenav.close();
+        this.sluitSidenav();
         this.updateZaak();
     }
 
-    mailVerstuurd(): void {
+    sluitSidenav(): void {
         this.action = null;
         this.actionsSidenav.close();
+    }
+
+    mailVerstuurd(): void {
+        this.sluitSidenav();
         this.updateZaak();
     }
 
     ontvangstBevestigd(): void {
-        this.action = null;
-        this.actionsSidenav.close();
+        this.sluitSidenav();
         this.updateZaak();
     }
 
@@ -865,14 +871,12 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
     }
 
     documentAanmakenStarten(redirectUrl: string): void {
-        this.action = null;
-        this.actionsSidenav.close();
+        this.sluitSidenav();
         window.open(redirectUrl);
     }
 
     documentAanmakenNietMogelijk(melding: string): void {
-        this.action = null;
-        this.actionsSidenav.close();
+        this.sluitSidenav();
         this.dialog.open(NotificationDialogComponent, {data: new NotificationDialogData(melding)});
     }
 
@@ -895,8 +899,7 @@ export class ZaakViewComponent extends ActionsViewComponent implements OnInit, A
         if (besluitVastgelegd) {
             this.zakenService.findBesluitByZaakUUID(this.zaak.uuid).subscribe(besluit => this.zaak.besluit = besluit);
         }
-        this.action = null;
-        this.actionsSidenav.close();
+        this.sluitSidenav();
     }
 
     besluitWijzigen(): void {
