@@ -167,7 +167,13 @@
         </ng-container>
 
         <ng-container matColumnDef="indicaties_filter">
-            <th mat-header-cell *matHeaderCellDef></th>
+            <th mat-header-cell *matHeaderCellDef>
+                <zac-facet-filter label="indicaties"
+                                  [selected]="dataSource.zoekParameters.filters.ZAAK_INDICATIES"
+                                  [opties]="dataSource.beschikbareFilters.ZAAK_INDICATIES"
+                                  (changed)="dataSource.zoekParameters.filters.ZAAK_INDICATIES = $event; filtersChange()">
+                </zac-facet-filter>
+            </th>
         </ng-container>
         <ng-container matColumnDef="indicaties">
             <th mat-header-cell cdkDrag *matHeaderCellDef

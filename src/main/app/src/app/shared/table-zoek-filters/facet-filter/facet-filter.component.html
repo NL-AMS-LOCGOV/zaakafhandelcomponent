@@ -9,7 +9,11 @@
                 [(ngModel)]="_selected">
         <mat-option>{{ (label + '.-kies-') | translate }}</mat-option>
         <mat-option *ngFor="let value of getFilters()" [value]="value.naam">
-            {{ value.naam == '-NULL-' ? (label + '.-geen-' | translate) : value.naam }}
+            {{ value.naam == '-NULL-'
+                ? (label + '.-geen-' | translate)
+                : isVertaalbaar(label)
+                        ? (VERTAALBARE_FACETTEN[label] + value.naam | translate)
+                        : value.naam }}
         </mat-option>
     </mat-select>
 </mat-form-field>
