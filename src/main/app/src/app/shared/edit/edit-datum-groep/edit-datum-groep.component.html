@@ -67,7 +67,7 @@
                     <mat-icon class="time-button">history</mat-icon>
                 </button>
             </div>
-            <div *ngIf="actieOpschorten" class="play-control" [class]="{'hervat': isHervat}">
+            <div *ngIf="actieOpschorten" class="play-control">
                 <button mat-icon-button color="primary"
                         [disabled]="isHervat"
                         (click)="opschorten()"
