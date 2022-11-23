@@ -29,7 +29,7 @@ export class ZaakIndicatiesComponent {
     }
 
     getDeelZaakToelichting(): string {
-        return this.getDeelzaken().length === 1 ? 'indicatie.relatie.toelichting' : 'indicatie.relatie.toelichting.meerdere.zaken';
+        return this.getDeelzaken().length === 1 ? 'msg.zaak.relatie' : 'msg.zaak.relaties';
     }
 
     getDeelZaakArgs(): object {

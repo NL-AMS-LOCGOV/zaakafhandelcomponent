@@ -11,12 +11,4 @@ export class DatumRange {
         this.van = van || null;
         this.tot = tot || null;
     }
-
-    hasValue(): boolean {
-        return this.van != null || this.tot != null;
-    }
-
-    hasRange(): boolean {
-        return this.van != null && this.tot != null;
-    }
 }

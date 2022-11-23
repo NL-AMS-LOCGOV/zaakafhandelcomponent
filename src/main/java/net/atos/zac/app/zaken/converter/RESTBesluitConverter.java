@@ -41,20 +41,18 @@ public class RESTBesluitConverter {
     private DRCClientService drcClientService;
 
     public RESTBesluit convertToRESTBesluit(final Besluit besluit) {
-        if (besluit != null) {
-            final RESTBesluit restBesluit = new RESTBesluit();
-            restBesluit.uuid = UriUtil.uuidFromURI(besluit.getUrl());
-            restBesluit.besluittype = restBesluittypeConverter.convertToRESTBesluittype(besluit.getBesluittype());
-            restBesluit.datum = besluit.getDatum();
-            restBesluit.identificatie = besluit.getIdentificatie();
-            restBesluit.url = besluit.getUrl();
-            restBesluit.toelichting = besluit.getToelichting();
-            restBesluit.ingangsdatum = besluit.getIngangsdatum();
-            restBesluit.vervaldatum = besluit.getVervaldatum();
-            restBesluit.informatieobjecten = informatieobjectConverter.convertInformatieobjectenToREST(listBesluitInformatieobjecten(besluit));
-            return restBesluit;
-        }
-        return null;
+        final RESTBesluit restBesluit = new RESTBesluit();
+        restBesluit.uuid = UriUtil.uuidFromURI(besluit.getUrl());
+        restBesluit.besluittype = restBesluittypeConverter.convertToRESTBesluittype(besluit.getBesluittype());
+        restBesluit.datum = besluit.getDatum();
+        restBesluit.identificatie = besluit.getIdentificatie();
+        restBesluit.url = besluit.getUrl();
+        restBesluit.toelichting = besluit.getToelichting();
+        restBesluit.ingangsdatum = besluit.getIngangsdatum();
+        restBesluit.vervaldatum = besluit.getVervaldatum();
+        restBesluit.informatieobjecten = informatieobjectConverter.convertInformatieobjectenToREST(
+                listBesluitInformatieobjecten(besluit));
+        return restBesluit;
     }
 
     public Besluit convertToBesluit(final Zaak zaak, final RESTBesluitVastleggenGegevens besluitToevoegenGegevens) {
@@ -71,7 +69,8 @@ public class RESTBesluitConverter {
 
     public List<EnkelvoudigInformatieobject> listBesluitInformatieobjecten(final Besluit besluit) {
         return brcClientService.listBesluitInformatieobjecten(besluit.getUrl()).stream()
-                .map(besluitInformatieobject -> drcClientService.readEnkelvoudigInformatieobject(besluitInformatieobject.getInformatieobject()))
+                .map(besluitInformatieobject -> drcClientService.readEnkelvoudigInformatieobject(
+                        besluitInformatieobject.getInformatieobject()))
                 .collect(Collectors.toList());
     }
 }

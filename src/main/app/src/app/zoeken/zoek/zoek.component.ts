@@ -45,7 +45,7 @@ export class ZoekComponent implements AfterViewInit {
     zoekType: ZoekType = ZoekType.ZAC;
     ZoekType = ZoekType;
     readonly zoekObjectType = ZoekObjectType;
-    zoekResultaat: ZoekResultaat<ZoekObject> = {totaal: 0, foutmelding: '', resultaten: [], filters: null};
+    zoekResultaat: ZoekResultaat<ZoekObject> = new ZoekResultaat<ZoekObject>();
     zoekParameters: ZoekParameters = new ZoekParameters();
     isLoadingResults = true;
     slow = false;
@@ -127,4 +127,5 @@ export class ZoekComponent implements AfterViewInit {
             this.zoekenControl.disable();
         }
     }
+
 }

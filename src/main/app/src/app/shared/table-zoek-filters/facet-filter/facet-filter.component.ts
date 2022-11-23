@@ -18,6 +18,11 @@ export class FacetFilterComponent implements OnInit, OnChanges {
     @Input() label: string;
     @Output() changed = new EventEmitter<string[]>();
 
+    /* veld: prefix */
+    public VERTAALBARE_FACETTEN = {
+        indicaties: 'indicatie.'
+    };
+
     getFilters(): FilterResultaat[] {
         if (this.opties) {
             return this.opties.sort((a, b) => a.naam?.localeCompare(b.naam));
@@ -36,5 +41,9 @@ export class FacetFilterComponent implements OnInit, OnChanges {
 
     private setSelected(): void {
         this._selected = this.selected ? this.selected[0] : null;
+    }
+
+    isVertaalbaar(veld: string): boolean {
+        return this.VERTAALBARE_FACETTEN[veld] !== undefined;
     }
 }

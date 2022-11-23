@@ -17,15 +17,15 @@ export class DateRangeFilterComponent implements OnChanges {
     @Input() label: string;
     @Output() changed = new EventEmitter<DatumRange>();
 
-    dateVan: FormControl<Date>;
-    dateTM: FormControl<Date>;
+    dateVan: FormControl<Date> = new FormControl<Date>(null);
+    dateTM: FormControl<Date> = new FormControl<Date>(null);
 
     ngOnChanges(changes: SimpleChanges): void {
         if (!this.range) {
             this.range = new DatumRange();
-            this.dateVan = new FormControl(this.range.van);
-            this.dateTM = new FormControl(this.range.tot);
         }
+        this.dateVan.setValue(this.range.van);
+        this.dateTM.setValue(this.range.tot);
     }
 
     clearDate($event: MouseEvent): void {
@@ -40,8 +40,16 @@ export class DateRangeFilterComponent implements OnChanges {
     change(): void {
         this.range.van = this.dateVan.value;
         this.range.tot = this.dateTM.value;
-        if (this.range.hasRange()) {
+        if (this.hasRange()) {
             this.changed.emit(this.range);
         }
     }
+
+    hasRange(): boolean {
+        if (this.range) {
+            return this.range.van != null && this.range.tot != null;
+        }
+        return false;
+    }
+
 }

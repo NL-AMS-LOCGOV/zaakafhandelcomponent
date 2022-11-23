@@ -132,11 +132,13 @@ public class DataConverter {
         zaakData.einddatum = zaak.getEinddatum();
 
         if (zaak.getStatus() != null) {
-            zaakData.status = ztcClientService.readStatustype(zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
+            zaakData.status = ztcClientService.readStatustype(
+                    zrcClientService.readStatus(zaak.getStatus()).getStatustype()).getOmschrijving();
         }
 
         if (zaak.getResultaat() != null) {
-            zaakData.resultaat = ztcClientService.readResultaattype(zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype())
+            zaakData.resultaat = ztcClientService.readResultaattype(
+                            zrcClientService.readResultaat(zaak.getResultaat()).getResultaattype())
                     .getOmschrijving();
         }
 
@@ -152,51 +154,44 @@ public class DataConverter {
             zaakData.vertrouwelijkheidaanduiding = zaak.getVertrouwelijkheidaanduiding().toValue();
         }
 
-        final RolOrganisatorischeEenheid groep = zgwApiService.findGroepForZaak(zaak);
-        if (groep != null) {
-            zaakData.groep = groep.getNaam();
-        }
+        zgwApiService.findGroepForZaak(zaak)
+                .map(RolOrganisatorischeEenheid::getNaam)
+                .ifPresent(groep -> zaakData.groep = groep);
 
-        final RolMedewerker behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
-        if (behandelaar != null) {
-            zaakData.behandelaar = behandelaar.getNaam();
-        }
+        zgwApiService.findBehandelaarForZaak(zaak)
+                .map(RolMedewerker::getNaam)
+                .ifPresent(behandelaar -> zaakData.behandelaar = behandelaar);
 
         if (zaak.getCommunicatiekanaal() != null) {
-            final CommunicatieKanaal communicatiekanaal = vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()));
-            if (communicatiekanaal != null) {
-                zaakData.communicatiekanaal = communicatiekanaal.getNaam();
-            }
+            vrlClientService.findCommunicatiekanaal(uuidFromURI(zaak.getCommunicatiekanaal()))
+                    .map(CommunicatieKanaal::getNaam)
+                    .ifPresent(communicatiekanaal -> zaakData.communicatiekanaal = communicatiekanaal);
         }
 
         return zaakData;
     }
 
     private AanvragerData createAanvragerData(final Zaak zaak) {
-        final Rol<?> initiator = zgwApiService.findInitiatorForZaak(zaak);
-        if (initiator != null) {
-            return convertToAanvragerData(initiator);
-        } else {
-            return null;
-        }
+        return zgwApiService.findInitiatorForZaak(zaak)
+                .map(this::convertToAanvragerData)
+                .orElse(null);
     }
 
     private AanvragerData convertToAanvragerData(final Rol<?> initiator) {
         return switch (initiator.getBetrokkeneType()) {
             case NATUURLIJK_PERSOON -> createAanvragerDataNatuurlijkPersoon(initiator.getIdentificatienummer());
             case VESTIGING -> createAanvragerDataVestiging(initiator.getIdentificatienummer());
-            case NIET_NATUURLIJK_PERSOON -> createAanvragerDataNietNatuurlijkPersoon(initiator.getIdentificatienummer());
-            default -> throw new NotImplementedException(String.format("Initiator of type '%s' is not supported"), initiator.getBetrokkeneType().toValue());
+            case NIET_NATUURLIJK_PERSOON ->
+                    createAanvragerDataNietNatuurlijkPersoon(initiator.getIdentificatienummer());
+            default -> throw new NotImplementedException(String.format("Initiator of type '%s' is not supported"),
+                                                         initiator.getBetrokkeneType().toValue());
         };
     }
 
     private AanvragerData createAanvragerDataNatuurlijkPersoon(final String bsn) {
-        final IngeschrevenPersoonHal persoon = brpClientService.findPersoon(bsn, FIELDS_PERSOON);
-        if (persoon != null) {
-            return convertToAanvragerDataPersoon(persoon);
-        } else {
-            return null;
-        }
+        return brpClientService.findPersoon(bsn, FIELDS_PERSOON)
+                .map(this::convertToAanvragerDataPersoon)
+                .orElse(null);
     }
 
     private AanvragerData convertToAanvragerDataPersoon(final IngeschrevenPersoonHal persoon) {
@@ -221,27 +216,22 @@ public class DataConverter {
     }
 
     private String convertToHuisnummer(final Verblijfplaats verblijfplaats) {
-        return Stream.of(Objects.toString(verblijfplaats.getHuisnummer(), null), verblijfplaats.getHuisnummertoevoeging(), verblijfplaats.getHuisletter())
+        return Stream.of(Objects.toString(verblijfplaats.getHuisnummer(), null),
+                         verblijfplaats.getHuisnummertoevoeging(), verblijfplaats.getHuisletter())
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(" "));
     }
 
     private AanvragerData createAanvragerDataVestiging(final String vestigingsnummer) {
-        final ResultaatItem vestiging = kvkClientService.findVestiging(vestigingsnummer);
-        if (vestiging != null) {
-            return convertToAanvragerDataBedrijf(vestiging);
-        } else {
-            return null;
-        }
+        return kvkClientService.findVestiging(vestigingsnummer)
+                .map(this::convertToAanvragerDataBedrijf)
+                .orElse(null);
     }
 
     private AanvragerData createAanvragerDataNietNatuurlijkPersoon(final String rsin) {
-        final ResultaatItem vestiging = kvkClientService.findRechtspersoon(rsin);
-        if (vestiging != null) {
-            return convertToAanvragerDataBedrijf(vestiging);
-        } else {
-            return null;
-        }
+        return kvkClientService.findRechtspersoon(rsin)
+                .map(this::convertToAanvragerDataBedrijf)
+                .orElse(null);
     }
 
     private AanvragerData convertToAanvragerDataBedrijf(final ResultaatItem vestiging) {

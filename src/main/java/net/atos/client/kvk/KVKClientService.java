@@ -5,6 +5,7 @@
 
 package net.atos.client.kvk;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,31 +40,31 @@ public class KVKClientService {
         }
     }
 
-    public ResultaatItem findHoofdvestiging(final String kvkNummer) {
+    public Optional<ResultaatItem> findHoofdvestiging(final String kvkNummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setType("hoofdvestiging");
         zoekParameters.setKvkNummer(kvkNummer);
         return findSingleItem(zoekParameters);
     }
 
-    public ResultaatItem findVestiging(final String vestigingsnummer) {
+    public Optional<ResultaatItem> findVestiging(final String vestigingsnummer) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setVestigingsnummer(vestigingsnummer);
         return findSingleItem(zoekParameters);
     }
 
-    public ResultaatItem findRechtspersoon(final String rsin) {
+    public Optional<ResultaatItem> findRechtspersoon(final String rsin) {
         final KVKZoekenParameters zoekParameters = new KVKZoekenParameters();
         zoekParameters.setType("rechtspersoon");
         zoekParameters.setRsin(rsin);
         return findSingleItem(zoekParameters);
     }
 
-    private ResultaatItem findSingleItem(final KVKZoekenParameters parameters) {
+    private Optional<ResultaatItem> findSingleItem(final KVKZoekenParameters parameters) {
         final Resultaat resultaat = find(parameters);
         return switch (resultaat.getTotaal()) {
-            case 0 -> null;
-            case 1 -> resultaat.getResultaten().get(0);
+            case 0 -> Optional.empty();
+            case 1 -> Optional.of(resultaat.getResultaten().get(0));
             default -> throw new IllegalStateException("%s: %d".formatted("Too many results", resultaat.getAantal()));
         };
     }
