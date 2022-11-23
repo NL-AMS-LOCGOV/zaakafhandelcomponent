@@ -636,5 +636,12 @@
   "resultaattype": "Resultaattype",
   "besluittype": "Besluittype",
   "informatieobjecttype": "Informatieobjecttype",
-  "zaakafhandelparameters": "Zaakafhandelparameters"
+  "zaakafhandelparameters": "Zaakafhandelparameters",
+  " 11 ": ">>--> Zaak formulieren <--<<",
+  "melding_klein_evenement.evenement": "Gegevens evenement",
+  "melding_klein_evenement.aanvrager.gegevens": "Gegevens aanvrager",
+  "naamEvenement": "Naam evenement",
+  "omschrijvingEvenement": "Omschrijving evenement",
+  "datumEvenement": "Datum evenement",
+  "verwachtAantalDeelnemers": "Verwacht aantal deelnemers"
 }

@@ -4,8 +4,6 @@
  */
 
 import {AbstractFormField} from '../../shared/material-form-builder/model/abstract-form-field';
-import {HeadingFormFieldBuilder} from '../../shared/material-form-builder/form-components/heading/heading-form-field-builder';
-import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from '@angular/forms';
 import {Zaak} from '../../zaken/model/zaak';
@@ -21,16 +19,13 @@ export abstract class AbstractZaakFormulier {
 
     initForm(): void {
         this.form = [];
-        this.form.push(
-            [new HeadingFormFieldBuilder().id('zaakdataBewerken').label(this.translate.instant('zaakdata')).level(HeadingLevel.H2).build()]);
-
         this._initForm();
     }
 
     protected abstract _initForm(): void;
 
     protected getDataElement(key: string): any {
-        if (this.dataElementen && this.dataElementen.hasOwnProperty(key)) {
+        if (this.dataElementen?.hasOwnProperty(key)) {
             return this.dataElementen[key];
         }
         return null;

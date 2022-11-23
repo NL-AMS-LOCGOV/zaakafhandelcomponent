@@ -636,5 +636,12 @@
   "resultaattype": "Result type",
   "besluittype": "Decision type",
   "informatieobjecttype": "Informationobject type",
-  "zaakafhandelparameters": "Case handling parameters"
+  "zaakafhandelparameters": "Case handling parameters",
+  " 11 ": ">>--> Zaak formulieren <--<<",
+  "melding_klein_evenement.evenement": "Event information",
+  "melding_klein_evenement.aanvrager.gegevens": "Requester details",
+  "naamEvenement": "Event name",
+  "omschrijvingEvenement": "Event description",
+  "datumEvenement": "Event date",
+  "verwachtAantalDeelnemers": "Expected number of participants"
 }

@@ -86,7 +86,7 @@ export abstract class AbstractTaakFormulier {
     }
 
     protected getDataElement(key: string): any {
-        if (this.dataElementen && this.dataElementen.hasOwnProperty(key)) {
+        if (this.dataElementen?.hasOwnProperty(key)) {
             return this.dataElementen[key];
         }
         return null;
