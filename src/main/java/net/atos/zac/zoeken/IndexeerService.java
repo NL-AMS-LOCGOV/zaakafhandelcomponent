@@ -32,7 +32,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.CursorMarkParams;
@@ -60,7 +60,7 @@ import net.atos.zac.zoeken.model.index.ZoekObjectType;
 @Transactional
 public class IndexeerService {
 
-    private static final String SOLR_CORE = "zac";
+    public static final String SOLR_CORE = "zac";
 
     private static final Logger LOG = Logger.getLogger(IndexeerService.class.getName());
 
@@ -90,7 +90,7 @@ public class IndexeerService {
 
     public IndexeerService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
-        solrClient = new HttpSolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
+        solrClient = new Http2SolrClient.Builder(String.format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
     public void indexeerDirect(final String id, final ZoekObjectType type) {
