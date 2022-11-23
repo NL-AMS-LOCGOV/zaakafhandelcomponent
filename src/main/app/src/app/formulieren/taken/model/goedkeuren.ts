@@ -14,9 +14,9 @@ import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/f
 import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {RadioFormFieldBuilder} from '../../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {Observable, of} from 'rxjs';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
-import {Goedkeuring} from './goedkeuring.enum';
 import {AbstractTaakFormulier} from '../abstract-taak-formulier';
+import {Goedkeuring} from '../goedkeuring.enum';
+import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 export class Goedkeuren extends AbstractTaakFormulier {
 
