@@ -5,23 +5,23 @@
 
 <mat-chip-list class="list" *ngIf="zaakZoekObject" selectable="false" fxLayout="row">
     <mat-chip *ngIf="zaakZoekObject.indicatieOpschorting" color="accent" selected
-              [matTooltip]="('indicatieOpschorting' | translate) +': '+ zaakZoekObject.redenOpschorting">
+              [matTooltip]="('indicatie.OPSCHORTING' | translate) +': '+ zaakZoekObject.redenOpschorting">
         O
     </mat-chip>
     <mat-chip *ngIf="zaakZoekObject.indicatieHeropend" color="accent" selected
-              [matTooltip]="('indicatieHeropend' | translate) +': '+ zaakZoekObject.statusToelichting">
+              [matTooltip]="('indicatie.HEROPEND' | translate) +': '+ zaakZoekObject.statusToelichting">
         H
     </mat-chip>
     <mat-chip *ngIf="zaakZoekObject.indicatieHoofdzaak"
-              [matTooltip]="'indicatieHoofdzaak' | translate">
+              [matTooltip]="'indicatie.HOOFDZAAK' | translate">
         HZ
     </mat-chip>
     <mat-chip *ngIf="zaakZoekObject.indicatieDeelzaak"
-              [matTooltip]="'indicatieDeelzaak' | translate">
+              [matTooltip]="'indicatie.DEELZAAK' | translate">
         DZ
     </mat-chip>
     <mat-chip *ngIf="zaakZoekObject.indicatieVerlenging"
-              [matTooltip]="('indicatieVerlenging' | translate) +': '+ zaakZoekObject.redenVerlenging">
+              [matTooltip]="('indicatie.VERLENGD' | translate) +': '+ zaakZoekObject.redenVerlenging">
         V
     </mat-chip>
 </mat-chip-list>
@@ -29,21 +29,21 @@
 <mat-chip-list class="view" *ngIf="zaak" selectable="false" fxLayout="row">
     <mat-chip *ngIf="zaak.isOpgeschort" color="accent" selected
               [matTooltip]="zaak.redenOpschorting">
-        {{'indicatieOpschorting' | translate}}
+        {{'indicatie.OPSCHORTING' | translate}}
     </mat-chip>
     <mat-chip *ngIf="zaak.isHeropend" color="accent" selected
               [matTooltip]="zaak.status.toelichting">
-        {{'indicatieHeropend' | translate}}
+        {{'indicatie.HEROPEND' | translate}}
     </mat-chip>
     <mat-chip *ngIf="zaak.isHoofdzaak"
               [matTooltip]="getDeelZaakToelichting() | translate: getDeelZaakArgs()">
-        {{'indicatieHoofdzaak' | translate}}
+        {{'indicatie.HOOFDZAAK' | translate}}
     </mat-chip>
     <mat-chip *ngIf="zaak.isDeelzaak"
-              [matTooltip]="'indicatie.relatie.toelichting' | translate: {'identificatie': getHoofdzaakID()}">
-        {{'indicatieDeelzaak' | translate}}
+              [matTooltip]="'msg.zaak.relatie' | translate: {'identificatie': getHoofdzaakID()}">
+        {{'indicatie.DEELZAAK' | translate}}
     </mat-chip>
     <mat-chip *ngIf="zaak.isVerlengd"
               [matTooltip]="zaak.redenVerlenging">
-        {{'indicatieVerlenging' | translate}}</mat-chip>
+        {{'indicatie.VERLENGD' | translate}}</mat-chip>
 </mat-chip-list>

@@ -22,11 +22,11 @@ export class MultiFacetFilterComponent implements OnInit {
 
     /* veld: prefix */
     public VERTAALBARE_FACETTEN = {
-        TAAK_STATUS: 'taak.status',
-        TYPE: 'type',
-        TOEGEKEND: 'zoeken.filter.jaNee',
-        ZAAK_INDICATIES: 'zoeken.filter.indicatie.zaak',
-        DOCUMENT_INDICATIES: 'zoeken.filter.indicatie.document'
+        TAAK_STATUS: 'taak.status.',
+        TYPE: 'type.',
+        TOEGEKEND: 'zoeken.filter.jaNee.',
+        ZAAK_INDICATIES: 'indicatie.',
+        DOCUMENT_INDICATIES: 'indicatie.'
     };
 
     constructor(private _formBuilder: FormBuilder) {}

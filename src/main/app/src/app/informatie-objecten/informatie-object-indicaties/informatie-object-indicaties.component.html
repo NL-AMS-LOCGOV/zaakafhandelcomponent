@@ -3,18 +3,31 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="infoObject.ondertekening"
-              [matTooltip]="infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">{{'indicatieOndertekend' | translate}}</mat-chip>
+<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
     <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
-              [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">{{'indicatieVergrendeld' | translate}}</mat-chip>
+              [matTooltip]="('indicatie.VERGRENDELD' | translate) + ': ' +infoObject.gelockedDoor.naam">
+        V
+    </mat-chip>
+    <mat-chip *ngIf="infoObject.indicatieGebruiksrecht" color="accent" selected
+              [matTooltip]="('indicatie.GEBRUIKSRECHTEN' | translate)">
+        G
+    </mat-chip>
+    <mat-chip *ngIf="infoObject.ondertekening"
+              [matTooltip]="('indicatie.ONDERTEKEND' | translate) + ': ' +infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">
+        O
+    </mat-chip>
 </mat-chip-list>
 
-<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="infoObject.ondertekening"
-              [matTooltip]="('indicatieOndertekend' | translate) + ': ' +infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">O
-    </mat-chip>
+<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
     <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
-              [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">V
+              [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">
+        {{'indicatie.VERGRENDELD' | translate}}
+    </mat-chip>
+    <mat-chip *ngIf="infoObject.indicatieGebruiksrecht" color="accent" selected>
+        {{'indicatie.GEBRUIKSRECHTEN' | translate}}
+    </mat-chip>
+    <mat-chip *ngIf="infoObject.ondertekening"
+              [matTooltip]="infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">
+        {{'indicatie.ONDERTEKEND' | translate}}
     </mat-chip>
 </mat-chip-list>
