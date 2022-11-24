@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -183,7 +184,7 @@ public class MailService {
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(eMailObjectType.getUrl());
         enkelvoudigInformatieobjectWithInhoud.setInhoud(body.getBytes(StandardCharsets.UTF_8));
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
-        enkelvoudigInformatieobjectWithInhoud.setFormaat("text/html");
+        enkelvoudigInformatieobjectWithInhoud.setFormaat(MediaType.TEXT_HTML);
         enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.html", onderwerp));
         enkelvoudigInformatieobjectWithInhoud.setStatus(InformatieobjectStatus.DEFINITIEF);
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
@@ -244,7 +245,9 @@ public class MailService {
         String resolvedTekst = tekst;
         resolvedTekst = replaceVariabele(resolvedTekst, ZAAKNUMMER, zaak.getIdentificatie());
         resolvedTekst = replaceVariabele(resolvedTekst, ZAAKURL,
-                                         String.format("<a href=\"%s\" title\"Klik om naar het zaakafhandelcomponent te gaan.\">%s</a>",
+                                         String.format("""
+                                                       <a href="%s" title="Klik om naar het zaakafhandelcomponent te gaan.">%s</a>
+                                                       """,
                                                        configuratieService.zaakTonenUrl(zaak.getIdentificatie()).toString(),
                                                        zaak.getIdentificatie()));
 
@@ -315,23 +318,23 @@ public class MailService {
                     .orElse(null);
             final Group group = groepId != null ? identityService.readGroup(groepId) : null;
             if (group != null) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGROEPTAAK,
-                                                 group.getName());
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGROEPTAAK, group.getName());
             }
         }
 
         if (resolvedTekst.contains(TOEGEWEZENGEBRUIKERTAAK.getVariabele())) {
             final User user = taskInfo.getAssignee() != null ? identityService.readUser(taskInfo.getAssignee()) : null;
             if (user != null) {
-                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK,
-                                                 user.getFullName());
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK, user.getFullName());
             } else {
                 resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK, null);
             }
         }
 
         resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TAAKURL,
-                                         String.format("<a href=\"%s\" title\"Klik om naar het zaakafhandelcomponent te gaan.\">%s</a>",
+                                         String.format("""
+                                         <a href="%s" title="Klik om naar het zaakafhandelcomponent te gaan.">%s</a>
+                                         """,
                                          configuratieService.taakTonenUrl(taskInfo.getId()).toString(),
                                          taskInfo.getId()));
 
@@ -367,8 +370,7 @@ public class MailService {
         final var verblijfplaats = persoon.getVerblijfplaats();
         if (isNotBlank(verblijfplaats.getStraat())) {
             return "%s %s%s%s, %s %s".formatted(verblijfplaats.getStraat(),
-                                                verblijfplaats.getHuisnummer() != null ?
-                                                        verblijfplaats.getHuisnummer().toString() : StringUtils.EMPTY,
+                                                emptyIfBlank(verblijfplaats.getHuisnummer()),
                                                 emptyIfBlank(verblijfplaats.getHuisletter()),
                                                 emptyIfBlank(verblijfplaats.getHuisnummertoevoeging()),
                                                 emptyIfBlank(verblijfplaats.getPostcode()),
@@ -386,8 +388,7 @@ public class MailService {
 
     private String getAdres(final ResultaatItem resultaatItem) {
         return "%s %s%s, %s %s".formatted(resultaatItem.getStraatnaam(),
-                                          resultaatItem.getHuisnummer() != null ?
-                                                  resultaatItem.getHuisnummer().toString() : StringUtils.EMPTY,
+                                          emptyIfBlank(resultaatItem.getHuisnummer()),
                                           emptyIfBlank(resultaatItem.getHuisnummerToevoeging()),
                                           emptyIfBlank(resultaatItem.getPostcode()),
                                           resultaatItem.getPlaats());
@@ -405,5 +406,9 @@ public class MailService {
 
     private String emptyIfBlank(final String value) {
         return isNotBlank(value) ? value : StringUtils.EMPTY;
+    }
+
+    private String emptyIfBlank(final Integer value) {
+        return value != null ? value.toString() : StringUtils.EMPTY;
     }
 }
