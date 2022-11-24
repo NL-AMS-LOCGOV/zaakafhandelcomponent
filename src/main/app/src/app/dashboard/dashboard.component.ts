@@ -33,12 +33,14 @@ export class DashboardComponent implements OnInit {
         new DashboardCard(DashboardCardId.MIJN_TAKEN_NIEUW, DashboardCardType.TAKEN, SignaleringType.TAAK_OP_NAAM),
         new DashboardCard(DashboardCardId.MIJN_ZAKEN, DashboardCardType.ZAAK_ZOEKEN),
         new DashboardCard(DashboardCardId.MIJN_ZAKEN_NIEUW, DashboardCardType.ZAKEN, SignaleringType.ZAAK_OP_NAAM),
-        new DashboardCard(DashboardCardId.MIJN_DOCUMENTEN_NIEUW, DashboardCardType.ZAKEN, SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
-        new DashboardCard(DashboardCardId.MIJN_ZAKEN_WAARSCHUWING, DashboardCardType.ZAAK_WAARSCHUWINGEN, SignaleringType.ZAAK_VERLOPEND)
+        new DashboardCard(DashboardCardId.MIJN_DOCUMENTEN_NIEUW, DashboardCardType.ZAKEN,
+            SignaleringType.ZAAK_DOCUMENT_TOEGEVOEGD),
+        new DashboardCard(DashboardCardId.MIJN_ZAKEN_WAARSCHUWING, DashboardCardType.ZAAK_WAARSCHUWINGEN,
+            SignaleringType.ZAAK_VERLOPEND)
     ];
 
     dashboardCardType = DashboardCardType;
-    width: number; // maximum number of cards horizontally
+    width: number; // actual number of cards horizontally
     editmode: boolean;
     showHint: boolean;
 
@@ -54,14 +56,16 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit(): void {
         this.utilService.setTitle('title.dashboard');
-        this.width = SessionStorageUtil.getItem('dashboardWidth', 2);
-        this.loadCards();
+        this.loadCards(SessionStorageUtil.getItem('dashboardWidth', 3));
         // TODO instead of session storage use userpreferences in a db
         SessionStorageUtil.setItem('dashboardOpened', moment());
         this.signaleringenService.updateSignaleringen();
     }
 
-    private loadCards(): void {
+    private loadCards(width: number): void {
+        while (this.grid.length < width) {
+            this.grid.push([]);
+        }
         forkJoin([
             this.gebruikersvoorkeurenService.listDashboardCards(),
             this.signaleringenService.listDashboardSignaleringTypen()
@@ -69,6 +73,7 @@ export class DashboardComponent implements OnInit {
             this.instellingen = dashboardInstellingen;
             this.addExistingCards(dashboardInstellingen, signaleringInstellingen);
             this.addNewCards(signaleringInstellingen);
+            this.updateWidth();
             this.updateAvailable();
         });
     }
@@ -108,9 +113,6 @@ export class DashboardComponent implements OnInit {
     // find a good position for a new card
     private addCard(card: DashboardCard): Position {
         const columns = this.grid.length;
-        if (columns < this.width) {
-            return this.putCard(card, columns);
-        }
         let shortest: number = -1;
         for (let column: number = 0; column < columns; column++) {
             if (shortest < 0 || this.grid[column].length < this.grid[shortest].length) {
@@ -121,10 +123,17 @@ export class DashboardComponent implements OnInit {
     }
 
     private putCard(card: DashboardCard, column: number = 0): Position {
-        while (this.grid.length <= column) {
-            this.grid.push([]);
-        }
         return new Position(column, this.grid[column].push(card) - 1);
+    }
+
+    private updateWidth() {
+        let width: number = 0;
+        for (const column of this.grid) {
+            if (0 < column.length) {
+                width++;
+            }
+        }
+        this.width = width;
     }
 
     private updateAvailable(): void {
@@ -155,9 +164,11 @@ export class DashboardComponent implements OnInit {
             if (sameColumn) {
                 moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
             } else {
-                transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+                transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex,
+                    event.currentIndex);
             }
             this.saveCards();
+            this.updateWidth();
         }
     }
 
@@ -171,6 +182,7 @@ export class DashboardComponent implements OnInit {
     add(card: DashboardCard): void {
         const position = this.addCard(card);
         this.saveCard(card, position.column, position.row);
+        this.updateWidth();
         this.updateAvailable();
     }
 
@@ -180,6 +192,7 @@ export class DashboardComponent implements OnInit {
                 if (column[row].id === card.id) {
                     column.splice(row, 1);
                     this.deleteCard(card);
+                    this.updateWidth();
                     this.updateAvailable();
                     return;
                 }
@@ -188,21 +201,24 @@ export class DashboardComponent implements OnInit {
     }
 
     private saveCards(): void {
-        this.gebruikersvoorkeurenService.updateDashboardCards(this.getInstellingen()).subscribe(dashboardInstellingen => {
-            this.instellingen = dashboardInstellingen;
-        });
+        this.gebruikersvoorkeurenService.updateDashboardCards(this.getInstellingen())
+            .subscribe(dashboardInstellingen => {
+                this.instellingen = dashboardInstellingen;
+            });
     }
 
     private saveCard(card: DashboardCard, column: number, row: number): void {
-        this.gebruikersvoorkeurenService.addDashboardCard(this.getInstellingAt(card, column, row)).subscribe(dashboardInstellingen => {
-            this.instellingen = dashboardInstellingen;
-        });
+        this.gebruikersvoorkeurenService.addDashboardCard(this.getInstellingAt(card, column, row))
+            .subscribe(dashboardInstellingen => {
+                this.instellingen = dashboardInstellingen;
+            });
     }
 
     private deleteCard(card: DashboardCard): void {
-        this.gebruikersvoorkeurenService.deleteDashboardCard(this.getInstelling(card)).subscribe(dashboardInstellingen => {
-            this.instellingen = dashboardInstellingen;
-        });
+        this.gebruikersvoorkeurenService.deleteDashboardCard(this.getInstelling(card))
+            .subscribe(dashboardInstellingen => {
+                this.instellingen = dashboardInstellingen;
+            });
     }
 
     private getInstellingen(): DashboardCardInstelling[] {
