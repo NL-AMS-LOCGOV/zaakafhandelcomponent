@@ -26,6 +26,6 @@ domeinen := [
     {
        "rol": "domein_oldenzaal",
        "zaaktypen": { "Wegenbeheer en onderhoud" }
-    },
+    }
 ]
 
