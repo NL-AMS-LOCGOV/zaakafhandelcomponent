@@ -10,12 +10,10 @@ import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.addDynamicField;
 import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.addField;
 import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.addFieldMultiValued;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 
 import net.atos.zac.solr.SolrSchemaUpdate;
@@ -35,26 +33,12 @@ class SolrSchemaV1 implements SolrSchemaUpdate {
 
     @Override
     public List<SchemaRequest.Update> getSchemaUpdates() {
-        // updateSolrConfig();
         final List<SchemaRequest.Update> schemaUpdates = new LinkedList<>();
         schemaUpdates.addAll(createGenericSchema());
         schemaUpdates.addAll(createZaakSchema());
         schemaUpdates.addAll(createTaakSchema());
         schemaUpdates.addAll(createInformatieobjectSchema());
         return schemaUpdates;
-    }
-
-    private void updateSolrConfig() throws SolrServerException, IOException {
-        final String command = """
-                {
-                    "update-updateprocessor" : {
-                        "name" : "add-schema-fields",
-                        "class" : "solr.AddSchemaFieldsUpdateProcessorFactory",
-                        "defaultFieldType" : "string"
-                    }
-                }
-                """;
-        // executeGenericSolrRequest(command);
     }
 
     private List<SchemaRequest.Update> createGenericSchema() {

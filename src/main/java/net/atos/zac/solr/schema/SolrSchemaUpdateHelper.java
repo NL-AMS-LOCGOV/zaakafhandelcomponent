@@ -134,11 +134,4 @@ public final class SolrSchemaUpdateHelper {
     public static SchemaRequest.DeleteField deleteField(final String name) {
         return new SchemaRequest.DeleteField(name);
     }
-
-    //    protected void executeGenericSolrRequest(final String command) throws SolrServerException, IOException {
-//        final var request = new GenericSolrRequest(SolrRequest.METHOD.POST, "/config", null);
-//        final var content = new RequestWriter.StringPayloadContentWriter(command, MediaType.APPLICATION_JSON);
-//        request.setContentWriter(content);
-//        request.process(solrClient);
-//    }
 }
