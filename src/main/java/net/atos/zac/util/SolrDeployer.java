@@ -5,12 +5,16 @@
 
 package net.atos.zac.util;
 
+import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.NAME;
+import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.STRING;
+import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.addField;
+import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.deleteField;
 import static net.atos.zac.zoeken.IndexeerService.SOLR_CORE;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -40,14 +44,14 @@ public class SolrDeployer {
     @ConfigProperty(name = "SOLR_URL")
     private String solrUrl;
 
-    private List<SolrSchemaUpdate> schemaUpdates;
-
     private SolrClient solrClient;
+
+    private List<SolrSchemaUpdate> schemaUpdates;
 
     @Inject
     public void setSchemaUpdates(final Instance<SolrSchemaUpdate> schemaUpdates) {
         this.schemaUpdates = schemaUpdates.stream()
-                .sorted(Comparator.comparingInt(SolrSchemaUpdate::getVersion))
+                .sorted(Comparator.comparingInt(SolrSchemaUpdate::getVersie))
                 .toList();
     }
 
@@ -55,7 +59,8 @@ public class SolrDeployer {
         solrClient = new Http2SolrClient.Builder("%s/solr/%s".formatted(solrUrl, SOLR_CORE)).build();
         try {
             final int currentVersion = getCurrentVersion();
-            if (currentVersion == schemaUpdates.get(schemaUpdates.size() - 1).getVersion()) {
+            LOG.info("Current version of Solr core '%s': %d".formatted(SOLR_CORE, currentVersion));
+            if (currentVersion == schemaUpdates.get(schemaUpdates.size() - 1).getVersie()) {
                 LOG.info("Solr core '%s' is up to date. No Solr schema migration needed.".formatted(SOLR_CORE));
             } else {
                 schemaUpdates.stream()
@@ -64,7 +69,7 @@ public class SolrDeployer {
 
                 schemaUpdates.stream()
                         .skip(currentVersion)
-                        .flatMap(schemaUpdate -> schemaUpdate.herindexeren().stream())
+                        .flatMap(schemaUpdate -> schemaUpdate.getTeHerindexerenZoekObjectTypes().stream())
                         .collect(Collectors.toSet())
                         .forEach(this::startHerindexeren);
             }
@@ -74,38 +79,34 @@ public class SolrDeployer {
     }
 
     private int getCurrentVersion() throws SolrServerException, IOException {
-        final String versionFieldName = new SchemaRequest.Fields().process(solrClient).getFields().stream()
-                .map(field -> field.get("name").toString())
+        return new SchemaRequest.Fields().process(solrClient).getFields().stream()
+                .map(field -> field.get(NAME).toString())
                 .filter(fieldName -> fieldName.startsWith(VERSION_FIELD_PREFIX))
                 .findAny()
-                .orElse(null);
-        final int currentVersion = versionFieldName != null ?
-                Integer.valueOf(StringUtils.substringAfter(versionFieldName, VERSION_FIELD_PREFIX)) : 0;
-        LOG.info("Current version of Solr core '%s': %d".formatted(SOLR_CORE, currentVersion));
-        return currentVersion;
+                .map(versionFieldName -> Integer.valueOf(
+                        StringUtils.substringAfter(versionFieldName, VERSION_FIELD_PREFIX)))
+                .orElse(0);
     }
 
     private void apply(final SolrSchemaUpdate schemaUpdate) {
-        LOG.info("Updating Solr core '%s' to version: %d".formatted(SOLR_CORE, schemaUpdate.getVersion()));
+        LOG.info("Updating Solr core '%s' to version: %d".formatted(SOLR_CORE, schemaUpdate.getVersie()));
         try {
-            schemaUpdate.updateSchema();
-            updateVersionField(schemaUpdate.getVersion());
+            final List<SchemaRequest.Update> schemaUpdates = new LinkedList<>();
+            schemaUpdates.addAll(schemaUpdate.getSchemaUpdates());
+            schemaUpdates.addAll(updateVersionField(schemaUpdate.getVersie()));
+            new SchemaRequest.MultiUpdate(schemaUpdates).process(solrClient);
         } catch (final SolrServerException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void updateVersionField(final int version) throws SolrServerException, IOException {
+    private List<SchemaRequest.Update> updateVersionField(final int version) {
+        final List<SchemaRequest.Update> schemaUpdates = new LinkedList<>();
         if (version > 1) {
-            new SchemaRequest.DeleteField(VERSION_FIELD_PREFIX + (version - 1))
-                    .process(solrClient);
+            schemaUpdates.add(deleteField(VERSION_FIELD_PREFIX + (version - 1)));
         }
-        new SchemaRequest.AddField(
-                Map.of("name", VERSION_FIELD_PREFIX + version,
-                       "type", "string",
-                       "indexed", false,
-                       "stored", false
-                )).process(solrClient);
+        schemaUpdates.add(addField(VERSION_FIELD_PREFIX + version, STRING, false, false));
+        return schemaUpdates;
     }
 
     private void startHerindexeren(final ZoekObjectType zoekObjectType) {

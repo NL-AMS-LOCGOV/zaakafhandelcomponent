@@ -5,24 +5,29 @@
 
 package net.atos.zac.solr.schema;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 
 import net.atos.zac.solr.SolrSchemaUpdate;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
-public class SolrSchemaV2 implements SolrSchemaUpdate {
+class SolrSchemaV2 implements SolrSchemaUpdate {
 
     @Override
-    public int getVersion() {
+    public int getVersie() {
         return 2;
     }
 
     @Override
-    public void updateSchema() {
+    public List<SchemaRequest.Update> getSchemaUpdates() {
+        return Collections.emptyList();
     }
 
     @Override
-    public Set<ZoekObjectType> herindexeren() {
+    public Set<ZoekObjectType> getTeHerindexerenZoekObjectTypes() {
         return Set.of(ZoekObjectType.TAAK);
     }
 }

@@ -6,17 +6,20 @@
 package net.atos.zac.solr;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 public interface SolrSchemaUpdate {
 
-    void updateSchema();
+    int getVersie();
 
-    int getVersion();
-
-    default Set<ZoekObjectType> herindexeren() {
+    default Set<ZoekObjectType> getTeHerindexerenZoekObjectTypes() {
         return Collections.emptySet();
     }
+
+    List<SchemaRequest.Update> getSchemaUpdates();
 }
