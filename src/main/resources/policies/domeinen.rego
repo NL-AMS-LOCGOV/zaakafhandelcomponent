@@ -8,12 +8,24 @@ domein_elk_zaaktype := {
 domeinen := [
     domein_elk_zaaktype,
     {
-        "rol": "domein_voorzieningen_verstrekken",
-        "zaaktypen": { "subsidie" }
+        "rol": "domein_kampen",
+        "zaaktypen": { "Aanvragen evenementenvergunning beoordelen" }
     },
     {
-        "rol": "domein_toestemming_verlenen",
-        "zaaktypen": { "melding klein evenement", "aanleg uitweg" }
+        "rol": "domein_dowr",
+        "zaaktypen": { "Subsidie" }
+    },
+    {
+        "rol": "domein_laarbeek",
+        "zaaktypen": { "Aanleg uitweg" }
+    },
+    {
+       "rol": "domein_oost_gelre",
+       "zaaktypen": { "Toeristenbelastingen" }
+    },
+    {
+       "rol": "domein_oldenzaal",
+       "zaaktypen": { "Wegenbeheer en onderhoud" }
     }
 ]
 
