@@ -106,7 +106,7 @@ public class ProductAanvraagService {
             return;
         }
 
-        final var zaak = new Zaak();
+        var zaak = new Zaak();
         final var zaaktype = ztcClientService.readZaaktype(zaaktypeUUID);
         zaak.setZaaktype(zaaktype.getUrl());
         zaak.setOmschrijving((String) productAanvraag.getData()
@@ -117,21 +117,23 @@ public class ProductAanvraagService {
         zaak.setStartdatum(object.getRecord().getStartAt());
         zaak.setBronorganisatie(BRON_ORGANISATIE);
         zaak.setVerantwoordelijkeOrganisatie(BRON_ORGANISATIE);
-        vrlClientService.findCommunicatiekanaal(COMMUNICATIEKANAAL_EFORMULIER)
-                .map(CommunicatieKanaal::getUrl)
-                .ifPresent(communicatieKanaal -> zaak.setCommunicatiekanaal(communicatieKanaal));
+        final Optional<CommunicatieKanaal> communicatiekanaal = vrlClientService.findCommunicatiekanaal(
+                COMMUNICATIEKANAAL_EFORMULIER);
+        if (communicatiekanaal.isPresent()) {
+            zaak.setCommunicatiekanaal(communicatiekanaal.get().getUrl());
+        }
 
-        final var createdZaak = zgwApiService.createZaak(zaak);
+        zaak = zgwApiService.createZaak(zaak);
 
         final ZaakafhandelParameters zaakafhandelParameters = zaakafhandelParameterService.readZaakafhandelParameters(
                 zaaktypeUUID);
-        toekennenZaak(createdZaak, zaakafhandelParameters);
+        toekennenZaak(zaak, zaakafhandelParameters);
 
-        pairProductAanvraagWithZaak(productAanvraagUrl, createdZaak.getUrl());
-        pairAanvraagPDFWithZaak(productAanvraag, createdZaak.getUrl());
+        pairProductAanvraagWithZaak(productAanvraagUrl, zaak.getUrl());
+        pairAanvraagPDFWithZaak(productAanvraag, zaak.getUrl());
         if (productAanvraag.getBsn() != null || productAanvraag.getKvk() != null) {
-            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), createdZaak.getUrl(),
-                         createdZaak.getZaaktype());
+            addInitiator(productAanvraag.getBsn(), productAanvraag.getKvk(), zaak.getUrl(),
+                         zaak.getZaaktype());
         }
 
         caseService.startCase(zaak, zaaktype, zaakafhandelParameters, productAanvraag.getData());
