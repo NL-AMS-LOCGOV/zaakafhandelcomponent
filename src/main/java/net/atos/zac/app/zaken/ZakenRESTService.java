@@ -910,6 +910,7 @@ public class ZakenRESTService {
         System.out.println("koppelHoofdEnDeelzaak ZAAK.updated " + hoofdzaak.getUuid());
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
+        indexeerService.addZaak(hoofdzaak.getUuid(), false);
         eventingService.send(ZAAK.updated(hoofdzaak.getUuid()));
     }
 
@@ -918,6 +919,7 @@ public class ZakenRESTService {
         zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
+        indexeerService.addZaak(hoofdzaakUUID, false);
         eventingService.send(ZAAK.updated(hoofdzaakUUID));
     }
 }
