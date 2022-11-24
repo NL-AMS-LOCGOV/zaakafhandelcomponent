@@ -43,8 +43,10 @@ import net.atos.client.zgw.drc.DRCClientService;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobjectListParameters;
 import net.atos.client.zgw.shared.model.Results;
+import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
 import net.atos.zac.app.taken.model.TaakSortering;
 import net.atos.zac.flowable.TaskService;
@@ -364,6 +366,12 @@ public class IndexeerService {
     public void addInformatieobject(final UUID informatieobjectUUID) {
         markItemForAddOrUpdateInSolrIndex(informatieobjectUUID.toString(), ZoekObjectType.DOCUMENT);
     }
+
+    public void addInformatieobjectByZaakinformatieobject(final UUID zaakinformatieobjectUUID) {
+        final ZaakInformatieobject zaakInformatieobject = zrcClientService.readZaakinformatieobject(zaakinformatieobjectUUID);
+        markItemForAddOrUpdateInSolrIndex(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()).toString(), ZoekObjectType.DOCUMENT);
+    }
+
 
     public void removeInformatieobject(final UUID informatieobjectUUID) {
         markItemForRemovalFromSolrIndex(informatieobjectUUID.toString(), ZoekObjectType.DOCUMENT);

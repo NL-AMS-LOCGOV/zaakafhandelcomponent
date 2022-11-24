@@ -160,6 +160,8 @@ public class NotificatieReceiver {
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
                 indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+            } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
+                indexeerService.addInformatieobjectByZaakinformatieobject(uuidFromURI(notificatie.getResourceUrl()));
             }
         }
         if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {
