@@ -6,6 +6,8 @@
 package net.atos.zac.app.planitems;
 
 import static net.atos.zac.configuratie.ConfiguratieService.BIJLAGEN;
+import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_BODY;
+import static net.atos.zac.documentcreatie.model.TaakData.TAAKDATA_EMAILADRES;
 import static net.atos.zac.policy.PolicyService.assertPolicy;
 
 import java.util.Date;
@@ -136,8 +138,12 @@ public class PlanItemsRESTService {
             final MailTemplate mailTemplate =
                     mailTemplateService.findMailtemplate(Mail.valueOf(humanTaskData.taakStuurGegevens.mail));
 
-            mailService.sendMail(new Ontvanger(humanTaskData.taakdata.get("emailadres")), mailTemplate.getOnderwerp(),
-                                 humanTaskData.taakdata.get("body"), bijlagen, true, zaak, null);
+            humanTaskData.taakdata.put(TAAKDATA_BODY,
+                                       mailService.sendMail(new Ontvanger(humanTaskData.taakdata.get(TAAKDATA_EMAILADRES)),
+                                                            mailTemplate.getOnderwerp(),
+                                                            humanTaskData.taakdata.get(TAAKDATA_BODY),
+                                                            bijlagen, true, zaak,
+                                                            null));
         }
         caseService.startHumanTask(planItem, humanTaskData.groep.id,
                                    humanTaskData.medewerker != null ? humanTaskData.medewerker.id : null, streefdatum,
