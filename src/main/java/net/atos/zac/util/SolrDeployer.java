@@ -23,22 +23,30 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest;
+import org.apache.solr.common.SolrException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.zac.solr.SolrSchemaUpdate;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
+@Singleton
 public class SolrDeployer {
 
     private static final Logger LOG = Logger.getLogger(SolrDeployer.class.getName());
 
     private static final String VERSION_FIELD_PREFIX = "schema_version_";
+
+    private static final int SOLR_STATUS_OK = 0;
+
+    private static final int WAIT_FOR_SOLR_SECONDS = 10;
 
     @Inject
     @ConfigProperty(name = "SOLR_URL")
@@ -57,6 +65,7 @@ public class SolrDeployer {
 
     public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
         solrClient = new Http2SolrClient.Builder("%s/solr/%s".formatted(solrUrl, SOLR_CORE)).build();
+        waitForSolrAvailability();
         try {
             final int currentVersion = getCurrentVersion();
             LOG.info("Current version of Solr core '%s': %d".formatted(SOLR_CORE, currentVersion));
@@ -75,6 +84,26 @@ public class SolrDeployer {
             }
         } catch (final SolrServerException | IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void waitForSolrAvailability() {
+        var solrAvailable = false;
+        while (!solrAvailable) {
+            try {
+                solrAvailable = new SolrPing().setActionPing().process(solrClient).getStatus() == SOLR_STATUS_OK;
+            } catch (final SolrServerException | IOException | SolrException e) {
+                solrAvailable = false;
+            }
+            if (!solrAvailable) {
+                LOG.warning("Waiting for %d seconds for Solr core '%s' to become available...".formatted(
+                        WAIT_FOR_SOLR_SECONDS, SOLR_CORE));
+                try {
+                    Thread.sleep(WAIT_FOR_SOLR_SECONDS * 1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
