@@ -12,7 +12,7 @@
         <ng-container matColumnDef="naam_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="naam"
-                                  [selected]="dataSource.zoekParameters.filters.TAAK_NAAM"
+                                  [filter]="dataSource.zoekParameters.filters.TAAK_NAAM"
                                   [opties]="this.dataSource.beschikbareFilters.TAAK_NAAM"
                                   (changed)="dataSource.zoekParameters.filters.TAAK_NAAM = $event; filtersChange()">
                 </zac-facet-filter>
@@ -59,7 +59,7 @@
         <ng-container matColumnDef="zaaktypeOmschrijving_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="zaaktype"
-                                  [selected]="dataSource.zoekParameters.filters.ZAAKTYPE"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAKTYPE"
                                   [opties]="dataSource.beschikbareFilters.ZAAKTYPE"
                                   (changed)="dataSource.zoekParameters.filters.ZAAKTYPE = $event; filtersChange()">
                 </zac-facet-filter>
@@ -109,7 +109,7 @@
         <ng-container matColumnDef="groep_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="groep"
-                                  [selected]="dataSource.zoekParameters.filters.GROEP"
+                                  [filter]="dataSource.zoekParameters.filters.GROEP"
                                   [opties]="this.dataSource.beschikbareFilters.GROEP"
                                   (changed)="dataSource.zoekParameters.filters.GROEP = $event; filtersChange()">
                 </zac-facet-filter>

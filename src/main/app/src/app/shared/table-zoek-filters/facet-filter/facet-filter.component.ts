@@ -5,6 +5,7 @@
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FilterResultaat} from '../../../zoeken/model/filter-resultaat';
+import {FilterParameters} from '../../../zoeken/model/filter-parameters';
 
 @Component({
     selector: 'zac-facet-filter',
@@ -13,10 +14,10 @@ import {FilterResultaat} from '../../../zoeken/model/filter-resultaat';
 })
 export class FacetFilterComponent implements OnInit, OnChanges {
     _selected: string;
-    @Input() selected: string[];
+    @Input() filter: FilterParameters;
     @Input() opties: FilterResultaat[];
     @Input() label: string;
-    @Output() changed = new EventEmitter<string[]>();
+    @Output() changed = new EventEmitter<FilterParameters>();
 
     /* veld: prefix */
     public VERTAALBARE_FACETTEN = {
@@ -40,10 +41,18 @@ export class FacetFilterComponent implements OnInit, OnChanges {
     }
 
     private setSelected(): void {
-        this._selected = this.selected ? this.selected[0] : null;
+        this._selected = this.filter?.waarden ? this.filter.waarden[0] : null;
     }
 
     isVertaalbaar(veld: string): boolean {
         return this.VERTAALBARE_FACETTEN[veld] !== undefined;
+    }
+
+    change() {
+        if (this._selected) {
+            this.changed.emit(new FilterParameters([this._selected], false));
+        } else {
+            this.changed.emit(new FilterParameters([], false));
+        }
     }
 }
