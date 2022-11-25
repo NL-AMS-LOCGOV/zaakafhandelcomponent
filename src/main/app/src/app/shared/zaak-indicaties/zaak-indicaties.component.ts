@@ -5,9 +5,9 @@
 
 import {Component, Input} from '@angular/core';
 import {ZaakZoekObject} from '../../zoeken/model/zaken/zaak-zoek-object';
-import {Zaak} from '../model/zaak';
-import {ZaakRelatietype} from '../model/zaak-relatietype';
-import {GerelateerdeZaak} from '../model/gerelateerde-zaak';
+import {Zaak} from '../../zaken/model/zaak';
+import {ZaakRelatietype} from '../../zaken/model/zaak-relatietype';
+import {GerelateerdeZaak} from '../../zaken/model/gerelateerde-zaak';
 
 @Component({
     selector: 'zac-zaak-indicaties',

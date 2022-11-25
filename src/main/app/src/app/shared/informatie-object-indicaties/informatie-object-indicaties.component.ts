@@ -4,7 +4,7 @@
  */
 
 import {Component, Input} from '@angular/core';
-import {EnkelvoudigInformatieobject} from '../model/enkelvoudig-informatieobject';
+import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 
 @Component({
     selector: 'zac-informatie-object-indicaties',
