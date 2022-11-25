@@ -186,7 +186,7 @@
         <ng-container matColumnDef="url_filter" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
                 <zac-zoekopdracht [werklijst]="dataSource.werklijst"
-                                  [zoekParameters]="dataSource.zoekParameters"
+                                  [zoekFilters]="dataSource.zoekParameters"
                                   [filtersChanged]="dataSource.filtersChanged$"
                                   (zoekopdracht)="dataSource.zoekopdrachtChanged($event)"></zac-zoekopdracht>
             </th>
