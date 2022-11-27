@@ -13,8 +13,10 @@ import static net.atos.zac.zoeken.model.index.ZoekObjectType.ZAAK;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -92,7 +94,7 @@ public class IndexeerService {
 
     private SolrClient solrClient;
 
-    private boolean isHerindexerenBezig = false;
+    private final Set<ZoekObjectType> herindexerenBezig = new HashSet<>();
 
     public IndexeerService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
@@ -116,11 +118,11 @@ public class IndexeerService {
     }
 
     public HerindexerenInfo herindexeren(final ZoekObjectType type) {
-        if (isHerindexerenBezig) {
+        if (herindexerenBezig.contains(type)) {
             LOG.info("Herindexeren is nog bezig ...");
             return new HerindexerenInfo(0, 0, 0);
         }
-        isHerindexerenBezig = true;
+        herindexerenBezig.add(type);
         try {
             LOG.info("[%s] Starten met herindexeren".formatted(type.toString()));
             deleteAllZoekIndexEntities(type);
@@ -137,12 +139,12 @@ public class IndexeerService {
             LOG.info("[%s] Herindexeren gereed".formatted(type.toString()));
             return new HerindexerenInfo(addCount, updateCount, removeCount);
         } finally {
-            isHerindexerenBezig = false;
+            herindexerenBezig.remove(type);
         }
     }
 
     public int indexeer(final int batchGrootte, final ZoekObjectType type) {
-        if (isHerindexerenBezig) {
+        if (herindexerenBezig.contains(type)) {
             LOG.info("[%s] Wachten met indexeren, herindexeren is nog bezig".formatted(type.toString()));
             return 0;
         }

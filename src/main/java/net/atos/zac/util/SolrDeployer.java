@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -87,14 +86,12 @@ public class SolrDeployer {
                         .skip(currentVersion)
                         .forEach(this::apply);
 
-                final Set<ZoekObjectType> types = schemaUpdates.stream()
+                schemaUpdates.stream()
                         .skip(currentVersion)
                         .flatMap(schemaUpdate -> schemaUpdate.getTeHerindexerenZoekObjectTypes().stream())
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toSet())
+                        .forEach(this::startHerindexeren);
 
-                if (!types.isEmpty()) {
-                    managedExecutor.submit(() -> herindexeren(types));
-                }
             }
         } catch (final SolrServerException | IOException e) {
             throw new RuntimeException(e);
@@ -151,7 +148,7 @@ public class SolrDeployer {
         return schemaUpdates;
     }
 
-    private void herindexeren(final Set<ZoekObjectType> types) {
-        types.forEach(indexeerService::herindexeren);
+    private void startHerindexeren(final ZoekObjectType type) {
+        managedExecutor.submit(() -> indexeerService.herindexeren(type));
     }
 }
