@@ -66,8 +66,13 @@ public class TaskService {
         public TaskDescriptionChangedData {}
     }
 
-    public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting, final int firstResult, final int maxResults) {
+    public List<Task> listOpenTasks(final TaakSortering sortering, final SorteerRichting SorteerRichting,
+            final int firstResult, final int maxResults) {
         return createOpenTasksQueryWithSorting(sortering, SorteerRichting).listPage(firstResult, maxResults);
+    }
+
+    public long countOpenTasks() {
+        return cmmnTaskService.createTaskQuery().count();
     }
 
     public List<Task> listOpenTasksDueNow() {
