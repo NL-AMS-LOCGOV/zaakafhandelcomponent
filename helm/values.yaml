@@ -195,11 +195,24 @@ solr:
   collectionReplicas: 1
   cloudBootstrap: false
   cloudEnabled: false
-  # Liveness and readiness probes give exception in SOLR pod when cloudEnabled=false
-  livenessProbe:
-    enabled: false
-  readinessProbe:
-    enabled: false
+  customReadinessProbe:
+    httpGet:
+      port: http
+      path: /solr/zac/admin/ping
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 15
+    failureThreshold: 6
+    successThreshold: 1
+  customLivenessProbe:
+    httpGet:
+      port: http
+      path: /solr/zac/admin/ping
+    initialDelaySeconds: 40
+    periodSeconds: 10
+    timeoutSeconds: 15
+    failureThreshold: 6
+    successThreshold: 1
   service:
     ports:
       http: 80
