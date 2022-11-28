@@ -51,6 +51,7 @@ public class MailTemplate {
     @Enumerated(EnumType.STRING)
     private Mail mail;
 
+    @NotNull
     @Column(name = "default_mailtemplate", nullable = false)
     private Boolean defaultMailtemplate;
 

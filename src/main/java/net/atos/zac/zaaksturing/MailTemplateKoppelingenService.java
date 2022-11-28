@@ -5,14 +5,14 @@
 
 package net.atos.zac.zaaksturing;
 
-import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
+import static net.atos.zac.util.ValidationUtil.valideerObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import static net.atos.zac.util.ValidationUtil.valideerObject;
+import net.atos.zac.zaaksturing.model.MailtemplateKoppeling;
 
 @ApplicationScoped
 @Transactional
@@ -32,7 +32,7 @@ public class MailTemplateKoppelingenService {
         }
     }
 
-    public MailtemplateKoppeling persistMailtemplate(final MailtemplateKoppeling mailtemplateKoppeling) {
+    public MailtemplateKoppeling storeMailtemplate(final MailtemplateKoppeling mailtemplateKoppeling) {
         valideerObject(mailtemplateKoppeling);
         final MailtemplateKoppeling existing = find(mailtemplateKoppeling.getId());
         if (existing != null) {
