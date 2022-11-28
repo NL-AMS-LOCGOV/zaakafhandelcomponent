@@ -19,7 +19,7 @@ public class RESTMailtemplateConverter {
         restMailtemplate.variabelen = mailTemplate.getMail().getVariabelen();
         restMailtemplate.onderwerp = mailTemplate.getOnderwerp();
         restMailtemplate.body = mailTemplate.getBody();
-        restMailtemplate.parent = mailTemplate.getParent();
+        restMailtemplate.defaultMailtemplate = mailTemplate.isDefaultMailtemplate();
 
         return restMailtemplate;
     }
@@ -31,7 +31,7 @@ public class RESTMailtemplateConverter {
         mailTemplate.setMailTemplateNaam(restMailtemplate.mailTemplateNaam);
         mailTemplate.setOnderwerp(restMailtemplate.onderwerp);
         mailTemplate.setBody(restMailtemplate.body);
-        mailTemplate.setParent(restMailtemplate.parent);
+        mailTemplate.setDefaultMailtemplate(restMailtemplate.defaultMailtemplate);
         return mailTemplate;
     }
 }
