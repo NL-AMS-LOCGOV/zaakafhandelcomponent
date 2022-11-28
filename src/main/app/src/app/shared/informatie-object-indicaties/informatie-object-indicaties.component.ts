@@ -5,6 +5,7 @@
 
 import {Component, Input} from '@angular/core';
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {DocumentZoekObject} from '../../zoeken/model/documenten/document-zoek-object';
 
 @Component({
     selector: 'zac-informatie-object-indicaties',
@@ -14,6 +15,7 @@ import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkel
 export class InformatieObjectIndicatiesComponent {
 
     @Input() infoObject: EnkelvoudigInformatieobject;
+    @Input() document: DocumentZoekObject;
     @Input() lijst: boolean;
 
     constructor() {}

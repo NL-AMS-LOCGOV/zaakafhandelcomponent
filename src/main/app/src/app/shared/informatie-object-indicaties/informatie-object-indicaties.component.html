@@ -3,22 +3,24 @@
   ~ SPDX-License-Identifier: EUPL-1.2+
   -->
 
-<mat-chip-list class="list" *ngIf="lijst" selectable="false" fxLayout="row">
-    <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
-              [matTooltip]="('indicatie.VERGRENDELD' | translate) + ': ' +infoObject.gelockedDoor.naam">
+<mat-chip-list class="list" *ngIf="document != undefined || lijst" selectable="false" fxLayout="row">
+    <mat-chip *ngIf="document?.indicatieVergrendeld || infoObject?.gelockedDoor" color="accent" selected
+              [matTooltip]="('indicatie.VERGRENDELD' | translate) + ': ' + (document != undefined ? document.vergrendeldDoor : infoObject.gelockedDoor.naam)">
         V
     </mat-chip>
-    <mat-chip *ngIf="infoObject.indicatieGebruiksrecht" color="accent" selected
+    <mat-chip *ngIf="document?.indicatieGebruiksrecht || infoObject?.indicatieGebruiksrecht" color="accent" selected
               [matTooltip]="('indicatie.GEBRUIKSRECHTEN' | translate)">
         G
     </mat-chip>
-    <mat-chip *ngIf="infoObject.ondertekening"
-              [matTooltip]="('indicatie.ONDERTEKEND' | translate) + ': ' +infoObject.ondertekening.soort + ' - ' + (infoObject.ondertekening.datum | datum)">
+    <mat-chip *ngIf="document?.indicatieOndertekend || infoObject?.ondertekening"
+              [matTooltip]="('indicatie.ONDERTEKEND' | translate) + ': ' +
+                  (document != undefined ? document.ondertekeningSoort : infoObject.ondertekening.soort) + ' - ' +
+                  ((document != undefined ? document.ondertekeningDatum : infoObject.ondertekening.datum) | datum)">
         O
     </mat-chip>
 </mat-chip-list>
 
-<mat-chip-list class="view" *ngIf="!lijst" selectable="false" fxLayout="row">
+<mat-chip-list class="view" *ngIf="!lijst && !document" selectable="false" fxLayout="row">
     <mat-chip *ngIf="infoObject.gelockedDoor" color="accent" selected
               [matTooltip]="'msg.document.vergrendeld' | translate: {gebruiker: infoObject.gelockedDoor.naam}">
         {{'indicatie.VERGRENDELD' | translate}}

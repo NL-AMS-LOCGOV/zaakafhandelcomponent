@@ -37,6 +37,7 @@ export class DocumentZoekObject implements ZoekObject {
     indicatieOndertekend: boolean;
     inhoudUrl: string;
     indicatieVergrendeld: boolean;
+    indicatieGebruiksrecht: boolean;
     vergrendeldDoor: string;
     rechten: DocumentRechten;
 }
