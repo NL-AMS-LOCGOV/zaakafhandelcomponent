@@ -186,9 +186,7 @@ public class IndexeerService {
 
     private void markAllInformatieobjectenForReindexing() {
         final EnkelvoudigInformatieobjectListParameters listParameters = new EnkelvoudigInformatieobjectListParameters();
-        listParameters.setPage(2); // niet FIRST_PAGE_NUMBER_ZGW_APIS omdat er op pagina 1 en 2 documenten zonder inhoud zitten en open-zaak een 500 terug
-        // geeft op listEnkelvoudigInformatieObjecten, na het opschonen van de data kan deze weer naar FIRST_PAGE_NUMBER_ZGW_APIS
-        // todo https://github.com/NL-AMS-LOCGOV/zaakafhandelcomponent/issues/1771
+        listParameters.setPage(FIRST_PAGE_NUMBER_ZGW_APIS);
         boolean hasNext = true;
         while (hasNext) {
             final Results<EnkelvoudigInformatieobject> results = drcClientService.listEnkelvoudigInformatieObjecten(listParameters);
