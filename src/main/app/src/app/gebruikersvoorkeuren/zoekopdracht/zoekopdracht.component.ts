@@ -11,8 +11,8 @@ import {Werklijst} from '../model/werklijst';
 import {Subscription} from 'rxjs';
 import {ZoekopdrachtSaveDialogComponent} from '../zoekopdracht-save-dialog/zoekopdracht-save-dialog.component';
 import {ZoekParameters} from '../../zoeken/model/zoek-parameters';
-import {ListParameters} from '../../shared/model/list-parameters';
-import {DatumRange} from '../../zoeken/model/datum-range';
+import {OntkoppeldDocumentListParameters} from '../../documenten/model/ontkoppeld-document-list-parameters';
+import {InboxDocumentListParameters} from '../../documenten/model/inbox-document-list-parameters';
 
 @Component({
     selector: 'zac-zoekopdracht',
@@ -22,7 +22,7 @@ import {DatumRange} from '../../zoeken/model/datum-range';
 export class ZoekopdrachtComponent implements OnInit, OnDestroy {
 
     @Input() werklijst: Werklijst;
-    @Input() zoekParameters: ZoekParameters | ListParameters;
+    @Input() zoekFilters: ZoekFilters;
     @Output() zoekopdracht = new EventEmitter<Zoekopdracht>();
     @Input() filtersChanged: EventEmitter<void>;
 
@@ -44,44 +44,9 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         });
     }
 
-    private heeftZoekParameters(): boolean {
-        const parameters: any = this.zoekParameters;
-        if (parameters != null) {
-            if (parameters.zoeken) {
-                for (const field in parameters.zoeken) {
-                    if (parameters.zoeken.hasOwnProperty(field)) {
-                        if (parameters.zoeken[field] != null) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            if (parameters.filters) {
-                for (const field in parameters.filters) {
-                    if (parameters.filters.hasOwnProperty(field)) {
-                        if (parameters.filters[field] != null) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            if (parameters.datums) {
-                for (const field in parameters.datums) {
-                    if (parameters.datums.hasOwnProperty(field)) {
-                        const datum: DatumRange = parameters.datums[field];
-                        if (datum?.van != null || datum?.tot != null) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     saveSearch(): void {
         const dialogRef = this.dialog.open(ZoekopdrachtSaveDialogComponent, {
-            data: {zoekopdrachten: this.zoekopdrachten, lijstID: this.werklijst, zoekopdracht: this.zoekParameters}
+            data: {zoekopdrachten: this.zoekopdrachten, lijstID: this.werklijst, zoekopdracht: this.zoekFilters}
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -111,7 +76,7 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
             this.actieveFilters = false;
             this.zoekopdracht.emit(this.actieveZoekopdracht);
         } else {
-            this.actieveFilters = this.heeftZoekParameters();
+            this.actieveFilters = this.heeftActieveFilters();
         }
     }
 
@@ -119,8 +84,26 @@ export class ZoekopdrachtComponent implements OnInit, OnDestroy {
         this.gebruikersvoorkeurenService.listZoekOpdrachten(this.werklijst).subscribe(zoekopdrachten => {
             this.zoekopdrachten = zoekopdrachten;
             this.actieveZoekopdracht = zoekopdrachten.find(z => z.actief);
-            this.actieveFilters = this.heeftZoekParameters();
+            this.actieveFilters = this.heeftActieveFilters();
             this.zoekopdracht.emit(this.actieveZoekopdracht);
         });
     }
+
+    // Need to DIY the OO here, because typescript manages to lose the prototype :-(
+    private heeftActieveFilters(): boolean {
+        switch (this.zoekFilters.filtersType) {
+            case 'ZoekParameters':
+                return ZoekParameters.heeftActieveFilters(this.zoekFilters);
+            case 'OntkoppeldDocumentListParameters':
+                return OntkoppeldDocumentListParameters.heeftActieveFilters(this.zoekFilters);
+            case 'InboxDocumentListParameters':
+                return InboxDocumentListParameters.heeftActieveFilters(this.zoekFilters);
+            default:
+                return false;
+        }
+    }
+}
+
+export interface ZoekFilters {
+    readonly filtersType: string;
 }
