@@ -312,7 +312,7 @@ public class ZGWApiService {
             if (brondatum != null) {
                 final Zaak zaakPatch = new Zaak();
                 zaakPatch.setArchiefactiedatum(brondatum.plus(resultaattype.getArchiefactietermijn()));
-                zrcClientService.updateZaak(zaakUUID, zaakPatch);
+                zrcClientService.patchZaak(zaakUUID, zaakPatch);
             }
         }
     }
