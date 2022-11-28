@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-package net.atos.zac.solr.schema;
+package net.atos.zac.solr;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +12,27 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest;
 
 public final class SolrSchemaUpdateHelper {
 
-    public static final String NAME = "name";
+    public static final String TYPE_STRING = "string";
 
-    public static final String STRING = "string";
+    public static final String TYPE_LOCATION = "location";
+
+    public static final String TYPE_PDATE = "pdate";
+
+    public static final String TYPE_PINT = "pint";
+
+    public static final String TYPE_PLONG = "plong";
+
+    public static final String TYPE_PDOUBLE = "pdouble";
+
+    public static final String TYPE_BOOLEAN = "boolean";
+
+    public static final String TYPE_TEXT_NL = "text_nl";
+
+    public static final String TYPE_TEXT_WS = "text_ws";
+
+    public static final String TYPE_TEXT_GENERAL_REV = "text_general_rev";
+
+    public static final String NAME = "name";
 
     private static final String TYPE = "type";
 
@@ -28,10 +46,6 @@ public final class SolrSchemaUpdateHelper {
 
     private static final String MULTI_VALUED = "multiValued";
 
-    private static final String SOURCE = "source";
-
-    private static final String DEST = "dest";
-
     private SolrSchemaUpdateHelper() {
     }
 
@@ -42,11 +56,11 @@ public final class SolrSchemaUpdateHelper {
                 ));
     }
 
-    public static SchemaRequest.AddField addField(final String name, final String type, final String _default) {
+    public static SchemaRequest.AddField addField(final String name, final String type, final String defaultValue) {
         return new SchemaRequest.AddField(
                 Map.of(NAME, name,
                        TYPE, type,
-                       DEFAULT, _default
+                       DEFAULT, defaultValue
                 ));
     }
 

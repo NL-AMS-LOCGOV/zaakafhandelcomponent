@@ -5,10 +5,10 @@
 
 package net.atos.zac.util;
 
-import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.NAME;
-import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.STRING;
-import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.addField;
-import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.deleteField;
+import static net.atos.zac.solr.SolrSchemaUpdateHelper.NAME;
+import static net.atos.zac.solr.SolrSchemaUpdateHelper.TYPE_STRING;
+import static net.atos.zac.solr.SolrSchemaUpdateHelper.addField;
+import static net.atos.zac.solr.SolrSchemaUpdateHelper.deleteField;
 import static net.atos.zac.zoeken.IndexeerService.SOLR_CORE;
 
 import java.io.IOException;
@@ -144,7 +144,7 @@ public class SolrDeployer {
         if (version > 1) {
             schemaUpdates.add(deleteField(VERSION_FIELD_PREFIX + (version - 1)));
         }
-        schemaUpdates.add(addField(VERSION_FIELD_PREFIX + version, STRING, false, false));
+        schemaUpdates.add(addField(VERSION_FIELD_PREFIX + version, TYPE_STRING, false, false));
         return schemaUpdates;
     }
 
