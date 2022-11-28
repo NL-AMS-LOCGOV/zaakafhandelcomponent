@@ -28,13 +28,13 @@
                                 {{'mail.' + row.mail | translate}}
                             </td>
                         </ng-container>
-                        <ng-container matColumnDef="parent">
+                        <ng-container matColumnDef="defaultMailtemplate">
                             <th mat-header-cell *matHeaderCellDef>
-                                {{'parent' | translate}}
+                                {{'defaultMailtemplate' | translate}}
                             </th>
                             <td mat-cell *matCellDef="let row">
-                                <mat-icon *ngIf="!row.parent" color="primary">done</mat-icon>
-                                <mat-icon *ngIf="row.parent">close</mat-icon>
+                                <mat-icon *ngIf="row.defaultMailtemplate" color="primary">done</mat-icon>
+                                <mat-icon *ngIf="!row.defaultMailtemplate">close</mat-icon>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="id" stickyEnd>

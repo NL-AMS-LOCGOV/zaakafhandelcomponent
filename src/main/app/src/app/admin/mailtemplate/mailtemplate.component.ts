@@ -33,7 +33,7 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         MAIL: 'mail',
         ONDERWERP: 'onderwerp',
         BODY: 'body',
-        PARENT: 'parent'
+        DEFAULT_MAILTEMPLATE: 'defaultMailtemplate'
     };
 
     naamFormField: AbstractFormControlField;
@@ -75,10 +75,10 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .label(this.fields.NAAM)
         .validators(Validators.required)
         .build();
-        this.mailFormField = new SelectFormFieldBuilder(this.template.parent == null ? mail.label : mail)
+        this.mailFormField = new SelectFormFieldBuilder(this.template.defaultMailtemplate ? mail.label : mail)
         .id(this.fields.MAIL)
         .label(this.fields.MAIL)
-        .readonly(this.template.parent == null)
+        .readonly(this.template.defaultMailtemplate)
         .optionLabel('label')
         .options(mails)
         .validators(Validators.required)
@@ -98,16 +98,16 @@ export class MailtemplateComponent extends AdminComponent implements OnInit, Aft
         .validators(Validators.required)
         .maxlength(1000)
         .build();
-        this.parentFormField = new InputFormFieldBuilder(this.template.parent)
-        .id(this.fields.PARENT)
-        .label(this.fields.PARENT)
+        this.parentFormField = new InputFormFieldBuilder(this.template.defaultMailtemplate)
+        .id(this.fields.DEFAULT_MAILTEMPLATE)
+        .label(this.fields.DEFAULT_MAILTEMPLATE)
         .build();
     }
 
     saveMailtemplate(): void {
         this.template.mailTemplateNaam = this.naamFormField.formControl.value;
-        this.template.mail = this.template.parent == null ? this.template.mail : this.mailFormField.formControl.value.value;
-        this.template.parent = this.parentFormField.formControl.value;
+        this.template.mail = this.template.defaultMailtemplate ? this.template.mail : this.mailFormField.formControl.value.value;
+        this.template.defaultMailtemplate = this.parentFormField.formControl.value;
         this.template.onderwerp = this.onderwerpFormField.formControl.value;
         this.template.body = this.bodyFormField.formControl.value;
         this.persistMailtemplate();

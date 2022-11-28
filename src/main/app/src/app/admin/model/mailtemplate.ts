@@ -12,5 +12,5 @@ export class Mailtemplate {
     body: string;
     mail: string;
     variabelen: MailtemplateVariabele[];
-    parent: number;
+    defaultMailtemplate: boolean;
 }
