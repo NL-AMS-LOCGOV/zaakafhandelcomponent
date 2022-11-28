@@ -12,12 +12,15 @@ import static net.atos.zac.solr.schema.SolrSchemaUpdateHelper.deleteField;
 import static net.atos.zac.zoeken.IndexeerService.SOLR_CORE;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
@@ -35,6 +38,7 @@ import org.apache.solr.common.SolrException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import net.atos.zac.solr.SolrSchemaUpdate;
+import net.atos.zac.zoeken.IndexeerService;
 import net.atos.zac.zoeken.model.index.ZoekObjectType;
 
 @Singleton
@@ -51,6 +55,12 @@ public class SolrDeployer {
     @Inject
     @ConfigProperty(name = "SOLR_URL")
     private String solrUrl;
+
+    @Resource
+    private ManagedExecutorService managedExecutor;
+
+    @Inject
+    private IndexeerService indexeerService;
 
     private SolrClient solrClient;
 
@@ -81,6 +91,7 @@ public class SolrDeployer {
                         .flatMap(schemaUpdate -> schemaUpdate.getTeHerindexerenZoekObjectTypes().stream())
                         .collect(Collectors.toSet())
                         .forEach(this::startHerindexeren);
+
             }
         } catch (final SolrServerException | IOException e) {
             throw new RuntimeException(e);
@@ -88,21 +99,20 @@ public class SolrDeployer {
     }
 
     private void waitForSolrAvailability() {
-        var solrAvailable = false;
-        while (!solrAvailable) {
+        while (true) {
             try {
-                solrAvailable = new SolrPing().setActionPing().process(solrClient).getStatus() == SOLR_STATUS_OK;
-            } catch (final SolrServerException | IOException | SolrException e) {
-                solrAvailable = false;
-            }
-            if (!solrAvailable) {
-                LOG.warning("Waiting for %d seconds for Solr core '%s' to become available...".formatted(
-                        WAIT_FOR_SOLR_SECONDS, SOLR_CORE));
-                try {
-                    Thread.sleep(WAIT_FOR_SOLR_SECONDS * 1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (new SolrPing().setActionPing().process(solrClient).getStatus() == SOLR_STATUS_OK) {
+                    return;
                 }
+            } catch (final SolrServerException | IOException | SolrException e) {
+                // nothing to report
+            }
+            LOG.warning("Waiting for %d seconds for Solr core '%s' to become available...".formatted(
+                    WAIT_FOR_SOLR_SECONDS, SOLR_CORE));
+            try {
+                Thread.sleep(Duration.ofSeconds(WAIT_FOR_SOLR_SECONDS).toMillis());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -138,7 +148,7 @@ public class SolrDeployer {
         return schemaUpdates;
     }
 
-    private void startHerindexeren(final ZoekObjectType zoekObjectType) {
-        LOG.info("Start herindexern Solr core '%s': %s".formatted(SOLR_CORE, zoekObjectType.toString()));
+    private void startHerindexeren(final ZoekObjectType type) {
+        managedExecutor.submit(() -> indexeerService.herindexeren(type));
     }
 }
