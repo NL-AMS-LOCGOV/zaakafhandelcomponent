@@ -5,6 +5,8 @@
 
 package net.atos.zac.mailtemplates.model;
 
+import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,8 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import static net.atos.zac.util.FlywayIntegrator.SCHEMA;
 
 @Entity
 @Table(schema = SCHEMA, name = "mail_template")
@@ -51,8 +51,9 @@ public class MailTemplate {
     @Enumerated(EnumType.STRING)
     private Mail mail;
 
-    @Column(name = "parent")
-    private Long parent;
+    @NotNull
+    @Column(name = "default_mailtemplate", nullable = false)
+    private Boolean defaultMailtemplate;
 
     public Long getId() {
         return id;
@@ -94,11 +95,11 @@ public class MailTemplate {
         this.mail = mail;
     }
 
-    public Long getParent() {
-        return parent;
+    public Boolean isDefaultMailtemplate() {
+        return defaultMailtemplate;
     }
 
-    public void setParent(final Long parent) {
-        this.parent = parent;
+    public void setDefaultMailtemplate(final Boolean defaultMailtemplate) {
+        this.defaultMailtemplate = defaultMailtemplate;
     }
 }

@@ -20,7 +20,7 @@ import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/in
 import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {HeadingLevel} from '../../shared/material-form-builder/form-components/heading/heading-form-field';
 
-export abstract class AbstractFormulier {
+export abstract class AbstractTaakFormulier {
 
     public static TOEKENNING_FIELD: string = 'toekenning-field';
     public static BIJLAGEN_FIELD: string = 'bijlagen';
@@ -72,7 +72,7 @@ export abstract class AbstractFormulier {
     }
 
     getHumanTaskData(formGroup: FormGroup): HumanTaskData {
-        const toekenning: { groep: Group, medewerker?: User } = formGroup.controls[AbstractFormulier.TOEKENNING_FIELD].value;
+        const toekenning: { groep: Group, medewerker?: User } = formGroup.controls[AbstractTaakFormulier.TOEKENNING_FIELD].value;
         this.humanTaskData.medewerker = toekenning.medewerker;
         this.humanTaskData.groep = toekenning.groep;
         this.humanTaskData.taakdata = this.getDataElementen(formGroup);
@@ -86,7 +86,7 @@ export abstract class AbstractFormulier {
     }
 
     protected getDataElement(key: string): any {
-        if (this.dataElementen && this.dataElementen.hasOwnProperty(key)) {
+        if (this.dataElementen?.hasOwnProperty(key)) {
             return this.dataElementen[key];
         }
         return null;
@@ -95,15 +95,15 @@ export abstract class AbstractFormulier {
     refreshTaakdocumenten() {
         this.form.forEach((value, index) => {
             value.forEach(field => {
-                if (field.id === AbstractFormulier.BIJLAGEN_FIELD) {
+                if (field.id === AbstractTaakFormulier.BIJLAGEN_FIELD) {
                     this.form.splice(index, 1);
                 }
             });
         });
 
         this.form.push(
-            [new DocumentenLijstFieldBuilder().id(AbstractFormulier.BIJLAGEN_FIELD)
-                                              .label(AbstractFormulier.BIJLAGEN_FIELD)
+            [new DocumentenLijstFieldBuilder().id(AbstractTaakFormulier.BIJLAGEN_FIELD)
+                                              .label(AbstractTaakFormulier.BIJLAGEN_FIELD)
                                               .documenten(this.getTaakdocumenten())
                                               .readonly(true)
                                               .build()]);
@@ -142,7 +142,7 @@ export abstract class AbstractFormulier {
             this.dataElementen = {};
         }
         Object.keys(formGroup.controls).forEach((key) => {
-            if (key !== AbstractFormulier.TOEKENNING_FIELD) {
+            if (key !== AbstractTaakFormulier.TOEKENNING_FIELD) {
                 this.dataElementen[key] = formGroup.controls[key]?.value;
             }
         });

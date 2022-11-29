@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SimpleParams;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -63,7 +63,7 @@ public class ZoekenService {
 
     public ZoekenService() {
         final String solrUrl = ConfigProvider.getConfig().getValue("solr.url", String.class);
-        solrClient = new HttpSolrClient.Builder(format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
+        solrClient = new Http2SolrClient.Builder(format("%s/solr/%s", solrUrl, SOLR_CORE)).build();
     }
 
     public ZoekResultaat<? extends ZoekObject> zoek(final ZoekParameters zoekParameters) {

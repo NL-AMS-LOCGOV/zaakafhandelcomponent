@@ -27,7 +27,7 @@
             <ng-container matColumnDef="actions_filter" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>
                     <zac-zoekopdracht [werklijst]="werklijst"
-                                      [zoekParameters]="listParameters"
+                                      [zoekFilters]="listParameters"
                                       [filtersChanged]="clearZoekopdracht"
                                       (zoekopdracht)="zoekopdrachtChanged($event)"></zac-zoekopdracht>
                 </th>

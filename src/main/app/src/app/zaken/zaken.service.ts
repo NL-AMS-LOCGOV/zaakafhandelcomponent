@@ -108,6 +108,12 @@ export class ZakenService {
         );
     }
 
+    updateZaakdata(zaak: Zaak): Observable<Zaak> {
+        return this.http.put<Zaak>(`${this.basepath}/zaakdata`, zaak).pipe(
+            catchError(err => this.foutAfhandelingService.foutAfhandelen(err))
+        );
+    }
+
     toekennen(zaak: Zaak, reden?: string): Observable<Zaak> {
         const toekennenGegevens: ZaakToekennenGegevens = new ZaakToekennenGegevens();
         toekennenGegevens.zaakUUID = zaak.uuid;

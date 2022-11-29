@@ -36,7 +36,6 @@ import net.atos.zac.documenten.model.OntkoppeldDocumentListParameters;
 import net.atos.zac.documenten.model.OntkoppeldeDocumentenResultaat;
 import net.atos.zac.shared.model.SorteerRichting;
 import net.atos.zac.util.UriUtil;
-import net.atos.zac.zoeken.IndexeerService;
 import net.atos.zac.zoeken.model.DatumRange;
 
 
@@ -52,8 +51,6 @@ public class OntkoppeldeDocumentenService {
     @Inject
     private Instance<LoggedInUser> loggedInUserInstance;
 
-    @Inject
-    private IndexeerService indexeerService;
 
     public OntkoppeldDocument create(final EnkelvoudigInformatieobject informatieobject, final Zaak zaak, final String reden) {
         final OntkoppeldDocument ontkoppeldDocument = new OntkoppeldDocument();
@@ -68,7 +65,6 @@ public class OntkoppeldeDocumentenService {
         ontkoppeldDocument.setReden(reden);
         valideerObject(ontkoppeldDocument);
         entityManager.persist(ontkoppeldDocument);
-        indexeerService.removeInformatieobject(informatieobject.getUUID());
         return ontkoppeldDocument;
     }
 

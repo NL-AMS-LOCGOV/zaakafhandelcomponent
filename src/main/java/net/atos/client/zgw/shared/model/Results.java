@@ -20,6 +20,9 @@ import javax.json.bind.annotation.JsonbProperty;
  */
 public class Results<T> {
 
+    // Aantal items wat Open Zaak terug geeft per pagina
+    public final static int NUM_ITEMS_PER_PAGE = 100;
+
     private final int count;
 
     private List<T> results;

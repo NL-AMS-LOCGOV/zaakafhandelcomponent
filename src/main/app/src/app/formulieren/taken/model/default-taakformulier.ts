@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormulier} from './abstract-formulier';
 import {Validators} from '@angular/forms';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
-import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
+import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
+import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 
-export class DefaultTaakformulier extends AbstractFormulier {
+export class DefaultTaakformulier extends AbstractTaakFormulier {
 
     fields = {
         REDEN_START: 'redenStart',

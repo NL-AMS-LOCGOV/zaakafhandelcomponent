@@ -243,6 +243,7 @@
   "openstaandeTaken": "Openstaande taken",
   "planItems": "Mogelijke taken",
   "zaak": "Zaak",
+  "zaakdata": "Zaakdata",
   "zaak.identificatie": "Zaaknummer",
   "zaak.locatie.adres": "Adres",
   "zaak.locatie.postcode": "Postcode",
@@ -460,6 +461,7 @@
   "actie.zaak.toekennen.groep": "Zaak toekennen aan groep",
   "actie.zaak.toekennen.medewerker": "Zaak toekennen aan medewerker",
   "actie.zaak.verlengen": "Zaak verlengen",
+  "actie.zaakdata.wijzigen": "Zaakdata wijzigen",
   "actie.zoeken": "Zoeken",
   "actie.zoeken.persoon": "Persoon zoeken",
   "actie.zoeken.bedrijf": "Bedrijf zoeken",
@@ -642,5 +644,12 @@
   "resultaattype": "Resultaattype",
   "besluittype": "Besluittype",
   "informatieobjecttype": "Informatieobjecttype",
-  "zaakafhandelparameters": "Zaakafhandelparameters"
+  "zaakafhandelparameters": "Zaakafhandelparameters",
+  " 11 ": ">>--> Zaak formulieren <--<<",
+  "melding_klein_evenement.evenement": "Gegevens evenement",
+  "melding_klein_evenement.aanvrager.gegevens": "Gegevens aanvrager",
+  "naamEvenement": "Naam evenement",
+  "omschrijvingEvenement": "Omschrijving evenement",
+  "datumEvenement": "Datum evenement",
+  "verwachtAantalDeelnemers": "Verwacht aantal deelnemers"
 }

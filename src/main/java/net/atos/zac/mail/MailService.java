@@ -13,7 +13,9 @@ import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.OMSCHRIJVI
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.REGISTRATIEDATUM;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.STARTDATUM;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.STREEFDATUM;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGEBRUIKERZAAK;
+import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGROEPTAAK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOEGEWEZENGROEPZAAK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.TOELICHTINGZAAK;
 import static net.atos.zac.mailtemplates.model.MailTemplateVariabelen.ZAAKNUMMER;
@@ -39,6 +41,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -134,7 +137,7 @@ public class MailService {
 
     private final MailjetClient mailjetClient = new MailjetClient(clientOptions);
 
-    public void sendMail(final Ontvanger ontvanger, final String onderwerp, final String body,
+    public String sendMail(final Ontvanger ontvanger, final String onderwerp, final String body,
             final String bijlagen, final boolean createDocumentFromMail, final Zaak zaak, final TaskInfo taskInfo) {
 
         final String resolvedOnderwerp = resolveVariabelen(onderwerp, zaak, taskInfo).replaceAll(HTML_TAG_REGEX,
@@ -159,6 +162,8 @@ public class MailService {
         } catch (MailjetException e) {
             LOG.log(Level.SEVERE, String.format("Failed to send mail with subject '%s'.", onderwerp), e);
         }
+
+        return resolvedBody;
     }
 
     private void createAndSaveDocumentFromMail(final String body, final String onderwerp, final Zaak zaak) {
@@ -179,8 +184,8 @@ public class MailService {
         enkelvoudigInformatieobjectWithInhoud.setInformatieobjecttype(eMailObjectType.getUrl());
         enkelvoudigInformatieobjectWithInhoud.setInhoud(body.getBytes(StandardCharsets.UTF_8));
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
-        enkelvoudigInformatieobjectWithInhoud.setFormaat("text/plain");
-        enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.txt", onderwerp));
+        enkelvoudigInformatieobjectWithInhoud.setFormaat(MediaType.TEXT_HTML);
+        enkelvoudigInformatieobjectWithInhoud.setBestandsnaam(String.format("%s.html", onderwerp));
         enkelvoudigInformatieobjectWithInhoud.setStatus(InformatieobjectStatus.DEFINITIEF);
         enkelvoudigInformatieobjectWithInhoud.setVertrouwelijkheidaanduiding(Vertrouwelijkheidaanduiding.OPENBAAR);
         enkelvoudigInformatieobjectWithInhoud.setVerzenddatum(LocalDate.now());
@@ -240,15 +245,19 @@ public class MailService {
         String resolvedTekst = tekst;
         resolvedTekst = replaceVariabele(resolvedTekst, ZAAKNUMMER, zaak.getIdentificatie());
         resolvedTekst = replaceVariabele(resolvedTekst, ZAAKURL,
-                                         configuratieService.zaakTonenUrl(zaak.getIdentificatie()).toString());
+                                         String.format("""
+                                                       <a href="%s" title="Klik om naar het zaakafhandelcomponent te gaan.">%s</a>
+                                                       """,
+                                                       configuratieService.zaakTonenUrl(zaak.getIdentificatie()).toString(),
+                                                       zaak.getIdentificatie()));
+
         resolvedTekst = replaceVariabele(resolvedTekst, OMSCHRIJVINGZAAK, zaak.getOmschrijving());
         resolvedTekst = replaceVariabele(resolvedTekst, TOELICHTINGZAAK, zaak.getToelichting());
         resolvedTekst = replaceVariabele(resolvedTekst, REGISTRATIEDATUM, zaak.getRegistratiedatum().toString());
         resolvedTekst = replaceVariabele(resolvedTekst, STARTDATUM, zaak.getStartdatum().toString());
+        resolvedTekst = replaceVariabele(resolvedTekst, STREEFDATUM, zaak.getEinddatumGepland() != null ?
+                zaak.getEinddatumGepland().toString() : null);
 
-        if (zaak.getEinddatumGepland() != null) {
-            resolvedTekst = replaceVariabele(resolvedTekst, STREEFDATUM, zaak.getEinddatumGepland().toString());
-        }
 
         if (zaak.getUiterlijkeEinddatumAfdoening() != null) {
             resolvedTekst = replaceVariabele(resolvedTekst, FATALEDATUM,
@@ -273,6 +282,9 @@ public class MailService {
             final Optional<Rol<?>> initiator = zgwApiService.findInitiatorForZaak(zaak);
             if (initiator.isPresent()) {
                 resolvedTekst = replaceInitiatorVariabelen(resolvedTekst, initiator.get());
+            } else {
+                resolvedTekst = replaceVariabele(resolvedTekst, INITIATOR, null);
+                resolvedTekst = replaceVariabele(resolvedTekst, ADRESINITIATOR, null);
             }
         }
 
@@ -287,6 +299,8 @@ public class MailService {
             final Optional<RolMedewerker> behandelaar = zgwApiService.findBehandelaarForZaak(zaak);
             if (behandelaar.isPresent()) {
                 resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERZAAK, behandelaar.get().getNaam());
+            } else {
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERZAAK, null);
             }
         }
 
@@ -296,7 +310,7 @@ public class MailService {
     private String resolveTaakVariabelen(final String tekst, final TaskInfo taskInfo) {
         String resolvedTekst = tekst;
 
-        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGROEPTAAK.getVariabele())) {
+        if (resolvedTekst.contains(TOEGEWEZENGROEPTAAK.getVariabele())) {
             final String groepId = taskInfo.getIdentityLinks().stream()
                     .filter(identityLinkInfo -> IdentityLinkType.CANDIDATE.equals(identityLinkInfo.getType()))
                     .findAny()
@@ -304,21 +318,25 @@ public class MailService {
                     .orElse(null);
             final Group group = groepId != null ? identityService.readGroup(groepId) : null;
             if (group != null) {
-                resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOEGEWEZENGROEPTAAK,
-                                                 group.getName());
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGROEPTAAK, group.getName());
             }
         }
 
-        if (resolvedTekst.contains(MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK.getVariabele())) {
+        if (resolvedTekst.contains(TOEGEWEZENGEBRUIKERTAAK.getVariabele())) {
             final User user = taskInfo.getAssignee() != null ? identityService.readUser(taskInfo.getAssignee()) : null;
             if (user != null) {
-                resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TOEGEWEZENGEBRUIKERTAAK,
-                                                 user.getFullName());
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK, user.getFullName());
+            } else {
+                resolvedTekst = replaceVariabele(resolvedTekst, TOEGEWEZENGEBRUIKERTAAK, null);
             }
         }
 
         resolvedTekst = replaceVariabele(resolvedTekst, MailTemplateVariabelen.TAAKURL,
-                                         configuratieService.taakTonenUrl(taskInfo.getId()).toString());
+                                         String.format("""
+                                         <a href="%s" title="Klik om naar het zaakafhandelcomponent te gaan.">%s</a>
+                                         """,
+                                         configuratieService.taakTonenUrl(taskInfo.getId()).toString(),
+                                         taskInfo.getId()));
 
         return resolvedTekst;
     }
@@ -352,10 +370,10 @@ public class MailService {
         final var verblijfplaats = persoon.getVerblijfplaats();
         if (isNotBlank(verblijfplaats.getStraat())) {
             return "%s %s%s%s, %s %s".formatted(verblijfplaats.getStraat(),
-                                                verblijfplaats.getHuisnummer(),
+                                                emptyIfBlank(verblijfplaats.getHuisnummer()),
                                                 emptyIfBlank(verblijfplaats.getHuisletter()),
                                                 emptyIfBlank(verblijfplaats.getHuisnummertoevoeging()),
-                                                verblijfplaats.getPostcode(),
+                                                emptyIfBlank(verblijfplaats.getPostcode()),
                                                 verblijfplaats.getWoonplaats());
         } else {
             return "%s, %s".formatted(persoon.getVerblijfplaats().getAdresregel1(),
@@ -370,9 +388,9 @@ public class MailService {
 
     private String getAdres(final ResultaatItem resultaatItem) {
         return "%s %s%s, %s %s".formatted(resultaatItem.getStraatnaam(),
-                                          resultaatItem.getHuisnummer(),
+                                          emptyIfBlank(resultaatItem.getHuisnummer()),
                                           emptyIfBlank(resultaatItem.getHuisnummerToevoeging()),
-                                          resultaatItem.getPostcode(),
+                                          emptyIfBlank(resultaatItem.getPostcode()),
                                           resultaatItem.getPlaats());
     }
 
@@ -382,10 +400,15 @@ public class MailService {
 
     private String replaceVariabele(final String target, final MailTemplateVariabelen variabele,
             final String waarde) {
-        return StringUtils.replace(target, variabele.getVariabele(), waarde);
+        return StringUtils.replace(target, variabele.getVariabele(), variabele.isResolveVariabeleAlsLegeString() ?
+                emptyIfBlank(waarde) : waarde);
     }
 
     private String emptyIfBlank(final String value) {
         return isNotBlank(value) ? value : StringUtils.EMPTY;
+    }
+
+    private String emptyIfBlank(final Integer value) {
+        return value != null ? value.toString() : StringUtils.EMPTY;
     }
 }

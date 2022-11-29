@@ -200,6 +200,8 @@ public class RESTZaakConverter {
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 
+        restZaak.zaakdata = caseVariablesService.readZaakdata(zaak.getUuid());
+
         return restZaak;
     }
 

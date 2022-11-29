@@ -16,8 +16,7 @@ import {Opcode} from '../../core/websocket/model/opcode';
 import {ObjectType} from '../../core/websocket/model/object-type';
 import {FormGroup} from '@angular/forms';
 import {FormConfig} from '../../shared/material-form-builder/model/form-config';
-import {AbstractFormulier} from '../../formulieren/model/abstract-formulier';
-import {TaakFormulierenService} from '../../formulieren/taak-formulieren.service';
+import {TaakFormulierenService} from '../../formulieren/taken/taak-formulieren.service';
 import {IdentityService} from '../../identity/identity.service';
 import {WebsocketListener} from '../../core/websocket/model/websocket-listener';
 import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
@@ -36,6 +35,7 @@ import {ActionsViewComponent} from '../../shared/abstract-view/actions-view-comp
 import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
 import {TaakStatus} from '../model/taak-status.enum';
 import {MedewerkerGroepFieldBuilder} from '../../shared/material-form-builder/form-components/select-medewerker/medewerker-groep-field-builder';
+import {AbstractTaakFormulier} from '../../formulieren/taken/abstract-taak-formulier';
 
 @Component({
     templateUrl: './taak-view.component.html',
@@ -59,7 +59,7 @@ export class TaakViewComponent extends ActionsViewComponent implements OnInit, A
     editFormFields: Map<string, any> = new Map<string, any>();
     streefdatumIcon: TextIcon;
 
-    formulier: AbstractFormulier;
+    formulier: AbstractTaakFormulier;
     formConfig: FormConfig;
     posts: number = 0;
     private taakListener: WebsocketListener;
