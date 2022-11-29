@@ -4,7 +4,11 @@
   -->
 
 <mat-card [formGroup]="formGroup">
-    <mat-card-title>{{'zoeken.filter.' + (label | lowercase) | translate}}</mat-card-title>
+    <mat-card-title-group>
+        <mat-card-title>{{'zoeken.filter.' + (label | lowercase) | translate}}</mat-card-title>
+        <mat-icon (click)="invert()" class="on" *ngIf="!inverse">toggle_off</mat-icon>
+        <mat-icon (click)="invert()" class="off" *ngIf="inverse">toggle_on</mat-icon>
+    </mat-card-title-group>
     <mat-card-content>
         <div *ngFor="let facetWaarde of opties;" fxLayout="row" fxLayoutAlign="space-between center">
             <mat-checkbox (change)="checkboxChange()" [formControlName]="facetWaarde.naam">

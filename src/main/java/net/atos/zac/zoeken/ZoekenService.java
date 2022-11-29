@@ -97,18 +97,18 @@ public class ZoekenService {
             }
         });
 
-        zoekParameters.getBeschikbareFilters()
-                .forEach(facetVeld -> query.addFacetField(format("{!ex=%s}%s", facetVeld, facetVeld.getVeld())));
+        zoekParameters.getFilters()
+                .forEach((filterVeld, filterParameters) -> query.addFacetField(format("{!ex=%s}%s", filterVeld, filterVeld.getVeld())));
 
-        zoekParameters.getFilters().forEach((filter, waardes) -> {
-            if (CollectionUtils.isNotEmpty(waardes)) {
-                final String waarde = String.join("\" OR \"", waardes);
+        zoekParameters.getFilters().forEach((filter, filterParameters) -> {
+            if (CollectionUtils.isNotEmpty(filterParameters.waarden())) {
+                final String waarde = String.join("\" OR \"", filterParameters.waarden());
                 if (LEEG.is(waarde)) {
                     query.addFilterQuery(format("{!tag=%s}!%s:(*)", filter, filter.getVeld()));
                 } else if (NIET_LEEG.is(waarde)) {
                     query.addFilterQuery(format("{!tag=%s}%s:(*)", filter, filter.getVeld()));
                 } else {
-                    query.addFilterQuery(format("{!tag=%s}%s:(\"%s\")", filter, filter.getVeld(), waarde));
+                    query.addFilterQuery(format("{!tag=%s}%s%s:(\"%s\")", filter, filterParameters.inverse() ? "-" : "", filter.getVeld(), waarde));
                 }
             }
         });
