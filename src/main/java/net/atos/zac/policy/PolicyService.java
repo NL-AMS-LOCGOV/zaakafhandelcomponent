@@ -113,7 +113,7 @@ public class PolicyService {
 
     public DocumentRechten readDocumentRechten(final DocumentZoekObject enkelvoudigInformatieobject) {
         final DocumentData documentData = new DocumentData();
-        documentData.definitief = DEFINITIEF.toValue().equals(enkelvoudigInformatieobject.getStatus());
+        documentData.definitief = DEFINITIEF.equals(enkelvoudigInformatieobject.getStatus());
         documentData.vergrendeld = enkelvoudigInformatieobject.isIndicatie(DocumentIndicatie.VERGRENDELD);
         documentData.vergrendeldDoor = enkelvoudigInformatieobject.getVergrendeldDoorGebruikersnaam();
         documentData.zaakOpen = !enkelvoudigInformatieobject.isZaakAfgehandeld();

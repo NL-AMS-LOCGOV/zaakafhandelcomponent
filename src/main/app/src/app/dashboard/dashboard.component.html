@@ -33,8 +33,9 @@
 </div>
 <div class="grid" cdkDropListGroup>
     <ng-container *ngFor="let column of grid">
-        <div class="grid-column" [ngClass]="{'draggable':editmode}" fxLayout="column" [fxFlex]="100/width"
-             fxLayoutGap="16px"
+        <div *ngIf="editmode||0<column.length"
+             class="grid-column" [ngClass]="{'draggable':editmode}"
+             fxLayout="column" [fxFlex]="100/(editmode?grid.length:width)" fxLayoutGap="16px"
              cdkDropList cdkDropListOrientation="vertical" cdkDropListDisabled="{{!editmode}}"
              (cdkDropListDropped)="move($event)" [cdkDropListData]="column">
             <mat-card *ngFor="let card of column " cdkDrag>

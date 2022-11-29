@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormulier} from './abstract-formulier';
 import {Validators} from '@angular/forms';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {TranslateService} from '@ngx-translate/core';
-import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
-import {TakenService} from '../../taken/taken.service';
-import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {InputFormFieldBuilder} from '../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
+import {TakenService} from '../../../taken/taken.service';
+import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {InputFormFieldBuilder} from '../../../shared/material-form-builder/form-components/input/input-form-field-builder';
+import {AbstractTaakFormulier} from '../abstract-taak-formulier';
 
-export class ExternAdviesVastleggen extends AbstractFormulier {
+export class ExternAdviesVastleggen extends AbstractTaakFormulier {
 
     fields = {
         VRAAG: 'vraag',

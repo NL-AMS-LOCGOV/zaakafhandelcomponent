@@ -50,10 +50,8 @@ public class SignaleringVerzonden {
     @Column(name = "subject", nullable = false)
     private String subject;
 
-    @NotNull
-    @Column(name = "subjectfield_enum", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SignaleringSubjectField subjectfield;
+    @Column(name = "detail")
+    private String detail;
 
     @NotNull
     @Column(name = "tijdstip", nullable = false)
@@ -99,12 +97,8 @@ public class SignaleringVerzonden {
         this.subject = subject;
     }
 
-    public SignaleringSubjectField getSubjectfield() {
-        return subjectfield;
-    }
-
     public void setSubjectfield(final SignaleringSubjectField subjectfield) {
-        this.subjectfield = subjectfield;
+        this.detail = subjectfield.name();
     }
 
     public ZonedDateTime getTijdstip() {

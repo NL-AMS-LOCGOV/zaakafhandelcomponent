@@ -56,10 +56,15 @@ spec:
             httpGet:
               port: admin
               path: /health/live
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               port: admin
               path: /health/ready
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 20
+            successThreshold: 1
           {{- end}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

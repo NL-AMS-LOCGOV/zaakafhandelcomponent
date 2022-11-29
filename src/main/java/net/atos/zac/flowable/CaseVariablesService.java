@@ -3,6 +3,7 @@ package net.atos.zac.flowable;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -59,8 +60,9 @@ public class CaseVariablesService {
         return (String) readCaseVariable(caseInstanceId, VAR_ZAAKTYPE_OMSCHRIJVING);
     }
 
-    public Boolean findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
-        return (Boolean) findCaseVariable(zaakUUID, VAR_ONTVANGSTBEVESTIGING_VERSTUURD);
+    public Optional<Boolean> findOntvangstbevestigingVerstuurd(final UUID zaakUUID) {
+        final Object caseVariable = findCaseVariable(zaakUUID, VAR_ONTVANGSTBEVESTIGING_VERSTUURD);
+        return caseVariable != null ? Optional.of((Boolean) caseVariable) : Optional.empty();
     }
 
     public void setOntvangstbevestigingVerstuurd(final UUID zaakUUID, final Boolean ontvangstbevestigingVerstuurd) {
@@ -71,8 +73,9 @@ public class CaseVariablesService {
         setVariable(caseInstanceId, VAR_ONTVANKELIJK, ontvankelijk);
     }
 
-    public ZonedDateTime findDatumtijdOpgeschort(final UUID zaakUUID) {
-        return (ZonedDateTime) findCaseVariable(zaakUUID, VAR_DATUMTIJD_OPGESCHORT);
+    public Optional<ZonedDateTime> findDatumtijdOpgeschort(final UUID zaakUUID) {
+        final Object caseVariable = findCaseVariable(zaakUUID, VAR_DATUMTIJD_OPGESCHORT);
+        return caseVariable != null ? Optional.of((ZonedDateTime) caseVariable) : Optional.empty();
     }
 
     public void setDatumtijdOpgeschort(final UUID zaakUUID, final ZonedDateTime datumtijOpgeschort) {
@@ -83,8 +86,9 @@ public class CaseVariablesService {
         removeVariable(zaakUUID, VAR_DATUMTIJD_OPGESCHORT);
     }
 
-    public Integer findVerwachteDagenOpgeschort(final UUID zaakUUID) {
-        return (Integer) findCaseVariable(zaakUUID, VAR_VERWACHTE_DAGEN_OPGESCHORT);
+    public Optional<Integer> findVerwachteDagenOpgeschort(final UUID zaakUUID) {
+        final Object caseVariable = findCaseVariable(zaakUUID, VAR_VERWACHTE_DAGEN_OPGESCHORT);
+        return caseVariable != null ? Optional.of((Integer) caseVariable) : Optional.empty();
     }
 
     public void setVerwachteDagenOpgeschort(final UUID zaakUUID, final Integer verwachteDagenOpgeschort) {
@@ -96,8 +100,12 @@ public class CaseVariablesService {
     }
 
     public Map<String, Object> readZaakdata(final UUID zaakUUID) {
-        final Map<String, Object> zaakdate = (Map<String, Object>) findCaseVariable(zaakUUID, VAR_ZAAK_DATA);
-        return zaakdate != null ? zaakdate : Collections.emptyMap();
+        final Map<String, Object> zaakdata = (Map<String, Object>) findCaseVariable(zaakUUID, VAR_ZAAK_DATA);
+        return zaakdata != null ? zaakdata : Collections.emptyMap();
+    }
+
+    public void setZaakdata(final UUID zaakUUID, final Map<String, Object> zaakdata) {
+        setVariable(zaakUUID, VAR_ZAAK_DATA, zaakdata);
     }
 
     private Object readCaseVariable(final String caseInstanceId, final String variableName) {
@@ -139,17 +147,19 @@ public class CaseVariablesService {
                 .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
                 .includeCaseVariables()
                 .singleResult();
-
         if (caseInstance != null) {
             return caseInstance.getCaseVariables().get(variableName);
-        } else {
-            final HistoricCaseInstance historicCaseInstance = cmmnHistoryService.createHistoricCaseInstanceQuery()
-                    .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
-                    .includeCaseVariables()
-                    .singleResult();
-
-            return historicCaseInstance != null ? historicCaseInstance.getCaseVariables().get(variableName) : null;
         }
+
+        final HistoricCaseInstance historicCaseInstance = cmmnHistoryService.createHistoricCaseInstanceQuery()
+                .variableValueEquals(VAR_ZAAK_UUID, zaakUUID)
+                .includeCaseVariables()
+                .singleResult();
+        if (historicCaseInstance != null) {
+            return historicCaseInstance.getCaseVariables().get(variableName);
+        }
+
+        return null;
     }
 
     private void setVariable(final String caseInstanceId, final String variableName, final Object value) {

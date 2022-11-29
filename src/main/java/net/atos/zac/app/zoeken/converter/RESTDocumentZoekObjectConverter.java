@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import net.atos.client.zgw.drc.model.InformatieobjectStatus;
 import net.atos.zac.app.policy.converter.RESTRechtenConverter;
 import net.atos.zac.app.zoeken.model.RESTDocumentZoekObject;
 import net.atos.zac.policy.PolicyService;
@@ -44,7 +43,7 @@ public class RESTDocumentZoekObjectConverter {
         restDocumentZoekObject.ondertekeningDatum = DateTimeConverterUtil.convertToLocalDate(documentZoekObject.getOndertekeningDatum());
         restDocumentZoekObject.vertrouwelijkheidaanduiding = documentZoekObject.getVertrouwelijkheidaanduiding();
         restDocumentZoekObject.auteur = documentZoekObject.getAuteur();
-        restDocumentZoekObject.status = InformatieobjectStatus.fromValue(documentZoekObject.getStatus()).toString();
+        restDocumentZoekObject.status = documentZoekObject.getStatus().toString();
         restDocumentZoekObject.formaat = documentZoekObject.getFormaat();
         restDocumentZoekObject.versie = documentZoekObject.getVersie();
         restDocumentZoekObject.bestandsnaam = documentZoekObject.getBestandsnaam();

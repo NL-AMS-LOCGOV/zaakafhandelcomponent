@@ -154,12 +154,15 @@ public class NotificatieReceiver {
         if (notificatie.getChannel() == Channel.ZAKEN) {
             if (notificatie.getResource() == ZAAK) {
                 if (notificatie.getAction() == CREATE || notificatie.getAction() == UPDATE) {
+                    // Updaten van taak is nodig bij afsluiten zaak
                     indexeerService.addZaak(uuidFromURI(notificatie.getResourceUrl()), notificatie.getAction() == UPDATE);
                 } else if (notificatie.getAction() == DELETE) {
                     indexeerService.removeZaak(uuidFromURI(notificatie.getResourceUrl()));
                 }
             } else if (notificatie.getResource() == STATUS || notificatie.getResource() == RESULTAAT || notificatie.getResource() == ROL) {
                 indexeerService.addZaak(uuidFromURI(notificatie.getMainResourceUrl()), false);
+            } else if (notificatie.getResource() == ZAAKINFORMATIEOBJECT && notificatie.getAction() == CREATE) {
+                indexeerService.addInformatieobjectByZaakinformatieobject(uuidFromURI(notificatie.getResourceUrl()));
             }
         }
         if (notificatie.getChannel() == Channel.INFORMATIEOBJECTEN) {

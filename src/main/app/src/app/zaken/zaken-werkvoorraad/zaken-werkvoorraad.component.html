@@ -45,7 +45,7 @@
         <ng-container matColumnDef="status_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="status"
-                                  [selected]="dataSource.zoekParameters.filters.ZAAK_STATUS"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_STATUS"
                                   [opties]="this.dataSource.beschikbareFilters.ZAAK_STATUS"
                                   (changed)="dataSource.zoekParameters.filters.ZAAK_STATUS = $event; filtersChange()">
                 </zac-facet-filter>
@@ -59,7 +59,7 @@
         <ng-container matColumnDef="zaaktype_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="zaaktype"
-                                  [selected]="dataSource.zoekParameters.filters.ZAAKTYPE"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAKTYPE"
                                   [opties]="this.dataSource.beschikbareFilters.ZAAKTYPE"
                                   (changed)="dataSource.zoekParameters.filters.ZAAKTYPE = $event; filtersChange()">
                 </zac-facet-filter>
@@ -84,7 +84,7 @@
         <ng-container matColumnDef="groep_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="groep"
-                                  [selected]="dataSource.zoekParameters.filters.GROEP"
+                                  [filter]="dataSource.zoekParameters.filters.GROEP"
                                   [opties]="this.dataSource.beschikbareFilters.GROEP"
                                   (changed)="dataSource.zoekParameters.filters.GROEP = $event; filtersChange()">
                 </zac-facet-filter>
@@ -134,7 +134,7 @@
         <ng-container matColumnDef="behandelaar_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="behandelaar"
-                                  [selected]="dataSource.zoekParameters.filters.BEHANDELAAR"
+                                  [filter]="dataSource.zoekParameters.filters.BEHANDELAAR"
                                   [opties]="this.dataSource.beschikbareFilters.BEHANDELAAR"
                                   (changed)="dataSource.zoekParameters.filters.BEHANDELAAR = $event; filtersChange()">
                 </zac-facet-filter>
@@ -193,7 +193,7 @@
         <ng-container matColumnDef="indicaties_filter">
             <th mat-header-cell *matHeaderCellDef>
                 <zac-facet-filter label="indicaties"
-                                  [selected]="dataSource.zoekParameters.filters.ZAAK_INDICATIES"
+                                  [filter]="dataSource.zoekParameters.filters.ZAAK_INDICATIES"
                                   [opties]="dataSource.beschikbareFilters.ZAAK_INDICATIES"
                                   (changed)="dataSource.zoekParameters.filters.ZAAK_INDICATIES = $event; filtersChange()">
                 </zac-facet-filter>
@@ -210,7 +210,7 @@
         <ng-container matColumnDef="url_filter" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
                 <zac-zoekopdracht [werklijst]="dataSource.werklijst"
-                                  [zoekParameters]="dataSource.zoekParameters"
+                                  [zoekFilters]="dataSource.zoekParameters"
                                   [filtersChanged]="dataSource.filtersChanged$"
                                   (zoekopdracht)="dataSource.zoekopdrachtChanged($event)"></zac-zoekopdracht>
             </th>

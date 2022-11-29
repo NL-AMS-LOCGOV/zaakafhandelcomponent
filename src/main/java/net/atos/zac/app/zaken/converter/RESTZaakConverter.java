@@ -12,7 +12,6 @@ import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -22,6 +21,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import net.atos.client.vrl.VRLClientService;
 import net.atos.client.vrl.model.CommunicatieKanaal;
@@ -140,7 +141,7 @@ public class RESTZaakConverter {
         restZaak.resultaat = zaakResultaatConverter.convert(zaak.getResultaat());
 
         restZaak.isOpgeschort = zaak.isOpgeschort();
-        if (zaak.isOpgeschort()) {
+        if (zaak.isOpgeschort() || StringUtils.isNotEmpty(zaak.getOpschorting().getReden())) {
             restZaak.redenOpschorting = zaak.getOpschorting().getReden();
         }
 
@@ -193,10 +194,12 @@ public class RESTZaakConverter {
         restZaak.isOpen = zaak.isOpen();
         restZaak.isHeropend = isHeropend(statustype);
         restZaak.isInIntakeFase = isIntake(statustype);
-        restZaak.isOntvangstbevestigingVerstuurd = isTrue(
-                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.isOntvangstbevestigingVerstuurd =
+                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false);
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
+
+        restZaak.zaakdata = caseVariablesService.readZaakdata(zaak.getUuid());
 
         return restZaak;
     }

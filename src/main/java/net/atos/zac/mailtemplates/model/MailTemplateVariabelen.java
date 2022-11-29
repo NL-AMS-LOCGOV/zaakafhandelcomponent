@@ -11,23 +11,33 @@ import java.util.Set;
 
 public enum MailTemplateVariabelen {
 
-    ZAAKNUMMER,
-    ZAAKTYPE,
-    ZAAKSTATUS,
-    REGISTRATIEDATUM,
-    STARTDATUM,
-    STREEFDATUM,
-    FATALEDATUM,
-    OMSCHRIJVINGZAAK,
-    TOELICHTINGZAAK,
-    INITIATOR,
-    ADRESINITIATOR,
-    TOEGEWEZENGROEPZAAK,
-    TOEGEWEZENGEBRUIKERZAAK,
-    TOEGEWEZENGROEPTAAK,
-    TOEGEWEZENGEBRUIKERTAAK,
-    ZAAKURL,
-    TAAKURL;
+    ZAAKNUMMER(false),
+    ZAAKTYPE(false),
+    ZAAKSTATUS(false),
+    REGISTRATIEDATUM(false),
+    STARTDATUM(false),
+    STREEFDATUM(true),
+    FATALEDATUM(false),
+    OMSCHRIJVINGZAAK(false),
+    TOELICHTINGZAAK(true),
+    INITIATOR(true),
+    ADRESINITIATOR(true),
+    TOEGEWEZENGROEPZAAK(false),
+    TOEGEWEZENGEBRUIKERZAAK(true),
+    TOEGEWEZENGROEPTAAK(false),
+    TOEGEWEZENGEBRUIKERTAAK(true),
+    ZAAKURL(false),
+    TAAKURL(false);
+
+    private final boolean resolveVariabeleAlsLegeString;
+
+    MailTemplateVariabelen(final boolean resolveVariabeleAlsLegeString) {
+        this.resolveVariabeleAlsLegeString = resolveVariabeleAlsLegeString;
+    }
+
+    public boolean isResolveVariabeleAlsLegeString() {
+        return resolveVariabeleAlsLegeString;
+    }
 
     private static final Set<MailTemplateVariabelen> DEFAULT =
             EnumSet.of(ZAAKNUMMER, ZAAKTYPE, ZAAKSTATUS, REGISTRATIEDATUM, STARTDATUM, STREEFDATUM, FATALEDATUM,

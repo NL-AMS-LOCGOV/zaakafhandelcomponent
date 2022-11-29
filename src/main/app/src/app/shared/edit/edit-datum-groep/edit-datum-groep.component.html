@@ -68,7 +68,10 @@
                 </button>
             </div>
             <div *ngIf="actieOpschorten" class="play-control">
-                <button mat-icon-button color="primary" (click)="opschorten()" title="{{ 'actie.zaak.opschorten' | translate}}">
+                <button mat-icon-button color="primary"
+                        [disabled]="isHervat"
+                        (click)="opschorten()"
+                        title="{{ isHervat ? ('msg.zaak.opschorten.niet.toegestaan' | translate:{reden: opschortReden}) : ('actie.zaak.opschorten' | translate)}}">
                     <mat-icon class="play-icon">play_arrow</mat-icon>
                     <mat-icon class="play-button">pause_circle_outline</mat-icon>
                 </button>

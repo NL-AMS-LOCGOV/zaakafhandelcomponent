@@ -7,7 +7,7 @@
     <mat-drawer #menuSidenav [mode]="sideNaveMode" position="start" opened="true" disableClose="true">
         <zac-side-nav (mode)="menuModeChanged($event)" [menu]="menu"></zac-side-nav>
     </mat-drawer>
-    <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action">
+    <mat-drawer #actionsSidenav mode="over" position="end" [ngSwitch]="action" class="zaak-actions-drawer">
         <zac-klant-koppel *ngSwitchCase="sideNavAction.ZOEK_INITIATOR"
                           (klantGegevens)="initiatorGeselecteerd($event.klant)"
                           [initiator]="true"></zac-klant-koppel>
@@ -43,6 +43,9 @@
         <zac-besluit-edit *ngSwitchCase="sideNavAction.BESLUIT_WIJZIGEN"
                           (besluitGewijzigd)="besluitVastgelegd($event)"
                           [zaak]="zaak"></zac-besluit-edit>
+        <zac-zaakdata *ngSwitchCase="sideNavAction.ZAAKDATA_WIJZIGEN"
+                      (done)="sluitSidenav()"
+                      [zaak]="zaak"></zac-zaakdata>
 
     </mat-drawer>
     <mat-drawer-content fxLayout="column" fxLayoutGap="20px">

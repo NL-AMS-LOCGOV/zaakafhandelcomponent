@@ -6,6 +6,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {FilterResultaat} from '../../../model/filter-resultaat';
+import {FilterParameters} from '../../../model/filter-parameters';
 
 @Component({
     selector: 'zac-multi-facet-filter',
@@ -15,10 +16,13 @@ import {FilterResultaat} from '../../../model/filter-resultaat';
 export class MultiFacetFilterComponent implements OnInit {
 
     formGroup: FormGroup;
-    @Input() selected: string[];
+    @Input() filter: FilterParameters;
     @Input() opties: FilterResultaat[];
     @Input() label: string;
-    @Output() changed = new EventEmitter<string[]>();
+    @Output() changed = new EventEmitter<FilterParameters>();
+
+    inverse: boolean;
+    selected: string[];
 
     /* veld: prefix */
     public VERTAALBARE_FACETTEN = {
@@ -26,15 +30,18 @@ export class MultiFacetFilterComponent implements OnInit {
         TYPE: 'type.',
         TOEGEKEND: 'zoeken.filter.jaNee.',
         ZAAK_INDICATIES: 'indicatie.',
-        DOCUMENT_INDICATIES: 'indicatie.'
+        DOCUMENT_INDICATIES: 'indicatie.',
+        DOCUMENT_STATUS: 'informatieobject.status.'
     };
 
     constructor(private _formBuilder: FormBuilder) {}
 
     ngOnInit(): void {
+        this.inverse = this.filter?.inverse === 'true';
         this.formGroup = this._formBuilder.group({});
+        this.selected = this.filter?.waarden ? this.filter.waarden : [];
         this.opties.forEach((value, index) => {
-            this.formGroup.addControl(value.naam, new FormControl(!!this.selected?.find(s => s === value.naam)));
+            this.formGroup.addControl(value.naam, new FormControl(!!this.selected.find(s => s === value.naam)));
         });
     }
 
@@ -45,10 +52,17 @@ export class MultiFacetFilterComponent implements OnInit {
                 checked.push(key);
             }
         });
-        this.changed.emit(checked);
+        this.changed.emit(new FilterParameters(checked, this.inverse));
     }
 
     isVertaalbaar(veld: string): boolean {
         return this.VERTAALBARE_FACETTEN[veld] !== undefined;
+    }
+
+    invert() {
+        this.inverse = !this.inverse;
+        if (Object.values(this.formGroup.value).includes(true)) {
+            this.checkboxChange();
+        }
     }
 }

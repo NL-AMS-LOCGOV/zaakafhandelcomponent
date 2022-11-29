@@ -82,10 +82,25 @@ export class ZoekComponent implements AfterViewInit {
             this.paginator.length = data.totaal;
             this.hasSearched = true;
             this.zoekResultaat = data;
-            this.hasZaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.ZAAK)?.aantal > 0;
-            this.hasTaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.TAAK)?.aantal > 0;
-            this.hasDocument = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.DOCUMENT)?.aantal > 0;
+            this.bepaalContext();
         });
+    }
+
+    bepaalContext(): void {
+        this.hasZaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.ZAAK)?.aantal > 0;
+        this.hasTaken = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.TAAK)?.aantal > 0;
+        this.hasDocument = this.zoekResultaat.filters.TYPE.find(f => f.naam === ZoekObjectType.DOCUMENT)?.aantal > 0;
+        if (this.zoekParameters.filters.TYPE?.waarden.length > 0) {
+            if (this.hasZaken) {
+                this.hasZaken = this.zoekParameters.filters.TYPE.waarden.includes(ZoekObjectType.ZAAK);
+            }
+            if (this.hasTaken) {
+                this.hasTaken = this.zoekParameters.filters.TYPE.waarden.includes(ZoekObjectType.TAAK);
+            }
+            if (this.hasDocument) {
+                this.hasDocument = this.zoekParameters.filters.TYPE.waarden.includes(ZoekObjectType.DOCUMENT);
+            }
+        }
     }
 
     getZoekParameters(): ZoekParameters {

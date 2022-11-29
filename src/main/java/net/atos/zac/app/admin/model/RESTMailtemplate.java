@@ -23,5 +23,5 @@ public class RESTMailtemplate {
 
     public Set<MailTemplateVariabelen> variabelen;
 
-    public Long parent;
+    public boolean defaultMailtemplate;
 }

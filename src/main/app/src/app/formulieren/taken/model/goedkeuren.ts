@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: EUPL-1.2+
  */
 
-import {AbstractFormulier} from './abstract-formulier';
-import {InformatieobjectZoekParameters} from '../../informatie-objecten/model/informatieobject-zoek-parameters';
-import {TextareaFormFieldBuilder} from '../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
+import {InformatieobjectZoekParameters} from '../../../informatie-objecten/model/informatieobject-zoek-parameters';
+import {TextareaFormFieldBuilder} from '../../../shared/material-form-builder/form-components/textarea/textarea-form-field-builder';
 import {Validators} from '@angular/forms';
-import {DocumentenLijstFieldBuilder} from '../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
+import {DocumentenLijstFieldBuilder} from '../../../shared/material-form-builder/form-components/documenten-lijst/documenten-lijst-field-builder';
 import {TranslateService} from '@ngx-translate/core';
-import {TakenService} from '../../taken/taken.service';
-import {InformatieObjectenService} from '../../informatie-objecten/informatie-objecten.service';
-import {ParagraphFormFieldBuilder} from '../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
-import {ReadonlyFormFieldBuilder} from '../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
-import {RadioFormFieldBuilder} from '../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
+import {TakenService} from '../../../taken/taken.service';
+import {InformatieObjectenService} from '../../../informatie-objecten/informatie-objecten.service';
+import {ParagraphFormFieldBuilder} from '../../../shared/material-form-builder/form-components/paragraph/paragraph-form-field-builder';
+import {ReadonlyFormFieldBuilder} from '../../../shared/material-form-builder/form-components/readonly/readonly-form-field-builder';
+import {RadioFormFieldBuilder} from '../../../shared/material-form-builder/form-components/radio/radio-form-field-builder';
 import {Observable, of} from 'rxjs';
-import {EnkelvoudigInformatieobject} from '../../informatie-objecten/model/enkelvoudig-informatieobject';
+import {AbstractTaakFormulier} from '../abstract-taak-formulier';
+import {Goedkeuring} from '../goedkeuring.enum';
+import {EnkelvoudigInformatieobject} from '../../../informatie-objecten/model/enkelvoudig-informatieobject';
 
-export class Goedkeuren extends AbstractFormulier {
+export class Goedkeuren extends AbstractTaakFormulier {
+
+    private readonly GOEDKEUREN_ENUM_PREFIX: string = 'goedkeuren.';
 
     fields = {
         TOELICHTING: 'toelichtingGoedkeuring',
@@ -60,8 +63,8 @@ export class Goedkeuren extends AbstractFormulier {
                 this.translate.instant('msg.goedkeuring.behandelen', {zaaknummer: this.taak.zaakIdentificatie}))
                                             .build()],
             [new ReadonlyFormFieldBuilder(this.getDataElement(fields.VRAAG)).id(fields.VRAAG)
-                                           .label(fields.VRAAG)
-                                           .build()],
+                                                                            .label(fields.VRAAG)
+                                                                            .build()],
             [new DocumentenLijstFieldBuilder().id(fields.ONDERTEKENEN)
                                               .label(fields.ONDERTEKENEN)
                                               .documenten(this.getDocumenten$(fields.RELEVANTE_DOCUMENTEN))
@@ -71,17 +74,17 @@ export class Goedkeuren extends AbstractFormulier {
                                               .build()],
             [new RadioFormFieldBuilder(this.readonly && goedkeurenDataElement ?
                 this.translate.instant(goedkeurenDataElement) : goedkeurenDataElement).id(fields.GOEDKEUREN)
-                                        .label(fields.GOEDKEUREN)
-                                        .options(this.getGoedkeurenOpties())
-                                        .validators(Validators.required)
-                                        .readonly(this.readonly)
-                                        .build()],
+                                                                                      .label(fields.GOEDKEUREN)
+                                                                                      .options(this.getGoedkeurenOpties$())
+                                                                                      .validators(Validators.required)
+                                                                                      .readonly(this.readonly)
+                                                                                      .build()],
             [new TextareaFormFieldBuilder(this.getDataElement(fields.TOELICHTING)).id(fields.TOELICHTING)
-                                           .label(fields.TOELICHTING)
-                                           .validators(Validators.required)
-                                           .readonly(this.readonly)
-                                           .maxlength(1000)
-                                           .build()]
+                                                                                  .label(fields.TOELICHTING)
+                                                                                  .validators(Validators.required)
+                                                                                  .readonly(this.readonly)
+                                                                                  .maxlength(1000)
+                                                                                  .build()]
         );
     }
 
@@ -105,11 +108,8 @@ export class Goedkeuren extends AbstractFormulier {
         }
     }
 
-    getGoedkeurenOpties(): Observable<string[]> {
-        return of([
-            'actie.ja',
-            'actie.nee'
-        ]);
+    getGoedkeurenOpties$(): Observable<string[]> {
+        return of(Object.keys(Goedkeuring).map(k => this.GOEDKEUREN_ENUM_PREFIX + Goedkeuring[k]));
     }
 
 }

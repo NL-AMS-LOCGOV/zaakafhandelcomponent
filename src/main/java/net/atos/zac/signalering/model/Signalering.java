@@ -33,6 +33,7 @@ import org.flowable.task.api.TaskInfo;
 import net.atos.client.zgw.drc.model.EnkelvoudigInformatieobject;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.model.Zaak;
+import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.zac.identity.model.Group;
 import net.atos.zac.identity.model.User;
 
@@ -63,6 +64,9 @@ public class Signalering {
     @NotBlank
     @Column(name = "subject", nullable = false)
     private String subject;
+
+    @Column(name = "detail")
+    private String detail;
 
     @NotNull
     @Column(name = "tijdstip", nullable = false)
@@ -131,8 +135,17 @@ public class Signalering {
 
     private void validSubjecttype(final SignaleringSubject subjecttype) {
         if (type.getSubjecttype() != subjecttype) {
-            throw new IllegalArgumentException(String.format("SignaleringType %s expects a %s-type subject", type, type.getSubjecttype()));
+            throw new IllegalArgumentException(
+                    String.format("SignaleringType %s expects a %s-type subject", type, type.getSubjecttype()));
         }
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(final ZaakInformatieobject detail) {
+        this.detail = URIUtil.parseUUIDFromResourceURI(detail.getInformatieobject()).toString();
     }
 
     public ZonedDateTime getTijdstip() {
@@ -145,6 +158,7 @@ public class Signalering {
 
     @Override
     public String toString() {
-        return String.format("%s-signalering voor %s %s (over %s %s)", getType(), getTargettype(), getTarget(), getSubjecttype(), getSubject());
+        return String.format("%s-signalering voor %s %s (over %s %s)", getType(), getTargettype(), getTarget(),
+                             getSubjecttype(), getSubject());
     }
 }

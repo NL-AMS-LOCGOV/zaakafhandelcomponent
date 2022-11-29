@@ -36,29 +36,29 @@
             <div fxFlex="">
                 <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
                     <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
-                                            [selected]="zoekParameters.filters[filter.key]"
+                                            [filter]="zoekParameters.filters[filter.key]"
                                             [opties]="filter.value"
                                             (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
                     </zac-multi-facet-filter>
                 </div>
-                <zac-klant-filter *ngIf="hasZaken" label="zaak_initiator"
+                <zac-klant-filter *ngIf="hasZaken || zoekParameters.zoeken.ZAAK_INITIATOR" label="zaak_initiator"
                                   [value]="zoekParameters.zoeken.ZAAK_INITIATOR"
                                   (changed)="zoekParameters.zoeken.ZAAK_INITIATOR = $event; zoek.emit()">
                 </zac-klant-filter>
-                <zac-date-filter *ngIf="hasZaken || hasTaken" label="startdatum"
+                <zac-date-filter *ngIf="hasZaken || hasTaken || hasDocument || zoekParameters.datums.STARTDATUM?.hasValue();" label="startdatum"
                                  [range]="zoekParameters.datums.STARTDATUM"
                                  (changed)="zoekParameters.datums.STARTDATUM = $event; zoek.emit()">
 
                 </zac-date-filter>
-                <zac-date-filter *ngIf="hasZaken || hasTaken" label="streefdatum"
+                <zac-date-filter *ngIf="hasZaken || hasTaken || zoekParameters.datums.STREEFDATUM?.hasValue();" label="streefdatum"
                                  [range]="zoekParameters.datums.STREEFDATUM"
                                  (changed)="zoekParameters.datums.STREEFDATUM = $event; zoek.emit()">
                 </zac-date-filter>
-                <zac-date-filter *ngIf="hasZaken" label="zaak.fataleDatum"
+                <zac-date-filter *ngIf="hasZaken || zoekParameters.datums.ZAAK_FATALE_DATUM?.hasValue();" label="zaak.fataleDatum"
                                  [range]="zoekParameters.datums.ZAAK_FATALE_DATUM"
                                  (changed)="zoekParameters.datums.ZAAK_FATALE_DATUM = $event; zoek.emit()">
                 </zac-date-filter>
-                <zac-date-filter *ngIf="hasZaken" label="zaak.einddatum"
+                <zac-date-filter *ngIf="hasZaken || zoekParameters.datums.ZAAK_EINDDATUM?.hasValue();" label="zaak.einddatum"
                                  [range]="zoekParameters.datums.ZAAK_EINDDATUM"
                                  (changed)="zoekParameters.datums.ZAAK_EINDDATUM = $event; zoek.emit()">
                 </zac-date-filter>

@@ -269,18 +269,24 @@ mat-card {
   }
 }
 
-mat-form-field .mat-form-field {
-  &-wrapper {
-    padding-bottom: 1em;
+mat-form-field {
+  .mat-form-field {
+    &-wrapper {
+      padding-bottom: 1em;
+    }
+
+    &-underline {
+      position: relative;
+      bottom: auto;
+    }
+
+    &-subscript-wrapper {
+      position: static;
+    }
   }
 
-  &-underline {
-    position: relative;
-    bottom: auto;
-  }
-
-  &-subscript-wrapper {
-    position: static;
+  mat-icon {
+    cursor: pointer;
   }
 }
 
