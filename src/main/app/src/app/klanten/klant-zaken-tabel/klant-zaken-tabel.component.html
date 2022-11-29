@@ -25,7 +25,7 @@
                 <ng-container matColumnDef="status_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="status"
-                                          [selected]="zoekParameters.filters.ZAAK_STATUS"
+                                          [filter]="zoekParameters.filters.ZAAK_STATUS"
                                           [opties]="this.zoekResultaat.filters.ZAAK_STATUS"
                                           (changed)="zoekParameters.filters.ZAAK_STATUS = $event; filtersChanged()">
                         </zac-facet-filter>
@@ -55,7 +55,7 @@
                 <ng-container matColumnDef="zaaktype_filter">
                     <th mat-header-cell *matHeaderCellDef>
                         <zac-facet-filter label="zaaktype"
-                                          [selected]="zoekParameters.filters.ZAAKTYPE"
+                                          [filter]="zoekParameters.filters.ZAAKTYPE"
                                           [opties]="zoekResultaat.filters.ZAAKTYPE"
                                           (changed)="zoekParameters.filters.ZAAKTYPE = $event; filtersChanged()">
                         </zac-facet-filter>
