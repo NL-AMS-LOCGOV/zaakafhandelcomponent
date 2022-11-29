@@ -98,6 +98,7 @@ public class DocumentZoekObjectConverter extends AbstractZoekObjectConverter<Doc
             documentZoekObject.setIndicatie(DocumentIndicatie.ONDERTEKEND, true);
         }
         documentZoekObject.setIndicatie(DocumentIndicatie.VERGRENDELD, informatieobject.getLocked());
+        documentZoekObject.setIndicatie(DocumentIndicatie.GEBRUIKSRECHT, informatieobject.getIndicatieGebruiksrecht());
         if (informatieobject.getLocked()) {
             final EnkelvoudigInformatieObjectLock lock = enkelvoudigInformatieObjectLockService.findLock(
                     informatieobject.getUUID());
