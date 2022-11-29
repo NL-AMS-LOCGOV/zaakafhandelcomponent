@@ -13,7 +13,7 @@ import {FilterParameters} from '../../../zoeken/model/filter-parameters';
     styleUrls: ['./facet-filter.component.less']
 })
 export class FacetFilterComponent implements OnInit, OnChanges {
-    _selected: string;
+    selected: string;
     @Input() filter: FilterParameters;
     @Input() opties: FilterResultaat[];
     @Input() label: string;
@@ -41,7 +41,7 @@ export class FacetFilterComponent implements OnInit, OnChanges {
     }
 
     private setSelected(): void {
-        this._selected = this.filter?.waarden ? this.filter.waarden[0] : null;
+        this.selected = this.filter?.waarden ? this.filter.waarden[0] : null;
     }
 
     isVertaalbaar(veld: string): boolean {
@@ -49,8 +49,8 @@ export class FacetFilterComponent implements OnInit, OnChanges {
     }
 
     change() {
-        if (this._selected) {
-            this.changed.emit(new FilterParameters([this._selected], false));
+        if (this.selected) {
+            this.changed.emit(new FilterParameters([this.selected], false));
         } else {
             this.changed.emit(new FilterParameters([], false));
         }
