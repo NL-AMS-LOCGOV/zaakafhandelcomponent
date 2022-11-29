@@ -5,8 +5,9 @@
 
 package net.atos.zac.mailtemplates;
 
-import net.atos.zac.mailtemplates.model.Mail;
-import net.atos.zac.mailtemplates.model.MailTemplate;
+import static net.atos.zac.util.ValidationUtil.valideerObject;
+
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -16,9 +17,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import java.util.List;
-
-import static net.atos.zac.util.ValidationUtil.valideerObject;
+import net.atos.zac.mailtemplates.model.Mail;
+import net.atos.zac.mailtemplates.model.MailTemplate;
 
 @ApplicationScoped
 @Transactional
@@ -38,15 +38,17 @@ public class MailTemplateService {
         }
     }
 
-    public MailTemplate persistMailtemplate(final MailTemplate mailTemplate) {
+    public MailTemplate storeMailtemplate(final MailTemplate mailTemplate) {
         valideerObject(mailTemplate);
-        final MailTemplate existing = find(mailTemplate.getId());
-        if (existing != null) {
-            return entityManager.merge(mailTemplate);
-        } else {
-            entityManager.persist(mailTemplate);
-            return mailTemplate;
+        if (mailTemplate.getId() != null) {
+            final MailTemplate existing = find(mailTemplate.getId());
+            if (existing != null) {
+                return entityManager.merge(mailTemplate);
+            }
         }
+
+        entityManager.persist(mailTemplate);
+        return mailTemplate;
     }
 
     public MailTemplate findMailtemplate(final Mail mail) {
