@@ -9,18 +9,53 @@ import {FilterVeld} from './filter-veld';
 import {SorteerVeld} from './sorteer-veld';
 import {ZoekObjectType} from './zoek-object-type';
 import {DatumRange} from './datum-range';
+import {FilterParameters} from './filter-parameters';
+import {ZoekFilters} from '../../gebruikersvoorkeuren/zoekopdracht/zoekopdracht.component';
 
-export class ZoekParameters {
+export class ZoekParameters implements ZoekFilters {
+    readonly filtersType = 'ZoekParameters';
     type: ZoekObjectType;
     alleenMijnZaken: boolean = false;
     alleenOpenstaandeZaken: boolean = false;
     alleenAfgeslotenZaken: boolean = false;
     alleenMijnTaken: boolean = false;
     zoeken: Partial<Record<ZoekVeld, string>> = {};
-    filters: Partial<Record<FilterVeld, string[]>> = {};
+    filters: Partial<Record<FilterVeld, FilterParameters>> = {};
     datums: Partial<Record<DatumVeld, DatumRange>> = {};
     sorteerVeld: SorteerVeld;
     sorteerRichting: 'desc' | 'asc' | '';
     rows: number = 25;
     page: number = 0;
+
+    static heeftActieveFilters(zoekFilters: any): boolean {
+        if (zoekFilters.zoeken) {
+            for (const field in zoekFilters.zoeken) {
+                if (zoekFilters.zoeken.hasOwnProperty(field)) {
+                    if (zoekFilters.zoeken[field] != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (zoekFilters.filters) {
+            for (const field in zoekFilters.filters) {
+                if (zoekFilters.filters.hasOwnProperty(field)) {
+                    if (zoekFilters.filters[field] != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (zoekFilters.datums) {
+            for (const field in zoekFilters.datums) {
+                if (zoekFilters.datums.hasOwnProperty(field)) {
+                    const datum: DatumRange = zoekFilters.datums[field];
+                    if (datum?.van != null || datum?.tot != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

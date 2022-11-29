@@ -12,7 +12,6 @@ import static net.atos.zac.app.klanten.model.klant.IdentificatieType.RSIN;
 import static net.atos.zac.app.klanten.model.klant.IdentificatieType.VN;
 import static net.atos.zac.util.UriUtil.uuidFromURI;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -195,8 +194,8 @@ public class RESTZaakConverter {
         restZaak.isOpen = zaak.isOpen();
         restZaak.isHeropend = isHeropend(statustype);
         restZaak.isInIntakeFase = isIntake(statustype);
-        restZaak.isOntvangstbevestigingVerstuurd = isTrue(
-                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()));
+        restZaak.isOntvangstbevestigingVerstuurd =
+                caseVariablesService.findOntvangstbevestigingVerstuurd(zaak.getUuid()).orElse(false);
         restZaak.isBesluittypeAanwezig = isNotEmpty(zaaktype.getBesluittypen());
         restZaak.rechten = rechtenConverter.convert(policyService.readZaakRechten(zaak, zaaktype));
 

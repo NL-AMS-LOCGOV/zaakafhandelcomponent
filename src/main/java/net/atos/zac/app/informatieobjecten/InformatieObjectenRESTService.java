@@ -246,10 +246,8 @@ public class InformatieObjectenRESTService {
                                                                 enkelvoudigInformatieobjectWithInhoud.getBeschrijving(),
                                                                 OMSCHRIJVING_VOORWAARDEN_GEBRUIKSRECHTEN);
         if (taakObject) {
-            List<UUID> taakdocumenten = taskVariablesService.findTaakdocumenten(documentReferentieId);
-            if (taakdocumenten == null) {
-                taakdocumenten = new LinkedList<>();
-            }
+            final List<UUID> taakdocumenten =
+                    taskVariablesService.findTaakdocumenten(documentReferentieId).orElse(new LinkedList<>());
             taakdocumenten.add(URIUtil.parseUUIDFromResourceURI(zaakInformatieobject.getInformatieobject()));
             taskVariablesService.setTaakdocumenten(documentReferentieId, taakdocumenten);
         }

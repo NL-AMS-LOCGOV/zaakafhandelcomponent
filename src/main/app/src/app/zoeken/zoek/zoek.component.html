@@ -36,7 +36,7 @@
             <div fxFlex="">
                 <div *ngFor="let filter of zoekResultaat.filters | keyvalue: originalOrder">
                     <zac-multi-facet-filter *ngIf="hasOption(filter.value)" [label]="filter.key"
-                                            [selected]="zoekParameters.filters[filter.key]"
+                                            [filter]="zoekParameters.filters[filter.key]"
                                             [opties]="filter.value"
                                             (changed)="zoekParameters.filters[filter.key] = $event; zoek.emit()">
                     </zac-multi-facet-filter>

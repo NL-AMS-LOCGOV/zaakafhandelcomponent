@@ -57,7 +57,8 @@ import net.atos.client.zgw.shared.model.audit.AuditTrailRegel;
 import net.atos.client.zgw.shared.util.URIUtil;
 import net.atos.client.zgw.zrc.ZRCClientService;
 import net.atos.client.zgw.zrc.model.BetrokkeneType;
-import net.atos.client.zgw.zrc.model.HoofdzaakPatch;
+import net.atos.client.zgw.zrc.model.GeometryZaakPatch;
+import net.atos.client.zgw.zrc.model.HoofdzaakZaakPatch;
 import net.atos.client.zgw.zrc.model.NatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.NietNatuurlijkPersoon;
 import net.atos.client.zgw.zrc.model.OrganisatorischeEenheid;
@@ -71,7 +72,6 @@ import net.atos.client.zgw.zrc.model.RolVestiging;
 import net.atos.client.zgw.zrc.model.Status;
 import net.atos.client.zgw.zrc.model.Vestiging;
 import net.atos.client.zgw.zrc.model.Zaak;
-import net.atos.client.zgw.zrc.model.ZaakGeometriePatch;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobject;
 import net.atos.client.zgw.zrc.model.ZaakInformatieobjectListParameters;
 import net.atos.client.zgw.zrc.model.ZaakListParameters;
@@ -338,9 +338,9 @@ public class ZakenRESTService {
     public RESTZaak updateZaak(@PathParam("uuid") final UUID zaakUUID,
             final RESTZaakEditMetRedenGegevens restZaakEditMetRedenGegevens) {
         assertPolicy(policyService.readZaakRechten(zrcClientService.readZaak(zaakUUID)).getWijzigen());
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(
-                                                                     restZaakEditMetRedenGegevens.zaak),
-                                                             restZaakEditMetRedenGegevens.reden);
+        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID, zaakConverter.convertToPatch(
+                                                                    restZaakEditMetRedenGegevens.zaak),
+                                                            restZaakEditMetRedenGegevens.reden);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -348,9 +348,9 @@ public class ZakenRESTService {
     @Path("{uuid}/zaakgeometrie")
     public RESTZaak updateZaakGeometrie(@PathParam("uuid") final UUID zaakUUID, final RESTZaak restZaak) {
         assertPolicy(policyService.readZaakRechten(zrcClientService.readZaak(zaakUUID)).getWijzigen());
-        final ZaakGeometriePatch zaakGeometriePatch = new ZaakGeometriePatch(
+        final GeometryZaakPatch geometryZaakPatch = new GeometryZaakPatch(
                 restGeometryConverter.convert(restZaak.zaakgeometrie));
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakGeometriePatch);
+        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID, geometryZaakPatch);
         return zaakConverter.convert(updatedZaak);
     }
 
@@ -363,15 +363,16 @@ public class ZakenRESTService {
         final Status status = zaak.getStatus() != null ? zrcClientService.readStatus(zaak.getStatus()) : null;
         final Statustype statustype = status != null ? ztcClientService.readStatustype(status.getStatustype()) : null;
         if (restZaakOpschortGegevens.indicatieOpschorting) {
-            assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort() && StringUtils.isEmpty(zaak.getOpschorting().getReden()));
+            assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort() && StringUtils.isEmpty(
+                    zaak.getOpschorting().getReden()));
         } else {
             assertPolicy(zaak.isOpgeschort());
         }
         final String toelichting = String.format("%s: %s", restZaakOpschortGegevens.indicatieOpschorting ?
                 OPSCHORTING : HERVATTING, restZaakOpschortGegevens.redenOpschorting);
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID,
-                                                             zaakConverter.convertToPatch(restZaakOpschortGegevens),
-                                                             toelichting);
+        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID,
+                                                            zaakConverter.convertToPatch(restZaakOpschortGegevens),
+                                                            toelichting);
         if (restZaakOpschortGegevens.indicatieOpschorting) {
             caseVariablesService.setDatumtijdOpgeschort(zaakUUID, ZonedDateTime.now());
             caseVariablesService.setVerwachteDagenOpgeschort(zaakUUID, restZaakOpschortGegevens.duurDagen);
@@ -387,8 +388,10 @@ public class ZakenRESTService {
     public RESTZaakOpschorting readOpschortingZaak(@PathParam("uuid") final UUID zaakUUID) {
         assertPolicy(policyService.readZaakRechten(zrcClientService.readZaak(zaakUUID)).getLezen());
         final RESTZaakOpschorting zaakOpschorting = new RESTZaakOpschorting();
-        zaakOpschorting.vanafDatumTijd = caseVariablesService.findDatumtijdOpgeschort(zaakUUID);
-        zaakOpschorting.duurDagen = caseVariablesService.findVerwachteDagenOpgeschort(zaakUUID);
+        caseVariablesService.findDatumtijdOpgeschort(zaakUUID)
+                .ifPresent(datumtijdOpgeschort -> zaakOpschorting.vanafDatumTijd = datumtijdOpgeschort);
+        caseVariablesService.findVerwachteDagenOpgeschort(zaakUUID)
+                .ifPresent(verwachteDagenOpgeschort -> zaakOpschorting.duurDagen = verwachteDagenOpgeschort);
         return zaakOpschorting;
     }
 
@@ -402,9 +405,9 @@ public class ZakenRESTService {
         assertPolicy(zaak.isOpen() && !isHeropend(statustype) && !zaak.isOpgeschort() &&
                              policyService.readZaakRechten(zaak).getBehandelen());
         final String toelichting = String.format("%s: %s", VERLENGING, restZaakVerlengGegevens.redenVerlenging);
-        final Zaak updatedZaak = zrcClientService.updateZaak(zaakUUID, zaakConverter.convertToPatch(zaakUUID,
-                                                                                                    restZaakVerlengGegevens),
-                                                             toelichting);
+        final Zaak updatedZaak = zrcClientService.patchZaak(zaakUUID, zaakConverter.convertToPatch(zaakUUID,
+                                                                                                   restZaakVerlengGegevens),
+                                                            toelichting);
         if (restZaakVerlengGegevens.takenVerlengen) {
             final int aantalTakenVerlengd = verlengOpenTaken(zaakUUID, restZaakVerlengGegevens.duurDagen);
             if (aantalTakenVerlengd > 0) {
@@ -905,8 +908,8 @@ public class ZakenRESTService {
     }
 
     private void koppelHoofdEnDeelzaak(final Zaak hoofdzaak, final UUID deelzaakUUID) {
-        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(hoofdzaak.getUrl());
-        zrcClientService.updateZaak(deelzaakUUID, deelzaak);
+        final HoofdzaakZaakPatch deelzaakPatch = new HoofdzaakZaakPatch(hoofdzaak.getUrl());
+        zrcClientService.patchZaak(deelzaakUUID, deelzaakPatch);
         System.out.println("koppelHoofdEnDeelzaak ZAAK.updated " + hoofdzaak.getUuid());
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
@@ -915,8 +918,8 @@ public class ZakenRESTService {
     }
 
     private void ontkoppelHoofdEnDeelzaak(final UUID deelzaakUUID, final UUID hoofdzaakUUID, final String reden) {
-        final HoofdzaakPatch deelzaak = new HoofdzaakPatch(null);
-        zrcClientService.updateZaak(deelzaakUUID, deelzaak, reden);
+        final HoofdzaakZaakPatch deelzaakPatch = new HoofdzaakZaakPatch(null);
+        zrcClientService.patchZaak(deelzaakUUID, deelzaakPatch, reden);
         // Hiervoor wordt door open zaak alleen voor de deelzaak een notificatie verstuurd.
         // Dus zelf het ScreenEvent versturen voor de hoofdzaak!
         indexeerService.addZaak(hoofdzaakUUID, false);
