@@ -93,14 +93,19 @@ public class RESTTaakConverter {
             restTaak.groep = groepConverter.convertGroupId(extractGroupId(taskInfo.getIdentityLinks()));
             restTaak.formulierDefinitie = humanTaskParameters.getFormulierDefinitieID();
             humanTaskParameters.getReferentieTabellen().forEach(rt -> {
-                restTaak.tabellen.put(rt.getVeld(), rt.getTabel().getWaarden().stream().map(ReferentieTabelWaarde::getNaam).toList());
+                restTaak.tabellen.put(rt.getVeld(),
+                                      rt.getTabel().getWaarden().stream().map(ReferentieTabelWaarde::getNaam).toList());
             });
 
             restTaak.zaaktypeOmschrijving = zaaktypeOmschrijving;
-            restTaak.taakinformatie = taskVariablesService.findTaakinformatie(taskInfo.getId());
+            taskVariablesService.findTaakinformatie(taskInfo.getId())
+                    .ifPresent(taakinformatie -> restTaak.taakinformatie = taakinformatie);
+
             if (withTaakdata) {
-                restTaak.taakdata = taskVariablesService.findTaakdata(taskInfo.getId());
-                restTaak.taakdocumenten = taskVariablesService.findTaakdocumenten(taskInfo.getId());
+                taskVariablesService.findTaakdata(taskInfo.getId())
+                        .ifPresent(taakdata -> restTaak.taakdata = taakdata);
+                taskVariablesService.findTaakdocumenten(taskInfo.getId())
+                        .ifPresent(taakdocumenten -> restTaak.taakdocumenten = taakdocumenten);
             }
         }
         return restTaak;
